@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the subtyping example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="subtyping" value="subtyping"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${subtyping}"/>
-    <delete dir="${examples.build}/${subtyping}"/>
-  </target>
-  <target name="build" depends="init">
-    <gombuild example="${subtyping}"/>
-    <tomcompile example="${subtyping}"/>
-    <javacompile example="${subtyping}"/>
-  </target>
+  <property name="example" value="subtyping"/>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${subtyping}/*.t"/>
-        <include name="${subtyping}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

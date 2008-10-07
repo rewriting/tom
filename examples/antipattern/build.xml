@@ -1,44 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the antipattern example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="antipattern" value="antipattern"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${antipattern}"/>
-    <delete dir="${examples.build}/${antipattern}"/>
-  </target>
+  <property name="example" value="antipattern"/>
   <target name="build" depends="init">
-    <gomcompile example="${antipattern}"/>
+    <gombuild example="${example}"/>
     <!--
     "Wait for the static %rule problem to be resolved"
-    <tomcompile example="${antipattern}"/>
+    <tomcompile example="${example}"/>
     -->
     <tom.preset srcdir="${examples.dir}"
-	        options="--noStatic"
-    optimize="no"
-    optimize2="no"
-                destdir="${examples.gen}">          
-       <include name="${antipattern}/**/*.t"/>
-       <exclude name="${antipattern}/**/*.g.t"/>
+      options="--noStatic"
+      optimize="no"
+      optimize2="no"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/*.g.t"/>
     </tom.preset>
-    <javacompile example="${antipattern}"/>
-  	<copy todir="${examples.build}/${antipattern}">
-      <fileset dir="${antipattern}">
+    <javacompile example="${example}"/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${example}">
         <include name="*.txt"/>
-    	<include name="${antipattern}/**/*.txt"/> 
+        <include name="${example}/**/*.txt"/> 
       </fileset>
     </copy>
-	
+
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
-         update="yes">
+      update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${antipattern}/**/*.t"/>
-        <include name="${antipattern}/**/*.txt"/>
-        <include name="${antipattern}/**/*.java"/>
-        <include name="${antipattern}/**/*.gom"/>
-        <include name="${antipattern}/**/*.tom"/>
-        <include name="${antipattern}/**/*.tom"/>
+        <include name="${example}/**/*.t"/>
+        <include name="${example}/**/*.txt"/>
+        <include name="${example}/**/*.java"/>
+        <include name="${example}/**/*.gom"/>
+        <include name="${example}/**/*.tom"/>
+        <include name="${example}/**/*.tom"/>
       </zipfileset>
     </zip>
   </target>

@@ -1,4 +1,4 @@
-module term
+module nspk.term
 imports int
 abstract syntax
 AgentId = a()

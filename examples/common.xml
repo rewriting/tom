@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project name="common">
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
@@ -77,6 +77,28 @@
         </gom.preset>
       </sequential>
     </macrodef>
+  <macrodef name="gompointercompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        termpointer="true"
+        destdir="${examples.gen}">
+        <include name="@{example}/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+  <macrodef name="gomtermgraphcompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        termgraph="true" 
+        destdir="${examples.gen}">
+        <include name="@{example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
     <!-- The gombuild macro do not pass the package argument -->
     <macrodef name="gombuild">
       <attribute name="example"/>
@@ -128,5 +150,54 @@
 
   <target name="clean.dist" description="Mr proper" depends="clean.examples">
     <delete dir="${examples.dist}"/>
+  </target>
+
+  <target name="clean" description="Cleans example directory" unless="${example}">
+    <delete dir="${examples.gen}/${example}"/>
+    <delete dir="${examples.build}/${example}"/>
+  </target>
+
+  <target name="build" depends="init" unless="${example}">
+    <gombuild example="${example}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
+  </target>
+
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
+
+  <target name="junit" depends="tom.init, build"
+    description="Runs junit acceptance tests">
+    <mkdir dir="${examples.report}"/>
+    <tom.junit printsummary="on"
+              fork="on"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
   </target>
 </project>

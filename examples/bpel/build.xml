@@ -1,60 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the bpel example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <macrodef name="gomtermgraphcompile">
-    <attribute name="example"/>
-    <sequential>
-      <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
-        termgraph="true" 
-        destdir="${examples.gen}">
-        <include name="@{example}/**/*.gom"/>
-      </gom.preset>
-    </sequential>
-  </macrodef>
-  <property name="bpel" value="bpel"/>
-  <target name="clean" description="Cleans examples directory">
-    <property name="bpel" value="bpel"/>
-    <delete dir="${examples.gen}/${bpel}"/>
-    <delete dir="${examples.build}/${bpel}"/>
-  </target>
+  <property name="example" value="bpel"/>
   <target name="build" depends="init">
     <!-- copy resources in build -->
-    <copy todir="${examples.build}/${bpel}">
-      <fileset dir="${examples.dir}/${bpel}">
-      </fileset>
-    </copy>
-    <mkdir dir="${examples.gen}/${bpel}"/>
-    <gomtermgraphcompile example="${bpel}"/>
+    <mkdir dir="${examples.gen}/${example}"/>
+    <gomtermgraphcompile example="${example}"/>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${bpel}"
+      package="${example}"
       grammar="Cond">
-      <include name="${bpel}/**/Wfg.gom"/>
+      <include name="${example}/**/Wfg.gom"/>
     </gomantlradapter.preset>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <antlr3 target="${bpel}/Cond.g"
-            outputdirectory="${examples.gen}/${bpel}"
-            libdirectory="${examples.gen}/${bpel}"
+    <antlr3 target="${example}/Cond.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <tomcompile example="${bpel}"/>
-    <javacompile example="${bpel}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+        <exclude name="build.xml"/>
+      </fileset>
+    </copy>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
       update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${bpel}/*.t"/>
-        <include name="${bpel}/*.java"/>
-        <include name="${bpel}/*.gom"/>
-        <include name="${bpel}/*.xml"/>
-        <include name="${bpel}/*.g"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.gom"/>
+        <include name="${example}/*.xml"/>
+        <include name="${example}/*.g"/>
       </zipfileset>
     </zip>
   </target>

@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the strings example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="strings" value="strings"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${strings}"/>
-    <delete dir="${examples.build}/${strings}"/>
-  </target>
-  <target name="build" depends="init">
-    <tomcompile example="${strings}"/>
-    <javacompile example="${strings}"/>
-  </target>
+  <property name="example" value="strings"/>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${strings}/*.t"/>
+        <include name="${example}/*.t"/>
       </zipfileset>
     </zip>
   </target>

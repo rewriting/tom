@@ -1,4 +1,4 @@
-module tree 
+module rbtree.tree 
 abstract syntax
 Color= R()
      | B()

@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the addressbook example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="addressbook" value="addressbook"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${addressbook}"/>
-    <delete dir="${examples.build}/${addressbook}"/>
-  </target>
-  <target name="build" depends="init">
-    <gombuild example="${addressbook}"/>
-    <tomcompile example="${addressbook}"/>
-    <javacompile example="${addressbook}"/>
-  </target>
+  <property name="example" value="addressbook"/>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${addressbook}/*.t"/>
-        <include name="${addressbook}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

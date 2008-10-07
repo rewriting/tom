@@ -1,4 +1,4 @@
-module Term    
+module antipattern.Term    
 imports String int
 abstract syntax
 Term = Variable(name:String)

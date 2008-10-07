@@ -1,4 +1,4 @@
-module Trees 
+module tactics.Trees 
 imports String 
 abstract syntax
 

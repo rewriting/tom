@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the propp example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="propp" value="propp"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${propp}"/>
-    <delete dir="${examples.build}/${propp}"/>
-  </target>
+  <property name="example" value="propp"/>
   <target name="build" depends="init">
-    <!--<adtcompile example="${propp}"
-      factory="seq"/>-->
-    <gombuild example="${propp}"/>
+    <gombuild example="${example}"/>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${propp}/SeqParser.g"
-                options="-I ${examples.gen}/${propp}"
+    <tom.preset outputfile="${examples.gen}/${example}/SeqParser.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-      <include name="${propp}/**/SeqParser.g.t"/>
+      <include name="${example}/**/SeqParser.g.t"/>
     </tom.preset>
-    <mkdir dir="${examples.gen}/${propp}"/>
-    <tomantlr target="${examples.gen}/${propp}/SeqParser.g"
-              outputdirectory="${examples.gen}/${propp}">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/SeqParser.g"
+              outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <tomcompile example="${propp}"/>
-    <javacompile example="${propp}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
     <!-- copy resources -->
-    <copy todir="${examples.build}/${propp}">
-      <fileset dir="${examples.dir}/${propp}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="examples"/>
         <include name="*.sty"/>
       </fileset>
@@ -35,10 +29,10 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${propp}/*.t"/>
-        <include name="${propp}/*.gom"/>
-        <include name="${propp}/*.sty"/>
-        <include name="${propp}/examples"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
+        <include name="${example}/*.sty"/>
+        <include name="${example}/examples"/>
       </zipfileset>
     </zip>
   </target>

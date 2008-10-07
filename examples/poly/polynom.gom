@@ -1,4 +1,4 @@
-module polynom
+module poly.polynom
 imports int String
 abstract syntax
 

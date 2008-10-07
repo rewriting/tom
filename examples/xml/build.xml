@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the xml example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="xml" value="xml"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${xml}"/>
-    <delete dir="${examples.build}/${xml}"/>
-  </target>
-  <target name="build" depends="init">
-    <tomcompile example="${xml}"/>
-    <javacompile example="${xml}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${xml}">
-      <fileset dir="${examples.dir}/${xml}">
+  <property name="example" value="xml"/>
+  <target name="build" depends="common.build">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="**/*.xml"/>
         <include name="*.html"/>
       </fileset>
@@ -21,10 +14,10 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${xml}/dommapping/*.t"/>
-        <include name="${xml}/dommapping/*.xml"/>
-        <include name="${xml}/*.t"/>
-        <include name="${xml}/*.xml"/>
+        <include name="${example}/dommapping/*.t"/>
+        <include name="${example}/dommapping/*.xml"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.xml"/>
       </zipfileset>
     </zip>
   </target>

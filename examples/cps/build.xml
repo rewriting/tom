@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the cps example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="cps" value="cps"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${cps}"/>
-    <delete dir="${examples.build}/${cps}"/>
-  </target>
-  <target name="build" depends="init">
-    <gombuild example="${cps}"/>
-    <tomcompile example="${cps}"/>
-    <javacompile example="${cps}"/>
-  </target>
+  <property name="example" value="cps"/>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${cps}/*.t"/>
-        <include name="${cps}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

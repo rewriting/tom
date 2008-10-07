@@ -1,51 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the termgraph example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <macrodef name="gomtermgraphcompile">
-    <attribute name="example"/>
-    <sequential>
-      <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
-        termgraph="true" 
-        destdir="${examples.gen}">
-        <include name="@{example}/**/*.gom"/>
-      </gom.preset>
-    </sequential>
-  </macrodef>
-  <property name="termgraph" value="termgraph"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${termgraph}"/>
-    <delete dir="${examples.build}/${termgraph}"/>
-  </target>
+  <property name="example" value="termgraph"/>
   <target name="build" depends="init">
     <!-- copy resources in build -->
-    <copy todir="${examples.build}/${termgraph}">
-      <fileset dir="${examples.dir}/${termgraph}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
       </fileset>
     </copy>
-    <gomtermgraphcompile example="${termgraph}"/>
+    <gomtermgraphcompile example="${example}"/>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${termgraph}/LambdaTermParser.g"
-                options="-I ${examples.gen}/${termgraph}"
+    <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-                <include name="${termgraph}/**/LambdaTermParser.g.t"/>
+                <include name="${example}/**/LambdaTermParser.g.t"/>
     </tom.preset>
-    <mkdir dir="${examples.gen}/${termgraph}"/>
-    <tomantlr target="${examples.gen}/${termgraph}/LambdaTermParser.g"
-              outputdirectory="${examples.gen}/${termgraph}">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"
+              outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <tomcompile example="${termgraph}"/>
-    <javacompile example="${termgraph}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
       update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${termgraph}/*.t"/>
-        <include name="${termgraph}/*.tom"/>
-        <include name="${termgraph}/*.java"/>
-        <include name="${termgraph}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.tom"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

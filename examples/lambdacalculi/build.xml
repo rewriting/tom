@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the lambdacalculi example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="lambdacalculi" value="lambdacalculi"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${lambdacalculi}"/>
-    <delete dir="${examples.build}/${lambdacalculi}"/>
-  </target>
+  <property name="example" value="lambdacalculi"/>
   <target name="build" depends="init">
     <gom.preset srcdir="${examples.dir}"
-      package="${lambdacalculi}" 
+      package="${example}" 
       termgraph="true" 
       destdir="${examples.gen}">
-      <include name="${lambdacalculi}/lambdaterm.gom"/>
+      <include name="${example}/lambdaterm.gom"/>
     </gom.preset>
-    <tom.preset outputfile="${examples.gen}/${lambdacalculi}/LambdaTermParser.g"
-                options="-I ${examples.gen}/${lambdacalculi}"
+    <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-                <include name="${lambdacalculi}/**/LambdaTermParser.g.t"/>
+                <include name="${example}/**/LambdaTermParser.g.t"/>
     </tom.preset>
-    <mkdir dir="${examples.gen}/${lambdacalculi}"/>
-    <tomantlr target="${examples.gen}/${lambdacalculi}/LambdaTermParser.g"
-      outputdirectory="${examples.gen}/${lambdacalculi}">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"
+      outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
 
-    <tomcompile example="${lambdacalculi}"/>
-    <javacompile example="${lambdacalculi}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <!-- not in the distribution -->

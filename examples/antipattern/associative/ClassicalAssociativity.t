@@ -34,8 +34,8 @@ import antipattern.*;
 
 import java.util.*;
 
-import antipattern.termaso.*;
-import antipattern.termaso.types.*;
+import antipattern.associative.termaso.*;
+import antipattern.associative.termaso.types.*;
 import tom.library.sl.*;
 
 
@@ -43,7 +43,7 @@ import tom.library.sl.*;
 //simple algorithm implementing the associative matching
 public class ClassicalAssociativity {
 
-  %include{ ../termaso/TermAso.tom }	
+  %include{ termaso/TermAso.tom }	
   %include{ sl.tom }
   %include{ java/util/types/Collection.tom}
 

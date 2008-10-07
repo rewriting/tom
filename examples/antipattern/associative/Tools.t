@@ -36,15 +36,15 @@ import antipattern.*;
 import java.io.*;
 import java.util.*;
 
-import antipattern.termaso.*;
-import antipattern.termaso.types.*;
+import antipattern.associative.termaso.*;
+import antipattern.associative.termaso.types.*;
 
 
 import tom.library.sl.*;
 
 public class Tools {
 
-  %include{ ../termaso/TermAso.tom }
+  %include{ termaso/TermAso.tom }
   %include{ sl.tom }	
   %include{ aterm.tom }
 

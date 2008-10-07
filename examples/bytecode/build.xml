@@ -1,34 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the bytecode example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="bytecode" value="bytecode"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${bytecode}"/>
-    <delete dir="${examples.build}/${bytecode}"/>
-  </target>
-  <target name="build" depends="init">
+  <property name="example" value="bytecode"/>
+  <target name="build" depends="common.build">
     <!-- copy resources in build -->
-    <copy todir="${examples.build}/${bytecode}">
-      <fileset dir="${examples.dir}/${bytecode}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+        <exclude name="build.xml"/>
       </fileset>
     </copy>
-    <gomcompile example="${bytecode}"/>
-    <tomcompile example="${bytecode}"/>
-    <javac.preset fork="true" destdir="${examples.build}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.examples.classpath"/>
-      <include name="${bytecode}/**/*.java"/>
-    </javac.preset>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${bytecode}/*.t"/>
-        <include name="${bytecode}/*.tom"/>
-        <include name="${bytecode}/*.java"/>
-        <include name="${bytecode}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.tom"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

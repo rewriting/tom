@@ -1,33 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the multigraph example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <macrodef name="gommultigraph">
-    <attribute name="example"/>
-    <sequential>
-      <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
-        termpointer="true" 
-        destdir="${examples.gen}">
-        <include name="@{example}/**/*.gom"/>
-      </gom.preset>
-    </sequential>
-  </macrodef>
-  <property name="multigraph" value="multigraph"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${multigraph}"/>
-    <delete dir="${examples.build}/${multigraph}"/>
-  </target>
+  <property name="example" value="multigraph"/>
   <target name="build" depends="init">
-    <!-- copy resources in build -->
-    <copy todir="${examples.build}/${multigraph}">
-      <fileset dir="${examples.dir}/${multigraph}">
+    <gompointercompile example="${example}"/>
+    <tomcompile example="${example}"/>
+    <javacompile example="${example}"/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="test"/>
       </fileset>
     </copy>
-    <gommultigraph example="${multigraph}"/>
-    <tomcompile example="${multigraph}"/>
-    <javacompile example="${multigraph}"/>
-  </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <!-- not in the distribution -->
   </target>
 </project>

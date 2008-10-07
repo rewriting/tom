@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the dom example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="dom" value="dom"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${dom}"/>
-    <delete dir="${examples.build}/${dom}"/>
-  </target>
-  <target name="build" depends="init">
-    <tomcompile example="${dom}"/>
-    <javacompile example="${dom}"/>
+  <property name="example" value="dom"/>
+  <target name="build" depends="common.build">
     <!-- copy resources -->
-    <copy todir="${examples.build}/${dom}">
-      <fileset dir="${examples.dir}/${dom}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="*.xml"/>
       </fileset>
     </copy>
@@ -20,8 +14,8 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${dom}/*.t"/>
-        <include name="${dom}/*.xml"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.xml"/>
       </zipfileset>
     </zip>
   </target>

@@ -1,43 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the strategy example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="strategy" value="strategy"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${strategy}"/>
-    <delete dir="${examples.build}/${strategy}"/>
-  </target>
+  <property name="example" value="strategy"/>
   <target name="build" depends="init">
     <!-- copy resources in build -->
-    <copy todir="${examples.build}/${strategy}">
-      <fileset dir="${examples.dir}/${strategy}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="*.xml"/>
       </fileset>
     </copy>
-    <gombuild example="${strategy}"/>
+    <gombuild example="${example}"/>
     <tom.preset srcdir="${examples.dir}"
 	              options="--genIntrospector"
                 destdir="${examples.gen}">          
-       <include name="${strategy}/**/HandWrittenStrat.t"/>
-       <include name="${strategy}/**/HandWrittenStrat2.t"/>
+       <include name="${example}/**/HandWrittenStrat.t"/>
+       <include name="${example}/**/HandWrittenStrat2.t"/>
     </tom.preset>
 	<tom.preset srcdir="${examples.dir}"
 	                destdir="${examples.gen}">          
-	       <include name="${strategy}/**/*.t"/>
-	       <exclude name="${strategy}/**/*.g.t"/>
-		   <exclude name="${strategy}/**/HandWrittenStrat.t"/>
-		   <exclude name="${strategy}/**/HandWrittenStrat2.t"/>
+	       <include name="${example}/**/*.t"/>
+	       <exclude name="${example}/**/*.g.t"/>
+		   <exclude name="${example}/**/HandWrittenStrat.t"/>
+		   <exclude name="${example}/**/HandWrittenStrat2.t"/>
 	</tom.preset> 
-    <javacompile example="${strategy}"/>
+    <javacompile example="${example}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${strategy}/*.t"/>
-        <include name="${strategy}/*.gom"/>
-        <include name="${strategy}/*.xml"/>
-        <include name="${strategy}/**/*.java"/>
-        <include name="${strategy}/**/*.tom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
+        <include name="${example}/*.xml"/>
+        <include name="${example}/**/*.java"/>
+        <include name="${example}/**/*.tom"/>
       </zipfileset>
     </zip>
   </target>

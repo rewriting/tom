@@ -1,4 +1,4 @@
-module Polygraphes
+module polygraphes.Polygraphes
 imports int String
 abstract syntax
 TwoPath = 

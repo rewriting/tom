@@ -1,4 +1,4 @@
-module jgset 
+module set.jgset 
 abstract syntax
 JGSet = emptyJGSet()
       | singleton(value:Element)

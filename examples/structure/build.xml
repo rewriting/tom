@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the structure example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="structure" value="structure"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${structure}"/>
-    <delete dir="${examples.build}/${structure}"/>
-  </target>
+  <property name="example" value="structure"/>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <gombuild example="${structure}"/>
+    <gombuild example="${example}"/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
       <!-- stamp not yet ready for apigen list -->
-      <include name="${structure}/**/*.t"/>
-      <exclude name="${structure}/**/StructuresParser.g.t"/>
-      <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/StructuresParser.g.t"/>
+      <!--      <exclude name="${example}/**/StructureCDT.t"/> -->
     </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${structure}/StructuresParser.g"
-                options="-I ${examples.gen}/${structure}"
+    <tom.preset outputfile="${examples.gen}/${example}/StructuresParser.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-      <include name="${structure}/**/StructuresParser.g.t"/>
+      <include name="${example}/**/StructuresParser.g.t"/>
     </tom.preset>
     <!-- build parser -->
-    <mkdir dir="${examples.gen}/${structure}"/>
-    <tomantlr target="${examples.gen}/${structure}/StructuresParser.g"
-              outputdirectory="${examples.gen}/${structure}">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/StructuresParser.g"
+              outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build java source -->
-    <javacompile example="${structure}"/>
+    <javacompile example="${example}"/>
     <!-- copy resources -->
-    <copy todir="${examples.build}/${structure}">
-      <fileset dir="${examples.dir}/${structure}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="examples"/>
       </fileset>
     </copy>
@@ -43,10 +39,10 @@
       </fileset>
     </path>
     <property name="sl.jar" refid="strategy.path"/>
-    <jar jarfile="${examples.build}/${structure}/structure.jar">
+    <jar jarfile="${examples.build}/${example}/example.jar">
       <fileset dir="${examples.build}">
-        <include name="${structure}/**/*.class"/>
-        <include name="${structure}/**/*.gif"/>
+        <include name="${example}/**/*.class"/>
+        <include name="${example}/**/*.gif"/>
       </fileset>
       <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar"/>
@@ -58,11 +54,11 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${structure}/*.t"/>
-        <include name="${structure}/*.gom"/>
-        <include name="${structure}/*.tom"/>
-        <include name="${structure}/*.java"/>
-        <include name="${structure}/examples*"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
+        <include name="${example}/*.tom"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/examples*"/>
       </zipfileset>
     </zip>
   </target>

@@ -1,73 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the parser example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="parser" value="parser"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${parser}"/>
-    <delete dir="${examples.build}/${parser}"/>
-  </target>
+  <property name="example" value="parser"/>
   <target name="build" depends="init">
     <gom.preset srcdir="${examples.dir}"
       destdir="${examples.gen}">
-      <include name="${parser}/Rule.gom"/>
+      <include name="${example}/Rule.gom"/>
     </gom.preset>
     <gom.preset srcdir="${examples.dir}"
       termgraph="true" 
       destdir="${examples.gen}">
-      <include name="${parser}/Term.gom"/>
+      <include name="${example}/Term.gom"/>
     </gom.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${parser}"
+      package="${example}"
       grammar="Rule">
-      <include name="${parser}/**/Rule.gom"/>
+      <include name="${example}/**/Rule.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${parser}"
+      package="${example}"
       termgraph="true" 
       grammar="Graph">
-      <include name="${parser}/**/Term.gom"/>
+      <include name="${example}/**/Term.gom"/>
     </gomantlradapter.preset>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${parser}/Rule.g"
-                options="-I ${examples.gen}/${parser}"
+    <tom.preset outputfile="${examples.gen}/${example}/Rule.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-      <include name="${parser}/Rule.g.t"/>
+      <include name="${example}/Rule.g.t"/>
     </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${parser}/Graph.g"
-                options="-I ${examples.gen}/${parser}"
+    <tom.preset outputfile="${examples.gen}/${example}/Graph.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-      <include name="${parser}/Graph.g.t"/>
+      <include name="${example}/Graph.g.t"/>
     </tom.preset>
-    <mkdir dir="${examples.gen}/${parser}"/>
+    <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <antlr3 target="${examples.gen}/${parser}/Rule.g"
-            outputdirectory="${examples.gen}/${parser}"
-            libdirectory="${examples.gen}/${parser}"
+    <antlr3 target="${examples.gen}/${example}/Rule.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <antlr3 target="${examples.gen}/${parser}/Graph.g"
-            outputdirectory="${examples.gen}/${parser}"
-            libdirectory="${examples.gen}/${parser}"
+    <antlr3 target="${examples.gen}/${example}/Graph.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <javacompile example="${parser}"/>
+    <javacompile example="${example}"/>
     <!-- copy resources -->
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${parser}/*.t"/>
-        <include name="${parser}/*.gom"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.gom"/>
       </zipfileset>
     </zip>
   </target>

@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the appletxml example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="appletxml" value="appletxml"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${appletxml}"/>
-    <delete dir="${examples.build}/${appletxml}"/>
-  </target>
-  <target name="build" depends="init">
-    <tomcompile example="${appletxml}"/>
-    <javacompile example="${appletxml}"/>
+  <property name="example" value="appletxml"/>
+  <target name="build" depends="common.build">
     <!-- Create a jar for the applet -->
     <!-- ugly hacks to find the TNode and tom-library jars -->
     <path id="tnode.path">
@@ -29,9 +23,9 @@
     </path>
     <property name="sl.jar" refid="strategy.path"/>
     <property name="tom-library.jar" refid="tom-library.path"/>
-    <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
+    <jar jarfile="${examples.build}/${example}/xmlconverter.jar">
       <fileset dir="${examples.build}">
-        <include name="${appletxml}/**/*.class"/>
+        <include name="${example}/**/*.class"/>
       </fileset>
       <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/**/*"/>
@@ -39,8 +33,8 @@
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tnode.jar}"/>
     </jar>
-    <copy todir="${examples.build}/${appletxml}">
-      <fileset dir="${examples.dir}/${appletxml}">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
         <include name="*.html"/>
       </fileset>
     </copy>
@@ -49,9 +43,9 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${appletxml}/*.t"/>
-        <include name="${appletxml}/*.java"/>
-        <include name="${appletxml}/*.html"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.html"/>
       </zipfileset>
     </zip>
   </target>

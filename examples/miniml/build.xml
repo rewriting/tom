@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the miniml example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="miniml" value="miniml"/>
-  <target name="clean" description="Cleans examples directory">
-    <property name="miniml" value="miniml"/>
-    <delete dir="${examples.gen}/${miniml}"/>
-    <delete dir="${examples.build}/${miniml}"/>
-  </target>
+  <property name="example" value="miniml"/>
   <target name="build" depends="init">
-    <mkdir dir="${examples.gen}/${miniml}"/>
-    <gomcompile example="${miniml}"/>
+    <mkdir dir="${examples.gen}/${example}"/>
+    <gomcompile example="${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <tom.preset outputfile="${examples.gen}/${miniml}/Lambda.g"
-                options="-I ${examples.gen}/${miniml}"
+    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
+                options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-                <include name="${miniml}/**/Lambda.g.t"/>
+                <include name="${example}/**/Lambda.g.t"/>
     </tom.preset>
-    <antlr3 target="${examples.gen}/${miniml}/Lambda.g"
-            outputdirectory="${examples.gen}/${miniml}"
-            libdirectory="${examples.gen}/${miniml}"
+    <antlr3 target="${examples.gen}/${example}/Lambda.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <tom.preset options="-I ${examples.gen}/${miniml}"
+    <tom.preset options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"
                 destdir="${examples.gen}"> 
-                <include name="${miniml}/*.t"/>
-                <exclude name="${miniml}/*.g.t"/>
+                <include name="${example}/*.t"/>
+                <exclude name="${example}/*.g.t"/>
     </tom.preset>
     <javac.preset destdir="${examples.build}"
-                  srcdir="${examples.gen}/${miniml}">
+                  srcdir="${examples.gen}/${example}">
       <classpath refid="tom.examples.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
@@ -42,11 +37,11 @@
     <zip destfile="${distrib.zip}" 
       update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${miniml}/*.t"/>
-        <include name="${miniml}/*.java"/>
-        <include name="${miniml}/*.gom"/>
-        <include name="${miniml}/*.xml"/>
-        <include name="${miniml}/*.g"/>
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.gom"/>
+        <include name="${example}/*.xml"/>
+        <include name="${example}/*.g"/>
       </zipfileset>
     </zip>
   </target>
