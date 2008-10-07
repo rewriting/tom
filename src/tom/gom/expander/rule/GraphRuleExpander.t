@@ -115,7 +115,7 @@ public class GraphRuleExpander {
     StringBuilder output = new StringBuilder();
     output.append(
         %[
-%include {sl.tom }
+%include { sl.tom }
 %typeterm tom_StringList {
   implement      { java.util.List<String> }
   is_sort(t)     { $t instanceof java.util.List }  

@@ -49,7 +49,8 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   private HookDeclList hookList;
   private ModuleList referencedModuleList;
   private HookDeclList referencedHookList;
-  /** The constructor*/
+
+  /** The constructor */
   public GraphExpanderPlugin() {
     super("GraphExpander");
   }
