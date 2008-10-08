@@ -22,17 +22,21 @@
     <mkdir dir="${lemu.build}"/>
     <mkdir dir="${lemu.gen}"/>
   </target>
+  <taskdef name="antlr3"
+    classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="tom.classpath"/>
+  </taskdef>
 
   <target name="build" depends="init">
-    <gom.preset srcdir="${lemu.src}/lambdapp"
-         destdir="${lemu.gen}"
-         package="lambdapp">
-         <include name="**/*.gom"/>
-    </gom.preset>
     <gom.preset srcdir="${lemu.src}/lemu"
-         destdir="${lemu.gen}"
-         package="lemu">
-         <include name="**/*.gom"/>
+      destdir="${lemu.gen}"
+      package="lemu">
+      <include name="**/*.gom"/>
+    </gom.preset>
+    <gom.preset srcdir="${lemu.src}/lemu2"
+      destdir="${lemu.gen}"
+      package="lemu2">
+      <include name="**/*.gom"/>
     </gom.preset>
 
     <tom.preset srcdir="${lemu.src}"
@@ -46,34 +50,23 @@
       srcdir="${lemu.src}/lemu"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>
-
-    <!-- LAMBDA -->
-    <tom.preset outputfile="${lemu.gen}/lambdapp/LambdaParser.g"
-      options="-I ${lemu.gen}/lambdapp"
-      srcdir="${lemu.src}/lambdapp"> 
-      <include name="LambdaParser.g.t"/>
+    <tom.preset outputfile="${lemu.gen}/lemu2/Lemu.g"
+      options="-I ${lemu.gen}/lemu2" 
+      srcdir="${lemu.src}/lemu2"> 
+      <include name="Lemu.g.t"/>
     </tom.preset>
-
-    <tomantlr target="${lemu.gen}/lambdapp/LambdaParser.g"
-      outputdirectory="${lemu.gen}/lambdapp">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
- 
-
-    <!-- FIN LAMBDA -->
-
-   <taskdef name="antlr3"
-             classname="org.apache.tools.ant.antlr.ANTLR3">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
 
     <antlr3 target="${lemu.src}/lemu/Seq.g"
       outputdirectory="${lemu.gen}/lemu">
-	    <classpath refid="tom.classpath"/>
+      <classpath refid="tom.classpath"/>
     </antlr3>
     <antlr3 target="${lemu.gen}/lemu/SeqWalker.g"
       outputdirectory="${lemu.gen}/lemu">
-	    <classpath refid="tom.classpath"/>
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <antlr3 target="${lemu.gen}/lemu2/Lemu.g"
+      outputdirectory="${lemu.gen}/lemu2">
+      <classpath refid="tom.classpath"/>
     </antlr3>
 
     <javac.preset destdir="${lemu.build}" fork="yes">

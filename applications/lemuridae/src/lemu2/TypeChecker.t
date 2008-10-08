@@ -1,8 +1,8 @@
-package lemu;
+package lemu2;
 
-import lemu.proofterms.types.*;
+import lemu2.proofterms.types.*;
+import lemu2.proofterms.types.fovarlist.fovarList;
 import java.util.Collection;
-import lemu.proofterms.types.fovarlist.fovarList;
 import tom.library.sl.*;
 
 public class TypeChecker {
@@ -75,15 +75,26 @@ public class TypeChecker {
   }
 
   private static boolean typecheck(ProofTerm pt, Sequent se) {
+    if(_typecheck(pt,se))
+      return true;
+    else {
+      System.out.println(pt + "\n" + se + "\n"); 
+      return false;
+    }
+  }
+
+
+  private static boolean _typecheck(ProofTerm pt, Sequent se) {
     %match(se) {
       seq(gamma,delta) -> {
         %match(pt) {
           ax(n,cn) -> {
             return `lookup(gamma,n).equals(`lookup(delta,cn));
           }
-          cut(CutPrem1(a,p,M1),CutPrem2(x,p,M2)) -> {
-            return `typecheck(M1,seq(gamma,rctx(cnprop(a,p),delta*)))
-              && `typecheck(M2,seq(lctx(nprop(x,p),gamma*),delta));
+          cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+            return `pa.equals(`px) 
+              && `typecheck(M1,seq(gamma,rctx(cnprop(a,pa),delta*)))
+              && `typecheck(M2,seq(lctx(nprop(x,px),gamma*),delta));
           }
           // left rules
           andL(AndLPrem1(x,px,y,py,M),n) -> {

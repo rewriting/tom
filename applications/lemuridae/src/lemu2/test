@@ -1,0 +1,23 @@
+(*
+rootR(
+  <r:A=>A> cut(
+    <a:B> implyR(<x:A><b:A>ax(x,b),r),
+    <x:B> implyR(<x:A><b:A>ax(x,b),r)))
+*)
+
+(*
+rootR(
+  <r:P(cc())=>exists x,P(x)> implyR(
+    <x:P(cc())><a:exists x,P(x)> existsR(
+      <b:P(cc())>ax(x,b),cc(),a),r))
+*)
+
+rootR(
+  <a:P(a())=>exists x,P(x)> cut(
+    <b:exists x,P(x)> implyR(
+      <x:P(a())><c:exists x,P(x)> existsR(<d:P(a())> ax(x,d),a(),b),a),
+    <z:exists x,P(x)> implyR(<v:P(a())><e:exists x,P(x)> ax(z,e),a)))
+
+(* rootR(<a:A=>A> cut(<c:A> implyR(<x:A><b:A> ax(x,c),a), <y:A> implyR(<x:A><b:A> ax(x,b),a))) *)
+
+

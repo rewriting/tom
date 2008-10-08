@@ -1,9 +1,9 @@
-package lemu;
+package lemu2;
 
 import tom.library.sl.*;
-import lemu.proofterms.types.*;
-import lemu.proofterms.types.namelist.nameList;
-import lemu.proofterms.types.conamelist.conameList;
+import lemu2.proofterms.types.*;
+import lemu2.proofterms.types.namelist.nameList;
+import lemu2.proofterms.types.conamelist.conameList;
 
 import java.util.HashSet;
 import java.util.Collection;
@@ -440,6 +440,9 @@ public class Evaluation {
 
   private static ProofTerm substCoName(ProofTerm pt, CoName cn1, Name n1, Prop prop, ProofTerm P) {
     %match(pt, CoName cn1) {
+      ax(n,cn), cn -> {
+        return `rename(P,n1,n);
+      }
       orR(OrRPrem1(a,pa,b,pb,M),cn), cn -> {
         return `cut(
             CutPrem1(cn1,prop,orR(
@@ -685,7 +688,18 @@ public class Evaluation {
         tmp.clear();
         try { `TopDown(RStep(tmp,t)).visit(t); }
         catch (VisitFailure e) { throw new RuntimeException("never happens"); }
-        if (tmp.isEmpty()) nf.add(t);
+        if (tmp.isEmpty()) {
+          
+          boolean in_nf = false;
+          for (ProofTerm nft: nf) {
+            if (nft.equals(t)) {
+              in_nf = true;
+              break;
+            }
+          }
+          if (!in_nf)  nf.add(t);
+        }
+
         else tmpres.addAll(tmp);
       }
       res.clear();
