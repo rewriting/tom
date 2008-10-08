@@ -81,7 +81,6 @@ TomTerm =
     | AntiTerm(TomTerm:TomTerm)
     | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
     | SymbolOf(GroundTerm:TomTerm)
-    | Ref(TomTerm:TomTerm)
 
     | Automata(Option:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
 
@@ -103,13 +102,3 @@ TomTerm =
     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
 
 TomList = concTomTerm(TomTerm*)
-
-  /*
-   * Hooks
-   */
-
-  Ref:make(e) {
-    %match(e) {
-      ExpressionToTomTerm[] -> { return e; }
-    }
-  }

@@ -26,6 +26,7 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -49,6 +50,7 @@ import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomGenericGenerator {
+  protected LinkedList<TomTerm> env = new LinkedList<TomTerm>();
 
   public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -156,11 +158,6 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(")");
   }
 
-  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
-    output.write("!");
-    generate(deep,term,moduleName);
-  }
-
   protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
     generateExpression(deep,exp,moduleName);
   }
@@ -177,7 +174,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.writeln(" in ");
     generateInstruction(deep,body,moduleName);
   }
-  
+ 
+
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
                              TomType tlType, 
                              Expression exp, Instruction body, String moduleName) throws IOException {
@@ -187,21 +185,30 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(" = ref (");
     generateExpression(deep,exp,moduleName);
     output.writeln(") in ");
+    env.addFirst(var);
     generateInstruction(deep,body,moduleName);
+    env.removeFirst();
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
-    output.indent(deep);
-    generate(deep,var,moduleName);
-    output.write(" := ");
-    generateExpression(deep,exp,moduleName);
+  /*
+   * redefinition of TomAbstractGenerator.getVariableName
+   * add a ! for variables under a LetRef
+   */
+  protected String getVariableName(TomTerm var) {
+    String varname = super.getVariableName(var);
+    if(env.contains(var)) {
+      return "!" + varname;
+    }
+    return varname;
   }
 
   protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
-    generate(deep+1,var,moduleName);
+    output.write(" ( ");
+    output.write(deep+1,super.getVariableName(var));
     output.write(" := ");
     generateExpression(deep+1,exp,moduleName);
     output.writeln("; ");
+    output.write(" ) ");
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {

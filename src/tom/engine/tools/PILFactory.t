@@ -230,10 +230,6 @@ public class PILFactory {
         return prettyPrint(`name);
       }
 
-      Ref(term) -> {
-        return prettyPrint(`term);
-      }
-
       RecordAppl(_,nameList,_,_) ->{
         return prettyPrint(`nameList); 
       }

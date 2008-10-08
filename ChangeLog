@@ -1,4 +1,5 @@
 2008-10-08 pem
+  * removed Ref constructor: dereference performed in the Caml backend
   * simplified PostGenerator
   * removed LetAssign: Assign should be used instead
 

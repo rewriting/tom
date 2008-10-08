@@ -377,10 +377,6 @@ matchBlock: {
     output.write(deep, "\n# end def " + tomName + "\n");
   }
 
-  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
-    generate(deep,term,moduleName);
-  }
-
   protected void genDecl(String returnType,
       String declName,
       String suffix,

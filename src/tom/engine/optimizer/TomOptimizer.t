@@ -215,7 +215,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy findRefVariable(set: HashSet) extends Identity() {
     visit TomTerm {
-      Ref((Variable|VariableStar)[AstName=name]) -> {
+      (Variable|VariableStar)[AstName=name] -> {
+      //Ref((Variable|VariableStar)[AstName=name]) -> {
         set.add(`name);
         //stop to visit this branch (like "return false" with traversal) 
         throw new VisitFailure();

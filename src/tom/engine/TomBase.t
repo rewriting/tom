@@ -557,8 +557,6 @@ public final class TomBase {
         return `type; 
       }
 
-      Ref(term) -> { return getTermType(`term, symbolTable); }
-
       TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
 
       FunctionCall[AstType=type] -> { return `type; }
@@ -595,8 +593,6 @@ public final class TomBase {
       (Variable|VariableStar)[AstName=Name(tomName)] -> { 
         return symbolTable.getSymbolFromName(`tomName); 
       }
-
-      Ref(term) -> { return getSymbolFromTerm(`term, symbolTable); }
 
       FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
 

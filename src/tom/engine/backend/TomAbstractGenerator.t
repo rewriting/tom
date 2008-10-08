@@ -101,7 +101,7 @@ public abstract class TomAbstractGenerator {
    * @param deep 
    * 		The distance from the right side (allows the computation of the column number)
    */
-  protected void generate(int deep, TomTerm subject, String moduleName)throws IOException {
+  protected void generate(int deep, TomTerm subject, String moduleName) throws IOException {
     %match(TomTerm subject) {
 
       Tom(l) -> {
@@ -111,16 +111,6 @@ public abstract class TomAbstractGenerator {
 
       TomInclude(l) -> {
         generateListInclude(deep,`l, moduleName);
-        return;
-      }
-
-      Ref(term@(Variable|VariableStar)[]) -> {
-        buildRef(deep, `term, moduleName);
-        return;
-      }
-
-      Ref(term) -> {
-        generate(deep, `term, moduleName);
         return;
       }
 
@@ -148,28 +138,9 @@ public abstract class TomAbstractGenerator {
         generateList(deep,`argList, moduleName);
         return;
       }
-
-      Variable[AstName=PositionName(l)] -> {
-          /*
-           * sans type: re-definition lorsque %variable est utilise
-           * avec type: probleme en cas de filtrage dynamique
-           */
-        output.write("tom" + TomBase.tomNumberListToString(`l));
-        return;
-      }
-
-      Variable[AstName=Name(name)] -> {
-        output.write(`name);
-        return;
-      }
-
-      VariableStar[AstName=PositionName(l)] -> {
-        output.write("tom" + TomBase.tomNumberListToString(`l));
-        return;
-      }
-
-      VariableStar[AstName=Name(name)] -> {
-        output.write(`name);
+      
+      var@(Variable|VariableStar)[] -> {
+        output.write(deep,getVariableName(`var));
         return;
       }
 
@@ -200,6 +171,26 @@ public abstract class TomAbstractGenerator {
     }
   }
 
+  protected String getVariableName(TomTerm var) {
+    %match(var) {
+      Variable[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      Variable[AstName=Name(name)] -> {
+        return `name;
+      }
+
+      VariableStar[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      VariableStar[AstName=Name(name)] -> {
+        return `name;
+      }
+    }
+    return null;
+  }
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
     %match(Expression subject) {
       Code(t) -> {
@@ -298,7 +289,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
  
-      GetSlot(_,Name(opname),slotName, var@(Ref|Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
@@ -809,7 +800,6 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException;
-  protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;
   protected abstract void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException;
 
   protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
