@@ -1,3 +1,7 @@
+2008-10-08 pem
+  * simplified PostGenerator
+  * removed LetAssign: Assign should be used instead
+
 2008-10-07 pem
   * update stable: fix the bug in compiler
 
