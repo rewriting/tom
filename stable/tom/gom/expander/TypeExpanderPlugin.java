@@ -83,7 +83,10 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
           GomMessage.expansionIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Typed Modules: {0}",typedModuleList);
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
+      catch(java.io.IOException e) { e.printStackTrace(); }
+      getLogger().log(Level.FINE, "Typed Modules:\n{0}",swriter);
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
@@ -97,7 +100,10 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
           GomMessage.hookExpansionIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Typed Hooks: {0}",typedHookList);
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
+      catch(java.io.IOException e) { e.printStackTrace(); }
+      getLogger().log(Level.FINE, "Typed Hooks:\n{0}",swriter);
       getLogger().log(Level.INFO, "Hook expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

@@ -166,3 +166,9 @@
   make(v) {( new tom.library.sl.OmegaU($v) )}
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OmegaU.ARG) )}
 }
+
+%op Strategy Up(s1:Strategy) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.Up) )}
+  make(v) {( new tom.library.sl.Up($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Up.ARG) )}
+}

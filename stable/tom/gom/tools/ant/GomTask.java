@@ -57,6 +57,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>fresh</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are

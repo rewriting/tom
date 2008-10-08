@@ -47,11 +47,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               boolean maximalsharing){
     super(gomClass,manager,tomHomePath,importList,mapping);
     this.maximalsharing = maximalsharing;
-    {{ Object tomMatch375NameNumber_freshVar_0=gomClass;if ( (tomMatch375NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch375NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tomMatch375NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch375NameNumber_freshVar_2=tomMatch375NameNumberfreshSubject_1;if ( (tomMatch375NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch375NameNumber_freshVar_1= tomMatch375NameNumber_freshVar_2.getSortList() ;if ( true ) {
+    {{ Object tomMatch419NameNumber_freshVar_0=gomClass;if ( (tomMatch419NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch419NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.GomClass )tomMatch419NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch419NameNumber_freshVar_2=tomMatch419NameNumber_freshSubject_1;if ( (tomMatch419NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch419NameNumber_freshVar_1= tomMatch419NameNumber_freshVar_2.getSortList() ;
 
-        this.sortList = tomMatch375NameNumber_freshVar_1;
+        this.sortList = tomMatch419NameNumber_freshVar_1;
         return;
-      }}}}}}}}
+      }}}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);

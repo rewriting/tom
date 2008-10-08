@@ -89,7 +89,10 @@ public class CompilerPlugin extends GomGenericPlugin {
           GomMessage.compilationIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Compiled Modules: {0}",classList);
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      try { tom.library.utils.Viewer.toTree(classList,swriter); }
+      catch(java.io.IOException e) { e.printStackTrace(); }
+      getLogger().log(Level.FINE, "Compiled Modules:\n{0}",swriter);
       getLogger().log(Level.INFO, "Compilation succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

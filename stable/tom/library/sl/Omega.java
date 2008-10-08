@@ -70,7 +70,6 @@ public class Omega extends AbstractStrategy {
     if(indexPosition==0) {
       return visitors[ARG].visit(introspector);
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(environment.getSubject())) {
-      int childNumber = indexPosition-1;
       environment.down(indexPosition);
       int status = visitors[ARG].visit(introspector);
       environment.up();

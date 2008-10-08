@@ -338,13 +338,6 @@
   make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.WhileDo.make($t0, $t1) }
 }
 
-%op Instruction Assign(Variable:TomTerm, Source:Expression) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.Assign) }
-  get_slot(Variable, t) { $t.getVariable() }
-  get_slot(Source, t) { $t.getSource() }
-  make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.Assign.make($t0, $t1) }
-}
-
 %op Instruction Let(Variable:TomTerm, Source:Expression, AstInstruction:Instruction) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.Let) }
   get_slot(Variable, t) { $t.getVariable() }
@@ -361,12 +354,11 @@
   make(t0, t1, t2) { tom.engine.adt.tominstruction.types.instruction.LetRef.make($t0, $t1, $t2) }
 }
 
-%op Instruction LetAssign(Variable:TomTerm, Source:Expression, AstInstruction:Instruction) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.LetAssign) }
+%op Instruction Assign(Variable:TomTerm, Source:Expression) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.Assign) }
   get_slot(Variable, t) { $t.getVariable() }
   get_slot(Source, t) { $t.getSource() }
-  get_slot(AstInstruction, t) { $t.getAstInstruction() }
-  make(t0, t1, t2) { tom.engine.adt.tominstruction.types.instruction.LetAssign.make($t0, $t1, $t2) }
+  make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.Assign.make($t0, $t1) }
 }
 
 %op Instruction Return(Kid1:TomTerm) {
@@ -1683,12 +1675,6 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.SymbolOf) }
   get_slot(GroundTerm, t) { $t.getGroundTerm() }
   make(t0) { tom.engine.adt.tomterm.types.tomterm.SymbolOf.make($t0) }
-}
-
-%op TomTerm Ref(TomTerm:TomTerm) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.Ref) }
-  get_slot(TomTerm, t) { $t.getTomTerm() }
-  make(t0) { tom.engine.adt.tomterm.types.tomterm.Ref.make($t0) }
 }
 
 %op TomTerm Automata(Option:OptionList, Constraint:Constraint, NumberList:TomNumberList, Inst:Instruction) {

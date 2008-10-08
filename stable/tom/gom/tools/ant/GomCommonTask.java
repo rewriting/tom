@@ -55,6 +55,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>fresh</li>
  * <li>multithread</li>
  * <li>nosharing</li>
  * <li></li>
@@ -79,6 +80,7 @@ public class GomCommonTask extends MatchingTask {
   protected boolean fork = false;
   protected boolean termpointer = false;
   protected boolean termgraph = false;
+  protected boolean fresh = false;
   protected boolean multithread = false;
   protected boolean nosharing = false;
 
@@ -168,6 +170,23 @@ public class GomCommonTask extends MatchingTask {
    */
   public boolean getTermgraph() {
     return termgraph;
+  }
+
+
+  /**
+   * If true, asks the compiler for Gom signature with binders.
+   * @param fresh if true, asks the compiler for Gom signature with pointers
+   */
+  public void setFresh(boolean fresh) {
+    this.fresh = fresh;
+  }
+
+  /**
+   * Gets the fresh flag.
+   * @return the fresh flag
+   */
+  public boolean getFresh() {
+    return fresh;
   }
 
   /**
@@ -352,19 +371,22 @@ public class GomCommonTask extends MatchingTask {
         javaRunner.createArg().setValue("--destdir");
         javaRunner.createArg().setFile(getDestdir());
       }
-      if(getVerbose() == true) {
+      if(getVerbose()) {
         javaRunner.createArg().setValue("--verbose");
       }
-      if(getTermgraph() == true) {
+      if(getTermgraph()) {
         javaRunner.createArg().setValue("--termgraph");
       }
-      if(getMultithread() == true) {
+      if(getFresh()) {
+        javaRunner.createArg().setValue("--fresh");
+      }
+      if(getMultithread()) {
         javaRunner.createArg().setValue("--multithread");
       }
-      if(getNosharing() == true) {
+      if(getNosharing()) {
         javaRunner.createArg().setValue("--nosharing");
       }
-      if(getTermpointer() == true) {
+      if(getTermpointer()) {
         javaRunner.createArg().setValue("--termpointer");
       }
       processAdditionalOptions(javaRunner);
@@ -398,7 +420,7 @@ public class GomCommonTask extends MatchingTask {
     if (cl.length == 0) {
       return;
     }
-    String output = "Compiling :";
+    String output = "Compiling:";
     for (int i = 0; i<cl.length; i++) {
       output = output + " " + cl[i].getAbsolutePath();
     }

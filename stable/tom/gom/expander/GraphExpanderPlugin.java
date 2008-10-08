@@ -34,10 +34,6 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
-/**
- * The responsability of the GraphExpander plugin is to
- * produce an abstract view of the Gom input with type information
- */
 public class GraphExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.referenced";
@@ -53,7 +49,8 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   private HookDeclList hookList;
   private ModuleList referencedModuleList;
   private HookDeclList referencedHookList;
-  /** The constructor*/
+
+  /** The constructor */
   public GraphExpanderPlugin() {
     super("GraphExpander");
   }

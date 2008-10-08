@@ -1,7 +1,6 @@
-// $ANTLR 3.1 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2008-08-26 17:23:31
+// $ANTLR 3.1 /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2008-10-08 22:39:56
 
 package tom.gom.expander.rule;
-import tom.gom.adt.rule.RuleTree;
 
 
 import org.antlr.runtime.*;
@@ -91,34 +90,34 @@ public class RuleParser extends Parser {
     }
 
     public String[] getTokenNames() { return RuleParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g"; }
 
 
     public static class ruleset_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "ruleset"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:20:1: ruleset : ( rule )* EOF -> ^( RuleList ( rule )* ) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:18:1: ruleset : ( rule )* EOF -> ^( RuleList ( rule )* ) ;
     public final RuleParser.ruleset_return ruleset() throws RecognitionException {
         RuleParser.ruleset_return retval = new RuleParser.ruleset_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token EOF2=null;
         RuleParser.rule_return rule1 = null;
 
 
-        RuleTree EOF2_tree=null;
+        Tree EOF2_tree=null;
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
         RewriteRuleSubtreeStream stream_rule=new RewriteRuleSubtreeStream(adaptor,"rule rule");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:20:8: ( ( rule )* EOF -> ^( RuleList ( rule )* ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:3: ( rule )* EOF
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:18:8: ( ( rule )* EOF -> ^( RuleList ( rule )* ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:3: ( rule )* EOF
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:3: ( rule )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:3: ( rule )*
             loop1:
             do {
                 int alt1=2;
@@ -131,7 +130,7 @@ public class RuleParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:4: rule
+            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:4: rule
             	    {
             	    pushFollow(FOLLOW_rule_in_ruleset128);
             	    rule1=rule();
@@ -162,15 +161,15 @@ public class RuleParser extends Parser {
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 21:15: -> ^( RuleList ( rule )* )
+            root_0 = (Tree)adaptor.nil();
+            // 19:15: -> ^( RuleList ( rule )* )
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:18: ^( RuleList ( rule )* )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:18: ^( RuleList ( rule )* )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(RuleList, "RuleList"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RuleList, "RuleList"), root_1);
 
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:29: ( rule )*
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:29: ( rule )*
                 while ( stream_rule.hasNext() ) {
                     adaptor.addChild(root_1, stream_rule.nextTree());
 
@@ -187,14 +186,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -204,17 +203,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "ruleset"
 
     public static class rule_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "rule"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:23:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) ;
     public final RuleParser.rule_return rule() throws RecognitionException {
         RuleParser.rule_return retval = new RuleParser.rule_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token ARROW4=null;
         Token IF6=null;
@@ -225,16 +224,16 @@ public class RuleParser extends Parser {
         RuleParser.term_return term5 = null;
 
 
-        RuleTree ARROW4_tree=null;
-        RuleTree IF6_tree=null;
+        Tree ARROW4_tree=null;
+        Tree IF6_tree=null;
         RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleTokenStream stream_ARROW=new RewriteRuleTokenStream(adaptor,"token ARROW");
         RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         RewriteRuleSubtreeStream stream_pattern=new RewriteRuleSubtreeStream(adaptor,"rule pattern");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:23:5: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:24:3: pattern ARROW term ( IF cond= condition )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:5: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:22:3: pattern ARROW term ( IF cond= condition )?
             {
             pushFollow(FOLLOW_pattern_in_rule152);
             pattern3=pattern();
@@ -251,7 +250,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_term.add(term5.getTree());
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:24:22: ( IF cond= condition )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:22:22: ( IF cond= condition )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -260,7 +259,7 @@ public class RuleParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:24:23: IF cond= condition
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:22:23: IF cond= condition
                     {
                     IF6=(Token)match(input,IF,FOLLOW_IF_in_rule159);  
                     stream_IF.add(IF6);
@@ -289,13 +288,13 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"token cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 25:5: -> { cond == null }? ^( Rule pattern term )
+            root_0 = (Tree)adaptor.nil();
+            // 23:5: -> { cond == null }? ^( Rule pattern term )
             if ( cond == null ) {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:25:26: ^( Rule pattern term )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:23:26: ^( Rule pattern term )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Rule, "Rule"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Rule, "Rule"), root_1);
 
                 adaptor.addChild(root_1, stream_pattern.nextTree());
                 adaptor.addChild(root_1, stream_term.nextTree());
@@ -304,12 +303,12 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 26:5: -> ^( ConditionalRule pattern term $cond)
+            else // 24:5: -> ^( ConditionalRule pattern term $cond)
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:26:8: ^( ConditionalRule pattern term $cond)
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:24:8: ^( ConditionalRule pattern term $cond)
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
 
                 adaptor.addChild(root_1, stream_pattern.nextTree());
                 adaptor.addChild(root_1, stream_term.nextTree());
@@ -325,14 +324,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -342,30 +341,30 @@ public class RuleParser extends Parser {
     // $ANTLR end "rule"
 
     public static class graphruleset_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "graphruleset"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:28:1: graphruleset : ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:26:1: graphruleset : ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) ;
     public final RuleParser.graphruleset_return graphruleset() throws RecognitionException {
         RuleParser.graphruleset_return retval = new RuleParser.graphruleset_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token EOF8=null;
         RuleParser.graphrule_return graphrule7 = null;
 
 
-        RuleTree EOF8_tree=null;
+        Tree EOF8_tree=null;
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
         RewriteRuleSubtreeStream stream_graphrule=new RewriteRuleSubtreeStream(adaptor,"rule graphrule");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:28:13: ( ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:3: ( graphrule )* EOF
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:26:13: ( ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:3: ( graphrule )* EOF
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:3: ( graphrule )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:3: ( graphrule )*
             loop3:
             do {
                 int alt3=2;
@@ -378,7 +377,7 @@ public class RuleParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:4: graphrule
+            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:4: graphrule
             	    {
             	    pushFollow(FOLLOW_graphrule_in_graphruleset208);
             	    graphrule7=graphrule();
@@ -409,15 +408,15 @@ public class RuleParser extends Parser {
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 29:20: -> ^( RuleList ( graphrule )* )
+            root_0 = (Tree)adaptor.nil();
+            // 27:20: -> ^( RuleList ( graphrule )* )
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:23: ^( RuleList ( graphrule )* )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:23: ^( RuleList ( graphrule )* )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(RuleList, "RuleList"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RuleList, "RuleList"), root_1);
 
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:34: ( graphrule )*
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:34: ( graphrule )*
                 while ( stream_graphrule.hasNext() ) {
                     adaptor.addChild(root_1, stream_graphrule.nextTree());
 
@@ -434,14 +433,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -451,17 +450,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "graphruleset"
 
     public static class graphrule_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "graphrule"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:31:1: graphrule : lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:1: graphrule : lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) ;
     public final RuleParser.graphrule_return graphrule() throws RecognitionException {
         RuleParser.graphrule_return retval = new RuleParser.graphrule_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token ARROW9=null;
         Token IF10=null;
@@ -472,15 +471,15 @@ public class RuleParser extends Parser {
         RuleParser.condition_return cond = null;
 
 
-        RuleTree ARROW9_tree=null;
-        RuleTree IF10_tree=null;
+        Tree ARROW9_tree=null;
+        Tree IF10_tree=null;
         RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleTokenStream stream_ARROW=new RewriteRuleTokenStream(adaptor,"token ARROW");
         RewriteRuleSubtreeStream stream_labelledpattern=new RewriteRuleSubtreeStream(adaptor,"rule labelledpattern");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:31:10: (lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:32:3: lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:10: (lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:30:3: lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )?
             {
             pushFollow(FOLLOW_labelledpattern_in_graphrule234);
             lhs=labelledpattern();
@@ -497,7 +496,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_labelledpattern.add(rhs.getTree());
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:32:49: ( IF cond= condition )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:30:49: ( IF cond= condition )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -506,7 +505,7 @@ public class RuleParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:32:50: IF cond= condition
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:30:50: IF cond= condition
                     {
                     IF10=(Token)match(input,IF,FOLLOW_IF_in_graphrule243);  
                     stream_IF.add(IF10);
@@ -537,13 +536,13 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
             RewriteRuleSubtreeStream stream_rhs=new RewriteRuleSubtreeStream(adaptor,"token rhs",rhs!=null?rhs.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 33:5: -> { cond == null }? ^( Rule $lhs $rhs)
+            root_0 = (Tree)adaptor.nil();
+            // 31:5: -> { cond == null }? ^( Rule $lhs $rhs)
             if ( cond == null ) {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:33:26: ^( Rule $lhs $rhs)
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:31:26: ^( Rule $lhs $rhs)
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Rule, "Rule"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Rule, "Rule"), root_1);
 
                 adaptor.addChild(root_1, stream_lhs.nextTree());
                 adaptor.addChild(root_1, stream_rhs.nextTree());
@@ -552,12 +551,12 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 34:5: -> ^( ConditionalRule $lhs $rhs $cond)
+            else // 32:5: -> ^( ConditionalRule $lhs $rhs $cond)
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:34:8: ^( ConditionalRule $lhs $rhs $cond)
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:32:8: ^( ConditionalRule $lhs $rhs $cond)
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
 
                 adaptor.addChild(root_1, stream_lhs.nextTree());
                 adaptor.addChild(root_1, stream_rhs.nextTree());
@@ -573,14 +572,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -590,17 +589,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "graphrule"
 
     public static class condition_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "condition"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:36:1: condition : cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:34:1: condition : cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond;
     public final RuleParser.condition_return condition() throws RecognitionException {
         RuleParser.condition_return retval = new RuleParser.condition_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token or=null;
         RuleParser.andcondition_return cond = null;
@@ -608,12 +607,12 @@ public class RuleParser extends Parser {
         RuleParser.andcondition_return andcondition11 = null;
 
 
-        RuleTree or_tree=null;
+        Tree or_tree=null;
         RewriteRuleTokenStream stream_OR=new RewriteRuleTokenStream(adaptor,"token OR");
         RewriteRuleSubtreeStream stream_andcondition=new RewriteRuleSubtreeStream(adaptor,"rule andcondition");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:36:10: (cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond)
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:37:3: cond= andcondition (or= OR andcondition )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:34:10: (cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond)
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:35:3: cond= andcondition (or= OR andcondition )*
             {
             pushFollow(FOLLOW_andcondition_in_condition297);
             cond=andcondition();
@@ -621,7 +620,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_andcondition.add(cond.getTree());
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:37:21: (or= OR andcondition )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:35:21: (or= OR andcondition )*
             loop5:
             do {
                 int alt5=2;
@@ -634,7 +633,7 @@ public class RuleParser extends Parser {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:37:22: or= OR andcondition
+            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:35:22: or= OR andcondition
             	    {
             	    or=(Token)match(input,OR,FOLLOW_OR_in_condition302);  
             	    stream_OR.add(or);
@@ -666,15 +665,15 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"token cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 38:3: -> {or!=null}? ^( CondOr ( andcondition )* )
+            root_0 = (Tree)adaptor.nil();
+            // 36:3: -> {or!=null}? ^( CondOr ( andcondition )* )
             if (or!=null) {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:38:18: ^( CondOr ( andcondition )* )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:36:18: ^( CondOr ( andcondition )* )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondOr, "CondOr"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondOr, "CondOr"), root_1);
 
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:38:27: ( andcondition )*
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:36:27: ( andcondition )*
                 while ( stream_andcondition.hasNext() ) {
                     adaptor.addChild(root_1, stream_andcondition.nextTree());
 
@@ -685,7 +684,7 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 39:3: -> $cond
+            else // 37:3: -> $cond
             {
                 adaptor.addChild(root_0, stream_cond.nextTree());
 
@@ -696,14 +695,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -713,17 +712,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "condition"
 
     public static class andcondition_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "andcondition"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:41:1: andcondition : cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:39:1: andcondition : cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond;
     public final RuleParser.andcondition_return andcondition() throws RecognitionException {
         RuleParser.andcondition_return retval = new RuleParser.andcondition_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token and=null;
         RuleParser.simplecondition_return cond = null;
@@ -731,12 +730,12 @@ public class RuleParser extends Parser {
         RuleParser.simplecondition_return simplecondition12 = null;
 
 
-        RuleTree and_tree=null;
+        Tree and_tree=null;
         RewriteRuleTokenStream stream_AND=new RewriteRuleTokenStream(adaptor,"token AND");
         RewriteRuleSubtreeStream stream_simplecondition=new RewriteRuleSubtreeStream(adaptor,"rule simplecondition");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:41:13: (cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond)
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:42:3: cond= simplecondition (and= AND simplecondition )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:39:13: (cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond)
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:40:3: cond= simplecondition (and= AND simplecondition )*
             {
             pushFollow(FOLLOW_simplecondition_in_andcondition337);
             cond=simplecondition();
@@ -744,7 +743,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_simplecondition.add(cond.getTree());
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:42:24: (and= AND simplecondition )*
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:40:24: (and= AND simplecondition )*
             loop6:
             do {
                 int alt6=2;
@@ -757,7 +756,7 @@ public class RuleParser extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:42:25: and= AND simplecondition
+            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:40:25: and= AND simplecondition
             	    {
             	    and=(Token)match(input,AND,FOLLOW_AND_in_andcondition342);  
             	    stream_AND.add(and);
@@ -789,15 +788,15 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"token cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 43:3: -> {and!=null}? ^( CondAnd ( simplecondition )* )
+            root_0 = (Tree)adaptor.nil();
+            // 41:3: -> {and!=null}? ^( CondAnd ( simplecondition )* )
             if (and!=null) {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:43:19: ^( CondAnd ( simplecondition )* )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:41:19: ^( CondAnd ( simplecondition )* )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondAnd, "CondAnd"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondAnd, "CondAnd"), root_1);
 
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:43:29: ( simplecondition )*
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:41:29: ( simplecondition )*
                 while ( stream_simplecondition.hasNext() ) {
                     adaptor.addChild(root_1, stream_simplecondition.nextTree());
 
@@ -808,7 +807,7 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 44:3: -> $cond
+            else // 42:3: -> $cond
             {
                 adaptor.addChild(root_0, stream_cond.nextTree());
 
@@ -819,14 +818,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -836,17 +835,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "andcondition"
 
     public static class simplecondition_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "simplecondition"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:46:1: simplecondition : (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond);
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:44:1: simplecondition : (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond);
     public final RuleParser.simplecondition_return simplecondition() throws RecognitionException {
         RuleParser.simplecondition_return retval = new RuleParser.simplecondition_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token EQUALS13=null;
         Token NOTEQUALS14=null;
@@ -876,15 +875,15 @@ public class RuleParser extends Parser {
         RuleParser.condition_return cond = null;
 
 
-        RuleTree EQUALS13_tree=null;
-        RuleTree NOTEQUALS14_tree=null;
-        RuleTree LEQ15_tree=null;
-        RuleTree LT16_tree=null;
-        RuleTree GEQ17_tree=null;
-        RuleTree GT18_tree=null;
-        RuleTree MATCH19_tree=null;
-        RuleTree LPAR20_tree=null;
-        RuleTree RPAR21_tree=null;
+        Tree EQUALS13_tree=null;
+        Tree NOTEQUALS14_tree=null;
+        Tree LEQ15_tree=null;
+        Tree LT16_tree=null;
+        Tree GEQ17_tree=null;
+        Tree GT18_tree=null;
+        Tree MATCH19_tree=null;
+        Tree LPAR20_tree=null;
+        Tree RPAR21_tree=null;
         RewriteRuleTokenStream stream_EQUALS=new RewriteRuleTokenStream(adaptor,"token EQUALS");
         RewriteRuleTokenStream stream_LEQ=new RewriteRuleTokenStream(adaptor,"token LEQ");
         RewriteRuleTokenStream stream_LT=new RewriteRuleTokenStream(adaptor,"token LT");
@@ -897,7 +896,7 @@ public class RuleParser extends Parser {
         RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:46:16: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond)
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:44:16: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond)
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -915,7 +914,7 @@ public class RuleParser extends Parser {
             }
             switch (alt8) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:47:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:45:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
                     {
                     pushFollow(FOLLOW_term_in_simplecondition377);
                     p1=term();
@@ -923,7 +922,7 @@ public class RuleParser extends Parser {
                     state._fsp--;
 
                     stream_term.add(p1.getTree());
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:47:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:45:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
                     int alt7=7;
                     switch ( input.LA(1) ) {
                     case EQUALS:
@@ -970,7 +969,7 @@ public class RuleParser extends Parser {
 
                     switch (alt7) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:47:12: EQUALS p2= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:45:12: EQUALS p2= term
                             {
                             EQUALS13=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_simplecondition380);  
                             stream_EQUALS.add(EQUALS13);
@@ -985,7 +984,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:48:13: NOTEQUALS p3= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:46:13: NOTEQUALS p3= term
                             {
                             NOTEQUALS14=(Token)match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_simplecondition398);  
                             stream_NOTEQUALS.add(NOTEQUALS14);
@@ -1000,7 +999,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:49:13: LEQ p4= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:47:13: LEQ p4= term
                             {
                             LEQ15=(Token)match(input,LEQ,FOLLOW_LEQ_in_simplecondition416);  
                             stream_LEQ.add(LEQ15);
@@ -1015,7 +1014,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:50:13: LT p5= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:48:13: LT p5= term
                             {
                             LT16=(Token)match(input,LT,FOLLOW_LT_in_simplecondition434);  
                             stream_LT.add(LT16);
@@ -1030,7 +1029,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 5 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:51:13: GEQ p6= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:49:13: GEQ p6= term
                             {
                             GEQ17=(Token)match(input,GEQ,FOLLOW_GEQ_in_simplecondition452);  
                             stream_GEQ.add(GEQ17);
@@ -1045,7 +1044,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 6 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:52:13: GT p7= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:50:13: GT p7= term
                             {
                             GT18=(Token)match(input,GT,FOLLOW_GT_in_simplecondition470);  
                             stream_GT.add(GT18);
@@ -1060,7 +1059,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 7 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:53:13: MATCH p8= term
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:51:13: MATCH p8= term
                             {
                             MATCH19=(Token)match(input,MATCH,FOLLOW_MATCH_in_simplecondition488);  
                             stream_MATCH.add(MATCH19);
@@ -1096,13 +1095,13 @@ public class RuleParser extends Parser {
                     RewriteRuleSubtreeStream stream_p2=new RewriteRuleSubtreeStream(adaptor,"token p2",p2!=null?p2.tree:null);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 55:5: -> {p2!=null}? ^( CondEquals $p1 $p2)
+                    root_0 = (Tree)adaptor.nil();
+                    // 53:5: -> {p2!=null}? ^( CondEquals $p1 $p2)
                     if (p2!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:55:20: ^( CondEquals $p1 $p2)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:53:20: ^( CondEquals $p1 $p2)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondEquals, "CondEquals"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondEquals, "CondEquals"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p2.nextTree());
@@ -1111,12 +1110,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 56:5: -> {p3!=null}? ^( CondNotEquals $p1 $p3)
+                    else // 54:5: -> {p3!=null}? ^( CondNotEquals $p1 $p3)
                     if (p3!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:56:20: ^( CondNotEquals $p1 $p3)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:54:20: ^( CondNotEquals $p1 $p3)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondNotEquals, "CondNotEquals"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondNotEquals, "CondNotEquals"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p3.nextTree());
@@ -1125,12 +1124,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 57:5: -> {p4!=null}? ^( CondLessEquals $p1 $p4)
+                    else // 55:5: -> {p4!=null}? ^( CondLessEquals $p1 $p4)
                     if (p4!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:57:20: ^( CondLessEquals $p1 $p4)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:55:20: ^( CondLessEquals $p1 $p4)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondLessEquals, "CondLessEquals"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondLessEquals, "CondLessEquals"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p4.nextTree());
@@ -1139,12 +1138,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 58:5: -> {p5!=null}? ^( CondLessThan $p1 $p5)
+                    else // 56:5: -> {p5!=null}? ^( CondLessThan $p1 $p5)
                     if (p5!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:58:20: ^( CondLessThan $p1 $p5)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:56:20: ^( CondLessThan $p1 $p5)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondLessThan, "CondLessThan"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondLessThan, "CondLessThan"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p5.nextTree());
@@ -1153,12 +1152,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 59:5: -> {p6!=null}? ^( CondGreaterEquals $p1 $p6)
+                    else // 57:5: -> {p6!=null}? ^( CondGreaterEquals $p1 $p6)
                     if (p6!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:59:20: ^( CondGreaterEquals $p1 $p6)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:57:20: ^( CondGreaterEquals $p1 $p6)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondGreaterEquals, "CondGreaterEquals"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondGreaterEquals, "CondGreaterEquals"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p6.nextTree());
@@ -1167,12 +1166,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 60:5: -> {p7!=null}? ^( CondGreaterThan $p1 $p7)
+                    else // 58:5: -> {p7!=null}? ^( CondGreaterThan $p1 $p7)
                     if (p7!=null) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:60:20: ^( CondGreaterThan $p1 $p7)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:58:20: ^( CondGreaterThan $p1 $p7)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondGreaterThan, "CondGreaterThan"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondGreaterThan, "CondGreaterThan"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p7.nextTree());
@@ -1181,12 +1180,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 61:5: -> ^( CondMatch $p1 $p8)
+                    else // 59:5: -> ^( CondMatch $p1 $p8)
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:61:8: ^( CondMatch $p1 $p8)
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:59:8: ^( CondMatch $p1 $p8)
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(CondMatch, "CondMatch"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondMatch, "CondMatch"), root_1);
 
                         adaptor.addChild(root_1, stream_p1.nextTree());
                         adaptor.addChild(root_1, stream_p8.nextTree());
@@ -1200,7 +1199,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:62:5: LPAR cond= condition RPAR
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:60:5: LPAR cond= condition RPAR
                     {
                     LPAR20=(Token)match(input,LPAR,FOLLOW_LPAR_in_simplecondition634);  
                     stream_LPAR.add(LPAR20);
@@ -1226,8 +1225,8 @@ public class RuleParser extends Parser {
                     RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"token cond",cond!=null?cond.tree:null);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 63:3: -> $cond
+                    root_0 = (Tree)adaptor.nil();
+                    // 61:3: -> $cond
                     {
                         adaptor.addChild(root_0, stream_cond.nextTree());
 
@@ -1240,14 +1239,14 @@ public class RuleParser extends Parser {
             }
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -1257,17 +1256,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "simplecondition"
 
     public static class pattern_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "pattern"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:1: pattern : ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) );
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:63:1: pattern : ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) );
     public final RuleParser.pattern_return pattern() throws RecognitionException {
         RuleParser.pattern_return retval = new RuleParser.pattern_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token varname=null;
         Token funname=null;
@@ -1294,20 +1293,20 @@ public class RuleParser extends Parser {
         RuleParser.pattern_return pattern38 = null;
 
 
-        RuleTree varname_tree=null;
-        RuleTree funname_tree=null;
-        RuleTree ID22_tree=null;
-        RuleTree LPAR23_tree=null;
-        RuleTree COMA25_tree=null;
-        RuleTree RPAR27_tree=null;
-        RuleTree AT28_tree=null;
-        RuleTree LPAR29_tree=null;
-        RuleTree COMA31_tree=null;
-        RuleTree RPAR33_tree=null;
-        RuleTree UNDERSCORE34_tree=null;
-        RuleTree UNDERSCORE35_tree=null;
-        RuleTree STAR36_tree=null;
-        RuleTree NOT37_tree=null;
+        Tree varname_tree=null;
+        Tree funname_tree=null;
+        Tree ID22_tree=null;
+        Tree LPAR23_tree=null;
+        Tree COMA25_tree=null;
+        Tree RPAR27_tree=null;
+        Tree AT28_tree=null;
+        Tree LPAR29_tree=null;
+        Tree COMA31_tree=null;
+        Tree RPAR33_tree=null;
+        Tree UNDERSCORE34_tree=null;
+        Tree UNDERSCORE35_tree=null;
+        Tree STAR36_tree=null;
+        Tree NOT37_tree=null;
         RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
@@ -1319,7 +1318,7 @@ public class RuleParser extends Parser {
         RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         RewriteRuleSubtreeStream stream_pattern=new RewriteRuleSubtreeStream(adaptor,"rule pattern");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:8: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:63:8: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) )
             int alt13=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -1372,7 +1371,7 @@ public class RuleParser extends Parser {
 
             switch (alt13) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:3: ID LPAR ( term ( COMA term )* )? RPAR
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:3: ID LPAR ( term ( COMA term )* )? RPAR
                     {
                     ID22=(Token)match(input,ID,FOLLOW_ID_in_pattern656);  
                     stream_ID.add(ID22);
@@ -1380,7 +1379,7 @@ public class RuleParser extends Parser {
                     LPAR23=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern658);  
                     stream_LPAR.add(LPAR23);
 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:11: ( term ( COMA term )* )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:11: ( term ( COMA term )* )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -1389,7 +1388,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt10) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:12: term ( COMA term )*
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:12: term ( COMA term )*
                             {
                             pushFollow(FOLLOW_term_in_pattern661);
                             term24=term();
@@ -1397,7 +1396,7 @@ public class RuleParser extends Parser {
                             state._fsp--;
 
                             stream_term.add(term24.getTree());
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:17: ( COMA term )*
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:17: ( COMA term )*
                             loop9:
                             do {
                                 int alt9=2;
@@ -1410,7 +1409,7 @@ public class RuleParser extends Parser {
 
                                 switch (alt9) {
                             	case 1 :
-                            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:18: COMA term
+                            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:18: COMA term
                             	    {
                             	    COMA25=(Token)match(input,COMA,FOLLOW_COMA_in_pattern664);  
                             	    stream_COMA.add(COMA25);
@@ -1450,21 +1449,21 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 66:37: -> ^( Appl ID ^( TermList ( term )* ) )
+                    root_0 = (Tree)adaptor.nil();
+                    // 64:37: -> ^( Appl ID ^( TermList ( term )* ) )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:40: ^( Appl ID ^( TermList ( term )* ) )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:40: ^( Appl ID ^( TermList ( term )* ) )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Appl, "Appl"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:50: ^( TermList ( term )* )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:50: ^( TermList ( term )* )
                         {
-                        RuleTree root_2 = (RuleTree)adaptor.nil();
-                        root_2 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(TermList, "TermList"), root_2);
+                        Tree root_2 = (Tree)adaptor.nil();
+                        root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_2);
 
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:61: ( term )*
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:61: ( term )*
                         while ( stream_term.hasNext() ) {
                             adaptor.addChild(root_2, stream_term.nextTree());
 
@@ -1483,10 +1482,10 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:5: (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR
                     {
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: (varname= ID )
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:6: varname= ID
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:5: (varname= ID )
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:6: varname= ID
                     {
                     varname=(Token)match(input,ID,FOLLOW_ID_in_pattern696);  
                     stream_ID.add(varname);
@@ -1497,8 +1496,8 @@ public class RuleParser extends Parser {
                     AT28=(Token)match(input,AT,FOLLOW_AT_in_pattern699);  
                     stream_AT.add(AT28);
 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:21: (funname= ID )
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:22: funname= ID
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:21: (funname= ID )
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:22: funname= ID
                     {
                     funname=(Token)match(input,ID,FOLLOW_ID_in_pattern704);  
                     stream_ID.add(funname);
@@ -1509,7 +1508,7 @@ public class RuleParser extends Parser {
                     LPAR29=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern707);  
                     stream_LPAR.add(LPAR29);
 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:39: ( term ( COMA term )* )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:39: ( term ( COMA term )* )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -1518,7 +1517,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt12) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:40: term ( COMA term )*
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:40: term ( COMA term )*
                             {
                             pushFollow(FOLLOW_term_in_pattern710);
                             term30=term();
@@ -1526,7 +1525,7 @@ public class RuleParser extends Parser {
                             state._fsp--;
 
                             stream_term.add(term30.getTree());
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:45: ( COMA term )*
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:45: ( COMA term )*
                             loop11:
                             do {
                                 int alt11=2;
@@ -1539,7 +1538,7 @@ public class RuleParser extends Parser {
 
                                 switch (alt11) {
                             	case 1 :
-                            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:46: COMA term
+                            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:46: COMA term
                             	    {
                             	    COMA31=(Token)match(input,COMA,FOLLOW_COMA_in_pattern713);  
                             	    stream_COMA.add(COMA31);
@@ -1581,27 +1580,27 @@ public class RuleParser extends Parser {
                     RewriteRuleTokenStream stream_funname=new RewriteRuleTokenStream(adaptor,"token funname",funname);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 67:65: -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
+                    root_0 = (Tree)adaptor.nil();
+                    // 65:65: -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:68: ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:68: ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(At, "At"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(At, "At"), root_1);
 
                         adaptor.addChild(root_1, stream_varname.nextNode());
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:82: ^( Appl $funname ^( TermList ( term )* ) )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:82: ^( Appl $funname ^( TermList ( term )* ) )
                         {
-                        RuleTree root_2 = (RuleTree)adaptor.nil();
-                        root_2 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Appl, "Appl"), root_2);
+                        Tree root_2 = (Tree)adaptor.nil();
+                        root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_2);
 
                         adaptor.addChild(root_2, stream_funname.nextNode());
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:98: ^( TermList ( term )* )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:98: ^( TermList ( term )* )
                         {
-                        RuleTree root_3 = (RuleTree)adaptor.nil();
-                        root_3 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(TermList, "TermList"), root_3);
+                        Tree root_3 = (Tree)adaptor.nil();
+                        root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_3);
 
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:109: ( term )*
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:109: ( term )*
                         while ( stream_term.hasNext() ) {
                             adaptor.addChild(root_3, stream_term.nextTree());
 
@@ -1623,7 +1622,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:5: UNDERSCORE
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:5: UNDERSCORE
                     {
                     UNDERSCORE34=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern750);  
                     stream_UNDERSCORE.add(UNDERSCORE34);
@@ -1639,13 +1638,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 68:16: -> ^( UnnamedVar )
+                    root_0 = (Tree)adaptor.nil();
+                    // 66:16: -> ^( UnnamedVar )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:19: ^( UnnamedVar )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:19: ^( UnnamedVar )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(UnnamedVar, "UnnamedVar"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(UnnamedVar, "UnnamedVar"), root_1);
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -1656,7 +1655,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:69:5: UNDERSCORE STAR
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: UNDERSCORE STAR
                     {
                     UNDERSCORE35=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern762);  
                     stream_UNDERSCORE.add(UNDERSCORE35);
@@ -1675,13 +1674,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 69:21: -> ^( UnnamedVarStar )
+                    root_0 = (Tree)adaptor.nil();
+                    // 67:21: -> ^( UnnamedVarStar )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:69:24: ^( UnnamedVarStar )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:24: ^( UnnamedVarStar )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(UnnamedVarStar, "UnnamedVarStar"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(UnnamedVarStar, "UnnamedVarStar"), root_1);
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -1692,7 +1691,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:5: NOT pattern
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:5: NOT pattern
                     {
                     NOT37=(Token)match(input,NOT,FOLLOW_NOT_in_pattern776);  
                     stream_NOT.add(NOT37);
@@ -1714,13 +1713,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 70:17: -> ^( Anti pattern )
+                    root_0 = (Tree)adaptor.nil();
+                    // 68:17: -> ^( Anti pattern )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:20: ^( Anti pattern )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:20: ^( Anti pattern )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Anti, "Anti"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Anti, "Anti"), root_1);
 
                         adaptor.addChild(root_1, stream_pattern.nextTree());
 
@@ -1736,14 +1735,14 @@ public class RuleParser extends Parser {
             }
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -1753,17 +1752,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "pattern"
 
     public static class term_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "term"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:72:1: term : ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin );
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:1: term : ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin );
     public final RuleParser.term_return term() throws RecognitionException {
         RuleParser.term_return retval = new RuleParser.term_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token s=null;
         Token ID40=null;
@@ -1772,13 +1771,13 @@ public class RuleParser extends Parser {
         RuleParser.builtin_return builtin41 = null;
 
 
-        RuleTree s_tree=null;
-        RuleTree ID40_tree=null;
+        Tree s_tree=null;
+        Tree ID40_tree=null;
         RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:72:5: ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:5: ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin )
             int alt15=3;
             switch ( input.LA(1) ) {
             case ID:
@@ -1820,9 +1819,9 @@ public class RuleParser extends Parser {
 
             switch (alt15) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:3: pattern
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:71:3: pattern
                     {
-                    root_0 = (RuleTree)adaptor.nil();
+                    root_0 = (Tree)adaptor.nil();
 
                     pushFollow(FOLLOW_pattern_in_term795);
                     pattern39=pattern();
@@ -1834,12 +1833,12 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:5: ID (s= STAR )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:5: ID (s= STAR )?
                     {
                     ID40=(Token)match(input,ID,FOLLOW_ID_in_term803);  
                     stream_ID.add(ID40);
 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:8: (s= STAR )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:8: (s= STAR )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -1848,7 +1847,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt14) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:9: s= STAR
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:9: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_term808);  
                             stream_STAR.add(s);
@@ -1870,13 +1869,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 75:18: -> {null==s}? ^( Var ID )
+                    root_0 = (Tree)adaptor.nil();
+                    // 73:18: -> {null==s}? ^( Var ID )
                     if (null==s) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:32: ^( Var ID )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:32: ^( Var ID )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Var, "Var"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
 
@@ -1884,12 +1883,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 75:42: -> ^( VarStar ID )
+                    else // 73:42: -> ^( VarStar ID )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:44: ^( VarStar ID )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:44: ^( VarStar ID )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(VarStar, "VarStar"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
 
@@ -1902,9 +1901,9 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:76:5: builtin
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:74:5: builtin
                     {
-                    root_0 = (RuleTree)adaptor.nil();
+                    root_0 = (Tree)adaptor.nil();
 
                     pushFollow(FOLLOW_builtin_in_term833);
                     builtin41=builtin();
@@ -1919,14 +1918,14 @@ public class RuleParser extends Parser {
             }
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -1936,28 +1935,28 @@ public class RuleParser extends Parser {
     // $ANTLR end "term"
 
     public static class builtin_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "builtin"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:76:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
     public final RuleParser.builtin_return builtin() throws RecognitionException {
         RuleParser.builtin_return retval = new RuleParser.builtin_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token INT42=null;
         Token STRING43=null;
 
-        RuleTree INT42_tree=null;
-        RuleTree STRING43_tree=null;
+        Tree INT42_tree=null;
+        Tree STRING43_tree=null;
         RewriteRuleTokenStream stream_INT=new RewriteRuleTokenStream(adaptor,"token INT");
         RewriteRuleTokenStream stream_STRING=new RewriteRuleTokenStream(adaptor,"token STRING");
 
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:76:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -1975,7 +1974,7 @@ public class RuleParser extends Parser {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:3: INT
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:77:3: INT
                     {
                     INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin842);  
                     stream_INT.add(INT42);
@@ -1991,13 +1990,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 79:7: -> ^( BuiltinInt INT )
+                    root_0 = (Tree)adaptor.nil();
+                    // 77:7: -> ^( BuiltinInt INT )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:10: ^( BuiltinInt INT )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:77:10: ^( BuiltinInt INT )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(BuiltinInt, "BuiltinInt"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinInt, "BuiltinInt"), root_1);
 
                         adaptor.addChild(root_1, stream_INT.nextNode());
 
@@ -2010,7 +2009,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:80:5: STRING
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:5: STRING
                     {
                     STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin856);  
                     stream_STRING.add(STRING43);
@@ -2026,13 +2025,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 80:12: -> ^( BuiltinString STRING )
+                    root_0 = (Tree)adaptor.nil();
+                    // 78:12: -> ^( BuiltinString STRING )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:80:15: ^( BuiltinString STRING )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:15: ^( BuiltinString STRING )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(BuiltinString, "BuiltinString"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinString, "BuiltinString"), root_1);
 
                         adaptor.addChild(root_1, stream_STRING.nextNode());
 
@@ -2048,14 +2047,14 @@ public class RuleParser extends Parser {
             }
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -2065,33 +2064,33 @@ public class RuleParser extends Parser {
     // $ANTLR end "builtin"
 
     public static class labelledpattern_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "labelledpattern"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:81:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
     public final RuleParser.labelledpattern_return labelledpattern() throws RecognitionException {
         RuleParser.labelledpattern_return retval = new RuleParser.labelledpattern_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token namelabel=null;
         Token COLON44=null;
         RuleParser.graphpattern_return p = null;
 
 
-        RuleTree namelabel_tree=null;
-        RuleTree COLON44_tree=null;
+        Tree namelabel_tree=null;
+        Tree COLON44_tree=null;
         RewriteRuleTokenStream stream_COLON=new RewriteRuleTokenStream(adaptor,"token COLON");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_graphpattern=new RewriteRuleSubtreeStream(adaptor,"rule graphpattern");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:84:3: (namelabel= ID COLON )? p= graphpattern
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:81:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:3: (namelabel= ID COLON )? p= graphpattern
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:84:3: (namelabel= ID COLON )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:3: (namelabel= ID COLON )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -2104,7 +2103,7 @@ public class RuleParser extends Parser {
             }
             switch (alt17) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:84:4: namelabel= ID COLON
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:4: namelabel= ID COLON
                     {
                     namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern877);  
                     stream_ID.add(namelabel);
@@ -2137,13 +2136,13 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_p=new RewriteRuleSubtreeStream(adaptor,"token p",p!=null?p.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 85:3: -> {$namelabel!=null}? ^( LabTerm $namelabel $p)
+            root_0 = (Tree)adaptor.nil();
+            // 83:3: -> {$namelabel!=null}? ^( LabTerm $namelabel $p)
             if (namelabel!=null) {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:85:26: ^( LabTerm $namelabel $p)
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:26: ^( LabTerm $namelabel $p)
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(LabTerm, "LabTerm"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(LabTerm, "LabTerm"), root_1);
 
                 adaptor.addChild(root_1, stream_namelabel.nextNode());
                 adaptor.addChild(root_1, stream_p.nextTree());
@@ -2152,7 +2151,7 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 86:3: -> $p
+            else // 84:3: -> $p
             {
                 adaptor.addChild(root_0, stream_p.nextTree());
 
@@ -2163,14 +2162,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -2180,17 +2179,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "labelledpattern"
 
     public static class graphpattern_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "graphpattern"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:1: graphpattern : ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref );
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:1: graphpattern : ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref );
     public final RuleParser.graphpattern_return graphpattern() throws RecognitionException {
         RuleParser.graphpattern_return retval = new RuleParser.graphpattern_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token s=null;
         Token ID46=null;
@@ -2201,13 +2200,13 @@ public class RuleParser extends Parser {
         RuleParser.ref_return ref48 = null;
 
 
-        RuleTree s_tree=null;
-        RuleTree ID46_tree=null;
+        Tree s_tree=null;
+        Tree ID46_tree=null;
         RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:13: ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:13: ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref )
             int alt19=4;
             switch ( input.LA(1) ) {
             case ID:
@@ -2248,9 +2247,9 @@ public class RuleParser extends Parser {
 
             switch (alt19) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:3: constructor
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:87:3: constructor
                     {
-                    root_0 = (RuleTree)adaptor.nil();
+                    root_0 = (Tree)adaptor.nil();
 
                     pushFollow(FOLLOW_constructor_in_graphpattern917);
                     constructor45=constructor();
@@ -2262,12 +2261,12 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:5: ID (s= STAR )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:5: ID (s= STAR )?
                     {
                     ID46=(Token)match(input,ID,FOLLOW_ID_in_graphpattern925);  
                     stream_ID.add(ID46);
 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:8: (s= STAR )?
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:8: (s= STAR )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -2276,7 +2275,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt18) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:9: s= STAR
+                            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: s= STAR
                             {
                             s=(Token)match(input,STAR,FOLLOW_STAR_in_graphpattern930);  
                             stream_STAR.add(s);
@@ -2298,13 +2297,13 @@ public class RuleParser extends Parser {
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-                    root_0 = (RuleTree)adaptor.nil();
-                    // 91:18: -> {null==s}? ^( Var ID )
+                    root_0 = (Tree)adaptor.nil();
+                    // 89:18: -> {null==s}? ^( Var ID )
                     if (null==s) {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:32: ^( Var ID )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:32: ^( Var ID )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Var, "Var"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
 
@@ -2312,12 +2311,12 @@ public class RuleParser extends Parser {
                         }
 
                     }
-                    else // 91:42: -> ^( VarStar ID )
+                    else // 89:42: -> ^( VarStar ID )
                     {
-                        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:44: ^( VarStar ID )
+                        // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:44: ^( VarStar ID )
                         {
-                        RuleTree root_1 = (RuleTree)adaptor.nil();
-                        root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(VarStar, "VarStar"), root_1);
+                        Tree root_1 = (Tree)adaptor.nil();
+                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
 
@@ -2330,9 +2329,9 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:5: builtin
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:5: builtin
                     {
-                    root_0 = (RuleTree)adaptor.nil();
+                    root_0 = (Tree)adaptor.nil();
 
                     pushFollow(FOLLOW_builtin_in_graphpattern955);
                     builtin47=builtin();
@@ -2344,9 +2343,9 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:5: ref
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:5: ref
                     {
-                    root_0 = (RuleTree)adaptor.nil();
+                    root_0 = (Tree)adaptor.nil();
 
                     pushFollow(FOLLOW_ref_in_graphpattern961);
                     ref48=ref();
@@ -2361,14 +2360,14 @@ public class RuleParser extends Parser {
             }
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -2378,29 +2377,29 @@ public class RuleParser extends Parser {
     // $ANTLR end "graphpattern"
 
     public static class ref_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "ref"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
     public final RuleParser.ref_return ref() throws RecognitionException {
         RuleParser.ref_return retval = new RuleParser.ref_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token AMPERCENT49=null;
         Token ID50=null;
 
-        RuleTree AMPERCENT49_tree=null;
-        RuleTree ID50_tree=null;
+        Tree AMPERCENT49_tree=null;
+        Tree ID50_tree=null;
         RewriteRuleTokenStream stream_AMPERCENT=new RewriteRuleTokenStream(adaptor,"token AMPERCENT");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:3: AMPERCENT ID
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:3: AMPERCENT ID
             {
             AMPERCENT49=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref970);  
             stream_AMPERCENT.add(AMPERCENT49);
@@ -2419,13 +2418,13 @@ public class RuleParser extends Parser {
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 96:16: -> ^( RefTerm ID )
+            root_0 = (Tree)adaptor.nil();
+            // 94:16: -> ^( RefTerm ID )
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:19: ^( RefTerm ID )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:19: ^( RefTerm ID )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(RefTerm, "RefTerm"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RefTerm, "RefTerm"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
 
@@ -2439,14 +2438,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
@@ -2456,17 +2455,17 @@ public class RuleParser extends Parser {
     // $ANTLR end "ref"
 
     public static class constructor_return extends ParserRuleReturnScope {
-        RuleTree tree;
+        Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "constructor"
-    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
+    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
     public final RuleParser.constructor_return constructor() throws RecognitionException {
         RuleParser.constructor_return retval = new RuleParser.constructor_return();
         retval.start = input.LT(1);
 
-        RuleTree root_0 = null;
+        Tree root_0 = null;
 
         Token ID51=null;
         Token LPAR52=null;
@@ -2477,18 +2476,18 @@ public class RuleParser extends Parser {
         RuleParser.labelledpattern_return labelledpattern55 = null;
 
 
-        RuleTree ID51_tree=null;
-        RuleTree LPAR52_tree=null;
-        RuleTree COMA54_tree=null;
-        RuleTree RPAR56_tree=null;
+        Tree ID51_tree=null;
+        Tree LPAR52_tree=null;
+        Tree COMA54_tree=null;
+        Tree RPAR56_tree=null;
         RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_labelledpattern=new RewriteRuleSubtreeStream(adaptor,"rule labelledpattern");
         try {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
             {
             ID51=(Token)match(input,ID,FOLLOW_ID_in_constructor989);  
             stream_ID.add(ID51);
@@ -2496,7 +2495,7 @@ public class RuleParser extends Parser {
             LPAR52=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor991);  
             stream_LPAR.add(LPAR52);
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:11: ( labelledpattern ( COMA labelledpattern )* )?
+            // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:11: ( labelledpattern ( COMA labelledpattern )* )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -2505,7 +2504,7 @@ public class RuleParser extends Parser {
             }
             switch (alt21) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:12: labelledpattern ( COMA labelledpattern )*
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:12: labelledpattern ( COMA labelledpattern )*
                     {
                     pushFollow(FOLLOW_labelledpattern_in_constructor994);
                     labelledpattern53=labelledpattern();
@@ -2513,7 +2512,7 @@ public class RuleParser extends Parser {
                     state._fsp--;
 
                     stream_labelledpattern.add(labelledpattern53.getTree());
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:28: ( COMA labelledpattern )*
+                    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:28: ( COMA labelledpattern )*
                     loop20:
                     do {
                         int alt20=2;
@@ -2526,7 +2525,7 @@ public class RuleParser extends Parser {
 
                         switch (alt20) {
                     	case 1 :
-                    	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:29: COMA labelledpattern
+                    	    // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:29: COMA labelledpattern
                     	    {
                     	    COMA54=(Token)match(input,COMA,FOLLOW_COMA_in_constructor997);  
                     	    stream_COMA.add(COMA54);
@@ -2566,21 +2565,21 @@ public class RuleParser extends Parser {
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
-            root_0 = (RuleTree)adaptor.nil();
-            // 100:3: -> ^( Appl ID ^( TermList ( labelledpattern )* ) )
+            root_0 = (Tree)adaptor.nil();
+            // 98:3: -> ^( Appl ID ^( TermList ( labelledpattern )* ) )
             {
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
                 {
-                RuleTree root_1 = (RuleTree)adaptor.nil();
-                root_1 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(Appl, "Appl"), root_1);
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:16: ^( TermList ( labelledpattern )* )
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:16: ^( TermList ( labelledpattern )* )
                 {
-                RuleTree root_2 = (RuleTree)adaptor.nil();
-                root_2 = (RuleTree)adaptor.becomeRoot((RuleTree)adaptor.create(TermList, "TermList"), root_2);
+                Tree root_2 = (Tree)adaptor.nil();
+                root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_2);
 
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:27: ( labelledpattern )*
+                // /Users/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:27: ( labelledpattern )*
                 while ( stream_labelledpattern.hasNext() ) {
                     adaptor.addChild(root_2, stream_labelledpattern.nextTree());
 
@@ -2600,14 +2599,14 @@ public class RuleParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-            retval.tree = (RuleTree)adaptor.rulePostProcessing(root_0);
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
-    	retval.tree = (RuleTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
 
         }
         finally {
