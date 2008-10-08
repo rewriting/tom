@@ -89,6 +89,17 @@ in let l = seq 0 20
 in let m = find (fun x-> or (eq x 2) (and (gt x 5) (not (gt x 15)))) l
 in if issome m then let xk = getsome m in (print (fst xk); throw (snd xk) ()) else () end 
 )
+;;
 
+(* mutually recursive functions *)
+let pair x y p = p x y 
+in let fst p = p (fun x -> fun y -> x) 
+in let snd p = p (fun x -> fun y -> y) 
+in let rec oddeven = fun freeze -> pair 
+ (fun n -> if eq n 0 then false else if eq n 1 then true else snd (oddeven ()) (minus n 1) end end) 
+ (fun n -> if eq n 0 then true else if eq n 1 then false else fst (oddeven ()) (minus n 1) end end) 
+in let odd = fst (oddeven ())
+in let even = snd (oddeven ())
+in (print (odd 9); print (odd 8); print (even 46); print (even 99))
 
 
