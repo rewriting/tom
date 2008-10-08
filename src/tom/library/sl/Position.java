@@ -44,6 +44,8 @@ public class Position implements Cloneable,Path {
 
   private int[] omega;
 
+  public static final Position ROOT = new Position();
+
   /* construct the root position */
   public Position() {
     omega = new int[0];
