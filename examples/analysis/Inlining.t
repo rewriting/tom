@@ -233,10 +233,6 @@ public class Inlining {
     make(s) { `AllCfg(s) }
   }
 
-  %op Strategy Up(s:Strategy) {
-    make(s) { new Up(s) }
-  }
-
   %op Strategy UpFail(s:Strategy) {
     make(s) { new UpFail(s) }
   }
