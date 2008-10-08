@@ -316,7 +316,7 @@
   </parallel>
   </target>
 
-  <target name="dist.all">
+  <target name="dist.all" depends="prepare.examples">
     <fail unless="version">
       ****************************************************
       ****************************************************

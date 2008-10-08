@@ -174,8 +174,26 @@
     <javacompile example="${example}"/>
   </target>
 
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <!-- not in the distribution -->
+  <target name="should-dist">
+    <condition property="can-be-distributed">
+      <and>
+        <isset property="distrib.zip"/>
+        <istrue value="${distribute}"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="dist" depends="should-dist, prepare.examples" if="can-be-distributed">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/**/*.t"/>
+        <include name="${example}/**/*.tom"/>
+        <include name="${example}/**/*.xml"/>
+        <include name="${example}/**/*.gom"/>
+        <include name="${example}/**/*.java"/>
+      </zipfileset>
+    </zip>
   </target>
 
   <target name="junit" depends="tom.init, build"
