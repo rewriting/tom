@@ -3,12 +3,7 @@
   <import file="../common.xml"/>
   <property name="example" value="lambdacalculi"/>
   <target name="build" depends="init">
-    <gom.preset srcdir="${examples.dir}"
-      package="${example}" 
-      termgraph="true" 
-      destdir="${examples.gen}">
-      <include name="${example}/lambdaterm.gom"/>
-    </gom.preset>
+    <gomtermgraphcompile example="${example}"/>
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
                 options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 

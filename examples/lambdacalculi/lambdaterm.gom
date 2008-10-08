@@ -1,4 +1,4 @@
-module lambdaterm
+module lambdacalculi.lambdaterm
 imports String
 abstract syntax
 LambdaTerm =

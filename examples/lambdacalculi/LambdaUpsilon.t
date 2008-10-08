@@ -96,8 +96,8 @@ class LambdaUpsilon {
       sort Subst:block() {
         public String toString() {
           %match(this) {
-            slash(t) -> { return %[@`t@/]%; }
-            lift(s) -> { return %["(@`s@)]%; }
+            slash(t) -> { return `t+"/"; }
+            lift(s) -> { return "\"("+`s+")"; }
             shift() -> { return "|"; }
           }
           return "";
