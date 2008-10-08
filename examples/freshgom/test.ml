@@ -135,5 +135,20 @@ let rec take = fun n -> fun l ->
         end
   end in
 take 5 (map square nats)
+;
+
+(* mutually recursive functions *)
+let fst = fun p -> match p with Pair(x,y) -> x end in
+let snd = fun p -> match p with Pair(x,y) -> y end in
+let rec oddeven = Pair(
+     (fun n -> match n with | O() -> False() | S(O()) -> True() | S(m) -> snd oddeven m end),
+     (fun n -> match n with | O() -> True() | S(O()) -> False() | S(m) -> fst oddeven m end))
+in 
+let odd =  fst oddeven in
+let even = snd oddeven in
+odd S(S(S(S(S(O())))))
+
+
+
 
 
