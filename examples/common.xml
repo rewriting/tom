@@ -99,6 +99,17 @@
       </gom.preset>
     </sequential>
   </macrodef>
+  <macrodef name="gomfreshcompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        fresh="true" 
+        destdir="${examples.gen}">
+        <include name="@{example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
     <!-- The gombuild macro do not pass the package argument -->
     <macrodef name="gombuild">
       <attribute name="example"/>

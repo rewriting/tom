@@ -32,7 +32,7 @@ FreshLambda.class: FreshLambda.java LambdaParser.class LambdaLexer.class Printer
 	javac FreshLambda.java
 
 lambda/Lambda.tom: lambda.gom
-	gom lambda.gom
+	gom --fresh lambda.gom
 
 clean:
 	rm -rf systemf lambda *.class *.java Lambda.g Lambda__.g *.tokens 

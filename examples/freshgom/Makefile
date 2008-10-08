@@ -11,7 +11,7 @@ TestSystemF.class: TestSystemF.java
 TestSystemF.t: systemf/SystemF.tom
 
 systemf/SystemF.tom: systemf.gom
-	gom systemf.gom
+	gom --fresh systemf.gom
 
 Lambda.g.t: lambda/Lambda.tom 
 
@@ -44,7 +44,7 @@ FreshLambda.class: FreshLambda.java LambdaParser.class LambdaLexer.class Printer
 	javac FreshLambda.java
 
 lambda/Lambda.tom: lambda.gom
-	gom lambda.gom
+	gom --fresh lambda.gom
 
 clean:
 	rm -rf systemf lambda *.class *.java Lambda.g Lambda__.g *.tokens 

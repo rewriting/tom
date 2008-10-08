@@ -4,7 +4,7 @@
   <property name="example" value="miniml"/>
   <target name="build" depends="init">
     <mkdir dir="${examples.gen}/${example}"/>
-    <gomcompile example="${example}"/>
+    <gomfreshcompile example="${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
