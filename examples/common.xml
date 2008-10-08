@@ -189,9 +189,11 @@
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${example}/**/*.t"/>
         <include name="${example}/**/*.tom"/>
-        <include name="${example}/**/*.xml"/>
         <include name="${example}/**/*.gom"/>
         <include name="${example}/**/*.java"/>
+        <include name="${example}/**/*.xml"/>
+        <include name="${example}/**/*.txt"/>
+        <include name="${example}/**/*.html"/>
       </zipfileset>
     </zip>
   </target>

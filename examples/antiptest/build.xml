@@ -2,16 +2,5 @@
 <project name="Build the antiptest example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="antiptest"/>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/*.t"/>
-        <include name="${example}/*.txt"/>
-        <include name="${example}/Matching.java"/>
-        <include name="${example}/*.gom"/>
-        <include name="${example}/atermmapping.tom"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>
