@@ -30,6 +30,7 @@ import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
+import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
@@ -80,6 +81,10 @@ public class ExpanderPlugin extends GomGenericPlugin {
     getLogger().log(Level.INFO, "Start expanding");
     Expander expander = new Expander(streamManager);
     modules = expander.expand(module);
+    // for the moment, the symbol table is only intialised for termgraph and freshgom
+    if (getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer") || getOptionBooleanValue("fresh")) {
+      GomEnvironment.getInstance().initSymbolTable(modules);
+    }
     if(modules == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),

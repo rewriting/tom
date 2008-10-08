@@ -54,6 +54,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>failonerror</li>
  * <li>fork</li>
  * <li>termgraph</li>
+ * <li>fresh</li>
  * <li>pointer</li>
  * <li>grammar</li>
  * <li></li>

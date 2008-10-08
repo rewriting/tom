@@ -81,6 +81,10 @@
         altName='tp' 
         description='Extend the signature for term pointers' 
         value='false'/> 
+      <boolean name='fresh' 
+        altName='f'
+        description='Extend the signature to deal with terms with binders' 
+        value='false'/> 
       <boolean name='termgraph' 
         altName='tg'
         description='Extend the signature for term-graphs' 
