@@ -266,29 +266,6 @@ public class TomOptimizer extends TomGenericPlugin {
           throw new VisitFailure();
         }
       }
-      // same code as for LetAssign with only one recursive call
-      Assign(Variable[AstName=name],src) -> {
-        if(variableName == `name) {
-          info.setlastvalue(`src,getEnvironment().getPosition());
-        } else {
-          if(info.lastAssignmentVariables.contains(`name)) {
-            info.lastAssignment = null;
-            info.lastAssignmentPosition = null;
-            info.lastAssignmentVariables.clear();
-          }
-        }
-        /* recursive call of the current strategy on src */
-        Environment current = getEnvironment();
-        current.down(2);
-        try {
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
-        } catch (VisitFailure e) {
-          current.upLocal();
-          throw new VisitFailure();
-        }
-      }
 
     }
   }
@@ -353,7 +330,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends defaultCase {
     visit Instruction {
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
+      LetAssign[Variable=Variable[AstName=varname]] -> {
         if(info.assignmentVariables.contains(`varname)) {
           info.modifiedAssignmentVariables=true;
           throw new tom.library.sl.VisitFailure();
@@ -379,7 +356,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       // should not happen
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
+      LetAssign[Variable=Variable[AstName=varname]] -> {
         if (variableName.equals(`varname)) {
           logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
         }
@@ -402,28 +379,28 @@ public class TomOptimizer extends TomGenericPlugin {
   /* 
    * rename variable1 into variable2
    */
-  %op Strategy renameVariable(variable1: TomName, variable2: TomName){
-    make(variable1,variable2) { (`TopDown(renameVariableOnce(variable1,variable2)) )}
+  %op Strategy renameVariable(variable1: TomName, variable2: TomName) {
+    make(variable1,variable2) { (`TopDown(renameVariableOnce(variable1,variable2)) ) }
   }
 
-  %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
-    visit TomTerm{
+  %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends Identity() {
+    visit TomTerm {
       var@(Variable|VariableStar)[AstName=astName] -> {
         if(variable1 == `astName) {
           return `var.setAstName(variable2);
         }
       }
-    } // end match
+    }
   }
 
-  %op Strategy CleanAssign(varname: TomName){
+  %op Strategy CleanAssign(varname: TomName) {
     make(varname) { (`TopDown(CleanAssignOnce(varname))) }
   }
 
-  %strategy CleanAssignOnce(varname:TomName) extends `Identity() {
+  %strategy CleanAssignOnce(varname:TomName) extends Identity() {
     visit Instruction {
       LetAssign((Variable|VariableStar)[AstName=name],_,body) -> {
-        if (`name.equals(varname)) { return `body; }
+        if(`name.equals(varname)) { return `body; }
       }
     }
   }

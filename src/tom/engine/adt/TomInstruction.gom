@@ -8,7 +8,6 @@ Instruction =
   | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
   | DoWhile(DoInst:Instruction,Condition:Expression)
   | WhileDo(Condition:Expression,DoInst:Instruction)
-  | Assign(Variable:TomTerm,Source:Expression)
             
   /**
    * <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way

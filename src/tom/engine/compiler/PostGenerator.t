@@ -59,11 +59,77 @@ public class PostGenerator {
 //------------------------------------------------------------  
  
   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
+    //System.out.println("instruction1 = " + instruction);
     instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
-    instruction = (Instruction)`TopDown(LetRefToLet()).visit(instruction);
-    return (Instruction) `TopDown(AddRef()).visitLight(instruction);
+    //System.out.println("instruction2 = " + instruction);
+    instruction = (Instruction) `TopDown(AddRef()).visitLight(instruction);
+    //System.out.println("instruction3 = " + instruction);
+    return instruction;
   }
   
+  /**
+   * Makes sure that no variable is declared if the same variable was declared above  
+   */
+  %strategy ChangeVarDeclarations() extends Identity() {
+    visit Instruction {
+      LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+        /*
+         * when there is an identical LetRef between the root and the current LetRef
+         * the current LetRef is replaced by a LetAssign
+         */
+        Visitable root = (Visitable) getEnvironment().getRoot();
+        //System.out.println("name: " + `name);
+        if(root != getEnvironment().getSubject()) {
+          try {
+            //System.out.println("root = " + root);
+            //System.out.println("pos = " + getEnvironment().getPosition());
+
+            getEnvironment().getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
+            //System.out.println("no LetRef above");
+          } catch (VisitFailure e) {
+            //System.out.println("become LetAssign: " + `name);
+            return `LetAssign(var,exp,body);
+          }
+        } else {
+          //System.out.println("is root");
+        }
+
+        /*
+         * when there is no LetRef before the current LetRef 
+         * if there is no LetAssign, not LetRef in the body
+         * the current LetRef is replaced by a Let
+         */
+        try {
+          `Not(TopDown(ChoiceId(CheckLetAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
+            //System.out.println("Assign in body");
+        } catch (VisitFailure e) {
+          //System.out.println("become Let: " + `name);
+          return `Let(var,exp,body);
+        }
+      }
+    }
+  }
+
+  %strategy CheckLetRefExistence(varName:TomName) extends Identity() {
+    visit Instruction {
+      LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(varName == `name ) {
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
+  %strategy CheckLetAssignExistence(varName:TomName) extends Identity() {
+    visit Instruction {
+      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(varName == `name ) {
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
   %strategy AddRef() extends Identity() {
     visit Expression { 
       EqualTerm(type,var@(Variable|VariableStar)[],t) -> {        
@@ -118,84 +184,17 @@ public class PostGenerator {
       }                
       // if we have a variable introduced in the match process, we generate LetRef
       // otherwise, let - for the variables of the initial pattern
-      LetRef(var@(Variable|VariableStar)[],src@TomTermToExpression(source@!Ref[]),instruction) -> {
-        TomName name = `var.getAstName(); 
-        %match(name){
-          PositionName[] -> {
-            return `LetRef(var,TomTermToExpression(Ref(source)),instruction);    
-          }
-        }
-        %match(source){
-          (Variable|VariableStar)[] -> {
-            return `Let(var,TomTermToExpression(Ref(source)),instruction);    
-          }
-          _ ->{
-            // we generate let for the variables of the initial pattern comming from lists
-            return `Let(var,src,instruction);    
-          }
-        }        
-      }      
+      LetRef(var@(Variable|VariableStar)[AstName=PositionName[]],src@TomTermToExpression(source@!Ref[]),instruction) -> {
+        return `LetRef(var,TomTermToExpression(Ref(source)),instruction);    
+      }
 
       LetAssign(var,TomTermToExpression(source@(Variable|VariableStar)[]),instruction) -> {        
         return `LetAssign(var,TomTermToExpression(Ref(source)),instruction);
       }
  
-    }// end visit
+    }
   }
   
-  /**
-   * Makes sure that no variable is declared if the same variable was declared above  
-   */
-  %strategy ChangeVarDeclarations() extends Identity() {
-    visit Instruction {
-      LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {
-        Visitable root = (Visitable) getEnvironment().getRoot();
-        if(root != getEnvironment().getSubject()) {
-          try {
-            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 
-          } catch (VisitFailure e) {
-            return `LetAssign(var,source,instruction);
-          }
-        }
-      }
-    }
-  }
 
-  %strategy LetRefToLet() extends Identity() {
-    visit Instruction {
-      LetRef(var@(Variable|VariableStar)[AstName=name],value,inst) -> {
-        try {
-          `TopDown(IsNotAssign(name)).visitLight(`inst);
-          return `Let(var,value,inst);
-          //variable never reassigned
-        } catch (VisitFailure e) {}
-      }
-    }
-  }
-
-  %strategy IsNotAssign(variableName:TomName) extends Identity() {
-    visit Instruction {
-      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(`name.equals(variableName)) {
-          throw new VisitFailure();
-        }
-      }
-      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(`name.equals(variableName)) {
-          throw new VisitFailure();
-        }
-      }
-    }
-  }
-
-  %strategy CheckVarExistence(varName:TomName) extends Identity() {
-    visit Instruction {
-      LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(varName == (`name) ) {
-          throw new VisitFailure();
-        }
-      }
-    }
-  }
 
 }

@@ -120,77 +120,72 @@ public class PILFactory {
   public String prettyPrint(tom.library.sl.Visitable subject) {
     %match(Instruction subject) {
       CompiledMatch(automata,_) -> { 
-	return prettyPrint(`automata); 
+        return prettyPrint(`automata); 
       }
 
       Let(variable,src,body) -> {
-	return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+        return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       LetRef(variable,src,body) -> {
-	return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+        return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       LetAssign(variable,src,body) -> {
-	return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+        return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
-
-      Assign(variable,src) -> {
-	return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
-      }
-
 
       DoWhile(doInst,condition) ->{
-	return "do\n\t " + prettyPrint(`doInst).replace("\n","\n\t") +"while "+ prettyPrint(`condition);
+        return "do\n\t " + prettyPrint(`doInst).replace("\n","\n\t") +"while "+ prettyPrint(`condition);
       }
 
       WhileDo(condition,doInst) ->{
-	return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replace("\n","\n\t");
+        return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replace("\n","\n\t");
       }
 
 
       If(cond,success,Nop()) -> {
-	return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t"); 
+        return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t"); 
       }
 
       If(cond,success,failure) -> {
-	return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replace("\n","\n\t")+"\n";
+        return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replace("\n","\n\t")+"\n";
       }
 
       AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
-	return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
+        return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
       }
 
       AbstractBlock(instList) -> {
-	return prettyPrint(`instList);
+        return prettyPrint(`instList);
       }
 
       UnamedBlock(instList) -> {
-	return prettyPrint(`instList);
+        return prettyPrint(`instList);
       }
 
       NamedBlock(name,instList) -> {
-	return `name + " : " + prettyPrint(`instList);
+        return `name + " : " + prettyPrint(`instList);
       }
 
 
       TypedAction(_,_,_) -> {
-	return "targetLanguageInstructions";
+        return "targetLanguageInstructions";
       }
 
       CompiledPattern(_,automata) -> { 
-	return prettyPrint(`automata); 
+        return prettyPrint(`automata); 
       }
 
     }
 
     %match(Expression subject) {
       TomTermToExpression(astTerm) -> {
-	return prettyPrint(`astTerm);
+        return prettyPrint(`astTerm);
       }
 
       IsSort[] -> {
-	return "isSort\n\t";
+        return "isSort\n\t";
       }
 
       IsFsym(name,term) -> {
@@ -198,81 +193,81 @@ public class PILFactory {
       }
 
       Negation(exp) -> {
-	return "not " + prettyPrint(`exp);
+        return "not " + prettyPrint(`exp);
       }
 
       IsEmptyList[Variable=kid1] -> {
-	return "is_empty(" + prettyPrint(`kid1) + ")";
+        return "is_empty(" + prettyPrint(`kid1) + ")";
       }
 
       EqualTerm(_,kid1,kid2) -> {
-	return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
+        return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
       }
 
       GetSliceList(astName,variableBeginAST,variableEndAST,tail) -> {
-	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
+        return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
       }
 
       GetHead[Variable=variable] -> {
-	return "getHead("+prettyPrint(`variable)+")";
+        return "getHead("+prettyPrint(`variable)+")";
       }
 
       GetTail[Variable=variable] -> {
-	return "getTail("+prettyPrint(`variable)+")";
+        return "getTail("+prettyPrint(`variable)+")";
       }
 
       GetSlot(_,astName,slotNameString,variable) -> {
-	return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
+        return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
       }
     }
 
     %match(TomTerm subject) {
       Variable(_,name,_,_) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       VariableStar(_,name,_,_) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       Ref(term) -> {
-	return prettyPrint(`term);
+        return prettyPrint(`term);
       }
 
       RecordAppl(_,nameList,_,_) ->{
-	return prettyPrint(`nameList); 
+        return prettyPrint(`nameList); 
       }
     }
 
     %match(TomName subject) {
       PositionName(number_list) -> {
-	return "t"+ TomBase.tomNumberListToString(`number_list);
+        return "t"+ TomBase.tomNumberListToString(`number_list);
       }
       Name(string) -> {
-	return `string;
+        return `string;
       }
 
     }
 
     %match(TomNumber subject) {
       Position(i) -> {
-	return "" + `i;
+        return "" + `i;
       }
 
       NameNumber(name) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       ListNumber(number) -> {
-	return "listNumber"+`number;
+        return "listNumber"+`number;
       }
 
       Begin(number) -> {
-	return "begin"+`number;
+        return "begin"+`number;
       }
 
       End(number) -> {
-	return "end"+`number;
+        return "end"+`number;
       }
 
     }
@@ -280,16 +275,16 @@ public class PILFactory {
     if(subject instanceof InstructionList) {
       InstructionList list = (InstructionList)subject;
       if(list.isEmptyconcInstruction()) {
-	return "";
+        return "";
       } else {
-	return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
+        return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
       }
     }  else if(subject instanceof TomNumberList) {
       TomNumberList list = (TomNumberList)subject;
       if(list.isEmptyconcTomNumber()) {
-	return "";
+        return "";
       } else {
-	return prettyPrint(list.getTailconcTomNumber()) + prettyPrint(list.getTailconcTomNumber());
+        return prettyPrint(list.getTailconcTomNumber()) + prettyPrint(list.getTailconcTomNumber());
       }
     }
     return subject.toString();
@@ -297,8 +292,8 @@ public class PILFactory {
 
   %strategy collectMatch(c:Collection) extends `Identity() {
     visit Instruction {
-      m@CompiledMatch[AutomataInst=_]  -> {
-	c.add(`m);
+      m@CompiledMatch[]  -> {
+        c.add(`m);
       }
     }
   } 
