@@ -134,7 +134,7 @@ public class ConstraintGenerator {
       }
       // 'if'
       IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
-        return `If(condition,LetAssign(left1,TomTermToExpression(right1),Nop()),LetAssign(left2,TomTermToExpression(right2),Nop()));
+        return `If(condition,Assign(left1,TomTermToExpression(right1)),Assign(left2,TomTermToExpression(right2)));
       }
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
@@ -194,7 +194,7 @@ public class ConstraintGenerator {
    */
   private static Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
     TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
-    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    Instruction assignFlagTrue = `Assign(flag,TrueTL());
     TomType intType = Compiler.getIntType();
     TomTerm counter = Compiler.getFreshVariable(intType);    
     // build the ifs
@@ -259,7 +259,7 @@ public class ConstraintGenerator {
   private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
     TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
-    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    Instruction assignFlagTrue = `Assign(flag,TrueTL());
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
     // collect variables    
     `TopDown(CollectVar(freshVarList)).visitLight(orDisjunction);    
@@ -307,7 +307,7 @@ public class ConstraintGenerator {
   private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
     TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());    
-    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,

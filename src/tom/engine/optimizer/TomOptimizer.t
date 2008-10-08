@@ -200,7 +200,7 @@ public class TomOptimizer extends TomGenericPlugin {
       lastAssignmentVariables.clear();
       try {
         `TopDownCollect(findRefVariable(lastAssignmentVariables)).visitLight(newassignment);
-      } catch(tom.library.sl.VisitFailure e) {
+      } catch(VisitFailure e) {
         logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
       }
     }
@@ -218,7 +218,7 @@ public class TomOptimizer extends TomGenericPlugin {
       Ref((Variable|VariableStar)[AstName=name]) -> {
         set.add(`name);
         //stop to visit this branch (like "return false" with traversal) 
-        throw new tom.library.sl.VisitFailure();
+        throw new VisitFailure();
       }
     }
   }
@@ -240,7 +240,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
       }
 
-      LetAssign(Variable[AstName=name],src,_) -> {
+      Assign(Variable[AstName=name],src) -> {
         if(variableName == `name) {
           info.setlastvalue(`src,getEnvironment().getPosition());
         } else {
@@ -253,14 +253,10 @@ public class TomOptimizer extends TomGenericPlugin {
         /* recursive call of the current strategy on src */
         Environment current = getEnvironment();
         try {
-        current.down(2);
-        goOnCase.visit(current);
-        current.up();
-        /* recursive call of the current strategy on inst */
-        current.down(3);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
+          current.down(2);
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
         } catch (VisitFailure e) {
           current.upLocal();
           throw new VisitFailure();
@@ -276,7 +272,9 @@ public class TomOptimizer extends TomGenericPlugin {
         if(variableName == `name) {
           info.readCount++;
           info.lastRead=getEnvironment().getPosition(); 
-          if(info.readCount==2) { throw new VisitFailure(); }
+          if(info.readCount==2) { 
+            throw new VisitFailure(); 
+          }
         }  
       } 
     } 
@@ -317,7 +315,7 @@ public class TomOptimizer extends TomGenericPlugin {
       assignmentVariables.clear();
       try {
         `TopDownCollect(findRefVariable(assignmentVariables)).visitLight(newassignment);
-      } catch(tom.library.sl.VisitFailure e) {
+      } catch(VisitFailure e) {
         logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
       }
     }
@@ -330,10 +328,10 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends defaultCase {
     visit Instruction {
-      LetAssign[Variable=Variable[AstName=varname]] -> {
+      Assign[Variable=Variable[AstName=varname]] -> {
         if(info.assignmentVariables.contains(`varname)) {
           info.modifiedAssignmentVariables=true;
-          throw new tom.library.sl.VisitFailure();
+          throw new VisitFailure();
         }
       }
     }
@@ -349,14 +347,14 @@ public class TomOptimizer extends TomGenericPlugin {
           goOnCase.visit(current);
           current.up();
           return (Instruction) current.getSubject();
-        }catch (VisitFailure e) {
+        } catch (VisitFailure e) {
           current.upLocal();
           throw new VisitFailure();
         }
       }
 
       // should not happen
-      LetAssign[Variable=Variable[AstName=varname]] -> {
+      Assign[Variable=Variable[AstName=varname]] -> {
         if (variableName.equals(`varname)) {
           logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
         }
@@ -399,8 +397,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy CleanAssignOnce(varname:TomName) extends Identity() {
     visit Instruction {
-      LetAssign((Variable|VariableStar)[AstName=name],_,body) -> {
-        if(`name.equals(varname)) { return `body; }
+      Assign((Variable|VariableStar)[AstName=name],_) -> {
+        if(`name.equals(varname)) { return `Nop(); }
       }
     }
   }
@@ -549,7 +547,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Position readPos = info.lastRead;
         if(mult == 0) {
           // 0 -> unused variable
-          // suppress the Let and all the corresponding LetAssigns in the body
+          // suppress the Let and all the corresponding Assigns in the body
           if(varName.length() > 0) {
             // why this test?
             // TODO: check variable occurence in TypedAction
@@ -649,7 +647,7 @@ public class TomOptimizer extends TomGenericPlugin {
     try {
       Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
       return res ==`FalseTL();
-    } catch(tom.library.sl.VisitFailure e) {
+    } catch(VisitFailure e) {
       return false;
     }
   }

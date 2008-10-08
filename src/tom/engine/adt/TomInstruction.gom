@@ -12,7 +12,7 @@ Instruction =
   /**
    * <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way
    * <code>LetRef</code> as above, but not functional
-   * <code>LetAssign</code> instanciates a variable
+   * <code>Assign</code> instanciates a variable
    *
    * @param Variable a variable
    * @param Source the value to give to the variable
@@ -20,7 +20,12 @@ Instruction =
    */
   | Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-  | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+   /**
+    * <code>Assign</code> instanciates a variable
+   * @param Variable a variable
+   * @param Source the value to give to the variable
+    */
+  | Assign(Variable:TomTerm,Source:Expression)
   /**/
   | Return(Kid1:TomTerm)
   | Nop()

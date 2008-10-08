@@ -131,8 +131,8 @@ public class PILFactory {
         return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
-      LetAssign(variable,src,body) -> {
-        return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+      Assign(variable,src) -> {
+        return "assign " + prettyPrint(`variable) + " = " + prettyPrint(`src);
       }
 
       DoWhile(doInst,condition) ->{

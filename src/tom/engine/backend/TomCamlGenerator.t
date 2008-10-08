@@ -197,15 +197,11 @@ public class TomCamlGenerator extends TomGenericGenerator {
     generateExpression(deep,exp,moduleName);
   }
 
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
-    output.writeln(deep,"( (* begin let assign*)");
+  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     generate(deep+1,var,moduleName);
     output.write(" := ");
     generateExpression(deep+1,exp,moduleName);
-    output.writeln("; (* from let assign *)");
-    generateInstruction(deep+1,body,moduleName);
-    output.writeln(deep,") (* end let assign*)");
-
+    output.writeln("; ");
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {

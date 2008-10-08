@@ -59,7 +59,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     super(output, optionManager, symbolTable);
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
     output.write("=");
@@ -165,7 +165,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType,
                           Expression exp, Instruction body, String moduleName) throws IOException {
     output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
-    buildAssignVar(deep,var,optionList,exp,moduleName);
+    buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
     output.writeln(deep,"}");
   }
@@ -173,11 +173,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
-  }
-
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep, var, list, exp, moduleName);
-    generateInstruction(deep,body, moduleName);
   }
 
   protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {

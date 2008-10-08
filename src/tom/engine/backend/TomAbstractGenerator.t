@@ -381,12 +381,16 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      LetAssign(var@(Variable|VariableStar)[Option=option],exp,body) -> {
-        `buildLetAssign(deep, var, option, exp, body, moduleName);
+      Assign(var@(Variable|VariableStar)[Option=option],exp) -> {
+        `buildAssign(deep, var, option, exp, moduleName);
         return;
       }
 
-      (Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+      Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
+        return;
+      }
+
+      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         `generateInstruction(deep, body, moduleName);
         return;
       }
@@ -853,7 +857,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException;
-  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;

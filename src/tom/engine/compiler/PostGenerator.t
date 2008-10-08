@@ -60,7 +60,7 @@ public class PostGenerator {
  
   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
     //System.out.println("instruction1 = " + instruction);
-    instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
+    instruction = (Instruction)`BottomUp(ChangeVarDeclarations()).visit(instruction);
     //System.out.println("instruction2 = " + instruction);
     instruction = (Instruction) `TopDown(AddRef()).visitLight(instruction);
     //System.out.println("instruction3 = " + instruction);
@@ -75,11 +75,12 @@ public class PostGenerator {
       LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
         /*
          * when there is an identical LetRef between the root and the current LetRef
-         * the current LetRef is replaced by a LetAssign
+         * the current LetRef is replaced by an Assign
          */
         Visitable root = (Visitable) getEnvironment().getRoot();
         //System.out.println("name: " + `name);
-        if(root != getEnvironment().getSubject()) {
+        //if(root != getEnvironment().getSubject()) {
+        if(getEnvironment().getPosition().depth()>0) { // we are not at the root
           try {
             //System.out.println("root = " + root);
             //System.out.println("pos = " + getEnvironment().getPosition());
@@ -87,8 +88,8 @@ public class PostGenerator {
             getEnvironment().getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
             //System.out.println("no LetRef above");
           } catch (VisitFailure e) {
-            //System.out.println("become LetAssign: " + `name);
-            return `LetAssign(var,exp,body);
+            //System.out.println("become Assign: " + `name);
+            return `AbstractBlock(concInstruction(Assign(var,exp),body));
           }
         } else {
           //System.out.println("is root");
@@ -96,11 +97,11 @@ public class PostGenerator {
 
         /*
          * when there is no LetRef before the current LetRef 
-         * if there is no LetAssign, not LetRef in the body
+         * if there is no Assign, not LetRef in the body
          * the current LetRef is replaced by a Let
          */
         try {
-          `Not(TopDown(ChoiceId(CheckLetAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
+          `Not(TopDown(ChoiceId(CheckAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
             //System.out.println("Assign in body");
         } catch (VisitFailure e) {
           //System.out.println("become Let: " + `name);
@@ -120,9 +121,9 @@ public class PostGenerator {
     }
   }
 
-  %strategy CheckLetAssignExistence(varName:TomName) extends Identity() {
+  %strategy CheckAssignExistence(varName:TomName) extends Identity() {
     visit Instruction {
-      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(varName == `name ) {
           throw new VisitFailure();
         }
@@ -188,8 +189,8 @@ public class PostGenerator {
         return `LetRef(var,TomTermToExpression(Ref(source)),instruction);    
       }
 
-      LetAssign(var,TomTermToExpression(source@(Variable|VariableStar)[]),instruction) -> {        
-        return `LetAssign(var,TomTermToExpression(Ref(source)),instruction);
+      Assign(var,TomTermToExpression(source@(Variable|VariableStar)[])) -> {        
+        return `Assign(var,TomTermToExpression(Ref(source)));
       }
  
     }

@@ -228,8 +228,11 @@ public class TomVerifier extends TomGenericPlugin {
       (UnamedBlock|AbstractBlock)(concInstruction(inst)) -> {
         return `inst;
       }
-      (Let|LetRef|LetAssign)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
+      (Let|LetRef)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
         return `body;
+      }
+      Assign[Variable=(UnamedVariable|UnamedVariableStar)[]] -> {
+        return `Nop();
       }
 
       CompiledPattern[AutomataInst=inst] -> {

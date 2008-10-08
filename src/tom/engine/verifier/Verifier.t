@@ -188,14 +188,23 @@ public class Verifier {
             instrFromInstruction(ift),
             instrFromInstruction(iff));
       }
-      (Let|LetRef|LetAssign)(Variable[AstName=avar],expr,body) -> {
+      (Let|LetRef)(Variable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
             termFromExpresssion(expr),
             instrFromInstruction(body));
       }
-      (Let|LetAssign|LetRef)(UnamedVariable[],_,body) -> {
+      Assign(Variable[AstName=avar],expr) -> {
+        Variable thevar = variableFromTomName(`avar);
+        return `ILLet(thevar,
+            termFromExpresssion(expr),
+            refuse()); /* check that refuse is correct here */
+      }
+      (Let|LetRef)(UnamedVariable[],_,body) -> {
         return instrFromInstruction(`body);
+      }
+      Assign(UnamedVariable[],_) -> {
+        return `refuse(); /* check that refuse is correct here */
       }
       CompiledPattern[AutomataInst=instr] -> {
         return instrFromInstruction(`instr);

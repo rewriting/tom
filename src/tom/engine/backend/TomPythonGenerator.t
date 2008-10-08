@@ -70,7 +70,7 @@ public class TomPythonGenerator extends TomGenericGenerator {
   }
   */
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
     output.write("=");
@@ -163,18 +163,13 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep,var,optionList,exp,moduleName);
+    buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
-  }
-
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep, var, list, exp, moduleName);
-    generateInstruction(deep,body, moduleName);
   }
 
   protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
