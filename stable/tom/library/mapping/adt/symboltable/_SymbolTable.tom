@@ -1,0 +1,494 @@
+
+    %op Strategy _No() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo._No)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.generationinfo._No() }
+    }
+  
+  
+  %op Strategy When_No(s:Strategy) {
+    make(s) { `Sequence(Is_No(),s) }
+  }
+
+  %op Strategy Is_No() {
+    make() { new tom.gom.adt.symboltable.strategy.generationinfo.Is_No()}
+  }
+  
+%op Strategy Make_No() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo.Make_No))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.generationinfo.Make_No() }
+}
+
+    %op Strategy _GenCons(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo._GenCons)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.symboltable.strategy.generationinfo._GenCons($arg0) }
+    }
+  
+  
+  %op Strategy When_GenCons(s:Strategy) {
+    make(s) { `Sequence(Is_GenCons(),s) }
+  }
+
+  %op Strategy Is_GenCons() {
+    make() { new tom.gom.adt.symboltable.strategy.generationinfo.Is_GenCons()}
+  }
+  
+%op Strategy Make_GenCons(_BaseName:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo.Make_GenCons))) }
+
+  get_slot(_BaseName, t) { $t._BaseName }
+  make( _BaseName) { new tom.gom.adt.symboltable.strategy.generationinfo.Make_GenCons( $_BaseName) }
+}
+
+    %op Strategy _GenNil(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo._GenNil)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.symboltable.strategy.generationinfo._GenNil($arg0) }
+    }
+  
+  
+  %op Strategy When_GenNil(s:Strategy) {
+    make(s) { `Sequence(Is_GenNil(),s) }
+  }
+
+  %op Strategy Is_GenNil() {
+    make() { new tom.gom.adt.symboltable.strategy.generationinfo.Is_GenNil()}
+  }
+  
+%op Strategy Make_GenNil(_BaseName:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.generationinfo.Make_GenNil))) }
+
+  get_slot(_BaseName, t) { $t._BaseName }
+  make( _BaseName) { new tom.gom.adt.symboltable.strategy.generationinfo.Make_GenNil( $_BaseName) }
+}
+
+    %op Strategy _ExpressionTypeInfo(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo._ExpressionTypeInfo)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.symboltable.strategy.freshsortinfo._ExpressionTypeInfo($arg0) }
+    }
+  
+  
+  %op Strategy When_ExpressionTypeInfo(s:Strategy) {
+    make(s) { `Sequence(Is_ExpressionTypeInfo(),s) }
+  }
+
+  %op Strategy Is_ExpressionTypeInfo() {
+    make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Is_ExpressionTypeInfo()}
+  }
+  
+%op Strategy Make_ExpressionTypeInfo(_AccessibleAtoms:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo.Make_ExpressionTypeInfo))) }
+
+  get_slot(_AccessibleAtoms, t) { $t._AccessibleAtoms }
+  make( new_AccessibleAtoms) { new tom.gom.adt.symboltable.strategy.freshsortinfo.Make_ExpressionTypeInfo( $new_AccessibleAtoms) }
+}
+
+    %op Strategy _PatternTypeInfo(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo._PatternTypeInfo)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.symboltable.strategy.freshsortinfo._PatternTypeInfo($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_PatternTypeInfo(s:Strategy) {
+    make(s) { `Sequence(Is_PatternTypeInfo(),s) }
+  }
+
+  %op Strategy Is_PatternTypeInfo() {
+    make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Is_PatternTypeInfo()}
+  }
+  
+%op Strategy Make_PatternTypeInfo(_BoundAtoms:Strategy, _AccessibleAtoms:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo.Make_PatternTypeInfo))) }
+
+  get_slot(_BoundAtoms, t) { $t._BoundAtoms }
+  get_slot(_AccessibleAtoms, t) { $t._AccessibleAtoms }
+  make( new_BoundAtoms,  new_AccessibleAtoms) { new tom.gom.adt.symboltable.strategy.freshsortinfo.Make_PatternTypeInfo( $new_BoundAtoms,  $new_AccessibleAtoms) }
+}
+
+    %op Strategy _AtomTypeInfo() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo._AtomTypeInfo)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.freshsortinfo._AtomTypeInfo() }
+    }
+  
+  
+  %op Strategy When_AtomTypeInfo(s:Strategy) {
+    make(s) { `Sequence(Is_AtomTypeInfo(),s) }
+  }
+
+  %op Strategy Is_AtomTypeInfo() {
+    make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Is_AtomTypeInfo()}
+  }
+  
+%op Strategy Make_AtomTypeInfo() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo.Make_AtomTypeInfo))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Make_AtomTypeInfo() }
+}
+
+    %op Strategy _NoFreshSort() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo._NoFreshSort)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.freshsortinfo._NoFreshSort() }
+    }
+  
+  
+  %op Strategy When_NoFreshSort(s:Strategy) {
+    make(s) { `Sequence(Is_NoFreshSort(),s) }
+  }
+
+  %op Strategy Is_NoFreshSort() {
+    make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Is_NoFreshSort()}
+  }
+  
+%op Strategy Make_NoFreshSort() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.freshsortinfo.Make_NoFreshSort))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.freshsortinfo.Make_NoFreshSort() }
+}
+
+    %op Strategy _SRefreshPoint() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SRefreshPoint)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SRefreshPoint() }
+    }
+  
+  
+  %op Strategy When_SRefreshPoint(s:Strategy) {
+    make(s) { `Sequence(Is_SRefreshPoint(),s) }
+  }
+
+  %op Strategy Is_SRefreshPoint() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SRefreshPoint()}
+  }
+  
+%op Strategy Make_SRefreshPoint() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SRefreshPoint))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SRefreshPoint() }
+}
+
+    %op Strategy _SInner() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SInner)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SInner() }
+    }
+  
+  
+  %op Strategy When_SInner(s:Strategy) {
+    make(s) { `Sequence(Is_SInner(),s) }
+  }
+
+  %op Strategy Is_SInner() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SInner()}
+  }
+  
+%op Strategy Make_SInner() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SInner))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SInner() }
+}
+
+    %op Strategy _SOuter() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SOuter)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SOuter() }
+    }
+  
+  
+  %op Strategy When_SOuter(s:Strategy) {
+    make(s) { `Sequence(Is_SOuter(),s) }
+  }
+
+  %op Strategy Is_SOuter() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SOuter()}
+  }
+  
+%op Strategy Make_SOuter() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SOuter))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SOuter() }
+}
+
+    %op Strategy _SNeutral() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SNeutral)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SNeutral() }
+    }
+  
+  
+  %op Strategy When_SNeutral(s:Strategy) {
+    make(s) { `Sequence(Is_SNeutral(),s) }
+  }
+
+  %op Strategy Is_SNeutral() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SNeutral()}
+  }
+  
+%op Strategy Make_SNeutral() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SNeutral))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SNeutral() }
+}
+
+    %op Strategy _SPattern() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SPattern)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SPattern() }
+    }
+  
+  
+  %op Strategy When_SPattern(s:Strategy) {
+    make(s) { `Sequence(Is_SPattern(),s) }
+  }
+
+  %op Strategy Is_SPattern() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SPattern()}
+  }
+  
+%op Strategy Make_SPattern() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SPattern))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SPattern() }
+}
+
+    %op Strategy _SNone() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status._SNone)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.status._SNone() }
+    }
+  
+  
+  %op Strategy When_SNone(s:Strategy) {
+    make(s) { `Sequence(Is_SNone(),s) }
+  }
+
+  %op Strategy Is_SNone() {
+    make() { new tom.gom.adt.symboltable.strategy.status.Is_SNone()}
+  }
+  
+%op Strategy Make_SNone() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.status.Make_SNone))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.status.Make_SNone() }
+}
+
+    %op Strategy _EmptyStringList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.stringlist._EmptyStringList)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.stringlist._EmptyStringList() }
+    }
+  
+  
+  %op Strategy When_EmptyStringList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyStringList(),s) }
+  }
+
+  %op Strategy Is_EmptyStringList() {
+    make() { new tom.gom.adt.symboltable.strategy.stringlist.Is_EmptyStringList()}
+  }
+  
+%op Strategy Make_EmptyStringList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.stringlist.Make_EmptyStringList))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.stringlist.Make_EmptyStringList() }
+}
+
+    %op Strategy _ConsStringList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.stringlist._ConsStringList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.symboltable.strategy.stringlist._ConsStringList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsStringList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsStringList(),s) }
+  }
+
+  %op Strategy Is_ConsStringList() {
+    make() { new tom.gom.adt.symboltable.strategy.stringlist.Is_ConsStringList()}
+  }
+  
+%op Strategy Make_ConsStringList(_HeadStringList:String, _TailStringList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.stringlist.Make_ConsStringList))) }
+
+  get_slot(_HeadStringList, t) { $t._HeadStringList }
+  get_slot(_TailStringList, t) { $t._TailStringList }
+  make( _HeadStringList,  new_TailStringList) { new tom.gom.adt.symboltable.strategy.stringlist.Make_ConsStringList( $_HeadStringList,  $new_TailStringList) }
+}
+
+    %op Strategy _EmptyconcFieldDescription() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescriptionlist._EmptyconcFieldDescription)))}
+      
+        make() { new tom.gom.adt.symboltable.strategy.fielddescriptionlist._EmptyconcFieldDescription() }
+    }
+  
+  
+  %op Strategy When_EmptyconcFieldDescription(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyconcFieldDescription(),s) }
+  }
+
+  %op Strategy Is_EmptyconcFieldDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.fielddescriptionlist.Is_EmptyconcFieldDescription()}
+  }
+  
+%op Strategy Make_EmptyconcFieldDescription() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescriptionlist.Make_EmptyconcFieldDescription))) }
+
+  make() { new tom.gom.adt.symboltable.strategy.fielddescriptionlist.Make_EmptyconcFieldDescription() }
+}
+
+    %op Strategy _ConsconcFieldDescription(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescriptionlist._ConsconcFieldDescription)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.symboltable.strategy.fielddescriptionlist._ConsconcFieldDescription($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsconcFieldDescription(s:Strategy) {
+    make(s) { `Sequence(Is_ConsconcFieldDescription(),s) }
+  }
+
+  %op Strategy Is_ConsconcFieldDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.fielddescriptionlist.Is_ConsconcFieldDescription()}
+  }
+  
+%op Strategy Make_ConsconcFieldDescription(_HeadconcFieldDescription:Strategy, _TailconcFieldDescription:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescriptionlist.Make_ConsconcFieldDescription))) }
+
+  get_slot(_HeadconcFieldDescription, t) { $t._HeadconcFieldDescription }
+  get_slot(_TailconcFieldDescription, t) { $t._TailconcFieldDescription }
+  make( new_HeadconcFieldDescription,  new_TailconcFieldDescription) { new tom.gom.adt.symboltable.strategy.fielddescriptionlist.Make_ConsconcFieldDescription( $new_HeadconcFieldDescription,  $new_TailconcFieldDescription) }
+}
+
+    %op Strategy _ConstructorDescription(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.constructordescription._ConstructorDescription)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.symboltable.strategy.constructordescription._ConstructorDescription($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_ConstructorDescription(s:Strategy) {
+    make(s) { `Sequence(Is_ConstructorDescription(),s) }
+  }
+
+  %op Strategy Is_ConstructorDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.constructordescription.Is_ConstructorDescription()}
+  }
+  
+%op Strategy Make_ConstructorDescription(_SortSymbol:String, _Fields:Strategy, _Generated:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.constructordescription.Make_ConstructorDescription))) }
+
+  get_slot(_SortSymbol, t) { $t._SortSymbol }
+  get_slot(_Fields, t) { $t._Fields }
+  get_slot(_Generated, t) { $t._Generated }
+  make( _SortSymbol,  new_Fields,  new_Generated) { new tom.gom.adt.symboltable.strategy.constructordescription.Make_ConstructorDescription( $_SortSymbol,  $new_Fields,  $new_Generated) }
+}
+
+    %op Strategy _VariadicConstructorDescription(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.constructordescription._VariadicConstructorDescription)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.symboltable.strategy.constructordescription._VariadicConstructorDescription($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_VariadicConstructorDescription(s:Strategy) {
+    make(s) { `Sequence(Is_VariadicConstructorDescription(),s) }
+  }
+
+  %op Strategy Is_VariadicConstructorDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.constructordescription.Is_VariadicConstructorDescription()}
+  }
+  
+%op Strategy Make_VariadicConstructorDescription(_SortSymbol:String, _Domain:String, _IsRefreshPoint:boolean) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.constructordescription.Make_VariadicConstructorDescription))) }
+
+  get_slot(_SortSymbol, t) { $t._SortSymbol }
+  get_slot(_Domain, t) { $t._Domain }
+  get_slot(_IsRefreshPoint, t) { $t._IsRefreshPoint }
+  make( _SortSymbol,  _Domain,  _IsRefreshPoint) { new tom.gom.adt.symboltable.strategy.constructordescription.Make_VariadicConstructorDescription( $_SortSymbol,  $_Domain,  $_IsRefreshPoint) }
+}
+
+    %op Strategy _FieldDescription(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescription._FieldDescription)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.symboltable.strategy.fielddescription._FieldDescription($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_FieldDescription(s:Strategy) {
+    make(s) { `Sequence(Is_FieldDescription(),s) }
+  }
+
+  %op Strategy Is_FieldDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.fielddescription.Is_FieldDescription()}
+  }
+  
+%op Strategy Make_FieldDescription(_FieldName:String, _Sort:String, _StatusValue:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.fielddescription.Make_FieldDescription))) }
+
+  get_slot(_FieldName, t) { $t._FieldName }
+  get_slot(_Sort, t) { $t._Sort }
+  get_slot(_StatusValue, t) { $t._StatusValue }
+  make( _FieldName,  _Sort,  new_StatusValue) { new tom.gom.adt.symboltable.strategy.fielddescription.Make_FieldDescription( $_FieldName,  $_Sort,  $new_StatusValue) }
+}
+
+    %op Strategy _SortDescription(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.sortdescription._SortDescription)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.symboltable.strategy.sortdescription._SortDescription($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_SortDescription(s:Strategy) {
+    make(s) { `Sequence(Is_SortDescription(),s) }
+  }
+
+  %op Strategy Is_SortDescription() {
+    make() { new tom.gom.adt.symboltable.strategy.sortdescription.Is_SortDescription()}
+  }
+  
+%op Strategy Make_SortDescription(_Constructors:Strategy, _ModuleSymbol:String, _FreshInfo:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.symboltable.strategy.sortdescription.Make_SortDescription))) }
+
+  get_slot(_Constructors, t) { $t._Constructors }
+  get_slot(_ModuleSymbol, t) { $t._ModuleSymbol }
+  get_slot(_FreshInfo, t) { $t._FreshInfo }
+  make( new_Constructors,  _ModuleSymbol,  new_FreshInfo) { new tom.gom.adt.symboltable.strategy.sortdescription.Make_SortDescription( $new_Constructors,  $_ModuleSymbol,  $new_FreshInfo) }
+}
+
+            %op Strategy _StringList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_StringList"),Choice(_ConsStringList(sub,MuVar("x_StringList")),_EmptyStringList())) }
+            }
+            
+            %op Strategy _concFieldDescription(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_concFieldDescription"),Choice(_ConsconcFieldDescription(sub,MuVar("x_concFieldDescription")),_EmptyconcFieldDescription())) }
+            }
+            
