@@ -3,12 +3,6 @@
 %include {tinyjava/TinyJava.tom}
 %include {tinyjava/_TinyJava.tom}
 
-%op Strategy Up(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof testgen.Up) )}
-  make(v) {( new testgen.Up($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
-}
-
 %op Strategy Debug(label:String) {
   make(label) {( new testgen.Debug($label) )}
 }

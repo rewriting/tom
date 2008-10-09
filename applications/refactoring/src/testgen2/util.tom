@@ -3,12 +3,6 @@
 %include {tinyjava/TinyJava.tom}
 %include {tinyjava/_TinyJava.tom}
 
-%op Strategy Up(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof testgen2.Up) )}
-  make(v) {( new testgen2.Up($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen2.Up.ARG) )}
-}
-
 %op Strategy MuFixPoint(id:String, s1:Strategy, s2:Strategy) {
   is_fsym(t) {( ($t instanceof testgen2.MuFixPoint) )}
   make(id, var, v) {( new testgen2.MuFixPoint($id, $var, $v) )}
