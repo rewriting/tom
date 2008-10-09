@@ -101,5 +101,38 @@ in let rec oddeven = fun freeze -> pair
 in let odd = fst (oddeven ())
 in let even = snd (oddeven ())
 in (print (odd 9); print (odd 8); print (even 46); print (even 99))
+;;
 
+(* tom generators *)
 
+callcc 
+(fun error ->
+  let pair x y p = p x y in 
+  let fst p = p (fun x -> fun y -> x) in
+  let snd p = p (fun x -> fun y -> y) 
+  in
+  let f k =
+    let k1 = callcc (fun kk -> throw k (pair 1 kk)) in
+    let k2 = callcc (fun kk -> throw k1 (pair 2 kk)) in
+    let k3 =  callcc (fun kk -> throw k2 (pair 3 kk)) in
+      throw error () 
+  in
+  let rec next kk un =
+    let p = callcc(fun k -> throw kk k) in
+    let n = fst p in
+    let kk1 = snd p in
+      pair n (next kk1)
+  in
+  let gen un =
+    let p = callcc (fun kk -> f kk) in
+      pair (fst p) (next (snd p))
+  in
+  
+  let rec main g =
+    let p = g () in
+    let n = fst p in
+    let gg = snd p in
+      (print n; main gg)
+  in
+  main gen
+)

@@ -63,7 +63,9 @@ public class FreshLambda {
       }
       Let(letin(x,a,b)) -> {
         LVar k = LVar.freshLVar("k");
-        return `Abs(lam(k,App(cps(a),Abs(lam(x,App(cps(b),Var(k)))))));
+        //return `Abs(lam(k,App(cps(a),Abs(lam(x,App(cps(b),Var(k)))))));
+        LVar va = LVar.freshLVar("va");
+        return `Abs(lam(k,App(cps(a),Abs(lam(va,Let(letin(x,Var(va),App(cps(b),Var(k)))))))));
       }
       Branch(a,b,c) -> {
         LVar k = LVar.freshLVar("k");
@@ -185,6 +187,7 @@ public class FreshLambda {
         System.out.print("optimization ... ");
         System.out.flush();
         LTerm ocpst = admin(cpst);
+        //System.out.println("\nparsed: " + Printer.prettyp5(ocpst.export()));
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
         System.out.println(" evaluation\n");
