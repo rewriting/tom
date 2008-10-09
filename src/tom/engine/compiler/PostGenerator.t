@@ -54,14 +54,13 @@ public class PostGenerator {
 	
 //------------------------------------------------------------  
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { ../adt/tomsignature/_TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
  
   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
-    //System.out.println("instruction1 = " + instruction);
+    // Warning: BottomUp cannot be replaced by TopDown
+    // otherwise, the code with getPostion is not correct
     instruction = (Instruction)`BottomUp(ChangeVarDeclarations()).visit(instruction);
-    //System.out.println("instruction2 = " + instruction);
     return instruction;
   }
   
@@ -76,22 +75,13 @@ public class PostGenerator {
          * the current LetRef is replaced by an Assign
          */
         Visitable root = (Visitable) getEnvironment().getRoot();
-        //System.out.println("name: " + `name);
-        //if(root != getEnvironment().getSubject()) {
         if(getEnvironment().getPosition().depth()>0) { // we are not at the root
           try {
-            //System.out.println("root = " + root);
-            //System.out.println("pos = " + getEnvironment().getPosition());
-
             getEnvironment().getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
-            //System.out.println("no LetRef above");
           } catch (VisitFailure e) {
-            //System.out.println("become Assign: " + `name);
             return `AbstractBlock(concInstruction(Assign(var,exp),body));
           }
-        } else {
-          //System.out.println("is root");
-        }
+        } 
 
         /*
          * when there is no LetRef before the current LetRef 
@@ -100,9 +90,7 @@ public class PostGenerator {
          */
         try {
           `Not(TopDown(ChoiceId(CheckAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
-            //System.out.println("Assign in body");
         } catch (VisitFailure e) {
-          //System.out.println("become Let: " + `name);
           return `Let(var,exp,body);
         }
       }

@@ -177,13 +177,13 @@ public class ConstraintGenerator {
    * do{ // n is the number of 'or'
    *    boolean flag = false;
    *    if (counter >= 0 && counter <=0 ) { // generated like this because if we use "counter == 0", we have to include "int.tom" 
-   *        if ( code_for_first_constraint_in_disjunction ){
+   *        if ( code_for_first_constraint_in_disjunction ) {
    *            flag = true;
    *        }
-   *    }else if (counter >= 1 && counter <= 1 ) {
+   *    } else if (counter >= 1 && counter <= 1 ) {
    *    ....
    *    else if (counter >= n-1 && counter <= n-1) {
-   *        if ( code_for_n_constraint_in_disjunction ){
+   *        if ( code_for_n_constraint_in_disjunction ) {
    *            flag = true;
    *        }
    *    }    
@@ -203,7 +203,7 @@ public class ConstraintGenerator {
     instruction = `AbstractBlock(concInstruction(instruction,
           If(EqualTerm(Compiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
     // counter++ : expression at the end of the loop 
-    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());
+    Instruction counterIncrement = `Assign(counter,AddOne(counter));
     //  stick the flag declaration and the counterIncrement   
     instruction = `LetRef(flag,FalseTL(),AbstractBlock(concInstruction(instruction,counterIncrement)));      
     instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),
@@ -242,12 +242,12 @@ public class ConstraintGenerator {
    * var1 = null;
    * var2 = null;
    * ....
-   * if (is_fsym(f1)){
+   * if (is_fsym(f1)) {
    *    flag = true;
    *    var1 = subterm1_f1();
    *    var2 = subterm2_f1();
    *    .....    
-   * }else if (is_fsym(f2)) {
+   * } else if (is_fsym(f2)) {
    *    flag = true;
    *    var1 = subterm1_f2();
    *    var2 = subterm2_f2();
@@ -297,10 +297,10 @@ public class ConstraintGenerator {
    * generates:
    * 
    * bool matchSuccessful = false;
-   * if (expression){
+   * if (expression) {
    *    matchSuccessful = true;
    * }
-   * if (matchSuccessful == false){
+   * if (matchSuccessful == false) {
    *    action;
    * }
    */
