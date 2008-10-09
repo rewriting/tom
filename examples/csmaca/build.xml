@@ -2,12 +2,5 @@
 <project name="Build the csmaca example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="csmaca"/>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/*.t"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>

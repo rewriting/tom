@@ -345,6 +345,8 @@
         <exclude name="multigraph/build.xml"/>
         <exclude name="set/build.xml"/>
         <exclude name="gasel/build.xml"/>
+        <exclude name="build/**/*"/>
+        <exclude name="gen/**/*"/>
       </zipfileset>
     </zip>
     <subant target="dist">

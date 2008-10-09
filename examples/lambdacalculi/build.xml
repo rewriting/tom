@@ -18,7 +18,5 @@
     <tomcompile example="${example}"/>
     <javacompile example="${example}"/>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <!-- not in the distribution -->
-  </target>
+  <property name="distribute" value="no"/>
 </project>

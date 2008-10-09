@@ -198,6 +198,7 @@
         <include name="${example}/**/Makefile"/>
         <include name="${example}/**/*.html"/>
         <include name="${example}/**/*.gif"/>
+        <include name="${example}/README"/>
       </zipfileset>
     </zip>
   </target>

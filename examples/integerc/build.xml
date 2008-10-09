@@ -37,13 +37,5 @@
       <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>
     </exec>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/*.t"/>
-        <include name="${example}/Makefile"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>
