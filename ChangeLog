@@ -1,3 +1,8 @@
+2008-10-08 balland
+  * add an new gom option : --fresh to handle terms with binders
+  * add a new traversal combinator Up
+	* bootstrap
+
 2008-10-08 pem
   * removed Ref constructor: dereference performed in the Caml backend
   * simplified PostGenerator
