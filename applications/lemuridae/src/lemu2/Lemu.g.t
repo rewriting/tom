@@ -38,23 +38,23 @@ funappl returns [RawTerm res]
 ;
 
 prop returns [RawProp res]
-: p=orprop { $res = p; } (IMPL p=prop { $res = `Rawimplies($res,p); })*;
+: p=orprop { $res = p; } (IMPL p=orprop { $res = `Rawimplies($res,p); })*;
 
 orprop returns [RawProp res]
-: p=andprop { $res = p; } (OR p=prop { $res = `Rawor($res,p); })*;
+: p=andprop { $res = p; } (OR p=andprop { $res = `Rawor($res,p); })*;
 
 andprop returns [RawProp res]
-: p=forallprop { $res = p; } (AND p=prop { $res = `Rawand($res,p); })*;
+: p=forallprop { $res = p; } (AND p=forallprop { $res = `Rawand($res,p); })*;
 
 forallprop returns [RawProp res]
-: FORALL ID COMMA p=prop { $res = `Rawforall(RawFa($ID.text,p)); }
-| EXISTS ID COMMA p=prop { $res = `Rawexists(RawEx($ID.text,p)); }
-| LPAR p=prop RPAR { $res = p; }
+: FORALL ID COMMA p=atom { $res = `Rawforall(RawFa($ID.text,p)); }
+| EXISTS ID COMMA p=atom { $res = `Rawexists(RawEx($ID.text,p)); }
 | p=atom { $res = p; }
 ;
 
 atom returns [RawProp res]
-: p=appl { $res = p; } 
+: LPAR p=prop RPAR { $res = p; }
+| p=appl { $res = p; } 
 | BOTTOM { $res = `Rawbottom(); }
 | TOP { $res = `Rawtop(); } 
 ;
@@ -96,6 +96,8 @@ proofterm returns [RawProofTerm res]
 | FORALLL '(' '<' x=ID ':' px=prop '>' m=proofterm ',' t=term ',' y=ID ')'
   { $res = `RawforallL(RawForallLPrem1($x.text,px,m),t,$y.text); }
 ;
+
+toplevel : proofterm EOF;
 
 
 COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;
