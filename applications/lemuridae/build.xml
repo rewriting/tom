@@ -33,7 +33,9 @@
       package="lemu">
       <include name="**/*.gom"/>
     </gom.preset>
-    <gom.preset srcdir="${lemu.src}/lemu2"
+    <gom.preset 
+      fresh="true"
+      srcdir="${lemu.src}/lemu2"
       destdir="${lemu.gen}"
       package="lemu2">
       <include name="**/*.gom"/>
@@ -43,7 +45,6 @@
       destdir="${lemu.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
-      <exclude name="**/LJ2NJ.t"/>
     </tom.preset>
     <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
       options="-I ${lemu.gen}/lemu" 
