@@ -2,7 +2,7 @@ import java.util.Hashtable;
 import java.util.HashSet;
 import systemf.types.*;
 
-public class TestSystemF {
+public class SystemF {
 
   %include { systemf/SystemF.tom }
 

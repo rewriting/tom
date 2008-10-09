@@ -3,24 +3,6 @@
   <import file="../common.xml"/>
   <property name="example" value="cps"/>
   <target name="build" depends="init">
-    <copy todir="${examples.build}/${example}">
-      <fileset dir="${examples.dir}/${example}">
-      </fileset>
-    </copy>
-    <gomfreshcompile example="${example}"/>
-    <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
-      options="-I ${examples.gen}/${example}"
-      srcdir="${examples.dir}"> 
-      <include name="${example}/**/Lambda.g.t"/>
-    </tom.preset>
-    <mkdir dir="${examples.gen}/${example}"/>
-    <tomantlr target="${examples.gen}/${example}/Lambda.g"
-      outputdirectory="${examples.gen}/${example}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 

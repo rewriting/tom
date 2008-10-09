@@ -1,14 +1,14 @@
-all: TestSystemF.class FreshLambda.class
-	java TestSystemF
+all: SystemF.class FreshLambda.class
+	java SystemF
 	java FreshLambda < test.ml
 
-TestSystemF.java: TestSystemF.t
-	tom TestSystemF.t
+SystemF.java: SystemF.t
+	tom SystemF.t
 
-TestSystemF.class: TestSystemF.java
-	javac TestSystemF.java
+SystemF.class: SystemF.java
+	javac SystemF.java
 
-TestSystemF.t: systemf/SystemF.tom
+SystemF.t: systemf/SystemF.tom
 
 systemf/SystemF.tom: systemf.gom
 	gom --fresh systemf.gom
