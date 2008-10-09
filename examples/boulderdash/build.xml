@@ -37,16 +37,5 @@
       <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/*"/>
     </jar>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/*.t"/>
-        <include name="${example}/*.gom"/>
-        <include name="${example}/*.gif"/>
-        <include name="${example}/*.html"/>
-        <include name="${example}/*.java"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>

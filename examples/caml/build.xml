@@ -36,17 +36,5 @@
       <env key="CAMLC" value="${camlc.bin}"/>
     </exec>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/Makefile"/>
-        <include name="${example}/*.t"/>
-        <include name="${example}/mapping.tom"/>
-        <include name="${example}/peanotype.ml"/>
-        <include name="${example}/tomExtension.ml"/>
-        <include name="${example}/tomList.ml"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>

@@ -191,9 +191,13 @@
         <include name="${example}/**/*.tom"/>
         <include name="${example}/**/*.gom"/>
         <include name="${example}/**/*.java"/>
+        <include name="${example}/**/*.g"/>
+        <include name="${example}/**/*.ml"/>
         <include name="${example}/**/*.xml"/>
         <include name="${example}/**/*.txt"/>
+        <include name="${example}/**/Makefile"/>
         <include name="${example}/**/*.html"/>
+        <include name="${example}/**/*.gif"/>
       </zipfileset>
     </zip>
   </target>
