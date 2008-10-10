@@ -187,7 +187,7 @@ public class TomOptimizer extends TomGenericPlugin {
        * 
        * Let x<-exp in body where x is used 0 times ==> eliminate
        * Let x<-exp in body where x is used 1 times ==> inline
-       *  IF exp does no depend from values which are modified between Let x<-exp and the use of x in the body
+       * If exp does no depend from values which are modified between Let x<-exp and the use of x in the body
        */
       Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         return `body; 
@@ -389,13 +389,13 @@ public class TomOptimizer extends TomGenericPlugin {
 
 
   /* strategies for Let inlining (using cps) */
-  // comp = special1(special2(comp,base(all(comp),fail())),fail())
+  // comp = AssignCase(TypedActionCase(comp,BaseCase(all(comp),fail())),fail())
   %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) { 
     make(variableName, info) { (
         `Try(
           mu(MuVar("comp"),
-            computeOccurencesLetSpecialCase1( computeOccurencesLetSpecialCase2( MuVar("comp"),
-                computeOccurencesLetBaseCase( All(MuVar("comp")),
+            computeOccurenceLet_AssignCase( computeOccurenceLet_TypedActionCase( MuVar("comp"),
+                computeOccurenceLet_BaseCase( All(MuVar("comp")),
                   variableName,
                   info
                   ),
@@ -408,7 +408,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariable) extends defaultCase {
+  %strategy computeOccurenceLet_AssignCase(defaultCase:Strategy,info:InfoVariable) extends defaultCase {
     visit Instruction {
       Assign[Variable=Variable[AstName=varname]] -> {
         if(info.assignmentVariables.contains(`varname)) {
@@ -419,7 +419,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   } 
 
-  %strategy computeOccurencesLetSpecialCase2(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariable) extends cutCase {
+  %strategy computeOccurenceLet_TypedActionCase(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariable) extends cutCase {
     visit Instruction {
       TypedAction[] -> {
         /* recursive call of the current strategy on the first child */
@@ -448,7 +448,7 @@ public class TomOptimizer extends TomGenericPlugin {
    * when variableName is encountered, its position is stored
    * if it appears more than once, the computation is stopped because there is no possible inlining
    */
-  %strategy computeOccurencesLetBaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariable) extends defaultCase {
+  %strategy computeOccurenceLet_BaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariable) extends defaultCase {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
@@ -461,13 +461,13 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   /* strategies for LetRef inlining (using cps) */
-  // comp = special( comp, basecase(comp,fail()) )
+  // comp = special( comp, Basecase(comp,fail()) )
   %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariable) { 
     make(variableName, info) { (
         `Try(
           mu(MuVar("comp"),
-            computeOccurencesLetRefSpecialCase( MuVar("comp"),
-              computeOccurencesLetRefBaseCase( All(MuVar("comp")), 
+            computeOccurencesLetRef_CutCase( MuVar("comp"),
+              computeOccurencesLetRef_BaseCase( All(MuVar("comp")), 
                 variableName,
                 info
                 ),
@@ -489,8 +489,8 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  //case where failure is used to cut branches
-  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
+  //cases where failure is used to cut branches
+  %strategy computeOccurencesLetRef_CutCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
     visit Instruction {
       TypedAction[] -> {
         /* recursive call of the current strategy on the first child */
@@ -530,7 +530,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
+  %strategy computeOccurencesLetRef_BaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
