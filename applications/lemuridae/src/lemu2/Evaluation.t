@@ -533,7 +533,7 @@ public class Evaluation {
 
   %strategy SubstFoVar(FoVar x, Term u) extends Identity() {
     visit Term {
-      Var(y) && y << FoVar x -> { return `u; }
+     var(y) && y << FoVar x -> { return `u; }
     }
   }
 
@@ -706,105 +706,6 @@ public class Evaluation {
       res.addAll(tmpres);
     } while(res.size()>0);
     return nf;
-  }
-
-  private static String prettyNormalForms(Collection<ProofTerm> c) {
-    String res = "";
-    for (ProofTerm pt: c) {
-      res += Pretty.pretty(pt.export());
-      res += "\n\n";
-    }
-    return res;
-  }
-
-  /* \x.x : A -> A */
-  static RawProp A = `RawrelApp("A",RawtermList());
-  static RawProofTerm pt1 = 
-    `RawrootR(
-        RawRootRPrem1("a",Rawimplies(A,A),RawimplyR(
-            RawImplyRPrem1("x",A,"a",A,Rawax("x","a")),
-            "a")));
-
-  static RawProofTerm pt2 = 
-    `RawrootR(
-        RawRootRPrem1("b",Rawimplies(A,A),RawimplyR(
-            RawImplyRPrem1("x",A,"a",A,Rawax("x","a")),
-            "b")));
-
-  static RawProofTerm pt3 = 
-    `RawrootR(
-        RawRootRPrem1("a",Rawimplies(A,A),Rawcut(
-            RawCutPrem1("a",Rawimplies(A,A),RawimplyR(
-                RawImplyRPrem1("x",A,"b",A,Rawax("x","b")),"a")),
-            RawCutPrem2("y",Rawimplies(A,A),Rawax("y","a"))))); 
-
-  static RawProofTerm pt4 = 
-    `RawrootR(
-        RawRootRPrem1("a",Rawimplies(A,A),Rawcut(
-            RawCutPrem1("a",Rawimplies(A,A),RawimplyR(
-                RawImplyRPrem1("x",A,"b",Rawimplies(A,A),Rawax("x","b")),"a")),
-            RawCutPrem2("y",Rawimplies(A,A),Rawax("y","a"))))); 
-
-
-  static RawTerm ca = `RawfunApp("a",RawtermList());
-  static RawTerm cb = `RawfunApp("b",RawtermList());
-  static RawTerm ff(RawTerm x) { return `RawfunApp("f",RawtermList(x)); }
-  static RawProp Pa = `RawrelApp("P",RawtermList(ca));
-  static RawProp ExPx = `Rawexists(RawEx("fx",RawrelApp("P",RawtermList(RawVar("fx")))));
-
-  static RawProofTerm pt5 = 
-    `RawrootR(
-        RawRootRPrem1("a",Rawimplies(Pa,ExPx),RawimplyR(
-            RawImplyRPrem1("x",Pa,"b",ExPx,RawexistsR(
-                RawExistsRPrem1("c",Pa,Rawax("x","c")),ca,"b")),"a")));
-
-  static RawProofTerm pt6 = 
-    `RawrootR(
-        RawRootRPrem1("a",Rawimplies(Pa,ExPx),RawimplyR(
-            RawImplyRPrem1("x",Pa,"b",ExPx,RawexistsR(
-                RawExistsRPrem1("c",Pa,Rawax("x","c")),cb,"b")),"a")));
-
-  /*
-     static RawProofTerm pt4 = 
-     `RawrootR(
-     RawRootRPrem1("a",
-   */
-
-  public static void main(String[] args) {
-    System.out.println(Pretty.pretty(pt1));
-    ProofTerm cpt1 = pt1.convert();
-    ProofTerm cpt2 = pt2.convert();
-    System.out.println(Pretty.pretty(cpt1.export()));
-    System.out.println(Pretty.pretty(cpt2.export()));
-    Pretty.setChurchStyle(false);
-    System.out.println(Pretty.pretty(cpt1.export()));
-    System.out.println(Pretty.pretty(cpt2.export()));
-    System.out.println("pt1 = pt2 : " + cpt1.equals(cpt2));
-    System.out.println(getFreeNames(cpt1));
-    System.out.println(getFreeCoNames(cpt1));
-    System.out.println(getFreeNames(`ax(Name.freshName("x"),CoName.freshCoName("a"))));
-    System.out.println(getFreeCoNames(`ax(Name.freshName("x"),CoName.freshCoName("a"))));
-    Name x = Name.freshName("x");
-    Name r = Name.freshName("r");
-    System.out.println(rename(`ax(x,CoName.freshCoName("a")),x,r));
-
-    ProofTerm cpt3 = pt3.convert();
-    System.out.println("pt3 = " + Pretty.pretty(cpt3.export()));
-    System.out.println("pt3 normal forms : ");
-    System.out.println(prettyNormalForms(reduce(cpt3)));
-    System.out.println("pt1 typechecks : " + TypeChecker.typecheck(cpt1));
-    System.out.println("pt2 typechecks : " + TypeChecker.typecheck(cpt2));
-    System.out.println("pt3 typechecks : " + TypeChecker.typecheck(cpt3));
-    Pretty.setChurchStyle(true);
-    ProofTerm cpt4 = pt4.convert();
-    System.out.println("pt4 = " + Pretty.pretty(cpt4.export()));
-    System.out.println("pt4 does not typecheck : " + !TypeChecker.typecheck(cpt4));
-    ProofTerm cpt5 = pt5.convert();
-    System.out.println("pt5 = " + Pretty.pretty(cpt5.export()));
-    System.out.println("pt5 typechecks : " + TypeChecker.typecheck(cpt5));
-    ProofTerm cpt6 = pt6.convert();
-    System.out.println("pt6 = " + Pretty.pretty(cpt6.export()));
-    System.out.println("pt6 does not typecheck : " + !TypeChecker.typecheck(cpt4));
   }
 }
 

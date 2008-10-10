@@ -9,7 +9,7 @@ atom FoVar
 
 /* first-order terms */
 
-Term = Var(v:FoVar)
+Term = var(v:FoVar)
      | funApp(fun:String, p:TermList)
 
 TermList = termList(Term*)
@@ -27,6 +27,18 @@ Prop = relApp(r:String, t:TermList)
 
 Fa binds FoVar = Fa(x:FoVar,inner p:Prop)
 Ex binds FoVar = Ex(x:FoVar,inner p:Prop)
+
+/* rewrite rules */
+
+Pattern binds FoVar = pvar(v:FoVar)
+                    | pfunApp(neutral fun:String, p:PatternList)
+
+PatternList binds FoVar = patternList(Pattern*)
+
+TermRewriteRule = termrrule(cl:<TRule>)
+TRule binds FoVar = trule(lhs:Pattern, inner rhs:Term)
+
+TermRewriteRules = termrrules(TermRewriteRule*)
 
 /* proof terms */
 

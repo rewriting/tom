@@ -38,7 +38,7 @@ public class TypeChecker {
 
   private static fovarList freeFoVars(Term t, fovarList ctx) {
     %match(t) {
-      Var(v) -> { if (!ctx.contains(`v)) return `fovarList(v); }
+      var(v) -> { if (!ctx.contains(`v)) return `fovarList(v); }
       funApp(_,tl) -> { return `freeFoVars(tl,ctx); }
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -61,7 +61,7 @@ public class TypeChecker {
 
   %strategy SubstFoVar(FoVar x, Term u) extends Identity() {
     visit Term {
-      Var(y) && y << FoVar x -> { return `u; }
+      var(y) && y << FoVar x -> { return `u; }
     }
   }
 
@@ -121,7 +121,7 @@ public class TypeChecker {
           }
           existsL(ExistsLPrem1(x,px,fx,M),n) -> {
             return `lookup(gamma,n).equals(`exists(Ex(fx,px)))
-                && `typecheck(M,seq(lctx(nprop(x,px),gamma*),delta)); 
+              && `typecheck(M,seq(lctx(nprop(x,px),gamma*),delta)); 
           }
           rootL(RootLPrem1(x,px,M)) -> {
             return `typecheck(M,seq(lctx(nprop(x,px),gamma*),delta)); 

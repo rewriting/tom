@@ -5,6 +5,8 @@ public class Pretty {
 
   %include { proofterms/proofterms.tom } 
 
+  /* propositions */
+
   public static String pretty(RawProp p) {
     %match(p) {
       Rawimplies(p1@RawrelApp[],p2) -> { return %[@`pretty(p1)@ => @`pretty(p2)@]% ; }
@@ -30,6 +32,8 @@ public class Pretty {
     throw new RuntimeException("non exhaustive patterns"); 
   }
 
+  /* first-order terms */
+
   public static String pretty(RawTermList tl) {
     %match(tl) {
       RawtermList() -> { return ""; }
@@ -40,7 +44,7 @@ public class Pretty {
   }
   public static String pretty(RawTerm t) {
     %match(t) {
-      RawVar(x) -> { return `x;}
+      Rawvar(x) -> { return `x;}
       // arithmetic pretty print
       RawfunApp("z",()) -> { return "0"; }
       i@RawfunApp("succ",_) -> {

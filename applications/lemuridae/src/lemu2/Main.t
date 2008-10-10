@@ -28,6 +28,8 @@ public class Main {
       LemuLexer lexer = new LemuLexer(new ANTLRInputStream(System.in));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LemuParser parser = new LemuParser(tokens);
+      TermRewriteRules rrules = parser.termmodulo().convert();
+      System.err.println(rrules);
       ProofTerm pt = parser.proofterm().convert();
       System.err.println(Pretty.pretty(pt.export()));
       System.out.println("typechecks : " + TypeChecker.typecheck(pt));
