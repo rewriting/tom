@@ -5,6 +5,7 @@ Instruction =
   | TomTermToInstruction(Tom:TomTerm)
   | ExpressionToInstruction(Expr:Expression)
   | TargetLanguageToInstruction(Tl:TargetLanguage)
+
   | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
   | DoWhile(DoInst:Instruction,Condition:Expression)
   | WhileDo(Condition:Expression,DoInst:Instruction)
@@ -12,7 +13,6 @@ Instruction =
   /**
    * <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way
    * <code>LetRef</code> as above, but not functional
-   * <code>Assign</code> instanciates a variable
    *
    * @param Variable a variable
    * @param Source the value to give to the variable
@@ -20,17 +20,20 @@ Instruction =
    */
   | Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-   /**
-    * <code>Assign</code> instanciates a variable
+  /**
+   * <code>Assign</code> instanciates a variable
+   *
    * @param Variable a variable
    * @param Source the value to give to the variable
-    */
+   */
   | Assign(Variable:TomTerm,Source:Expression)
   /**/
   | Return(Kid1:TomTerm)
   | Nop()
   /*
-   * AbstrackBlock: conversion from InstructionList to Instruction
+   * <code>AbstrackBlock</code> conversion from InstructionList to Instruction
+   * <code>UnamedBlock</code> a classical block: a list of instructions
+   * <code>NamedBlock</code> a block with a label (for break statement)
    */
   | AbstractBlock(InstList:InstructionList)
   | UnamedBlock(InstList:InstructionList)
@@ -55,8 +58,6 @@ Instruction =
    */
 
   | TypedAction(AstInstruction:Instruction,PositivePattern:Constraint,NegativePatternList:ConstraintList)
-  | AndInstruction(Instruction*)
-  | OrInstruction(Instruction*)
   
 /**
  * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)
@@ -67,9 +68,6 @@ Instruction =
 ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Option:OptionList)  
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
-AndInstruction:AU() { }
-OrInstruction:AU() { }  
-
 InstructionList = concInstruction(Instruction*)
 concInstruction:make_insert(e,l) {
   %match(e) {
