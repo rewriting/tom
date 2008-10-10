@@ -201,7 +201,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
         // count the occurend of name
         // and inspect the body to 
-        InfoVariable info = new InfoVariable(`exp);
+        InfoVariable info = new InfoVariable(`exp,getPosition());
         getEnvironment().down(3);
         `computeOccurencesLet(name,info).visit(getEnvironment());
         getEnvironment().up();
@@ -268,7 +268,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
-        InfoVariableRef info = new InfoVariableRef(`exp,getEnvironment().getPosition());
+        InfoVariable info = new InfoVariable(`exp,getEnvironment().getPosition());
         getEnvironment().down(3);
         //computeOccurencesLetRef on the body
         `computeOccurencesLetRef(name,info).visit(getEnvironment());
@@ -284,7 +284,7 @@ public class TomOptimizer extends TomGenericPlugin {
           // why this test?
           if(varName.length() > 0) {
             // TODO: check variable occurence in TypedAction
-            info = new InfoVariableRef();
+            info = new InfoVariable();
             `computeOccurencesLetRef(name,info).visit(`context);
             if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
@@ -357,47 +357,39 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public Expression assignment;
     public Position assignmentPosition;
-    public Position usePosition;
+    public Position usePosition; //only used for letref inlining
     public HashSet<TomName> assignmentVariables= new HashSet();
     public int readCount=0;
     public boolean modifiedAssignmentVariables=false;
 
     public InfoVariable() {}
 
-    public InfoVariable(Expression assignment) {
-      setAssignment(assignment); 
-    } 
-
     public InfoVariable(Expression assignment, Position assignmentPosition) {
       setAssignment(assignment,assignmentPosition);
     } 
 
-
-    public void setAssignment(Expression newAssignment) {
+    public void setAssignment(Expression newAssignment,Position newAssignmentPosition) {
+      assignment = newAssignment;
+      assignmentPosition = newAssignmentPosition;
       assignmentVariables.clear();
       try {
-        `TopDown(CollectVariable(assignmentVariables)).visitLight(newAssignment);
+        `TopDownCollect(CollectVariable(assignmentVariables)).visitLight(newAssignment);
       } catch(VisitFailure e) {
         logger.log( Level.SEVERE, "Error during collecting variables in "+newAssignment);
       }
     }
 
-    public void setAssignment(Expression assignment,Position assignmentPosition) {
-      assignment=Assignment;
-      assignmentPosition=newassignmentpos;
+    public void clear() {
+      assignment = null;
+      assignmentPosition = null;
       assignmentVariables.clear();
-      try {
-        `TopDown(CollectVariable(assignmentVariables)).visitLight(newAssignment);
-      } catch(VisitFailure e) {
-        logger.log( Level.SEVERE, "Error during collecting variables in "+newAssignment);
-      }
     }
- 
+
   }
 
 
-  /* strategies for Let inlining */
-  // comp = special1(special2(all(comp),base(all(comp),fail())),fail())
+  /* strategies for Let inlining (using cps) */
+  // comp = special1(special2(comp,base(all(comp),fail())),fail())
   %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) { 
     make(variableName, info) { (
         `Try(
@@ -468,11 +460,11 @@ public class TomOptimizer extends TomGenericPlugin {
     } 
   }
 
-  /* strategies for LetRef inlining */
+  /* strategies for LetRef inlining (using cps) */
   // comp = special( comp, basecase(comp,fail()) )
-  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariableRef) { 
+  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariable) { 
     make(variableName, info) { (
-      `Try(
+        `Try(
           mu(MuVar("comp"),
             computeOccurencesLetRefSpecialCase( MuVar("comp"),
               computeOccurencesLetRefBaseCase( All(MuVar("comp")), 
@@ -483,7 +475,7 @@ public class TomOptimizer extends TomGenericPlugin {
               info
               )
             ))
-      ) }
+        ) }
   }
 
 
@@ -498,16 +490,16 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   //case where failure is used to cut branches
-  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariableRef) extends defaultCase {
+  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
     visit Instruction {
       TypedAction[] -> {
         /* recursive call of the current strategy on the first child */
         Environment current = getEnvironment();
         current.down(1);
         try {
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
         } catch (VisitFailure e) {
           current.upLocal();
           throw new VisitFailure();
@@ -519,10 +511,8 @@ public class TomOptimizer extends TomGenericPlugin {
           info.setAssignment(`src,getEnvironment().getPosition());
         } else {
           if(info.assignmentVariables.contains(`name)) {
-            info.assignment = null;
-            info.assignmentPosition = null;
-            info.assignmentVariables.clear();
-          }
+            info.clear();
+         }
         }
         /* recursive call of the current strategy on src */
         Environment current = getEnvironment();
@@ -540,12 +530,12 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariableRef) extends defaultCase {
+  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
           info.readCount++;
-          info.usePosition=getEnvironment().getPosition(); 
+          info.usePosition = getEnvironment().getPosition(); 
           if(info.readCount==2) { 
             throw new VisitFailure(); 
           }
