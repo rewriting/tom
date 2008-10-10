@@ -22,7 +22,7 @@ public class TestArray extends TestCase {
   %typeterm L {
     implement { ArrayList }
     is_sort(t) { $t instanceof ArrayList }
-    equals(l1,l2)    { $l1.equals($l2) }
+    equals(l1,l2)    { ($l1).equals($l2) }
   }
 
   %oparray L conc( E* ) {
@@ -41,7 +41,7 @@ public class TestArray extends TestCase {
   %typeterm E {
     implement           { ATerm }
     is_sort(t) { $t instanceof ATerm }
-    equals(t1, t2)      { ($t1.equals($t2)) }
+    equals(t1, t2)      { ($t1).equals($t2) }
   }
 
   %op E a() {

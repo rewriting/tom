@@ -246,11 +246,13 @@ public class Compiler extends TomGenericPlugin {
         // if a label is assigned to a pattern (label:pattern ->
         // action) we generate corresponding labeled-block				 
         %match(optionList) {
-          concOption(_*,Label(Name(name)),_*) -> {            
-            return `concInstruction(CompiledPattern(constraint,NamedBlock(name,concInstruction(instruction))), newList*);
+          concOption(_*,Label(Name(name)),_*) -> {
+            // UnamedBlock(concInstruction(...)) to put patterns/actions in a fresh environment
+            return `concInstruction(UnamedBlock(concInstruction(CompiledPattern(constraint,NamedBlock(name,concInstruction(instruction))))), newList*);
           }
         }
-        return `concInstruction(CompiledPattern(constraint,instruction), newList*);
+        // UnamedBlock(concInstruction(...)) to put patterns/actions in a fresh environment
+        return `concInstruction(UnamedBlock(concInstruction(CompiledPattern(constraint,instruction))), newList*);
       }
     }
     return null;

@@ -75,7 +75,7 @@ public class ConstraintGenerator {
     }
     
     // iterate until all generators are applied and nothing was changed 
-    mainLoop: while(true){		
+    mainLoop: while(true) {
       for(int i=0 ; i < genNb ; i++){        
         result = gen[i].generate(expression);
         // if nothing was done, start counting 
