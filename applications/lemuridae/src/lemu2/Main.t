@@ -12,12 +12,12 @@ public class Main {
   %include { proofterms/proofterms.tom } 
   %include { sl.tom } 
 
-  private static String prettyNormalForms(Collection<ProofTerm> c) {
+  private static String prettyNormalForms(Collection<ProofTerm> c,TermRewriteRules tr) {
     String res = "";
     for (ProofTerm pt: c) {
       res += "- " + Pretty.pretty(pt.export());
       res += "\n";
-      res += "  typechecks : " + TypeChecker.typecheck(pt);
+      res += "  typechecks : " + TypeChecker.typecheck(pt,tr);
       res += "\n";
     }
     return res;
@@ -29,12 +29,12 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LemuParser parser = new LemuParser(tokens);
       TermRewriteRules rrules = parser.termmodulo().convert();
-      System.err.println(Pretty.pretty(rrules.export()));
+      System.out.println(Pretty.pretty(rrules.export()));
       ProofTerm pt = parser.proofterm().convert();
-      System.err.println(Pretty.pretty(pt.export()));
-      System.out.println("typechecks : " + TypeChecker.typecheck(pt));
+      System.out.println(Pretty.pretty(pt.export()));
+      System.out.println("typechecks : " + TypeChecker.typecheck(pt,rrules));
       System.out.println("normal forms : ");
-      System.out.println(prettyNormalForms(Evaluation.reduce(pt)));
+      System.out.println(prettyNormalForms(Evaluation.reduce(pt),rrules));
     } catch(Exception e) {
       e.printStackTrace();
     }

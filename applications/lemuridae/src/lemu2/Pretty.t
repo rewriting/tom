@@ -47,7 +47,7 @@ public class Pretty {
       Rawvar(x) -> { return `x;}
       // arithmetic pretty print
       RawfunApp("z",()) -> { return "0"; }
-      i@RawfunApp("succ",_) -> {
+      i@RawfunApp("s",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (ConversionError e) { }
       }
@@ -73,7 +73,7 @@ public class Pretty {
   private static int peanoToInt(RawTerm t) throws ConversionError {
     %match(t) {
       RawfunApp("z",()) -> { return 0; }
-      RawfunApp("succ",(n)) -> { return 1+`peanoToInt(n); }
+      RawfunApp("s",(n)) -> { return 1+`peanoToInt(n); }
     }
     throw new ConversionError();
   }

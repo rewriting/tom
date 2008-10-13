@@ -94,5 +94,8 @@ LCtx = lctx(NProp*)
 RCtx = rctx(CNProp*)
 Sequent = seq(l:LCtx,r:RCtx)
 
+/* data structures used by Rewriting.t */
 
+FoMap = fomap(v:FoVar,t:Term)
+FoSubst = fosubst(FoMap*)
 

@@ -4,10 +4,10 @@ term modulo {
 }
 
 rootR(
-  <a:P(a())=>exists x,P(x)> cut(
+  <a:P(s(s(z())))=>exists x,P(x)> cut(
     <b:exists x,P(x)> implyR(
-      <x:P(a())><c:exists x,P(x)> existsR(<d:P(a())> ax(x,d),a(),b),a),
-    <z:exists x,P(x)> implyR(<v:P(a())><e:exists x,P(x)> ax(z,e),a)))
+      <x:P(plus(s(z()),s(z())))><c:exists x,P(x)> existsR(<d:P(s(s(z())))> ax(x,d),plus(s(s(z())),z()),b),a),
+    <z:exists x,P(x)> implyR(<v:P(plus(z(),s(s(z()))))><e:exists x,P(x)> ax(z,e),a)))
 
 (* rootR(<a:A=>A> cut(<c:A> implyR(<x:A><b:A> ax(x,c),a), <y:A> implyR(<x:A><b:A> ax(x,b),a))) *)
 
