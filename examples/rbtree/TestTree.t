@@ -68,4 +68,33 @@ public class TestTree extends TestCase {
     assertTrue(test.member(t,`e1()));
     assertTrue(test.member(t,`e2()));
   }
+
+  public void testInsertMore() {
+    int n = 20;
+    Tree t = `emptyTree();
+    Element[] array = makeArray(n);
+    for (int i = 0; i<array.length; i++) {
+      t = test.insert(t, array[i]);
+    }
+    assertEquals(3*n,test.card(t));
+  }
+
+  private Element[] makeArray(int n) {
+    Element e1 = `e1();
+    Element e2 = `e2();
+    Element e3 = `e3();
+    Element array[] = new Element[3*n];
+    array[0] = e1;
+    array[1] = e2;
+    array[2] = e3;
+    for(int i=1 ; i<n ; i++) {
+      Element old_e1 = array[3*i+0-3];
+      Element old_e2 = array[3*i+1-3];
+      Element old_e3 = array[3*i+2-3];
+      array[3*i+0] = `f(old_e1);
+      array[3*i+1] = `f(old_e2);
+      array[3*i+2] = `f(old_e3);
+    }
+    return array;
+  }
 }
