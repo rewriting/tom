@@ -2,23 +2,5 @@
 <project name="Build the xml example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="xml"/>
-  <target name="build" depends="common.build">
-    <copy todir="${examples.build}/${example}">
-      <fileset dir="${examples.dir}/${example}">
-        <include name="**/*.xml"/>
-        <include name="*.html"/>
-      </fileset>
-    </copy>
-  </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${example}/dommapping/*.t"/>
-        <include name="${example}/dommapping/*.xml"/>
-        <include name="${example}/*.t"/>
-        <include name="${example}/*.xml"/>
-      </zipfileset>
-    </zip>
-  </target>
+  <property name="distribute" value="yes"/>
 </project>

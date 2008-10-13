@@ -347,6 +347,7 @@
         <exclude name="gasel/build.xml"/>
         <exclude name="build/**/*"/>
         <exclude name="gen/**/*"/>
+        <exclude name="dist/**/*"/>
       </zipfileset>
     </zip>
     <subant target="dist">
