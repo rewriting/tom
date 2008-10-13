@@ -69,14 +69,26 @@ public class TestTree extends TestCase {
     assertTrue(test.member(t,`e2()));
   }
 
-  public void testInsertMore() {
-    int n = 20;
+  public void testInsert20() {
+    assertEquals(7,depth(buildTree(20)));
+  }
+
+  public void testInsert100() {
+    assertEquals(11,depth(buildTree(100)));
+  }
+
+  public void testInsert1000() {
+    assertEquals(15,depth(buildTree(1000)));
+  }
+
+  public Tree buildTree(int nodes) {
     Tree t = `emptyTree();
-    Element[] array = makeArray(n);
+    Element[] array = makeArray(nodes);
     for (int i = 0; i<array.length; i++) {
       t = test.insert(t, array[i]);
     }
-    assertEquals(3*n,test.card(t));
+    assertEquals(3*nodes,test.card(t));
+    return t;
   }
 
   private Element[] makeArray(int n) {
@@ -96,5 +108,21 @@ public class TestTree extends TestCase {
       array[3*i+2] = `f(old_e3);
     }
     return array;
+  }
+
+  private int depth(Tree t) {
+    %match(t) {
+      emptyTree() -> { return 0; }
+      node[lhs=l,rhs=r] -> {
+        int ldepth = depth(`l);
+        int rdepth = depth(`r);
+        if (ldepth>rdepth) {
+          return ldepth+1;
+        } else {
+          return rdepth+1;
+        }
+      }
+    }
+    return 0;
   }
 }
