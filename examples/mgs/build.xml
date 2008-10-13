@@ -12,14 +12,5 @@
     </tom.preset>
     <javacompile example="${example}"/>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${msg}/*.t"/>
-        <include name="${msg}/*.g"/>
-      </zipfileset>
-    </zip>
-  </target>
-
+  <property name="distribute" value="yes"/>
 </project>

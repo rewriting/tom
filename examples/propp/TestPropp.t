@@ -64,5 +64,4 @@ public class TestPropp extends TestCase {
 								 -1,
 								 test.comparePair(`pair(4,"something"),`pair(8,"anything")));
 	}
-
 }
