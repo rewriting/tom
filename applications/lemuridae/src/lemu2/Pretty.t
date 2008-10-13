@@ -51,10 +51,10 @@ public class Pretty {
         try { return Integer.toString(peanoToInt(`i));}
         catch (ConversionError e) { }
       }
-      RawfunApp("plus",(t1,t2)) -> { return %[("@``pretty(t1)@ + @``pretty(t2)@)]%; }
-      RawfunApp("mult",(t1,t2)) -> { return %[("@``pretty(t1)@ * @``pretty(t2)@)]%; }
-      RawfunApp("minus",(t1,t2)) -> { return %[("@``pretty(t1)@ - @``pretty(t2)@)]%; }
-      RawfunApp("div",(t1,t2)) -> { return %[("@``pretty(t1)@ / @``pretty(t2)@)]%; }
+      RawfunApp("plus",(t1,t2)) -> { return %[(@`pretty(t1)@ + @`pretty(t2)@)]%; }
+      RawfunApp("mult",(t1,t2)) -> { return %[(@`pretty(t1)@ * @`pretty(t2)@)]%; }
+      RawfunApp("minus",(t1,t2)) -> { return %[(@`pretty(t1)@ - @`pretty(t2)@)]%; }
+      RawfunApp("div",(t1,t2)) -> { return %[(@`pretty(t1)@ / @`pretty(t2)@)]%; }
       // finite 1st order theory of classes 
       RawfunApp("appl",(p,x*)) -> { return %[@`pretty(p)@[@`pretty(x)@]]%; }
       RawfunApp("nil",()) -> { return "nil"; }
@@ -123,5 +123,35 @@ public class Pretty {
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
+
+  /* -- rewrite rules --*/
+
+  public static String pretty(RawTermRewriteRules tl) {
+    %match(tl) {
+      Rawtermrrules() -> { return ""; }
+      Rawtermrrules(x) -> { return `pretty(x); }
+      Rawtermrrules(h,t*) -> { return `pretty(h) + "\n" + `pretty(t); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawFoBound tl) {
+    %match(tl) {
+      RawfoBound() -> { return ""; }
+      RawfoBound(x) -> { return `x; }
+      RawfoBound(h,t*) -> { return %[@`h@,@`pretty(t)@]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawTermRewriteRule r) {
+    %match(r) {
+      Rawtermrrule(Rawtrule(b,lhs,rhs)) -> { 
+        return %[[@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
 }
 

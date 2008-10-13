@@ -17,14 +17,6 @@ grammar Lemu;
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private RawPatternList append(RawPatternList l, RawPattern t) {
-    %match(l) {
-      EmptyRawpatternList() -> { return `ConsRawpatternList(t,EmptyRawpatternList()); }
-      ConsRawpatternList(x,xs) -> { return `ConsRawpatternList(x,append(xs,t)); }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
   private RawTermRewriteRules append(RawTermRewriteRules l, RawTermRewriteRule t) {
     %match(l) {
       EmptyRawtermrrules() -> { return `ConsRawtermrrules(t,EmptyRawtermrrules()); }
@@ -33,6 +25,13 @@ grammar Lemu;
     throw new RuntimeException("non exhaustive patterns");
   }
 
+  private RawFoBound append(RawFoBound l, String v) {
+    %match(l) {
+      EmptyRawfoBound() -> { return `ConsRawfoBound(v,EmptyRawfoBound()); }
+      ConsRawfoBound(x,xs) -> { return `ConsRawfoBound(x,append(xs,v)); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
 
 }
 
@@ -55,21 +54,6 @@ term returns [RawTerm res]
 funappl returns [RawTerm res] 
 : ID LPAR l=term_list RPAR { $res = `RawfunApp($ID.text,l); } 
 | ID LPAR RPAR { $res = `RawfunApp($ID.text,RawtermList()); }
-;
-
-pattern_list returns [RawPatternList res]
-: p=pattern { $res=`RawpatternList(p); } (COMMA p=pattern { $res = append($res,p); })* 
-;
-
-pattern returns [RawPattern res]
-: LPAR p=pattern RPAR { $res = p; } 
-| f=pfunappl { $res = f; }
-| ID { $res = `Rawpvar($ID.text); }
-;
-
-pfunappl returns [RawPattern res] 
-: ID LPAR l=pattern_list RPAR { $res = `RawpfunApp($ID.text,l); } 
-| ID LPAR RPAR { $res = `RawpfunApp($ID.text,RawpatternList()); }
 ;
 
 /* propositions */
@@ -103,15 +87,20 @@ appl returns [RawProp res]
 
 /* rewrite rules */
 
+boundlist returns [RawFoBound res]
+: '[' ']' { $res=`RawfoBound(); }
+| '[' v=ID { $res=`RawfoBound($v.text); } (',' v=ID { $res=append($res,$v.text); })* ']'
+;
+
 termrrule returns [RawTermRewriteRule res]
-: lhs=pattern ARROW rhs=term { $res = `Rawtermrrule(Rawtrule(lhs,rhs)); }
+: b=boundlist lhs=term ARROW rhs=term { $res = `Rawtermrrule(Rawtrule(b,lhs,rhs)); }
 ;
 
 termrrules returns [RawTermRewriteRules res]
 @init{
   $res = `Rawtermrrules();
 }
-: (r=termrrule { $res = append($res,r); } DOT)* 
+: (r=termrrule { $res = append($res,r); })* 
 ;
 
 /* proofterms */
@@ -169,6 +158,8 @@ RBR : '>';
 COLON : ':';
 LBRACE : '{';
 RBRACE : '}';
+LBRACKET : '[';
+RBRACKET : ']';
 
 /* other symbols */
 ARROW : '->';

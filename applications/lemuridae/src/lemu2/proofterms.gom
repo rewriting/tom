@@ -30,13 +30,10 @@ Ex binds FoVar = Ex(x:FoVar,inner p:Prop)
 
 /* rewrite rules */
 
-Pattern binds FoVar = pvar(v:FoVar)
-                    | pfunApp(neutral fun:String, p:PatternList)
-
-PatternList binds FoVar = patternList(Pattern*)
+FoBound binds FoVar = foBound(FoVar*)
 
 TermRewriteRule = termrrule(cl:<TRule>)
-TRule binds FoVar = trule(lhs:Pattern, inner rhs:Term)
+TRule binds FoVar = trule(bound:FoBound, inner lhs:Term, inner rhs:Term)
 
 TermRewriteRules = termrrules(TermRewriteRule*)
 

@@ -29,7 +29,7 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LemuParser parser = new LemuParser(tokens);
       TermRewriteRules rrules = parser.termmodulo().convert();
-      System.err.println(rrules);
+      System.err.println(Pretty.pretty(rrules.export()));
       ProofTerm pt = parser.proofterm().convert();
       System.err.println(Pretty.pretty(pt.export()));
       System.out.println("typechecks : " + TypeChecker.typecheck(pt));

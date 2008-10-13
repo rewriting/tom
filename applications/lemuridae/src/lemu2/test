@@ -1,6 +1,6 @@
 term modulo {
-  plus(z(),x) -> x.
-  plus(s(x),y) -> s(plus(x,y)).
+  [x]   plus(z(),x) -> x
+  [x,y] plus(s(x),y) -> s(plus(x,y))
 }
 
 rootR(
