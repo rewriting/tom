@@ -199,6 +199,7 @@
         <include name="${example}/**/*.html"/>
         <include name="${example}/**/*.gif"/>
         <include name="${example}/README"/>
+        <include name="${example}/*.sty"/>
       </zipfileset>
     </zip>
   </target>
