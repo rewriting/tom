@@ -12,4 +12,5 @@
       </fileset>
     </copy>
   </target>
+  <property name="distribute" value="no"/>
 </project>

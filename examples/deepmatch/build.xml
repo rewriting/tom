@@ -2,4 +2,5 @@
 <project name="Build the deepmatch example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="deepmatch"/>
+  <property name="distribute" value="no"/>
 </project>

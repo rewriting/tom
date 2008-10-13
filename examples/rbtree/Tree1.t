@@ -231,6 +231,4 @@ public class Tree1 {
       return 1;
     }
   }
-
 }
-
