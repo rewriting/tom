@@ -2,7 +2,7 @@ module subtyping.Language
 imports String int
 abstract syntax
 
-Input = Input(ctx: Context, consSub: ReconResultList, tests: TomInstructionList)
+Input = Input(ctx: Context, consSub: ConstraintList, tests: TomInstructionList)
 
 TomType = Type(name: String)
         | TypeVar(index: int)
@@ -60,7 +60,7 @@ Substitution = MList(Mapping*)
 
 SubstitutionList = SList(Substitution*)
 
-ContextAndResult = CRPair(con: Context, res: ReconResultList)
+ContextAndResult = CRPair(con: Context, res: ReconResult)
 
 /* J'aurais besoin de ça après ajouter les patterns compliqués */
 ContextAndConstraints = CCPair(con: Context, constraints: ConstraintList)

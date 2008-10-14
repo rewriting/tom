@@ -10,6 +10,7 @@ public class TypeInference {
   %include{ sl.tom }
 
   %typeterm IntList { implement { ArrayList<Integer> } }
+  %typeterm SubsList { implement { ArrayList<Substitution> } }
 
   private static int counter = 0;
   
@@ -93,9 +94,9 @@ public class TypeInference {
   //-----------------------------------------------
   %strategy transitivity() extends Identity() {
     visit ConstraintList {
-      cl@CList(_*,Subtype(t1,t2),_*,Subtype(t2,t3),_*) &&
+      cl@CList(_*,Subtype(t1,t2@!t1),_*,Subtype(t2,t3@!t1),_*) &&
       !CList(_*,Subtype(t1,t3),_*) << cl &&
-      (t1 != t2) && (t2 != t3) && (t1 != t3)
+      (t2 != t3)
       -> { return `CList(Subtype(t1,t3),cl*); }
     }
   }
@@ -116,150 +117,145 @@ public class TypeInference {
     throw new RuntimeException("Error in applyTransitivity function");
   }
 
-/*
-  //-----------------------------------------------------------------
-  // To verify if exists a common upper type between two given types 
-  //-----------------------------------------------------------------
-  private static boolean findToptype(Constraint consTop, ConstraintList topcl) {
-    %match(consTop){
-      CommonTopType(type1,type2) &&
-      CList(_*,,_*)  
-    }
-    throw new RunTimeException("Error in findTopType function.");
-  }
-
-  //----------------------------------------------------------------
-  // To find an error among the constraints of equality relations
-  //----------------------------------------------------------------
-  private static boolean eqConstraintsResolution(ConstraintList subcl,ConstraintList topcl) {
-    %match(topcl) {
-      CList(_*,consTop@CommonTopType(ty1@Type(_),ty2@Type(_)),_*)
-      -> 
-      {
-        if (`findTopType(consTop,topcl))
-          return true;
-        else
-          throw new RuntimeException("Error in comparision between " + `ty1 + " and " + `ty2 + ".");
-      }
-      //(_*,CommonTopType(ty1@TypeVar(_),ty2@TypeVar(_)),_*) -> {}
-    }
-    throw new RuntimeException("Error during resolution of equality relation constraints.");
-  }
-*/
   //----------------------------------------
   // To resolve the constraints of typing
   // ---------------------------------------
-  private static Substitution applyConstraintsResolution(ConstraintList cl) {
+ /* private static Substitution applyConstraintsResolution(ConstraintList cl) {
     return constraintsResolution(cl,`MList(),`CList());
   }
+*/
+  %strategy constraintsResolution(ml: Substitution, subcl: ConstraintList) extends Identity() {
+    visit ConstraintList {
+     /* CList()
+      -> { return ml;}*/
 
-  private static Substitution constraintsResolution(ConstraintList clist, Substitution ml, ConstraintList subcl) {
-    //System.out.println("ConstraintList = " +clist);
-    ConstraintList cl = applyTransitivity(clist);
-    //System.out.println("SubConstraintList = " +cl);
-    %match(cl) {
-      CList()
-      -> { return ml;}
-
-      CList(cons,consl*)
+      originalList@CList(cons,consl*)
       ->
       {
         %match(cons) {
           // {type = type} U C -> resolution(C)
           Equation(type,type)
-          -> { return `constraintsResolution(consl,ml,subcl); }
+          ->
+          {
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{type = type} U C -> resolution(C)\n"); 
+            return `CList(consl);
+          }
 
           // {type <: type} U C -> resolution(C)
           Subtype(type,type)
-          -> { return `constraintsResolution(consl,ml,subcl); }
+          ->
+          { 
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{type <: type} U C -> resolution(C)\n");
+            return `CList(consl); 
+          }
 
           // {tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) 
           Equation(tvar@TypeVar(_),type) &&
           (tvar != type)
           ->
           { 
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C)");
             Mapping map = `MapsTo(tvar,type);
-            Substitution rec = `constraintsResolution(applySubstitution(map,consl),ml,applySubstitution(map,subcl)); 
-            return `MList(map,rec*);
+            Substitution mlist = ml;
+            ml = `MList(map,mlist*);
+            System.out.println("SubstitutionList = " + ml);
+
+            ConstraintList subclist = `applySubstitution(map,subcl);
+            subcl = `applyTransitivity(subclist);
+            System.out.println("AuxiliarList = " + subcl);
+
+            ConstraintList clist = `applySubstitution(map,consl);
+            ConstraintList new_clist = `applyTransitivity(clist);
+            System.out.println("FinalList = " + new_clist + "\n");
+            return new_clist;
           }
 
-          // {ty = tvar} U C -> {tvar |-> ty} && resolution([ty/tvar]C) 
-          Equation(ty@Type(_),tvar@TypeVar(_))
+          // {tprim = tvar} U C -> {tvar |-> tprim} && resolution([tprim/tvar]C) 
+          Equation(tprim@Type(_),tvar@TypeVar(_))
           ->
           { 
-            Mapping map = `MapsTo(tvar,ty);
-            Substitution rec = `constraintsResolution(applySubstitution(map,consl),ml,applySubstitution(map,subcl)); 
-            return `MList(map,rec*);
-          }
-/*
-          // {X = Y} U C -> {X |-> Y} && resolution([Y/X]C) 
-          Equation(tvar1@TypeVar(_),tvar2@TypeVar(_)) &&
-          (tvar1 != tvar2)
-          ->
-          { 
-            Mapping map = `MapsTo(tvar1,tvar2);
-            Substitution rec = `constraintsResolution(applySubstitution(map,consl),ml,applySubstitution(map,subcl)); 
-            return `MList(map,rec*);
-          }
-*/
-          // {ty1 = type2} U C -> false
-          Equation(ty1@Type(_),type2@Type(_)) &&
-          (ty1 != type2)
-          -> { throw new RuntimeException("Constraint resolution error: " + `ty1 + " = " + `type2); }
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{tprim = tvar} U C -> {tvar |-> tprim} && resolution([tprim/tvar]C)");
+            Mapping map = `MapsTo(tvar,tprim);
+            Substitution mlist = ml;
+            ml = `MList(map,mlist*);
+            System.out.println("SubstitutionList = " + ml);
 
-          // {tvar1 <: tvar2, tvar2 <: tvar1} U C -> resolution({tvar1 = tvar2} U C)
-          Subtype(tvar1@TypeVar(_),tvar2@TypeVar(_)) &&
-          CList(x*,Subtype(tvar2,tvar1),y*) << consl &&
-          (tvar1 != tvar2)
-          -> { return `constraintsResolution(CList(Equation(tvar1,tvar2),x*,y*),ml,subcl); }
+            ConstraintList subclist = `applySubstitution(map,subcl);
+            subcl = `applyTransitivity(subclist);
+            System.out.println("AuxiliarList = " + subcl);
 
-          // {tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C) ||
+            ConstraintList clist = `applySubstitution(map,consl);
+            ConstraintList new_clist = `applyTransitivity(clist);
+            System.out.println("FinalList = " + new_clist + "\n");
+            return new_clist;
+          }
+
+          // {tprim1 = tprim2} U C -> false
+          Equation(tprim1@Type(_),tprim2@Type(_)) &&
+          (tprim1 != tprim2)
+          -> { throw new RuntimeException("Bad subtyping declaration of types: " + `tprim1 + " = " + `tprim2); }
+
+          // {type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C)
+          Subtype(type1,type2) &&
+          CList(x*,Subtype(type2,type1),y*) << consl &&
+          (type1 != type2)
+          -> 
+          {
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C)\n");
+            return `CList(Equation(type1,type2),x*,y*);
+          }
+
+          // {tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C)
           Subtype(tvar1@TypeVar(_),type2) && 
           CList(x*,Subtype(tvar1,type3),y*) << consl && 
           (type2 != type3)
-            ->
-            { 
-              TomType min_t = `minimalType(type2,type3,subcl);
-              return `constraintsResolution(CList(Equation(tvar1,min_t),x*,y*),ml,subcl);
+          ->
+          { 
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C)\n");
+            System.out.println("AuxiliarList before minimalType function = " + `subcl);
+            TomType min_t = `minimalType(type2,type3,subcl);
+            return `CList(Equation(tvar1,min_t),x*,y*);
             }
 
-          // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U C) ||
-          // Default case: should be after {Xtvar1 <: type2, tvar1 <: t3} U C ...
+          // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)
+          // Default case: should be after {tvar1 <: type2, tvar1 <: t3} U C ...
           Subtype(tvar1@TypeVar(_),type2)
-          -> { return `constraintsResolution(CList(Equation(tvar1,type2),consl*),ml,subcl); }
+          -> 
+          {
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)\n");
+            return `CList(Equation(tvar1,type2),consl*);
+          }
 
-          // {ty1 <: type2} U C -> (insert({ty1 <: type2},SubList) && resolution(C)) ||
-          Subtype(ty1@Type(_),type2) &&
-          (ty1 != type2)
-          -> { return `constraintsResolution(consl,ml,CList(cons,subcl*)); }
- 
-/*
-          Subtype(t1,t2) && (t1 != t2)
-          -> {
-            %match {
-              // {X <: Y,Y <: X} U C -> resolution({X = Y} U C)
-              TypeVar(i1) << t1 &&
-              TypeVar(i2) << t2 &&
-              CList(x*,Subtype(TypeVar(i2),TypeVar(i1)),y*) << consl
-              -> { return `constraintsResolution(CList(Equation(t1,t2),x*,y*),ml,subcl*); }
-              // {X <: Y,X <: Z} U C -> resolution({X = min(Y,Z)} U C)
-              TypeVar(i) << t1 &&
-              CList(x*,Subtype(TypeVar(i),t3),y*) << consl
-              ->
-              { 
-                TomType min_t = `minimalType(t2,t3,subcl*);
-                return `constraintsResolution(CList(Equation(t1,min_t),x*,y*),ml,subcl*);
-              }
-            }
-            //{A <: B} U C -> (insert({A <: B},SubList) && resolution(C))
-            return `constraintsResolution(consl*,ml,CList(cons,subcl*));
-          }           
- */
+          // {tprim1 <: type2} U C -> (insert({tprim1 <: type2},SubList) && resolution(C))
+          constraint@Subtype(tprim1@Type(_),type2) &&
+          !CList(_*,constraint,_*) << subcl &&
+          (tprim1 != type2)
+          -> 
+          {
+            System.out.println("OriginalList = " + `originalList);
+            System.out.println("{tprim1 <: type2} U C -> (insert({tprim1 <: type2},SubList) && resolution(C))");
+            ConstraintList subclist = `CList(constraint,subcl*);
+            subcl = subclist;
+            System.out.println("AuxiliarList = " + subcl + "\n");
+            return `CList(consl);
+          }
+          
+          constraint@Subtype(tprim1@Type(_),type2) &&
+          CList(_*,constraint,_*) << subcl &&
+          (tprim1 != type2)
+          -> 
+          { return `CList(consl); }
         }
       }
-      //return constraintsResolution(`consl*,ml);
     }
-    throw new RuntimeException("Error during resolution of constraints.");
+    //throw new RuntimeException("Error during resolution of constraints.");
   }
 
   //------------------------------------------
@@ -284,29 +280,39 @@ public class TypeInference {
   //--------------------------------------------------------
   public static SubstitutionList typeOfAll(Input in) {
     %match(in) {
-      Input(ctx,rrlist,allMatchs) &&
+      Input(ctx,clist,allMatchs) &&
       !Context() << ctx &&
       !TIList() << allMatchs
-      -> { return `typeOf(ctx,rrlist,allMatchs,SList()); }
+      -> { return `typeOf(ctx,clist,allMatchs,SList()); }
     }
     throw new RuntimeException("Error in declaration of Context and Matchs");
   }
   
-  public static SubstitutionList typeOf(Context ctx, ReconResultList rrlist, TomInstructionList allMatchs, SubstitutionList allSubs) {
+  public static SubstitutionList typeOf(Context ctx, ConstraintList clist, TomInstructionList allMatchs, SubstitutionList allSubs) {
     %match(allMatchs) {
       TIList() -> { return allSubs; }
       TIList(match,matchs*)
       ->
       {
         counter = maxIndexTypeVars(`match) + 1;
-        %match(reconTomInstruction(ctx,match,rrlist)) {
-          pairList@!RRList()
+        %match(reconTomInstruction(ctx,match,clist)) {
+          cl@!CList()
           ->
           {
-            ConstraintList cl = constraintsUnion(`pairList);
-            Substitution subs = applyConstraintsResolution(cl);
-            System.out.println("SubstitutionList = " +subs);
-            return `typeOf(ctx,rrlist,matchs*,SList(subs,allSubs*));
+            try {
+              Substitution subs = `MList();
+              // original subtype relations defined by the programmer
+              ConstraintList subcl = clist;
+              System.out.println("-------- Initial CList = " + `cl + "\n");
+              `RepeatId(constraintsResolution(subs,subcl)).visitLight(`cl);
+              /*ConstraintList cl = constraintsUnion(`pairList);
+              Substitution subs = applyConstraintsResolution(`cl);*/
+              System.out.println("OutterAuxiliarList = " + subcl);
+              System.out.println("OutterSubstitutionList = " + subs + "\n");
+              return `typeOf(ctx,clist,matchs*,SList(subs,allSubs*));
+            } catch(VisitFailure e) {
+              throw new RuntimeException("Error during resolution of constraints.");
+            }
           }
         }
       }
@@ -317,11 +323,11 @@ public class TypeInference {
   //------------------------------------------------------
   // To reconstruct the type of a "match" instruction
   //------------------------------------------------------
-  private static ReconResultList reconTomInstruction(Context ctx, TomInstruction match, ReconResultList rrlist) {
+  private static ConstraintList reconTomInstruction(Context ctx, TomInstruction match, ConstraintList clist) {
     %match(match) {
       Match(rule) -> { 
-        ReconResultList rl = `reconClause(ctx,rule);
-        return `RRList(rl*,rrlist*);
+        ConstraintList cl = reconClause(ctx,`rule);
+        return `CList(cl*,clist*);
       }
     }
     throw new RuntimeException("Type reconstruction failed to the \"match\" instruction.");
@@ -330,15 +336,15 @@ public class TypeInference {
   //-------------------------------------------------
   // To reconstruct the type of one of the rules
   //-------------------------------------------------
-  private static ReconResultList reconClause(Context ctx, Clause rule) {
+  private static ConstraintList reconClause(Context ctx, Clause rule) {
     %match(rule) {
       Rule(condition,result) &&
-      CRPair(ctx_c,pair_c) << reconCondition(ctx,condition)
+      CCPair(ctx_c,cl_c) << reconCondition(ctx,condition)
       -> 
       {
         %match(reconBlockList(Context(ctx*,ctx_c*),result)) {
-          RRList() -> { return `RRList(pair_c*); }
-          pairList@!RRList() -> { return `RRList(pair_c*,pairList*); }
+          CList() -> { return `cl_c; }
+          cl_bl@!CList() -> { return `CList(cl_c*,cl_bl*); }
         }
       }
     }
@@ -349,22 +355,22 @@ public class TypeInference {
   // To reconstruct the type of the left side of rule
   // in others words, the pattern matching
   //----------------------------------------------------
-  private static ContextAndResult reconCondition(Context ctx, Condition cond) {
+  private static ContextAndConstraints reconCondition(Context ctx, Condition cond) {
     %match {
       Matching(pattern,subject,type) << cond &&
       CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern) &&
       Pair(type_s,constraints_s) << reconTerm(ctx,subject) &&
-      RRList(Pair(type_p,_)) << pair_p
+      Pair(type_p,cl_p) << pair_p
       ->
       {
         ConstraintList cl_s = `CList(Equation(type,type_s),Equation(type_s,type_p),constraints_s*);
-        return `CRPair(ctx_p,RRList(pair_p,Pair(type_s,cl_s)));
+        return `CCPair(ctx_p,CList(cl_p*,cl_s*));
       }
 
       (Conjunction(cond1,cond2) << cond || Disjunction(cond1,cond2) << cond) &&
-      CRPair(ctx1,res1) << reconCondition(ctx,cond1) &&
-      CRPair(ctx2,res2) << reconCondition(ctx1,cond2)
-      -> { return `CRPair(ctx2,RRList(res1*,res2*)); }
+      CCPair(ctx1,cl1) << reconCondition(ctx,cond1) &&
+      CCPair(ctx2,cl2) << reconCondition(ctx1,cond2)
+      -> { return `CCPair(ctx2,CList(cl1*,cl2*)); }
 
       (Equality(term1,term2) << cond ||
       Inequality(term1,term2) << cond ||
@@ -379,7 +385,7 @@ public class TypeInference {
         TomType newTypeVar = freshTypeVar();
         ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
         ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*);
-        return `CRPair(ctx,RRList(Pair(type1,cl1*),Pair(type2,cl2*)));
+        return `CCPair(ctx,CList(cl1*,cl2*));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the left side of the rules of the pattern matching.");
@@ -389,18 +395,19 @@ public class TypeInference {
   // To reconstruct the types of the right side of rule
   // in other words, the type of backquote variables
   //-----------------------------------------------------
-  private static ReconResultList reconBlockList(Context ctx, TomTermList backquotes) {
-    return reconBackquotes(ctx,backquotes,`RRList());
+  private static ConstraintList reconBlockList(Context ctx, TomTermList backquotes) {
+    return reconBackquotes(ctx,backquotes,`CList());
   }
 
-  private static ReconResultList reconBackquotes(Context ctx, TomTermList backquotes, ReconResultList pair) {
+  private static ConstraintList reconBackquotes(Context ctx, TomTermList backquotes, ConstraintList cl) {
     %match(backquotes) {
-      TTeList() -> { return pair; }
-      TTeList(term,terms*)
+      TTeList() -> { return cl; }
+      TTeList(term,terms*) &&
+      Pair(_,current_cl) << reconTerm(ctx,term)
       ->
       {
-        ReconResult currentPair = `reconTerm(ctx,term);
-        return `reconBackquotes(ctx,terms,RRList(currentPair,pair*));
+        //ReconResult currentPair = `reconTerm(ctx,term);
+        return `reconBackquotes(ctx,terms,CList(current_cl*,cl*));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the right side of the rules of the pattern matching.");
@@ -411,12 +418,12 @@ public class TypeInference {
   //----------------------------------------
   private static ContextAndResult reconPattern(Context ctx, TomTerm pattern) {
     %match(pattern) {
-      Var(name,type) -> { return `CRPair(Context(Jugement(name,type),ctx*),RRList(Pair(type,CList()))); }
+      Var(name,type) -> { return `CRPair(Context(Jugement(name,type),ctx*),Pair(type,CList())); }
       Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) &&
       CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom)
       -> 
       {
-        return `CRPair(ctx_p,RRList(Pair(codom,cons)));
+        return `CRPair(ctx_p,Pair(codom,cons));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the pattern.");
@@ -435,7 +442,7 @@ public class TypeInference {
       TTeList(), Domain() -> { return `CCPair(ctx,cons); }
       TTeList(pterm,pterms*), Domain(pDom,pTypes*) &&
       CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
-      RRList(Pair(type_p,cons_p)) << res_p
+      Pair(type_p,cons_p) << res_p
       -> 
       {
         return `reconPatternArgs(ctx_p,pterms*,pTypes,CList(Subtype(type_p,pDom),cons_p*,cons*));
