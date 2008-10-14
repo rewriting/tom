@@ -14,7 +14,8 @@ public class Eval {
     try {
       System.out.println("Please enter the file path that contain the Input information: ");
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      File testFile = new File(reader.readLine());
+      String path = reader.readLine();
+      File testFile = new File(path);
       String instructions = getContents(testFile);
       //System.out.println("Original file contents: " + instructions);
       Input in = Input.fromString(instructions);
@@ -59,7 +60,7 @@ public class Eval {
 
   private static void writeMatchsAndSubs(SubstitutionList allSubs, TomInstructionList allMatchs) {
     %match {
-      SList(sub,subs*) << allSubs &&
+      SList(subs*,sub) << allSubs &&
       TIList(match,matchs*) << allMatchs
       ->
       {
