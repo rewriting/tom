@@ -25,6 +25,14 @@ grammar Lemu;
     throw new RuntimeException("non exhaustive patterns");
   }
 
+  private RawPropRewriteRules append(RawPropRewriteRules l, RawPropRewriteRule t) {
+    %match(l) {
+      EmptyRawproprrules() -> { return `ConsRawproprrules(t,EmptyRawproprrules()); }
+      ConsRawproprrules(x,xs) -> { return `ConsRawproprrules(x,append(xs,t)); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
   private RawFoBound append(RawFoBound l, String v) {
     %match(l) {
       EmptyRawfoBound() -> { return `ConsRawfoBound(v,EmptyRawfoBound()); }
@@ -103,6 +111,17 @@ termrrules returns [RawTermRewriteRules res]
 : (r=termrrule { $res = append($res,r); })* 
 ;
 
+proprrule returns [RawPropRewriteRule res]
+: b=boundlist lhs=prop ARROW rhs=prop { $res = `Rawproprrule(Rawprule(b,lhs,rhs)); }
+;
+
+proprrules returns [RawPropRewriteRules res]
+@init{
+  $res = `Rawproprrules();
+}
+: (r=proprrule { $res = append($res,r); })* 
+;
+
 /* proofterms */
 
 proofterm returns [RawProofTerm res]
@@ -110,6 +129,10 @@ proofterm returns [RawProofTerm res]
   { $res = `RawrootR(RawRootRPrem1($a.text,pa,m)); }
 | AX '(' x=ID ',' a=ID ')' 
   { $res = `Rawax($x.text,$a.text); }
+| TRUER '(' a=ID ')'
+  { $res=`RawtrueR($a.text); }
+| FALSEL '(' x=ID ')'
+  { $res=`RawfalseL($x.text); }
 | CUT '(' '<' a=ID ':' pa=prop '>' m=proofterm ',' 
           '<' x=ID ':' px=prop '>' n=proofterm ')' 
   { $res = `Rawcut(RawCutPrem1($a.text,pa,m),RawCutPrem2($x.text,px,n)); }
@@ -141,6 +164,10 @@ proofterm returns [RawProofTerm res]
 /* declarations */
 termmodulo returns [RawTermRewriteRules res] 
 : TERM MODULO LBRACE l=termrrules RBRACE { $res=l; }
+;
+
+propmodulo returns [RawPropRewriteRules res] 
+: PROP MODULO LBRACE l=proprrules RBRACE { $res=l; }
 ;
 
 toplevel : proofterm EOF;

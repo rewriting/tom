@@ -15,8 +15,8 @@ public class Pretty {
       Rawor(p1,p2) -> { return %[(@`pretty(p1)@) \/ @`pretty(p2)@]%; }
       Rawand(p1@RawrelApp[],p2) -> { return %[@`pretty(p1)@ /\ @`pretty(p2)@]%; }
       Rawand(p1,p2) -> { return %[(@`pretty(p1)@) /\ @`pretty(p2)@]%; }
-      Rawforall(RawFa(x,p1)) -> { return %[forall @`x@, @`pretty(p1)@]%; }
-      Rawexists(RawEx(x,p1)) -> { return %[exists @`x@, @`pretty(p1)@]%; }
+      Rawforall(RawFa(x,p1)) -> { return %[forall @`x@, (@`pretty(p1)@)]%; }
+      Rawexists(RawEx(x,p1)) -> { return %[exists @`x@, (@`pretty(p1)@)]%; }
       RawrelApp(r,()) -> { return `r; }
       // arithmetic pretty print
       RawrelApp("eq",(x,y)) -> { return %[@`pretty(x)@ = @`pretty(y)@]%; }
@@ -105,6 +105,8 @@ public class Pretty {
   public static String pretty(RawProofTerm t) {
     %match(t) {
       Rawax(n,cn) -> {return %[ax(@`n@,@`cn@)]%; }
+      RawfalseL(n) -> { return %[falseL(@`n@)]%; }
+      RawtrueR(cn) -> { return %[trueR(@`cn@)]%; }
       Rawcut(RawCutPrem1(cn,pcn,M),RawCutPrem2(n,pn,N)) -> { return %[cut(@`pr(cn,pcn)@ @`pretty(M)@,@`pr(n,pn)@ @`pretty(N)@)]%; }
       RawfalseL(n) -> { return %[falseL(@`n@)]%; }
       RawfalseL(cn) -> { return %[falseL(@`cn@)]%; }
@@ -126,15 +128,6 @@ public class Pretty {
 
   /* -- rewrite rules --*/
 
-  public static String pretty(RawTermRewriteRules tl) {
-    %match(tl) {
-      Rawtermrrules() -> { return ""; }
-      Rawtermrrules(x) -> { return `pretty(x); }
-      Rawtermrrules(h,t*) -> { return `pretty(h) + "\n" + `pretty(t); }
-    }
-    throw new RuntimeException("non exhaustive patterns"); 
-  }
-
   public static String pretty(RawFoBound tl) {
     %match(tl) {
       RawfoBound() -> { return ""; }
@@ -144,9 +137,34 @@ public class Pretty {
     throw new RuntimeException("non exhaustive patterns"); 
   }
 
+  public static String pretty(RawTermRewriteRules tl) {
+    %match(tl) {
+      Rawtermrrules() -> { return ""; }
+      Rawtermrrules(h,t*) -> { return `pretty(h) + "\n" + `pretty(t); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
   public static String pretty(RawTermRewriteRule r) {
     %match(r) {
       Rawtermrrule(Rawtrule(b,lhs,rhs)) -> { 
+        return %[[@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawPropRewriteRules tl) {
+    %match(tl) {
+      Rawproprrules() -> { return ""; }
+      Rawproprrules(h,t*) -> { return `pretty(h) + "\n" + `pretty(t); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawPropRewriteRule r) {
+    %match(r) {
+      Rawproprrule(Rawprule(b,lhs,rhs)) -> { 
         return %[[@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
       }
     }

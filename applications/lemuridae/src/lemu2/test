@@ -3,11 +3,43 @@ term modulo {
   [x,y] plus(s(x),y) -> s(plus(x,y))
 }
 
+prop modulo {
+  [x]   Eq(x,x) -> True
+  [x]   Eq(s(x),z()) -> False
+  [x]   Eq(z(),s(x)) -> False
+  [x,y] Eq(s(x),s(y)) -> Eq(x,y)
+
+  [n] forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n))) -> Nat(n)
+  []  forall t, (Eps(t) => (N => Eps(t) => Eps(t)) => Eps(t)) -> N
+
+  [n] forall x, P(x,n) -> Q(n)
+}
+
+rootR(
+  <r:Nat(z())> forallR(
+    <a:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
+      <x:In(p0,z())><b:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
+        <y:forall m, (In(p0,m)  => In(p0,s(m)))><c:In(p0,z())> ax(x,c),b),a),r))
+    
+
+(*
+rootR(
+  <r:forall y, P(y,a()) => Q(a())> implyR(
+    <x:forall y,P(y,a())><a:Q(a())> ax(x,a),r))
+*)
+
+(*
+rootR(
+  <r:Eq(s(s(s(z()))),plus(s(z()),s(s(z()))))> trueR(r))
+*)
+
+(*
 rootR(
   <a:P(s(s(z())))=>exists x,P(x)> cut(
     <b:exists x,P(x)> implyR(
       <x:P(plus(s(z()),s(z())))><c:exists x,P(x)> existsR(<d:P(s(s(z())))> ax(x,d),plus(s(s(z())),z()),b),a),
     <z:exists x,P(x)> implyR(<v:P(plus(z(),s(s(z()))))><e:exists x,P(x)> ax(z,e),a)))
+*)
 
 (* rootR(<a:A=>A> cut(<c:A> implyR(<x:A><b:A> ax(x,c),a), <y:A> implyR(<x:A><b:A> ax(x,b),a))) *)
 

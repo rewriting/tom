@@ -37,6 +37,11 @@ TRule binds FoVar = trule(bound:FoBound, inner lhs:Term, inner rhs:Term)
 
 TermRewriteRules = termrrules(TermRewriteRule*)
 
+PropRewriteRule = proprrule(cl:<PRule>)
+PRule binds FoVar = prule(bound:FoBound, inner lhs:Prop, inner rhs:Prop)
+
+PropRewriteRules = proprrules(PropRewriteRule*)
+
 /* proof terms */
 
 ProofTerm = ax(x:Name,a:CoName)
@@ -92,7 +97,7 @@ NProp = nprop(n:Name,p:Prop)
 CNProp = cnprop(cn:CoName,p:Prop)
 LCtx = lctx(NProp*)
 RCtx = rctx(CNProp*)
-Sequent = seq(l:LCtx,r:RCtx)
+Sequent = seq(free:FoVarList,l:LCtx,r:RCtx)
 
 /* data structures used by Rewriting.t */
 
