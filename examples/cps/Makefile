@@ -1,39 +1,39 @@
-all: FreshLambda.class
-	java FreshLambda < test.ml
+all: cps/FreshLambda.class
+	java cps.FreshLambda < test.ml
 
-Lambda.g.t: lambda/Lambda.tom 
+Lambda.g.t: cps/lambda/Lambda.tom 
 
-Printer.t: lambda/Lambda.tom 
+Printer.t: cps/lambda/Lambda.tom 
 
-FreshLambda.t: lambda/Lambda.tom 
+FreshLambda.t: cps/lambda/Lambda.tom 
 
-Lambda.g: Lambda.g.t
-	tom -o Lambda.g Lambda.g.t
+cps/Lambda.g: Lambda.g.t
+	tom -o cps/Lambda.g -I cps Lambda.g.t
 
-LambdaParser.java LambdaLexer.java: Lambda.g
-	java org.antlr.Tool Lambda.g
+cps/LambdaParser.java cps/LambdaLexer.java: cps/Lambda.g
+	java org.antlr.Tool cps/Lambda.g
 
-LambdaParser.class: LambdaParser.java
-	javac LambdaParser.java
+cps/LambdaParser.class: cps/LambdaParser.java
+	javac cps/LambdaParser.java
 
-LambdaLexer.class: LambdaLexer.java
-	javac LambdaLexer.java
+cps/LambdaLexer.class: cps/LambdaLexer.java
+	javac cps/LambdaLexer.java
 
-Printer.java: Printer.t
-	tom Printer.t
+cps/Printer.java: Printer.t
+	tom -I cps Printer.t
 
-FreshLambda.java: FreshLambda.t
-	tom FreshLambda.t
+cps/FreshLambda.java: FreshLambda.t
+	tom -I cps FreshLambda.t
 
-Printer.class: Printer.java
-	javac Printer.java
+cps/Printer.class: cps/Printer.java
+	javac cps/Printer.java
 
-FreshLambda.class: FreshLambda.java LambdaParser.class LambdaLexer.class Printer.class
-	javac FreshLambda.java
+cps/FreshLambda.class: cps/FreshLambda.java cps/LambdaParser.class cps/LambdaLexer.class cps/Printer.class
+	javac cps/FreshLambda.java
 
-lambda/Lambda.tom: lambda.gom
-	gom --fresh lambda.gom
+cps/lambda/Lambda.tom: lambda.gom
+	gom --fresh --package cps lambda.gom
 
 clean:
-	rm -rf systemf lambda *.class *.java Lambda.g Lambda__.g *.tokens 
+	rm -rf cps/
 

@@ -1,4 +1,4 @@
-module Lambda
+module cps.lambda
 imports boolean int String
 abstract syntax
 

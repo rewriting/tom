@@ -1,12 +1,14 @@
+package cps;
+
 import tom.library.sl.*;
-import lambda.types.*;
+import cps.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 import java.io.*;
 
 public class Printer {
 
-  %include { lambda/Lambda.tom }
+  %include { lambda/lambda.tom }
 
   public static String pretty(Value v) {
     %match(v) {

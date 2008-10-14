@@ -2,13 +2,14 @@
 grammar Lambda;
 
 @header {
-  import lambda.types.*;
+  package cps;
+  import cps.lambda.types.*;
   import java.util.ArrayList;
   import java.util.Collections;
 }
 
 @members {
-  %include { lambda/Lambda.tom }
+  %include { lambda/lambda.tom }
 
   public static RawLTerm makeWithArgs(ArrayList<String> args, RawLTerm t) {
     Collections.reverse(args);
@@ -21,6 +22,7 @@ grammar Lambda;
 }
 
 @lexer::header {
+  package cps;
 }
 
 toplevel returns [ArrayList<RawLTerm> res]

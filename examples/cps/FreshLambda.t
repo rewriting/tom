@@ -1,12 +1,14 @@
+package cps;
+
 import tom.library.sl.*;
-import lambda.types.*;
+import cps.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 
 public class FreshLambda {
 
   %include { sl.tom }
-  %include { lambda/Lambda.tom }
+  %include { lambda/lambda.tom }
 
   // returns t[u/x]
   public static LTerm substitute(LTerm t, LVar x, LTerm u) {
