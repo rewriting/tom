@@ -13,6 +13,9 @@
     </tom.preset>
     <javacompile example="${example}"/>
     <antcall target="zenon.make"/>
+    <fail>
+        Let the build fail, to check cruisecontrol sends a mail.
+    </fail>
   </target>
   <target name="zenon.make" if="zvtov.bin">
     <apply dir="${examples.gen}/${example}" 
@@ -25,9 +28,6 @@
       </fileset>
       <mapper type="glob" from="*.zv" to="*.v"/>
     </apply>
-    <fail>
-        Let the build fail, to check cruisecontrol sends a mail.
-    </fail>
   </target>
   <property name="distribute" value="yes"/>
   <target name="dist" depends="common.dist" if="distrib.zip">
