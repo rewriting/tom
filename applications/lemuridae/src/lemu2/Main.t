@@ -35,6 +35,7 @@ public class Main {
       System.out.println(Pretty.pretty(prules.export()));
       ProofTerm pt = parser.proofterm().convert();
       System.out.println(Pretty.pretty(pt.export()));
+      System.out.println();
       System.out.println("typechecks : " + TypeChecker.typecheck(pt,rrules,prules));
       System.out.println("normal forms : ");
       System.out.println(prettyNormalForms(Evaluation.reduce(pt),rrules,prules));

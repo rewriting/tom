@@ -698,6 +698,9 @@ public class Evaluation {
             }
           }
           if (!in_nf)  nf.add(t);
+          for(ProofTerm ptn: nf) {
+            System.out.println(Pretty.pretty(ptn));
+          }
         }
 
         else tmpres.addAll(tmp);

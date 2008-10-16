@@ -13,14 +13,14 @@ public class TypeChecker {
 
   private static Prop lookup(LCtx ctx, Name n) {
     %match(ctx) {
-      lctx(_*,nprop(x,p),_*) && x << Name n -> { return `p; }
+      lctx(_*,nprop(x,p),_*) && x == n -> { return `p; }
     }
     throw new RuntimeException("name " + n + " not in scope");
   }
 
   private static Prop lookup(RCtx ctx, CoName cn) {
     %match(ctx) {
-      rctx(_*,cnprop(x,p),_*) && x << CoName cn -> { return `p; }
+      rctx(_*,cnprop(x,p),_*) && x == cn -> { return `p; }
     }
     throw new RuntimeException("coname " + cn + " not in scope");
   }
@@ -95,7 +95,7 @@ public class TypeChecker {
       if(_typecheck(pt,se,trs,prs))
         return true;
       else {
-        System.out.println(pt + "\n" + se + "\n"); 
+        System.out.println(Pretty.pretty(pt) + "\n\n" + Pretty.pretty(se) + "\n"); 
         return false;
       }
     }
