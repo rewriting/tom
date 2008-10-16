@@ -13,9 +13,6 @@
     </tom.preset>
     <javacompile example="${example}"/>
     <antcall target="zenon.make"/>
-    <fail>
-        Let the build fail, to check cruisecontrol sends a mail.
-    </fail>
   </target>
   <target name="zenon.make" if="zvtov.bin">
     <apply dir="${examples.gen}/${example}" 
