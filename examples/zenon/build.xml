@@ -13,6 +13,9 @@
     </tom.preset>
     <javacompile example="${example}"/>
     <antcall target="zenon.make"/>
+    <fail>
+      Test cc mails when build fails
+    </fail>
   </target>
   <target name="zenon.make" if="zvtov.bin">
     <apply dir="${examples.gen}/${example}" 
