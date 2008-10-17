@@ -141,6 +141,24 @@ public class TypeInference {
     return `False();
   }
 
+  //----------------------------------------------------
+  // To find a subtype declaration in a constraint list
+  //----------------------------------------------------
+  private static ConstraintList whoIsSubtype(TomType type1, TomType type2, ConstraintList cl) {
+    %match(cl) {
+      CList(_*,cons@Subtype(t1,t2),_*) &&
+      t1 << TomType type1 &&
+      t2 << TomType type2
+      -> { return `CList(cons); }
+
+      CList(_*,cons@Subtype(t2,t1),_*) &&
+      t1 << TomType type1 &&
+      t2 << TomType type2
+      -> { return `CList(cons); }
+    }
+    return `False();
+  }
+
   //----------------------------------------
   // To resolve the constraints of typing
   // ---------------------------------------
@@ -162,13 +180,17 @@ public class TypeInference {
         return `CList(x*,y*); 
       }
 */
-      // {tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) si (tvar not(member) C) 
-      cl@CList(x*,Equation(tvar@TypeVar(_),type),y*) && 
-      (tvar != type)
+
+      // {tvar = type} U C -> {tvar |-> type} &&
+      //                      (if (tvar in C) then (resolution({type = type} U [type/tvar]C))
+      //                       else (resolution({type = type} U C))) 
+      cl@CList(x*,Equation(tvar@TypeVar(_),type@!tvar),y*) //&& 
+      //(tvar != type)
       ->
       { 
-        System.out.println("{tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) " +
-                           "si (tvar not(member) C)");
+        System.out.println("{tvar = type} U C -> {tvar |-> type} && (if (tvar in C) " +
+                           "then (resolution({type = type} U [type/tvar]C)) " +
+                           "else (resolution({type = type} U C)))\n");
         Mapping map = `MapsTo(tvar,type);
         ml.add(`map);
 
@@ -187,12 +209,15 @@ public class TypeInference {
         return `CList(Equation(type,type),x*,y*);
       }
 
-      // {tprim = tvar} U C -> {tvar |-> tprim} && (resolution([tprim/tvar]C) si (tvar not(member) C))
+      // {tprim = tvar} U C -> {tvar |-> tprim} &&
+      //                      (if (tvar in C) then (resolution({tprim = tprim} U [tprim/tvar]C))
+      //                       else (resolution({tprim = tprim} U C)))
       cl@CList(x*,Equation(tprim@Type(_),tvar@TypeVar(_)),y*)
       ->
       { 
-        System.out.println("{tprim = tvar} U C -> {tvar |-> tprim} && (resolution([tprim/tvar]C) " +
-                           "si (tvar not(member) C))");
+        System.out.println("{tprim = tvar} U C -> {tvar |-> tprim} && (if (tvar in C) " +
+                           "then (resolution({tprim = tprim} U [tprim/tvar]C)) " +
+                           "else (resolution({tprim = tprim} U C)))\n");
         Mapping map = `MapsTo(tvar,tprim);
         ml.add(`map);
 
@@ -216,23 +241,27 @@ public class TypeInference {
       (tprim1 != tprim2)
       -> { throw new RuntimeException("Bad subtyping declaration of types: " + `tprim1 + " = " + `tprim2); /*return `False();*/ }
 
-      // {type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C) si ((type1 = type2) (not(member) C)
+      // {type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U
+      //                                         {type1 <: type2, type2 <: type1} U C) si ((type1 = type2) notin C)
       cl@CList(_*,Subtype(type1,type2@!type1),_*,Subtype(type2,type1),_*) &&
       !CList(_*,Equation(type1,type2),_*) << cl     
       -> 
       {
-        System.out.println("{type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C) " +
-                           "si ((type1 = type2) (not(member) C)\n");
+        System.out.println("{type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U " +
+                           "{type1 <: type2, type2 <: type1} U C) si ((type1 = type2) notin C) \n");        
         return `CList(Equation(type1,type2),cl*);
       }
 
-      // {tvar1 <: tprim2, tvar1 <: tprim3} U C -> resolution({tvar1 = min(type2,type3)} U C) si ((tvar1 = min(type2,type3)) (not(member)) C)
+      // {tvar1 <: tprim2, tvar1 <: tprim3} U C -> resolution({tvar1 = min(tprim2,tprim3)} U
+      //                                           {tvar1 <: tprim2, tvar1 <: tprim3} U C) 
+      //                                           si ((tvar1 = min(tprim2,tprim3)) notin C)
       cl@CList(_*,Subtype(tvar1@TypeVar(_),tprim2@Type(_)),_*,Subtype(tvar1,tprim3@Type(_)),_*) &&
       (tprim2 != tprim3)
       ->
       { 
-        System.out.println("{tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C) " +
-                           "si ((tvar1 = min(type2,type3)) (not(member)) C)\n");
+        System.out.println("{tvar1 <: tprim2, tvar1 <: tprim3} U C -> resolution({tvar1 = min(tprim2,tprim3)} U " +
+                           "{tvar1 <: tprim2, tvar1 <: tprim3} U C) " +
+                           "si ((tvar1 = min(tprim2,tprim3)) notin C)\n");
         TomType min_t = `minimalType(tprim2,tprim3,cl);
         %match(cl) {
           !CList(_*,Equation(t1,t2),_*)  &&
@@ -242,13 +271,24 @@ public class TypeInference {
         }
       }
 
-      // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)
+      // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U {tvar1 <: type2} U C)
       // Default case: should be after {tvar1 <: type2, tvar1 <: t3} U C ...
-      cl@CList(_*,Subtype(tvar1@TypeVar(_),type2),_*)
+      cl@CList(_*,Subtype(tvar1@TypeVar(_),type2@!tvar1),_*)
       -> 
       {
-        System.out.println("{tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)\n");
+        System.out.println("{tvar1 <: type2} U C -> resolution({tvar1 = type2} U {tvar1 <: type2} U C)\n");
         return `CList(Equation(tvar1,type2),cl*);
+      }
+
+      // {type1 <:> type2} U C -> (if ((type1 <: type2) in C) then (resolution({type1 <: type2} U {type1 <:> type2} U C))
+      //                           elseif ((type2 <: type1) in C) then (resolution({type2 <: type1} U {type1 <:> type2} U C)))
+      cl@CList(_*,CommSubtype(type1,type2@!type1),_*)
+      ->
+      {
+        %match(whoIsSubtype(type1,type2,cl)) {
+          False() -> { throw new RuntimeException("Bad subtyping declaration of types: " + `type1 + " <:> " + `type2);/*return `False();*/ }
+          cons@!False() -> { return `CList(cons,cl*); }
+        }
       }
     }
   }
@@ -281,9 +321,9 @@ public class TypeInference {
             try {
               ArrayList<Mapping> subs = new ArrayList<Mapping>();
               // original subtype relations defined by the programmer
-              System.out.println("-------- Initial CList = " + `cl + "\n");
+              //System.out.println("-------- Initial CList = " + `cl + "\n");
               ConstraintList new_cl = `applyTransitivity(cl);
-              System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
+              //System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
               `RepeatId(constraintsResolution(subs)).visitLight(`new_cl);
               //System.out.println("-------- Final CList = " + `new_cl);
               Substitution res = `MList();
@@ -364,9 +404,9 @@ public class TypeInference {
       ->
       {
         TomType newTypeVar = freshTypeVar();
-        ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
-        ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*);
-        return `CCPair(ctx,CList(cl1*,cl2*));
+        //ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
+        //ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*);
+        return `CCPair(ctx,CList(CommSubtype(type1,type2),cons1*,cons2*));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the left side of the rules of the pattern matching.");

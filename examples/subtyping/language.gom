@@ -36,8 +36,8 @@ Condition = Matching(pattern: TomTerm, subject: TomTerm, type: TomType)
 
 /* Type Reconstruction */
 Constraint = Equation(type1: TomType, type2: TomType)
-           | Subtype(type1: TomType, type: TomType)
-           //| MapsTo(tvar: int, type: TomType)
+           | Subtype(type1: TomType, type2: TomType)
+           | CommSubtype(type1: TomType, type2: TomType)
 
 ConstraintList = CList(Constraint*)
                | False()
@@ -62,7 +62,6 @@ SubstitutionList = SList(Substitution*)
 
 ContextAndResult = CRPair(con: Context, res: ReconResult)
 
-/* J'aurais besoin de ça après ajouter les patterns compliqués */
 ContextAndConstraints = CCPair(con: Context, constraints: ConstraintList)
 
 

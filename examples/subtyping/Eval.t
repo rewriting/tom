@@ -85,7 +85,7 @@ public class Eval {
       Rule(cond,res) 
       ->
       {
-        writeMatching(`cond);
+        writeCondition(`cond);
         System.out.print(" -> { ");
         writeTTeList(`res);
         System.out.print(" }");
@@ -93,7 +93,7 @@ public class Eval {
     }
   }
 
-  private static void writeMatching(Condition cond) {
+  private static void writeCondition(Condition cond) {
     %match(cond) {
       Matching(p,s,ty)
       ->
@@ -104,6 +104,83 @@ public class Eval {
         System.out.print(") ");
         writeTomTerm(`s);
       }
+
+      Conjunction(c1,c2)
+      ->
+      {
+        writeCondition(`c1);
+        System.out.print(" && ");
+        writeCondition(`c2);
+      }
+
+      Disjunction(c1,c2)
+      ->
+      {
+        writeCondition(`c1);
+        System.out.print(" || ");
+        writeCondition(`c2);
+      }
+
+      Equality(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" == ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
+      Inequality(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" != ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
+      Greater(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" > ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
+      GreaterEq(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" >= ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
+      Less(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" < ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
+      LessEq(t1,t2)
+      ->
+      {
+        System.out.print("(");
+        writeTomTerm(`t1);
+        System.out.print(" <= ");
+        writeTomTerm(`t2);
+        System.out.print(")");
+      }
+
     }
   }
 
@@ -119,17 +196,6 @@ public class Eval {
           System.out.print(", ");
           writeMList(`maps*);
         }
-      }
-    }
-  }
-
-  private static void writeRRList(ReconResultList rrlist) {
-    %match(rrlist) {
-      RRList() -> { System.out.println("\n"); }
-      RRList(rresult,rreslist*) -> {
-        System.out.print("Pair "+ (counter++) + ": ");
-        writePair(`rresult);
-        writeRRList(`rreslist*);
       }
     }
   }
@@ -206,7 +272,7 @@ public class Eval {
   private static void writeTomType(TomType t) {
     %match(t) {
       Type(n) -> { System.out.print(`n); }
-      TypeVar(i) -> { System.out.print("var" + `i); }
+      TypeVar(i) -> { System.out.print("tvar" + `i); }
     }
   }
 }
