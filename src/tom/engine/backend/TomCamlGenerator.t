@@ -217,20 +217,20 @@ public class TomCamlGenerator extends TomGenericGenerator {
 		} else {
 			output.write(deep,"(if "); 
 			generateExpression(deep,exp,moduleName); 
-			output.writeln(" then ");
+			output.writeln(" then begin ");
 			generateInstruction(deep+1,succes,moduleName);
-			output.writeln(deep,")");
+			output.writeln(deep," end)");
 		}
   }
 
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
     output.write(deep,"if "); 
     generateExpression(deep,exp,moduleName); 
-    output.writeln(" then ");
+    output.writeln(" then begin ");
     generateInstruction(deep+1,succes,moduleName);
-    output.writeln(deep," else ");
+    output.writeln(deep," end else begin ");
     generateInstruction(deep+1,failure,moduleName);
-    output.writeln(deep," (* endif *)");
+    output.writeln(deep," end (* endif *)");
   }
 
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
@@ -366,7 +366,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
-    output.write(" None ");
+    output.write(" (Obj.magic \"Hopefully nobody will notice\") ");
   }
 
   protected void buildExpTrue(int deep) throws IOException {
@@ -421,5 +421,30 @@ public class TomCamlGenerator extends TomGenericGenerator {
   protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
     generate(deep,exp,moduleName);
   }
+
+
+  public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
+    %match(Instruction subject) {
+
+      Nop() -> {
+	`buildNop();
+        return;
+      }
+
+      Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
+	`buildNop();
+        return;
+      }
+
+      t -> {
+	super.generateInstruction(deep, subject, moduleName);
+      }
+    }
+  }
+
+  protected void buildNop() throws IOException {
+    output.write(" () ");
+  }
+
 
 } // class TomCamlGenerator
