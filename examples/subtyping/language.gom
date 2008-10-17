@@ -40,6 +40,8 @@ Constraint = Equation(type1: TomType, type2: TomType)
            //| MapsTo(tvar: int, type: TomType)
 
 ConstraintList = CList(Constraint*)
+               | False()
+               | True()
 
 ReconResult = Pair(type: TomType, constraints: ConstraintList)
 

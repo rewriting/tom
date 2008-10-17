@@ -10,7 +10,7 @@ public class TypeInference {
   %include{ sl.tom }
 
   %typeterm IntList { implement { ArrayList<Integer> } }
-  %typeterm SubsList { implement { ArrayList<Substitution> } }
+  %typeterm MappingList { implement { ArrayList<Mapping> } }
 
   private static int counter = 0;
   
@@ -94,7 +94,7 @@ public class TypeInference {
   //-----------------------------------------------
   %strategy transitivity() extends Identity() {
     visit ConstraintList {
-      cl@CList(_*,Subtype(t1,t2@!t1),_*,Subtype(t2,t3@!t1),_*) &&
+      cl@CList(_*,Subtype(t1@Type(_),t2@!t1),_*,Subtype(t2,t3@!t1),_*) &&
       !CList(_*,Subtype(t1,t3),_*) << cl &&
       (t2 != t3)
       -> { return `CList(Subtype(t1,t3),cl*); }
@@ -117,145 +117,135 @@ public class TypeInference {
     throw new RuntimeException("Error in applyTransitivity function");
   }
 
-  //----------------------------------------
-  // To resolve the constraints of typing
-  // ---------------------------------------
- /* private static Substitution applyConstraintsResolution(ConstraintList cl) {
-    return constraintsResolution(cl,`MList(),`CList());
-  }
-*/
-  %strategy constraintsResolution(ml: Substitution, subcl: ConstraintList) extends Identity() {
-    visit ConstraintList {
-     /* CList()
-      -> { return ml;}*/
-
-      originalList@CList(cons,consl*)
+  //---------------------------------------------------------------------
+  // To know if a given TypeVar name already exists in a constraint list
+  //---------------------------------------------------------------------
+  private static ConstraintList findTypeVars(TomType tvar, ConstraintList cl) {
+    %match(cl) {
+      CList(_*,cons,_*)
       ->
       {
         %match(cons) {
-          // {type = type} U C -> resolution(C)
-          Equation(type,type)
-          ->
-          {
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{type = type} U C -> resolution(C)\n"); 
-            return `CList(consl);
-          }
-
-          // {type <: type} U C -> resolution(C)
-          Subtype(type,type)
-          ->
-          { 
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{type <: type} U C -> resolution(C)\n");
-            return `CList(consl); 
-          }
-
-          // {tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) 
-          Equation(tvar@TypeVar(_),type) &&
-          (tvar != type)
-          ->
-          { 
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C)");
-            Mapping map = `MapsTo(tvar,type);
-            Substitution mlist = ml;
-            ml = `MList(map,mlist*);
-            System.out.println("SubstitutionList = " + ml);
-
-            ConstraintList subclist = `applySubstitution(map,subcl);
-            subcl = `applyTransitivity(subclist);
-            System.out.println("AuxiliarList = " + subcl);
-
-            ConstraintList clist = `applySubstitution(map,consl);
-            ConstraintList new_clist = `applyTransitivity(clist);
-            System.out.println("FinalList = " + new_clist + "\n");
-            return new_clist;
-          }
-
-          // {tprim = tvar} U C -> {tvar |-> tprim} && resolution([tprim/tvar]C) 
-          Equation(tprim@Type(_),tvar@TypeVar(_))
-          ->
-          { 
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{tprim = tvar} U C -> {tvar |-> tprim} && resolution([tprim/tvar]C)");
-            Mapping map = `MapsTo(tvar,tprim);
-            Substitution mlist = ml;
-            ml = `MList(map,mlist*);
-            System.out.println("SubstitutionList = " + ml);
-
-            ConstraintList subclist = `applySubstitution(map,subcl);
-            subcl = `applyTransitivity(subclist);
-            System.out.println("AuxiliarList = " + subcl);
-
-            ConstraintList clist = `applySubstitution(map,consl);
-            ConstraintList new_clist = `applyTransitivity(clist);
-            System.out.println("FinalList = " + new_clist + "\n");
-            return new_clist;
-          }
-
-          // {tprim1 = tprim2} U C -> false
-          Equation(tprim1@Type(_),tprim2@Type(_)) &&
-          (tprim1 != tprim2)
-          -> { throw new RuntimeException("Bad subtyping declaration of types: " + `tprim1 + " = " + `tprim2); }
-
-          // {type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C)
-          Subtype(type1,type2) &&
-          CList(x*,Subtype(type2,type1),y*) << consl &&
-          (type1 != type2)
-          -> 
-          {
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C)\n");
-            return `CList(Equation(type1,type2),x*,y*);
-          }
-
-          // {tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C)
-          Subtype(tvar1@TypeVar(_),type2) && 
-          CList(x*,Subtype(tvar1,type3),y*) << consl && 
-          (type2 != type3)
-          ->
-          { 
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C)\n");
-            System.out.println("AuxiliarList before minimalType function = " + `subcl);
-            TomType min_t = `minimalType(type2,type3,subcl);
-            return `CList(Equation(tvar1,min_t),x*,y*);
-            }
-
-          // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)
-          // Default case: should be after {tvar1 <: type2, tvar1 <: t3} U C ...
-          Subtype(tvar1@TypeVar(_),type2)
-          -> 
-          {
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)\n");
-            return `CList(Equation(tvar1,type2),consl*);
-          }
-
-          // {tprim1 <: type2} U C -> (insert({tprim1 <: type2},SubList) && resolution(C))
-          constraint@Subtype(tprim1@Type(_),type2) &&
-          !CList(_*,constraint,_*) << subcl &&
-          (tprim1 != type2)
-          -> 
-          {
-            System.out.println("OriginalList = " + `originalList);
-            System.out.println("{tprim1 <: type2} U C -> (insert({tprim1 <: type2},SubList) && resolution(C))");
-            ConstraintList subclist = `CList(constraint,subcl*);
-            subcl = subclist;
-            System.out.println("AuxiliarList = " + subcl + "\n");
-            return `CList(consl);
-          }
-          
-          constraint@Subtype(tprim1@Type(_),type2) &&
-          CList(_*,constraint,_*) << subcl &&
-          (tprim1 != type2)
-          -> 
-          { return `CList(consl); }
+          Equation(x,_) && x << TomType tvar -> { return `True(); }
+          Equation(_,x) && x << TomType tvar -> { return `True(); }
+          Subtype(x,_) && x << TomType tvar -> { return `True(); }
+          Subtype(_,x) && x << TomType tvar -> { return `True(); }
         }
       }
     }
-    //throw new RuntimeException("Error during resolution of constraints.");
+    return `False();
+  }
+
+  //----------------------------------------
+  // To resolve the constraints of typing
+  // ---------------------------------------
+  %strategy constraintsResolution(ml: MappingList) extends Identity() {
+    visit ConstraintList {
+/*      // {type = type} U C -> resolution(C)
+      CList(x*,Equation(type,type),y*)
+      ->
+      {
+        System.out.println("{type = type} U C -> resolution(C)\n"); 
+        return `CList(x*,y*);
+      }
+
+      // {type <: type} U C -> resolution(C)
+      CList(x*,Subtype(type,type),y*)
+      ->
+      { 
+        System.out.println("{type <: type} U C -> resolution(C)\n");
+        return `CList(x*,y*); 
+      }
+*/
+      // {tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) si (tvar not(member) C) 
+      cl@CList(x*,Equation(tvar@TypeVar(_),type),y*) && 
+      (tvar != type)
+      ->
+      { 
+        System.out.println("{tvar = type} U C -> {tvar |-> type} && resolution([type/tvar]C) " +
+                           "si (tvar not(member) C)");
+        Mapping map = `MapsTo(tvar,type);
+        ml.add(`map);
+
+        ConstraintList sublist = `CList(x*,y*);
+        %match(findTypeVars(tvar,sublist)) {
+          True()
+          ->
+          {
+            ConstraintList clist = `applySubstitution(map,cl);
+            //System.out.println("after apply substitution = " + clist);
+            sublist = applyTransitivity(clist);
+            return `CList(sublist*);
+          }
+        }
+        // apply substituion only on the pair
+        return `CList(Equation(type,type),x*,y*);
+      }
+
+      // {tprim = tvar} U C -> {tvar |-> tprim} && (resolution([tprim/tvar]C) si (tvar not(member) C))
+      cl@CList(x*,Equation(tprim@Type(_),tvar@TypeVar(_)),y*)
+      ->
+      { 
+        System.out.println("{tprim = tvar} U C -> {tvar |-> tprim} && (resolution([tprim/tvar]C) " +
+                           "si (tvar not(member) C))");
+        Mapping map = `MapsTo(tvar,tprim);
+        ml.add(`map);
+
+        ConstraintList sublist = `CList(x*,y*);
+        %match(findTypeVars(tvar,sublist)) {
+          True()
+          ->
+          {
+            ConstraintList clist = `applySubstitution(map,cl);
+            //System.out.println("after apply substitution = " + clist);
+            sublist = applyTransitivity(clist);
+            return `CList(sublist*);
+          }
+        }
+      // apply substituion only on the pair
+        return `CList(Equation(tprim,tprim),x*,y*);
+      }
+
+      // {tprim1 = tprim2} U C -> false
+      CList(_*,Equation(tprim1@Type(_),tprim2@Type(_)),_*) &&
+      (tprim1 != tprim2)
+      -> { throw new RuntimeException("Bad subtyping declaration of types: " + `tprim1 + " = " + `tprim2); /*return `False();*/ }
+
+      // {type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C) si ((type1 = type2) (not(member) C)
+      cl@CList(_*,Subtype(type1,type2@!type1),_*,Subtype(type2,type1),_*) &&
+      !CList(_*,Equation(type1,type2),_*) << cl     
+      -> 
+      {
+        System.out.println("{type1 <: type2, type2 <: type1} U C -> resolution({type1 = type2} U C) " +
+                           "si ((type1 = type2) (not(member) C)\n");
+        return `CList(Equation(type1,type2),cl*);
+      }
+
+      // {tvar1 <: tprim2, tvar1 <: tprim3} U C -> resolution({tvar1 = min(type2,type3)} U C) si ((tvar1 = min(type2,type3)) (not(member)) C)
+      cl@CList(_*,Subtype(tvar1@TypeVar(_),tprim2@Type(_)),_*,Subtype(tvar1,tprim3@Type(_)),_*) &&
+      (tprim2 != tprim3)
+      ->
+      { 
+        System.out.println("{tvar1 <: type2, tvar1 <: type3} U C -> resolution({tvar1 = min(type2,type3)} U C) " +
+                           "si ((tvar1 = min(type2,type3)) (not(member)) C)\n");
+        TomType min_t = `minimalType(tprim2,tprim3,cl);
+        %match(cl) {
+          !CList(_*,Equation(t1,t2),_*)  &&
+          t1 << TomType tvar1 &&
+          t2 << TomType min_t
+          -> { return `CList(Equation(t1,t2),cl*); }
+        }
+      }
+
+      // {tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)
+      // Default case: should be after {tvar1 <: type2, tvar1 <: t3} U C ...
+      cl@CList(_*,Subtype(tvar1@TypeVar(_),type2),_*)
+      -> 
+      {
+        System.out.println("{tvar1 <: type2} U C -> resolution({tvar1 = type2} U C)\n");
+        return `CList(Equation(tvar1,type2),cl*);
+      }
+    }
   }
 
   //------------------------------------------
@@ -300,16 +290,18 @@ public class TypeInference {
           ->
           {
             try {
-              Substitution subs = `MList();
+              ArrayList<Mapping> subs = new ArrayList<Mapping>();
               // original subtype relations defined by the programmer
-              ConstraintList subcl = clist;
-              System.out.println("-------- Initial CList = " + `cl + "\n");
-              `RepeatId(constraintsResolution(subs,subcl)).visitLight(`cl);
-              /*ConstraintList cl = constraintsUnion(`pairList);
-              Substitution subs = applyConstraintsResolution(`cl);*/
-              System.out.println("OutterAuxiliarList = " + subcl);
-              System.out.println("OutterSubstitutionList = " + subs + "\n");
-              return `typeOf(ctx,clist,matchs*,SList(subs,allSubs*));
+              //System.out.println("-------- Initial CList = " + `cl + "\n");
+              ConstraintList new_cl = `applyTransitivity(cl);
+              //System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
+              `RepeatId(constraintsResolution(subs)).visitLight(`new_cl);
+              //System.out.println("-------- Final CList = " + `new_cl);
+              Substitution res = `MList();
+              for (Mapping m: subs) {
+                res = `MList(m,res*);
+              }
+              return `typeOf(ctx,clist,matchs*,SList(res,allSubs*));
             } catch(VisitFailure e) {
               throw new RuntimeException("Error during resolution of constraints.");
             }
@@ -406,7 +398,6 @@ public class TypeInference {
       Pair(_,current_cl) << reconTerm(ctx,term)
       ->
       {
-        //ReconResult currentPair = `reconTerm(ctx,term);
         return `reconBackquotes(ctx,terms,CList(current_cl*,cl*));
       }
     }
