@@ -98,6 +98,11 @@ public class TypeInference {
       !CList(_*,Subtype(t1,t3),_*) << cl &&
       (t2 != t3)
       -> { return `CList(Subtype(t1,t3),cl*); }
+
+      cl@CList(_*,Subtype(t2,t3@!t1),_*,Subtype(t1@Type(_),t2@!t1)) &&
+      !CList(_*,Subtype(t1,t3),_*) << cl &&
+      (t2 != t3)
+      -> { return `CList(Subtype(t1,t3),cl*); }
     }
   }
 
@@ -248,22 +253,6 @@ public class TypeInference {
     }
   }
 
-  //------------------------------------------
-  // To put all constraints in an only list
-  //------------------------------------------
-  private static ConstraintList constraintsUnion(ReconResultList rrlist) {
-    return getConstraintPair(rrlist,`CList());
-  }
-
-  private static ConstraintList getConstraintPair(ReconResultList rrlist, ConstraintList cl) {
-    %match(rrlist) {
-      RRList() -> { return cl; }
-      RRList(rresult,rreslist*) && Pair(_,cons) << rresult
-      -> { return `getConstraintPair(rreslist*,CList(cons*,cl*)); }
-    }
-    throw new RuntimeException("Error during the union of constraints.");
-  }
-
   //--------------------------------------------------------
   // To call functions to reconstruct the types for each
   // kind of term of a pattern matching
@@ -292,9 +281,9 @@ public class TypeInference {
             try {
               ArrayList<Mapping> subs = new ArrayList<Mapping>();
               // original subtype relations defined by the programmer
-              //System.out.println("-------- Initial CList = " + `cl + "\n");
+              System.out.println("-------- Initial CList = " + `cl + "\n");
               ConstraintList new_cl = `applyTransitivity(cl);
-              //System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
+              System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
               `RepeatId(constraintsResolution(subs)).visitLight(`new_cl);
               //System.out.println("-------- Final CList = " + `new_cl);
               Substitution res = `MList();
