@@ -67,15 +67,23 @@ public class Queens {
   %include{ sl.tom }
 
    private static bdd.Bdd tree = new Bdd();
-   private static int N;      /* Size of the chess board */
-   private static Node X[][]; /* BDD variable array */
 
   public final static void main(String[] args) {
+    Node queen = mkQueens(8);
+
+    //System.out.println(queen);
+    SolutionList sol =  tree.allSat(queen);
+    //System.out.println("allSat = " + sol);
+    System.out.println("nb sol = " + sol.length());
+    //System.out.println("countSat = " + tree.countSat(queen));
+
+  }
+
+  public static Node mkQueens(int N) {
     Node queen; /* N-queens problem express as a BDD */
 
-    N = 8;
     queen = mkTrue();
-    X = new Node[N][N];
+    Node X[][] = new Node[N][N]; /* BDD variable array */
 
     /* Build variable array */
     for(int i=0 ; i<N ; i++) {
@@ -99,54 +107,48 @@ public class Queens {
     /* Build requirements for each variable(field) */
     for(int i=0 ; i<N ; i++) {
       for(int j=0 ; j<N ; j++) {
-        queen = and(queen,build(i,j));
+        queen = and(queen,build(X,i,j));
         //System.out.println(%[queen[@i@,@j@] = @queen@]%);
        }
     }
-
-    //System.out.println(queen);
-    SolutionList sol =  tree.allSat(queen);
-    //System.out.println("allSat = " + sol);
-    System.out.println("nb sol = " + sol.length());
-    //System.out.println("countSat = " + tree.countSat(queen));
-
+    return queen;
   }
 
   /* 
    * Build the requirements for all other fields than (i,j) assuming
    * that (i,j) has a queen 
    */
-   private static Node build(int i, int j) {
+   private static Node build(Node[][] X, int i, int j) {
      Node a = mkTrue();
      Node b = mkTrue();
      Node c = mkTrue();
      Node d = mkTrue();
 
      /* No one in the same column */
-     for(int l=0 ; l<N ; l++) {
+     for(int l=0 ; l<X[i].length ; l++) {
        if(l != j) {
          a = and(a,imp(X[i][j],not(X[i][l])));
        }
      }
      /* No one in the same row */
-     for(int k=0 ; k<N ; k++) {
+     for(int k=0 ; k<X.length ; k++) {
        if(k != i) {
          b = and(b,imp(X[i][j],not(X[k][j])));
        }
      }
      /* No one in the same down-right diagonal */
-     for(int k=0 ; k<N ; k++) {
+     for(int k=0 ; k<X.length ; k++) {
        int ll = j+k-i;
-       if(ll>=0 && ll<N) {
+       if(ll>=0 && ll<X.length) {
          if(k != i) {
            c = and(c,imp(X[i][j],not(X[k][ll])));
          }
        }
      }
      /* No one in the same up-right diagonal */
-     for(int k=0 ; k<N ; k++) {
+     for(int k=0 ; k<X.length ; k++) {
        int ll = j+i-k;
-       if(ll>=0 && ll<N) {
+       if(ll>=0 && ll<X.length) {
          if(k != i) {
            d = and(d,imp(X[i][j],not(X[k][ll])));
          }
