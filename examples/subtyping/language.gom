@@ -45,8 +45,6 @@ ConstraintList = CList(Constraint*)
 
 ReconResult = Pair(type: TomType, constraints: ConstraintList)
 
-ReconResultList = RRList(ReconResult*)
-
 Domain = Domain(TomType*)
 
 Signature = Sig(dom: Domain, codom: TomType)
