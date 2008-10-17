@@ -196,6 +196,23 @@ writer.write(%[
         return res;
       }
     }
+
+    if(trm instanceof aterm.ATermList) {
+      aterm.ATermList list = (aterm.ATermList) trm;
+      @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
+      try {
+        while(!list.isEmpty()) {
+          @domainClassName@ elem = @fromATermElement("list.getFirst()","elem")@;
+          res = @fullClassName(cons.getClassName())@.make(elem,res);
+          list = list.getNext();
+        }
+      } catch(IllegalArgumentException e) {
+        // returns null when the fromATerm call failed
+        return null;
+      }
+      return res;
+    }
+
     return null;
   }
 

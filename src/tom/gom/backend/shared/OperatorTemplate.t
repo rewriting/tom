@@ -425,7 +425,6 @@ generateGetters(writer);
 
 ]%);
 
-
     writer.write(%[
   /* Visitable */
   public int getChildCount() {
