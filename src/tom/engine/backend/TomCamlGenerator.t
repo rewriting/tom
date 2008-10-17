@@ -235,21 +235,21 @@ public class TomCamlGenerator extends TomGenericGenerator {
 
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
     output.writeln(deep,"let tom_internal_cond = ref true in ");
-    output.writeln(deep,"while !tom_internal_cond do");
+    output.writeln(deep,"while !tom_internal_cond do ");
     generateInstruction(deep+1,succes,moduleName);
-    output.writeln(deep+1,"; tom_internal_cond := ");
+    output.writeln(deep+1," ; tom_internal_cond := ");
     generateExpression(deep,exp,moduleName);
     output.writeln();
-    output.writeln(deep,"done");
+    output.writeln(deep," done");
   }
 
   protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.write(deep,"while ");
     generateExpression(deep,exp,moduleName);
-    output.writeln(" do");
+    output.writeln(" do ");
     generateInstruction(deep+1,succes,moduleName);
     output.writeln();
-    output.writeln(deep,"done");
+    output.writeln(deep," done");
   }
 
   protected void genDecl(String returnType,
