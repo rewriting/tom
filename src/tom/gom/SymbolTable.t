@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.HashSet;
 import tom.gom.tools.GomEnvironment;
 
-
 public class SymbolTable {
 
   %include { adt/gom/Gom.tom}
@@ -55,14 +54,14 @@ public class SymbolTable {
     }
     public String getSortName() { return sortName; } 
     public String toString() {
-      return "sort exception : " + sortName;
+      return "sort exception: " + sortName;
     }
   }
 
   public class UndeclaredSortException extends SortException {
     public UndeclaredSortException(String n) { super(n); }
     public String toString() {
-      return "undeclared sort : " + sortName;
+      return "undeclared sort: " + sortName;
     }
   }
 
@@ -74,24 +73,28 @@ public class SymbolTable {
     }
     public String getConstructorName() { return constructorName; } 
     public String toString() {
-      return "constructor exception : " + constructorName;
+      return "constructor exception: " + constructorName;
     }
   }
 
   public class UndeclaredConstructorException extends ConstructorException {
     public UndeclaredConstructorException(String n) { super(n); }
   }
+
   public class InvalidConstructorException extends ConstructorException {
     public InvalidConstructorException(String n) { super(n); }
   }
 
-  protected Hashtable<String,SortDescription> sorts = 
+  /** map sort-name -> SortDescription */
+  private Hashtable<String,SortDescription> sorts = 
     new Hashtable<String,SortDescription>();
 
-  protected Hashtable<String,ConstructorDescription> constructors =  
+  /** map constructor-name -> ConstructorDescription */
+  private Hashtable<String,ConstructorDescription> constructors =  
     new Hashtable<String,ConstructorDescription>();
 
-  protected Graph<String> graph = new Graph<String>();
+  /** ??? for FreshGom */
+  private Graph<String> graph = new Graph<String>();
 
   protected String pack = "";
 
@@ -101,25 +104,33 @@ public class SymbolTable {
 
   public String toString() {
     StringBuffer buf = new StringBuffer();
-    for (Map.Entry<String,SortDescription> e: sorts.entrySet()) {
+    for(Map.Entry<String,SortDescription> e: sorts.entrySet()) {
       java.io.StringWriter swriter = new java.io.StringWriter();
-      try { tom.library.utils.Viewer.toTree(e.getValue(),swriter); }
-      catch(java.io.IOException ex) { ex.printStackTrace(); }
+      try {
+        tom.library.utils.Viewer.toTree(e.getValue(),swriter); 
+      } catch(java.io.IOException ex) {
+        ex.printStackTrace(); 
+      }
       buf.append("sort " + e.getKey() + ":\n" + swriter + "\n");
     }
-    for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()){
+    for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()) {
       java.io.StringWriter swriter = new java.io.StringWriter();
-      try { tom.library.utils.Viewer.toTree(e.getValue(),swriter); }
-      catch(java.io.IOException ex) { ex.printStackTrace(); }
+      try {
+        tom.library.utils.Viewer.toTree(e.getValue(),swriter); 
+      } catch(java.io.IOException ex) {
+        ex.printStackTrace(); 
+      }
       buf.append("constructor " + e.getKey() + ":\n" + swriter + "\n");
     }
     return buf.toString();
   }
 
-  public static String rawSort(String s) { return "Raw" + s; }
+  public static String rawSort(String s) {
+    return "Raw" + s; 
+  }
 
   public String rawCons(String c) { 
-    if (isGenerated(c)) {
+    if(isGenerated(c)) {
       %match(getGenerated(c)) {
         GenCons(suffix) ->  { return "ConsRaw" + `suffix; }
         GenNil(suffix) -> { return "EmptyRaw" + `suffix; }
@@ -130,8 +141,9 @@ public class SymbolTable {
 
   public String qualifiedRawSortId(String sort) {
     SortDescription desc = sorts.get(sort);
-    if (desc==null)
+    if(desc==null) {
       throw new UndeclaredSortException(sort);
+    }
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
         return (pack.equals("") ? "" : pack + ".") 
@@ -143,8 +155,9 @@ public class SymbolTable {
 
   public String qualifiedRawConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
-    if (desc==null) 
+    if(desc==null) {
       throw new UndeclaredConstructorException(cons);
+    }
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
         return qualifiedSortId(`s) + "." + `rawCons(cons); 
@@ -153,11 +166,11 @@ public class SymbolTable {
     throw new RuntimeException("non exhaustive match");
   }
 
-
   public String qualifiedSortId(String sort) {
     SortDescription desc = sorts.get(sort);
-    if (desc==null)
+    if(desc==null) {
       throw new UndeclaredSortException(sort);
+    }
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
         return (pack.equals("") ? "" : pack + ".") 
@@ -169,8 +182,9 @@ public class SymbolTable {
 
   public String qualifiedConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
-    if (desc==null) 
+    if(desc==null) {
       throw new UndeclaredConstructorException(cons);
+    }
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
         return qualifiedSortId(`s).toLowerCase() + "." + cons; 
@@ -181,7 +195,7 @@ public class SymbolTable {
 
   public void fill(GomModuleList gml) {
     %match(gml) {
-      ConcGomModule(_*,m,_*) -> { `fill(m); }
+      ConcGomModule(_*,m,_*) -> { `fillFromGomModule(m); }
     }
     fillGraph();
     isolateFreshSorts();
@@ -206,7 +220,7 @@ public class SymbolTable {
             FieldDescription("Tail"+c,codom,SPattern()));
       /* codom = ... | c(<dom>*) | ...
          => codom = ... | Consc(Headc:<dom>,Tailc:codom) | ... */
-      } else if (isRefreshPoint(c)) {
+      } else if(isRefreshPoint(c)) {
         ConsFields = `concFieldDescription(
             FieldDescription("Head"+c,dom,SRefreshPoint()),
             FieldDescription("Tail"+c,codom,SNone()));
@@ -235,19 +249,19 @@ public class SymbolTable {
     }
   }
 
-  private void fill(GomModule m) {
+  private void fillFromGomModule(GomModule m) {
     %match(m) {
       GomModule[ModuleName=GomModuleName[Name=n],
         SectionList=(_*,Public[GrammarList=(_*,g,_*)],_*)] -> {
-          `fill(n,g);
+          `fillFromGrammar(n,g);
         }
     }
   }
 
-  private void fill(String moduleName, Grammar g) {
+  private void fillFromGrammar(String moduleName, Grammar g) {
     %match(g) {
       //Sorts[TypeList=(_*,ty,_*)] -> { `fill(moduleName,ty); }
-      Grammar[ProductionList=(_*,p,_*)] -> { `fill(moduleName,p); }
+      Grammar[ProductionList=(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
     }
   }
 
@@ -269,7 +283,7 @@ public class SymbolTable {
     return res;
   }
 
-  private void fill(String moduleName, Production p) {
+  private void fillFromProduction(String moduleName, Production p) {
     %match(p) {
       SortType[Type=GomType[Specialization=spe,Name=n],
         Binds=boundAtoms,ProductionList=pl] -> {
@@ -291,7 +305,6 @@ public class SymbolTable {
         }
     }
   }
-
 
   private void fillCons(String codom, Production p)  {
     %match(p) {
@@ -414,10 +427,10 @@ public class SymbolTable {
     return getGenerated(cons).getBaseName();
   }
 
-
-
   public boolean isExpressionType(String sort) {
-    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
+    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+      return false;
+    }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
@@ -428,7 +441,9 @@ public class SymbolTable {
   }
 
   public boolean isPatternType(String sort) {
-    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
+    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+      return false; 
+    }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { PatternTypeInfo[] -> { return true; } }
@@ -439,7 +454,9 @@ public class SymbolTable {
   }
 
   public boolean isAtomType(String sort) {
-    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
+    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+      return false;
+    }
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { AtomTypeInfo[] -> { return true; } }
@@ -470,27 +487,25 @@ public class SymbolTable {
   }
 
   %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
-  %strategy 
-    SetRefreshPoints(st:SymbolTable,codom:String) extends Identity() {
-      visit FieldDescription {
-        fd@FieldDescription[Sort=ty] -> {
-          if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-            return `fd.setStatusValue(`SRefreshPoint());
-          }
-        }
-      }
-      visit ConstructorDescription {
-        vd@VariadicConstructorDescription[Domain=ty] -> {
-          if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-            return `vd.setIsRefreshPoint(true);
-          }
+  %strategy SetRefreshPoints(st:SymbolTable,codom:String) extends Identity() {
+    visit FieldDescription {
+      fd@FieldDescription[Sort=ty] -> {
+        if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
+          return `fd.setStatusValue(`SRefreshPoint());
         }
       }
     }
+    visit ConstructorDescription {
+      vd@VariadicConstructorDescription[Domain=ty] -> {
+        if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
+          return `vd.setIsRefreshPoint(true);
+        }
+      }
+    }
+  }
 
   private void fillRefreshPoints() {
-    for(Map.Entry<String,ConstructorDescription> e: 
-        constructors.entrySet()) {
+    for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()) {
       String c = e.getKey();
       ConstructorDescription cd = e.getValue();
       String codom = cd.getSortSymbol();
@@ -509,8 +524,9 @@ public class SymbolTable {
     }
 
   public String getSort(String constructor) {
-    try { return constructors.get(constructor).getSortSymbol(); }
-    catch(NullPointerException e) {
+    try { 
+      return constructors.get(constructor).getSortSymbol(); 
+    } catch(NullPointerException e) {
       throw new UndeclaredConstructorException(constructor);
     }
   }
@@ -521,7 +537,6 @@ public class SymbolTable {
       int count=1;
 
       %match(c) {
-
         VariadicConstructorDescription[Domain=Domain] -> {
           return `Domain;
         }
@@ -550,11 +565,10 @@ public class SymbolTable {
       }
     }
 
-  public tom.gom.adt.symboltable.types.stringlist.StringList 
-    getBoundAtoms(String sort) {
-      return (tom.gom.adt.symboltable.types.stringlist.StringList)
-        sorts.get(sort).getFreshInfo().getBoundAtoms();
-    }
+  public tom.gom.adt.symboltable.types.stringlist.StringList getBoundAtoms(String sort) {
+    return (tom.gom.adt.symboltable.types.stringlist.StringList)
+      sorts.get(sort).getFreshInfo().getBoundAtoms();
+  }
 
   private FieldDescriptionList getFieldList(String constructor) {
     return constructors.get(constructor).getFields();
@@ -600,9 +614,9 @@ public class SymbolTable {
   * where it generates 'getHeadRawC()' and 'getTailRawC()'
   **/
   public String rawGetter(String cons, String field) {
-    if (isGenerated(cons)) {
+    if(isGenerated(cons)) {
       String suffix = getBaseName(cons);
-      if (field.startsWith("Head")) {
+      if(field.startsWith("Head")) {
         return "getHeadRaw" + suffix + "()";
       } else if (field.startsWith("Tail")) {
         return "getTailRaw" + suffix + "()";
@@ -677,7 +691,9 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SOuter()],_*) -> {
-        if (`n.equals(field)) return true;
+        if(`n.equals(field)) {
+          return true;
+        }
       }
     }
     return false;
@@ -688,7 +704,9 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SPattern()],_*) -> {
-        if (`n.equals(field)) return true;
+        if(`n.equals(field)) {
+          return true;
+        }
       }
     }
     return false;
@@ -699,7 +717,9 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SInner()],_*) -> {
-        if (`n.equals(field)) return true;
+        if(`n.equals(field)) {
+          return true;
+        }
       }
     }
     return false;
@@ -710,7 +730,9 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SNeutral()],_*) -> {
-        if (`n.equals(field)) return true;
+        if(`n.equals(field)) {
+          return true;
+        }
       }
     }
     return false;
@@ -758,7 +780,9 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SRefreshPoint()],_*) -> {
-        if (`n.equals(field)) return true;
+        if(`n.equals(field)) {
+          return true;
+        }
       }
     }
     return false;
@@ -782,9 +806,11 @@ public class SymbolTable {
    **/
   public Set<String> getFreshConstructors() {
     HashSet<String> res = new HashSet();
-    for(String c: constructors.keySet())
-      if(isFreshType(getSort(c)))
+    for(String c: constructors.keySet()) {
+      if(isFreshType(getSort(c))) {
         res.add(c);
+      }
+    }
     return res;
   }
 
@@ -802,24 +828,34 @@ public class SymbolTable {
   public Set<String> getFreshSorts() {
     Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
-    while(it.hasNext()) 
-      if (!isFreshType(it.next())) it.remove();
+    while(it.hasNext()) { 
+      if(!isFreshType(it.next())) {
+        it.remove();
+      }
+    }
     return res;
   }
 
   public Set<String> getAtoms() {
     Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
-    while(it.hasNext()) 
-      if (!isAtomType(it.next())) it.remove();
+    while(it.hasNext()) {
+      if(!isAtomType(it.next())) {
+        it.remove();
+      }
+    }
     return res;
   }
 
   private StringList getAccessibleAtoms
     (String sort, HashSet<String> visited)  {
-      if (GomEnvironment.getInstance().isBuiltin(sort) || visited.contains(sort)) return `StringList();
+      if(GomEnvironment.getInstance().isBuiltin(sort) || visited.contains(sort)) {
+        return `StringList();
+      }
       visited.add(sort);
-      if (isAtomType(sort)) return `StringList(sort);
+      if(isAtomType(sort)) {
+        return `StringList(sort);
+      }
       StringList res = `StringList();
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
@@ -848,19 +884,22 @@ public class SymbolTable {
   }
 
   private void fillGraph() {
+    /* TODO: the graph should be reseted */
     for(String sort: getSorts()) {
       if (GomEnvironment.getInstance().isBuiltin(sort)) continue;
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
-            if (!GomEnvironment.getInstance().isBuiltin(`ty)) 
+            if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
               graph.addLink(sort,`ty);
+            }
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
-              if (!GomEnvironment.getInstance().isBuiltin(`ty)) 
+              if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
                 graph.addLink(sort,`ty);
+              }
             }
         }
       }
@@ -892,6 +931,9 @@ public class SymbolTable {
     sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
   }
 
+  /**
+    * clear all entries (sorts and constructors)
+    */
   public void clear() {
     sorts.clear();
     constructors.clear();

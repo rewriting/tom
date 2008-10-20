@@ -99,7 +99,6 @@ writer.write(%[
   public boolean @isOperatorMethod(operatorName)@() {
     return false;
   }
-
 ]%);
     }
     // methods for each slot
@@ -116,13 +115,17 @@ writer.write(%[
   public @className()@ @setMethod(slot)@(@slotDomain(slot)@ _arg) {
     throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
-
 ]%);
 
     }
 
     /* fromTerm method, dispatching to operator classes */
     writer.write(%[
+  public aterm.ATerm toATerm() {
+    // returns null to indicates sub-classes that they have to work
+    return null;
+  }
+
   public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
     @fullClassName()@ tmp;
 ]%);
@@ -138,15 +141,14 @@ writer.write(%[
   public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
     return fromTerm(atermFactory.readFromFile(stream));
   }
-
 ]%);
     
     /* abstract method to compare two terms represented by objects without maximal sharing */
     /* used in the mapping */
-    if (! maximalsharing) {
+    if(!maximalsharing) {
       writer.write(%[
   public abstract boolean deepEquals(Object o);
-  ]%);
+]%);
     } 
 
     /* length and reverse prototypes, only usable on lists */
@@ -246,14 +248,14 @@ matchblock: {
       }
     }
   */
-    if (!hooks.isEmptyConcHook()) {
+    if(!hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
     }
   }
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
     ClassNameList consum = `ConcClassName(operatorList*,variadicOperatorList*);
-    while (!consum.isEmptyConcClassName()) {
+    while(!consum.isEmptyConcClassName()) {
       ClassName operatorName = consum.getHeadConcClassName();
       consum = consum.getTailConcClassName();
       writer.write(%[
@@ -265,25 +267,24 @@ matchblock: {
     }
   }
 
-  public void generateTomMapping(Writer writer)
-      throws java.io.IOException {
+  public void generateTomMapping(Writer writer) throws java.io.IOException {
     writer.write(%[
 %typeterm @className()@ {
   implement { @fullClassName()@ }
   is_sort(t) { ($t instanceof @fullClassName()@) }
 ]%);
-if (maximalsharing) {
-    writer.write(%[
+    if(maximalsharing) {
+      writer.write(%[
   equals(t1,t2) { ($t1==$t2) }
 ]%);
-} else {
-writer.write(%[
+    } else {
+      writer.write(%[
   equals(t1,t2) { (((@fullClassName()@)$t1).deepEquals($t2)) }
 ]%);
-  }
-writer.write(%[
+    }
+    writer.write(%[
 }
 ]%);
-}
+ }
 
 }

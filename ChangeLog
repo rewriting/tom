@@ -1,3 +1,10 @@
+2008-18-10 pem
+  * modify toATerm and fromTerm such that ATernList of the for [...]
+	  are produced and parse.
+		There is an unsolved ambiguity when several variadic operators exist in
+		the same sort
+	* improved the optimizer to always inline Let x<-y in body
+
 2008-10-10 pem
   * generate less AbstractBlock, and thus less { ... }
 	* improved the optimizer: Inlining generalized to all kind of variables

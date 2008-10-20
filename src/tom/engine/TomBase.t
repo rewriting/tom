@@ -602,7 +602,7 @@ public final class TomBase {
   }
 
 
-  public static TomType getTermType(Expression t, SymbolTable symbolTable){
+  public static TomType getTermType(Expression t, SymbolTable symbolTable) {
     %match(Expression t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
@@ -610,6 +610,7 @@ public final class TomBase {
       GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
+      Cast[AstType=type] -> { return `type; }
     }
     System.out.println("getTermType error on term: " + t);
     throw new TomRuntimeException("getTermType error on term: " + t);

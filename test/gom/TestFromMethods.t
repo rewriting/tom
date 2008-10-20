@@ -67,11 +67,7 @@ public class TestFromMethods extends TestCase {
       `Name("\"Hello\tWorld\n print-it\f end\""),
       `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
       `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
-      `concInt(1,2,3,4,5,6,7,8,9,0),
-      `concLong(10000,123455,23445556),
-      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3)),
-      `concBool(true(),false(),true(),false()),
-      `concChar('t','o','m')
+      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3))
     };
     TestSuite suite = new TestSuite();
     for (int i = 0; i<TESTS.length;i++) {
@@ -96,4 +92,29 @@ public class TestFromMethods extends TestCase {
     Wrapper newObj = Wrapper.fromString(testSubject.toString());
     assertEquals(testSubject,newObj);
   }
+
+ public void testListInt() {
+    ListInt l = `concInt(1,2,3,4,5,6,7,8,9,0);
+    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
+    assertEquals(l,Wrapper.fromString(l.toString()));
+  }
+
+  public void testListLong() {
+    ListLong l = `concLong(10000,123455,23445556);
+    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
+    assertEquals(l,Wrapper.fromString(l.toString()));
+  }
+
+  public void testListBool() {
+    ListBool l = `concBool(true(),false(),true(),false());
+    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
+    assertEquals(l,Wrapper.fromString(l.toString()));
+  }
+
+  public void testListChar() {
+    ListChar l = `concChar('t','o','m');
+    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
+    assertEquals(l,Wrapper.fromString(l.toString()));
+  }
+
 }

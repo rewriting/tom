@@ -151,9 +151,9 @@ public class Compiler {
             }
             GomClass operatorClass;
             allOperators = `ConcClassName(operatorClassName,allOperators*);
-            if (variadicOpClassName != null) {
+            if(variadicOpClassName != null) {
               /* We just processed a variadic operator */
-              GomClass cons = `OperatorClass(operatorClassName,
+              GomClass consClass = `OperatorClass(operatorClassName,
                   abstracttypeName,
                   variadicOpClassName,
                   mappingName,
@@ -174,7 +174,7 @@ public class Compiler {
                                                      mappingName,
                                                      sortClassName,
                                                      emptyClass,
-                                                     cons,
+                                                     consClass,
                                                      ConcHook());
             } else {
               operatorClass = `OperatorClass(operatorClassName,

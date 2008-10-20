@@ -65,9 +65,8 @@ public class Backend {
 
   public int generate(GomClassList classList) {
     int errno = 0;
-    Set mappingSet = new HashSet();
-    Map generators =
-      new HashMap();
+    Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
+    Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
     %match(GomClassList classList) {
       ConcGomClass(_*,
@@ -80,7 +79,7 @@ public class Backend {
           new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
         generators.put(smappingclass,stratMapping);
 
-        TemplateClass mapping = null;
+        MappingTemplateClass mapping = null;
         if(strategySupport) {
           mapping =
             templatefactory.makeTomMappingTemplate(`gomclass,stratMapping);
@@ -99,13 +98,13 @@ public class Backend {
       errno += generateClass(gomclass,generators);
     }
     /* The mappings may need to access generators */
-    Iterator it = mappingSet.iterator();
+    Iterator<MappingTemplateClass> it = mappingSet.iterator();
     while (it.hasNext()) {
-      ((MappingTemplateClass)it.next()).addTemplates(generators);
+      it.next().addTemplates(generators);
     }
-    it = generators.keySet().iterator();
-    while (it.hasNext()) {
-      ((TemplateClass)generators.get(it.next())).generateFile();
+    Iterator<ClassName> itc = generators.keySet().iterator();
+    while (itc.hasNext()) {
+      generators.get(itc.next()).generateFile();
     }
 
     return 1;
@@ -114,9 +113,7 @@ public class Backend {
   /*
    * Create template classes for the different classes to generate
    */
-  public int generateClass(
-      GomClass gomclass,
-      Map generators) {
+  public int generateClass(GomClass gomclass, Map<ClassName,TemplateClass> generators) {
     %match(GomClass gomclass) {
       TomMapping[ClassName=className] -> {
         /* It was processed by the caller: check it is already in generators */
@@ -165,7 +162,6 @@ public class Backend {
         TemplateClass isOpStrat =
           new tom.gom.backend.strategy.IsOpTemplate(gomclass);
         isOpStrat.generateFile();
-
 
         TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
         makeOpStrat.generateFile();

@@ -108,12 +108,10 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
 
-
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
-
         if(getOptionBooleanValue("optimize2")) {          
           Strategy optStrategy2 = `Sequence(
               InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
@@ -186,12 +184,20 @@ public class TomOptimizer extends TomGenericPlugin {
       /*
        * 
        * Let x<-exp in body where x is used 0 times ==> eliminate
+       * Let x<-variable in body ==> inline
        * Let x<-exp in body where x is used 1 times ==> inline
        * If exp does no depend from values which are modified between Let x<-exp and the use of x in the body
        */
       Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         return `body; 
       } 
+
+      Let((Variable|VariableStar)[AstName=name],exp,body) &&
+        (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
+         Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
+          return (Instruction) `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
+       // return  (Instruction) `renameVariable(name,expname).visitLight(`body);
+      }
 
       Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
         String varName = ""; // real name of the variable (i.e. without the tom_ prefix)
@@ -561,6 +567,16 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
+  %strategy replaceVariableByExpression(variable:TomName, exp:Expression) extends Identity() {
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=astName] -> {
+        if(variable == `astName) {
+          return `ExpressionToTomTerm(exp);
+        }
+      }
+    }
+  }
+
   %op Strategy CleanAssign(varname: TomName) {
     make(varname) { (`TopDown(CleanAssignOnce(varname))) }
   }
@@ -576,7 +592,6 @@ public class TomOptimizer extends TomGenericPlugin {
   private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
     return factory.remove(term1)==factory.remove(term2);
   }
-
 
   %strategy NopElimAndFlatten() extends Identity() {
     visit Instruction {
@@ -664,7 +679,7 @@ public class TomOptimizer extends TomGenericPlugin {
             InfoVariable info = new InfoVariable();
             `computeOccurencesLet(name1,info).visit(`body2);
             int mult = info.readCount; 
-            if(mult==0){
+            if(mult==0) {
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
               Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));

@@ -94,7 +94,7 @@ writer.write(%[
   @@Override
   public int length() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
-      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
+      @fullClassName(sortName)@ tl = this.getTail@className()@();
       if (tl instanceof @className()@) {
         return 1+((@className()@)tl).length();
       } else {
@@ -103,8 +103,7 @@ writer.write(%[
     } else {
       return 0;
     }
-    }
-
+  }
 
   public static @fullClassName(sortName)@ fromArray(@domainClassName@[] array) {
     @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
@@ -120,8 +119,8 @@ writer.write(%[
       @fullClassName(sortName)@ cur = this;
       @fullClassName(sortName)@ rev = @fullClassName(empty.getClassName())@.make();
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        rev = @fullClassName(cons.getClassName())@.make(((@fullClassName(cons.getClassName())@)cur).getHead@className()@(),rev);
-        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        rev = @fullClassName(cons.getClassName())@.make(cur.getHead@className()@(),rev);
+        cur = cur.getTail@className()@();
       }
 ]%);
     if(fullClassName(sortName).equals(domainClassName)) { /* domain = codomain */
@@ -140,7 +139,7 @@ writer.write(%[
 
   public @fullClassName(sortName)@ append(@domainClassName@ element) {
     if(this instanceof @fullClassName(cons.getClassName())@) {
-      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
+      @fullClassName(sortName)@ tl = this.getTail@className()@();
       if (tl instanceof @className()@) {
         return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).append(element));
       } else {
@@ -167,8 +166,8 @@ writer.write(%[
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        @domainClassName@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
-        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        @domainClassName@ elem = cur.getHead@className()@();
+        cur = cur.getTail@className()@();
         @toStringChild("buffer","elem")@
         if(cur instanceof @fullClassName(cons.getClassName())@) {
           buffer.append(",");
@@ -182,6 +181,15 @@ writer.write(%[
     buffer.append(")");
   }
 
+  public aterm.ATerm toATerm() {
+    aterm.ATerm res = atermFactory.makeList();
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ tail = this.getTail@className()@();
+      res = atermFactory.makeList(@toATermHead()@,(aterm.ATermList)tail.toATerm());
+    } 
+    return res;
+  }
+
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
@@ -190,7 +198,7 @@ writer.write(%[
 
         aterm.ATerm array[] = appl.getArgumentArray();
         for(int i = array.length-1; i>=0; --i) {
-          @domainClassName@ elem = @fromATermElement("array[i]","elem")@;
+          @domainClassName@ elem = @fromATermElement("array[i]")@;
           res = @fullClassName(cons.getClassName())@.make(elem,res);
         }
         return res;
@@ -202,7 +210,7 @@ writer.write(%[
       @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
       try {
         while(!list.isEmpty()) {
-          @domainClassName@ elem = @fromATermElement("list.getFirst()","elem")@;
+          @domainClassName@ elem = @fromATermElement("list.getFirst()")@;
           res = @fullClassName(cons.getClassName())@.make(elem,res);
           list = list.getNext();
         }
@@ -210,7 +218,7 @@ writer.write(%[
         // returns null when the fromATerm call failed
         return null;
       }
-      return res;
+      return res.reverse();
     }
 
     return null;
@@ -234,10 +242,10 @@ writer.write(%[
     if(o==null) { return false; }
     if(cur instanceof @fullClassName(cons.getClassName())@) {
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        if( o.equals(((@fullClassName(cons.getClassName())@)cur).getHead@className()@()) ) {
+        if( o.equals(cur.getHead@className()@()) ) {
           return true;
         }
-        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        cur = cur.getTail@className()@();
       }
       if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
         if( o.equals(cur) ) {
@@ -268,8 +276,8 @@ writer.write(%[
           throw new java.util.NoSuchElementException();
         }
         if(list.isCons@className()@()) {
-          @primitiveToReferenceType(domainClassName)@ head = ((@fullClassName(cons.getClassName())@)list).getHead@className()@();
-          list = ((@fullClassName(cons.getClassName())@)list).getTail@className()@();
+          @primitiveToReferenceType(domainClassName)@ head = list.getHead@className()@();
+          list = list.getTail@className()@();
           return head;
         } else {
           // we are in this case only if domain=codomain
@@ -321,9 +329,9 @@ writer.write(%[
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        @primitiveToReferenceType(domainClassName)@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
+        @primitiveToReferenceType(domainClassName)@ elem = cur.getHead@className()@();
         array[i] = elem;
-        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        cur = cur.getTail@className()@();
         i++;
       }
       if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
@@ -345,9 +353,9 @@ writer.write(%[
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        @primitiveToReferenceType(domainClassName)@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
+        @primitiveToReferenceType(domainClassName)@ elem = cur.getHead@className()@();
         array[i] = (T)elem;
-        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        cur = cur.getTail@className()@();
         i++;
       }
       if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
@@ -488,7 +496,14 @@ writer.write(%[
     return res.toString();
   }
 
-  private String fromATermElement(String term, String element) {
+  private String toATermHead() {
+    SlotField head = cons.getSlotFields().getHeadConcSlotField();
+    StringBuilder res = new StringBuilder();
+    toATermSlotField(res,head);
+    return res.toString();
+  }
+
+  private String fromATermElement(String term) {
     SlotField slot = cons.getSlotFields().getHeadConcSlotField();
     StringBuilder buffer = new StringBuilder();
     fromATermSlotField(buffer,slot,term);
@@ -533,3 +548,4 @@ writer.write(%[
     return Logger.getLogger(getClass().getName());
   }
 }
+//@primitiveToReferenceType(domainClassName)@ elem = this.getHead@className()@();

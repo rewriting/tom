@@ -61,7 +61,7 @@ public class OperatorTemplate extends TemplateHookedClass {
                     SortName=sortName,
                     SlotFields=slots] -> {
         this.abstractType = `abstractType;
-        this.extendsType = `extendsType;;
+        this.extendsType = `extendsType;
         this.sortName = `sortName;
         this.slotList = `slots;
         return;
@@ -406,6 +406,11 @@ generateGetters(writer);
   /* AbstractType */
   @@Override
   public aterm.ATerm toATerm() {
+    aterm.ATerm res = super.toATerm();
+    if(res != null) {
+      // the super class has produced an ATerm (may be a variadic operator)
+      return res;
+    }
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
       new aterm.ATerm[] {@generateToATermChilds()@});
@@ -550,7 +555,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      if (res.length()!=0) {
+      if(res.length()!=0) {
         res.append(", ");
       }
       toATermSlotField(res,head);

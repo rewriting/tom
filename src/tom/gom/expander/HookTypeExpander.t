@@ -67,7 +67,6 @@ public class HookTypeExpander {
         %match(prodList) {
           ConcProduction(_*, prod, _*) -> {
 
-
             /* Process hooks attached to a module */
             %match(prod) {
               hook@Hook[NameType=KindModule(),HookType=hkind,Name=mname] -> {
@@ -161,7 +160,7 @@ public class HookTypeExpander {
             !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"ACU"]], _*) -> {
               /* generate an error to make users specify the theory */
               getLogger().log(Level.SEVERE,
-                "As you use make_insert,make_empty or rules, specify the associated theory for the variadic operator "+`opName);
+                "As you use make_insert, make_empty or rules, specify the associated theory for the variadic operator "+`opName);
             }
           }
         }

@@ -96,7 +96,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
    * necessary (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if (hooks.isEmptyConcHook()) {
+    if(hooks.isEmptyConcHook()) {
       try {
         File output = fileToGenerate();
         // make sure the directory exists
@@ -109,7 +109,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         e.printStackTrace();
         return 1;
       }
-    } else { /* We need to call tom to generate the file */
+    } else { /* We need to call Tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());

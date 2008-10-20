@@ -302,7 +302,15 @@ public class Inlining {
       Declare(var,expr,body) -> { return w+"declare " + pretty(`var) + " <- " + pretty(`expr) + " in\n" + pretty(indent+1,`body); }
       Assign(var,expr) -> { return w+pretty(`var)+" = "+pretty(`expr); }
       Print(expr) -> { return w+"print("+pretty(`expr)+")"; }
-      Seq(x*) -> { String s=""; while(!`x.isEmptySeq()) { s+=pretty(indent,`x.getHeadSeq())+";\n"; `x=`x.getTailSeq(); } return s;  }
+      Seq(X*) -> {
+        Instruction x = `X;
+        String s=""; 
+        while(!`x.isEmptySeq()) { 
+          s+=pretty(indent,`x.getHeadSeq())+";\n"; 
+          `x=`x.getTailSeq();
+        }
+        return s;
+      }
     }
     %match(e) {
       Plus(e1,e2) -> { return "("+pretty(`e1)+" + "+pretty(`e2)+")"; }

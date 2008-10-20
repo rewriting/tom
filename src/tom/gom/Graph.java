@@ -24,7 +24,7 @@
 
 package tom.gom;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collection;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class Graph<T> {
     public Node(T v) { value = v; }
   }
 
-  private Hashtable<T,Node> table = new Hashtable<T,Node>();
+  private HashMap<T,Node> table = new HashMap<T,Node>();
 
   public void addLink(T a, T b) {
     if (!table.containsKey(a)) table.put(a,new Node(a));
@@ -49,8 +49,9 @@ public class Graph<T> {
   }
 
   private void reset() {
-    for(Node n: table.values())
+    for(Node n: table.values()) {
       n.mark = false;
+    }
   }
 
   public Set<T> connected(Collection<T> c) {
@@ -64,8 +65,9 @@ public class Graph<T> {
 
   private void collectConnected(Collection<Node> c, Set<T> collected) {
     for(Node n: c) {
-      if(n.mark) continue;
-      else {
+      if(n.mark) {
+        continue;
+      } else {
         n.mark = true;
         collected.add(n.value);
         collectConnected(n.neighbors,collected);
