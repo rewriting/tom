@@ -204,7 +204,7 @@
     </zip>
   </target>
 
-  <target name="junit" depends="tom.init, build"
+  <target name="junit" depends="tom.init, build" unless="${example}"
     description="Runs junit acceptance tests">
     <mkdir dir="${examples.report}"/>
     <tom.junit printsummary="on"
