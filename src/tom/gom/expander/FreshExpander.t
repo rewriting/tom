@@ -80,7 +80,7 @@ public class FreshExpander {
   private String alphamapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       if(st.isPatternType(sort)) {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@OuterMap]%);
@@ -97,7 +97,7 @@ public class FreshExpander {
   private String newAlphamapList(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
       if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
@@ -111,7 +111,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       if(st.isPatternType(sort)) {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@OuterMap]%);
@@ -131,7 +131,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ExportMap<@aid@>()]%);
       if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.ExportMap<@aid@>()]%);
@@ -145,7 +145,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       if(st.isPatternType(sort)) {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@OuterMap]%);
@@ -165,7 +165,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
       if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.ConvertMap<@aid@>()]%);
@@ -332,7 +332,7 @@ public class FreshExpander {
     for(String a: st.getBoundAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       buf.append( %[java.util.Hashtable<@aid@,@aid@> @a@Map]% );
     }
     return buf.toString();
@@ -345,7 +345,7 @@ public class FreshExpander {
     for(String a: st.getBoundAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new java.util.Hashtable<@aid@,@aid@>()]%);
     }
     return buf.toString();
@@ -526,12 +526,12 @@ public class FreshExpander {
     String exportmapargs = exportmapArgList(sort);
     String newexportmaps = newExportmapList(sort);
     String rawsortid = st.qualifiedRawSortId(sort);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = "{";
 
     for(String a: st.getAccessibleAtoms(sort)) {
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       res += %[ 
         public abstract @sortid@ 
           rename@a@(java.util.Hashtable<@aid@,@aid@> map); 
@@ -576,7 +576,7 @@ public class FreshExpander {
       ]%;
 
       for(String a: st.getBoundAtoms(sort)) {
-        String aid = st.qualifiedSortId(a);
+        String aid = st.getFullSortClassName(a);
         res += %[
           public java.util.Set<@aid@> getBound@a@() {
             java.util.HashSet<@aid@> res = new java.util.HashSet<@aid@>();
@@ -610,7 +610,7 @@ public class FreshExpander {
   private String rawSortBlockHookString(String sort) {
     String convertmapargs = convertmapArgList(sort);
     String newconvertmaps = newConvertmapList(sort);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = %[{
      /**
@@ -625,7 +625,7 @@ public class FreshExpander {
 
     if(st.isPatternType(sort)) {
       for(String a: st.getBoundAtoms(sort)) {
-        String aid = st.qualifiedSortId(a);
+        String aid = st.getFullSortClassName(a);
         res += %[
           public tom.library.freshgom.ConvertMap<@aid@> getBound@a@Map() {
             tom.library.freshgom.ConvertMap<@aid@> res = 
@@ -654,9 +654,9 @@ public class FreshExpander {
   }
 
   private String renameRecursiveCalls(String c, String atomSort) {
-    String sortid = st.qualifiedSortId(st.getSort(c));
+    String sortid = st.getFullSortClassName(st.getSort(c));
     String res = %[@sortid@ res = this;]%; 
-    String atomSortId = st.qualifiedSortId(atomSort);
+    String atomSortId = st.getFullSortClassName(atomSort);
     for(String f: st.getFields(c)) {
       String fsort = st.getSort(c,f);
       if (env.isBuiltin(fsort)) continue;
@@ -676,13 +676,13 @@ public class FreshExpander {
 
   private String refreshRecursiveCalls(String c) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = %[@sortid@ res = this;]%; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
       if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
-        String fsortid = st.qualifiedSortId(fsort);
+        String fsortid = st.getFullSortClassName(fsort);
         res += %[
           @fsortid@ @f@ = get@f@();
           if (@fsort@Map.containsKey(@f@))
@@ -711,7 +711,7 @@ public class FreshExpander {
 
   private String alphaRecursiveCalls(String c) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
@@ -724,7 +724,7 @@ public class FreshExpander {
               throw new tom.library.freshgom.AlphaMap.AlphaException();
            ]%;
         } else {
-          String fsortid = st.qualifiedSortId(fsort);
+          String fsortid = st.getFullSortClassName(fsort);
           String rawfsortid = st.qualifiedRawSortId(fsort);
           if (st.isAtomType(fsort)) {
             res += %[
@@ -740,7 +740,7 @@ public class FreshExpander {
               @fsortid@ o_@f@ = o.get@f@();
             ]%;
             for(String a: st.getBoundAtoms(fsort)) {
-              String aid = st.qualifiedSortId(a);
+              String aid = st.getFullSortClassName(a);
               res += %[
                 tom.library.freshgom.AlphaMap<@aid@> @f@_bound@a@
                   = new tom.library.freshgom.AlphaMap<@aid@>();
@@ -766,7 +766,7 @@ public class FreshExpander {
               throw new tom.library.freshgom.AlphaMap.AlphaException();
           ]%;
         } else {
-          String fsortid = st.qualifiedSortId(fsort);
+          String fsortid = st.getFullSortClassName(fsort);
           String rawfsortid = st.qualifiedRawSortId(fsort);
           if (st.isAtomType(fsort)) {
             if (st.isBound(c,f)) 
@@ -796,7 +796,7 @@ public class FreshExpander {
 
   private String exportRecursiveCalls(String c) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
@@ -804,7 +804,7 @@ public class FreshExpander {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (env.isBuiltin(fsort)) continue;
-        String fsortid = st.qualifiedSortId(fsort);
+        String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
           res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
@@ -818,7 +818,7 @@ public class FreshExpander {
           res += %[{ /* to limit declared variables scope */]%;
           res += %[@fsortid@ @f@ = get@f@();]%;
           for(String a: st.getBoundAtoms(fsort)) {
-            String aid = st.qualifiedSortId(a);
+            String aid = st.getFullSortClassName(a);
             res += %[
               java.util.Set<@aid@> @f@_bound@a@ = @f@.getBound@a@();
               tom.library.freshgom.ExportMap<@aid@> @a@InnerMap 
@@ -836,7 +836,7 @@ public class FreshExpander {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (env.isBuiltin(fsort)) continue;
-        String fsortid = st.qualifiedSortId(fsort);
+        String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
           if (st.isBound(c,f))
@@ -863,7 +863,7 @@ public class FreshExpander {
 
   private String getBoundRecursiveCalls(String c, String atomSort) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
@@ -881,8 +881,8 @@ public class FreshExpander {
 
   private String getBound2RecursiveCalls(String c, String a) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
-    String aid = st.qualifiedSortId(a);
+    String sortid = st.getFullSortClassName(sort);
+    String aid = st.getFullSortClassName(a);
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
@@ -902,17 +902,17 @@ public class FreshExpander {
   }
 
   private String constructorBlockHookString(String c) {
-    String cid = st.qualifiedConstructorId(c);
+    String cid = st.getFullConstructorClassName(c);
     String sort = st.getSort(c);
     String alphamapargs = alphamapArgList(sort);
     String exportmapargs = exportmapArgList(sort);
     String rawsortid = st.qualifiedRawSortId(sort);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = "{";
 
     for(String a: st.getAccessibleAtoms(sort)) {
-      String aid = st.qualifiedSortId(a);
+      String aid = st.getFullSortClassName(a);
       res += %[
         public @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map) {
           @renameRecursiveCalls(c,a)@
@@ -946,7 +946,7 @@ public class FreshExpander {
       ]%;
 
       for(String a: st.getBoundAtoms(sort)) {
-        String aid = st.qualifiedSortId(a);
+        String aid = st.getFullSortClassName(a);
         res += %[ 
           public void getBound@a@(java.util.Set<@aid@> atoms) {
             @getBoundRecursiveCalls(c,a)@
@@ -981,8 +981,8 @@ public class FreshExpander {
 
   private String getBoundMapRecursiveCalls(String c, String atomSort) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
-    String aid = st.qualifiedSortId(atomSort);
+    String sortid = st.getFullSortClassName(sort);
+    String aid = st.getFullSortClassName(atomSort);
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
@@ -1003,7 +1003,7 @@ public class FreshExpander {
 
   private String convertRecursiveCalls(String c) {
     String sort = st.getSort(c);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
@@ -1011,7 +1011,7 @@ public class FreshExpander {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (env.isBuiltin(fsort)) continue;
-        String fsortid = st.qualifiedSortId(fsort);
+        String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
           res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
@@ -1026,7 +1026,7 @@ public class FreshExpander {
           res += %[{ /* to limit declared variables scope */]%;
           res += %[@rawfsortid@ raw_@f@ = @st.rawGetter(c,f)@;]%;
           for(String a: st.getBoundAtoms(fsort)) {
-            String aid = st.qualifiedSortId(a);
+            String aid = st.getFullSortClassName(a);
             res += %[
               tom.library.freshgom.ConvertMap<@aid@> raw_@f@_bound@a@ 
                 = raw_@f@.getBound@a@Map();
@@ -1045,7 +1045,7 @@ public class FreshExpander {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (env.isBuiltin(fsort)) continue;
-        String fsortid = st.qualifiedSortId(fsort);
+        String fsortid = st.getFullSortClassName(fsort);
         //String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
           if (st.isBound(c,f))
@@ -1073,7 +1073,7 @@ public class FreshExpander {
   private String rawConstructorBlockHookString(String c) {
     String sort = st.getSort(c);
     String convertmapargs = convertmapArgList(sort);
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = %[{
       /**
@@ -1086,7 +1086,7 @@ public class FreshExpander {
 
     if(st.isPatternType(sort)) {
       for(String a: st.getBoundAtoms(sort)) {
-        String aid = st.qualifiedSortId(a);
+        String aid = st.getFullSortClassName(a);
         res += %[
           public void 
             getBound@a@Map(tom.library.freshgom.ConvertMap<@aid@> m) {
@@ -1110,7 +1110,7 @@ public class FreshExpander {
   }
 
   private String atomBlockHookString(String sort) {
-    String sortid = st.qualifiedSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     return %[{
       private static int counter = 0;
 
@@ -1271,8 +1271,8 @@ public class FreshExpander {
     if (st.isVariadic(c)) {
       String codomain = st.getCoDomain(c);
       String domain = st.getDomain(c);
-      String consid = st.qualifiedConstructorId("Cons" + c);
-      String nilid = st.qualifiedConstructorId("Empty" + c);
+      String consid = st.getFullConstructorClassName("Cons" + c);
+      String nilid = st.getFullConstructorClassName("Empty" + c);
       String gethead = null;
       if(st.isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
       else gethead = %[getHead@c@()]%;
@@ -1287,7 +1287,7 @@ public class FreshExpander {
         }
       }]%;
     } else {
-      String cid = st.qualifiedConstructorId(c);
+      String cid = st.getFullConstructorClassName(c);
       return %[{
         %op @s@ @c@(@typedConsArgList(c)@) {
           is_fsym(t) { ($t instanceof @cid@) }
