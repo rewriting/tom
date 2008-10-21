@@ -12,12 +12,16 @@ public class Eval {
 
   public static void main(String[] args) {
     try {
-      System.out.println("Please enter the file path that contain the Input information: ");
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      String path = reader.readLine();
+      String path = "";
+      if (args.length > 0)
+        path = args[0];
+      else {
+        System.out.println("Please enter the file path that contain the Input information: ");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        path = reader.readLine();
+      }
       File testFile = new File(path);
       String instructions = getContents(testFile);
-      //System.out.println("Original file contents: " + instructions);
       Input in = Input.fromString(instructions);
       System.out.println("\n------- Running Type Reconstruction Algorithm --------\n");
       Eval test = new Eval();
@@ -186,7 +190,6 @@ public class Eval {
 
   private static void writeMList(Substitution subs) {
     %match(subs) {
-      //MList() -> { System.out.print(""); }
       MList(map,maps*) &&
       MapsTo(t1,t2) << map -> {
         writeTomType(`t1);
@@ -238,7 +241,6 @@ public class Eval {
 
   private static void writeTTeList(TomTermList args) {
     %match(args) {
-      //TTeList() -> { System.out.print(""); }
       TTeList(term,terms*)
       ->
       {
