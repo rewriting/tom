@@ -54,6 +54,10 @@ public class Graph<T> {
     }
   }
 
+  public void clear() {
+    table.clear();
+  }
+
   public Set<T> connected(Collection<T> c) {
     reset();
     HashSet<Node> set = new HashSet<Node>();

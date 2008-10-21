@@ -45,45 +45,6 @@ public class SymbolTable {
   %include { util/ArrayList.tom }
   %include { sl.tom }  
 
-  public class SortException extends RuntimeException {
-    protected String sortName;
-
-    public SortException(String sortName) {
-      super();
-      this.sortName = sortName;
-    }
-    public String getSortName() { return sortName; } 
-    public String toString() {
-      return "sort exception: " + sortName;
-    }
-  }
-
-  public class UndeclaredSortException extends SortException {
-    public UndeclaredSortException(String n) { super(n); }
-    public String toString() {
-      return "undeclared sort: " + sortName;
-    }
-  }
-
-  public class ConstructorException extends RuntimeException {
-    protected String constructorName;
-    public ConstructorException(String constructorName) {
-      super();
-      this.constructorName = constructorName;
-    }
-    public String getConstructorName() { return constructorName; } 
-    public String toString() {
-      return "constructor exception: " + constructorName;
-    }
-  }
-
-  public class UndeclaredConstructorException extends ConstructorException {
-    public UndeclaredConstructorException(String n) { super(n); }
-  }
-
-  public class InvalidConstructorException extends ConstructorException {
-    public InvalidConstructorException(String n) { super(n); }
-  }
 
   /** map sort-name -> SortDescription */
   private Hashtable<String,SortDescription> sorts = 
@@ -92,14 +53,191 @@ public class SymbolTable {
   /** map constructor-name -> ConstructorDescription */
   private Hashtable<String,ConstructorDescription> constructors =  
     new Hashtable<String,ConstructorDescription>();
+  
+  protected String packageName = "";
 
-  /** ??? for FreshGom */
-  private Graph<String> graph = new Graph<String>();
+  private Graph<String> sortDependences = new Graph<String>();
+  
+  public void fill(GomModuleList gml) {
+    %match(gml) {
+      ConcGomModule(_*,m,_*) -> { `fillFromGomModule(m); }
+    }
+    computeSortDependences();
+    isolateFreshSorts();
+    //System.out.println("sorts concerned by freshgom: " + getFreshSorts());
+    //fillRefreshPoints();
+    fillAccessibleAtoms();
+    generateConsAndNils();
+  }
 
-  protected String pack = "";
+  public void addConstructor(String symbol, String codomain, FieldDescriptionList fields) {
+    constructors.put(symbol,`ConstructorDescription(codomain,fields,No()));
+    SortDescription s = sorts.get(codomain);
+    StringList l = s.getConstructors();
+    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  }
 
-  public void setPackage(String pack) {
-    this.pack = pack;
+  public void addVariadicConstructor(String symbol, String domain, String codomain) {
+    constructors.put(symbol,`VariadicConstructorDescription(codomain,domain,false));
+    SortDescription s = sorts.get(codomain);
+    StringList l = s.getConstructors();
+    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  }
+
+  /**
+   * returns the set of all constructor symbols
+   **/
+  public Set<String> getConstructors() {
+    return new HashSet(constructors.keySet());
+  }
+
+  /**
+   * returns the set of all sort symbols
+   **/
+  public Set<String> getSorts() {
+    return new HashSet(sorts.keySet());
+  }
+
+  /**
+   * clear all entries (sorts and constructors)
+   */
+  public void clear() {
+    sorts.clear();
+    constructors.clear();
+  }
+
+  public String getFullSortClassName(String sort) {
+    SortDescription desc = sorts.get(sort);
+    if(desc==null) {
+      throw new UndeclaredSortException(sort);
+    }
+    %match(desc) {
+      SortDescription[ModuleSymbol=m] -> { 
+        return (packageName.equals("") ? "" : packageName + ".") 
+          + `m.toLowerCase() + ".types." + sort; 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
+  }
+
+  public String getFullConstructorClassName(String cons) {
+    ConstructorDescription desc = constructors.get(cons);
+    if(desc==null) {
+      throw new UndeclaredConstructorException(cons);
+    }
+    %match(desc) {
+      ConstructorDescription[SortSymbol=s] -> {
+        return getFullSortClassName(`s).toLowerCase() + "." + cons; 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
+  }
+
+  public boolean isBuiltin(String sort) {
+    %match(sort) {
+      "boolean" | "String" | "int" -> { return true; }
+    }
+    return false;
+  }
+
+  public void setPackage(String packageName) {
+    this.packageName = packageName;
+  }
+
+  public void generateConsAndNils() {
+    for(String c: getConstructors()) {
+      if(!isVariadic(c)) continue;
+      String dom = getDomain(c);
+      String codom = getCoDomain(c);
+      FieldDescriptionList ConsFields = null; // head and tail
+      FieldDescriptionList NilFields = `concFieldDescription();
+      /* codom binds X = ... | c(dom*) | ...
+         => codom binds X = ... | Consc(Headc:dom,Tailc:codom) | ... */
+      if(isPatternType(codom)) {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SPattern()),
+            FieldDescription("Tail"+c,codom,SPattern()));
+        /* codom = ... | c(<dom>*) | ...
+           => codom = ... | Consc(Headc:<dom>,Tailc:codom) | ... */
+      } else if(isRefreshPoint(c)) {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SRefreshPoint()),
+            FieldDescription("Tail"+c,codom,SNone()));
+        /* codom = ... | c(dom*) | ...
+           => codom = ... | Consc(Headc:dom,Tailc:codom) | ... */
+      } else {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SNone()),
+            FieldDescription("Tail"+c,codom,SNone()));
+      }
+
+      // add the new constructors to constructors map
+      String nilc = "Empty" + c;
+      String consc = "Cons" + c;
+      constructors.put(nilc,
+          `ConstructorDescription(codom,NilFields,GenNil(c)));
+      constructors.put(consc,
+          `ConstructorDescription(codom,ConsFields,GenCons(c)));
+
+      // modify the codomain description
+      SortDescription sd = sorts.get(codom);
+      StringList conslist = sd.getConstructors();
+      conslist = `StringList(conslist*,nilc,consc);
+      sd = sd.setConstructors(conslist);
+      sorts.put(codom,sd);
+    }
+  }
+
+  public boolean isVariadic(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { VariadicConstructorDescription[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  public boolean isGenerated(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { 
+        ConstructorDescription[Generated=!No()] -> { 
+          return `true; 
+        } 
+      }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  public boolean isGeneratedCons(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { 
+        ConstructorDescription[Generated=GenCons[]] -> { 
+          return `true; 
+        } 
+      }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  public boolean isGeneratedNil(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { 
+        ConstructorDescription[Generated=GenNil[]] -> { 
+          return `true; 
+        } 
+      }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
   }
 
   public String toString() {
@@ -123,130 +261,6 @@ public class SymbolTable {
       buf.append("constructor " + e.getKey() + ":\n" + swriter + "\n");
     }
     return buf.toString();
-  }
-
-  public static String rawSort(String s) {
-    return "Raw" + s; 
-  }
-
-  public String rawCons(String c) { 
-    if(isGenerated(c)) {
-      %match(getGenerated(c)) {
-        GenCons(suffix) ->  { return "ConsRaw" + `suffix; }
-        GenNil(suffix) -> { return "EmptyRaw" + `suffix; }
-      }
-    }
-    return "Raw" + c; 
-  }
-
-  public String qualifiedRawSortId(String sort) {
-    SortDescription desc = sorts.get(sort);
-    if(desc==null) {
-      throw new UndeclaredSortException(sort);
-    }
-    %match(desc) {
-      SortDescription[ModuleSymbol=m] -> { 
-        return (pack.equals("") ? "" : pack + ".") 
-          + `m.toLowerCase() + ".types." + rawSort(sort); 
-      }
-    }
-    throw new RuntimeException("non exhaustive match");
-  }
-
-  public String qualifiedRawConstructorId(String cons) {
-    ConstructorDescription desc = constructors.get(cons);
-    if(desc==null) {
-      throw new UndeclaredConstructorException(cons);
-    }
-    %match(desc) {
-      ConstructorDescription[SortSymbol=s] -> {
-        return qualifiedSortId(`s) + "." + `rawCons(cons); 
-      }
-    }
-    throw new RuntimeException("non exhaustive match");
-  }
-
-  public String qualifiedSortId(String sort) {
-    SortDescription desc = sorts.get(sort);
-    if(desc==null) {
-      throw new UndeclaredSortException(sort);
-    }
-    %match(desc) {
-      SortDescription[ModuleSymbol=m] -> { 
-        return (pack.equals("") ? "" : pack + ".") 
-          + `m.toLowerCase() + ".types." + sort; 
-      }
-    }
-    throw new RuntimeException("non exhaustive match");
-  }
-
-  public String qualifiedConstructorId(String cons) {
-    ConstructorDescription desc = constructors.get(cons);
-    if(desc==null) {
-      throw new UndeclaredConstructorException(cons);
-    }
-    %match(desc) {
-      ConstructorDescription[SortSymbol=s] -> {
-        return qualifiedSortId(`s).toLowerCase() + "." + cons; 
-      }
-    }
-    throw new RuntimeException("non exhaustive match");
-  }
-
-  public void fill(GomModuleList gml) {
-    %match(gml) {
-      ConcGomModule(_*,m,_*) -> { `fillFromGomModule(m); }
-    }
-    fillGraph();
-    isolateFreshSorts();
-    //System.out.println("sorts concerned by freshgom: " + getFreshSorts());
-    //fillRefreshPoints();
-    fillAccessibleAtoms();
-    generateConsAndNils();
-  }
-
-  public void generateConsAndNils() {
-    for(String c: getConstructors()) {
-      if(!isVariadic(c)) continue;
-      String dom = getDomain(c);
-      String codom = getCoDomain(c);
-      FieldDescriptionList ConsFields = null; // head and tail
-      FieldDescriptionList NilFields = `concFieldDescription();
-      /* codom binds X = ... | c(dom*) | ...
-         => codom binds X = ... | Consc(Headc:dom,Tailc:codom) | ... */
-      if(isPatternType(codom)) {
-        ConsFields = `concFieldDescription(
-            FieldDescription("Head"+c,dom,SPattern()),
-            FieldDescription("Tail"+c,codom,SPattern()));
-      /* codom = ... | c(<dom>*) | ...
-         => codom = ... | Consc(Headc:<dom>,Tailc:codom) | ... */
-      } else if(isRefreshPoint(c)) {
-        ConsFields = `concFieldDescription(
-            FieldDescription("Head"+c,dom,SRefreshPoint()),
-            FieldDescription("Tail"+c,codom,SNone()));
-      /* codom = ... | c(dom*) | ...
-         => codom = ... | Consc(Headc:dom,Tailc:codom) | ... */
-      } else {
-        ConsFields = `concFieldDescription(
-            FieldDescription("Head"+c,dom,SNone()),
-            FieldDescription("Tail"+c,codom,SNone()));
-      }
-
-      // add the new constructors to constructors map
-      String nilc = "Empty" + c;
-      String consc = "Cons" + c;
-      constructors.put(nilc,
-          `ConstructorDescription(codom,NilFields,GenNil(c)));
-      constructors.put(consc,
-          `ConstructorDescription(codom,ConsFields,GenCons(c)));
-
-      // modify the codomain description
-      SortDescription sd = sorts.get(codom);
-      StringList conslist = sd.getConstructors();
-      conslist = `StringList(conslist*,nilc,consc);
-      sd = sd.setConstructors(conslist);
-      sorts.put(codom,sd);
-    }
   }
 
   private void fillFromGomModule(GomModule m) {
@@ -273,6 +287,79 @@ public class SymbolTable {
       }
     }
     return res;
+  }
+
+  /* Methods only used by freshgom */
+
+  /**
+   * returns only sorts concerned by freshGom
+   **/
+  public Set<String> getFreshSorts() {
+    Set<String> res = getSorts();
+    Iterator<String> it = res.iterator();
+    while(it.hasNext()) { 
+      if(!isFreshType(it.next())) {
+        it.remove();
+      }
+    }
+    return res;
+  }
+
+
+  /**
+   * returns the set of all constructor symbols
+   * concerned by freshgom
+   **/
+  public Set<String> getFreshConstructors() {
+    HashSet<String> res = new HashSet();
+    for(String c: constructors.keySet()) {
+      if(isFreshType(getSort(c))) {
+        res.add(c);
+      }
+    }
+    return res;
+  }
+
+
+  public static String rawSort(String s) {
+    return "Raw" + s; 
+  }
+
+  public String rawCons(String c) { 
+    if(isGenerated(c)) {
+      %match(getGenerated(c)) {
+        GenCons(suffix) ->  { return "ConsRaw" + `suffix; }
+        GenNil(suffix) -> { return "EmptyRaw" + `suffix; }
+      }
+    }
+    return "Raw" + c; 
+  }
+
+  public String qualifiedRawSortId(String sort) {
+    SortDescription desc = sorts.get(sort);
+    if(desc==null) {
+      throw new UndeclaredSortException(sort);
+    }
+    %match(desc) {
+      SortDescription[ModuleSymbol=m] -> { 
+        return (packageName.equals("") ? "" : packageName + ".") 
+          + `m.toLowerCase() + ".types." + rawSort(sort); 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
+  }
+
+  public String qualifiedRawConstructorId(String cons) {
+    ConstructorDescription desc = constructors.get(cons);
+    if(desc==null) {
+      throw new UndeclaredConstructorException(cons);
+    }
+    %match(desc) {
+      ConstructorDescription[SortSymbol=s] -> {
+        return getFullSortClassName(`s) + "." + `rawCons(cons); 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
   }
 
   private static StringList convertBoundAtoms(AtomList al) {
@@ -363,66 +450,14 @@ public class SymbolTable {
     sorts.put(sort,desc.setFreshInfo(i));
   }
 
-  public boolean isVariadic(String cons) {
-    try {
-      ConstructorDescription desc = constructors.get(cons);
-      %match(desc) { VariadicConstructorDescription[] -> { return true; } }
-      return false;
-    } catch (NullPointerException e) {
-      throw new UndeclaredConstructorException(cons);
-    }
-  }
-
-  public boolean isGenerated(String cons) {
-    try {
-      ConstructorDescription desc = constructors.get(cons);
-      %match(desc) { 
-        ConstructorDescription[Generated=!No()] -> { 
-          return `true; 
-        } 
-      }
-      return false;
-    } catch (NullPointerException e) {
-      throw new UndeclaredConstructorException(cons);
-    }
-  }
-
-  public boolean isGeneratedCons(String cons) {
-    try {
-      ConstructorDescription desc = constructors.get(cons);
-      %match(desc) { 
-        ConstructorDescription[Generated=GenCons[]] -> { 
-          return `true; 
-        } 
-      }
-      return false;
-    } catch (NullPointerException e) {
-      throw new UndeclaredConstructorException(cons);
-    }
-  }
-
-  public boolean isGeneratedNil(String cons) {
-    try {
-      ConstructorDescription desc = constructors.get(cons);
-      %match(desc) { 
-        ConstructorDescription[Generated=GenNil[]] -> { 
-          return `true; 
-        } 
-      }
-      return false;
-    } catch (NullPointerException e) {
-      throw new UndeclaredConstructorException(cons);
-    }
-  }
-
   private GenerationInfo getGenerated(String cons) {
     ConstructorDescription desc = constructors.get(cons);
     return desc.getGenerated();
   }
 
   /**
-  * precondition : isGenerated(cons)
-  */
+   * precondition : isGenerated(cons)
+   */
   public String getBaseName(String cons) {
     return getGenerated(cons).getBaseName();
   }
@@ -477,13 +512,6 @@ public class SymbolTable {
     } catch (NullPointerException e) {
       throw new UndeclaredSortException(sort);
     }
-  }
-
-  public boolean isBuiltin(String sort) {
-    %match(sort) {
-      "boolean" | "String" | "int" -> { return true; }
-    }
-    return false;
   }
 
   %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
@@ -610,9 +638,9 @@ public class SymbolTable {
   }
 
   /**
-  * generates 'getfield()' except for HeadC and TailC
-  * where it generates 'getHeadRawC()' and 'getTailRawC()'
-  **/
+   * generates 'getfield()' except for HeadC and TailC
+   * where it generates 'getHeadRawC()' and 'getTailRawC()'
+   **/
   public String rawGetter(String cons, String field) {
     if(isGenerated(cons)) {
       String suffix = getBaseName(cons);
@@ -679,8 +707,8 @@ public class SymbolTable {
       }
       ConstructorDescription[Fields=
         concFieldDescription(_*,
-          FieldDescription[StatusValue=SRefreshPoint()],_*)] -> {
-            return true;
+            FieldDescription[StatusValue=SRefreshPoint()],_*)] -> {
+          return true;
         }
     }
     return false;
@@ -740,8 +768,8 @@ public class SymbolTable {
 
 
   /**
-  * for variadic operators 
-  */
+   * for variadic operators 
+   */
   public boolean isRefreshPoint(String cons) {
     ConstructorDescription d = constructors.get(cons);
     %match(d) {
@@ -793,48 +821,6 @@ public class SymbolTable {
     return getBoundAtoms(sort).contains(getSort(cons,field));
   }
 
-  /**
-   * returns the set of all constructor symbols
-   **/
-  public Set<String> getConstructors() {
-    return new HashSet(constructors.keySet());
-  }
-
-  /**
-   * returns the set of all constructor symbols
-   * concerned by freshgom
-   **/
-  public Set<String> getFreshConstructors() {
-    HashSet<String> res = new HashSet();
-    for(String c: constructors.keySet()) {
-      if(isFreshType(getSort(c))) {
-        res.add(c);
-      }
-    }
-    return res;
-  }
-
-
-  /**
-   * returns the set of all sort symbols
-   **/
-  public Set<String> getSorts() {
-    return new HashSet(sorts.keySet());
-  }
-
-  /**
-   * returns only sorts concerned by freshGom
-   **/
-  public Set<String> getFreshSorts() {
-    Set<String> res = getSorts();
-    Iterator<String> it = res.iterator();
-    while(it.hasNext()) { 
-      if(!isFreshType(it.next())) {
-        it.remove();
-      }
-    }
-    return res;
-  }
 
   public Set<String> getAtoms() {
     Set<String> res = getSorts();
@@ -883,8 +869,8 @@ public class SymbolTable {
     }
   }
 
-  private void fillGraph() {
-    /* TODO: the graph should be reseted */
+  private void computeSortDependences() {
+    sortDependences.clear();
     for(String sort: getSorts()) {
       if (GomEnvironment.getInstance().isBuiltin(sort)) continue;
       for(String c: getConstructors(sort)) {
@@ -892,13 +878,13 @@ public class SymbolTable {
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
             if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
-              graph.addLink(sort,`ty);
+              sortDependences.addLink(sort,`ty);
             }
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
               if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
-                graph.addLink(sort,`ty);
+                sortDependences.addLink(sort,`ty);
               }
             }
         }
@@ -912,31 +898,52 @@ public class SymbolTable {
   private void isolateFreshSorts() {
     Set<String> atoms = getAtoms();
     Set<String> sorts = getSorts();
-    Set<String> connected = graph.connected(atoms);
+    Set<String> connected = sortDependences.connected(atoms);
     sorts.removeAll(connected);
     for(String s: sorts) { setFreshSortInfo(s,`NoFreshSort()); }
   }
 
-  public void addConstructor(String symbol, String codomain, FieldDescriptionList fields) {
-    constructors.put(symbol,`ConstructorDescription(codomain,fields,No()));
-    SortDescription s = sorts.get(codomain);
-    StringList l = s.getConstructors();
-    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  /* TODO: use GomMessage and the logger instead of RutimeException */
+
+  public class SortException extends RuntimeException {
+    protected String sortName;
+
+    public SortException(String sortName) {
+      super();
+      this.sortName = sortName;
+    }
+    public String getSortName() { return sortName; } 
+    public String toString() {
+      return "sort exception: " + sortName;
+    }
   }
 
-  public void addVariadicConstructor(String symbol, String domain, String codomain) {
-    constructors.put(symbol,`VariadicConstructorDescription(codomain,domain,false));
-    SortDescription s = sorts.get(codomain);
-    StringList l = s.getConstructors();
-    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  public class UndeclaredSortException extends SortException {
+    public UndeclaredSortException(String n) { super(n); }
+    public String toString() {
+      return "undeclared sort: " + sortName;
+    }
   }
 
-  /**
-    * clear all entries (sorts and constructors)
-    */
-  public void clear() {
-    sorts.clear();
-    constructors.clear();
+  public class ConstructorException extends RuntimeException {
+    protected String constructorName;
+    public ConstructorException(String constructorName) {
+      super();
+      this.constructorName = constructorName;
+    }
+    public String getConstructorName() { return constructorName; } 
+    public String toString() {
+      return "constructor exception: " + constructorName;
+    }
   }
+
+  public class UndeclaredConstructorException extends ConstructorException {
+    public UndeclaredConstructorException(String n) { super(n); }
+  }
+
+  public class InvalidConstructorException extends ConstructorException {
+    public InvalidConstructorException(String n) { super(n); }
+  }
+
 
 }
