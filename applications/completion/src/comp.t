@@ -110,24 +110,20 @@ let rec is_in x = function
 let unify ts = 
   let rec aux_accu accu ts = 
     let aux = aux_accu accu in
-%match (eq_list ts) {
-    conc_eq(_*,p@prop(!atomic(_,_),_),_*) ->
+%match {
+      conc_eq(_*,p@prop(!atomic[],_),_*) << ts || 
+      conc_eq(_*,p@prop(_,!atomic[]),_*) << ts ->
       { 
-	raise (Invalid_argument "Unifying non-atomic proposition (left)")
-      }
-
-    conc_eq(_*,p@prop(_,!atomic[]),_*) ->
-      { 
-	raise (Invalid_argument "Unifying non-atomic proposition (right)") 
+	raise (Invalid_argument ("Unifying non-atomic proposition : " ^ (rules_to_string [`p])))
       }
    
-    conc_eq(_*,prop(atomic(s,_),atomic(!s,_)),_*) ->
+    conc_eq(_*,prop(atomic(s,_),atomic(!s,_)),_*) << ts ->
       { raise Not_match }
 
-    conc_eq(t1*,prop(p,p),t2*) -> 
+    conc_eq(t1*,prop(p,p),t2*) << ts -> 
 	  { raise (Res_eq_list (aux (`conc_eq(t1*,t2*)))) }
 
-    conc_eq(t1*,prop(atomic(s,a1),atomic(s,a2)),t2*) -> 
+    conc_eq(t1*,prop(atomic(s,a1),atomic(s,a2)),t2*) << ts -> 
       { raise (Res_eq_list (aux (try 
 				List.fold_left2 
 				  (fun l t1 t2 -> Term(t1,t2)::l)
@@ -135,16 +131,16 @@ let unify ts =
 			      with Invalid_argument _ -> raise Not_match)))
       }
 
-    conc_eq(_*,term(fun(s,_),fun(!s,_)),_*) ->
+    conc_eq(_*,term(fun(s,_),fun(!s,_)),_*) << ts ->
       { raise Not_match }
  
-    conc_eq(t1*,term(s,s),t2*) ->
+    conc_eq(t1*,term(s,s),t2*) << ts ->
       { raise (Res_eq_list (aux (`conc_eq(t1*,t2*)))) }
     
-    conc_eq(t1*,term(s@fun[],t@var[]),t2*) ->
+    conc_eq(t1*,term(s@fun[],t@var[]),t2*) << ts ->
       { raise (Res_eq_list (aux (`conc_eq(t1*,term(t,s),t2*)))) }
     
-    conc_eq(t1*,term(fun(s,a1),fun(s,a2)),t2*) -> 
+    conc_eq(t1*,term(fun(s,a1),fun(s,a2)),t2*) << ts -> 
       { raise (Res_eq_list (aux (try 
 				   List.fold_left2 
 				     (fun l t1 t2 -> Term(t1,t2)::l)
@@ -170,7 +166,7 @@ let unify ts =
 	  if is_in y q then
 	    if is_in x q then
 	      let sub = [e] in
-		aux_accu (e::accu) 
+	      aux_accu (e::accu) (* e :: subst_list [e] accu *)
 		  (List.rev_map
 		   (function 
 			Term(s,t) -> 
@@ -239,10 +235,22 @@ let closure tab =
   let rec aux accu = function
       (b,_)::q ->
 	let accuref = ref [] in
-%match (prop_list b) {
-	  conc(_*,a(atomic(s,a1),c(_,c1,_)),_*,a(not(atomic(s,a2)),c(_,c2,_)),_*) |
-	  conc(_*,a(not(atomic(s,a1)),c(_,c1,_)),_*,a(atomic(s,a2),c(_,c2,_)),_*) 
-	-> {
+%match {
+	  conc(_*,a(atomic(s,a1),c(_,c1,_)),_*,a(not(atomic(s,a2)),c(_,c2,_)),_*) << b -> {
+	  (try 
+             let 
+		 to_add = List.fold_left2 (fun l t1 t2 -> Term(t1,t2)::l) 
+	       (List.rev_append (`c1) (`c2)) (`a1) (`a2) in
+	       ignore (unify to_add);
+	       List.iter 
+		 (fun q -> 
+		   accuref :=
+		     (List.rev_append to_add q)::!accuref)
+		 accu
+	   with Invalid_argument _ | Not_match -> ()
+	  )
+	}
+conc(_*,a(not(atomic(s,a1)),c(_,c1,_)),_*,a(atomic(s,a2),c(_,c2,_)),_*) << b  -> {
 	  (try 
              let 
 		 to_add = List.fold_left2 (fun l t1 t2 -> Term(t1,t2)::l) 
@@ -268,7 +276,25 @@ let closure tab =
 
 exception Hop
 
-let tableau rules tab =
+let do_gamma max bg =
+       let rec aux accu = function
+	 | (Ex(x,p,i),(l,c,rr))::ps when i < max ->
+	       let y = fresh_var "v_" in
+	       let e = Term(Var x, Var y) in	
+	       let q = subst [e] p 
+	       and r = y::l, c, rr in
+		 aux ((Ex(x,p,i+1),(l,c,rr))::(q,r)::accu) ps
+	 | (Not(All(x,p,i)),(l,c,rr))::ps when i < max ->
+	     let y = fresh_var "v_" in
+	     let e = Term(Var x, Var y) in	
+	     let q = Not(subst [e] p)
+	     and r = y::l, c, rr in
+	       aux ((Not(All(x,p,i+1)),(l,c,rr))::(q,r)::accu) ps
+	 | ap::ps -> aux (ap::accu) ps
+	 | [] -> List.rev accu
+       in aux [] (bg)
+
+let tableau max rules tab =
   let h = Hashtbl.create 100000 in
   let hash t = t in
   let rec tableau_aux finished tabs =
@@ -378,7 +404,7 @@ let tableau rules tab =
 	  raise Hop
 	end }
 		    
-    tab(b1*,b(conc(gamma*,a(all(x,p),cs@c(l,_,_)),delta*),s),b2*) ->
+    tab(b1*,b(conc(gamma*,a(all(x,p,_),cs@c(l,_,_)),delta*),s),b2*) ->
       { (* delta *)
 	let e = Term(Var (`x), 
 		     Fun(fresh_var "sk_", 
@@ -391,7 +417,7 @@ let tableau rules tab =
 	    raise Hop
 	  end }
 
-    tab(b1*,b(conc(gamma*,a(not(ex(x,p)),cs@c(l,_,_)),delta*),s),b2*) ->
+    tab(b1*,b(conc(gamma*,a(not(ex(x,p,_)),cs@c(l,_,_)),delta*),s),b2*) ->
       { (* delta *)
 	let e = Term(Var (`x), 
 		     Fun(fresh_var "sk_", 
@@ -422,36 +448,115 @@ let tableau rules tab =
 	  raise Hop
 	end }
   
-    tab(b1*,b(bg@conc(_*,a(ex(_,_),_),_*),an(true(),t)),b2*) |
-    tab(b1*,b(bg@conc(_*,a(not(all(_,_)),_),_*),an(true(),t)),b2*)
+    tab(b1*,b(bg@conc(_*,a(ex(_,_,i),_),_*),an(true(),t)),b2*) ->
+      { (* gamma *)
+	if (`i) < max then
+	  let nbg = do_gamma max (`bg) in
+	    fprintf (!proof_chan) "{gamma}";
+	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
+	    raise Hop
+      }
+
+    tab(b1*,b(bg@conc(_*,a(not(all(_,_,i)),_),_*),an(true(),t)),b2*) && i < max
        ->
      { (* gamma *)
-       let rec aux accu = function
-	 | ((Ex(x,p),(l,c,rr)) as o)::ps ->
-	     let y = fresh_var "v_" in
-	     let e = Term(Var x, Var y) in	
-	     let q = subst [e] p 
-	     and r = y::l, c, rr in
-	       aux (o::(q,r)::accu) ps
-	 | ((Not(All(x,p)),(l,c,rr)) as o)::ps ->
-	     let y = fresh_var "v_" in
-	     let e = Term(Var x, Var y) in	
-	     let q = Not(subst [e] p)
-	     and r = y::l, c, rr in
-	       aux (o::(q,r)::accu) ps
-	 | ap::ps -> aux (ap::accu) ps
-	 | [] -> List.rev accu
-       in let nbg = aux [] (`bg) in
-	 begin
-	   fprintf (!proof_chan) "{gamma}";
-	   add (`tab(b1*,b2*,b(nbg,an(false(),t))));
-	   raise Hop;
-	 end
+	  let nbg = do_gamma max (`bg) in
+	    fprintf (!proof_chan) "{gamma}";
+	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
+	    raise Hop
      }
 };
 %match (tableau tab) {
-  tab(b1*,b(bg@conc(_*,a(atomic(_,_),_),_*),an(_,_)),b2*) 
-| tab(b1*,b(bg@conc(_*,a(not(atomic(_,_)),_),_*),an(_,_)),b2*) -> { 
+  tab(b1*,b(bg@conc(_*,a(atomic(_,_),_),_*),an(_,_)),b2*) ->
+{ 
+    (* rw *)
+    let rec aux bunify accu c ap = 
+      let unify = if bunify then unify else pmatch in
+	match ap with
+	  | (Atomic(_,_) as p,(l,cs,rr))::r ->
+	      let rec aux2 = function
+		| eq::eqs -> begin
+		    try
+		  if List.mem eq rr then raise Not_match
+		  else
+		    let rp, rc = rewrite_gen unify (refresh eq) cs p in
+		      aux bunify ((rp,(l,rc,[]))::(p,(l,cs,eq::rr))::accu) true r
+    		with
+		    Not_match -> aux2 eqs
+	      end
+	    | [] -> aux bunify ((p,(l,cs,rr))::accu) c r
+	  in aux2 rules
+      | (Not(Atomic(_,_) as p),(l,cs,rr))::r ->
+	  let rec aux2 = function
+	    | eq::eqs -> begin
+		try
+		  if List.mem eq rr then raise Not_match 
+		  else
+		    let rp, rc = rewrite_gen unify (refresh eq) cs p in
+		      aux bunify ((Not rp,(l,rc,[]))::((Not p,(l,rc,eq::rr)))::accu)
+			true r
+		with
+		    Not_match -> aux2 eqs
+	      end
+	    | [] -> aux bunify ((Not(p),(l,cs,rr))::accu) c r
+	  in aux2 rules 
+      | ap::r -> aux bunify (ap::accu) c r
+      | [] -> if bunify || c then [accu], c else aux true [] c accu
+    in
+    let rec aux_s accu c = function
+      | (Atomic(_,_) as p,(l,cs,rr))::r ->
+	  let rec aux2 accu2 b = function
+	    | eq::eqs -> begin
+		try
+		  if List.mem eq rr then raise Not_match
+		  else
+		    let rp, rc = rewrite (refresh eq) cs p in
+		      aux2 (List.fold_left
+			      (fun h q -> ((rp,(l,rc,[]))::(p,(l,cs,eq::rr))::q)::h)
+			      accu2 accu) true
+			eqs
+		with
+		    Not_match -> aux2 accu2 b eqs
+	      end
+	    | [] -> if b then accu2,b
+	      else List.rev_map (fun q -> (p,(l,cs,rr))::q) accu, b
+	  in let accu, b =  aux2 [] false rules in
+	    aux_s accu (c || b) r
+      | (Not(Atomic(_,_) as p),(l,cs,rr))::r ->
+	  let rec aux2 accu2 b = function
+	    | eq::eqs -> begin
+		try
+		  if List.mem eq rr then raise Not_match
+		  else
+		    let rp, rc = rewrite (refresh eq) cs p in
+		      aux2 (List.fold_left
+			      (fun h q -> ((Not rp,(l,rc,[]))::((Not p,(l,rc,eq::rr)))::q)::h) accu2 accu) true
+		      eqs
+		with
+		    Not_match -> aux2 accu2 b eqs
+	      end
+	    | [] -> if b then accu2, b
+	      else List.rev_map (fun q -> (Not(p),(l,cs,rr))::q) accu, b
+	  in let accu, b = aux2 [] false rules in
+	    aux_s accu (c||b) r
+      | ap::r -> aux_s (List.rev_map (fun q -> ap::q) accu) c r
+      | [] -> accu, c
+    in
+    let nbgs, c = if !Globals.split_rew then
+      aux_s [[]] false (`bg)
+    else aux false [] false (`bg) in
+      if c then 
+	begin
+	  fprintf (!proof_chan) "{rw}";
+	  List.iter
+	    (fun nbg -> 
+	       add 
+		 (`tab(b1*,b2*,b(nbg,an(true(),true()))))) nbgs;
+	  raise Hop
+	end
+      else ()
+  }
+ tab(b1*,b(bg@conc(_*,a(not(atomic(_,_)),_),_*),an(_,_)),b2*) -> { 
     (* rw *)
     let rec aux bunify accu c ap = 
       let unify = if bunify then unify else pmatch in
@@ -541,31 +646,24 @@ let tableau rules tab =
   }
 };
 %match (tableau tab) {
-  tab(b1*,b(bg@conc(_*,a(ex(_,_),_),_*),an(_,t)),b2*) |
-  tab(b1*,b(bg@conc(_*,a(not(all(_,_)),_),_*),an(_,t)),b2*)
-    ->
+    tab(b1*,b(bg@conc(_*,a(ex(_,_,i),_),_*),an(_,t)),b2*) ->
       { (* gamma *)
-	let rec aux accu = function
-	  | ((Ex(x,p),(l,c,rr)) as o)::ps ->
-	      let y = fresh_var "v_" in
-	      let e = Term(Var x, Var y) in	
-	      let q = subst [e] p 
-	      and r = y::l, c, rr in
-		aux (o::(q,r)::accu) ps
-	  | ((Not(All(x,p)),(l,c,rr)) as o)::ps ->
-	      let y = fresh_var "v_" in
-	      let e = Term(Var x, Var y) in	
-	      let q = Not(subst [e] p)
-	      and r = y::l, c, rr in
-		aux (o::(q,r)::accu) ps
-	  | ap::ps -> aux (ap::accu) ps
-	  | [] -> List.rev accu
-	in let nbg = aux [] (`bg) in 
-	  begin
+ 	if (`i) < max then
+	  let nbg = do_gamma max (`bg) in
 	    fprintf (!proof_chan) "{gamma}";
 	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
 	    raise Hop
-	  end }
+     }
+
+    tab(b1*,b(bg@conc(_*,a(not(all(_,_,i)),_),_*),an(_,t)),b2*)
+       ->
+     { (* gamma *)
+	if (`i) < max then
+	  let nbg = do_gamma max (`bg) in
+	    fprintf (!proof_chan) "{gamma}";
+	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
+	    raise Hop
+     }
 };
 add_f tab
 			 with
@@ -675,12 +773,12 @@ let rec critic eq1 = function
       let rq, sub2 = rewrite eq2 sub1 (subst sub1 p) in
       let bp = subst sub2 p in
 	[
-	  [bp,([],[],[]); rp,([],[],[])],(true,true);
-	  [Not(bp),([],[],[]); Not(rq),([],[],[])],(true,true)
+	  [bp,([],[],[eq1]); rp,([],[],[])],(true,true);
+	  [Not(bp),([],[],[eq2]); Not(rq),([],[],[])],(true,true)
 	],
 	[
-	  [bp,([],[],[]); rq,([],[],[])],(true,true);
-	  [Not(bp),([],[],[]); Not(rp),([],[],[])],(true,true)
+	  [bp,([],[],[eq2]); rq,([],[],[])],(true,true);
+	  [Not(bp),([],[],[eq1]); Not(rp),([],[],[])],(true,true)
 	], bp
   | Term(_,_) as eq2 -> begin
       match eq1 with
@@ -732,7 +830,7 @@ let rec get_rules = function
 	       (get_rules (`tab(b(conc(gamma*,a(not(p),l),a(not(q),l),delta*),s),r*))))
       }
 		    
-    b(conc(gamma*,a(all(x,p),cs@c(l,_,_)),delta*),s) ->
+    b(conc(gamma*,a(all(x,p,_),cs@c(l,_,_)),delta*),s) ->
       { (* delta *)
 	let e = Term(Var (`x), 
 		     Var(fresh_var "var_")) in
@@ -742,7 +840,7 @@ let rec get_rules = function
 	       (get_rules (`tab(b(conc(gamma*,a(q,cs),delta*),s),r*))))
       }
 
-    b(conc(gamma*,a(not(ex(x,p)),cs@c(l,_,_)),delta*),s) ->
+    b(conc(gamma*,a(not(ex(x,p,_)),cs@c(l,_,_)),delta*),s) ->
       { (* delta *)
 	let e = Term(Var (`x), 
 		     Var (fresh_var "var_")) in
@@ -766,7 +864,7 @@ let rec get_rules = function
 				  b(conc(gamma*,a(not(q),l),delta*),s),r*))))
       }
 
-   b(conc(gamma*,ap@a(ex(x,p),cs@c(l,_,_)),delta*),s) ->
+   b(conc(gamma*,ap@a(ex(x,p,_),cs@c(l,_,_)),delta*),s) ->
       { (* gamma *)
 	let e = Term(Var (`x), 
 		     Fun(fresh_var "const_",[])) in
@@ -776,7 +874,7 @@ let rec get_rules = function
 	       (get_rules (`tab(b(conc(gamma*,a(q,cs),delta*,ap),s),r*))))
       }
 
-    b(conc(gamma*,ap@a(not(all(x,p)),cs@c(l,_,_)),delta*),s) ->
+    b(conc(gamma*,ap@a(not(all(x,p,_)),cs@c(l,_,_)),delta*),s) ->
       { (* gamma *)
 	let e = Term(Var (`x), 
 		     Fun(fresh_var "const_",[])) in

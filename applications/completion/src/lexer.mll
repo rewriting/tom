@@ -9,7 +9,9 @@
 	"comp", COMP;
 	"unif", UNIF;
 	"addrules", ADDRULES;
-	"tab", TAB ]
+	"tab", TAB;
+	"deep", DEEP
+      ]
 
 }
 rule token = parse
@@ -42,6 +44,7 @@ rule token = parse
   | "EX"           { EX }
   | "FALSE"        { FALSE }
   | "TRUE"         { TRUE }
+  | ['0'-'9']+ as lxm { INT (int_of_string lxm) }
   | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm
                    { try
                        Hashtbl.find keyword_table lxm

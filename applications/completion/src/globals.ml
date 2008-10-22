@@ -4,6 +4,8 @@ let in_chan =  ref stdin
 
 let split_rew = ref false
 
+let nb_iter = ref 10
+
 open Arg
 
 let print_ver () = 
@@ -27,6 +29,8 @@ let speclist = Arg.align
   [ 
     "-p", String open_proofs, "file Print proofs in file";
     "--proofs", String open_proofs, "file Print proofs in file";
+    "-i", Set_int nb_iter, "int Decompose each quantifier at most int times";
+    "--iterations", Set_int nb_iter, "int Decompose each quantifier at most int times";
     "-s", Set split_rew," Parallelize rewriting";
     "--split", Set split_rew," Parallelize rewriting";
     "-v", Unit print_ver, " Print version";

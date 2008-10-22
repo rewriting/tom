@@ -17,7 +17,7 @@ exception Solved
 val closure : Datatypes.tableau -> unit
 
 val tableau :
-  Datatypes.eq list -> Datatypes.branch list -> Datatypes.branch list list
+  int -> Datatypes.eq list -> Datatypes.branch list -> Datatypes.branch list list
 
 val unify_max : Datatypes.tableau -> Datatypes.tableau list
 

@@ -1,4 +1,3 @@
-addrules lappl(lambda(a),b) -> subst(a,lcons(b,id.)) 
 addrules subst(lappl(b,a),s) -> lappl(subst(b,s),subst(a,s))
 addrules subst(one.,lcons(a,s)) -> a
 addrules subst(a,id.) -> a
@@ -11,6 +10,7 @@ addrules rond(lcons(a,s),t) -> lcons(subst(a,t),rond(s,t))
 addrules rond(s,id.) -> s
 addrules lcons(one.,shift.) -> id.
 addrules lcons(subst(one.,s), rond(shift., s)) -> s
+addrules lappl(lambda(a),b) -> subst(a,lcons(b,id.)) 
 
 addrules subst(pitype(a,b),s) -> pitype(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
 addrules subst(pikind(a,b),s) -> pikind(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
@@ -19,31 +19,32 @@ addrules in(pitype(a,b),type.) --> in(a,type.) /\ %
 		    (ALL z. (in(z,a) => in(subst(b,lcons(z,id.)), type.)))
 addrules in(pikind(a,b),kind.) --> in(a,type.) /\ %
 		    (ALL z. (in(z,a) => in(subst(b,lcons(z,id.)), kind.)))
-addrules in(a,pitype(b,c)) --> in(b,type.) /\ (ALL z. (in(z,b) => %
-	       	  (in(lappl(a,z),subst(c,lcons(z,id.))) /\ in(subst(c,lcons(z,id.)),type.))))
-addrules in(a,pikind(b,c)) --> in(b,type.) /\ (ALL z. (in(z,b) => %
-	       	  (in(lappl(a,z),subst(c,lcons(z,id.))) /\ in(subst(c,lcons(z,id.)),kind.))))
+addrules in(a,pitype(b,c)) --> in(pitype(b,c),type.) /\ %
+	 (ALL z. (in(z,b) => in(lappl(a,z),subst(c,lcons(z,id.)))))
+addrules in(a,pikind(b,c)) --> in(pikind(b,c),kind.) /\ %
+	 (ALL z. (in(z,b) => in(lappl(a,z),subst(c,lcons(z,id.)))))
 
-addrules WF(cons(gamma,e(a,b))) --> %
-    (WF(gamma)=>(in(b,type.)\/in(b,kind.))) => (C(gamma) /\in(a,b))
-
-addrules C(cons(gamma,e(a,b))) --> %
-     C(gamma) /\ in(a,b)
+addrules imp(a,b) -> pitype(a,subst(b,shift.))
 
 %At the end to make the proof close more quickly
 addrules in(type.,kind.) --> A\/-A
 
-%tab EX x.(in(a.,type.)=> in(pikind(a., subst(x,shift.)),kind.))
-
-%quit.
-
-tab (in(nat.,type.) /\ %
-     in(z.,nat.) /\ %
-     in(succ.,pitype(nat.,subst(nat.,shift.))) /\ %
-     in(natList., pikind(nat., subst(type.,shift.))) /\ %
-     in(nil.,lappl(natList.,z.)) /\ %
-     in(cons., pitype(nat., pitype(subst(nat.,shift.), pitype(lappl(subst(natList.,rond(shift.,shift.)), one.), %
-      	 	  	    lappl(subst(natList.,rond(shift.,rond(shift.,shift.))), lappl(subst(succ.,rond(shift.,rond(shift.,shift.))),subst(one.,shift.)))))))) %
- => in(lappl(lappl(lappl(cons., lappl(succ., z.)), z.), nil.), lappl(natList.,lappl(succ.,z.)))
+tab in(a.,type.) => in(t,pitype(a.,subst(a.,shift.)))
 
 quit
+
+tab ((in(a.,type.) /\ in(b.,type.)) /\ in(c.,type.)) => in( lambda(lambda(lambda(lappl(lappl(subst(one.,rond(shift.,shift.)),one.),lappl(subst(one.,shift.),one.))))), imp(imp(a.,imp(b.,c.)),imp(imp(a.,b.),imp(a.,c.))))
+
+quit
+
+lappl(lappl(subst(one.,rond(shift.,shift.)),one.),%
+lappl(subst(one.,shift.),one.))))) )%,
+%imp(imp(a,imp(b,c)),imp(imp(a,b),imp(a,c)))))
+
+
+
+
+
+in( lambda(lambda(lambda(lappl(lappl(subst(one.,rond(shift.,shift.)),one.),%
+lappl(subst(one.,shift.),one.))))) )%,
+%imp(imp(a,imp(b,c)),imp(imp(a,b),imp(a,c)))))

@@ -1,6 +1,7 @@
 %include { caml/metal.tom }
 %include { string.tom }
 %include { bool.tom }
+%include { int.tom }
 
 %typeterm term {
   implement { term }
@@ -80,18 +81,20 @@
     make(s,t) { And(s,t) }
 }
 
-%op prop all(name:String, prop:prop) {
-  is_fsym(t) { match t with All(_,_) -> true | _ -> false }
+%op prop all(name:String, prop:prop, nb_it: int) {
+    is_fsym(t) { match t with All(_,_,_) -> true | _ -> false }
     get_slot(name,t) { get_subterm t 0 }
     get_slot(prop,t) { get_subterm t 1 }
-    make(s,t) { All(s,t) }
+    get_slot(nb_it,t) { get_subterm t 2 }
+    make(s,t,i) { All(s,t,i) }
 }
 
-%op prop ex(name:String, prop:prop) {
-    is_fsym(t) { match t with Ex(_,_) -> true | _ -> false }
+%op prop ex(name:String, prop:prop, nb_it: int) {
+    is_fsym(t) { match t with Ex(_,_,_) -> true | _ -> false }
     get_slot(name,t) { get_subterm t 0 }
     get_slot(prop,t) { get_subterm t 1 }
-    make(s,t) { Ex(s,t) }
+    get_slot(nb_it,t) { get_subterm t 2 }
+    make(s,t,i) { Ex(s,t,i) }
 }
 
 %typeterm string_list {

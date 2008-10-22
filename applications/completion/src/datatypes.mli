@@ -8,8 +8,8 @@ type prop =
   | Not of prop
   | Or of prop * prop
   | And of prop * prop
-  | All of string * prop
-  | Ex of string * prop
+  | All of string * prop * int 
+  | Ex of string * prop * int
 
 type eq = Term of term * term | Prop of prop * prop
 

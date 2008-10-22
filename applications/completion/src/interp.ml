@@ -6,7 +6,7 @@ let rules = ref []
   
 let solve_and_print tab =  
   begin try
-    let t1 = Comp.tableau !rules tab in
+    let t1 = Comp.tableau !Globals.nb_iter !rules tab in
       print_string "\n------------------\n";
       print_string "Remaining branches\n";
       print_string (tableau_list_to_string t1);
@@ -30,7 +30,7 @@ let bunif t =
 
 let comp tab = 
   begin try
-    let t1 = Comp.tableau !rules tab in
+    let t1 = Comp.tableau !Globals.nb_iter !rules tab in
     let s = 
       List.fold_left (fun r t -> List.rev_append (Comp.unify_max t) r)
       [] t1 in 
@@ -46,7 +46,7 @@ let comp tab =
 
 let create_rules p t =  
   try
-    let t1 = Comp.tableau !rules t in
+    let t1 = Comp.tableau !Globals.nb_iter !rules t in
       List.iter (fun t -> 
 		   let bs = List.fold_left 
 		     (fun res t -> 

@@ -2,8 +2,9 @@
   let parse_error = Interp.error_handling
 %}
 %token EOL PIPE DASH COMMA LPAR RPAR AND OR DOT ARROW ALL EX IMP FALSE TRUE
-%token TAB RULES QUIT UNIF ADDRULES COMP
+%token TAB RULES QUIT UNIF ADDRULES COMP DEEP
 %token <string> STRING
+%token <int> INT
 %right OR
 %right AND 
 %right IMP
@@ -41,11 +42,11 @@ prop:
 | smallprop IMP smallprop { Datatypes.Or(Datatypes.Not($1),$3) } /* classical */
 | smallprop { $1 }
 | ALL strings DOT prop { List.fold_left 
-			   (fun a e -> Datatypes.All(e,a))
+			   (fun a e -> Datatypes.All(e,a,0))
 			   $4 $2
 		       }
 | EX strings DOT prop { List.fold_left 
-			   (fun a e -> Datatypes.Ex(e,a))
+			   (fun a e -> Datatypes.Ex(e,a,0))
 			   $4 $2 }
 
 strings:
@@ -90,6 +91,7 @@ command:
 | COMP tableau EOL { Interp.comp $2 }
 | COMP EOL { Interp.critical_proofs !Interp.rules }
 | ADDRULES rules EOL { Interp.rules := List.rev_append $2 !Interp.rules }
+| DEEP INT EOL { Globals.nb_iter := $2 }
 | EOL { () }
 
 rules:

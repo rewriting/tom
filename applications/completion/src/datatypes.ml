@@ -11,8 +11,8 @@ type prop =
   | Not of prop
   | Or of prop * prop
   | And of prop * prop
-  | All of string * prop
-  | Ex of string * prop
+  | All of string * prop * int
+  | Ex of string * prop * int
 
 type eq = 
     Term of term * term
@@ -97,9 +97,9 @@ let rec prop_to_string = function
   | Or(p, q) 
     ->
       Printf.sprintf "(%s) \\/ (%s)" (prop_to_string p) (prop_to_string q)
-  | All(x,p) ->
+  | All(x,p,_) ->
       Printf.sprintf "ALL %s. %s" x (prop_to_string p)
-  | Ex(x,p) ->
+  | Ex(x,p,_) ->
       Printf.sprintf "EX %s. %s" x (prop_to_string p)
 
 let branch_to_string (b, _: branch) = 
@@ -147,8 +147,8 @@ let rec subst sub = function
   | Not(p) -> Not(subst sub p)
   | And(p,q) -> And(subst sub p, subst sub q)
   | Or(p,q) -> Or(subst sub p, subst sub q)
-  | All(x,q) -> All(x, subst (Term(Var x, Var x)::sub) q)
-  | Ex(x,q) -> Ex(x, subst (Term(Var x, Var x)::sub) q)
+  | All(x,q,i) -> All(x, subst (Term(Var x, Var x)::sub) q, i)
+  | Ex(x,q,i) -> Ex(x, subst (Term(Var x, Var x)::sub) q, i)
   | False -> False
   | True -> True
 
@@ -159,12 +159,12 @@ let fresh_var s =
   s ^ (string_of_int !fresh_counter)
 
 let rec prop_eq p q = match p,q with
-  | All(x,p), All(y,q) ->
+  | All(x,p,_), All(y,q,_) ->
       (x = y && p = q) || (let z = Var(fresh_var "v_") in 
 			     prop_eq 
 			       (subst [Term(Var x, z)] p)
 			       (subst [Term(Var y, z)] q))
-  | Ex(x,p), Ex(y,q) ->
+  | Ex(x,p,_), Ex(y,q,_) ->
       (x = y && p = q) || (let z = Var(fresh_var "v_") in 
 			     prop_eq 
 			       (subst [Term(Var x, z)] p)
