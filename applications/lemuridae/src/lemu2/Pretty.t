@@ -276,6 +276,8 @@ public class Pretty {
       forallL(ForallLPrem1(x,px,M),term,n) -> { return %[forallL(@`pr(pretty(x),px,sp)@ @`pretty(M,sp+1)@,@`pretty(term)@,@`pretty(n)@)]%; }
       rootL(RootLPrem1(x,px,M)) -> { return %[@`pr(pretty(x),px,sp)@ @`pretty(M,sp+1)@]%; }
       rootR(RootRPrem1(a,pa,M)) -> { return %[@`pr(pretty(a),pa,sp)@ @`pretty(M,sp+1)@]%; }
+      foldL(id,FoldLPrem1(x,px,M),n) -> { return %[foldL[@`id@](@`pr(pretty(x),px,sp)@ @`pretty(M,sp+1)@,@`pretty(n)@)]%; }
+      foldR(id,FoldRPrem1(a,pa,M),cn) -> { return %[foldR[@`id@](@`pr(pretty(a),pa,sp)@ @`pretty(M,sp+1)@,@`pretty(cn)@)]%; }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
