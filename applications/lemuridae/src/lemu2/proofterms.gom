@@ -32,12 +32,12 @@ Ex binds FoVar = Ex(x:FoVar,inner p:Prop)
 
 FoBound binds FoVar = foBound(FoVar*)
 
-TermRewriteRule = termrrule(cl:<TRule>)
+TermRewriteRule = termrrule(id:String,cl:<TRule>)
 TRule binds FoVar = trule(bound:FoBound, inner lhs:Term, inner rhs:Term)
 
 TermRewriteRules = termrrules(TermRewriteRule*)
 
-PropRewriteRule = proprrule(cl:<PRule>)
+PropRewriteRule = proprrule(id:String,cl:<PRule>)
 PRule binds FoVar = prule(bound:FoBound, inner lhs:Prop, inner rhs:Prop)
 
 PropRewriteRules = proprrules(PropRewriteRule*)
@@ -60,6 +60,10 @@ ProofTerm = ax(x:Name,a:CoName)
           | forallL(flp1:<ForallLPrem1>,t:Term,n:Name)
           | rootL(rlp1:<RootLPrem1>)
           | rootR(rrp1:<RootRPrem1>)
+          /* extensions */
+          | foldR(name:String,forp1:<FoldRPrem1>,cn:CoName)
+          | foldL(name:String,folp1:<FoldLPrem1>,n:Name)
+          
 
 RootLPrem1 binds Name = RootLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 RootRPrem1 binds CoName = RootRPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)
@@ -85,6 +89,8 @@ ExistsLPrem1 binds Name FoVar = ExistsLPrem1(x:Name,inner px:Prop,fx:FoVar,inner
 ForallRPrem1 binds CoName FoVar = ForallRPrem1(a:CoName,inner pa:Prop,fx:FoVar,inner M:ProofTerm)
 ForallLPrem1 binds Name = ForallLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 
+FoldRPrem1 binds CoName = FoldRPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)
+FoldLPrem1 binds Name = FoldLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 /* -- data structures used by Evaluation.t -- */
 
 NameList = nameList(Name*)

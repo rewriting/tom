@@ -25,6 +25,13 @@ public class TypeChecker {
     throw new RuntimeException("coname " + cn + " not in scope");
   }
 
+  private static PropRewriteRule lookup(PropRewriteRules pfrules, String id) {
+    %match(pfrules) {
+      proprrules(_*,r@proprrule(n,_),_*) && n == id -> { return `r; }
+    }
+    throw new RuntimeException("rule " + id + " not in scope");
+  }
+
   private static fovarList freeFoVars(TermList tl, fovarList ctx) {
     %match(tl) {
       termList() -> { return `fovarList(); }
@@ -75,6 +82,10 @@ public class TypeChecker {
     return Rewriting.normalize(p,trs,prs);
   }
 
+  private static Prop unfold(Prop p, PropRewriteRule pfr) {
+    return Rewriting.rewrite(p,pfr);
+  }
+
   /* checks p1 and p2 alpha-equivalence with free the set of free vars */
   private static boolean alpha(Prop p1, Prop p2, FoVarList free) {
     AlphaMap<FoVar> map = new AlphaMap<FoVar>();
@@ -86,13 +97,13 @@ public class TypeChecker {
   }
 
   public static boolean 
-    typecheck(ProofTerm pt, TermRewriteRules trs, PropRewriteRules prs) {
-      return typecheck(pt,`seq(fovarList(),lctx(),rctx()),trs,prs);
+    typecheck(ProofTerm pt, TermRewriteRules trs, PropRewriteRules prs, PropRewriteRules pfrs) {
+      return typecheck(pt,`seq(fovarList(),lctx(),rctx()),trs,prs,pfrs);
     }
 
   private static boolean 
-    typecheck(ProofTerm pt, Sequent se, TermRewriteRules trs, PropRewriteRules prs) {
-      if(_typecheck(pt,se,trs,prs))
+    typecheck(ProofTerm pt, Sequent se, TermRewriteRules trs, PropRewriteRules prs, PropRewriteRules pfrs) {
+      if(_typecheck(pt,se,trs,prs,pfrs))
         return true;
       else {
         System.out.println(Pretty.pretty(pt) + "\n\n" + Pretty.pretty(se) + "\n"); 
@@ -101,7 +112,7 @@ public class TypeChecker {
     }
 
   private static boolean 
-    _typecheck(ProofTerm pt, Sequent se, TermRewriteRules trs, PropRewriteRules prs) {
+    _typecheck(ProofTerm pt, Sequent se, TermRewriteRules trs, PropRewriteRules prs, PropRewriteRules pfrs) {
       %match(se) {
         seq(free,gamma,delta) -> {
           %match(pt) {
@@ -110,8 +121,8 @@ public class TypeChecker {
             }
             cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
               return `alpha(norm(pa,trs,prs),norm(px,trs,prs),free) 
-                && `typecheck(M1,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs)
-                && `typecheck(M2,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs);
+                && `typecheck(M1,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs)
+                && `typecheck(M2,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs);
             }
             // left rules
             falseL(n) -> {
@@ -119,32 +130,39 @@ public class TypeChecker {
             }
             andL(AndLPrem1(x,px,y,py,M),n) -> {
               return `alpha(norm(lookup(gamma,n),trs,prs),norm(and(px,py),trs,prs),free)
-                && `typecheck(M,seq(free,lctx(nprop(x,px),nprop(y,py),gamma*),delta),trs,prs);
+                && `typecheck(M,seq(free,lctx(nprop(x,px),nprop(y,py),gamma*),delta),trs,prs,pfrs);
             }
             orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
               return `alpha(norm(lookup(gamma,n),trs,prs),norm(or(px,py),trs,prs),free)
-                && `typecheck(M1,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs)
-                && `typecheck(M2,seq(free,lctx(nprop(y,py),gamma*),delta),trs,prs);
+                && `typecheck(M1,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs)
+                && `typecheck(M2,seq(free,lctx(nprop(y,py),gamma*),delta),trs,prs,pfrs);
             }
             implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
               return `alpha(norm(lookup(gamma,n),trs,prs),norm(implies(pa,px),trs,prs),free)
-                && `typecheck(M1,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs)
-                && `typecheck(M2,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs);
+                && `typecheck(M1,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs)
+                && `typecheck(M2,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
             }
             forallL(ForallLPrem1(x,px,M),t,n) -> {
               %match(norm(lookup(gamma,n),trs,prs)) {
                 forall(Fa(fx,p)) -> {
                   return `alpha(norm(px,trs,prs),norm(substFoVar(p,fx,t),trs,prs),free) 
-                    && `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs);
+                    && `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs);
                 }
               } return false;
             }
             existsL(ExistsLPrem1(x,px,fx,M),n) -> {
               return `alpha(norm(lookup(gamma,n),trs,prs),norm(exists(Ex(fx,px)),trs,prs),free)
-                && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),trs,prs); 
+                && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs); 
             }
             rootL(RootLPrem1(x,px,M)) -> {
-              return `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs); 
+              return `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs); 
+            }
+            foldL(id,FoldLPrem1(x,px,M),n) -> {
+              // TODO : step by step unfolding
+              Prop prem = `unfold(norm(lookup(gamma,n),trs,prs),lookup(pfrs,id));
+              return prem == null ? false : 
+                `alpha(norm(prem,trs,prs),norm(px,trs,prs),free) 
+                && `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs);
             }
             // right rules
             trueR(cn) -> {
@@ -152,31 +170,38 @@ public class TypeChecker {
             }
             orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
               return `alpha(norm(lookup(delta,cn),trs,prs),norm(or(pa,pb),trs,prs),free)
-                && `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),cnprop(b,pb),delta*)),trs,prs);
+                && `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),cnprop(b,pb),delta*)),trs,prs,pfrs);
             }
             andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
               return `alpha(norm(lookup(delta,cn),trs,prs),norm(and(pa,pb),trs,prs),free)
-                && `typecheck(M1,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs)
-                && `typecheck(M2,seq(free,gamma,rctx(cnprop(b,pb),delta*)),trs,prs);
+                && `typecheck(M1,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs)
+                && `typecheck(M2,seq(free,gamma,rctx(cnprop(b,pb),delta*)),trs,prs,pfrs);
             }
             implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
               return `alpha(norm(lookup(delta,cn),trs,prs),norm(implies(px,pa),trs,prs),free)
-                && `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),rctx(cnprop(a,pa),delta*)),trs,prs);
+                && `typecheck(M,seq(free,lctx(nprop(x,px),gamma*),rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
             }
             existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
               %match(norm(lookup(delta,cn),trs,prs)) {
                 exists(Ex(fx,p)) -> {
                   return `alpha(norm(pa,trs,prs),norm(substFoVar(p,fx,t),trs,prs),free) 
-                    && `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs);
+                    && `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
                 }
               } return false;
             }
             forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
               return `alpha(norm(lookup(delta,cn),trs,prs),norm(forall(Fa(fx,pa)),trs,prs),free)
-                && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),trs,prs);
+                && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
             }
             rootR(RootRPrem1(a,pa,M)) -> {
-              return `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs);
+              return `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
+            }
+            foldR(id,FoldRPrem1(a,pa,M),cn) -> {
+              // TODO : step by step unfolding
+              Prop prem = `unfold(norm(lookup(delta,cn),trs,prs),lookup(pfrs,id));
+              return prem == null ? false : 
+                `alpha(norm(prem,trs,prs),norm(pa,trs,prs),free) 
+                && `typecheck(M,seq(free,gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
             }
           }
         }

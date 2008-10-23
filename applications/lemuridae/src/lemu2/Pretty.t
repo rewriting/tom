@@ -133,6 +133,8 @@ public class Pretty {
       RawforallL(RawForallLPrem1(x,px,M),term,n) -> { return %[forallL(@`pr(x,px,sp)@ @`pretty(M,sp+1)@,@`pretty(term)@,@`n@)]%; }
       RawrootL(RawRootLPrem1(x,px,M)) -> { return %[@`pr(x,px,sp)@ @`pretty(M,sp+1)@]%; }
       RawrootR(RawRootRPrem1(a,pa,M)) -> { return %[@`pr(a,pa,sp)@ @`pretty(M,sp+1)@]%; }
+      RawfoldL(id,RawFoldLPrem1(x,px,M),n) -> { return %[foldL(@`id@,@`pr(x,px,sp)@ @`pretty(M,sp+1)@,@`n@)]%; }
+      RawfoldR(id,RawFoldRPrem1(a,pa,M),cn) -> { return %[foldR(@`id@,@`pr(a,pa,sp)@ @`pretty(M,sp+1)@,@`cn@)]%; }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
@@ -162,8 +164,8 @@ public class Pretty {
 
   public static String pretty(RawTermRewriteRule r) {
     %match(r) {
-      Rawtermrrule(Rawtrule(b,lhs,rhs)) -> { 
-        return %[[@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
+      Rawtermrrule(id,Rawtrule(b,lhs,rhs)) -> { 
+        return %[@`id@ : [@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
       }
     }
     throw new RuntimeException("non exhaustive patterns"); 
@@ -179,8 +181,8 @@ public class Pretty {
 
   public static String pretty(RawPropRewriteRule r) {
     %match(r) {
-      Rawproprrule(Rawprule(b,lhs,rhs)) -> { 
-        return %[[@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
+      Rawproprrule(id,Rawprule(b,lhs,rhs)) -> { 
+        return %[@`id@ : [@`pretty(b)@] @`pretty(lhs)@ -> @`pretty(rhs)@]%; 
       }
     }
     throw new RuntimeException("non exhaustive patterns"); 

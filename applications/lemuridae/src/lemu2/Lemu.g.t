@@ -101,7 +101,7 @@ boundlist returns [RawFoBound res]
 ;
 
 termrrule returns [RawTermRewriteRule res]
-: b=boundlist lhs=term ARROW rhs=term { $res = `Rawtermrrule(Rawtrule(b,lhs,rhs)); }
+: n=ID ':' b=boundlist lhs=term ARROW rhs=term { $res = `Rawtermrrule($n.text,Rawtrule(b,lhs,rhs)); }
 ;
 
 termrrules returns [RawTermRewriteRules res]
@@ -112,7 +112,7 @@ termrrules returns [RawTermRewriteRules res]
 ;
 
 proprrule returns [RawPropRewriteRule res]
-: b=boundlist lhs=prop ARROW rhs=prop { $res = `Rawproprrule(Rawprule(b,lhs,rhs)); }
+: n=ID ':' b=boundlist lhs=prop ARROW rhs=prop { $res = `Rawproprrule($n.text,Rawprule(b,lhs,rhs)); }
 ;
 
 proprrules returns [RawPropRewriteRules res]
@@ -159,6 +159,10 @@ proofterm returns [RawProofTerm res]
   { $res = `RawforallR(RawForallRPrem1($a.text,pa,$fx.text,m),$b.text); }
 | FORALLL '(' '<' x=ID ':' px=prop '>' m=proofterm ',' t=term ',' y=ID ')'
   { $res = `RawforallL(RawForallLPrem1($x.text,px,m),t,$y.text); }
+| FOLDR '[' na=ID ']''(''<' a=ID ':' pa=prop '>' m=proofterm ',' b=ID ')'  
+  { $res = `RawfoldR($na.text,RawFoldRPrem1($a.text,pa,m),$b.text); }
+| FOLDL '[' na=ID ']''(' '<' x=ID ':' px=prop '>' m=proofterm ',' y=ID ')'  
+  { $res = `RawfoldL($na.text,RawFoldLPrem1($x.text,px,m),$y.text); }
 ;
 
 /* declarations */
@@ -168,6 +172,10 @@ termmodulo returns [RawTermRewriteRules res]
 
 propmodulo returns [RawPropRewriteRules res] 
 : PROP MODULO LBRACE l=proprrules RBRACE { $res=l; }
+;
+
+propfold returns [RawPropRewriteRules res] 
+: PROP FOLD LBRACE l=proprrules RBRACE { $res=l; }
 ;
 
 toplevel : proofterm EOF;
@@ -205,6 +213,7 @@ COMMA : ',';
 TERM : 'term';
 PROP : 'prop';
 MODULO : 'modulo';
+FOLD : 'fold';
 
 /* proofterms */
 AX : 'ax';
@@ -223,6 +232,8 @@ FORALLR : 'forallR';
 FORALLL : 'forallL';
 ROOTL : 'rootL';
 ROOTR : 'rootR';
+FOLDL : 'foldL';
+FOLDR : 'foldR';
 
 /* identifiers */
 ID : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;

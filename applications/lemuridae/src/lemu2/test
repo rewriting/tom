@@ -1,47 +1,47 @@
 term modulo {
-  [x]   plus(z(),x) -> x
-  [x,y] plus(s(x),y) -> s(plus(x,y))
+  plusz : [x]   plus(z(),x)  -> x
+  pluss : [x,y] plus(s(x),y) -> s(plus(x,y))
 }
 
 prop modulo {
-  [x]   Eq(x,x) -> True
-  [x]   Eq(s(x),z()) -> False
-  [x]   Eq(z(),s(x)) -> False
-  [x,y] Eq(s(x),s(y)) -> Eq(x,y)
-
-  [n] forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n))) -> Nat(n)
-  []  forall t, (Eps(t) => (N => Eps(t) => Eps(t)) => Eps(t)) -> N
-
-  [n] forall x, P(x,n) -> Q(n)
+  eqrefl : [x]   Eq(x,x)       -> True
+  eqsz   : [x]   Eq(s(x),z())  -> False
+  eqzs   : [x]   Eq(z(),s(x))  -> False
+  eqss   : [x,y] Eq(s(x),s(y)) -> Eq(x,y)
 }
 
+prop fold {
+  natdef : [n] Nat(n) -> forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n)))
+  ndef   : []  N      -> forall t, (Eps(t) => (N => Eps(t) => Eps(t)) => Eps(t))
+}
 
 rootR(
     <r:Nat(s(z()))> cut(
       <a:forall n, (Nat(n) => Nat(s(n)))> forallR(
         <b:Nat(n0) => Nat(s(n0))><n0> implyR(
-          <y:Nat(n0)><c:Nat(s(n0))> forallR(
-            <d:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0)))><p0> implyR(
-              <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0))> implyR(
-                <z1:forall m, (In(p0,m) => In(p0,s(m)))><f:In(p0,s(n0))> cut( 
-                  <h9:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n0)))> ax(y,h9),
-                  <z9:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n0)))> forallL(
-                    <z2:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0))> implyL(
-                      <z3:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0)> implyL( 
-                        <z4:In(p0,n0)> forallL(
-                          <z5:In(p0,n0) => In(p0,s(n0))> implyL(
-                            <z6:In(p0,s(n0))> ax(z6,f),
-                            <h1:In(p0,n0)> ax(z4,h1),z5),n0,z1),
-                        <h:forall m, (In(p0,m) => In(p0,s(m)))> ax(z1,h),z3),
-                      <g:In(p0,z())> ax(z,g),z2),p0,z9))
-                ,e),d),c),b),a),
+          <y:Nat(n0)><c:Nat(s(n0))> foldR[natdef](
+            <c1:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,s(n0))))> forallR(
+              <d:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0)))><p0> implyR(
+                <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0))> implyR(
+                  <z1:forall m, (In(p0,m) => In(p0,s(m)))><f:In(p0,s(n0))> foldL[natdef](
+                    <z9:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n0)))> forallL(
+                      <z2:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0))> implyL(
+                        <z3:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0)> implyL( 
+                          <z4:In(p0,n0)> forallL(
+                            <z5:In(p0,n0) => In(p0,s(n0))> implyL(
+                              <z6:In(p0,s(n0))> ax(z6,f),
+                              <h1:In(p0,n0)> ax(z4,h1),z5),n0,z1),
+                          <h:forall m, (In(p0,m) => In(p0,s(m)))> ax(z1,h),z3),
+                        <g:In(p0,z())> ax(z,g),z2),p0,z9),y)
+                  ,e),d),c1),c),b),a),
       <x:forall n, (Nat(n) => Nat(s(n)))> forallL(
         <y:Nat(z()) => Nat(s(z()))> implyL(
           <z:Nat(s(z()))> ax(z,r),
-          <b:Nat(z())> forallR(
-            <d:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
-              <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
-                <z1:forall m, (In(p0,m)  => In(p0,s(m)))><f:In(p0,z())> ax(z,f),e),d),b),y),z(),x)))
+          <b:Nat(z())> foldR[natdef](
+            <b1:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,z())))> forallR(
+              <d:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
+                <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
+                  <z1:forall m, (In(p0,m)  => In(p0,s(m)))><f:In(p0,z())> ax(z,f),e),d),b1),b),y),z(),x)))
 
 
 
