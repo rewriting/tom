@@ -1,0 +1,27 @@
+definition
+
+module Main
+
+exports
+
+context-free start-symbols 
+ Bool Block 
+
+sorts Bool Block BoolList Id
+
+lexical syntax
+ [\ \t\n\r] -> LAYOUT
+
+lexical syntax
+  [0-9]+ -> Id {cons("IdCons")}
+
+context-free syntax
+ Id -> Bool {cons("Id")}
+ "true" -> Bool { cons("True") }
+ "false" -> Bool { cons("False") }
+ Bool "&" Bool -> Bool { cons("And") }
+ "{" BoolList "}" -> Block {cons("BoolBlock")}
+ Bool* -> BoolList {cons("list")}
+
+context-free restrictions
+  Id -/- [0-9]

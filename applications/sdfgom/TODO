@@ -1,0 +1,5 @@
+sdf2table -i Test.sdf
+sglr -t -p Test.tbl -i start -o query.asfix
+implodePt -t
+
+
