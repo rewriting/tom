@@ -40,22 +40,3 @@ ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
 OrConstraint:AU() { `FalseConstraint() }
 OrConstraintDisjunction:AU() { }
-/*
-AndConstraint:make_insert(e,l) {
-  if(l.isEmptyAndConstraint()) {
-    return e;
-  }
-}
-OrConstraint:make_insert(e,l) {
-  if(l.isEmptyOrConstraint()) {
-    return e;
-  }
-}
-OrConstraintDisjunction:make_insert(e,l) {
-  if(l.isEmptyOrConstraintDisjunction()) {
-    return e;
-  }
-}
-*/
-
-

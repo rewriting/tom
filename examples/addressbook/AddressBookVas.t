@@ -41,6 +41,7 @@ public class AddressBookVas {
       Date = date( year:int, month:int, day:int )
       Person = person(firstname:String,lastname:String, birthdate:Date)
       PersonList = concPerson( Person* )
+
   }
  
   public final static void main(String[] args) {
@@ -49,9 +50,11 @@ public class AddressBookVas {
     happyBirthday(book,today);
   }
 
-  public static void happyBirthday(PersonList book, Date d) {
+  public static void happyBirthday(PersonList book, 
+                                   Date d) {
     %match(book, d) {
-      concPerson(_*, person(firstname, _, date(_, month,day)), _*) , date(_,month,day)   -> {
+      concPerson(_*, person(firstname, _, date(_, month,day)), _*) , 
+      date(_,month,day)   -> {
 	System.out.println("month = " + `month);
 	System.out.println("day = " + `day);
 	  System.out.println("Happy birthday " + `firstname);

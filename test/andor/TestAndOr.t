@@ -375,6 +375,16 @@ public class TestAndOr extends TestCase {
     fail();
   }
 
+  public void test30() {
+    Term l = `f(a(),b());
+    %match(l) {
+      g(x) || f(x,x)<<l -> {
+        fail();
+      }
+    }
+    return;
+  }
+
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
   }

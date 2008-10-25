@@ -50,15 +50,11 @@ public class GeneralPurposePropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
 
-  // contains variables that were already replaced (for optimizing reasons)
-  private static ArrayList replacedVariables = null; 
-
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    replacedVariables = new ArrayList();
-    return  (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
+    return (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
   }	
 
-  %strategy GeneralPropagations() extends `Identity() {
+  %strategy GeneralPropagations() extends Identity() {
     visit Constraint {      
       /**
        * Antipattern
@@ -85,13 +81,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
        * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
        */
-      AndConstraint?(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[]],value),Y*) -> {
-        if (!replacedVariables.contains(`x)) {
-          replacedVariables.add(`x);
-          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v,value)).visitLight(`Y*);
-          if(res != `Y*) {
-            return `AndConstraint(X*,eq,res);
-          }
+      AndConstraint?(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
+        // we cannot cache already renamed variables, because disjunctions have to be taken into account
+        // for example: g(x) || f(x,x) -> ...
+        Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(varName)).visitLight(`Y*);
+        if(res != `Y*) {
+          return `AndConstraint(X*,eq,res);
         }
       }  
       /**
@@ -102,7 +97,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
        */
       m@MatchConstraint(term@(Variable|VariableStar|UnamedVariableStar|UnamedVariable)[Constraints = !concConstraint()],g) -> {
         Constraint result = ConstraintPropagator.performDetach(`m);
-        if (`term.isVariable()) {
+        if(`term.isVariable()) {
           result = `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g),result);
         }
         return result;
@@ -156,15 +151,17 @@ matchSlot:  %match(slot,TomName name) {
     // never gets here
     throw new TomRuntimeException("GeneralPurposePropagator:detachSublists - unexpected result");
   }
-  
-  
-  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm, value:TomTerm) extends Identity() {
+ 
+  /*
+   * x << s -> fresh << s ^ fresh==x
+   */
+  %strategy ReplaceMatchConstraint(varName:TomName) extends Identity() {
     visit Constraint {
-      // we can have the same variable both as variablestar and as variable
+      // we can have the same variable both as variableStar and as variable
       // we know that this is ok, because the type checker authorized it
-      MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) && name << TomName varName -> {        
-        TomTerm freshVar = `v.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
-        return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
+      MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
+        TomTerm freshVar = `var.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
+        return `AndConstraint(MatchConstraint(freshVar,subject),MatchConstraint(TestVar(freshVar),var));
       }
     }
   }
