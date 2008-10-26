@@ -124,7 +124,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{ Object tomMatch70NameNumber_freshVar_0=type;if ( (tomMatch70NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch70NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_3=tomMatch70NameNumber_freshSubject_1;if ( (tomMatch70NameNumber_freshVar_3 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_1= tomMatch70NameNumber_freshVar_3.getTomType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_2= tomMatch70NameNumber_freshVar_3.getTlType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_5=tomMatch70NameNumber_freshVar_1;if ( (tomMatch70NameNumber_freshVar_5 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {{  String  tomMatch70NameNumber_freshVar_4= tomMatch70NameNumber_freshVar_5.getString() ;{  String  tomMatch70NameNumber_freshVar_6=tomMatch70NameNumber_freshVar_4;if ( "Strategy".equals(tomMatch70NameNumber_freshVar_6) ) {
+      {{ Object tomMatch71NameNumber_freshVar_0=type;if ( (tomMatch71NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch71NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_3=tomMatch71NameNumber_freshSubject_1;if ( (tomMatch71NameNumber_freshVar_3 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_1= tomMatch71NameNumber_freshVar_3.getTomType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_2= tomMatch71NameNumber_freshVar_3.getTlType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_5=tomMatch71NameNumber_freshVar_1;if ( (tomMatch71NameNumber_freshVar_5 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {{  String  tomMatch71NameNumber_freshVar_4= tomMatch71NameNumber_freshVar_5.getString() ;{  String  tomMatch71NameNumber_freshVar_6=tomMatch71NameNumber_freshVar_4;if ( "Strategy".equals(tomMatch71NameNumber_freshVar_6) ) {
 
           stratChild.add(Integer.valueOf(index));
         }}}}}}}}}}}}}
@@ -135,9 +135,9 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		{{ Object tomMatch71NameNumber_freshVar_0=extendsType;if ( (tomMatch71NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch71NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_2=tomMatch71NameNumber_freshSubject_1;if ( (tomMatch71NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {{  String  tomMatch71NameNumber_freshVar_1= tomMatch71NameNumber_freshVar_2.getString() ;
+		{{ Object tomMatch72NameNumber_freshVar_0=extendsType;if ( (tomMatch72NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch72NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch72NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch72NameNumber_freshVar_2=tomMatch72NameNumber_freshSubject_1;if ( (tomMatch72NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {{  String  tomMatch72NameNumber_freshVar_1= tomMatch72NameNumber_freshVar_2.getString() ;
 
-				output.write(deep," extends " + tomMatch71NameNumber_freshVar_1);
+				output.write(deep," extends " + tomMatch72NameNumber_freshVar_1);
 			}}}}}}}
 
     output.writeln(deep," {");
@@ -243,12 +243,12 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
-        {{ Object tomMatch72NameNumber_freshVar_0=localVar;if ( (tomMatch72NameNumber_freshVar_0 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch72NameNumber_freshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch72NameNumber_freshVar_0);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch72NameNumber_freshVar_2=tomMatch72NameNumber_freshSubject_1;if ( (tomMatch72NameNumber_freshVar_2 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch72NameNumber_freshVar_1= tomMatch72NameNumber_freshVar_2.getAstType() ;
+        {{ Object tomMatch73NameNumber_freshVar_0=localVar;if ( (tomMatch73NameNumber_freshVar_0 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch73NameNumber_freshVar_0);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshVar_2=tomMatch73NameNumber_freshSubject_1;if ( (tomMatch73NameNumber_freshVar_2 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_1= tomMatch73NameNumber_freshVar_2.getAstType() ;
 
-            output.write(deep,TomBase.getTLType(tomMatch72NameNumber_freshVar_1) + " ");
-            generate(deep,tomMatch72NameNumber_freshSubject_1,moduleName);
+            output.write(deep,TomBase.getTLType(tomMatch73NameNumber_freshVar_1) + " ");
+            generate(deep,tomMatch73NameNumber_freshSubject_1,moduleName);
             break matchBlock;
-          }}}}}}{ Object tomMatch72NameNumber_freshVar_3=localVar;if ( (tomMatch72NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch72NameNumber_freshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch72NameNumber_freshVar_3);
+          }}}}}}{ Object tomMatch73NameNumber_freshVar_3=localVar;if ( (tomMatch73NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch73NameNumber_freshVar_3);
 
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
@@ -263,9 +263,9 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.writeln(deep,")");
 
-    {{ Object tomMatch73NameNumber_freshVar_0=throwsType;if ( (tomMatch73NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch73NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_2=tomMatch73NameNumber_freshSubject_1;if ( (tomMatch73NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {{  String  tomMatch73NameNumber_freshVar_1= tomMatch73NameNumber_freshVar_2.getString() ;
+    {{ Object tomMatch74NameNumber_freshVar_0=throwsType;if ( (tomMatch74NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch74NameNumber_freshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tomMatch74NameNumber_freshVar_0);{  tom.engine.adt.tomtype.types.TomType  tomMatch74NameNumber_freshVar_2=tomMatch74NameNumber_freshSubject_1;if ( (tomMatch74NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {{  String  tomMatch74NameNumber_freshVar_1= tomMatch74NameNumber_freshVar_2.getString() ;
 
-        output.write(deep," throws " + tomMatch73NameNumber_freshVar_1);
+        output.write(deep," throws " + tomMatch74NameNumber_freshVar_1);
       }}}}}}}
 
 

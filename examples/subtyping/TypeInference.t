@@ -404,8 +404,8 @@ public class TypeInference {
       ->
       {
         TomType newTypeVar = freshTypeVar();
-        //ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
-        //ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*);
+        /* ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
+           ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*); */
         return `CCPair(ctx,CList(CommSubtype(type1,type2),cons1*,cons2*));
       }
     }

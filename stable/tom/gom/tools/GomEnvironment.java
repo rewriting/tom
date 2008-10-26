@@ -42,14 +42,14 @@ public class GomEnvironment {
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;
-  private SymbolTable symboltable;
+  private SymbolTable symbolTable;
   
   /**
    * A private constructor method to defeat instantiation
    */
   private GomEnvironment() { 
     initBuiltins();
-    symboltable = new SymbolTable();
+    symbolTable = new SymbolTable();
   }
 
   /**
@@ -64,12 +64,12 @@ public class GomEnvironment {
   }
 
   public SymbolTable getSymbolTable() {
-    return symboltable; 
+    return symbolTable; 
   }
 
   public void initSymbolTable(GomModuleList l) {
-    symboltable.clear();
-    symboltable.fill(l);
+    symbolTable.clear();
+    symbolTable.fill(l);
   }
 
   private Map importedModules = new HashMap();

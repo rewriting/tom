@@ -464,98 +464,6 @@
   make( new_AstInstruction,  new_PositivePattern,  new_NegativePatternList) { new tom.engine.adt.tominstruction.strategy.instruction.Make_TypedAction( $new_AstInstruction,  $new_PositivePattern,  $new_NegativePatternList) }
 }
 
-    %op Strategy _EmptyAndInstruction() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._EmptyAndInstruction)))}
-      
-        make() { new tom.engine.adt.tominstruction.strategy.instruction._EmptyAndInstruction() }
-    }
-  
-  
-  %op Strategy When_EmptyAndInstruction(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyAndInstruction(),s) }
-  }
-
-  %op Strategy Is_EmptyAndInstruction() {
-    make() { new tom.engine.adt.tominstruction.strategy.instruction.Is_EmptyAndInstruction()}
-  }
-  
-%op Strategy Make_EmptyAndInstruction() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_EmptyAndInstruction))) }
-
-  make() { new tom.engine.adt.tominstruction.strategy.instruction.Make_EmptyAndInstruction() }
-}
-
-    %op Strategy _ConsAndInstruction(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._ConsAndInstruction)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.tominstruction.strategy.instruction._ConsAndInstruction($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsAndInstruction(s:Strategy) {
-    make(s) { `Sequence(Is_ConsAndInstruction(),s) }
-  }
-
-  %op Strategy Is_ConsAndInstruction() {
-    make() { new tom.engine.adt.tominstruction.strategy.instruction.Is_ConsAndInstruction()}
-  }
-  
-%op Strategy Make_ConsAndInstruction(_HeadAndInstruction:Strategy, _TailAndInstruction:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_ConsAndInstruction))) }
-
-  get_slot(_HeadAndInstruction, t) { $t._HeadAndInstruction }
-  get_slot(_TailAndInstruction, t) { $t._TailAndInstruction }
-  make( new_HeadAndInstruction,  new_TailAndInstruction) { new tom.engine.adt.tominstruction.strategy.instruction.Make_ConsAndInstruction( $new_HeadAndInstruction,  $new_TailAndInstruction) }
-}
-
-    %op Strategy _EmptyOrInstruction() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._EmptyOrInstruction)))}
-      
-        make() { new tom.engine.adt.tominstruction.strategy.instruction._EmptyOrInstruction() }
-    }
-  
-  
-  %op Strategy When_EmptyOrInstruction(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyOrInstruction(),s) }
-  }
-
-  %op Strategy Is_EmptyOrInstruction() {
-    make() { new tom.engine.adt.tominstruction.strategy.instruction.Is_EmptyOrInstruction()}
-  }
-  
-%op Strategy Make_EmptyOrInstruction() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_EmptyOrInstruction))) }
-
-  make() { new tom.engine.adt.tominstruction.strategy.instruction.Make_EmptyOrInstruction() }
-}
-
-    %op Strategy _ConsOrInstruction(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._ConsOrInstruction)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.tominstruction.strategy.instruction._ConsOrInstruction($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsOrInstruction(s:Strategy) {
-    make(s) { `Sequence(Is_ConsOrInstruction(),s) }
-  }
-
-  %op Strategy Is_ConsOrInstruction() {
-    make() { new tom.engine.adt.tominstruction.strategy.instruction.Is_ConsOrInstruction()}
-  }
-  
-%op Strategy Make_ConsOrInstruction(_HeadOrInstruction:Strategy, _TailOrInstruction:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_ConsOrInstruction))) }
-
-  get_slot(_HeadOrInstruction, t) { $t._HeadOrInstruction }
-  get_slot(_TailOrInstruction, t) { $t._TailOrInstruction }
-  make( new_HeadOrInstruction,  new_TailOrInstruction) { new tom.engine.adt.tominstruction.strategy.instruction.Make_ConsOrInstruction( $new_HeadOrInstruction,  $new_TailOrInstruction) }
-}
-
     %op Strategy _EmptyconcInstruction() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instructionlist._EmptyconcInstruction)))}
       
@@ -5824,16 +5732,6 @@
   make( new_SlotName,  new_Appl) { new tom.engine.adt.tomslot.strategy.slot.Make_PairSlotAppl( $new_SlotName,  $new_Appl) }
 }
 
-            %op Strategy _AndInstruction(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_AndInstruction"),Choice(_ConsAndInstruction(sub,MuVar("x_AndInstruction")),_EmptyAndInstruction())) }
-            }
-            
-            %op Strategy _OrInstruction(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_OrInstruction"),Choice(_ConsOrInstruction(sub,MuVar("x_OrInstruction")),_EmptyOrInstruction())) }
-            }
-            
             %op Strategy _concInstruction(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_concInstruction"),Choice(_ConsconcInstruction(sub,MuVar("x_concInstruction")),_EmptyconcInstruction())) }

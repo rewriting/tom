@@ -199,7 +199,7 @@ public class Viewer {
 
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {{ Object tomMatch618NameNumber_freshVar_0=term;if ( tomMatch618NameNumber_freshVar_0 instanceof aterm.ATerm ) {{  aterm.ATerm  tomMatch618NameNumber_freshSubject_1=(( aterm.ATerm )tomMatch618NameNumber_freshVar_0);{  aterm.ATerm  tomMatch618NameNumber_freshVar_3=tomMatch618NameNumber_freshSubject_1;if ( tomMatch618NameNumber_freshVar_3 instanceof aterm.ATermAppl ) {{  aterm.AFun  tomMatch618NameNumber_freshVar_1= ((aterm.ATermAppl)tomMatch618NameNumber_freshVar_3).getAFun() ;{  aterm.ATermList  tomMatch618NameNumber_freshVar_2= ((aterm.ATermAppl)tomMatch618NameNumber_freshVar_3).getArguments() ;{  aterm.AFun  tomMatch618NameNumber_freshVar_5=tomMatch618NameNumber_freshVar_1;if ( tomMatch618NameNumber_freshVar_5 instanceof aterm.AFun ) {{  String  tomMatch618NameNumber_freshVar_4= tomMatch618NameNumber_freshVar_5.getName() ;{  String  tom_name=tomMatch618NameNumber_freshVar_4;{  aterm.ATermList  tom_list=tomMatch618NameNumber_freshVar_2;
+      {{ Object tomMatch620NameNumber_freshVar_0=term;if ( tomMatch620NameNumber_freshVar_0 instanceof aterm.ATerm ) {{  aterm.ATerm  tomMatch620NameNumber_freshSubject_1=(( aterm.ATerm )tomMatch620NameNumber_freshVar_0);{  aterm.ATerm  tomMatch620NameNumber_freshVar_3=tomMatch620NameNumber_freshSubject_1;if ( tomMatch620NameNumber_freshVar_3 instanceof aterm.ATermAppl ) {{  aterm.AFun  tomMatch620NameNumber_freshVar_1= ((aterm.ATermAppl)tomMatch620NameNumber_freshVar_3).getAFun() ;{  aterm.ATermList  tomMatch620NameNumber_freshVar_2= ((aterm.ATermAppl)tomMatch620NameNumber_freshVar_3).getArguments() ;{  aterm.AFun  tomMatch620NameNumber_freshVar_5=tomMatch620NameNumber_freshVar_1;if ( tomMatch620NameNumber_freshVar_5 instanceof aterm.AFun ) {{  String  tomMatch620NameNumber_freshVar_4= tomMatch620NameNumber_freshVar_5.getName() ;{  String  tom_name=tomMatch620NameNumber_freshVar_4;{  aterm.ATermList  tom_list=tomMatch620NameNumber_freshVar_2;
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
@@ -212,31 +212,31 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + tom_name.length() + 3;
-            {{ Object tomMatch619NameNumber_freshVar_0=tom_list;if ( tomMatch619NameNumber_freshVar_0 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch619NameNumber_freshSubject_1=(( aterm.ATermList )tomMatch619NameNumber_freshVar_0);{  aterm.ATermList  tomMatch619NameNumber_freshVar_1=tomMatch619NameNumber_freshSubject_1;if ( tomMatch619NameNumber_freshVar_1 instanceof aterm.ATermList ) {if (!( tomMatch619NameNumber_freshVar_1.isEmpty() )) {{  aterm.ATermList  tomMatch619NameNumber_freshVar_2= tomMatch619NameNumber_freshVar_1.getNext() ;{  aterm.ATermList  tomMatch619NameNumber_begin_4=tomMatch619NameNumber_freshVar_2;{  aterm.ATermList  tomMatch619NameNumber_end_5=tomMatch619NameNumber_freshVar_2;do {{{  aterm.ATermList  tomMatch619NameNumber_freshVar_3=tomMatch619NameNumber_end_5;if (!( tomMatch619NameNumber_freshVar_3.isEmpty() )) {{  aterm.ATermList  tomMatch619NameNumber_freshVar_6= tomMatch619NameNumber_freshVar_3.getNext() ;if ( tomMatch619NameNumber_freshVar_6.isEmpty() ) {
+            {{ Object tomMatch621NameNumber_freshVar_0=tom_list;if ( tomMatch621NameNumber_freshVar_0 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch621NameNumber_freshSubject_1=(( aterm.ATermList )tomMatch621NameNumber_freshVar_0);{  aterm.ATermList  tomMatch621NameNumber_freshVar_1=tomMatch621NameNumber_freshSubject_1;if ( tomMatch621NameNumber_freshVar_1 instanceof aterm.ATermList ) {if (!( tomMatch621NameNumber_freshVar_1.isEmpty() )) {{  aterm.ATermList  tomMatch621NameNumber_freshVar_2= tomMatch621NameNumber_freshVar_1.getNext() ;{  aterm.ATermList  tomMatch621NameNumber_begin_4=tomMatch621NameNumber_freshVar_2;{  aterm.ATermList  tomMatch621NameNumber_end_5=tomMatch621NameNumber_freshVar_2;do {{{  aterm.ATermList  tomMatch621NameNumber_freshVar_3=tomMatch621NameNumber_end_5;if (!( tomMatch621NameNumber_freshVar_3.isEmpty() )) {{  aterm.ATermList  tomMatch621NameNumber_freshVar_6= tomMatch621NameNumber_freshVar_3.getNext() ;if ( tomMatch621NameNumber_freshVar_6.isEmpty() ) {
 
                 // first child
                 w.write("─" + tom_name+ "─┬");
                 context.push(ndeep-1); 
-                ATermToTree( tomMatch619NameNumber_freshVar_1.getFirst() ,w,context,ndeep);
+                ATermToTree( tomMatch621NameNumber_freshVar_1.getFirst() ,w,context,ndeep);
                 context.pop();
                 w.write('\n');
 
                 // 2 ... n-1
-                {{ Object tomMatch620NameNumber_freshVar_0=tom_get_slice_concATerm(tomMatch619NameNumber_begin_4,tomMatch619NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if ( tomMatch620NameNumber_freshVar_0 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch620NameNumber_freshSubject_1=(( aterm.ATermList )tomMatch620NameNumber_freshVar_0);{  aterm.ATermList  tomMatch620NameNumber_freshVar_1=tomMatch620NameNumber_freshSubject_1;if ( tomMatch620NameNumber_freshVar_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch620NameNumber_begin_3=tomMatch620NameNumber_freshVar_1;{  aterm.ATermList  tomMatch620NameNumber_end_4=tomMatch620NameNumber_freshVar_1;do {{{  aterm.ATermList  tomMatch620NameNumber_freshVar_2=tomMatch620NameNumber_end_4;if (!( tomMatch620NameNumber_freshVar_2.isEmpty() )) {{  aterm.ATermList  tomMatch620NameNumber_freshVar_5= tomMatch620NameNumber_freshVar_2.getNext() ;
+                {{ Object tomMatch622NameNumber_freshVar_0=tom_get_slice_concATerm(tomMatch621NameNumber_begin_4,tomMatch621NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if ( tomMatch622NameNumber_freshVar_0 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch622NameNumber_freshSubject_1=(( aterm.ATermList )tomMatch622NameNumber_freshVar_0);{  aterm.ATermList  tomMatch622NameNumber_freshVar_1=tomMatch622NameNumber_freshSubject_1;if ( tomMatch622NameNumber_freshVar_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch622NameNumber_begin_3=tomMatch622NameNumber_freshVar_1;{  aterm.ATermList  tomMatch622NameNumber_end_4=tomMatch622NameNumber_freshVar_1;do {{{  aterm.ATermList  tomMatch622NameNumber_freshVar_2=tomMatch622NameNumber_end_4;if (!( tomMatch622NameNumber_freshVar_2.isEmpty() )) {{  aterm.ATermList  tomMatch622NameNumber_freshVar_5= tomMatch622NameNumber_freshVar_2.getNext() ;
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch620NameNumber_freshVar_2.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch622NameNumber_freshVar_2.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }}}if ( tomMatch620NameNumber_end_4.isEmpty() ) {tomMatch620NameNumber_end_4=tomMatch620NameNumber_begin_3;} else {tomMatch620NameNumber_end_4= tomMatch620NameNumber_end_4.getNext() ;}}} while(!( tomMatch620NameNumber_end_4==tomMatch620NameNumber_begin_3 ));}}}}}}}}
+                  }}}if ( tomMatch622NameNumber_end_4.isEmpty() ) {tomMatch622NameNumber_end_4=tomMatch622NameNumber_begin_3;} else {tomMatch622NameNumber_end_4= tomMatch622NameNumber_end_4.getNext() ;}}} while(!( tomMatch622NameNumber_end_4==tomMatch622NameNumber_begin_3 ));}}}}}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch619NameNumber_freshVar_3.getFirst() ,w,context,ndeep);
-              }}}}if ( tomMatch619NameNumber_end_5.isEmpty() ) {tomMatch619NameNumber_end_5=tomMatch619NameNumber_begin_4;} else {tomMatch619NameNumber_end_5= tomMatch619NameNumber_end_5.getNext() ;}}} while(!( tomMatch619NameNumber_end_5==tomMatch619NameNumber_begin_4 ));}}}}}}}}}}
+                ATermToTree( tomMatch621NameNumber_freshVar_3.getFirst() ,w,context,ndeep);
+              }}}}if ( tomMatch621NameNumber_end_5.isEmpty() ) {tomMatch621NameNumber_end_5=tomMatch621NameNumber_begin_4;} else {tomMatch621NameNumber_end_5= tomMatch621NameNumber_end_5.getNext() ;}}} while(!( tomMatch621NameNumber_end_5==tomMatch621NameNumber_begin_4 ));}}}}}}}}}}
 
           }
         }}}}}}}}}}}}}
@@ -254,11 +254,11 @@ public class Viewer {
     return s;
   }
 
-  public static class RemoveMu extends tom.library.sl.BasicStrategy {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{ Object tomMatch621NameNumber_freshVar_0=tom__arg;if ( (tomMatch621NameNumber_freshVar_0 instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch621NameNumber_freshSubject_1=(( tom.library.sl.Strategy )tomMatch621NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch621NameNumber_freshVar_2=tomMatch621NameNumber_freshSubject_1;if (( (tomMatch621NameNumber_freshVar_2 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch621NameNumber_freshVar_1=( (tom.library.sl.Strategy)tomMatch621NameNumber_freshVar_2.getChildAt(tom.library.sl.Mu.V) );
+  public static class RemoveMu extends tom.library.sl.BasicStrategy {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{ Object tomMatch623NameNumber_freshVar_0=tom__arg;if ( (tomMatch623NameNumber_freshVar_0 instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch623NameNumber_freshSubject_1=(( tom.library.sl.Strategy )tomMatch623NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch623NameNumber_freshVar_2=tomMatch623NameNumber_freshSubject_1;if (( (tomMatch623NameNumber_freshVar_2 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch623NameNumber_freshVar_1=( (tom.library.sl.Strategy)tomMatch623NameNumber_freshVar_2.getChildAt(tom.library.sl.Mu.V) );
 
 
-        return tomMatch621NameNumber_freshVar_1;
-      }}}}}}{ Object tomMatch621NameNumber_freshVar_3=tom__arg;if ( (tomMatch621NameNumber_freshVar_3 instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch621NameNumber_freshSubject_1=(( tom.library.sl.Strategy )tomMatch621NameNumber_freshVar_3);
+        return tomMatch623NameNumber_freshVar_1;
+      }}}}}}{ Object tomMatch623NameNumber_freshVar_3=tom__arg;if ( (tomMatch623NameNumber_freshVar_3 instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch623NameNumber_freshSubject_1=(( tom.library.sl.Strategy )tomMatch623NameNumber_freshVar_3);
 
         if (getEnvironment().getCurrentStack().contains(getEnvironment().getSubject())) {
           //corresponds to a pointer due to MuVar

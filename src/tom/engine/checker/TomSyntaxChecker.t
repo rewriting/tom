@@ -666,7 +666,7 @@ matchLbl: %match(constr) {
   private boolean verifyOrConstraint(Constraint orConstraint, Instruction action) throws VisitFailure{
     ArrayList<TomTerm> freeVarList1 = new ArrayList<TomTerm>();
     ArrayList<TomTerm> freeVarList2 = new ArrayList<TomTerm>();
-    %match(orConstraint){
+    %match(orConstraint) {
       OrConstraint(_*,x,_*) -> {
         // we collect the free vars only from match constraints
         // and we check these variables for numeric constraints also
@@ -674,25 +674,9 @@ matchLbl: %match(constr) {
         %match(x) {
           MatchConstraint(pattern,_) -> { 
             `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
-            // not fully supported for the moment
-            TomSymbol symb = TomBase.getSymbolFromTerm(`pattern,symbolTable());
-            if(symb != null && !TomBase.isSyntacticOperator(symb)) {
-              messageWarning(currentTomStructureOrgTrack.getFileName(),
-                  currentTomStructureOrgTrack.getLine(),
-                  TomMessage.notSyntacticInOr,
-                  new Object[]{});
-            }      
           }
           AndConstraint(_*,MatchConstraint(pattern,_),_*) -> { 
             `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
-            // not fully supported for the moment
-            TomSymbol symb = TomBase.getSymbolFromTerm(`pattern,symbolTable());
-            if(symb != null && !TomBase.isSyntacticOperator(symb)) {
-              messageWarning(currentTomStructureOrgTrack.getFileName(),
-                  currentTomStructureOrgTrack.getLine(),
-                  TomMessage.notSyntacticInOr,
-                  new Object[]{});
-            }      
           }
         }        
         if(!freeVarList1.isEmpty()) {

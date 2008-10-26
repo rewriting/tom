@@ -57,11 +57,11 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
-    {{ Object tomMatch416NameNumber_freshVar_0=h;if ( (tomMatch416NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch416NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_freshVar_1=tomMatch416NameNumber_freshSubject_1;if ( ((tomMatch416NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch416NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_begin_3=tomMatch416NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_end_4=tomMatch416NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_freshVar_2=tomMatch416NameNumber_end_4;if (!( tomMatch416NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch416NameNumber_freshVar_8= tomMatch416NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch416NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {{  tom.gom.adt.code.types.Code  tomMatch416NameNumber_freshVar_7= tomMatch416NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch416NameNumber_freshVar_5= tomMatch416NameNumber_freshVar_2.getTailConcHook() ;
+    {{ Object tomMatch418NameNumber_freshVar_0=h;if ( (tomMatch418NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch418NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_1=tomMatch418NameNumber_freshSubject_1;if ( ((tomMatch418NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch418NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_begin_3=tomMatch418NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_end_4=tomMatch418NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_2=tomMatch418NameNumber_end_4;if (!( tomMatch418NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch418NameNumber_freshVar_8= tomMatch418NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch418NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {{  tom.gom.adt.code.types.Code  tomMatch418NameNumber_freshVar_7= tomMatch418NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_5= tomMatch418NameNumber_freshVar_2.getTailConcHook() ;
 
-        res.append(CodeGen.generateCode(tomMatch416NameNumber_freshVar_7));
+        res.append(CodeGen.generateCode(tomMatch418NameNumber_freshVar_7));
         res.append("\n");
-      }}}}}}if ( tomMatch416NameNumber_end_4.isEmptyConcHook() ) {tomMatch416NameNumber_end_4=tomMatch416NameNumber_begin_3;} else {tomMatch416NameNumber_end_4= tomMatch416NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch416NameNumber_end_4==tomMatch416NameNumber_begin_3) ));}}}}}}}}
+      }}}}}}if ( tomMatch418NameNumber_end_4.isEmptyConcHook() ) {tomMatch418NameNumber_end_4=tomMatch418NameNumber_begin_3;} else {tomMatch418NameNumber_end_4= tomMatch418NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch418NameNumber_end_4==tomMatch418NameNumber_begin_3) ));}}}}}}}}
 
     return res.toString();
   }
@@ -69,11 +69,11 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
-    {{ Object tomMatch417NameNumber_freshVar_0=h;if ( (tomMatch417NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch417NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_freshVar_1=tomMatch417NameNumber_freshSubject_1;if ( ((tomMatch417NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch417NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_begin_3=tomMatch417NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_end_4=tomMatch417NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_freshVar_2=tomMatch417NameNumber_end_4;if (!( tomMatch417NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch417NameNumber_freshVar_8= tomMatch417NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch417NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {{  tom.gom.adt.code.types.Code  tomMatch417NameNumber_freshVar_7= tomMatch417NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch417NameNumber_freshVar_5= tomMatch417NameNumber_freshVar_2.getTailConcHook() ;
+    {{ Object tomMatch419NameNumber_freshVar_0=h;if ( (tomMatch419NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch419NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_freshVar_1=tomMatch419NameNumber_freshSubject_1;if ( ((tomMatch419NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch419NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_begin_3=tomMatch419NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_end_4=tomMatch419NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_freshVar_2=tomMatch419NameNumber_end_4;if (!( tomMatch419NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch419NameNumber_freshVar_8= tomMatch419NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch419NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {{  tom.gom.adt.code.types.Code  tomMatch419NameNumber_freshVar_7= tomMatch419NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch419NameNumber_freshVar_5= tomMatch419NameNumber_freshVar_2.getTailConcHook() ;
 
-        res.append(CodeGen.generateCode(tomMatch417NameNumber_freshVar_7));
+        res.append(CodeGen.generateCode(tomMatch419NameNumber_freshVar_7));
         res.append("\n");
-      }}}}}}if ( tomMatch417NameNumber_end_4.isEmptyConcHook() ) {tomMatch417NameNumber_end_4=tomMatch417NameNumber_begin_3;} else {tomMatch417NameNumber_end_4= tomMatch417NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch417NameNumber_end_4==tomMatch417NameNumber_begin_3) ));}}}}}}}}
+      }}}}}}if ( tomMatch419NameNumber_end_4.isEmptyConcHook() ) {tomMatch419NameNumber_end_4=tomMatch419NameNumber_begin_3;} else {tomMatch419NameNumber_end_4= tomMatch419NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch419NameNumber_end_4==tomMatch419NameNumber_begin_3) ));}}}}}}}}
 
     return res.toString();
   }
@@ -81,12 +81,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
-    {{ Object tomMatch418NameNumber_freshVar_0=h;if ( (tomMatch418NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch418NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_1=tomMatch418NameNumber_freshSubject_1;if ( ((tomMatch418NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch418NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_begin_3=tomMatch418NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_end_4=tomMatch418NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_2=tomMatch418NameNumber_end_4;if (!( tomMatch418NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch418NameNumber_freshVar_8= tomMatch418NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch418NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {{  tom.gom.adt.code.types.Code  tomMatch418NameNumber_freshVar_7= tomMatch418NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch418NameNumber_freshVar_5= tomMatch418NameNumber_freshVar_2.getTailConcHook() ;
+    {{ Object tomMatch420NameNumber_freshVar_0=h;if ( (tomMatch420NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.HookList) ) {{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.HookList )tomMatch420NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_freshVar_1=tomMatch420NameNumber_freshSubject_1;if ( ((tomMatch420NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || (tomMatch420NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) {{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_begin_3=tomMatch420NameNumber_freshVar_1;{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_end_4=tomMatch420NameNumber_freshVar_1;do {{{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_freshVar_2=tomMatch420NameNumber_end_4;if (!( tomMatch420NameNumber_freshVar_2.isEmptyConcHook() )) {{  tom.gom.adt.objects.types.Hook  tomMatch420NameNumber_freshVar_8= tomMatch420NameNumber_freshVar_2.getHeadConcHook() ;if ( (tomMatch420NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {{  tom.gom.adt.code.types.Code  tomMatch420NameNumber_freshVar_7= tomMatch420NameNumber_freshVar_8.getCode() ;{  tom.gom.adt.objects.types.HookList  tomMatch420NameNumber_freshVar_5= tomMatch420NameNumber_freshVar_2.getTailConcHook() ;
 
         res.append(",");
-        res.append(CodeGen.generateCode(tomMatch418NameNumber_freshVar_7));
+        res.append(CodeGen.generateCode(tomMatch420NameNumber_freshVar_7));
         res.append("\n");
-      }}}}}}if ( tomMatch418NameNumber_end_4.isEmptyConcHook() ) {tomMatch418NameNumber_end_4=tomMatch418NameNumber_begin_3;} else {tomMatch418NameNumber_end_4= tomMatch418NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch418NameNumber_end_4==tomMatch418NameNumber_begin_3) ));}}}}}}}}
+      }}}}}}if ( tomMatch420NameNumber_end_4.isEmptyConcHook() ) {tomMatch420NameNumber_end_4=tomMatch420NameNumber_begin_3;} else {tomMatch420NameNumber_end_4= tomMatch420NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch420NameNumber_end_4==tomMatch420NameNumber_begin_3) ));}}}}}}}}
 
     return res.toString();
   }
@@ -96,7 +96,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
    * necessary (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if (hooks.isEmptyConcHook()) {
+    if(hooks.isEmptyConcHook()) {
       try {
         File output = fileToGenerate();
         // make sure the directory exists
@@ -109,7 +109,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         e.printStackTrace();
         return 1;
       }
-    } else { /* We need to call tom to generate the file */
+    } else { /* We need to call Tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
