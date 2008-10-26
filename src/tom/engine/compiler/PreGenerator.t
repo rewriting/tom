@@ -231,7 +231,7 @@ block: %match(constraint) {
               */
              MatchConstraint[Pattern=matchP@(Variable|VariableStar)[]],NumericConstraint[Pattern=x,Subject=y]
                && (matchP << TomTerm x || matchP << TomTerm y) 
-               // we need '?' because Y* can be reduced to a single element
+               /* we need '?' because Y* can be reduced to a single element */
                && !AndConstraint?(_*,MatchConstraint[Pattern=x],_*) << Y 
                && !AndConstraint?(_*,MatchConstraint[Pattern=y],_*) << Y -> {
                  toOrder = `AndConstraint(X*,first,second,Y*,Z*);

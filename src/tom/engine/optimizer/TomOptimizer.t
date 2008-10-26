@@ -106,7 +106,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   public void run() {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
-      // Initialize strategies
+      /* Initialize strategies */
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
@@ -196,7 +196,6 @@ public class TomOptimizer extends TomGenericPlugin {
         (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
          Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
           return (Instruction) `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
-       // return  (Instruction) `renameVariable(name,expname).visitLight(`body);
       }
 
       Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
@@ -759,7 +758,6 @@ public class TomOptimizer extends TomGenericPlugin {
          */
         TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
         if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-          //System.out.println("symbol = " + tomSymbol);
           TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
           TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
           if(domain!=codomain) {

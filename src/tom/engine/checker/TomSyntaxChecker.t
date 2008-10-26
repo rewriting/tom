@@ -671,7 +671,7 @@ matchLbl: %match(constr) {
         // we collect the free vars only from match constraints
         // and we check these variables for numeric constraints also
         // ex: 'y << a() || x > 3' should generate an error 
-        %match(x){
+        %match(x) {
           MatchConstraint(pattern,_) -> { 
             `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
             // not fully supported for the moment
@@ -728,7 +728,7 @@ matchLbl: %match(constr) {
     return true;
   }
   
-  private boolean containsVariable(TomTerm var, Instruction action){
+  private boolean containsVariable(TomTerm var, Instruction action) {
     try{
       `TopDown(ContainsVariable(var)).visitLight(action);
     } catch(VisitFailure e) {
@@ -739,8 +739,8 @@ matchLbl: %match(constr) {
   %strategy ContainsVariable(TomTerm var) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
-        `v = `v.setOption(`concOption()); // to avoid problems related to line numbers
-        if (`v==var) {
+        TomTerm newvar = `v.setOption(`concOption()); // to avoid problems related to line numbers
+        if(`newvar==var) {
           throw new VisitFailure();
         }
       }
@@ -753,8 +753,8 @@ matchLbl: %match(constr) {
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
-        `v = `v.setOption(`concOption()); // to avoid problems related to line numbers
-        if(!varList.contains(`v)) { 
+        TomTerm newvar = `v.setOption(`concOption()); // to avoid problems related to line numbers
+        if(!varList.contains(newvar)) { 
           varList.add(`v); 
         }
         throw new VisitFailure();// to stop the top-down
