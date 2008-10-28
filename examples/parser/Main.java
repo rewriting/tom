@@ -4,7 +4,6 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 import parser.rule.RuleAdaptor;
-import parser.rule.RuleAdaptor;
 
 public class Main {
 

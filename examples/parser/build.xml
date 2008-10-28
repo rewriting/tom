@@ -38,6 +38,7 @@
                 srcdir="${examples.dir}"> 
       <include name="${example}/Graph.g.t"/>
     </tom.preset>
+    <tomcompile example="${example}"/>
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
