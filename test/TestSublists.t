@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2008, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  *   - Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.  
+ *  notice, this list of conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
  *  - Neither the name of the INRIA nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *  this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -36,7 +36,7 @@ public class TestSublists extends TestCase {
   %gom {
     module M
       abstract syntax
-      Term = 
+      Term =
       | a()
       | b()
       | c()
@@ -79,8 +79,8 @@ public class TestSublists extends TestCase {
   public void test3() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
-      list(X*,p@list(b(),b()),Y*) -> {        
-        if (`p == `list(b(),b()) && `X == `list(a()) && `Y == `list(c())){
+      list(X*,p@list(b(),b()),Y*) -> {
+        if (`p == `list(b(),b()) && `X == `list(a()) && `Y == `list(c())) {
           return;
         } else {
           fail();
@@ -113,7 +113,7 @@ public class TestSublists extends TestCase {
       termList(_X*,_p@list(_*,b(),_*),_Y*) -> {
         fail();
       }
-    }    
+    }
   }
 
   public void test6() {
@@ -122,7 +122,7 @@ public class TestSublists extends TestCase {
       termList(_X*,list(_*,b(),_*),_Y*) -> {
         return;
       }
-    }    
+    }
     fail();
   }
 
@@ -132,7 +132,7 @@ public class TestSublists extends TestCase {
       termList(_X*,termList(_*,b(),_*),_Y*) -> {
         return;
       }
-    }    
+    }
     fail();
   }
 
@@ -140,13 +140,13 @@ public class TestSublists extends TestCase {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
       termList(_X*,p@!termList(_*,!b(),_*),_Y*) -> {
-        if( `p == `termList(b()) || `p == `termList(b(),b()) || `p == `termList()){
+        if( `p == `termList(b()) || `p == `termList(b(),b()) || `p == `termList()) {
           return;
-        }else{
+        } else {
           fail();
         }
       }
-    }    
+    }
     fail();
   }
 
@@ -156,11 +156,11 @@ public class TestSublists extends TestCase {
       termList(_X*,p@termList(b(),b()),_Y*) -> {
         if( `p == `termList(b(),b()) ) {
           return;
-        }else{
+        } else {
           fail();
         }
       }
-    }    
+    }
     fail();
   }
 
@@ -176,14 +176,14 @@ public class TestSublists extends TestCase {
   }
 
   public void test11() {
-    TermList t = `termList(termList(a(),b()));    
-    %match(t) {      
+    TermList t = `termList(termList(a(),b()));
+    %match(t) {
       _z@termList(termList(a(),b())) -> {
-        return; 
+        return;
       }
-    }     
-    fail(); 
-  } 
+    }
+    fail();
+  }
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
