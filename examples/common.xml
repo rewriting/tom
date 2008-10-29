@@ -163,12 +163,12 @@
     <delete dir="${examples.dist}"/>
   </target>
 
-  <target name="clean" description="Cleans example directory" unless="example">
+  <target name="clean" description="Cleans example directory" if="example">
     <delete dir="${examples.gen}/${example}"/>
     <delete dir="${examples.build}/${example}"/>
   </target>
 
-  <target name="build" depends="init" unless="example">
+  <target name="build" depends="init" if="example">
     <gombuild example="${example}"/>
     <tomcompile example="${example}"/>
     <javacompile example="${example}"/>
@@ -208,7 +208,7 @@
     <mkdir dir="${examples.report}"/>
   </target>
 
-  <target name="junit" depends="tom.init, report.init,  build" unless="example"
+  <target name="junit" depends="tom.init,report.init,build" if="example"
     description="Runs junit acceptance tests">
     <tom.junit printsummary="on"
               fork="on"

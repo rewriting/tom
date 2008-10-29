@@ -47,6 +47,62 @@ public class TestRuleParser extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestRuleParser.class));
   }
 
+  private Term getTerm(String code) {
+    try {
+      RuleLexer lexer = new RuleLexer(new ANTLRStringStream(code));
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      RuleParser parser = new RuleParser(tokens);
+      Tree tree = (Tree) parser.term().getTree();
+      Term term = (Term) RuleAdaptor.getTerm(tree);
+      return term;
+    } catch (Exception e) {
+      fail("Parse failed, with exception "+e);
+      return null;
+    }
+  }
+
+  public void testSimpleTerm() {
+    String termCode = "a()";
+    Term term = getTerm(termCode);
+    assertEquals(`Appl("a",TermList()), term);
+  }
+
+  public void testVariable() {
+    String termCode = "x";
+    Term term = getTerm(termCode);
+    assertEquals(`Var("x"), term);
+  }
+
+  public void testBranchTerm() {
+    String termCode = "Node(x,y)";
+    Term term = getTerm(termCode);
+    assertEquals(`Appl("Node",TermList(Var("x"),Var("y"))), term);
+  }
+
+  public void testIntTerm() {
+    String termCode = "123";
+    Term term = getTerm(termCode);
+    assertEquals(`BuiltinInt(123), term);
+  }
+
+  public void testIntApplTerm() {
+    String termCode = "Int(123)";
+    Term term = getTerm(termCode);
+    assertEquals(`Appl("Int",TermList(BuiltinInt(123))), term);
+  }
+
+  public void testStringTerm() {
+    String termCode = "\"foo\"";
+    Term term = getTerm(termCode);
+    assertEquals(`BuiltinString("\"foo\""), term);
+  }
+
+  public void testStringApplTerm() {
+    String termCode = "foo(\"bar\")";
+    Term term = getTerm(termCode);
+    assertEquals(`Appl("foo",TermList(BuiltinString("\"bar\""))), term);
+  }
+
   private RuleList getRuleList(String code) {
     try {
       RuleLexer lexer = new RuleLexer(new ANTLRStringStream(code));
@@ -61,9 +117,23 @@ public class TestRuleParser extends TestCase {
     }
   }
 
-  public void testRimpleRule() {
+  public void testSimpleRule() {
     String ruleCode = "a() -> b()\n";
     RuleList rl = getRuleList(ruleCode);
-    assertEquals(`RuleList(Rule(Appl("a",TermList()),Appl("b",TermList()))), rl);
+    assertEquals(
+        `RuleList(Rule(Appl("a",TermList()),Appl("b",TermList()))),
+        rl);
+  }
+
+  public void testConditionalRule() {
+    String ruleCode = "a(x,y) -> b() if x==y\n";
+    RuleList rl = getRuleList(ruleCode);
+    assertEquals(
+        `RuleList(
+          ConditionalRule(
+            Appl("a",TermList(Var("x"),Var("y"))),
+            Appl("b",TermList()),
+            CondEquals(Var("x"),Var("y")))),
+        rl);
   }
 }
