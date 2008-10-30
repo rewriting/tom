@@ -109,7 +109,7 @@ public class Transformer2 {
   %strategy CallToSRead(index:IntWrapper) extends Identity() {
     visit TInstructionList {
       c@(Aload(i),
-          inv@Invokevirtual[owner="java/io/FileReader",name="read"],
+          Invokevirtual[owner="java/io/FileReader",name="read"],
           Pop(), tail*)-> {
         if(index.getReaderIndex()==`i){ 
           System.out.println("Attempt to read a file");
@@ -244,6 +244,7 @@ public class Transformer2 {
     BytecodeReader br = new BytecodeReader(file);
     System.out.println("Analyzing ...");
     TClass c= br.getTClass();
+    System.out.println(c);
     //String secureName = c.getinfo().getname() + "Secure";
     //TClass cSecured = renameClass(fileAccesVerify(c),secureName);
     c = fileAccesVerify(c);
