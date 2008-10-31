@@ -430,6 +430,7 @@ public class ASTFactory {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
+    System.out.println(args);
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
@@ -505,7 +506,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList)[],tail*) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList|BuildConsList)[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }
