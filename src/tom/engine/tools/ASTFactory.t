@@ -430,7 +430,6 @@ public class ASTFactory {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
-    System.out.println(args);
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
