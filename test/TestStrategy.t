@@ -30,6 +30,8 @@ public class TestStrategy extends TestCase {
       | h(s1:Term,s2:Term)
       Term1 = e()
       L = concTerm(Term*)
+
+      Pf = Unary() | Variadic(Pf*)
   } 
 
   static boolean bool0 = true;
@@ -61,7 +63,7 @@ public class TestStrategy extends TestCase {
     Strategy rule8 = `S8(bool);
     Strategy rule9 = `S9(i);
    
-    try{
+    try {
       assertSame("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
       assertSame("a return b", `rule1.visitLight(`a()), `b());
       assertSame("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
@@ -170,6 +172,20 @@ public class TestStrategy extends TestCase {
   %strategy S9(i:int) extends  Identity() {
     visit Term {
       g(x,x) -> { return `x; }
+    }
+  }
+
+  %strategy fnc() extends Identity() {
+    visit Pf {
+      Unary() -> { return `Variadic(Variadic(Unary()));}
+    }
+  }
+
+  public void testFnc() {
+    try {
+      assertEquals(`fnc().visitLight(`Unary()), `Variadic(Variadic(Unary())));
+    } catch (tom.library.sl.VisitFailure e) {
+      fail("tom.library.sl.VisitFailure()");
     }
   }
 
