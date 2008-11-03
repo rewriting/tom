@@ -5,7 +5,7 @@
   <target name="build" depends="init">
     <!-- copy resources in build -->
     <mkdir dir="${examples.gen}/${example}"/>
-    <gomtermgraphcompile example="${example}"/>
+    <gomtermgraphcompile/>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
@@ -23,8 +23,8 @@
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <tomcompile/>
+    <javacompile/>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
         <include name="*.xml"/>

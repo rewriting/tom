@@ -34,111 +34,101 @@
     </path>
 
     <macrodef name="tomcompile">
-      <attribute name="example"/>
       <sequential>
         <tom.preset srcdir="${examples.dir}"
                     destdir="${examples.gen}">          
-          <include name="@{example}/**/*.t"/>
-          <exclude name="@{example}/**/*.g.t"/>
+          <include name="${example}/**/*.t"/>
+          <exclude name="${example}/**/*.g.t"/>
         </tom.preset>
       </sequential>
     </macrodef>
     <macrodef name="adtcompile">
-      <attribute name="example"/>
       <attribute name="factory"/>
       <sequential>
         <adt srcdir="${examples.dir}"
              name="@{factory}" 
-             package="@{example}" 
+             package="${example}" 
              visitable="${visitable}"
              destdir="${examples.gen}">
-          <include name="@{example}/**/*.adt"/>
+          <include name="${example}/**/*.adt"/>
         </adt>
       </sequential>
     </macrodef>
     <macrodef name="vascompile">
-      <attribute name="example"/>
       <sequential>
         <vas config="${vasconfigfile}"
              srcdir="${examples.dir}"
-             package="@{example}" 
+             package="${example}" 
              destdir="${examples.gen}">
-          <include name="@{example}/**/*.vas"/>
+          <include name="${example}/**/*.vas"/>
         </vas>
       </sequential>
     </macrodef>
     <macrodef name="gomcompile">
-      <attribute name="example"/>
       <sequential>
         <gom.preset srcdir="${examples.dir}"
-                    package="@{example}" 
+                    package="${example}" 
                     destdir="${examples.gen}">
-          <include name="@{example}/**/*.gom"/>
+          <include name="${example}/**/*.gom"/>
         </gom.preset>
       </sequential>
     </macrodef>
   <macrodef name="gompointercompile">
-    <attribute name="example"/>
     <sequential>
       <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
+        package="${example}" 
         termpointer="true"
         destdir="${examples.gen}">
-        <include name="@{example}/*.gom"/>
+        <include name="${example}/*.gom"/>
       </gom.preset>
     </sequential>
   </macrodef>
   <macrodef name="gomtermgraphcompile">
-    <attribute name="example"/>
     <sequential>
       <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
+        package="${example}" 
         termgraph="true" 
         destdir="${examples.gen}">
-        <include name="@{example}/**/*.gom"/>
+        <include name="${example}/**/*.gom"/>
       </gom.preset>
     </sequential>
   </macrodef>
   <macrodef name="gomfreshcompile">
-    <attribute name="example"/>
     <sequential>
       <gom.preset srcdir="${examples.dir}"
-        package="@{example}" 
+        package="${example}" 
         fresh="true" 
         destdir="${examples.gen}">
-        <include name="@{example}/**/*.gom"/>
+        <include name="${example}/**/*.gom"/>
       </gom.preset>
     </sequential>
   </macrodef>
     <!-- The gombuild macro do not pass the package argument -->
     <macrodef name="gombuild">
-      <attribute name="example"/>
       <sequential>
 	<gom.preset srcdir="${examples.dir}"
 	  destdir="${examples.gen}">
-	  <include name="@{example}/**/*.gom"/>
+	  <include name="${example}/**/*.gom"/>
 	</gom.preset>
       </sequential>
     </macrodef>
     <macrodef name="gomantlradapterbuild">
-      <attribute name="example"/>
       <attribute name="grammar"/>
       <sequential>
         <gomantlradapter.preset srcdir="${examples.dir}"
-                                package="@{example}" 
+                                package="${example}" 
                                 destdir="${examples.gen}"
                                 grammar="@{grammar}">
-          <include name="@{example}/**/*.gom"/>
+          <include name="${example}/**/*.gom"/>
         </gomantlradapter.preset>
       </sequential>
     </macrodef>
     <macrodef name="javacompile">
-      <attribute name="example"/>
       <sequential>
         <javac.preset destdir="${examples.build}" >
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
-          <include name="@{example}/**/*.java"/>
+          <include name="${example}/**/*.java"/>
           <classpath refid="tom.examples.classpath"/>
         </javac.preset>
       </sequential>
@@ -169,9 +159,9 @@
   </target>
 
   <target name="build" depends="init" if="example">
-    <gombuild example="${example}"/>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <gombuild/>
+    <tomcompile/>
+    <javacompile/>
   </target>
 
   <target name="should-dist">

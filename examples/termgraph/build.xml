@@ -8,7 +8,7 @@
       <fileset dir="${examples.dir}/${example}">
       </fileset>
     </copy>
-    <gomtermgraphcompile example="${example}"/>
+    <gomtermgraphcompile/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
                 options="-I ${examples.gen}/${example}"
@@ -20,8 +20,8 @@
               outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <tomcompile/>
+    <javacompile/>
   </target>
   <property name="distribute" value="yes"/>
 </project>

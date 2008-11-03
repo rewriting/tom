@@ -3,13 +3,13 @@
   <import file="../common.xml"/>
   <property name="example" value="cps"/>
   <target name="build" depends="init">
-    <gomfreshcompile example="${example}"/>
+    <gomfreshcompile/>
     <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
                 options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/Lambda.g.t"/>
     </tom.preset>
-    <tomcompile example="${example}"/>
+    <tomcompile/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
@@ -20,7 +20,7 @@
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <javacompile example="${example}"/>
+    <javacompile/>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
         <include name="examples"/>

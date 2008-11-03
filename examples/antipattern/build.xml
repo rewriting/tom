@@ -3,10 +3,10 @@
   <import file="../common.xml"/>
   <property name="example" value="antipattern"/>
   <target name="build" depends="init">
-    <gombuild example="${example}"/>
+    <gombuild/>
     <!--
     "Wait for the static %rule problem to be resolved"
-    <tomcompile example="${example}"/>
+    <tomcompile/>
     -->
     <tom.preset srcdir="${examples.dir}"
       options="--noStatic"
@@ -16,7 +16,7 @@
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/*.g.t"/>
     </tom.preset>
-    <javacompile example="${example}"/>
+    <javacompile/>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${example}">
         <include name="*.txt"/>

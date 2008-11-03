@@ -4,7 +4,7 @@
   <property name="example" value="structure"/>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <gombuild example="${example}"/>
+    <gombuild/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
@@ -25,7 +25,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build java source -->
-    <javacompile example="${example}"/>
+    <javacompile/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">

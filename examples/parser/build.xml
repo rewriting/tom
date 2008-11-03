@@ -38,7 +38,7 @@
                 srcdir="${examples.dir}"> 
       <include name="${example}/Graph.g.t"/>
     </tom.preset>
-    <tomcompile example="${example}"/>
+    <tomcompile/>
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
@@ -56,7 +56,7 @@
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <javacompile example="${example}"/>
+    <javacompile/>
   </target>
   <property name="distribute" value="yes"/>
 </project>

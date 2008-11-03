@@ -4,7 +4,7 @@
   <property name="example" value="polygraphes"/>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <gomcompile example="${example}"/>
+    <gomcompile/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
@@ -28,7 +28,7 @@
     </tomantlr>
     -->
     <!-- build java source -->
-    <javacompile example="${example}"/>
+    <javacompile/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${example}">
       <fileset dir="${example}">

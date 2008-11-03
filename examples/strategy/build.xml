@@ -9,7 +9,7 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
-    <gombuild example="${example}"/>
+    <gombuild/>
     <tom.preset srcdir="${examples.dir}"
 	              options="--genIntrospector"
                 destdir="${examples.gen}">          
@@ -23,7 +23,7 @@
 		   <exclude name="${example}/**/HandWrittenStrat.t"/>
 		   <exclude name="${example}/**/HandWrittenStrat2.t"/>
 	</tom.preset> 
-    <javacompile example="${example}"/>
+    <javacompile/>
   </target>
   <property name="distribute" value="yes"/>
 </project>

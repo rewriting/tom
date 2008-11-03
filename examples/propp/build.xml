@@ -3,7 +3,7 @@
   <import file="../common.xml"/>
   <property name="example" value="propp"/>
   <target name="build" depends="init">
-    <gombuild example="${example}"/>
+    <gombuild/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/SeqParser.g"
                 options="-I ${examples.gen}/${example}"
@@ -15,8 +15,8 @@
               outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <tomcompile/>
+    <javacompile/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">

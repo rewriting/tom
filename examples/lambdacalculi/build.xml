@@ -3,7 +3,7 @@
   <import file="../common.xml"/>
   <property name="example" value="lambdacalculi"/>
   <target name="build" depends="init">
-    <gomtermgraphcompile example="${example}"/>
+    <gomtermgraphcompile/>
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
                 options="-I ${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
@@ -15,8 +15,8 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
 
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <tomcompile/>
+    <javacompile/>
   </target>
   <property name="distribute" value="no"/>
 </project>

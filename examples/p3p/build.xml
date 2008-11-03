@@ -3,8 +3,8 @@
   <import file="../common.xml"/>
   <property name="example" value="p3p"/>
   <target name="build" depends="init">
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <tomcompile/>
+    <javacompile/>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
         <include name="*.xml"/>

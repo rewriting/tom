@@ -3,9 +3,9 @@
   <import file="../common.xml"/>
   <property name="example" value="multigraph"/>
   <target name="build" depends="init">
-    <gompointercompile example="${example}"/>
-    <tomcompile example="${example}"/>
-    <javacompile example="${example}"/>
+    <gompointercompile/>
+    <tomcompile/>
+    <javacompile/>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
         <include name="test"/>

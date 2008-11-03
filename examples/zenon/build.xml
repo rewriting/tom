@@ -11,7 +11,7 @@
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/*.g.t"/>
     </tom.preset>
-    <javacompile example="${example}"/>
+    <javacompile/>
     <antcall target="zenon.make"/>
   </target>
   <target name="zenon.make" if="zvtov.bin">

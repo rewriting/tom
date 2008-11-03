@@ -3,16 +3,16 @@
   <import file="../common.xml"/>
   <property name="example" value="boulderdash"/>
   <target name="build" depends="init">
-    <gomcompile example="${example}"/>
+    <gomcompile/>
     <!--
-    <tomcompile example="${example}"/>
+    <tomcompile/>
     -->
     <tom.preset srcdir="${examples.dir}"
 	        options="--noStatic"
                 destdir="${examples.gen}">          
        <include name="${example}/**/*.t"/>
     </tom.preset>
-    <javacompile example="${example}"/>
+    <javacompile/>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">

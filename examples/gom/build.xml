@@ -3,7 +3,7 @@
   <import file="../common.xml"/>
   <property name="example" value="gom"/>
   <target name="build" depends="init">
-    <gomcompile example="${example}"/>
+    <gomcompile/>
     <tom.preset srcdir="${examples.dir}"
       options="--genIntrospector"
       destdir="${examples.gen}">          
@@ -14,7 +14,7 @@
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/TestCarre.t"/>
     </tom.preset> 
-    <javacompile example="${example}"/>
+    <javacompile/>
   </target>
   <property name="distribute" value="yes"/>
 </project>

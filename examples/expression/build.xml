@@ -12,7 +12,7 @@
                 destdir="${examples.gen}">
       <include name="${example}/**/RecordStrict.t"/>
     </tom.preset>
-    <javacompile example="${example}"/>
+    <javacompile/>
   </target>
   <property name="distribute" value="yes"/>
 </project>
