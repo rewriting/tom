@@ -29,9 +29,9 @@
 
 package addressbook;
 
-import addressbook.addressbookvas.person.types.*;
+import addressbook.addressbookgom.person.types.*;
 
-public class AddressBookVas {
+public class AddressBookGom {
 
   %gom {
     module person
