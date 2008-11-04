@@ -108,6 +108,7 @@
           <src path="${examples.gen}"/>
           <include name="${example}/**/*.java"/>
           <classpath refid="tom.examples.classpath"/>
+          <compilerarg value="-Xlint:unchecked"/>
         </javac.preset>
       </sequential>
     </macrodef>
@@ -179,10 +180,10 @@
   <target name="junit" depends="tom.init,report.init,build" if="example"
     description="Runs junit acceptance tests">
     <tom.junit printsummary="on"
-              fork="on"
-              haltonfailure="false"
-              failureproperty="tests.failed"
-              showoutput="true">
+	    fork="on"
+	    haltonfailure="false"
+	    failureproperty="tests.failed"
+	    showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
         <fileset dir="${examples.dir}/${examples.lib}">
@@ -198,6 +199,7 @@
           <include name="${example}/**/Test*.java"/>
         </fileset>
       </batchtest>
+      <sysproperty key="basedir" value="${examples.dir}"/>
       <formatter type="xml" if="test.xmlreport"/>
     </tom.junit>
     <fail if="tests.failed">

@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2008, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,38 +33,40 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
+import java.io.InputStream;
 import tom.library.sl.VisitFailure;
 
 public class P3PEvaluator2 {
-   
+
   %include{ adt/tnode/TNode.tom }
   %include{ sl.tom }
   %include{ java/util/types/Collection.tom }
- 
+
   private XmlTools xtools;
- 
+
   public static void main (String args[]) {
     P3PEvaluator2 P3PEvaluator2 = new P3PEvaluator2();
-    P3PEvaluator2.run("p3p/server.xml","p3p/client.xml");
+    boolean res = P3PEvaluator2.run(
+        P3PEvaluator2.class.getResourceAsStream("server.xml"),
+        P3PEvaluator2.class.getResourceAsStream("client.xml"));
+    System.out.println("res = " + res);
   }
 
-  private void run(String polfile,String clientfile){
+  public boolean run(InputStream polfile, InputStream clientfile) {
     xtools = new XmlTools();
     TNode pol = (TNode)xtools.convertXMLToTNode(polfile);
     TNode client = (TNode)xtools.convertXMLToTNode(clientfile);
-    boolean res = compareDataGroup(getDataGroup(pol),getDataGroup(client));
-    System.out.println("res = " + res);
+    return compareDataGroup(getDataGroup(pol),getDataGroup(client));
   }
-     
+
   private TNode getDataGroup(TNode doc) {
-    HashSet c = new HashSet();
+    HashSet<TNode> c = new HashSet<TNode>();
     try {
       `TopDownCollect(collectDatagroup(c)).visitLight(doc);
     } catch(VisitFailure e) {}
-    Iterator it = c.iterator();
+    Iterator<TNode> it = c.iterator();
     while(it.hasNext()) {
-      TNode datagroup = (TNode)it.next();
-      return datagroup;
+      return it.next();
     }
 
     return `xml(<DATA-GROUP/>);
@@ -77,11 +79,11 @@ public class P3PEvaluator2 {
     }
     return res;
   }
- 
+
   private boolean appearsIn(String refclient, TNode pol) {
     %match(TNode pol) {
       <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP>
-         -> { 
+         -> {
          if(`ref.equals(refclient)) {
            return true;
          }
@@ -90,13 +92,15 @@ public class P3PEvaluator2 {
     return false;
   }
 
-  %strategy collectDatagroup(collection:Collection) extends `Identity() {
+  %typeterm CollectionTNode {
+    implement { Collection<TNode> }
+  }
+  %strategy collectDatagroup(collection:CollectionTNode) extends `Identity() {
     visit TNode {
       t@<DATA-GROUP> </DATA-GROUP> -> {
         collection.add(`t);
         throw new VisitFailure();
       }
     }
-  } 
-  
+  }
 }
