@@ -42,28 +42,6 @@
         </tom.preset>
       </sequential>
     </macrodef>
-    <macrodef name="adtcompile">
-      <attribute name="factory"/>
-      <sequential>
-        <adt srcdir="${examples.dir}"
-             name="@{factory}" 
-             package="${example}" 
-             visitable="${visitable}"
-             destdir="${examples.gen}">
-          <include name="${example}/**/*.adt"/>
-        </adt>
-      </sequential>
-    </macrodef>
-    <macrodef name="vascompile">
-      <sequential>
-        <vas config="${vasconfigfile}"
-             srcdir="${examples.dir}"
-             package="${example}" 
-             destdir="${examples.gen}">
-          <include name="${example}/**/*.vas"/>
-        </vas>
-      </sequential>
-    </macrodef>
     <macrodef name="gomcompile">
       <sequential>
         <gom.preset srcdir="${examples.dir}"
