@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2008, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -36,32 +36,31 @@ public class AddressBookGom {
   %gom {
     module person
     imports int String
-      
+
     abstract syntax
       Date = date( year:int, month:int, day:int )
       Person = person(firstname:String,lastname:String, birthdate:Date)
       PersonList = concPerson( Person* )
 
   }
- 
+
   public final static void main(String[] args) {
     PersonList book = generateBook();
     Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
 
-  public static void happyBirthday(PersonList book, 
-                                   Date d) {
+  public static void happyBirthday(PersonList book, Date d) {
     %match(book, d) {
-      concPerson(_*, person(firstname, _, date(_, month,day)), _*) , 
-      date(_,month,day)   -> {
-	System.out.println("month = " + `month);
-	System.out.println("day = " + `day);
-	  System.out.println("Happy birthday " + `firstname);
+      concPerson(_*, person(firstname, _, date(_, month,day)), _*) ,
+      date(_,month,day) -> {
+        System.out.println("month = " + `month);
+        System.out.println("day = " + `day);
+        System.out.println("Happy birthday " + `firstname);
       }
     }
   }
-  
+
   public static PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
@@ -69,5 +68,5 @@ public class AddressBookGom {
       person("Paul","Muller",date(2000,1,27))
 			);
   }
-  
+
 }

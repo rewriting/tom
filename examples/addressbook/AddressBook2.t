@@ -38,16 +38,20 @@ public class AddressBook2 {
   public final static void main(String[] args) {
     PersonList book = generateBook();
     Date today = `date(2003,3,27);
-    happyBirthday(book,today);
+    String name = happyBirthday(book,today);
+    if (name != null) {
+      System.out.println("Happy birthday " + name);
+    }
   }
 
-  public static void happyBirthday(PersonList book, Date date) {
+  public static String happyBirthday(PersonList book, Date date) {
     %match(book, date) {
       concPerson(_*, person(firstname, _, date(_,month,day)), _*),
         date(_,month,day)   -> {
-        System.out.println("Happy birthday " + `firstname);
+        return `firstname;
       }
     }
+    return null;
   }
 
   public static PersonList generateBook() {

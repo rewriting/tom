@@ -38,13 +38,12 @@ public class AddressBook1 {
   %include { data/Data.tom }
 
   public final static void main(String[] args) {
-    HashSet book = new HashSet();
+    HashSet<Person> book = new HashSet<Person>();
     generatePerson(book);
 
-    Iterator it = book.iterator();
+    Iterator<Person> it = book.iterator();
     while(it.hasNext()) {
-      Person p = (Person) it.next();
-      happyBirthday(p, `date(2004,3,27));
+      happyBirthday(it.next(), `date(2004,3,27));
     }
   }
 
@@ -59,7 +58,7 @@ public class AddressBook1 {
     }
   }
 
-  public static void generatePerson(HashSet set) {
+  public static void generatePerson(HashSet<Person> set) {
     set.add(`person("John","Smith",date(1965,3,27)));
     set.add(`person("Marie","Muller",date(1986,3,26)));
     set.add(`person("Paul","Muller",date(2000,1,27)));
