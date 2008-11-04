@@ -4,10 +4,10 @@
   <property name="example" value="integerc"/>
   <target name="build" depends="init">
     <mkdir dir="${examples.gen}/${example}"/>
-    <tom.preset srcdir="${examples.dir}"
+    <tom.preset srcdir="${examples.dir}/${example}"
 	        destdir="${examples.gen}/${example}"         
-                options="--cCode -I ${tom.home}/share/jtom">
-      <include name="${example}/**/*.t"/>
+                ccode="yes">
+      <include name="**/*.t"/>
     </tom.preset>
     <copy todir="${examples.gen}/${example}">
       <fileset dir="${examples.dir}/${example}">

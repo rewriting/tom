@@ -1,3 +1,7 @@
+2008-04-11 tonio
+  * let the ant task for tom know ccode and camlcode options
+  * avoid recompiling integerc and caml examples when not needed
+
 2008-25-10 pem
   * bootinstall
 

@@ -94,6 +94,8 @@ public class TomTask extends MatchingTask {
   private boolean failOnError = true;
   private boolean fork = false;
   private boolean listFiles = false;
+  private boolean cCode = false;
+  private boolean camlCode = false;
   private File[] compileList = new File[0];
 
   private Java javaRunner;
@@ -282,6 +284,36 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, generates C code
+   * @param cCode if true generate C code
+   */
+  public void setCcode(boolean cCode) {
+    this.cCode = cCode;
+    if (cCode) {
+      camlCode = false;
+    }
+  }
+
+  public boolean getCcode() {
+    return this.cCode;
+  }
+
+  /**
+   * If true, generates Caml code
+   * @param camlCode if true generate Caml code
+   */
+  public void setCamlcode(boolean camlCode) {
+    this.camlCode = camlCode;
+    if (camlCode) {
+      cCode = false;
+    }
+  }
+
+  public boolean getCamlcode() {
+    return this.camlCode;
+  }
+
+  /**
    * If true, compiles with optimization enabled.
    * @param optimize if true compile with optimization level-2 enabled
    */
@@ -451,7 +483,13 @@ public class TomTask extends MatchingTask {
     } else {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom("*.t");
-      m.setTo("*.java");
+      if (cCode) {
+        m.setTo("*.tom.c");
+      } else if (camlCode) {
+        m.setTo("*.tom.ml");
+      } else {
+        m.setTo("*.java");
+      }
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
@@ -553,6 +591,12 @@ public class TomTask extends MatchingTask {
       if(optimize2 == true) {
         javaRunner.createArg().setValue("--optimize2");
       }
+      if (cCode) {
+        javaRunner.createArg().setValue("--cCode");
+      }
+      if (camlCode) {
+        javaRunner.createArg().setValue("--camlCode");
+      }
       if(pretty == true) {
         javaRunner.createArg().setValue("--pretty");
       }
@@ -573,9 +617,6 @@ public class TomTask extends MatchingTask {
       }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
-        //if(verbose) {
-        //  System.out.println("Compiling " + filename + "...");
-        //}
         javaRunner.createArg().setValue(filename);
       }
 

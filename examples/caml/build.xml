@@ -2,17 +2,14 @@
 <project name="Build the caml example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="caml"/>
-  <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${caml}"/>
-    <delete dir="${examples.build}/${caml}"/>
-  </target>
   <target name="build" depends="init">
     <mkdir dir="${examples.gen}/${example}"/>
     <!-- build tom -->
     <tom destdir="${examples.gen}/${example}"
-         srcdir="${examples.dir}"
-         options="--camlCode -I ${tom.home}/share/jtom">
-      <include name="${example}/**/*.t"/>
+         srcdir="${examples.dir}/${example}"
+         camlcode="yes"
+         options="-I ${tom.home}/share/jtom">
+      <include name="**/*.t"/>
       <classpath refid="tom.classpath"/>
     </tom>
     <!-- copy resources in build -->
