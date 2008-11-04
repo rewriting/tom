@@ -24,52 +24,6 @@
 
   <property name="examples.lib"   value="lib"/>
 
-  <!-- Examples to build and distribute -->
-  <property name="cril"           value="cril"/>
-
-  <target name="init" depends="tom.init">
-    <mkdir dir="${examples.build}"/>
-    <mkdir dir="${examples.gen}"/>
-    <path id="tom.examples.classpath">
-      <fileset dir="${examples.dir}/${examples.lib}">
-        <include name="*.jar"/>
-      </fileset>
-      <pathelement path="${tom.classpath}"/>
-    </path>
-
-    <macrodef name="tomcompile">
-      <attribute name="example"/>
-      <sequential>
-        <tom.preset srcdir="${examples.dir}"
-          destdir="${examples.gen}">
-          <include name="@{example}/**/*.t"/>
-          <exclude name="@{example}/**/*.g.t"/>
-        </tom.preset>
-      </sequential>
-    </macrodef>
-    <macrodef name="gomcompile">
-      <attribute name="example"/>
-      <sequential>
-        <gom.preset srcdir="${examples.dir}"
-                    package="@{example}"
-                    destdir="${examples.gen}"> 
-          <include name="@{example}/**/*.gom"/>
-        </gom.preset>
-      </sequential>
-    </macrodef>
-    <macrodef name="javacompile">
-      <attribute name="example"/>
-      <sequential>
-        <javac.preset destdir="${examples.build}">
-          <src path="${examples.dir}"/>
-          <src path="${examples.gen}"/>
-          <classpath refid="tom.examples.classpath"/>
-          <include name="@{example}/**/*.java"/>
-        </javac.preset>
-      </sequential>
-    </macrodef>
-  </target>
-
   <target name="prepare.examples">
     <mkdir dir="${examples.dist}"/>
   </target>
@@ -94,28 +48,6 @@
         <file name="${example}/build.xml"/>
       </filelist>
     </subant>
-  </target>
-
-  <target name="cril" depends="init">
-    <!-- build tom -->
-    <tomcompile example="${cril}"/>
-    <!-- builds the parser using javacc -->
-    <mkdir dir="${example.gen}/cril/jtom/ddd/data/ddd"/>
-    <javacc target="${examples.dir}/cril/jtom/ddd/data/ddd/parser.jj"
-            outputdirectory="${example.gen}/cril/jtom/ddd/data/ddd"
-            javacchome="${javaccdir}" />
-    <mkdir dir="${example.gen}/cril/jtom/ddd/data/dbm"/>
-    <javacc target="${examples.dir}/cril/jtom/ddd/data/dbm/parser.jj"
-            outputdirectory="${example.gen}/cril/jtom/ddd/data/dbm"
-            javacchome="${javaccdir}" />
-    <!-- build java source -->
-    <javacompile example="${cril}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${cril}">
-      <fileset dir="${examples.dir}/${cril}">
-        <include name="*.xml"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="examples"
