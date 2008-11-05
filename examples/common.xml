@@ -184,6 +184,7 @@
 	    haltonfailure="false"
 	    failureproperty="tests.failed"
 	    showoutput="true">
+      <formatter type="brief" usefile="no"/>
       <classpath>
         <path refid="tom.classpath"/>
         <fileset dir="${examples.dir}/${examples.lib}">

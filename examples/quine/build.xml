@@ -2,5 +2,12 @@
 <project name="Build the quine example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="quine"/>
+  <target name="build" depends="common.build">
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.t"/>
+      </fileset>
+    </copy>
+  </target>
   <property name="distribute" value="yes"/>
 </project>
