@@ -107,6 +107,11 @@ public class TestStructure extends TestCase {
     test = new StructureGom();
   }
 
+  public void tearDown() {
+    test = null;
+    query_string = null;
+  }
+
   public void testsolve() {
     Struc query = test.strucFromPretty(query_string);
     boolean res = test.localSolve(query);
