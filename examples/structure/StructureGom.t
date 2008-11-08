@@ -62,6 +62,10 @@ public class StructureGom {
     //boolean res      = proofSearch(initStruc, `o());
     long stopChrono  = System.currentTimeMillis();
 
+    if (!res) {
+      System.out.println("the input is false");
+    }
+
     System.out.println("proof = "+res+" in "+(stopChrono-startChrono)+" ms");
   }
 
@@ -131,6 +135,10 @@ public class StructureGom {
           }
         }
       };
+  public boolean localSolve(Struc start) {
+    return localSearch(start, `o());
+  }
+
   public boolean localSearch(Struc start, Struc end) {
     TreeSet c1 = new TreeSet(comparator);
     c1.add(start);
@@ -194,7 +202,6 @@ public class StructureGom {
       if(c1.contains(end)) {
         return true;
       } else if(c1.isEmpty()) {
-        System.out.println("the input is false");
         return false;
       }
     }
