@@ -13,8 +13,30 @@ prop modulo {
 prop fold {
   natdef : [n] Nat(n) -> forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n)))
   ndef   : []  N      -> forall t, (Eps(t) => (N => Eps(t) => Eps(t)) => Eps(t))
+
+  test   : [x] P(x)   -> P(s(x))
 }
 
+
+(* cut elimination test *)
+rootR(
+  <r:P(z())=>P(s(s(z())))> cut(
+    <th:forall n, (P(n)=>P(s(n)))> forallR(
+      <a:P(n0)=>P(s(n0))><n0> implyR(
+        <x:P(n0)><b:P(s(n0))> foldL[test](
+          <y:P(s(n0))> ax(y,b),x),a),th),
+    <th:forall n, (P(n)=>P(s(n)))> implyR(
+      <x:P(z())><a:P(s(s(z())))> forallL(
+        <y:P(s(z()))=>P(s(s(z())))> forallL(
+           <z:P(z())=>P(s(z()))> implyL(
+             <z1:P(s(z()))> implyL(
+               <z2:P(s(s(z())))> ax(z2,a),
+               <b:P(s(z()))> ax(z1,b),y),
+             <c:P(z())> ax(x,c),z),z(),th),s(z()),th),r)))
+
+
+(* typechecks *)
+(*
 rootR(
     <r:Nat(s(z()))> cut(
       <a:forall n, (Nat(n) => Nat(s(n)))> forallR(
@@ -42,6 +64,7 @@ rootR(
               <d:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
                 <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
                   <z1:forall m, (In(p0,m)  => In(p0,s(m)))><f:In(p0,z())> ax(z,f),e),d),b1),b),y),z(),x)))
+*)
 
 
 
