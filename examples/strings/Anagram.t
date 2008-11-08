@@ -40,22 +40,27 @@ public class Anagram {
       System.exit(1);
     }
     Anagram test = new Anagram();
-    test.isAnagram(args[0],args[1]);
+    test.showIsAnagram(args[0],args[1]);
   }
 
-  public void isAnagram(String w1, String w2) {
+  public boolean isAnagram(String w1, String w2) {
     %match(String w1, String w2) {
       (),() -> {
-        System.out.println("They are anagrams.");
-        return;
+        return true;
       }
       (l,a1*),(b2*,l,a2*) -> {
 //         `isAnagram(a1,b2*+a2*);
-        `isAnagram(a1,concString(b2*,a2*));
-        return;
+        return `isAnagram(a1,concString(b2*,a2*));
       }
     }
-    System.out.println("They aren't anagrams.");
+    return false;
   }
 
+  private void showIsAnagram(String w1, String w2) {
+    if (isAnagram(w1,w2)) {
+      System.out.println("They are anagrams.");
+    } else {
+      System.out.println("They aren't anagrams.");
+    }
+  }
 }
