@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2008, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,54 +29,25 @@
 
 package poly;
 
-import poly.expression.*;
-import poly.expression.types.*;
-
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import tom.library.sl.*;
+public class TestPoly extends TestCase {
 
-public class PolyTraveler2 extends TestCase {
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
-  public PolyTraveler2() {
-  }
-
-  %include { expression/expression.tom }
-  %include{ sl.tom }
-
-  %strategy SimplifyPlus() extends `Fail() {
-
-    visit Expression {
-      exp(zero())    -> { return `one(); }
-      plus(zero(),x) -> { return `x; }
-      plus(x,zero()) -> { return `x; }
-      mult(one(),x)  -> { return `x; }
-      mult(x,one())  -> { return `x; }
-      mult(zero(),_) -> { return `zero(); }
-      mult(_,zero()) -> { return `zero(); }
-    }
-  }
-
-  public void testSimplifyPlus() {
-    Expression var = `variable("X");
-    //Expression res = `mult(plus(var,zero()),one());
-    Expression t = `mult(one(),exp(var));
-
-    Strategy v = `SimplifyPlus();
-    //Strategy bu = `OnceBottomUp(v);
-    Strategy bu = `BottomUp(Try(v));
-    try {
-      System.out.println(" bu.visitLight(" + t + ")");
-      Expression res = (Expression)bu.visitLight(t);
-      System.out.println("Simplified form is " + res);
-      assertSame("bu.visitLight(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
-    } catch (VisitFailure e) {
-      System.out.println("WARNING: VisitFailure: " + e.getMessage());
-    }
-  }
-  
-  public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyTraveler2.class));
+  public static Test suite() {
+    TestSuite suite = new TestSuite();
+    suite.addTest(new TestSuite(PolyAdvanced1.class));
+    suite.addTest(new TestSuite(PolyAdvanced2.class));
+    suite.addTest(new TestSuite(PolyApigen1.class));
+    suite.addTest(new TestSuite(PolyApigen2.class));
+    suite.addTest(new TestSuite(PolySimple2.class));
+    suite.addTest(new TestSuite(PolyTraveler1.class));
+    suite.addTest(new TestSuite(PolyTraveler2.class));
+    return suite;
   }
 }
