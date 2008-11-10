@@ -787,6 +787,7 @@ public class Evaluation {
 
   static Collection<ProofTerm> reduce(ProofTerm pt) {
     Collection<ProofTerm> res = new HashSet<ProofTerm>();
+    Collection<ProofTerm> swap;
     res.add(pt);
     Collection<ProofTerm> nf = new HashSet<ProofTerm>();
     Collection<ProofTerm> tmp = new HashSet<ProofTerm>();
@@ -805,12 +806,26 @@ public class Evaluation {
               break;
             }
           }
-          if (!in_nf)  nf.add(t);
+          if (!in_nf) {
+            nf.add(t);
+            System.out.println("nf so far: " + nf.size());      
+          }
         }
-        else tmpres.addAll(tmp);
+        for(ProofTerm ptt: tmp) {
+          boolean in_tmpres = false;
+          for(ProofTerm pttr: tmpres) {
+            if(ptt.equals(pttr)) {
+              in_tmpres = true;
+              break;
+            }
+          }
+          if (!in_tmpres) tmpres.add(ptt);
+        }
       }
-      res.addAll(tmpres);
-      System.out.println("res.size() = " + res.size());
+      swap = tmpres;
+      tmpres = res;
+      res = swap;
+      System.out.println("intermediate results: " + res.size());
     } while(res.size()>0);
     return nf;
   }
