@@ -29,7 +29,7 @@
 
 package lambdacalculi;
 
-import lambdacalculi.barengregtconvention.barendregt.types.*;
+import lambdacalculi.barendregtconvention.barendregt.types.*;
 import tom.library.sl.*;
 
 class BarendregtConvention {
@@ -52,8 +52,8 @@ class BarendregtConvention {
         /* the following hooks maintain barendregt's convention
            (no subterm with a variable both free and bound) */
  
-        static lambdacalculi.barengregtconvention.barendregt.types.LTerm 
-          refresh(String n, lambdacalculi.barengregtconvention.barendregt.types.LTerm lt) {
+        static lambdacalculi.barendregtconvention.barendregt.types.LTerm 
+          refresh(String n, lambdacalculi.barendregtconvention.barendregt.types.LTerm lt) {
             %match(String n,lt) {
               x, lappl(t1,t2) -> { return `lappl(refresh(x,t1),refresh(x,t2)); }
               _, v@var[] -> { return `v; }
@@ -66,8 +66,8 @@ class BarendregtConvention {
             throw new RuntimeException();
           }
 
-        static lambdacalculi.barengregtconvention.barendregt.types.LTerm 
-          replace(String v, String nv, lambdacalculi.barengregtconvention.barendregt.types.LTerm lt) {
+        static lambdacalculi.barendregtconvention.barendregt.types.LTerm 
+          replace(String v, String nv, lambdacalculi.barendregtconvention.barendregt.types.LTerm lt) {
             %match(String v,lt) {
               _, lappl(t1,t2) -> { return `lappl(replace(v,nv,t1),replace(v,nv,t2)); }
               x, var(x) -> { return `var(nv); }
