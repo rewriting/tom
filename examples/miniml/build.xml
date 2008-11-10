@@ -27,9 +27,9 @@
                 <exclude name="${example}/*.g.t"/>
     </tom.preset>
     <javac.preset destdir="${examples.build}"
-                  srcdir="${examples.gen}/${example}">
+                  srcdir="${examples.gen}">
       <classpath refid="tom.examples.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${example}/**/*.java"/>
     </javac.preset>
   </target>
 
