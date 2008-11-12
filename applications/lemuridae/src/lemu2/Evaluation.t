@@ -304,10 +304,7 @@ public class Evaluation {
   private static ProofTerm reconame(ProofTerm pt, CoName cn1, CoName cn2) { 
     %match(pt) {
       ax(n,cn) -> {
-        if (`cn.equals(cn1)) 
-          return `ax(n,cn2);
-        else 
-          return `ax(n,cn); 
+        return `cn == cn1 ? `ax(n,cn2) : `ax(n,cn); 
       }
       cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
         return `cut(CutPrem1(a,pa,reconame(M1,cn1,cn2)),CutPrem2(x,px,reconame(M2,cn1,cn2)));
@@ -597,7 +594,7 @@ public class Evaluation {
 
   %strategy SubstFoVarInTerm(FoVar x, Term u) extends Identity() {
     visit Term {
-     var(y) && y << FoVar x -> { return `u; }
+     var(y) && y == x -> { return `u; }
     }
   }
 
@@ -620,8 +617,8 @@ public class Evaluation {
       and(p,q) -> { return `and(substFoVar(p,x,t),substFoVar(q,x,t)); }
       or(p,q) -> { return `or(substFoVar(p,x,t),substFoVar(q,x,t)); }
       implies(p,q) -> { return `implies(substFoVar(p,x,t),substFoVar(q,x,t)); }
-      forall(Fa(x,p)) -> { return `forall(Fa(x,substFoVar(p,x,t))); }
-      exists(Ex(x,p)) -> { return `exists(Ex(x,substFoVar(p,x,t))); }
+      forall(Fa(y,p)) -> { return `forall(Fa(y,substFoVar(p,x,t))); }
+      exists(Ex(y,p)) -> { return `exists(Ex(y,substFoVar(p,x,t))); }
       bottom() -> { return `bottom(); }
       top() -> { return `top(); }
     }
@@ -769,9 +766,10 @@ public class Evaluation {
       cut(
           CutPrem1(b,pb,p1@forallR(ForallRPrem1(a,pa,fx,M),b)),
           CutPrem2(y,py,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
-        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y))
+        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,substFoVar(pa,fx,t),substFoVar(M,fx,t)),CutPrem2(x,px,N))));
+        }
       }
       // fold cuts
       cut(
@@ -808,7 +806,7 @@ public class Evaluation {
           }
           if (!in_nf) {
             nf.add(t);
-            System.out.println("nf so far: " + nf.size());      
+            System.out.println("normal forms so far: " + nf.size());      
           }
         }
         for(ProofTerm ptt: tmp) {
