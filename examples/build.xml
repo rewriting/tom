@@ -305,9 +305,6 @@
       </batchtest>
       <formatter type="xml" if="test.xmlreport"/>
     </tom.junit>
-    <fail>
-      Test cc mail
-    </fail>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
