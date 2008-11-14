@@ -54,12 +54,14 @@ class BenchSl {
   public static void run(Nat subject, int version, int count, Nat base) {
     System.out.print("sl " + version + ": ");
     try {
+      Strategy s1 = `RepeatId(BottomUp(Rewrite(base)));
+      Strategy s2 = `InnermostId(Rewrite(base));
       long startChrono = System.currentTimeMillis();
       for(int i = 0; i < count; ++i) {
         if(version == 1) {
-          `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+          s1.visit(subject);
         } else {
-          `InnermostId(Rewrite(base)).visit(subject);
+          s2.visit(subject);
         }
       }
       long stopChrono = System.currentTimeMillis();

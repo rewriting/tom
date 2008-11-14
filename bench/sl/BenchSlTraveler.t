@@ -55,12 +55,15 @@ class BenchSlTraveler {
   public static void run(Nat subject, int version,  int count, Nat base) {
     System.out.print("sl traveler " + version + ": ");
     try {
+      Strategy s1 = `RepeatId(BottomUp(Rewrite(base)));
+      Strategy s2 = `InnermostId(Rewrite(base));
       long startChrono = System.currentTimeMillis();
       for(int i = 0; i < count; ++i) {
         if(version==1) {
-          `RepeatId(BottomUp(Rewrite(base))).visitLight(subject);
+          s1.visitLight(subject);
+          //System.out.println(s1.visitLight(subject));
         } else {
-          `InnermostId(Rewrite(base)).visitLight(subject);
+          s2.visitLight(subject);
         }
       }
       long stopChrono = System.currentTimeMillis();

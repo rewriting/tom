@@ -29,13 +29,14 @@
 package sl;
 
 import sl.term.types.*;
+import static sl.BenchJJTraveler.*;
 
 public class Main{
 
   %include {term/term.tom}
-  
+
   public static void main(String[] args) {
-    
+
     int intbase = 0;
     int count = 0;
     try {
@@ -46,6 +47,7 @@ public class Main{
       return;
     }
     Nat base = buildInt(intbase);
+    sl.jjterm.types.Nat jjbase = buildJJInt(intbase);
     Nat[] query = new Nat[10];
     int cpt = 0;
     query[cpt++] = `F(M(),N(),P(),Zero(),Suc(Zero()));
@@ -54,12 +56,23 @@ public class Main{
     query[cpt++] = `F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero());
     query[cpt++] = `F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N()));
     query[cpt++] = `F(P(), Suc(P()), Zero(), N(), P());
-      
+
+    sl.jjterm.types.Nat[] jjquery = new sl.jjterm.types.Nat[10];
+    cpt = 0;
+    jjquery[cpt++] = make_F(make_M(),make_N(),make_P(),make_Zero(),make_Suc(make_Zero()));
+    jjquery[cpt++] = make_F(make_M(),make_N(),make_F(make_N(),make_P(),make_Zero(),make_N(),make_Zero()),make_Zero(),make_Suc(make_Zero()));
+    jjquery[cpt++] = make_C(make_F(make_N(),make_Zero(),make_C(make_M(),make_N()),make_P(),make_Suc(make_N())),make_C(make_N(),make_P()));
+    jjquery[cpt++] = make_F(make_C(make_M(),make_C(make_N(),make_Suc(make_Suc(make_N())))),make_N(),make_C(make_P(),make_Suc(make_Zero())),make_Suc(make_Suc(make_Zero())),make_Zero());
+    jjquery[cpt++] = make_F(make_N(),make_M(),make_Suc(make_C(make_Suc(make_P()),make_N())),make_M(),make_C(make_Suc(make_N()),make_N()));
+    jjquery[cpt++] = make_F(make_P(),make_Suc(make_P()),make_Zero(),make_N(),make_P());
+
     for(int i=0 ; i<cpt ; i++) {
       BenchSlTraveler.run(query[i], 1, count,base);
       BenchSl.run(query[i], 1, count,base);
+      BenchJJTraveler.run(jjquery[i], 1, count,jjbase);
       BenchSlTraveler.run(query[i], 2, count,base);
       BenchSl.run(query[i], 2, count,base);
+      BenchJJTraveler.run(jjquery[i], 2, count,jjbase);
     }
   }
 
@@ -70,5 +83,14 @@ public class Main{
     }
     return res;
   }
+
+  public static sl.jjterm.types.Nat buildJJInt(int i) {
+    sl.jjterm.types.Nat res = make_Zero();
+    for(int j=0; j<i; j++) {
+      res = make_Suc(res);
+    }
+    return res;
+  }
+
 
 }
