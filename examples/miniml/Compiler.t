@@ -10,6 +10,8 @@ public class Compiler {
   %include { lambda/Lambda.tom }
   %include { sl.tom }
 
+  private static int scount = 0;
+
   private static String type(RawLType ty) {
     %match(ty) {
       RawAtom(s) -> { return `s; }
@@ -89,10 +91,11 @@ public class Compiler {
         return %[tom_make_@`f@(@`compile(tl,vl)@)]%;
       }
       RawTyped(RawTyCase(s@RawTyped(_,sty),rls),ty) -> {
+        int counter = scount++;
         return %[((new Value<@`type(ty)@>() {
           public @`type(ty)@ value() {
-            @`type(sty)@ _subject = @`compile(s,vl)@;
-            %match(_subject) { @`compile(rls,vl)@ }
+            final @`type(sty)@ _subject@counter@ = @`compile(s,vl)@;
+            %match(_subject@counter@) { @`compile(rls,vl)@ }
             throw new RuntimeException("non-exhaustive patterns");
           }
         }).value())]%;

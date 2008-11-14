@@ -67,7 +67,29 @@ public class Typer {
     Context ctx = `Context(RangeOf("Z",Range(Domain(),Atom("Nat"))),
                            RangeOf("S",Range(Domain(Atom("Nat")),Atom("Nat"))),
                            RangeOf("ConsNList",Range(Domain(Atom("Nat"),Atom("NatList")),Atom("NatList"))),
-                           RangeOf("EmptyNList",Range(Domain(),Atom("NatList"))));
+                           RangeOf("EmptyNList",Range(Domain(),Atom("NatList"))),
+                           RangeOf("ConsTList",Range(Domain(Atom("Term"),Atom("TermList")),Atom("TermList"))),
+                           RangeOf("EmptyTList",Range(Domain(),Atom("TermList"))),
+                           RangeOf("ConsTLList",Range(Domain(Atom("TermList"),Atom("TermListList")),Atom("TermListList"))),
+                           RangeOf("EmptyTLList",Range(Domain(),Atom("TermListList"))),
+                           RangeOf("ConsTLLList",Range(Domain(Atom("TermListList"),Atom("TermListListList")),Atom("TermListListList"))),
+                           RangeOf("EmptyTLLList",Range(Domain(),Atom("TermListListList"))),
+                           RangeOf("Fun",Range(Domain(Atom("Name"),Atom("TermList")),Atom("Term"))),
+                           RangeOf("A",Range(Domain(),Atom("Name"))),
+                           RangeOf("B",Range(Domain(),Atom("Name"))),
+                           RangeOf("C",Range(Domain(),Atom("Name"))),
+                           RangeOf("D",Range(Domain(),Atom("Name"))),
+                           RangeOf("E",Range(Domain(),Atom("Name"))),
+                           RangeOf("F",Range(Domain(),Atom("Name"))),
+                           RangeOf("G",Range(Domain(),Atom("Name"))),
+                           RangeOf("NoneTL",Range(Domain(),Atom("TermRes"))),
+                           RangeOf("SomeTL",Range(Domain(Atom("TermList")),Atom("TermRes"))),
+                           RangeOf("NoneTLL",Range(Domain(),Atom("TermListRes"))),
+                           RangeOf("SomeTLL",Range(Domain(Atom("TermListList")),Atom("TermListRes"))),
+                           RangeOf("NoneTLLL",Range(Domain(),Atom("TermListListRes"))),
+                           RangeOf("SomeTLLL",Range(Domain(Atom("TermListListList")),Atom("TermListListRes"))));
+
+
     %match(recon(ctx,t)) {
       Pair(ty,con) -> { 
         Substitution subst = `unify(con);
