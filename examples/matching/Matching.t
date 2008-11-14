@@ -51,7 +51,7 @@ class Matching {
         cons(h1,t1),cons(h2,t2) -> { return `And(Match(h1,h2),decomposeList(t1,t2)); }
       }
     }
-    
+
     Match:make(x,y) {
        %match(x,y) {
          // Delete
@@ -79,7 +79,7 @@ class Matching {
   public void run() {
     Term p1 = `Appl("f",cons(Variable("x"),nil()));
     Term s1 = `Appl("f",cons(Appl("a",nil()),nil()));
-    
+
     Term p2 = `Appl("f",cons(Variable("x"),cons(Appl("g",cons(Variable("y"),nil())),nil())));
     Term s2 = `Appl("f",cons(Appl("a",nil()),cons(Appl("g",cons(Appl("b",nil()),nil())),nil())));
 
@@ -95,7 +95,7 @@ class Matching {
     System.out.println("match(p2,s2) = " + `Match(p2,s2));
     System.out.println("match(p3,s3) = " + `Match(p3,s3));
   }
-  
+
   public final static void main(String[] args) {
     Matching test = new Matching();
     test.run();
