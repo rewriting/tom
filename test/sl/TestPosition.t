@@ -41,43 +41,43 @@ public class TestPosition extends TestCase {
 	}
 
   public void testNormalize(){
-    Position p = new Position(new int[]{1,-1,2,-2,1,2,3,-3,1,1});
+    Position p = Position.makeFromArray(new int[]{1,-1,2,-2,1,2,3,-3,1,1});
     Path pp = p.getCanonicalPath();
-    assertEquals(pp,new Position(new int[]{1,2,1,1}));
+    assertEquals(pp,Position.makeFromArray(new int[]{1,2,1,1}));
   }
 
   public void testAdd(){
-    Position p1 = new Position(new int[]{1,1,2,1});
-    Position p2 = new Position(new int[]{1,2,1,2,1});
+    Position p1 = Position.makeFromArray(new int[]{1,1,2,1});
+    Position p2 = Position.makeFromArray(new int[]{1,2,1,2,1});
     Path r = p2.add(p1);
     r = r.getCanonicalPath();
-    assertEquals(r,new Position(new int[]{1,2,1,2,1,1,1,2,1}));
+    assertEquals(r,Position.makeFromArray(new int[]{1,2,1,2,1,1,1,2,1}));
   }
 
   public void testInverse(){
-    Position p = new Position(new int[]{1,1,2});
+    Position p = Position.makeFromArray(new int[]{1,1,2});
     Path r = p.inverse();
     r = r.getCanonicalPath();
-    assertEquals(r,new Position(new int[]{-2,-1,-1}));
+    assertEquals(r,Position.makeFromArray(new int[]{-2,-1,-1}));
   }
 
   public void testSub(){
-    Position p1 = new Position(new int[]{1,1,2,1});
-    Position p2 = new Position(new int[]{1,2,1,2,1});
+    Position p1 = Position.makeFromArray(new int[]{1,1,2,1});
+    Position p2 = Position.makeFromArray(new int[]{1,2,1,2,1});
     Path r = p2.sub(p1);
     r = r.getCanonicalPath();
-    assertEquals(r,new Position(new int[]{-1, -2, -1, 2, 1, 2, 1}));
+    assertEquals(r,Position.makeFromArray(new int[]{-1, -2, -1, 2, 1, 2, 1}));
   }
 
   public void testEquals() {
-    Position p1 = new Position(new int[]{1,1});
-    Position p2 = new Position(new int[]{1,1});
+    Position p1 = Position.makeFromArray(new int[]{1,1});
+    Position p2 = Position.makeFromArray(new int[]{1,1});
     assertEquals("Similar objects should be equal" ,p1,p2);
   }
 
   public void testHashCode() {
-    Position p1 = new Position(new int[]{1,1});
-    Position p2 = new Position(new int[]{1,1});
+    Position p1 = Position.makeFromArray(new int[]{1,1});
+    Position p2 = Position.makeFromArray(new int[]{1,1});
     assertEquals("HashCode for similar objects should be equal"
         ,p1.hashCode(),p2.hashCode());
   }

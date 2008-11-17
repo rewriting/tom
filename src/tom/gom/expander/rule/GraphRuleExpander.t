@@ -114,6 +114,7 @@ public class GraphRuleExpander {
     output.append(
         %[
 %include { sl.tom }
+%include { java/util/ArrayList.tom}
 %typeterm tom_StringList {
   implement      { java.util.List<String> }
   is_sort(t)     { $t instanceof java.util.List }  
@@ -125,7 +126,7 @@ public class GraphRuleExpander {
   equals(l1,l2)  { $l1.equals($l2) }
 }
 
-%typeterm tom_SharedLabel{
+%typeterm tom_SharedLabel {
   implement {SharedLabel}
   is_sort(t) { ($t instanceof SharedLabel) }
 }
@@ -253,8 +254,8 @@ static class Subst extends @fullClassName(abstractType)@ {
       Var@`name@(name) -> {
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
-        Position wwl = (Position) (new Position(new int[]{1})).add(omega).add(wl); 
-        Position wwr = (Position) (new Position(new int[]{2})).add(wr); 
+        Position wwl = (Position) (Position.makeFromArray(new int[]{1})).add(omega).add(wl); 
+        Position wwr = (Position) (Position.makeFromArray(new int[]{2})).add(wr); 
         Position res = (Position) wwl.sub(wwr);
         return Path@`name@.make(res);
       }
@@ -267,16 +268,16 @@ static class Subst extends @fullClassName(abstractType)@ {
   }
   
   private static Position getVarPos(@fullClassName(abstractType)@ term, String varname) {
-    Position p = new Position();
+    ArrayList<Position> list = new ArrayList<Position>();
     try {
-      `OnceTopDown(GetVarPos(p,varname)).visit(term);
-      return p;
+      `OnceTopDown(GetVarPos(list,varname)).visit(term);
+      return list.get(0);
     } catch (VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
       }
   }
 
-  %strategy GetVarPos(Position p, String varname) extends Fail() {
+  %strategy GetVarPos(ArrayList l, String varname) extends Fail() {
 ]%);
 
  %match(moduleList) {
@@ -285,9 +286,10 @@ static class Subst extends @fullClassName(abstractType)@ {
         %[
     visit @`name@ {
       v@@Var@`name@(name) -> { 
-        if (`name.equals(varname)) { 
-          p.setValue(getEnvironment().getPosition().toArray()); 
-          return `v; } 
+        if(`name.equals(varname)) { 
+          l.add(Position.makeFromPath(getEnvironment().getPosition()));
+          return `v; 
+        } 
       } 
     }
    ]%);
@@ -331,6 +333,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 
   String imports = %[
 import tom.library.sl.*;
+import java.util.ArrayList;
    ]%;
 
   //import all the constructors Path<Sort> of the module
@@ -369,8 +372,8 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
                 /* 1. set needed positions */
                 Position omega = getEnvironment().getPosition();
-                Position posFinal = new Position(new int[]{1});
-                Position posRhs = new Position(new int[]{2});
+                Position posFinal = Position.makeFromArray(new int[]{1});
+                Position posRhs = Position.makeFromArray(new int[]{2});
                 Position newomega = (Position) posFinal.add(omega);
 
                 /* 2. go to the root and get the global term-graph */
@@ -589,7 +592,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       RefTerm[l=label] -> {
         if (! map.containsKey(`label)){
           Position old = getEnvironment().getPosition();
-          Position rootpos = new Position(new int[]{});
+          Position rootpos = Position.make();
           Info info = new Info();
           info.omegaRef = old;
           getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           

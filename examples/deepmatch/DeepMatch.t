@@ -55,7 +55,7 @@ class DeepMatch {
 
     public Iter(T t) {
       term = t;
-      pos = new Position();
+      pos = Position.make();
       lastvisited = new Stack<Integer>();
     }
 
@@ -104,7 +104,7 @@ class DeepMatch {
             newlv.push(last);
             newpos = newpos.down(last);
             res = new Iter(term, newpos, newlv);
-          } else if (newpos.depth() == 0) {
+          } else if (newpos.length() == 0) {
             res = new Iter();
           }
         }

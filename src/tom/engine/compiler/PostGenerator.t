@@ -77,7 +77,7 @@ public class PostGenerator {
          * the current LetRef is replaced by an Assign
          */
         Visitable root = (Visitable) getEnvironment().getRoot();
-        if(getEnvironment().getPosition().depth()>0) { // we are not at the root
+        if(getEnvironment().getPosition().length()>0) { // we are not at the root
           try {
             getEnvironment().getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
           } catch (VisitFailure e) {

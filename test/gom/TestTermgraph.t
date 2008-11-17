@@ -125,7 +125,7 @@ public class TestTermgraph extends TestCase {
     try {
       assertEquals(
           `g(g(f(a()),a()),g(PathTerm(-1,-2,1,1,1),PathTerm(-2,-2,1,2))),
-          new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
+          Position.makeFromArray(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
     } catch(VisitFailure e) {
       fail();
     }
@@ -136,7 +136,7 @@ public class TestTermgraph extends TestCase {
     try {
       assertEquals(
           `g(g(f(f(a())),a()),PathTerm(-2,1,1,1,1)),
-          new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
+          Position.makeFromArray(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
     } catch(VisitFailure e) {
       fail();
     }
@@ -154,7 +154,7 @@ public class TestTermgraph extends TestCase {
   public void testGraphRules52() {
     Term fk = `f(k(PathTerm(-1,-1)));
     try {
-      assertEquals(`f(PathTerm(-1)),new Position(new int[]{1}).getOmega(Term.rulek()).visit(fk));
+      assertEquals(`f(PathTerm(-1)),Position.makeFromArray(new int[]{1}).getOmega(Term.rulek()).visit(fk));
     } catch(VisitFailure e) {
       fail();
     }
@@ -163,7 +163,7 @@ public class TestTermgraph extends TestCase {
   public void testGraphRules6() {
     Term t = `g(f(a()),PathTerm(-2,1,1));
     try {
-      assertEquals(`g(g(b(),PathTerm(-2,1)),PathTerm(-2,1,1)),new Position(new int[]{1}).getOmega(Term.TestSideEffect()).visit(t));
+      assertEquals(`g(g(b(),PathTerm(-2,1)),PathTerm(-2,1,1)),Position.makeFromArray(new int[]{1}).getOmega(Term.TestSideEffect()).visit(t));
     } catch(VisitFailure e) {
       fail();
     }

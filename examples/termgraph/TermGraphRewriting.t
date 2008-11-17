@@ -114,9 +114,9 @@ public class TermGraphRewriting {
       RefTerm[labelTerm=label] -> {
         if (! map.containsKey(`label)){
           Info info = new Info();
-          Position pos = new Position(new int[]{});
+          Position pos = Position.makeFromArray(new int[]{});
           Position old = getEnvironment().getPosition();
-          Position rootpos = new Position(new int[]{});
+          Position rootpos = Position.makeFromArray(new int[]{});
           map.put(`label,old);
           getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
           `Try(TopDown(CollectSubterm(label,info))).visit(getEnvironment());
@@ -208,23 +208,23 @@ public class TermGraphRewriting {
     /************************************************************/
 
     /* position of the final subject */
-    Position posFinal = new Position(new int[]{1});
+    Position posFinal = Position.makeFromArray(new int[]{1});
     try {
       /* term t with labels */
       Term tt = (Term) `UnExpand(map).visit(t);
 
       /* redex with labels */
-      Term redex = (Term) new Position(new int[]{1,1}).getSubterm().visit(tt);
+      Term redex = (Term) Position.makeFromArray(new int[]{1,1}).getSubterm().visit(tt);
 
       /* add labels for variables x and y */
-      Position _x = new Position(new int[]{1});
-      Position _y = new Position(new int[]{2});
+      Position _x = Position.makeFromArray(new int[]{1});
+      Position _y = Position.makeFromArray(new int[]{2});
       final Term term_x =  (Term) _x.getSubterm().visit(redex);
       final Term term_y =  (Term) _y.getSubterm().visit(redex);
       redex = (Term) _x.getReplace(`LabTerm("x",term_x)).visit(redex);
       redex = (Term) _y.getReplace(`LabTerm("y",term_y)).visit(redex);
       /* replace in t the lhs by the rhs */
-      tt = (Term) new Position(new int[]{1,1}).getReplace(`f(RefTerm("x"))).visit(tt);
+      tt = (Term) Position.makeFromArray(new int[]{1,1}).getReplace(`f(RefTerm("x"))).visit(tt);
 
       /* concat the redex on top of the term */
       tt = `SubstTerm(tt,redex);
@@ -245,8 +245,8 @@ public class TermGraphRewriting {
       /************************************************************/
 
       /* redex */
-      Position posSubst = new Position(new int[]{2});
-      Position posRedex = new Position(new int[]{1,1,1});
+      Position posSubst = Position.makeFromArray(new int[]{2});
+      Position posRedex = Position.makeFromArray(new int[]{1,1,1});
 
       /* concat a constant on top of the term */
       Term t3 = `SubstTerm(t,a());
@@ -266,7 +266,7 @@ public class TermGraphRewriting {
       t3 = (Term) posFinal.getSubterm().visit(t3);
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t3);
 
-      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
+      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(Position.makeFromArray(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
 
       t = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
       System.out.println("\nMore complex initial term :\n"+t);
@@ -290,7 +290,7 @@ public class TermGraphRewriting {
       t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);
       t4 = (Term) posFinal.getSubterm().visit(t4);
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t4);
-      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
+      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(Position.makeFromArray(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
 
     } catch(VisitFailure e) {
       System.out.println("Unexcepted failure");

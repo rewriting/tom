@@ -154,18 +154,18 @@ public class GraphExpander {
 
     String codeBlock =%[
 
-    public Path add(Path p){
-        Position pp = Position.make(this);
+    public Path add(Path p) {
+        Position pp = Position.makeFromPath(this);
         return make(pp.add(p));
     }
 
-    public Path inverse(){
-      Position pp = Position.make(this);
+    public Path inverse() {
+      Position pp = Position.makeFromPath(this);
       return make(pp.inverse());
     }
 
-    public Path sub(Path p){
-      Position pp = Position.make(this);
+    public Path sub(Path p) {
+      Position pp = Position.makeFromPath(this);
       return make(pp.sub(p));
     }
 
@@ -204,9 +204,9 @@ public class GraphExpander {
       return (Path@sortName@) ref;
     }
 
-    public int compare(Path p){
-      Position p1 = Position.make(this);
-      Position p2 = Position.make(p);
+    public int compare(Path p) {
+      Position p1 = Position.makeFromPath(this);
+      Position p2 = Position.makeFromPath(p);
       return p1.compare(p2);
     }
     ]%;
@@ -680,7 +680,7 @@ public class GraphExpander {
         Ref@`sortName@[label@`sortName@=label] -> {
           if (! map.containsKey(`label)){
             Position old = getEnvironment().getPosition();
-            Position rootpos = new Position(new int[]{});
+            Position rootpos = Position.make();
             Info@`sortName@ info = new Info@`sortName@();
             info.omegaRef = old;
             getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           

@@ -30,7 +30,8 @@
  **/
 package tom.library.sl;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Object that represents an environment of a strategy
@@ -97,12 +98,12 @@ public final class Environment implements Cloneable {
    * Tests if two environments are equals
    */
   public boolean equals(Object o) {
-    if (o instanceof Environment) {
+    if(o instanceof Environment) {
       Environment p = (Environment)o;
       /* we need to check only the meaningful part of the omega and subterm arrays */
-      if (current==p.current) {
+      if(current==p.current) {
         for(int i=0; i<current+1; i++) {
-          if (omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
+          if(omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
             return false;
           }
         }
@@ -119,14 +120,19 @@ public final class Environment implements Cloneable {
     /* Hash only the interesting part of the array */
     int[] hashedOmega = new int[current+1];
     Object[] hashedSubterm = new Object[current+1];
+    // TODO: remove arraycopy
     System.arraycopy(omega,0,hashedOmega,0,current+1);
     System.arraycopy(subterm,0,hashedSubterm,0,current+1);
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
-  public int getStatus() { return status; } 
+  public int getStatus() { 
+    return status; 
+  } 
 
-  public void setStatus(int s) { this.status = s; }
+  public void setStatus(int s) {
+    this.status = s; 
+  }
 
   /**
    * get the current root
@@ -146,9 +152,9 @@ public final class Environment implements Cloneable {
   /**
    * get the current stack
    */
-  public Vector<Object> getCurrentStack() {
-    Vector<Object> v = new Vector<Object>();
-    for (int i=0;i<depth();i++) {
+  public List<Object> getCurrentStack() {
+    List<Object> v = new ArrayList<Object>();
+    for(int i=0;i<depth();i++) {
       v.add(subterm[i]);
     }
     return v;
@@ -192,12 +198,8 @@ public final class Environment implements Cloneable {
    * @return the current position
    */
   public Position getPosition() {
-    int[] reducedOmega = new int[depth()];
-    System.arraycopy(omega,1,reducedOmega,0,depth());
-    return new Position(reducedOmega);
+    return Position.makeFromSubarray(omega,1,depth());
   }
-
-
 
   /**
    * Get the depth of the position in the tree
@@ -254,7 +256,7 @@ public final class Environment implements Cloneable {
     for(int i=0;i<length;i++) {
       int head = normalizedPath.getHead();
       normalizedPath = normalizedPath.getTail();
-      if(head>0){
+      if(head>0) {
         down(head);
         if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
           // we do not want to follow the last reference
@@ -277,9 +279,9 @@ public final class Environment implements Cloneable {
     for(int i=0;i<length;i++) {
       int head = normalizedPath.getHead();
       normalizedPath = normalizedPath.getTail();
-      if(head>0){
+      if(head>0) {
         down(head);
-        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+        if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
           // we do not want to follow the last reference
           followPath((Path)subterm[current]);
         }

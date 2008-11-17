@@ -97,7 +97,7 @@ public class Matching {
           i++;
           omega2 = (conc) omega2.getTailconc(); 
         }
-        Position src = new Position(array);
+        Position src = Position.makeFromArray(array);
         Position dest = (Position) src.add((Path)`p).getCanonicalPath();
         Term refTerm = (Term) dest.getSubterm().visit(originalSubject);
         int [] destarray = dest.toArray(); 
@@ -119,7 +119,7 @@ public class Matching {
           i++;
           omega = (conc) omega.getTailconc(); 
         }
-        Position src = new Position(array);
+        Position src = Position.makeFromArray(array);
         Position dest = (Position) src.add((Path)`p).getCanonicalPath();
         array = new int[omega1.size()];
         i =0;
@@ -128,7 +128,7 @@ public class Matching {
           i++;
           omega1 = (conc) omega1.getTailconc(); 
         }
-        Position newdest = new Position(array);
+        Position newdest = Position.makeFromArray(array);
         if (dest.equals(newdest)) {
           return `Solve(And(X*,Y*),And(context,m));
         }

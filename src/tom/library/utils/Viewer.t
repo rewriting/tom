@@ -31,7 +31,7 @@ package tom.library.utils;
 import java.io.*;
 import tom.library.sl.*;
 import java.util.Stack;
-import java.util.Vector;
+import java.util.List;
 import aterm.pure.PureFactory;
 import att.grappa.*;
 import javax.swing.*;
@@ -84,9 +84,9 @@ public class Viewer {
   private static String getNodeFromPos(Position p) {
     int[] omega = p.toArray();
     StringBuilder r = new StringBuilder("p");
-    for(int i=0 ; i<p.depth() ; i++) {
+    for(int i=0 ; i<p.length() ; i++) {
       r.append(omega[i]);
-      if(i<p.depth()-1) {
+      if(i<p.length()-1) {
         r.append("_");
       }
     }
@@ -128,7 +128,7 @@ public class Viewer {
           String name = term.substring(0,(end==-1)?term.length():end);
           w.write(%[
               @getNodeFromPos(current)@ [label="@name@"]; ]%);
-          if(!current.equals(new Position(new int[]{}))) {
+          if(!current.equals(Position.make())) {
             Position father = current.up();
             w.write(%[
                 @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
@@ -285,7 +285,7 @@ public class Viewer {
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
-      Vector<Object> stack = getEnvironment().getCurrentStack(); 
+      List<Object> stack = getEnvironment().getCurrentStack(); 
       try {
         //test if it is a pointer due to an expanded MuVar
         if (stack.contains(v)) {

@@ -17,7 +17,7 @@ abs:block() {
   visit LambdaTerm{
     v@var[] -> {
       if(`v.equals(var)){
-        return `PathLambdaTerm(getEnvironment().getPosition().depth()+1);
+        return `PathLambdaTerm(getEnvironment().getPosition().length()+1);
       }
     }
   }

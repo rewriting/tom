@@ -1,3 +1,13 @@
+2008-04-17 pem
+  * improve class Position
+  * the public interface of Position has changed:
+  * use Position.make() instead of new Position()
+  * use Position.makeFromArray() instead of new Position(int[])
+  * use Position.makeFromPath() instead of new Position(Path)
+  * ...
+  * use length() instead of depth()
+  * setValue(int[]) has been removed 
+
 2008-04-11 tonio
   * let the ant task for tom know ccode and camlcode options
   * avoid recompiling integerc and caml examples when not needed
@@ -12,20 +22,20 @@
 
 2008-18-10 pem
   * modify toATerm and fromTerm such that ATernList of the for [...]
-	  are produced and parse.
-		There is an unsolved ambiguity when several variadic operators exist in
-		the same sort
-	* improved the optimizer to always inline Let x<-y in body
+    are produced and parse.
+    There is an unsolved ambiguity when several variadic operators exist in
+    the same sort
+  * improved the optimizer to always inline Let x<-y in body
 
 2008-10-10 pem
   * generate less AbstractBlock, and thus less { ... }
-	* improved the optimizer: Inlining generalized to all kind of variables
-	* make -O option active by default
+  * improved the optimizer: Inlining generalized to all kind of variables
+  * make -O option active by default
 
 2008-10-08 balland
   * add an new gom option : --fresh to handle terms with binders
   * add a new traversal combinator Up
-	* bootstrap
+  * bootstrap
 
 2008-10-08 pem
   * removed Ref constructor: dereference performed in the Caml backend

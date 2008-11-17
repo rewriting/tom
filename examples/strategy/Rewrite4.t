@@ -84,9 +84,9 @@ public class Rewrite4 {
   %strategy S1() extends `Identity() { 
     visit Term {
       subject -> {
-        int depth = getEnvironment().getPosition().depth();
+        int length = getEnvironment().getPosition().length();
         String offset = "";
-        for (int i = 0; i<depth; i++){
+        for (int i = 0; i<length; i++){
           offset += "  ";
         }
         System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ getEnvironment().getPosition());
@@ -98,9 +98,9 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        int depth = getEnvironment().getPosition().depth();
+        int length = getEnvironment().getPosition().length();
         String offset = "";
-        for (int i = 0; i<depth; i++){
+        for (int i = 0; i<length; i++){
           offset += "--";
         }
         System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ getEnvironment().getPosition());
