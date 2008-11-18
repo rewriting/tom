@@ -50,17 +50,17 @@ public class SortTemplate extends TemplateHookedClass {
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
     this.maximalsharing = maximalsharing;
-    {{ Object tomMatch447NameNumber_freshVar_0=gomClass;if ( (tomMatch447NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch447NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.GomClass )tomMatch447NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch447NameNumber_freshVar_5=tomMatch447NameNumber_freshSubject_1;if ( (tomMatch447NameNumber_freshVar_5 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch447NameNumber_freshVar_1= tomMatch447NameNumber_freshVar_5.getAbstractType() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch447NameNumber_freshVar_2= tomMatch447NameNumber_freshVar_5.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch447NameNumber_freshVar_3= tomMatch447NameNumber_freshVar_5.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch447NameNumber_freshVar_4= tomMatch447NameNumber_freshVar_5.getSlotFields() ;
+    {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
 
 
 
-        this.abstractType = tomMatch447NameNumber_freshVar_1;
-        this.operatorList = tomMatch447NameNumber_freshVar_2;
-        this.variadicOperatorList = tomMatch447NameNumber_freshVar_3;
-        this.slotList = tomMatch447NameNumber_freshVar_4;
+        this.abstractType =  (( tom.gom.adt.objects.types.GomClass )gomClass).getAbstractType() ;
+        this.operatorList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getOperators() ;
+        this.variadicOperatorList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getVariadicOperators() ;
+        this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
-      }}}}}}}}}}
+      }}}}
 
     throw new GomRuntimeException(
         "Bad argument for SortTemplate: " + gomClass);

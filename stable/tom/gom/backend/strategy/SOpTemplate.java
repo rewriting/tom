@@ -44,19 +44,19 @@ public class SOpTemplate extends TemplateClass {
   public SOpTemplate(GomClass gomClass) {
     super(gomClass);
     ClassName clsName = this.className;
-    {{ Object tomMatch469NameNumber_freshVar_0=clsName;if ( (tomMatch469NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch469NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.ClassName )tomMatch469NameNumber_freshVar_0);{  tom.gom.adt.objects.types.ClassName  tomMatch469NameNumber_freshVar_3=tomMatch469NameNumber_freshSubject_1;if ( (tomMatch469NameNumber_freshVar_3 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch469NameNumber_freshVar_1= tomMatch469NameNumber_freshVar_3.getPkg() ;{  String  tomMatch469NameNumber_freshVar_2= tomMatch469NameNumber_freshVar_3.getName() ;
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
-        String newpkg = tomMatch469NameNumber_freshVar_1.replaceFirst(".types.",".strategy.");
-        String newname = "_"+tomMatch469NameNumber_freshVar_2;
+        String newpkg =  (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() .replaceFirst(".types.",".strategy.");
+        String newname = "_"+ (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
-      }}}}}}}}{{ Object tomMatch470NameNumber_freshVar_0=gomClass;if ( (tomMatch470NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch470NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.GomClass )tomMatch470NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch470NameNumber_freshVar_3=tomMatch470NameNumber_freshSubject_1;if ( (tomMatch470NameNumber_freshVar_3 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch470NameNumber_freshVar_1= tomMatch470NameNumber_freshVar_3.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch470NameNumber_freshVar_2= tomMatch470NameNumber_freshVar_3.getSlotFields() ;
+      }}}}{{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {
 
 
 
-        this.operator = tomMatch470NameNumber_freshVar_1;
-        this.slotList = tomMatch470NameNumber_freshVar_2;
+        this.operator =  (( tom.gom.adt.objects.types.GomClass )gomClass).getClassName() ;
+        this.slotList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSlotFields() ;
         return;
-      }}}}}}}}
+      }}}}
 
     throw new GomRuntimeException(
         "Wrong argument for SOpTemplate: " + gomClass);

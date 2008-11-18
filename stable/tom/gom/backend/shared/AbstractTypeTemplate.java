@@ -47,11 +47,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               boolean maximalsharing){
     super(gomClass,manager,tomHomePath,importList,mapping);
     this.maximalsharing = maximalsharing;
-    {{ Object tomMatch421NameNumber_freshVar_0=gomClass;if ( (tomMatch421NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch421NameNumber_freshSubject_1=(( tom.gom.adt.objects.types.GomClass )tomMatch421NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch421NameNumber_freshVar_2=tomMatch421NameNumber_freshSubject_1;if ( (tomMatch421NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch421NameNumber_freshVar_1= tomMatch421NameNumber_freshVar_2.getSortList() ;
+    {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {
 
-        this.sortList = tomMatch421NameNumber_freshVar_1;
+        this.sortList =  (( tom.gom.adt.objects.types.GomClass )gomClass).getSortList() ;
         return;
-      }}}}}}}
+      }}}}
 
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);

@@ -156,8 +156,6 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
-  public static final TomMessage notSyntacticInOr =
-      new TomMessage("The use of symbols with a theory associated (like lists or arrays) is not fully supported in disjunctions");
     
  
   // checker.TomChecker
