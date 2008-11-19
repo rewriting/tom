@@ -97,6 +97,35 @@ public class Eval {
     }
   }
 
+  private static void writeConjConditionList(ConditionList conds) {
+    %match(conds) {
+      CondList(c1,cs*)
+      ->
+      {
+        writeCondition(`c1);
+        if (`cs != `CondList()) {
+          System.out.println(" && ");
+          writeConjConditionList(`cs);
+        }
+      }
+    }
+  }
+
+  private static void writeDisjConditionList(ConditionList conds) {
+    %match(conds) {
+      CondList(c1,cs*)
+      ->
+      {
+        writeCondition(`c1);
+        if (`cs != `CondList()) {
+          System.out.println(" || ");
+          writeDisjConditionList(`cs);
+        }
+      }
+    }
+  }
+
+
   private static void writeCondition(Condition cond) {
     %match(cond) {
       Matching(p,s,ty)
@@ -109,20 +138,20 @@ public class Eval {
         writeTomTerm(`s);
       }
 
-      Conjunction(c1,c2)
+      Conjunction(conds)
       ->
       {
-        writeCondition(`c1);
-        System.out.print(" && ");
-        writeCondition(`c2);
+        System.out.print("(");
+        writeConjConditionList(`conds);
+        System.out.print(")");
       }
 
-      Disjunction(c1,c2)
+      Disjunction(conds)
       ->
       {
-        writeCondition(`c1);
-        System.out.print(" || ");
-        writeCondition(`c2);
+        System.out.print("(");
+        writeDisjConditionList(`conds);
+        System.out.print(")");
       }
 
       Equality(t1,t2)
