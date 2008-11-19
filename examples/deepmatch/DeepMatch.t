@@ -104,7 +104,7 @@ class DeepMatch {
             newlv.push(last);
             newpos = newpos.down(last);
             res = new Iter(term, newpos, newlv);
-          } else if (newpos.length() == 0) {
+          } else if(newpos.length() == 0) {
             res = new Iter();
           }
         }

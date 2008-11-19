@@ -169,15 +169,15 @@ public class GraphExpander {
       return make(pp.sub(p));
     }
 
-    public int getHead(){
+    public int getHead() {
       return getHeadPath@sortName@();
     }
 
-    public Path getTail(){
+    public Path getTail() {
       return (Path) getTailPath@sortName@();
     }
 
-    public Path getCanonicalPath(){
+    public Path getCanonicalPath() {
       %match(this) {
         Path@sortName@(X*,x,y,Y*) -> {
           if (`x==-`y) {
@@ -188,12 +188,22 @@ public class GraphExpander {
       return this;
     }
 
-    public Path conc(int i){
+    public Path conc(int i) {
       Path@sortName@ current = this;
       return (Path) `Path@sortName@(i,current*);
     }
 
-    public static Path@sortName@ make(Path path){
+    public int[] toIntArray() {
+      int[] array = new int[length()];
+      Path p = this;
+      for(int i=0; i<length(); i++) {
+        array[i] = p.getHead();
+        p = p.getTail();
+      }
+      return array;
+    }
+
+    public static Path@sortName@ make(Path path) {
       @CodeGen.generateCode(`FullSortClass(sort))@ ref = `Path@sortName@();
       Path pp = path.getCanonicalPath();
       int size = pp.length();

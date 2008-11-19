@@ -100,7 +100,7 @@ public class Matching {
         Position src = Position.makeFromArray(array);
         Position dest = (Position) src.add((Path)`p).getCanonicalPath();
         Term refTerm = (Term) dest.getSubterm().visit(originalSubject);
-        int [] destarray = dest.toArray(); 
+        int [] destarray = dest.toIntArray(); 
         Pos destconc = `conc();
         for (int k=0; k<dest.length();k++) {
           destconc = `conc(destconc*,destarray[k]);

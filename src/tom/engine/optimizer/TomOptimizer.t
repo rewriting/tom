@@ -273,7 +273,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
-        InfoVariable info = new InfoVariable(`exp,getEnvironment().getPosition());
+        InfoVariable info = new InfoVariable(`exp,getPosition());
         getEnvironment().down(3);
         //computeOccurencesLetRef on the body
         `computeOccurencesLetRef(name,info).visit(getEnvironment());
@@ -457,7 +457,7 @@ public class TomOptimizer extends TomGenericPlugin {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
-          info.usePosition = getEnvironment().getPosition(); 
+          info.usePosition = getPosition(); 
           info.readCount++;
           if(info.readCount==2) { throw new VisitFailure(); }
         } 
@@ -513,7 +513,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
       Assign(Variable[AstName=name],src) -> {
         if(variableName == `name) {
-          info.setAssignment(`src,getEnvironment().getPosition());
+          info.setAssignment(`src,getPosition());
         } else {
           if(info.assignmentVariables.contains(`name)) {
             info.clear();
@@ -540,7 +540,7 @@ public class TomOptimizer extends TomGenericPlugin {
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
           info.readCount++;
-          info.usePosition = getEnvironment().getPosition(); 
+          info.usePosition = getPosition(); 
           if(info.readCount==2) { 
             throw new VisitFailure(); 
           }

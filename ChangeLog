@@ -1,3 +1,8 @@
+2008-04-19 pem
+  * improved the implementation of Position and Environment 
+    (no longer use getHead and getTail)
+  * added a int[] toIntArray() method in Path
+
 2008-04-18 pem
   * bootinstall
 

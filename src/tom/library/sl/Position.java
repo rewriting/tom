@@ -74,28 +74,9 @@ public class Position implements Cloneable,Path {
   }
 
   public static Position makeFromPath(Path p) {
-    if(p instanceof Position) {
-      // efficient implementation
-      Position pos = (Position) p;
-      return makeFromArray(pos.omega);
-    }
-
-    Path pp = p.getCanonicalPath();
-    int size = pp.length();
-    int[] array = new int[size];
-    for(int i=0;i<size;i++) {
-      array[i]= pp.getHead();
-      pp = pp.getTail();
-    }
-    return makeFromArrayWithoutCopy(array);
+    return makeFromArrayWithoutCopy(p.toIntArray());
   }
   
-  public int[] toArray() {
-    int[] array = new int[length()];
-    System.arraycopy(omega, 0, array, 0, length());
-    return array;
-  }
-
   public Object clone() {
     Position clone = null;
     try {
@@ -173,13 +154,19 @@ public class Position implements Cloneable,Path {
     return r.toString();
   }
 
+  /*
+   * implementation of the Path interface
+   */
+
   public Path add(Path p) {
-    if(p.length()>0) {
-      Path result = this.conc(p.getHead());
-      return result.add(p.getTail());
-    } else {
-      return (Path) clone();
+    if(p.length()==0) {
+      return (Path)this.clone();
     }
+    int[] ap = p.toIntArray();
+    int[] merge = new int[length()+ap.length];
+    System.arraycopy(omega, 0, merge, 0, length());
+    System.arraycopy(ap, 0, merge, length(), ap.length);
+    return makeFromArrayWithoutCopy(merge);
   }
 
   public Path sub(Path p) {
@@ -208,7 +195,7 @@ public class Position implements Cloneable,Path {
 
   public Path getTail() {
     if(length()==0) {
-      return null;
+      throw new RuntimeException("Empty list has no tail");
     }
     return Position.makeFromSubarray(omega,1,length()-1);
   }
@@ -218,17 +205,6 @@ public class Position implements Cloneable,Path {
     System.arraycopy(omega,0,result,0,length());
     result[length()]=i;
     return makeFromArrayWithoutCopy(result);
-  }
-
-  public Position up() {
-    return Position.makeFromSubarray(omega,0,length()-1);
-  }
-
-  public Position down(int i) {
-    int[] array = new int[length()+1];
-    System.arraycopy(omega,0,array,0,length());
-    array[length()]=i;
-    return makeFromArrayWithoutCopy(array);
   }
 
   public Path getCanonicalPath() {
@@ -264,6 +240,23 @@ public class Position implements Cloneable,Path {
       }
     }
     return pos;
+  }
+
+  public int[] toIntArray() {
+    int[] array = new int[length()];
+    System.arraycopy(omega, 0, array, 0, length());
+    return array;
+  }
+
+  public Position up() {
+    return Position.makeFromSubarray(omega,0,length()-1);
+  }
+
+  public Position down(int i) {
+    int[] array = new int[length()+1];
+    System.arraycopy(omega,0,array,0,length());
+    array[length()]=i;
+    return makeFromArrayWithoutCopy(array);
   }
 
   public boolean hasPrefix(Position prefix) {
