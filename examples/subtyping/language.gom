@@ -25,14 +25,16 @@ TomInstructionList = TIList(TomInstruction*)
 Clause = Rule(condition: Condition, result: TomTermList)
 
 Condition = Matching(pattern: TomTerm, subject: TomTerm, type: TomType)
-          | Conjunction(cond1: Condition, cond2: Condition)
-          | Disjunction(cond1: Condition, cond2: Condition)
+          | Conjunction(conds: ConditionList)
+          | Disjunction(conds: ConditionList)
           | Equality(term1: TomTerm, term2: TomTerm)
           | Inequality(term1: TomTerm, term2: TomTerm)
           | Greater(term1: TomTerm, term2: TomTerm)
           | GreaterEq(term1: TomTerm, term2: TomTerm)
           | Less(term1: TomTerm, term2: TomTerm)
           | LessEq(term1: TomTerm, term2: TomTerm)
+
+ConditionList = CondList(Condition*)
 
 /* Type Reconstruction */
 Constraint = Equation(type1: TomType, type2: TomType)
@@ -45,6 +47,8 @@ ConstraintList = CList(Constraint*)
 
 ReconResult = Pair(type: TomType, constraints: ConstraintList)
 
+ReconResultList = RRList(ReconResult*)
+
 Domain = Domain(TomType*)
 
 Signature = Sig(dom: Domain, codom: TomType)
@@ -54,6 +58,8 @@ Jugement = Jugement(var: String, type: TomType)
 
 Context = Context(Jugement*)
 
+//ContextList = CTXList(Context*)
+
 Mapping = MapsTo(tvar: TomType, type: TomType)
 
 Substitution = MList(Mapping*)
@@ -61,6 +67,8 @@ Substitution = MList(Mapping*)
 SubstitutionList = SList(Substitution*)
 
 ContextAndResult = CRPair(con: Context, res: ReconResult)
+
+ContextAndResultList = CRList(con: Context, rlist: ReconResultList)
 
 ContextAndConstraints = CCPair(con: Context, constraints: ConstraintList)
 
