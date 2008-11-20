@@ -11,6 +11,7 @@ public class TypeInference {
 
   %typeterm IntList { implement { ArrayList<Integer> } }
   %typeterm MappingList { implement { ArrayList<Mapping> } }
+  %typeterm MatchingList { implement { ArrayList<Condition> } }
 
   private static int counter = 0;
   
@@ -316,7 +317,6 @@ public class TypeInference {
           {
             try {
               ArrayList<Mapping> subs = new ArrayList<Mapping>();
-              // original subtype relations defined by the programmer
               //System.out.println("-------- Initial CList = " + `cl + "\n");
               ConstraintList new_cl = `applyTransitivity(cl);
               //System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
@@ -380,7 +380,7 @@ public class TypeInference {
     %match {
       Matching(_,_,_) << cond -> { return `reconMatching(ctx,cond,cl); }
       
-      Conjunction(conditions) << cond || Disjunction(conditions) << cond -> { return `reconConditionList(ctx,conditions,cl); }
+      Conjunction(conditions) << cond || Disjunction(conditions) << cond -> { return `reconConjDisj(ctx,conditions,cl); }
       
       (Equality(term1,term2) << cond ||
       Inequality(term1,term2) << cond ||
@@ -413,92 +413,137 @@ public class TypeInference {
     throw new RuntimeException("Error in reconMatching function.");
   }
 
-  private static ContextAndConstraints reconConditionList(Context ctx, ConditionList conditions, ConstraintList cl) {
-    /*
-      (Conjunction(cond1,cond2) << cond || Disjunction(cond1,cond2) << cond) &&
-      CCPair(ctx1,cl1) << reconCondition(ctx,cond1) &&
-      CCPair(ctx2,cl2) << reconCondition(ctx1,cond2)
-      -> { return `CCPair(ctx2,CList(cl1*,cl2*)); }
-    */
-    %match {
-      CondList() << conditions -> { return `CCPair(ctx,cl); }
-      //(Conjunction(conds) << conditions || Disjunction(conds) << conditions) &&
-      CondList(c1,cs*) << conditions
+  %strategy unfoldCondList() extends Identity() {
+    visit ConditionList {
+      CondList(x*,Conjunction(CondList(sublist*)),y*) -> { return `CondList(x*,sublist*,y*); }
+      CondList(x*,Disjunction(CondList(sublist*)),y*) -> { return `CondList(x*,sublist*,y*); }
+    }
+  }
+
+  %strategy separeMatchings(ml : MatchingList) extends Identity() {
+    visit ConditionList {
+      CondList(x*,match@Matching(_,_,_),y*) 
       ->
       {
-        ContextAndConstraints cc_matchings = `collectLocalContexts(ctx,RRList(),CondList(),conditions,cl);
-        //System.out.println("CCPair after collected local contexts:\n" + cc_matchings +"\n");
-
-      /*      
-        ConditionList withoutMatching = `CondList();
-        ArrayList<Jugement> local_ctx = ArrayList<Jugement>();
-        local_ctx.add(ctx);
-        ArrayList<Constraint> local_cons = ArrayList<Constraint>();
-        ArrayList<Condition> subjects = ArrayList<Condition>();
-        try {
-          withoutMatching = (ConditionList) `RepeatId(treatMatchings(local_ctx,local_cons,subjects)).visitLight(conds);
-        } catch (VisitFailure e) {
-          throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
-        }
-
-        Context whole_ctx = `Context();
-        for(int i=0; i<local_ctx.size(); i++) {
-          whole_ctx = `Context(local_ctx[i],whole_ctx*);
-        }
-        
-        ConstraintList whole_cons = `CList();
-        for(int i=0; i<local_cons.size(); i++) {
-          whole_cons = `CList(local_cons[i],whole_cons*);
-        }
-
-        ConditionList all_subjects = `CondList();
-        for(int i=0; i<subjects.size(); i++) {i
-          all_subjects = `CondList(subjects[i],all_subjects*);
-        }
-    */
-
-        Condition first_cond = `c1;
-        ConditionList rest_cond = `cs;
-        %match(cc_matchings) {
-          //the condition list constains Matchings instructions: we need to remove them
-          CCPair(whole_ctx,whole_cons)
-          ->
-          {
-            //System.out.println("CondList before strategy applications:\n" + `conditions +"\n");
-
-            ConditionList withoutMatching = `conditions;
-            try {
-              withoutMatching = (ConditionList) `RepeatId(deleteMatchings()).visitLight(conditions);
-            } catch (VisitFailure e) {
-              throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
-            }
-            ctx = `whole_ctx;
-            cl = `whole_cons;
-
-            //System.out.println("CondList after strategy applications:\n" + withoutMatching +"\n");
-            //System.out.println("CList after remove matchings of condition list:\n" + cl +"\n");
-
-            %match(withoutMatching) {
-              CondList() -> { return `cc_matchings; }
-              CondList(sub_c1,sub_cs*)
-              -> 
-              { 
-                first_cond = `sub_c1; 
-                rest_cond = `sub_cs;
-              }
-            }
-            //return `reconEachCondition(Context(ctx*,whole_ctx*),withoutMatching,CList(whole_cons*,cl*)); 
-          }
-        }
-
-        %match {
-          CCPair(whole_ctx,whole_cons) << reconEachCondition(ctx,first_cond,cl) -> { return `reconConditionList(whole_ctx,rest_cond,whole_cons); }
-        }
+        //System.out.println("Testing strategy... :\n" + `test +"\n");
+        ml.add(`match);
+        return `CondList(x*,y*);
       }
+    } 
+  }
+
+  private static ContextAndConstraints reconConjDisj(Context ctx, ConditionList conditions, ConstraintList cl) {
+
+    System.out.println("CondList before unfolding:\n" + `conditions + "\n");
+    // 1 - unfold the condition list
+    ConditionList unfold_conditions = `conditions;
+    try {
+      unfold_conditions = (ConditionList) `RepeatId(unfoldCondList()).visitLight(conditions);
+    } catch (VisitFailure e) {
+      throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
+    }
+  
+    System.out.println("CondList after unfolding:\n" + unfold_conditions + "\n");
+
+    // 2 - separe matching condition from the other conditons
+    ConditionList withoutMatchings = `CondList();
+    ArrayList<Condition> onlyMatchings = new ArrayList<Condition>();
+    try {
+      withoutMatchings = (ConditionList) `RepeatId(separeMatchings(onlyMatchings)).visitLight(unfold_conditions);
+    } catch (VisitFailure e) {
+      throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
+    }
+
+    ConditionList matchings_list = `CondList();
+    for (int i=0; i < onlyMatchings.size(); i++) {
+      matchings_list = `CondList(onlyMatchings.get(i),matchings_list*);
+    }
+
+    // 3 - collect local contexts and contraints of patterns and reconstruct types of subjects
+    ContextAndResultList local_crlist = collectLocalContexts(ctx,`RRList(),matchings_list);
+
+    // 4 - reconstruct types of subjects
+    ContextAndConstraints whole_cc = `reconMatchingList(local_crlist,matchings_list,cl);
+
+    %match(whole_cc){
+      CCPair(whole_ctx,whole_cl)
+      ->
+      {
+        ctx = `whole_ctx;
+        cl = `whole_cl*;
+      }
+    }
+
+    // 5 - reconstruct the rest of the condition list (without matchings)
+    return `reconConditionList(ctx,withoutMatchings,cl);
+  }
+
+  //---------------------------------------------------------------------------
+  // To reconstruct the types of each terms of a conjunction or a disjunction
+  // It is necessary to collect all local context for each pattern before to
+  // try to reconstruct types of theirs related subjects
+  //---------------------------------------------------------------------------
+  private static ContextAndResultList collectLocalContexts(Context ctx, ReconResultList rrl, ConditionList ml) {
+    %match {
+      CondList() << ml -> { return `CRLPair(ctx,rrl); }
+
+      CondList(match,matchs*) << ml &&
+      Matching(pattern,_,_) << match &&
+      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern) //&&
+      //Pair(_,cons_p) << pair_p
+      ->
+      {
+        Context whole_ctx = `Context(ctx_p*,ctx*);
+
+        //the order of insertion in RRList is important because it needs to be the same of matchings_list
+        ReconResultList whole_rrl = `RRList(rrl*,pair_p);
+        //ConstraintList whole_cl = `CList(cons_p*,cl*);
+        //System.out.println("\'conds\' in first case os collectLocalContexts: \n" + `CondList(x*,y*) +"\n");
+        //System.out.println("\'wholeMatchings\' in first case os collectLocalContexts: \n" + whole_listMatchings +"\n");
+        return `collectLocalContexts(whole_ctx,whole_rrl,matchs);
+      }
+    }
+    throw new RuntimeException("Type reconstruction failed to collect local contexts in a composed condition.");
+  }
+
+  private static ContextAndConstraints reconMatchingList(ContextAndResultList crlist, ConditionList listMatchings, ConstraintList cl) {
+    System.out.println("CRLPair in reconMatchingList: \n" + crlist + "\n");
+    System.out.println("CondList in reconMatchingList: \n" + listMatchings + "\n");
+    System.out.println("CList in reconMatchingList: \n" + cl + "\n");
+
+    %match {
+      CondList() << listMatchings &&
+      CRLPair(ctx,_) << crlist
+      -> { return `CCPair(ctx,cl); }
+
+      CondList(match,matchs*) << listMatchings &&
+      Matching(_,subject,type) << match &&
+      CRLPair(ctx,rrlist) << crlist &&
+      RRList(pair,pairs*) << rrlist &&
+      Pair(type_p,cons_p) << pair &&
+      Pair(type_s,cons_s) << reconTerm(ctx,subject)
+      -> 
+      {
+        System.out.println("Pair: \n" + `pair + "\n");
+        System.out.println("Match: \n" + `match + "\n");
+        ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_p,type_s),cons_p*,cons_s*,cl*);
+        return `reconMatchingList(CRLPair(ctx,pairs),matchs,cl_s); 
+      }
+    }
+    throw new RuntimeException("Error in reconMatchingList function.");
+  }
+
+  private static ContextAndConstraints reconConditionList(Context ctx, ConditionList condlist, ConstraintList cl) {
+    %match {
+      CondList() << condlist -> { return `CCPair(ctx,cl); }
+
+      CondList(cond,conds*) << condlist &&
+      CCPair(whole_ctx,whole_cl)  << reconEachCondition(ctx,cond,cl)
+      -> { return `reconConditionList(whole_ctx,conds,whole_cl); }
     }
     throw new RuntimeException("Error in reconConditionList function.");
   }
-  
+
   private static ContextAndConstraints reconRelation(Context ctx, Condition cond, ConstraintList cl) {
     %match {
       (Equality(term1,term2) << cond ||
@@ -512,82 +557,12 @@ public class TypeInference {
       ->
       {
         TomType newTypeVar = freshTypeVar();
-        /* ConstraintList cl1 = `CList(Subtype(type1,newTypeVar),cons1*);
-           ConstraintList cl2 = `CList(Subtype(type2,newTypeVar),cons2*); */
         return `CCPair(ctx,CList(CommSubtype(type1,type2),cons1*,cons2*,cl*));
       }
     }
     throw new RuntimeException("Error in reconRelation function.");
   }
 
-  %strategy deleteMatchings() extends Identity() {
-    visit ConditionList {
-      test@CondList(x*,Matching(_,_,_),y*) 
-      ->
-      {
-        //System.out.println("Testing strategy... :\n" + `test +"\n");
-        return `CondList(x*,y*);
-      }
-    } 
-  }
-  //---------------------------------------------------------------------------
-  // To reconstruct the types of each terms of a conjunction or a disjunction
-  // It is necessary to collect all local context for each pattern before to
-  // try to reconstruct types of theirs related subjects
-  //---------------------------------------------------------------------------
-  private static ContextAndConstraints collectLocalContexts(Context ctx, ReconResultList listRes, ConditionList listMatchings, ConditionList conds, ConstraintList cl) {
-    %match {
-      CondList(x*,match@Matching(pattern,_,_),y*) << conds &&
-      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern) &&
-      Pair(_,cons_p) << pair_p
-      ->
-      {
-        Context whole_ctx = `Context(ctx_p*,ctx*);
-        ReconResultList whole_listRes = `RRList(pair_p,listRes*);
-        ConditionList whole_listMatchings = `CondList(match,listMatchings*);
-        //System.out.println("\'conds\' in first case os collectLocalContexts: \n" + `CondList(x*,y*) +"\n");
-        //System.out.println("\'wholeMatchings\' in first case os collectLocalContexts: \n" + whole_listMatchings +"\n");
-        return `collectLocalContexts(whole_ctx,whole_listRes,whole_listMatchings,CondList(x*,y*),CList(cons_p*,cl*));
-      }
-
-      !CondList(_*,Matching(_,_,_),_*) << conds &&
-      !CondList() << listMatchings
-      ->
-      {
-        //System.out.println("CondList before call reconMatchingList:\n" + cl +"\n");
-        ConstraintList cons_res = `reconMatchingList(ctx,listRes,listMatchings,cl);
-        //System.out.println("CondList after call reconMatchingList:\n" + cons_res +"\n");
-        return `CCPair(ctx,cons_res);
-      }
-      
-      !CondList(_*,Matching(_,_,_),_*) << conds &&
-      CondList() << listMatchings
-      ->
-      { 
-        return `CCPair(ctx,cl); 
-      }
-    }
-    throw new RuntimeException("Type reconstruction failed to collect matchings in a composed condition.");
-  }
-
-  private static ConstraintList reconMatchingList(Context ctx, ReconResultList listRes, ConditionList listMatchings, ConstraintList cl) {
-    %match {
-      CondList() << listMatchings -> { return cl; }
-
-      CondList(cond,conds*) << listMatchings &&
-      Matching(_,subject,type) << cond &&
-      RRList(pair,pairs*) << listRes &&
-      Pair(type_p,cons_p) << pair &&
-      Pair(type_s,cons_s) << reconTerm(ctx,subject)
-      -> 
-      {
-        ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_p,type_s),cons_s*,cl*);
-        return `reconMatchingList(ctx,pairs,conds,cl_s); 
-      }
-    }
-    throw new RuntimeException("Error in reconMatchingList function.");
-  } 
- 
   //-----------------------------------------------------
   // To reconstruct the types of the right side of rule
   // in other words, the type of backquote variables
@@ -614,7 +589,19 @@ public class TypeInference {
   //----------------------------------------
   private static ContextAndResult reconPattern(Context ctx, TomTerm pattern) {
     %match(pattern) {
-      Var(name,type) -> { return `CRPair(Context(Jugement(name,type),ctx*),Pair(type,CList())); }
+      Var(name,type)
+      -> 
+      { 
+        ConstraintList cl = `CList();
+        if (isAssocVar(ctx,`name)) {
+          TomType existent_type = assocVar(ctx,`name);
+          cl = `CList(Equation(type,existent_type));
+        }
+        else
+          ctx = `Context(Jugement(name,type),ctx*);
+        return `CRPair(ctx,Pair(type,cl)); 
+      }
+
       Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) &&
       CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom)
       -> 
@@ -687,6 +674,16 @@ public class TypeInference {
       }
     }
     throw new RuntimeException("Type reconstruction failed to a function term.");
+  }
+
+  //--------------------------------------------------------------
+  // To check if a variable is in the context
+  //--------------------------------------------------------------
+  private static boolean isAssocVar(Context ctx, String name) {
+    %match(ctx) {
+      Context(_*,Jugement(var,type),_*) && var << String name -> { return true; }
+    }
+    return false;
   }
 
   //--------------------------------------------------------------
