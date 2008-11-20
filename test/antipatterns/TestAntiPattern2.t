@@ -32,9 +32,9 @@ package antipatterns;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import antipatterns.test1.m.types.*;
+import antipatterns.testantipattern2.m.types.*;
 
-public class Test1 extends TestCase {
+public class TestAntiPattern2 extends TestCase {
   %gom {
     module M
       abstract syntax
@@ -77,7 +77,7 @@ public class Test1 extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(Test1.class));
+    junit.textui.TestRunner.run(new TestSuite(TestAntiPattern2.class));
   }
 
 }
