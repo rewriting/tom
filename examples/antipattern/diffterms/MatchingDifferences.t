@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package antipattern;
+package antipattern.diffterms;
 
 //import aterm.pure.SingletonFactory;
 import aterm.*;
@@ -36,6 +36,7 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
+import antipattern.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
@@ -45,7 +46,7 @@ import tom.library.sl.*;
 public class MatchingDifferences implements Matching {
 
   // %include{ atermmapping.tom }
-  %include{ term/Term.tom }
+  %include{ ../term/Term.tom }
   %include{ sl.tom }
 
   public Constraint simplifyAndSolve(Constraint c, Collection solution) {

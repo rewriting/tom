@@ -26,11 +26,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package antipattern;
+package antipattern.baralgo;
 
 import aterm.*;
 import aterm.pure.*;
 
+import antipattern.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
@@ -39,7 +40,7 @@ import tom.library.sl.*;
 
 public class ReplaceSystem extends BasicStrategy {
 	
-	%include{ term/Term.tom }
+	%include{ ../term/Term.tom }
 	%include{ sl.tom }
 
     private Term variable;

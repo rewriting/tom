@@ -37,6 +37,7 @@ import aterm.pure.*;
 import java.util.Iterator;
 import java.util.HashSet;
 
+import antipattern.baralgo.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 

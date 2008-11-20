@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package antipattern;
+package antipattern.baralgo;
 
 import aterm.*;
 import aterm.pure.*;
@@ -35,6 +35,7 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
+import antipattern.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
@@ -45,7 +46,7 @@ import tom.library.sl.*;
 public class Matching5 implements Matching{
 	
 	%include{ sl.tom }	
-	%include{ term/Term.tom }
+	%include{ ../term/Term.tom }
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		

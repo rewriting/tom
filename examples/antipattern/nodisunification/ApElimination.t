@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package antipattern;
+package antipattern.nodisinufication;
 
 import aterm.*;
 import aterm.pure.*;
@@ -35,6 +35,7 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
+import antipattern.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
@@ -49,7 +50,7 @@ public class ApElimination implements Matching{
 
   %include{ sl.tom }        
   %include{ boolean.tom }	
-  %include{ term/Term.tom }
+  %include{ ../term/Term.tom }
 
   public static int varCounter = 0;
   public Tools tools = new Tools();
@@ -74,7 +75,7 @@ public class ApElimination implements Matching{
     varCounter = 0;		
 
     // replace the match with =
-    label:%match(Constraint c){
+    label:%match(Constraint c) {
       Match(p,s) -> { 
         transformedMatch = `Equal(p,s/* GenericGroundTerm("SUBJECT") */);
         // collect free variables
@@ -94,7 +95,7 @@ public class ApElimination implements Matching{
     Constraint noAnti = null;;
     try{
       noAnti = applyMainRule(transformedMatch);
-    }catch(VisitFailure e){
+    }catch(VisitFailure e) {
       System.out.println("1. reduction failed on: " + transformedMatch);
       e.printStackTrace();
     }
@@ -144,8 +145,8 @@ public class ApElimination implements Matching{
     Term pattern = null;
     Term subject = null;
 
-    %match(Constraint c){
-      Equal(p,s) ->{
+    %match(Constraint c) {
+      Equal(p,s) -> {
         pattern = `p;
         subject = `s;
       }
@@ -154,13 +155,13 @@ public class ApElimination implements Matching{
     // first get the constraint without the anti
     Constraint cNoAnti =  `Equal((Term)OnceTopDownId(ElimAnti()).visitLight(pattern),subject);
     // if nothing changed, time to exit
-    if (cNoAnti == c){
+    if (cNoAnti == c) {
       return c;
     }
     // get the constraint with a variable instead of anti
     Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visitLight(pattern),subject);
 
-    quantifiedVarList.add(`Variable("v" + ApAndDisunification1.varCounter));
+    quantifiedVarList.add(`Variable("v" + antipattern.disunification.ApAndDisunification1.varCounter));
 
     // recursiv call
     cAntiReplaced = applyMainRule(cAntiReplaced);		
@@ -178,10 +179,10 @@ public class ApElimination implements Matching{
 
 
   // quantifies the variables in positive positions
-  %strategy AnalyzeTerm(subject:Term,checkQuantified:boolean) extends `Identity(){		
+  %strategy AnalyzeTerm(subject:Term,checkQuantified:boolean) extends `Identity() {		
 
     visit Term {
-      v@Variable(x) ->{
+      v@Variable(x) -> {
 
         antiCounter = 0;
 
@@ -207,7 +208,7 @@ public class ApElimination implements Matching{
   }
 
   // counts the anti symbols
-  %strategy CountAnti() extends `Identity(){
+  %strategy CountAnti() extends `Identity() {
     visit Term {
       Anti(_) -> {
         antiCounter++;				
@@ -216,7 +217,7 @@ public class ApElimination implements Matching{
   }
 
   // returns a term without the first negation that it finds
-  %strategy ElimAnti() extends `Identity(){		
+  %strategy ElimAnti() extends `Identity() {		
     visit Term {		 
       Anti(p) -> {
         return `p;
@@ -226,19 +227,19 @@ public class ApElimination implements Matching{
 
   // returns a term with the first negation that it finds
   // replaced by a fresh variable
-  %strategy ReplaceAnti() extends `Identity(){
+  %strategy ReplaceAnti() extends `Identity() {
 
     visit Term {
       // main rule
       a@Anti(_) -> {
-        return `Variable("v" + (++ApAndDisunification1.varCounter) );
+        return `Variable("v" + (++antipattern.disunification.ApAndDisunification1.varCounter) );
       }
     }
   }
 
   // the strategy that handles the variables inside an anti
   // symbol for beeing qunatified
-  %strategy ApplyStrategy() extends `Identity(){
+  %strategy ApplyStrategy() extends `Identity() {
 
     visit Term {
       // main rule
@@ -253,7 +254,7 @@ public class ApElimination implements Matching{
   // collects the free variable of term
   // NB: can be improved not to further search for a variable
   // if an anti symbol was found on that branch
-//%strategy CollectFreeVariables() extends `Identity(){
+//%strategy CollectFreeVariables() extends `Identity() {
 
 //visit Term {
 //// main rule
@@ -263,7 +264,7 @@ public class ApElimination implements Matching{
 //}
 //}
 
-  %strategy ClassicalPatternMatching() extends `Identity(){
+  %strategy ClassicalPatternMatching() extends `Identity() {
 
     visit Constraint{
       // Decompose
@@ -283,13 +284,13 @@ public class ApElimination implements Matching{
       }
 
       // Merge
-      And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+      And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) -> {
         // rulesCounter++;
         return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
       }
 
       // Delete
-      Equal(a,a) ->{
+      Equal(a,a) -> {
         // rulesCounter++;
         return `True();
       }
@@ -319,13 +320,13 @@ public class ApElimination implements Matching{
       And(concAnd(t)) -> {
         return `t;
       }
-      And(concAnd(X*,And(concAnd(Y*)),Z*)) ->{
+      And(concAnd(X*,And(concAnd(Y*)),Z*)) -> {
         return `And(concAnd(X*,Y*,Z*));
       }
     }
   }	
 
-  %strategy ReplaceVariables() extends `Identity(){
+  %strategy ReplaceVariables() extends `Identity() {
 
     visit Constraint{
       // Replace
@@ -333,7 +334,7 @@ public class ApElimination implements Matching{
 
         Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visitLight(`And(concAnd(X*,Y*)));
         // if we replaced something
-        if (res != `And(concAnd(X*,Y*))){
+        if (res != `And(concAnd(X*,Y*))) {
           return `And(concAnd(eq,res));
         }
       }
@@ -342,24 +343,24 @@ public class ApElimination implements Matching{
 
   // replaces all equalities that contain
   // quantified variables with true
-  %strategy EliminateQuantifiedVars() extends `Identity(){
+  %strategy EliminateQuantifiedVars() extends `Identity() {
 
     visit Constraint{
       Equal(var@Variable[],s) -> {				
         if (quantifiedVarList.contains(`var) 
-            && !freeVarList.contains(`var)){
+            && !freeVarList.contains(`var)) {
           return `True();
         }            
       }
     }
   }
 
-  %strategy Cleaning() extends `Identity(){
+  %strategy Cleaning() extends `Identity() {
 
     visit Constraint{
 
       // Delete - equalities created by replace
-      Equal(a,a) ->{
+      Equal(a,a) -> {
         // rulesCounter++;
         return `True();
       }
@@ -378,12 +379,12 @@ public class ApElimination implements Matching{
       }
 
       // clean
-      Neg(True()) ->{
+      Neg(True()) -> {
         return `False();
       }
 
       // clean
-      Neg(False()) ->{
+      Neg(False()) -> {
         return `True();
       }
 
@@ -400,10 +401,10 @@ public class ApElimination implements Matching{
 
   }
 
-  %strategy ReplaceTerm(variable:Term,value:Term) extends `Identity(){
+  %strategy ReplaceTerm(variable:Term,value:Term) extends `Identity() {
     visit Term {
-      t ->{
-        if (`t == variable){
+      t -> {
+        if (`t == variable) {
           return value;
         }
       }

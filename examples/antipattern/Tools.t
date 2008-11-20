@@ -35,6 +35,7 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
+import antipattern.baralgo.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
