@@ -58,18 +58,16 @@ Jugement = Jugement(var: String, type: TomType)
 
 Context = Context(Jugement*)
 
-//ContextList = CTXList(Context*)
-
 Mapping = MapsTo(tvar: TomType, type: TomType)
 
 Substitution = MList(Mapping*)
 
 SubstitutionList = SList(Substitution*)
 
-ContextAndResult = CRPair(con: Context, res: ReconResult)
+ContextAndResult = CRPair(ctx: Context, res: ReconResult)
 
-ContextAndResultList = CRList(con: Context, rlist: ReconResultList)
+ContextAndResultList = CRLPair(ctx: Context, rlist: ReconResultList)
 
-ContextAndConstraints = CCPair(con: Context, constraints: ConstraintList)
+ContextAndConstraints = CCPair(ctx: Context, constraints: ConstraintList)
 
 
