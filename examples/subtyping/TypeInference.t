@@ -59,6 +59,7 @@ public class TypeInference {
       CList(_*,Subtype(ty1,ty2),_*) &&
       ty1 << TomType t1 && ty2 << TomType t2
       -> { return t1; }
+
       CList(_*,Subtype(ty2,ty1),_*) &&
       ty2 << TomType t2 && ty1 << TomType t1
       -> { return t2; }
@@ -165,23 +166,6 @@ public class TypeInference {
   // ---------------------------------------
   %strategy constraintsResolution(ml: MappingList) extends Identity() {
     visit ConstraintList {
-/*      // {type = type} U C -> resolution(C)
-      CList(x*,Equation(type,type),y*)
-      ->
-      {
-        System.out.println("{type = type} U C -> resolution(C)\n"); 
-        return `CList(x*,y*);
-      }
-
-      // {type <: type} U C -> resolution(C)
-      CList(x*,Subtype(type,type),y*)
-      ->
-      { 
-        System.out.println("{type <: type} U C -> resolution(C)\n");
-        return `CList(x*,y*); 
-      }
-*/
-
       // C = {tvar = type} U C' -> {tvar |-> type} &&
       //                      (if (tvar in C') then (resolution([type/tvar]C))
       //                       else (resolution({type = type} U C'))) 
@@ -203,7 +187,7 @@ public class TypeInference {
             ConstraintList clist = `applySubstitution(map,cl);
             //System.out.println("after apply substitution = " + clist);
             sublist = applyTransitivity(clist);
-	    return sublist;
+	          return sublist;
           }
         }
         // apply substituion only on the pair
@@ -242,23 +226,23 @@ public class TypeInference {
       (tprim1 != tprim2)
       -> { throw new RuntimeException("Bad subtyping declaration of types: " + `tprim1 + " = " + `tprim2); /*return `False();*/ }
 
-      // C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) si ((type1 = type2) notin C')
+      // C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) if ((type1 = type2) notin C')
       cl@CList(_*,Subtype(type1,type2@!type1),_*,Subtype(type2,type1),_*) &&
       !CList(_*,Equation(type1,type2),_*) << cl     
       -> 
       {
-        System.out.println("C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) si ((type1 = type2) notin C) \n");        
+        System.out.println("C = {type1 <: type2, type2 <: type1} U C' -> resolution({type1 = type2} U C) if ((type1 = type2) notin C) \n");        
         return `CList(Equation(type1,type2),cl*);
       }
 
       // C = {tvar1 <: tprim2, tvar1 <: tprim3} U C' -> resolution({tvar1 = min(tprim2,tprim3)} U C) 
-      //                                           si ((tvar1 = min(tprim2,tprim3)) notin C')
+      //                                           if ((tvar1 = min(tprim2,tprim3)) notin C')
       cl@CList(_*,Subtype(tvar1@TypeVar(_),tprim2@Type(_)),_*,Subtype(tvar1,tprim3@Type(_)),_*) &&
       (tprim2 != tprim3)
       ->
       { 
         System.out.println("C = {tvar1 <: tprim2, tvar1 <: tprim3} U C' -> resolution({tvar1 = min(tprim2,tprim3)} U C) " +
-                           "si ((tvar1 = min(tprim2,tprim3)) notin C')\n");
+                           "if ((tvar1 = min(tprim2,tprim3)) notin C')\n");
         TomType min_t = `minimalType(tprim2,tprim3,cl);
         %match(cl) {
           !CList(_*,Equation(t1,t2),_*)  &&
@@ -269,11 +253,13 @@ public class TypeInference {
       }
 
       // C = {tvar1 <: type2} U C' -> resolution({tvar1 = type2} U C)
-      // Default case: should be after {tvar1 <: type2, tvar1 <: t3} U C ...
-      cl@CList(_*,Subtype(tvar1@TypeVar(_),type2@!tvar1),_*)
+      //                              if ((tvar1 = type2) notin C')
+      // Default case: should be after {tvar1 <: tprim2, tvar1 <: tprim3} U C ...
+      cl@CList(_*,Subtype(tvar1@TypeVar(_),type2@!tvar1),_*) && !CList(_*,Equation(tvar1,type2),_*) << cl
       -> 
       {
-        System.out.println("C = {tvar1 <: type2} U C' -> resolution({tvar1 = type2} U C)\n");
+        System.out.println("C = {tvar1 <: type2} U C' -> resolution({tvar1 = type2} U C)" +
+                           "if ((tvar1 = type2) notin C')\n");
         return `CList(Equation(tvar1,type2),cl*);
       }
 
@@ -342,7 +328,9 @@ public class TypeInference {
   //------------------------------------------------------
   private static ConstraintList reconTomInstruction(Context ctx, TomInstruction match, ConstraintList clist) {
     %match(match) {
-      Match(rule) -> { 
+      Match(rule) 
+      -> 
+      { 
         ConstraintList cl = reconClause(ctx,`rule);
         return `CList(cl*,clist*);
       }
@@ -390,14 +378,14 @@ public class TypeInference {
       LessEq(term1,term2) << cond) &&
       Pair(type1,cons1) << reconTerm(ctx,term1) &&
       Pair(type2,cons2) << reconTerm(ctx,term2)
-      ->
-      {
-        return `reconRelation(ctx,cond,cl);
-      }
+      -> { return `reconRelation(ctx,cond,cl); }
     }
     throw new RuntimeException("Error in reconCondition function.");
   }
 
+  //----------------------------------------------------------
+  // To reconstruct the type of a single matching condition
+  //----------------------------------------------------------
   private static ContextAndConstraints reconMatching(Context ctx, Condition cond, ConstraintList cl) {
     %match {
       Matching(pattern,subject,type) << cond &&
@@ -413,6 +401,33 @@ public class TypeInference {
     throw new RuntimeException("Error in reconMatching function.");
   }
 
+  //-----------------------------------------------------------
+  // To reconstruct the type of a single relation condition
+  //-----------------------------------------------------------
+  private static ContextAndConstraints reconRelation(Context ctx, Condition cond, ConstraintList cl) {
+    %match {
+      (Equality(term1,term2) << cond ||
+      Inequality(term1,term2) << cond ||
+      Greater(term1,term2) << cond ||
+      GreaterEq(term1,term2) << cond ||
+      Less(term1,term2) << cond ||
+      LessEq(term1,term2) << cond) &&
+      Pair(type1,cons1) << reconTerm(ctx,term1) &&
+      Pair(type2,cons2) << reconTerm(ctx,term2)
+      ->
+      {
+        TomType newTypeVar = freshTypeVar();
+        return `CCPair(ctx,CList(CommSubtype(type1,type2),cons1*,cons2*,cl*));
+      }
+    }
+    throw new RuntimeException("Error in reconRelation function.");
+  }
+
+  //----------------------------------------------------------------------------
+  // To reconstruct the types of each terms of a conjunction or a disjunction
+  // It is necessary to collect all local context for each pattern before to
+  // try to reconstruct types of theirs related subjects
+  //---------------------------------------------------------------------------- 
   %strategy unfoldCondList() extends Identity() {
     visit ConditionList {
       CondList(x*,Conjunction(CondList(sublist*)),y*) -> { return `CondList(x*,sublist*,y*); }
@@ -433,8 +448,7 @@ public class TypeInference {
   }
 
   private static ContextAndConstraints reconConjDisj(Context ctx, ConditionList conditions, ConstraintList cl) {
-
-    System.out.println("CondList before unfolding:\n" + `conditions + "\n");
+    //System.out.println("CondList before unfolding:\n" + `conditions + "\n");
     // 1 - unfold the condition list
     ConditionList unfold_conditions = `conditions;
     try {
@@ -443,7 +457,7 @@ public class TypeInference {
       throw new RuntimeException("Error in reconCondition function: collecting matching in a composed condition.");
     }
   
-    System.out.println("CondList after unfolding:\n" + unfold_conditions + "\n");
+    //System.out.println("CondList after unfolding:\n" + unfold_conditions + "\n");
 
     // 2 - separe matching condition from the other conditons
     ConditionList withoutMatchings = `CondList();
@@ -459,7 +473,7 @@ public class TypeInference {
       matchings_list = `CondList(onlyMatchings.get(i),matchings_list*);
     }
 
-    // 3 - collect local contexts and contraints of patterns and reconstruct types of subjects
+    // 3 - collect local contexts and contraints of patterns and reconstruct type of each one 
     ContextAndResultList local_crlist = collectLocalContexts(ctx,`RRList(),matchings_list);
 
     // 4 - reconstruct types of subjects
@@ -479,9 +493,10 @@ public class TypeInference {
   }
 
   //---------------------------------------------------------------------------
-  // To reconstruct the types of each terms of a conjunction or a disjunction
-  // It is necessary to collect all local context for each pattern before to
-  // try to reconstruct types of theirs related subjects
+  // To collect the local context of each pattern and its type and constraints
+  // related to this type. This data will be used to reconstruct types of
+  // the subjects and the other conditions that are not matchings (like
+  // a relation condition)
   //---------------------------------------------------------------------------
   private static ContextAndResultList collectLocalContexts(Context ctx, ReconResultList rrl, ConditionList ml) {
     %match {
@@ -489,8 +504,7 @@ public class TypeInference {
 
       CondList(match,matchs*) << ml &&
       Matching(pattern,_,_) << match &&
-      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern) //&&
-      //Pair(_,cons_p) << pair_p
+      CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern)      
       ->
       {
         Context whole_ctx = `Context(ctx_p*,ctx*);
@@ -506,10 +520,13 @@ public class TypeInference {
     throw new RuntimeException("Type reconstruction failed to collect local contexts in a composed condition.");
   }
 
+  //----------------------------------------------------------------------------
+  // To reconstruct types of a set of subjects by global and all local contexts
+  //----------------------------------------------------------------------------
   private static ContextAndConstraints reconMatchingList(ContextAndResultList crlist, ConditionList listMatchings, ConstraintList cl) {
-    System.out.println("CRLPair in reconMatchingList: \n" + crlist + "\n");
-    System.out.println("CondList in reconMatchingList: \n" + listMatchings + "\n");
-    System.out.println("CList in reconMatchingList: \n" + cl + "\n");
+    //System.out.println("CRLPair in reconMatchingList: \n" + crlist + "\n");
+    //System.out.println("CondList in reconMatchingList: \n" + listMatchings + "\n");
+    //System.out.println("CList in reconMatchingList: \n" + cl + "\n");
 
     %match {
       CondList() << listMatchings &&
@@ -533,6 +550,10 @@ public class TypeInference {
     throw new RuntimeException("Error in reconMatchingList function.");
   }
 
+  //------------------------------------------------------------------
+  // To reconstruct types of teh other conditions by global and all 
+  // local contexts
+  //------------------------------------------------------------------
   private static ContextAndConstraints reconConditionList(Context ctx, ConditionList condlist, ConstraintList cl) {
     %match {
       CondList() << condlist -> { return `CCPair(ctx,cl); }
@@ -542,25 +563,6 @@ public class TypeInference {
       -> { return `reconConditionList(whole_ctx,conds,whole_cl); }
     }
     throw new RuntimeException("Error in reconConditionList function.");
-  }
-
-  private static ContextAndConstraints reconRelation(Context ctx, Condition cond, ConstraintList cl) {
-    %match {
-      (Equality(term1,term2) << cond ||
-      Inequality(term1,term2) << cond ||
-      Greater(term1,term2) << cond ||
-      GreaterEq(term1,term2) << cond ||
-      Less(term1,term2) << cond ||
-      LessEq(term1,term2) << cond) &&
-      Pair(type1,cons1) << reconTerm(ctx,term1) &&
-      Pair(type2,cons2) << reconTerm(ctx,term2)
-      ->
-      {
-        TomType newTypeVar = freshTypeVar();
-        return `CCPair(ctx,CList(CommSubtype(type1,type2),cons1*,cons2*,cl*));
-      }
-    }
-    throw new RuntimeException("Error in reconRelation function.");
   }
 
   //-----------------------------------------------------
