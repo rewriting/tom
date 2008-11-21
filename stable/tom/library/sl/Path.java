@@ -109,4 +109,8 @@ public interface Path {
    */
   public Path conc(int i);
 
+  /**
+   * @return an array containing all of the elements in this path in proper sequence (from first to last element).
+   */
+  public int[] toIntArray();
 }

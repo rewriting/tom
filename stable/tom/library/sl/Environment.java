@@ -250,44 +250,35 @@ public final class Environment implements Cloneable {
     //System.out.println("after down: " + this);
   }
 
-  public void followPath(Path path) {
-    Path normalizedPath = path.getCanonicalPath();
-    int length = normalizedPath.length();
-    for(int i=0;i<length;i++) {
-      int head = normalizedPath.getHead();
-      normalizedPath = normalizedPath.getTail();
-      if(head>0) {
-        down(head);
-        if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
-          // we do not want to follow the last reference
-          followPath((Path)subterm[current]);
-        }
-      } else {
-        //verify that getsubomega() = -head
-        up();
-      }
-    }
-  }
-
   public void goToPosition(Position p) {
     followPath(p.sub(getPosition()));
   }
 
+  public void followPath(Path path) {
+    genericFollowPath(path,false);
+  }
+
   public void followPathLocal(Path path) {
-    Path normalizedPath = path.getCanonicalPath();
-    int length = normalizedPath.length();
+    genericFollowPath(path,true);
+  }
+
+  private void genericFollowPath(Path path, boolean local) {
+    int[] normalizedPathArray = path.getCanonicalPath().toIntArray();
+    int length = normalizedPathArray.length;
     for(int i=0;i<length;i++) {
-      int head = normalizedPath.getHead();
-      normalizedPath = normalizedPath.getTail();
-      if(head>0) {
-        down(head);
-        if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+      if(normalizedPathArray[i]>0) {
+        down(normalizedPathArray[i]);
+        if(subterm[current] instanceof Path && i+1<length) {
           // we do not want to follow the last reference
-          followPath((Path)subterm[current]);
+          genericFollowPath((Path)subterm[current],local);
         }
       } else {
-        //verify that getsubomega() = -head
-        upLocal();
+        //verify that getsubomega() = -normalizedPathArray[i]
+        if(local) {
+          upLocal();
+        } else {
+          up();
+        }
       }
     }
   }

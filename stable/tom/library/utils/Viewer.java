@@ -82,7 +82,7 @@ public class Viewer {
 
 
   private static String getNodeFromPos(Position p) {
-    int[] omega = p.toArray();
+    int[] omega = p.toIntArray();
     StringBuilder r = new StringBuilder("p");
     for(int i=0 ; i<p.length() ; i++) {
       r.append(omega[i]);
