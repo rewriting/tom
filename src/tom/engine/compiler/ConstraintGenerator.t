@@ -77,7 +77,6 @@ public class ConstraintGenerator {
   // the list of all generators
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
 
-  // public static Instruction performGenerations(Expression expression, Instruction action) 
   public Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
     // counts the generators that didn't change the instruction
@@ -225,7 +224,6 @@ public class ConstraintGenerator {
    * if (flag == true) ...
    *  
    */
-  // private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
   private Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
     TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
@@ -274,7 +272,6 @@ public class ConstraintGenerator {
    *    action;
    * }
    */
-  // private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
   private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
     TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());    
