@@ -49,12 +49,33 @@ public class VariadicGenerator implements IBaseGenerator {
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
+  %typeterm VariadicGenerator {
+    implement { VariadicGenerator }
+    is_sort(t) { ($t instanceof VariadicGenerator) }
+  }
+
+  private Compiler compiler; 
+  private ConstraintGenerator constraintGenerator; 
+ 
+  public VariadicGenerator(Compiler myCompiler, ConstraintGenerator myConstraintGenerator) {
+    this.compiler = myCompiler;
+    this.constraintGenerator = myConstraintGenerator;
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public ConstraintGenerator getConstraintGenerator() {
+    return this.constraintGenerator;
+  }
+ 
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDown(Generator()).visitLight(expression);
+    return (Expression)`TopDown(Generator(this)).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy Generator() extends Identity() {
+  %strategy Generator(vg:VariadicGenerator) extends Identity() {
     visit Expression {
       // generate pre-loop for X* = or _* = 
       /*
@@ -68,7 +89,7 @@ public class VariadicGenerator implements IBaseGenerator {
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
-        Expression testEmpty = ConstraintGenerator.genIsEmptyList(`opName,`end);
+        Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
@@ -81,11 +102,11 @@ public class VariadicGenerator implements IBaseGenerator {
     visit TomTerm {
       // generate getHead
       ListHead(opName,type,variable) -> {
-        return `ExpressionToTomTerm(genGetHead(opName,type,variable));
+        return `ExpressionToTomTerm(vg.genGetHead(opName,type,variable));
       }
       // generate getTail
       ListTail(opName,variable) -> {
-        return `ExpressionToTomTerm(genGetTail(opName,variable));
+        return `ExpressionToTomTerm(vg.genGetTail(opName,variable));
       }
     }
   } // end strategy	
@@ -97,8 +118,8 @@ public class VariadicGenerator implements IBaseGenerator {
    *   the element itself is returned when it is not a list operator
    *   this occurs because the last element of a loop may not be a list
    */ 
-  private static Expression genGetHead(TomName opName, TomType type, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+  private Expression genGetHead(TomName opName, TomType type, TomTerm var) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
@@ -114,8 +135,8 @@ public class VariadicGenerator implements IBaseGenerator {
    *   the neutral element is returned when it is not a list operator
    *   this occurs because the last element of a loop may not be a list
    */ 
-  private static Expression genGetTail(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+  private Expression genGetTail(TomName opName, TomTerm var) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {

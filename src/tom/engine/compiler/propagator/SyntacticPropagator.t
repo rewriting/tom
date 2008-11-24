@@ -48,15 +48,36 @@ public class SyntacticPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
   
+  %typeterm SyntacticPropagator {
+    implement { SyntacticPropagator }
+    is_sort(t) { ($t instanceof SyntacticPropagator) }
+  }
+
+  private Compiler compiler; 
+  private ConstraintPropagator constraintPropagator;
+ 
+  public SyntacticPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   // contains variables that were already replaced (for optimizing reasons)
-  private static ArrayList replacedVariables = null; 
+  private ArrayList replacedVariables = null; 
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {   
     replacedVariables = new ArrayList(); 
-    return  (Constraint)`TopDown(SyntacticPatternMatching()).visitLight(constraint);
+    return  (Constraint)`TopDown(SyntacticPatternMatching(this)).visitLight(constraint);
   }	
 
-  %strategy SyntacticPatternMatching() extends `Identity() {
+  %strategy SyntacticPatternMatching(sp:SyntacticPropagator) extends `Identity() {
     visit Constraint {
       /**
        * Decompose
@@ -77,7 +98,7 @@ public class SyntacticPropagator implements IBasePropagator {
       m@MatchConstraint(rappl@RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
+            sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
        
         //System.out.println("m = " + `m);
         Constraint lastPart = `AndConstraint();
@@ -85,14 +106,14 @@ public class SyntacticPropagator implements IBasePropagator {
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = Compiler.getFreshVariable(Compiler.getSlotType(`firstName,`slotName));
+            TomTerm freshVar = sp.getCompiler().getFreshVariable(sp.getCompiler().getSlotType(`firstName,`slotName));
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
             lastPart = `AndConstraint(lastPart*,MatchConstraint(appl,freshVar));              
           }
         }
-        TomTerm freshSubject = Compiler.getFreshVariable(Compiler.getTermTypeFromTerm(`g));
+        TomTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
         // take each symbol and build the disjunction
         Constraint l = `OrConstraintDisjunction();
         %match(nameList) {
@@ -113,7 +134,7 @@ public class SyntacticPropagator implements IBasePropagator {
             l = `OrConstraintDisjunction(l*,andForName);
           }
         }
-        return `AndConstraint(MatchConstraint(freshSubject,g),l*,lastPart*,ConstraintPropagator.performDetach(m));
+        return `AndConstraint(MatchConstraint(freshSubject,g),l*,lastPart*,sp.getConstraintPropagator().performDetach(m));
       }      
     }
   }// end %strategy

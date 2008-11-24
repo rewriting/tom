@@ -49,12 +49,44 @@ public class VariadicPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
+  %typeterm VariadicPropagator {
+    implement { VariadicPropagator }
+    is_sort(t) { ($t instanceof VariadicPropagator) }
+  }
+
+  %typeterm GeneralPurposePropagator {
+    implement { GeneralPurposePropagator }
+    is_sort(t) { ($t instanceof GeneralPurposePropagator) }
+  }
+
+  private Compiler compiler;  
+  private GeneralPurposePropagator generalPurposePropagator; 
+  private ConstraintPropagator constraintPropagator; 
+ 
+  public VariadicPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+    this.generalPurposePropagator = new GeneralPurposePropagator(this.compiler, this.constraintPropagator);
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public GeneralPurposePropagator getGeneralPurposePropagator() {
+    return this.generalPurposePropagator;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    Constraint res =  (Constraint)`TopDown(VariadicPatternMatching()).visitLight(constraint);		
+    Constraint res =  (Constraint)`TopDown(VariadicPatternMatching(this)).visitLight(constraint);		
     return res;
   }	
 
-  %strategy VariadicPatternMatching() extends Identity() {
+  %strategy VariadicPatternMatching(vp:VariadicPropagator) extends Identity() {
     visit Constraint {      
       /**
        * Detach sublists
@@ -67,11 +99,11 @@ public class VariadicPropagator implements IBasePropagator {
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not a list, nothing to do
-        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName(`tomName);
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
         if(!TomBase.isListOperator(symb)) {
           return `m; 
         }
-        Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
+        Constraint detachedConstr = vp.getGeneralPurposePropagator().detachSublists(`m);
         if(detachedConstr != `m) {
           return detachedConstr; 
         }
@@ -94,13 +126,13 @@ public class VariadicPropagator implements IBasePropagator {
        */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this is not a list, nothing to do
-        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName(`tomName);
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
         if(!TomBase.isListOperator(symb)) {
           return `m;
         }        
         // declare fresh variable
-        TomType listType = Compiler.getTermTypeFromTerm(`t);
-        TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
+        TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
+        TomTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         Constraint l = `AndConstraint();        
@@ -109,7 +141,7 @@ public class VariadicPropagator implements IBasePropagator {
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            TomTerm newFreshVarList = Compiler.getFreshVariableStar(listType);            
+            TomTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
 mAppl:      %match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
@@ -118,8 +150,8 @@ mAppl:      %match(appl) {
                   // we should only assign it, without generating a loop
                   l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
                 } else {
-                  TomTerm beginSublist = Compiler.getBeginVariableStar(listType);
-                  TomTerm endSublist = Compiler.getEndVariableStar(listType);              
+                  TomTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
+                  TomTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
                   l = `AndConstraint(l*,
                       MatchConstraint(beginSublist,freshVariable),
                       MatchConstraint(endSublist,freshVariable),             
@@ -131,7 +163,7 @@ mAppl:      %match(appl) {
               _ -> {
                 l = `AndConstraint(l*,                      
                     Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,Compiler.getTermTypeFromTerm(appl),freshVariable)),
+                    MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)),
                     MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if(`X.length() == 0) {                  
@@ -143,7 +175,7 @@ mAppl:      %match(appl) {
           }
         }// end match
         // fresh var declaration + add head equality condition + detached constraints
-        l = `AndConstraint(freshVarDeclaration, isSymbolConstr, ConstraintPropagator.performDetach(m),l*);
+        l = `AndConstraint(freshVarDeclaration, isSymbolConstr, vp.getConstraintPropagator().performDetach(m),l*);
         return l;
       }					
     }

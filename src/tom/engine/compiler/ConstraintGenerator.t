@@ -27,6 +27,8 @@ package tom.engine.compiler;
 
 import java.util.*;
 
+import java.lang.reflect.*;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
@@ -37,6 +39,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.compiler.*;
 import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
@@ -54,13 +57,29 @@ public class ConstraintGenerator {
   %include { java/util/types/Collection.tom}
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------	
+
+  %typeterm ConstraintGenerator {
+    implement { ConstraintGenerator }
+    is_sort(t) { ($t instanceof ConstraintGenerator) }
+  }
+
+  private Compiler compiler;
+
+  public ConstraintGenerator(Compiler myCompiler) {
+    this.compiler = myCompiler; 
+  } 
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
  
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
 
-  public static Instruction performGenerations(Expression expression, Instruction action) 
-       throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
+  // public static Instruction performGenerations(Expression expression, Instruction action) 
+  public Instruction performGenerations(Expression expression, Instruction action) 
+       throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
     // counts the generators that didn't change the instruction
     int genCounter = 0;
     int genNb = generatorsNames.length;
@@ -68,8 +87,11 @@ public class ConstraintGenerator {
     Expression result = null;
     // cache the generators
     IBaseGenerator[] gen = new IBaseGenerator[genNb];
+    Class[] classTab = new Class[]{Class.forName("tom.engine.compiler.Compiler"), Class.forName("tom.engine.compiler.ConstraintGenerator")};
     for(int i=0 ; i < genNb ; i++) {
-      gen[i] = (IBaseGenerator)Class.forName(generatorsPackage + generatorsNames[i]).newInstance();
+      Class myClass = Class.forName(generatorsPackage + generatorsNames[i]);
+      java.lang.reflect.Constructor constructor = myClass.getConstructor(classTab);
+      gen[i] = (IBaseGenerator)constructor.newInstance(this.getCompiler(),this);
     }
     
     // iterate until all generators are applied and nothing was changed 
@@ -92,10 +114,10 @@ public class ConstraintGenerator {
   /**
    * Converts the resulted expression (after generation) into instructions
    */
-  private static Instruction buildInstructionFromExpression(Expression expression, Instruction action)
+  private Instruction buildInstructionFromExpression(Expression expression, Instruction action)
       throws VisitFailure {		
     // it is done innermost because the expression is also simplified		
-    expression = (Expression)`TopDown(ReplaceSubterms()).visitLight(expression);
+    expression = (Expression)`TopDown(ReplaceSubterms(this)).visitLight(expression);
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     return automata;
@@ -104,7 +126,7 @@ public class ConstraintGenerator {
   /**
    * Generates the automata from the expression
    */
-  private static Instruction generateAutomata(Expression expression, Instruction action) throws VisitFailure {
+  private Instruction generateAutomata(Expression expression, Instruction action) throws VisitFailure {
     %match(expression){
       And(left,right) -> {
         Instruction subInstruction = `generateAutomata(right,action);
@@ -153,10 +175,10 @@ public class ConstraintGenerator {
   /**
    * Converts 'Subterm' to 'GetSlot'
    */
-  %strategy ReplaceSubterms() extends Identity() {
+  %strategy ReplaceSubterms(cg:ConstraintGenerator) extends Identity() {
     visit TomTerm {
       Subterm(constructorName@Name(name), slotName, term) -> {
-        TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(`name);
+        TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(`name);
         TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
         return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
       }
@@ -169,7 +191,7 @@ public class ConstraintGenerator {
    * we are forced to duplication the action to have the same semantics as
    * without disjunctions
    */
-  private static Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
+  private Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
     %match(orConnector) {
       OrConnector(x,Y*) -> {        
         return `AbstractBlock(concInstruction(
@@ -203,9 +225,10 @@ public class ConstraintGenerator {
    * if (flag == true) ...
    *  
    */
-  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
+  // private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
+  private Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Collection<TomTerm> freshVarList = new HashSet<TomTerm>();
     // collect variables    
@@ -213,7 +236,7 @@ public class ConstraintGenerator {
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(Compiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
+          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
     // add fresh variables' declarations
     for(TomTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -222,7 +245,7 @@ public class ConstraintGenerator {
     return `LetRef(flag,FalseTL(),instruction);
   }
 
-  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue)
+  private Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue)
       throws VisitFailure {    
     %match(orDisjunction){
       OrExpressionDisjunction() -> {
@@ -251,14 +274,15 @@ public class ConstraintGenerator {
    *    action;
    * }
    */
-  private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
+  // private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
+  private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());    
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());    
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(EqualTerm(Compiler.getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
@@ -294,8 +318,8 @@ public class ConstraintGenerator {
    *   is_empty(l) || l==make_empty()
    *   this is needed because get_tail() may return the neutral element 
    */ 
-  public static Expression genIsEmptyList(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(opName.getString());
+  public Expression genIsEmptyList(TomName opName, TomTerm var) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(opName.getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
@@ -304,7 +328,7 @@ public class ConstraintGenerator {
     return `IsEmptyList(opName, var);
   }
   
-  private static Instruction buildNumericCondition(Constraint c, Instruction action) {
+  private Instruction buildNumericCondition(Constraint c, Instruction action) {
     %match(c) {
       NumericConstraint(left,right,type) -> {        
         Expression leftExpr = `TomTermToExpression(left);
@@ -319,9 +343,9 @@ public class ConstraintGenerator {
           NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
-          NumEqual()                -> { TomType tomType = Compiler.getTermTypeFromTerm(`left);
+          NumEqual()                -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
                                          return `If(EqualTerm(tomType,right,left),action,Nop()); }
-          NumDifferent()            -> { TomType tomType = Compiler.getTermTypeFromTerm(`left);
+          NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
                                          return `If(Negation(EqualTerm(tomType,right,left)),action,Nop()); }
         }
       }
@@ -359,16 +383,16 @@ public class ConstraintGenerator {
    * } while (counter < n)
    *  
    */
-  private static Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
+  private Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
-    TomType intType = Compiler.getIntType();
-    TomTerm counter = Compiler.getFreshVariable(intType);    
+    TomType intType = getCompiler().getIntType();
+    TomTerm counter = getCompiler().getFreshVariable(intType);    
     // build the ifs
     Instruction instruction = `buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(Compiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
     // counter++ : expression at the end of the loop 
     Instruction counterIncrement = `Assign(counter,AddOne(counter));
     //  stick the flag declaration and the counterIncrement   
@@ -390,7 +414,7 @@ public class ConstraintGenerator {
    *
    * builds the ifs in a constraint disjunction (see buildConstraintDisjunction above for details)
    */
-  private static Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
+  private Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
       TomTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
     %match(orConnector) {
       OrConnector(x,Y*) -> {        

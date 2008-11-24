@@ -94,7 +94,7 @@ public class Viewer {
   }
 
   //TODO: adapt to traverse any data-structure using newsl
-  static class Print extends AbstractStrategy {
+  static private class Print extends AbstractStrategy {
 
     protected Writer w;
 
@@ -268,7 +268,7 @@ public class Viewer {
     }
   }
 
-  static class PrintStrategy extends AbstractStrategy {
+  static private class PrintStrategy extends AbstractStrategy {
 
     protected Writer w;
 
@@ -322,4 +322,3 @@ public class Viewer {
   }
 
 }
-

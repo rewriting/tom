@@ -61,7 +61,7 @@ public class PluginPlatform extends PluginPlatformBase {
 
   /** Radical of the logger */
   private String loggerRadical;
-  
+
   /**
    * The current file name to process - this is used in the status handler 
    * in order to have the file name when it was not passed at logging 
@@ -74,6 +74,7 @@ public class PluginPlatform extends PluginPlatformBase {
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     super(loggerRadical);  
     statusHandler = new StatusHandler();
+ 
     this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
     pluginsList = confManager.getPluginsList();

@@ -25,6 +25,8 @@
  **/
 package tom.engine.compiler.propagator;
 
+import tom.engine.compiler.propagator.*;  
+
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -50,11 +52,32 @@ public class GeneralPurposePropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
 
+  %typeterm GeneralPurposePropagator {
+    implement { GeneralPurposePropagator }
+    is_sort(t) { ($t instanceof GeneralPurposePropagator) }
+  }
+
+  private Compiler compiler;  
+  private ConstraintPropagator constraintPropagator; 
+ 
+  public GeneralPurposePropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
+    return (Constraint)`TopDown(GeneralPropagations(this)).visitLight(constraint);
   }	
 
-  %strategy GeneralPropagations() extends Identity() {
+  %strategy GeneralPropagations(gpp:GeneralPurposePropagator) extends Identity() {
     visit Constraint {      
       /**
        * Antipattern
@@ -64,7 +87,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
         return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
-            ConstraintPropagator.performDetach(MatchConstraint(term,s)));
+            gpp.getConstraintPropagator().performDetach(MatchConstraint(term,s)));
       }      
       /**
        * SwitchAnti : here is just for efficiency reasons, and not for ordering, 
@@ -84,7 +107,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
       AndConstraint?(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
         // we cannot cache already renamed variables, because disjunctions have to be taken into account
         // for example: g(x) || f(x,x) -> ...
-        Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(varName)).visitLight(`Y*);
+        Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(varName,gpp)).visitLight(`Y*);
         if(res != `Y*) {
           return `AndConstraint(X*,eq,res);
         }
@@ -96,7 +119,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
        *  a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
       m@MatchConstraint(term@(Variable|VariableStar|UnamedVariableStar|UnamedVariable)[Constraints = !concConstraint()],g) -> {
-        Constraint result = ConstraintPropagator.performDetach(`m);
+        Constraint result = gpp.getConstraintPropagator().performDetach(`m);
         if(`term.isVariable()) {
           result = `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g),result);
         }
@@ -121,7 +144,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
    * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
    * 
    */ 
-  public static Constraint detachSublists(Constraint constraint) {
+  public Constraint detachSublists(Constraint constraint) {
     // will hold the new slots of t
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
@@ -133,7 +156,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 matchSlot:  %match(slot,TomName name) {
               ps@PairSlotAppl[Appl=appl],childName &&  
                 (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
-                  TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
+                  TomTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
                   constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
                   newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
                   break matchSlot;
@@ -155,12 +178,12 @@ matchSlot:  %match(slot,TomName name) {
   /*
    * x << s -> fresh << s ^ fresh==x
    */
-  %strategy ReplaceMatchConstraint(varName:TomName) extends Identity() {
+  %strategy ReplaceMatchConstraint(varName:TomName,gpp:GeneralPurposePropagator) extends Identity() {
     visit Constraint {
       // we can have the same variable both as variableStar and as variable
       // we know that this is ok, because the type checker authorized it
       MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
-        TomTerm freshVar = `var.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
+        TomTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
         return `AndConstraint(MatchConstraint(freshVar,subject),MatchConstraint(TestVar(freshVar),var));
       }
     }

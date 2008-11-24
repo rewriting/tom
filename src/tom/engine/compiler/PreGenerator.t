@@ -57,19 +57,27 @@ public class PreGenerator {
   %include { ../../library/mapping/java/sl.tom}
   // ------------------------------------------------------------
 
-  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure {
+  private ConstraintGenerator constraintGenerator;
+
+  public PreGenerator(ConstraintGenerator myConstraintGenerator) {
+    this.constraintGenerator = myConstraintGenerator;
+  } 
+
+  public ConstraintGenerator getConstraintGenerator() {
+    return this.constraintGenerator;
+  }
+
+  public Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure {
     constraint = orderConstraints(constraint);
     return constraintsToExpressions(constraint);
   }
 
-  private static Constraint orderConstraints(Constraint constraint) {
+  private Constraint orderConstraints(Constraint constraint) {
     %match(constraint) {
       !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {
-        //return repeatOrdering(constraint);
         return orderAndConstraint(constraint);
       }
       AndConstraint(X*,or@OrConstraint(_*),Y*) -> {
-        //return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
         return orderAndConstraint(`AndConstraint(X*,orderConstraints(or),Y*));
       }
       /*
@@ -84,7 +92,7 @@ public class PreGenerator {
     return constraint;
   }
 /*
-  private static Constraint repeatOrdering(Constraint constraint) {
+  private Constraint repeatOrdering(Constraint constraint) {
     Constraint result = constraint;
     do {
       constraint = result;
@@ -99,7 +107,7 @@ public class PreGenerator {
    * We use a loop and two nested match to be more efficient
    *
    */
-  private static Constraint orderAndConstraint(Constraint constraint) {
+  private Constraint orderAndConstraint(Constraint constraint) {
     Constraint toOrder = constraint;
     do {
       constraint = toOrder;
@@ -290,7 +298,7 @@ block: %match(constraint) {
   /**
    * Translates constraints into expressions
    */
-  private static Expression constraintsToExpressions(Constraint constraint) {
+  private Expression constraintsToExpressions(Constraint constraint) {
     %match(constraint) {
       AndConstraint(m,X*) -> {
         return `And(constraintsToExpressions(m), constraintsToExpressions(X*));
@@ -311,7 +319,7 @@ block: %match(constraint) {
         return `Negation(constraintsToExpressions(c));
       }
       EmptyListConstraint(opName,variable) -> {
-        return ConstraintGenerator.genIsEmptyList(`opName,`variable);
+        return getConstraintGenerator().genIsEmptyList(`opName,`variable);
       }
       EmptyArrayConstraint(opName,variable,index) -> {
         return `IsEmptyArray(opName,variable,index);

@@ -25,6 +25,8 @@
  **/
 package tom.engine.compiler.propagator;
 
+import tom.engine.compiler.propagator.*;  
+
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -39,7 +41,7 @@ import tom.engine.TomBase;
 import tom.engine.compiler.Compiler;
 
 /**
- * Syntactic propagator
+ * Array propagator
  */
 public class ArrayPropagator implements IBasePropagator {
 
@@ -48,11 +50,43 @@ public class ArrayPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
+  %typeterm ArrayPropagator {
+    implement { ArrayPropagator }
+    is_sort(t) { ($t instanceof ArrayPropagator) }
+  }
+
+  %typeterm GeneralPurposePropagator {
+    implement { GeneralPurposePropagator }
+    is_sort(t) { ($t instanceof GeneralPurposePropagator) }
+  }
+
+  private Compiler compiler;
+  private ConstraintPropagator constraintPropagator; // only present for compatibility 
+  private GeneralPurposePropagator generalPurposePropagator;  
+ 
+  public ArrayPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator; // only present for compatibility 
+    this.generalPurposePropagator = new GeneralPurposePropagator(this.compiler, this.constraintPropagator);
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public GeneralPurposePropagator getGeneralPurposePropagator() {
+    return this.generalPurposePropagator;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(ArrayPatternMatching()).visitLight(constraint);		
+    return (Constraint)`TopDown(ArrayPatternMatching(this)).visitLight(constraint);		
   }	
 
-  %strategy ArrayPatternMatching() extends Identity() {
+  %strategy ArrayPatternMatching(ap:ArrayPropagator) extends Identity() {
     visit Constraint {
       /**
        * Detach sublists
@@ -65,9 +99,10 @@ public class ArrayPropagator implements IBasePropagator {
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not an array, nothing to do
-        if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
+        // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
+        if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
-        Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
+        Constraint detachedConstr = ap.getGeneralPurposePropagator().detachSublists(`m);
         // if something changed
         if (detachedConstr != `m) { return detachedConstr; }
       }      
@@ -82,15 +117,16 @@ public class ArrayPropagator implements IBasePropagator {
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
-            if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
+            // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
+            if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
             // declare fresh variable            
-            TomType termType = Compiler.getTermTypeFromTerm(`g);            
-            TomTerm freshVariable = Compiler.getFreshVariableStar(termType);
+            TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
+            TomTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
             Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
             
             // declare fresh index = 0            
-            TomTerm freshIndex = getFreshIndex();				
+            TomTerm freshIndex = ap.getFreshIndex();				
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
             Constraint l = `AndConstraint();
     match:  %match(slots) {
@@ -98,7 +134,7 @@ public class ArrayPropagator implements IBasePropagator {
                 l = `AndConstraint(l*,EmptyArrayConstraint(name,freshVariable,freshIndex));
               }
               concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-                TomTerm newFreshIndex = getFreshIndex();                
+                TomTerm newFreshIndex = ap.getFreshIndex();                
           mAppl:%match(appl){
                   // if we have a variable star
                   (VariableStar | UnamedVariableStar)[] -> {
@@ -109,8 +145,8 @@ public class ArrayPropagator implements IBasePropagator {
                       l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
                             GetSliceArray(name,freshVariable,freshIndex,ExpressionToTomTerm(GetSize(name,freshVariable))))));
                     } else {
-                      TomTerm beginIndex = getBeginIndex();
-                      TomTerm endIndex = getEndIndex();
+                      TomTerm beginIndex = ap.getBeginIndex();
+                      TomTerm endIndex = ap.getEndIndex();
                       l = `AndConstraint(l*,
                           MatchConstraint(beginIndex,freshIndex),
                           MatchConstraint(endIndex,freshIndex),
@@ -122,7 +158,8 @@ public class ArrayPropagator implements IBasePropagator {
                   _ -> {                    
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,Compiler.getTermTypeFromTerm(appl),freshVariable,freshIndex))),
+                        /** MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))).*/
+                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
                         MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
@@ -135,21 +172,21 @@ public class ArrayPropagator implements IBasePropagator {
             }// end match                        
             // add head equality condition + fresh var declaration + detached constraints
             l = `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable)),
-                freshIndexDeclaration,ConstraintPropagator.performDetach(m),l*);
+                freshIndexDeclaration,ap.getConstraintPropagator().performDetach(m),l*);
             return l;
         }
     }
   }// end %strategy
 
-  private static TomTerm getBeginIndex() {
-    return Compiler.getBeginVariableStar(Compiler.getIntType());
+  private TomTerm getBeginIndex() {
+    return getCompiler().getBeginVariableStar(getCompiler().getIntType());
   }
 
-  private static TomTerm getEndIndex() {
-    return Compiler.getEndVariableStar(Compiler.getIntType());
+  private TomTerm getEndIndex() {
+    return getCompiler().getEndVariableStar(getCompiler().getIntType());
   }
 
-  private static TomTerm getFreshIndex() {
-    return Compiler.getFreshVariableStar(Compiler.getIntType());    
+  private TomTerm getFreshIndex() {
+    return getCompiler().getFreshVariableStar(getCompiler().getIntType());    
   }
 }
