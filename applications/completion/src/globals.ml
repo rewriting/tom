@@ -1,4 +1,4 @@
-let proof_chan = ref stdout
+let proof_output = ref (fun e -> Printf.printf "%s" (Lazy.force e))
 
 let in_chan =  ref stdin
 
@@ -23,12 +23,16 @@ Options are:"
 
 let usage_func = ref (fun () -> ())
 
-let open_proofs p = proof_chan := open_out p
-
+let open_proofs p = (let proof_chan = open_out p 
+		     in proof_output :=
+			  fun e -> Printf.fprintf proof_chan "%s" (Lazy.force e))
+  
 let speclist = Arg.align
   [ 
     "-p", String open_proofs, "file Print proofs in file";
     "--proofs", String open_proofs, "file Print proofs in file";
+    "-q", Unit (fun () -> proof_output := fun e -> ()), " Do not print proofs";
+    "--quiet", Unit (fun () -> proof_output := fun e -> ()), " Do not print proofs";
     "-i", Set_int nb_iter, "int Decompose each quantifier at most int times";
     "--iterations", Set_int nb_iter, "int Decompose each quantifier at most int times";
     "-s", Set split_rew," Parallelize rewriting";

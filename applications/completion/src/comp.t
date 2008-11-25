@@ -305,7 +305,7 @@ let tableau max rules tab =
 	  and future_finished = ref finished in
 	  let add tab = future_tabs := tab::!future_tabs in
 	  let add_f tab = future_finished := tab::!future_finished in
-	    fprintf !proof_chan "\n [ ";
+	!proof_output (lazy "\n [ ");
 	    List.iter
 	      (fun tab ->
 		 try 
@@ -316,62 +316,62 @@ let tableau max rules tab =
 		 with 
 		     Not_found ->
 		       Hashtbl.add h (hash tab) tab; 
-		       fprintf (!proof_chan) "\n%s" (tableau_to_string tab);
+	       !proof_output (lazy ("\n" ^ tableau_to_string tab ^ "\n"));
 		       try
   (* cleaning and axioms *)
 %match (tableau tab) {
     tab(b1*,l,b2*,l,b3*) ->
 	{ begin
-	    fprintf (!proof_chan) "{redundance}";
+	    !proof_output (lazy "{redundance}");
 	    add (`tab(b1*,l,b2*,b3*));
 	    raise Hop
 	  end }
     
     tab(b1*,b(conc(_*,a(True(),_),_*),_),b2*) ->
 	{ begin 
-	    fprintf (!proof_chan) "{true}";
+	    !proof_output (lazy "{true}");
 	    add (`tab(b1*,b2*));
 	    raise Hop
 	  end } 
 
     tab(b1*,b(conc(_*,a(not(False()),_),_*),_),b2*) ->
 	{ begin 
-	    fprintf (!proof_chan) "{true}";
+	    !proof_output (lazy "{true}");
 	    add (`tab(b1*,b2*));
 	    raise Hop
 	  end } 
 
     tab(b1*,b(conc(_*,a(p,_),_*,a(not(p),_),_*),_),b2*) ->
 	{ begin 
-	    fprintf (!proof_chan) "{closure}";
+	    !proof_output (lazy "{closure}");
 	    add (`tab(b1*,b2*));
 	    raise Hop
 	  end } 
 
     tab(b1*,b(conc(_*,a(not(p),_),_*,a(p,_),_*),_),b2*) ->
 	{ begin 
-	    fprintf (!proof_chan) "{closure}";
+	    !proof_output (lazy "{closure}");
 	    add (`tab(b1*,b2*));
 	    raise Hop
 	  end } 
 
     tab(b1*,b(conc(gamma*,a(False(),_),delta*),s),b2*) ->
 	{ begin
-	    fprintf (!proof_chan) "{false}";
+	    !proof_output (lazy "{false}");
 	    add (`tab(b1*,b(conc(gamma*,delta*),s),b2*));
 	    raise Hop
 	  end }
 
     tab(b1*,b(conc(gamma*,a(not(True()),_),delta*),s),b2*) ->
 	{ begin
-	    fprintf (!proof_chan) "{false}";
+	    !proof_output (lazy "{false}");
 	    add (`tab(b1*,b(conc(gamma*,delta*),s),b2*));
 	    raise Hop
 	  end }
     
     tab(b1*,b(conc(gamma*,ap,eta*,ap,delta*),s),b2*) ->
 	{ begin
-	    fprintf (!proof_chan) "{weak}";
+	    !proof_output (lazy "{weak}");
 	    add (`tab(b1*,b(conc(gamma*,ap,eta*,delta*),s),b2*));
 	    raise Hop
 	  end }
@@ -382,7 +382,7 @@ let tableau max rules tab =
 %match (tableau tab) {
     tab(b1*,b(conc(gamma*,a(not(not(p)),l),delta*),s),b2*) -> 
 	{ begin
-	    fprintf (!proof_chan) "{classical}";
+	    !proof_output (lazy "{classical}");
 	    add (`tab(b1*,b(conc(gamma*,a(p,l),delta*),s),b2*));
 	    raise Hop
 	  end
@@ -391,7 +391,7 @@ let tableau max rules tab =
     tab(b1*,b(conc(gamma*,a(or(p,q),l),delta*),s),b2*) ->
       { (* alpha *)
 	begin
-	  fprintf (!proof_chan) "{alpha}";
+	  !proof_output (lazy "{alpha}");
 	  add (`tab(b1*,b2*,b(conc(gamma*,a(p,l),a(q,l),delta*),s)));
 	  raise Hop
 	end }
@@ -399,7 +399,7 @@ let tableau max rules tab =
     tab(b1*,b(conc(gamma*,a(not(and(p,q)),l),delta*),s),b2*) ->
       { (* alpha *)
 	begin
-	  fprintf (!proof_chan) "{alpha}";
+	  !proof_output (lazy "{alpha}");
 	  add (`tab(b1*,b2*,b(conc(gamma*,a(not(p),l),a(not(q),l),delta*),s)));
 	  raise Hop
 	end }
@@ -412,7 +412,7 @@ let tableau max rules tab =
 	let q = subst [e] (`p) 
 	in
 	  begin
-	    fprintf (!proof_chan) "{delta}";
+	    !proof_output (lazy "{delta}");
 	    add (`tab(b1*,b2*,b(conc(gamma*,a(q,cs),delta*),s)));
 	    raise Hop
 	  end }
@@ -425,7 +425,7 @@ let tableau max rules tab =
 	let q = subst [e] (`p) 
 	in
 	  begin
-	    fprintf (!proof_chan) "{delta}";
+	    !proof_output (lazy "{delta}");
 	    add (`tab(b1*,b2*,b(conc(gamma*,a(not(q),cs),delta*),s)));
 	    raise Hop
 	  end }
@@ -433,7 +433,7 @@ let tableau max rules tab =
     tab(b1*,b(conc(gamma*,a(and(p,q),l),delta*),s),b2*) -> 
        { (* beta *)
 	 begin 
-	   fprintf (!proof_chan) "{beta}";
+	   !proof_output (lazy "{beta}");
 	   add (`tab(b1*,b2*,b(conc(gamma*,a(p,l),delta*),s),
 				b(conc(gamma*,a(q,l),delta*),s)));
 	   raise Hop
@@ -442,7 +442,7 @@ let tableau max rules tab =
     tab(b1*,b(conc(gamma*,a(not(or(p,q)),l),delta*),s),b2*) -> 
       { (* beta *)
 	begin
-	  fprintf (!proof_chan) "{beta}";
+	  !proof_output (lazy "{beta}");
 	  add (`tab(b1*,b2*,b(conc(gamma*,a(not(p),l),delta*),s),
 				b(conc(gamma*,a(not(q),l),delta*),s)));
 	  raise Hop
@@ -452,7 +452,7 @@ let tableau max rules tab =
       { (* gamma *)
 	if (`i) < max then
 	  let nbg = do_gamma max (`bg) in
-	    fprintf (!proof_chan) "{gamma}";
+	    !proof_output (lazy "{gamma}");
 	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
 	    raise Hop
       }
@@ -461,7 +461,7 @@ let tableau max rules tab =
        ->
      { (* gamma *)
 	  let nbg = do_gamma max (`bg) in
-	    fprintf (!proof_chan) "{gamma}";
+	    !proof_output (lazy "{gamma}");
 	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
 	    raise Hop
      }
@@ -547,7 +547,7 @@ let tableau max rules tab =
     else aux false [] false (`bg) in
       if c then 
 	begin
-	  fprintf (!proof_chan) "{rw}";
+	  !proof_output (lazy "{rw}");
 	  List.iter
 	    (fun nbg -> 
 	       add 
@@ -635,7 +635,7 @@ let tableau max rules tab =
     else aux false [] false (`bg) in
       if c then 
 	begin
-	  fprintf (!proof_chan) "{rw}";
+	  !proof_output (lazy "{rw}");
 	  List.iter
 	    (fun nbg -> 
 	       add 
@@ -650,7 +650,7 @@ let tableau max rules tab =
       { (* gamma *)
  	if (`i) < max then
 	  let nbg = do_gamma max (`bg) in
-	    fprintf (!proof_chan) "{gamma}";
+	    !proof_output (lazy "{gamma}");
 	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
 	    raise Hop
      }
@@ -660,7 +660,7 @@ let tableau max rules tab =
      { (* gamma *)
 	if (`i) < max then
 	  let nbg = do_gamma max (`bg) in
-	    fprintf (!proof_chan) "{gamma}";
+	    !proof_output (lazy "{gamma}");
 	    add (`tab(b1*,b2*,b(nbg,an(false(),t))));
 	    raise Hop
      }
@@ -670,7 +670,7 @@ add_f tab
 			     Hop -> ()
 	      ) tabs;
 	    try
-	      fprintf !proof_chan "\n ] ";
+	      !proof_output (lazy "\n ] ");
 	      tableau_aux !future_finished !future_tabs		       
 	    with
 		Sys.Break -> List.rev_append !future_finished !future_tabs
