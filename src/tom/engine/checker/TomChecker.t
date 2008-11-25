@@ -69,7 +69,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
-  protected static Option currentTomStructureOrgTrack;
+  protected Option currentTomStructureOrgTrack;
     
   public TomChecker(String name) {
     super(name);
@@ -78,7 +78,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void reinit() {
     currentTomStructureOrgTrack = null;
   }
- 
+
   public int getClass(TomTerm term) {
     %match(TomTerm term) {
       TermAppl[NameList=(Name(""))] -> { return UNAMED_APPL;}
@@ -95,7 +95,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     throw new TomRuntimeException("Invalid Term");
   }
   
-  public static String getName(TomTerm term) {
+  public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(TomTerm term) {
       TermAppl[NameList=(Name(name))] -> { return `name;}
@@ -148,14 +148,14 @@ abstract public class TomChecker extends TomGenericPlugin {
     return TomBase.getTomType(type);
   }
   
-  protected static String findOriginTrackingFileName(OptionList optionList) {
+  protected String findOriginTrackingFileName(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
     }
     return "unknown filename";
   }
 
-  protected static int findOriginTrackingLine(OptionList optionList) {
+  protected int findOriginTrackingLine(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
     }

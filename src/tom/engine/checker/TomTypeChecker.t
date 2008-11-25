@@ -144,8 +144,8 @@ public class TomTypeChecker extends TomChecker {
     visit TomTerm {
       app@TermAppl[] -> {
         if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
-          ttc.messageError(findOriginTrackingFileName(`app.getOption()),
-              findOriginTrackingLine(`app.getOption()),
+          ttc.messageError(ttc.findOriginTrackingFileName(`app.getOption()),
+              ttc.findOriginTrackingLine(`app.getOption()),
               TomMessage.unknownVariableInWhen,
               new Object[]{ttc.getName(`app)});
         }
@@ -225,8 +225,8 @@ public class TomTypeChecker extends TomChecker {
     visit TomTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
         if(!`listName.equals(`rootName)) {
-          ttc.messageError(findOriginTrackingFileName(`options),
-              findOriginTrackingLine(`options),
+          ttc.messageError(ttc.findOriginTrackingFileName(`options),
+              ttc.findOriginTrackingLine(`options),
               TomMessage.incoherentVariableStar,
               new Object[]{ (`variableName),(`rootName),(`listName) });
         }

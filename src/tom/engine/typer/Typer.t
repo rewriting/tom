@@ -454,7 +454,7 @@ public class Typer extends TomGenericPlugin {
       }
     }
 
-    private static TomList sortAttributeList(TomList attrList) {
+    private TomList sortAttributeList(TomList attrList) {
       %match(attrList) {
         concTomTerm() -> { return attrList; }
         concTomTerm(X1*,e1,X2*,e2,X3*) -> {
@@ -513,7 +513,7 @@ public class Typer extends TomGenericPlugin {
       return attrList;
     }
 
-    private static OptionList convertOriginTracking(String name,OptionList optionList) {
+    private OptionList convertOriginTracking(String name,OptionList optionList) {
       Option originTracking = TomBase.findOriginTracking(optionList);
       %match(originTracking) {
         OriginTracking[Line=line, FileName=fileName] -> {

@@ -304,6 +304,7 @@ public class Verifier {
         `Fail().visitLight(`t);
       }
       iltrue(x) -> {
+        // outsubst.set(`x);
         outsubst.set(`x);
       }
     }
@@ -768,7 +769,8 @@ public class Verifier {
     implement { SubstRef }
     is_sort(t) { ($t instanceof SubstRef) }
   }
-  static private class SubstRef {
+
+  private class SubstRef {
     private SubstitutionList sublist;
     public SubstRef(SubstitutionList slist) {
       sublist = slist;

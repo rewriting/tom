@@ -93,8 +93,24 @@ public class Expander extends TomGenericPlugin {
   private static final TomTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType,concConstraint());
 
   /** if the flag is true, a class that implements Introspector is generated */
-  private static boolean genIntrospector = false;
-  private static boolean generatedIntrospector = false;
+  private boolean genIntrospector = false;
+  private boolean generatedIntrospector = false;
+
+  public boolean getGenIntrospector() {
+    return genIntrospector;
+  }
+
+  public void setGenIntrospector(boolean genIntrospector) {
+    this.genIntrospector = genIntrospector;
+  }
+
+  public boolean getGeneratedIntrospector() {
+    return generatedIntrospector;
+  }
+
+  public void setGeneratedIntrospector(boolean generatedIntrospector) {
+    this.generatedIntrospector = generatedIntrospector;
+  }
 
   /** Constructor */
   public Expander() {
@@ -104,10 +120,10 @@ public class Expander extends TomGenericPlugin {
   public void run() {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
-    genIntrospector = getOptionBooleanValue("genIntrospector");
+    setGenIntrospector(getOptionBooleanValue("genIntrospector"));
     try {
       //reinit the variable for intropsector generation
-      generatedIntrospector = false;
+      setGeneratedIntrospector(false);
       TomTerm expandedTerm = (TomTerm) this.expand((TomTerm)getWorkingTerm());
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
@@ -238,8 +254,8 @@ matchBlock: {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
-        if(expander.genIntrospector && !generatedIntrospector) {
-          generatedIntrospector=true;
+        if(expander.getGenIntrospector() && !expander.getGeneratedIntrospector()) {
+          expander.setGeneratedIntrospector(true);
           DeclarationList l = `concDeclaration();
           //generate the code for every method of Instrospector interface
 
