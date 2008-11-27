@@ -610,6 +610,8 @@ public class TypeInference {
       {
         return `CRPair(ctx_p,Pair(codom,cons));
       }
+
+      //TO DO: add a rule for lists
     }
     throw new RuntimeException("Type reconstruction failed to the pattern.");
   }
@@ -653,6 +655,8 @@ public class TypeInference {
         ConstraintList cl = `reconArgsList(ctx,args,dom);
         return `Pair(codom,cl);
       }
+
+      //TO DO: add a rule for lists
     }
     throw new RuntimeException("Type reconstruction failed to a term of a rule.");
   }
@@ -689,7 +693,7 @@ public class TypeInference {
   }
 
   //--------------------------------------------------------------
-  // To check if a variable is in the context and return his type
+  // To check if a variable is in the context and return its type
   //--------------------------------------------------------------
   private static TomType assocVar(Context ctx, String name) {
     %match(ctx) {
@@ -699,12 +703,36 @@ public class TypeInference {
   }
 
   //-------------------------------------------------------------------
-  // To check if a function is in the context and return his signature
+  // To check if a function is in the context and return its signature
   //-------------------------------------------------------------------
   private static Signature assocFun(Context ctx, String name) {
     %match(ctx) {
-      Context(_*,SigOf(fun,sig),_*) && fun << String name -> { return `sig; }
+      Context(_*,SigOf(fun,sig),_*) && fun << String name
+      -> 
+      { 
+        %match(sig) {
+          Sig(dom,codom) && Domain(_*) << dom -> { return `sig; }
+        }  
+        throw new RuntimeException("Ill formed function\"" + name + "\"."); 
+      }
     }
     throw new RuntimeException("Function\"" + name + "\" was not declared.");
+  }
+
+  //-------------------------------------------------------------------
+  // To check if a list is in the context and return its signature
+  //-------------------------------------------------------------------
+  private static Signature assocList(Context ctx, String name) {
+    %match(ctx) {
+      Context(_*,SigOf(list,sig),_*) && list << String name
+      -> 
+      { 
+        %match(sig) {
+          Sig(dom,codom) && VariadicDomain(_) << dom -> { return `sig; }
+        }  
+        throw new RuntimeException("Ill formed list\"" + name + "\"."); 
+      }
+    }
+    throw new RuntimeException("List\"" + name + "\" was not declared.");
   }
 }

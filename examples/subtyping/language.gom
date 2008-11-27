@@ -11,6 +11,7 @@ TomTypeList = TTyList(TomType*)
 
 TomTerm = Var(name: String, type: TomType)
         | Fun(name: String, args: TomTermList)
+        | List(name: String, elems: TomTermList)
 
 TomTermList = TTeList(TomTerm*)
 
@@ -50,6 +51,7 @@ ReconResult = Pair(type: TomType, constraints: ConstraintList)
 ReconResultList = RRList(ReconResult*)
 
 Domain = Domain(TomType*)
+       | VariadicDomain(type: TomType)
 
 Signature = Sig(dom: Domain, codom: TomType)
 
