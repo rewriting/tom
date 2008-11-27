@@ -81,6 +81,10 @@ public class ProofBuilder extends Observable {
 
     private static int ruleIndex = 0;
     
+    public InfoNarrow(HashMap<String, Term> tds) {
+      this.tds = tds;
+    }
+    
     public InfoNarrow(Position pos, TermRule rule, 
 		      HashMap<String, Term> tds) {
       this.pos = pos;
@@ -104,6 +108,8 @@ public class ProofBuilder extends Observable {
     public int getNumRule() { return numRule; }
     public HashMap<String,Term> getTds() { return tds; }
 
+    public void setTds(HashMap<String,Term> t) { tds = t; }
+
     public boolean equals(Object o) {
       if (o == this) return true;
       else if (o instanceof InfoNarrow) {
@@ -115,6 +121,7 @@ public class ProofBuilder extends Observable {
     }
   }
 
+  %typeterm InfoNarrow { implement { InfoNarrow } }
   %typeterm InfoNarrowVector { implement { java.util.Vector<InfoNarrow> } }
     
   %strategy CollectNarrow(l: InfoNarrowVector, tl:TermRuleList, pl:PropRuleList)
@@ -462,6 +469,38 @@ b: {
 
   public static Tree createOpenLeaf(Sequent concl) {
     return `rule(openInfo(),premisses(),concl,nullProp());
+  }
+
+
+  %strategy ApplyUnifAxiom(in: InfoNarrow) extends Fail() {
+    visit Tree {
+      rule[c=seq@sequent((_*,act1,_*),(_*,act2,_*))] -> 
+	{
+	  HashMap<String,Term> tds = Unification.unify(`act1, `act2);
+	  if (tds != null) {
+	    in.setTds(tds);
+	    return `rule(axiomInfo(),premisses(),seq,act1);
+	  }
+	}
+    }
+  }
+
+  %strategy ApplySubst(in: InfoNarrow) extends Identity() {
+    visit Tree {
+      t -> { return (Tree) Unification.substitute(in.getTds(), `t); }
+    }
+  }
+
+  // should do better
+  %strategy ToRoot(s: Strategy) extends Identity() {
+    visit Object {
+      _ -> {
+
+	while (getEnvironment().depth() > 1) 
+	  getEnvironment().up();
+	s.visit(getEnvironment());
+      }
+    }
   }
 
   %strategy ApplyAxiom() extends Fail() {
@@ -1421,6 +1460,19 @@ b :{
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply rule axiom " + e.getMessage());
+          }
+        }
+
+        /* Axiom case */
+        proofCommand("axiomunif") -> {
+          try {
+            InfoNarrow in = new InfoNarrow(null);
+	    Strategy strat = `Sequence(ApplyUnifAxiom(in), 
+				       ToRoot(ApplySubst(in)));
+	    tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
+	    //tree = (Tree) Unification.substitute(in.getTds(), tree);
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply rule axiomunif " + e.getMessage());
           }
         }
 

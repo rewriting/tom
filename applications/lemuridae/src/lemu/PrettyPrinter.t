@@ -315,6 +315,18 @@ class PrettyPrinter {
      funAppl("pikind",(x,y)) -> {
        return ("\\dot\\pi_\\square ") + toLatex(`x) + " .~" +  toLatex(`y);
      }
+     funAppl("pitt",(x,y)) -> {
+       return ("\\dot\\pi_{***} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pitk",(x,y)) -> {
+       return ("\\dot\\pi_{*\\square\\square} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikt",(x,y)) -> {
+       return ("\\dot\\pi_{\\square**} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikk",(x,y)) -> {
+       return ("\\dot\\pi_{\\square\\square\\square} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
 
      // lambda-sigma
      funAppl("subst",(x,y)) -> {
@@ -616,7 +628,7 @@ class PrettyPrinter {
 
       // set theory prettyprint
       relationAppl("in",(x,y)) -> {
-        return prettyPrint(`x) + " \u2208 " + prettyPrint(`y);
+        return prettyPrint(`x) + " : " + prettyPrint(`y);
       }
 
       // Hoare triples
@@ -708,6 +720,18 @@ class PrettyPrinter {
       }
       funAppl("pikind",(x,y))  -> {
         return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
+      }
+      funAppl("pitt",(x,y))  -> {
+        return "π⁎⁎⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pitk",(x,y))  -> {
+        return "π⁎◽◽" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pikt",(x,y))  -> {
+        return "π◽⁎⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pikk",(x,y))  -> {
+        return "π◽◽◽" + prettyPrint(`x) + ". " + prettyPrint(`y);
       }
 
       // Hoare triples

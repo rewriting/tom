@@ -55,6 +55,11 @@ public final class Gui implements Observer {
     public void actionPerformed(ActionEvent event) { commandField.cancelAllCommand(); }
   };
 
+  //Aller au curseur
+  private AbstractAction toCaret = new AbstractAction ("Go to Cursor") {
+    public void actionPerformed(ActionEvent event) { commandField.transmitCommandToCaret(); }
+  };
+
   // Clear the recent file list
   private AbstractAction clear = new AbstractAction ("Clear") {
     public void actionPerformed (ActionEvent event) {recentFiles = new HashSet(); refreshMenuBar(); }
@@ -319,7 +324,12 @@ public final class Gui implements Observer {
     menuItem.setAction(allUp);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, ActionEvent.CTRL_MASK));
     menu2.add(menuItem);
-    
+    // Action ToCaret
+    menuItem = new JMenuItem("Go to cursor");
+    menuItem.setAction(toCaret);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.CTRL_MASK));
+    menu2.add(menuItem);
+        
     // Ajout des menus
     mainMenuBar.add(menu1);
     mainMenuBar.add(menu2);

@@ -56,6 +56,14 @@ public class CommandArea extends JTextArea implements KeyListener, CaretListener
     }
   };
 
+  // action associee a CTRL+RIGHT
+  private AbstractAction toCaret = new AbstractAction ("ToCaret") {
+    public void actionPerformed(ActionEvent event) {
+      // System.out.println("up");
+      transmitCommandToCaret();
+    }
+  };
+
   // highlighter permettant la colorisation des commandes deja envoyees au ProofBuilder
   Highlighter.HighlightPainter myHighlightPainter = new MyHighlightPainter(new Color(176,212,255));
 
@@ -89,6 +97,20 @@ public class CommandArea extends JTextArea implements KeyListener, CaretListener
   public void transmitAllCommand() {
     int positionToReach = getLineCount();
     while (currentline < positionToReach) {transmitCommand(); }
+    //if (currentline >= positionToReach) {
+    //  for (;currentline<positionToReach; transmitCommand()) {}
+    //}
+  }
+
+  //methode qui va au curseur
+  public void transmitCommandToCaret() {
+    if (offsetLimit > getCaretPosition()) 
+      cancelAllCommand();
+    int positionToReach = currentline;
+    try {while (getLineEndOffset(positionToReach) < getCaretPosition())
+	positionToReach++;}
+    catch (javax.swing.text.BadLocationException e) {};
+    while (currentline < positionToReach+1) {transmitCommand(); }
     //if (currentline >= positionToReach) {
     //  for (;currentline<positionToReach; transmitCommand()) {}
     //}
