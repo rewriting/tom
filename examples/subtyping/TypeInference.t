@@ -176,6 +176,9 @@ public class TypeInference {
         System.out.println("C = {tvar = type} U C' -> {tvar |-> type} && (if (tvar in C') " +
                            "then (resolution([type/tvar]C)) " +
                            "else (resolution({type = type} U C')))\n");
+
+        //System.out.println("tvar: " + `tvar + ".   type: " + `type + "\n");
+
         Mapping map = `MapsTo(tvar,type);
         ml.add(map);
 
@@ -605,26 +608,29 @@ public class TypeInference {
       }
 
       Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) &&
-      CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom)
-      -> 
-      {
-        return `CRPair(ctx_p,Pair(codom,cons));
-      }
+      CCPair(ctx_p,cl) << reconPatternFunArgs(ctx,args,dom)
+      -> { return `CRPair(ctx_p,Pair(codom,cl)); }
 
-      //TO DO: add a rule for lists
+      List(name,args) &&
+      Sig(dom,codom) << assocList(ctx,name) &&
+      VariadicDomain(type) << dom &&
+      CCPair(ctx_p,cl) << reconPatternListArgs(ctx,args,name,type,codom)
+      -> { return `CRPair(ctx_p,Pair(codom,cl)); }
+
+      // it is not allow to have a list variable like a pattern
     }
     throw new RuntimeException("Type reconstruction failed to the pattern.");
   }
 
   //----------------------------------------
   // To reconstruct the types of arguments
-  // of a pattern function
+  // of a function in a pattern
   //----------------------------------------
-  private static ContextAndConstraints reconPatternArgsList(Context ctx, TomTermList pArgs, Domain dom) {
-    return reconPatternArgs(ctx,pArgs,dom,`CList());  
+  private static ContextAndConstraints reconPatternFunArgs(Context ctx, TomTermList pArgs, Domain dom) {
+    return reconPatternFArgs(ctx,pArgs,dom,`CList());  
   }
 
-  private static ContextAndConstraints reconPatternArgs(Context ctx, TomTermList pArgs, Domain dom, ConstraintList cons) {
+  private static ContextAndConstraints reconPatternFArgs(Context ctx, TomTermList pArgs, Domain dom, ConstraintList cons) {
     %match(pArgs,dom) {
       TTeList(), Domain() -> { return `CCPair(ctx,cons); }
       TTeList(pterm,pterms*), Domain(pDom,pTypes*) &&
@@ -632,31 +638,113 @@ public class TypeInference {
       Pair(type_p,cons_p) << res_p
       -> 
       {
-        return `reconPatternArgs(ctx_p,pterms*,pTypes,CList(Subtype(type_p,pDom),cons_p*,cons*));
+        return `reconPatternFArgs(ctx_p,pterms*,pTypes,CList(Subtype(type_p,pDom),cons_p*,cons*));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the function arguments of a pattern.");
   }
-  
+
+  //----------------------------------------
+  // To reconstruct the types of arguments
+  // of a list in a pattern
+  //----------------------------------------
+  private static ContextAndConstraints reconPatternListArgs(Context ctx, TomTermList pArgs, String name, TomType dom, TomType codom) {
+    return reconPatternLArgs(ctx,pArgs,name,dom,codom,`CList());  
+  }
+
+  private static ContextAndConstraints reconPatternLArgs(Context ctx, TomTermList pArgs, String name, TomType dom, TomType codom, ConstraintList cons) {
+    %match {
+      TTeList() << pArgs -> { return `CCPair(ctx,cons); }
+
+      TTeList(pterm,pterms*) << pArgs &&
+      ListVar(_,type) << pterm &&
+      CRPair(ctx_p,res_p) << reconPatternListVar(ctx,pterm) &&
+      Pair(_,cons_p) << res_p
+      -> { return `reconPatternLArgs(ctx_p,pterms*,name,dom,codom,CList(Equation(type,codom),cons_p*,cons*)); }
+        
+      TTeList(pterm,pterms*) << pArgs &&
+      !List(_,_) << pterm &&
+      CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
+      Pair(type_p,cons_p) << res_p
+      -> { return `reconPatternLArgs(ctx_p,pterms*,name,dom,codom,CList(Subtype(type_p,dom),cons_p*,cons*)); }
+
+      TTeList(pterm,pterms*) << pArgs &&
+      List(tName,_) << pterm
+      -> 
+      {
+        %match {
+          tName << String name &&
+          CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
+          Pair(_,cons_p) << res_p
+          // it is not necessary to test if the type of "term" and the time of the original list
+          // are equals because it is forbidden to declare 2 lists with the same constructor
+          // name so, it is not possible to have 2 lists with same name and different types
+          -> { return `reconPatternLArgs(ctx_p,pterms*,name,dom,codom,CList(cons_p*,cons*)); }
+        }
+        throw new RuntimeException("Ill formed list\"" + name + "\".");
+      }
+    }
+    throw new RuntimeException("Type reconstruction failed to the function arguments of a pattern.");
+  }
+
+  //--------------------------------------------------------------------
+  // To reconstruct the type of a list variable in a list of a pattern
+  //--------------------------------------------------------------------
+  private static ContextAndResult reconPatternListVar(Context ctx, TomTerm pattern) {
+    %match(pattern) {
+      ListVar(name,type)
+      -> 
+      { 
+        ConstraintList cl = `CList();
+        if (isAssocVar(ctx,`name)) {
+          TomType existent_type = assocVar(ctx,`name);
+          cl = `CList(Equation(type,existent_type));
+        }
+        else
+          ctx = `Context(Jugement(name,type),ctx*);
+        return `CRPair(ctx,Pair(type,cl)); 
+      }
+    }
+    throw new RuntimeException("Type reconstruction failed to the list variable in a list of a pattern.");
+  }
+
   //---------------------------------------------
   // To reconstruct the types of the tom terms
   //---------------------------------------------
   private static ReconResult reconTerm(Context ctx, TomTerm term) {
-    %match(term) {
-      Var(name,type)
+    //System.out.println("Term to reconstruct: " + term + "\n");
+    %match {
+      Var(name,type) << term || ListVar(name,type) << term
       -> 
       {
         TomType typeInContext = assocVar(ctx,`name);
         return `Pair(type,CList(Equation(typeInContext,type)));
       }
-      Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name)
+/*
+      ListVar(name,type) << term 
       -> 
       {
-        ConstraintList cl = `reconArgsList(ctx,args,dom);
+        TomType typeInContext = assocVar(ctx,`name);
+        return `Pair(type,CList(Equation(typeInContext,type)));
+      }
+*/
+      Fun(name,args) << term && Sig(dom,codom) << assocFun(ctx,name)
+      -> 
+      {
+        ConstraintList cl = `reconFunArgs(ctx,args,dom);
         return `Pair(codom,cl);
       }
 
-      //TO DO: add a rule for lists
+      List(name,args) << term &&
+      Sig(dom,codom) << assocList(ctx,name) &&
+      VariadicDomain(type) << dom
+      ->
+      {
+        ConstraintList cl = `reconListArgs(ctx,args,name,type);
+        return `Pair(codom,cl);
+      }
+
+      //ListVar(name,_) -> { throw new RuntimeException("List variable \"" + `name + "\" is not allowed in subject!"); }
     }
     throw new RuntimeException("Type reconstruction failed to a term of a rule.");
   }
@@ -665,18 +753,61 @@ public class TypeInference {
   // To reconstruct the types of arguments
   // of a function term
   //----------------------------------------
-  private static ConstraintList reconArgsList(Context ctx, TomTermList args, Domain dom) {
-    return reconArgs(ctx,args,dom,`CList());
+  private static ConstraintList reconFunArgs(Context ctx, TomTermList args, Domain dom) {
+    return reconFArgs(ctx,args,dom,`CList());
   }
 
-  private static ConstraintList reconArgs(Context ctx, TomTermList args, Domain dom, ConstraintList cons) {
+  private static ConstraintList reconFArgs(Context ctx, TomTermList args, Domain dom, ConstraintList cons) {
     %match(args,dom) {
       TTeList(), Domain() -> { return cons; }
       TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons_t) << reconTerm(ctx,term)
       -> 
       {
         ConstraintList cl = `CList(Subtype(tArg,tDom),cons*,cons_t*);
-        return `reconArgs(ctx,terms,types,cl);
+        return `reconFArgs(ctx,terms,types,cl);
+      }
+    }
+    throw new RuntimeException("Type reconstruction failed to a function term.");
+  }
+
+  //-------------------------------------------
+  // To reconstruct the types of arguments
+  // of a list term ("star" and "merge" rules
+  //-------------------------------------------
+  private static ConstraintList reconListArgs(Context ctx, TomTermList args, String name, TomType dom) {
+    return reconLArgs(ctx,args,name,dom,`CList());
+  }
+
+  private static ConstraintList reconLArgs(Context ctx, TomTermList args, String name, TomType dom, ConstraintList cons) {
+    %match {
+      TTeList() << args -> { return cons; }
+
+      TTeList(term,terms*) << args &&
+      !List(_,_) << term &&
+      Pair(tArg,cons_t) << reconTerm(ctx,term)
+      -> 
+      {
+        ConstraintList cl = `CList(Subtype(tArg,dom),cons*,cons_t*);
+        return `reconLArgs(ctx,terms,name,dom,cl);
+      }
+
+      TTeList(term,terms*) << args &&
+      List(tName,_) << term
+      -> 
+      {
+        %match {
+          tName << String name &&
+          Pair(_,cons_t) << reconTerm(ctx,term)
+          // it is not necessary to test if the type of "term" and the time of the original list
+          // are equals because it is forbidden to declare 2 lists with the same constructor
+          // name so, it is not possible to have 2 lists with same name and different types
+          ->
+          {
+            ConstraintList cl = `CList(cons*,cons_t*);
+            return `reconLArgs(ctx,terms,name,dom,cl);
+          }
+        }
+        throw new RuntimeException("Ill formed list\"" + name + "\".");
       }
     }
     throw new RuntimeException("Type reconstruction failed to a function term.");

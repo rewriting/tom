@@ -10,6 +10,7 @@ TomType = Type(name: String)
 TomTypeList = TTyList(TomType*)
 
 TomTerm = Var(name: String, type: TomType)
+        | ListVar(name: String, type: TomType) // like x*
         | Fun(name: String, args: TomTermList)
         | List(name: String, elems: TomTermList)
 

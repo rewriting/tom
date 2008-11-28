@@ -290,6 +290,14 @@ public class Eval {
         System.out.print(`n + ":");
         writeTomType(`t);
       }
+
+      ListVar(n,t)
+      ->
+      {
+        System.out.print(`n + "*:");
+        writeTomType(`t);
+      }
+
       Fun(n,args)
       ->
       {
@@ -298,6 +306,14 @@ public class Eval {
         System.out.print(")");
       }
  
+      List(n,args)
+      ->
+      {
+        System.out.print(`n + "(");
+        writeTTeList(`args);
+        System.out.print(")");
+      }
+
     }
   }
   private static void writeTomType(TomType t) {
