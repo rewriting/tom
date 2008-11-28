@@ -1,0 +1,6 @@
+#!/bin/sh
+orig=$PWD
+cd ../build/
+java lemu2.Main < $orig/$1
+cd $orig
+
