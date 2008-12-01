@@ -27,12 +27,6 @@ public class Demo {
   %include { sl.tom }
   %include { demo/term/_Term.tom }
 
-  %op Strategy Up(s:Strategy) {
-    make(s) { new Up(s) }
-  }
-
-
-
   public final static void main(String[] args) {
     Instruction p1 = `Declare(Var("x"),Plus(Cst(1),Cst(2)), Seq(
           Declare(Var("y"),Mult(Var("x"),Cst(10)),
@@ -75,7 +69,7 @@ public class Demo {
 
   %strategy RenameVar(n1:String,n2:String) extends Identity() {
     visit Expression {
-      Var(n) -> { if(`n==n1) return `Var(n2); }
+      Var(n) && n==n1 -> Var(n2)
     }
   }
 
