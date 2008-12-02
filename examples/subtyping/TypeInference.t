@@ -544,8 +544,8 @@ public class TypeInference {
       Pair(type_s,cons_s) << reconTerm(ctx,subject)
       -> 
       {
-        System.out.println("Pair: \n" + `pair + "\n");
-        System.out.println("Match: \n" + `match + "\n");
+        //System.out.println("Pair: \n" + `pair + "\n");
+        //System.out.println("Match: \n" + `match + "\n");
         ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_p,type_s),cons_p*,cons_s*,cl*);
         return `reconMatchingList(CRLPair(ctx,pairs),matchs,cl_s); 
       }
