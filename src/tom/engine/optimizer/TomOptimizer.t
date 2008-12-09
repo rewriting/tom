@@ -104,10 +104,9 @@ public class TomOptimizer extends TomGenericPlugin {
     super("TomOptimizer");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       /* Initialize strategies */
-
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
@@ -142,7 +141,7 @@ public class TomOptimizer extends TomGenericPlugin {
             new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
 
         e.printStackTrace();
-        return;
+         return;
       }
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX, 
@@ -155,7 +154,6 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("prettyPIL")) {
       System.out.println(factory.prettyPrintCompiledMatch(factory.remove((TomTerm)getWorkingTerm())));
     }
-
   }
 
   private final static String PREFIX = "tom_";

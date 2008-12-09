@@ -24,6 +24,7 @@
 
 package tom.gom.backend;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.objects.types.*;
 
@@ -45,10 +47,20 @@ public class BackendPlugin extends GomGenericPlugin {
 
   /** the list of compiled classes */
   private GomClassList classList;
+  private TemplateFactory templateFactory;
 
   /** The constructor*/
   public BackendPlugin() {
     super("GomBackend");
+    templateFactory = new SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /** the declared options string */
@@ -77,11 +89,11 @@ public class BackendPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomClassList) {
       classList = (GomClassList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+      setGomEnvironment((GomEnvironment)arg[1]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomBackend", "[GomClassList,GomStreamManager]",
+          new Object[]{"GomBackend", "[GomClassList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -90,10 +102,10 @@ public class BackendPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map informationTracker) {
     getLogger().log(Level.INFO, "Start compilation");
     // make sure the environment has the correct streamManager
-    environment().setStreamManager(getStreamManager());
+    getGomEnvironment().setStreamManager(getStreamManager());
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
@@ -110,17 +122,18 @@ public class BackendPlugin extends GomGenericPlugin {
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     Backend backend =
-      new Backend(TemplateFactory.getFactory(getOptionManager()),
+      new Backend(templateFactory.getFactory(getOptionManager()),
                   tomHomePath, strategiesMapping, multithread, nosharing,
-                  streamManager.getImportList());
+                  getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,
           GomMessage.generationIssue.getMessage(),
-          streamManager.getInputFileName());
+          getStreamManager().getInputFileName());
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -129,6 +142,6 @@ public class BackendPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{getStreamManager()};
+    return new Object[]{getGomEnvironment()};
   }
 }

@@ -27,12 +27,14 @@ package tom.gom.antlradapter;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.gom.types.*;
 
@@ -53,6 +55,14 @@ public class AdapterPlugin extends GomGenericPlugin {
   /** The constructor*/
   public AdapterPlugin() {
     super("GomAntlrAdapter");
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -77,12 +87,12 @@ public class AdapterPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-
     getLogger().log(Level.INFO, "Start adapter generation");
     // make sure the environment has the correct streamManager
-    environment().setStreamManager(getStreamManager());
+    //environment().setStreamManager(getStreamManager());
+    //do not understand why the streamManager would not be correct. keep previous comment
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
@@ -96,9 +106,10 @@ public class AdapterPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
     String grammarName = (String)getOptionManager().getOptionValue("grammar");
-    AdapterGenerator adapter = new AdapterGenerator(tomHomePath, streamManager,grammarName);
+    AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment(),grammarName);
     adapter.generate(moduleList,hookList);
     getLogger().log(Level.INFO, "Adapter generation succeeded");
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -107,6 +118,6 @@ public class AdapterPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{getStreamManager()};
+    return new Object[]{getGomEnvironment()};
   }
 }

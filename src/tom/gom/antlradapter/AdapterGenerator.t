@@ -47,22 +47,37 @@ public class AdapterGenerator {
 
   /* Attributes needed to call tom properly */
   private File tomHomePath;
-  private GomStreamManager streamManager;
+  // Here, we use a GomEnvironment in spite of the fact that only a GomStreamManager is needed
+  // But as other classes have a GomEnvironment, we keep the same model for the moment
+  // It is better to stay with one single model whatever class is used
+  private GomEnvironment gomEnvironment;
   private String grammarPkg = "";
   private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, GomStreamManager streamManager, String grammar) {
+  AdapterGenerator(File tomHomePath, GomEnvironment gomEnvironment, String grammar) {
     this.tomHomePath = tomHomePath;
-    this.streamManager = streamManager;
+    this.gomEnvironment = gomEnvironment;
     int lastDot = grammar.lastIndexOf('.');
     if (-1 != lastDot) {
       // the grammar is in a package different from the gom file
       this.grammarPkg = grammar.substring(0,lastDot);
       this.grammarName = grammar.substring(lastDot+1,grammar.length());
     } else {
-      this.grammarPkg = streamManager.getDefaultPackagePath();
+      this.grammarPkg = getStreamManager().getDefaultPackagePath();
       this.grammarName = grammar;
     }
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public GomStreamManager getStreamManager() {
+    return getGomEnvironment().getStreamManager();
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   %include { ../adt/gom/Gom.tom}
@@ -117,7 +132,7 @@ public class AdapterGenerator {
   }
 
   private String adapterPkg() {
-    String packagePrefix = streamManager.getDefaultPackagePath();
+    String packagePrefix = getStreamManager().getDefaultPackagePath();
     return ((packagePrefix=="")?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
@@ -327,7 +342,7 @@ public class @filename()@Adaptor {
   }
 
   protected String filename() {
-    String filename = (new File(streamManager.getOutputFileName())).getName();
+    String filename = (new File(getStreamManager().getOutputFileName())).getName();
     int dotidx = filename.indexOf('.');
     if(-1 != dotidx) {
       filename = filename.substring(0,dotidx);
@@ -337,21 +352,21 @@ public class @filename()@Adaptor {
 
   protected File tokenFileToGenerate() {
     File output = new File(
-        streamManager.getDestDir(),
+        getStreamManager().getDestDir(),
         fullFileName()+"TokenList.txt");
     return output;
   }
 
   protected File adaptorFileToGenerate() {
     File output = new File(
-        streamManager.getDestDir(),
+        getStreamManager().getDestDir(),
         fullFileName()+"Adaptor.java");
     return output;
   }
 
   protected File treeFileToGenerate() {
     File output = new File(
-        streamManager.getDestDir(),
+        getStreamManager().getDestDir(),
         fullFileName()+"Tree.java");
     return output;
   }

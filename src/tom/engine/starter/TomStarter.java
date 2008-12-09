@@ -26,6 +26,7 @@
 package tom.engine.starter;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
@@ -66,7 +67,7 @@ public class TomStarter extends TomGenericPlugin {
    * inherited from plugin interface
    * Create the VasStreamManager as input for next plugin
    */
-  public void run() {
+  public void run(Map informationTracker) {
     TomStreamManager localStreamManager = new TomStreamManager();
     localStreamManager.initializeFromOptionManager(getOptionManager());
     localStreamManager.prepareForInputFile(fileName);

@@ -88,7 +88,7 @@ public class TomVerifier extends TomGenericPlugin {
     super("TomVerifier");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     boolean camlsemantics = getOptionBooleanValue("camlSemantics");
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean optimize2 = getOptionBooleanValue("optimize2");
@@ -190,7 +190,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
   }
 
-  public static Collection collectMatch(TomTerm subject) {
+  public Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
       `TopDown(collectMatch(result)).visitLight(subject);

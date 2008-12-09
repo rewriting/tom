@@ -36,8 +36,8 @@ public class StratMappingTemplate extends MappingTemplateClass {
 
   %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(GomClass gomClass) {
-    super(gomClass);
+  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     %match(gomClass) {
       TomMapping[OperatorClasses=ops] -> {
         this.operatorClasses = `ops;
@@ -48,6 +48,10 @@ public class StratMappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
   
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);
   }
@@ -56,11 +60,11 @@ public class StratMappingTemplate extends MappingTemplateClass {
     %match(GomClassList operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
-            (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.IsOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.MakeOpTemplate(`op,getGomEnvironment())).generateMapping());
       }
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,

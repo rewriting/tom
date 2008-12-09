@@ -161,7 +161,7 @@ public class Compiler extends TomGenericPlugin {
     compilerEnvironment = new CompilerEnvironment();
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     try {

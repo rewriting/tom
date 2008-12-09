@@ -30,6 +30,7 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 import tom.library.adt.tnode.*;
+import tom.gom.tools.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.
@@ -90,7 +91,8 @@ public class PluginPlatform extends PluginPlatformBase {
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  public int run() {
+  //public int run() {
+  public int run(Map informationTracker) {
     try {
       boolean globalSuccess = true;
       int globalNbOfErrors = 0;
@@ -142,7 +144,7 @@ public class PluginPlatform extends PluginPlatformBase {
             globalNbOfWarnings += statusHandler.nbOfWarnings();
             break;
           }
-          plugin.run();
+          plugin.run(informationTracker);
           if(statusHandler.hasError()) {
             getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
                 new Object[]{plugin.getClass().getName(), initArgument});

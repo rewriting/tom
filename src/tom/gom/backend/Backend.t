@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
@@ -45,6 +46,7 @@ public class Backend {
   private boolean strategySupport = true;
   private boolean multithread = false;
   private boolean maximalsharing = true;
+  private GomEnvironment gomEnvironment;
 
   %include { ../adt/objects/Objects.tom }
   %include { sl.tom }
@@ -54,13 +56,19 @@ public class Backend {
           boolean strategySupport,
           boolean multithread,
           boolean nosharing,
-          List importList) {
+          List importList,
+          GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.strategySupport = strategySupport;
     this.multithread = multithread;
     this.maximalsharing = ! nosharing;
     this.importList = importList;
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public int generate(GomClassList classList) {
@@ -76,16 +84,16 @@ public class Backend {
         GomClass nGomClass =
           `gomclass.setClassName(smappingclass);
         TemplateClass stratMapping =
-          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
+          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
         generators.put(smappingclass,stratMapping);
 
         MappingTemplateClass mapping = null;
         if(strategySupport) {
           mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,stratMapping);
+            templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
         } else {
           mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,null);
+            templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
         }
         mappingSet.add(mapping);
         generators.put(`className,mapping);
@@ -130,7 +138,8 @@ public class Backend {
               importList,
               gomclass,
               (TemplateClass)generators.get(`mapping),
-              maximalsharing);
+              maximalsharing,
+              getGomEnvironment());
         generators.put(`className,abstracttype);
         return 1;
       }
@@ -141,7 +150,8 @@ public class Backend {
               importList,
               gomclass,
               (TemplateClass)generators.get(`mapping),
-              maximalsharing);
+              maximalsharing,
+              getGomEnvironment());
         generators.put(`className,sort);
         return 1;
       }
@@ -152,18 +162,19 @@ public class Backend {
             gomclass,
             (TemplateClass)generators.get(`mapping),
             multithread,
-            maximalsharing);
+            maximalsharing,
+            getGomEnvironment());
         generators.put(`className,operator);
 
         TemplateClass sOpStrat =
-          new tom.gom.backend.strategy.SOpTemplate(gomclass);
+          new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
         sOpStrat.generateFile();
 
         TemplateClass isOpStrat =
-          new tom.gom.backend.strategy.IsOpTemplate(gomclass);
+          new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
         isOpStrat.generateFile();
 
-        TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
+        TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
         makeOpStrat.generateFile();
        return 1;
       }
@@ -176,7 +187,8 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(`mapping));
+              (TemplateClass)generators.get(`mapping),
+              getGomEnvironment());
         generators.put(`className,operator);
         /* Generate files for cons and empty */
         int ret = 1;

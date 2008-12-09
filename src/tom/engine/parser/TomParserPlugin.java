@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.Iterator;
@@ -138,7 +139,7 @@ public class TomParserPlugin extends TomGenericPlugin {
    * inherited from plugin interface
    * Parse the input ans set the "Working" TomTerm to be compiled.
    */
-  public void run() {
+  public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();

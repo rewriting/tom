@@ -37,12 +37,16 @@ public class MakeOpTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   /**
    * The argument is an operator class, and this template generates the
    * assotiated MakeOp strategy
    */
-  public MakeOpTemplate(GomClass gomClass) {
-    super(gomClass);
+  public MakeOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
     %match(clsName) {
       ClassName(pkg,name) -> {
@@ -198,7 +202,7 @@ public class @className()@ implements tom.library.sl.Strategy {
         SlotField[Name=name,Domain=domain] -> {
           args.append((i==0?"":", "));
           args.append(fieldName(`name));
-          if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
             args.append(":Strategy");
           } else {
             args.append(":");
@@ -215,7 +219,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     StringBuilder out = new StringBuilder();
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           out.append("true, ");
         } else {
           out.append("false, ");
@@ -233,7 +237,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     int count = 0;
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           count++;
         }
       }
@@ -248,7 +252,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     String res="";
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "  private tom.library.sl.Strategy "+fieldName(`fieldName)+";\n";
         } else {
           res += "  private "+fullClassName(`domain)+" "+fieldName(`fieldName)+";\n";
@@ -262,7 +266,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     String res="";
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
         } else {
           // Skip builtin childs
@@ -285,7 +289,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     int index = 0;
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
           index++;
         }
@@ -299,7 +303,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     int index = 0;
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[      case @index@: @fieldName(`fieldName)@ = (tom.library.sl.Strategy) @argName@; return this;
 ]%;
           index++;
@@ -323,7 +327,7 @@ public class @className()@ implements tom.library.sl.Strategy {
           if (res.length()!=0) {
             res.append(", ");
           }
-          if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
             res.append("tom.library.sl.Strategy ");
             res.append(fieldName(`name));
           } else {
@@ -344,7 +348,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     String res = "";
     %match(SlotFieldList slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
 ]%;
@@ -361,7 +365,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     String res = "";
     %match(SlotFieldList slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
     (@fieldName(`fieldName)@).visit(@introspectorName@);
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
@@ -390,7 +394,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     int index = 0;
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=name,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "    this."+fieldName(`name)+" = (tom.library.sl.Strategy)"+array+"["+index+"];\n";
           index++;
         }
@@ -413,7 +417,7 @@ public class @className()@ implements tom.library.sl.Strategy {
           if (res.length()!=0) {
             res.append(", ");
           }
-          if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (!getGomEnvironment().isBuiltinClass(`domain)) {
             res.append(" ");
             if(withDollar) {
               res.append("$");

@@ -39,8 +39,8 @@ public class MappingTemplate extends MappingTemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping) {
-    super(gomClass);
+  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     %match(gomClass) {
       TomMapping[SortClasses=sortClasses,
                  OperatorClasses=ops] -> {
@@ -54,48 +54,52 @@ public class MappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(GomEnvironment.getInstance().isBuiltinSort("boolean")) {
+    if(getGomEnvironment().isBuiltinSort("boolean")) {
       writer.write(%[
 %include { boolean.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("String")) {
+    if(getGomEnvironment().isBuiltinSort("String")) {
       writer.write(%[
 %include { string.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("int")) {
+    if(getGomEnvironment().isBuiltinSort("int")) {
       writer.write(%[
 %include { int.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("char")) {
+    if(getGomEnvironment().isBuiltinSort("char")) {
       writer.write(%[
 %include { char.tom }
 ]%);
     }
-    if (GomEnvironment.getInstance().isBuiltinSort("double")) {
+    if (getGomEnvironment().isBuiltinSort("double")) {
       writer.write(%[
 %include { double.tom }
 ]%);
     }
-    if (GomEnvironment.getInstance().isBuiltinSort("long")) {
+    if (getGomEnvironment().isBuiltinSort("long")) {
       writer.write(%[
 %include { long.tom }
 ]%);
     }
-    if (GomEnvironment.getInstance().isBuiltinSort("float")) {
+    if (getGomEnvironment().isBuiltinSort("float")) {
       writer.write(%[
 %include { float.tom }
 ]%);
     }
-    if (GomEnvironment.getInstance().isBuiltinSort("ATerm")) {
+    if (getGomEnvironment().isBuiltinSort("ATerm")) {
       writer.write(%[
 %include { aterm.tom }
 ]%);
     }
-    if (GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
+    if (getGomEnvironment().isBuiltinSort("ATermList")) {
       writer.write(%[
 %include { aterm.tom }
 ]%);
@@ -141,11 +145,11 @@ public class MappingTemplate extends MappingTemplateClass {
   }
 
   protected File fileToGenerate() {
-    GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
+    GomStreamManager stream = getGomEnvironment().getStreamManager();
     File output = new File(stream.getDestDir(),fileName());
     // log the generated mapping file name
     try {
-      GomEnvironment.getInstance()
+      getGomEnvironment()
         .setLastGeneratedMapping(output.getCanonicalPath());
     } catch(Exception e) {
       e.printStackTrace();

@@ -25,10 +25,12 @@
 package tom.gom.starter;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 
 /**
@@ -44,6 +46,14 @@ public class Starter extends GomGenericPlugin {
   
   public Starter() {
     super("GomStarter");
+  }
+  
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -65,11 +75,11 @@ public class Starter extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the GomStreamManager as input for next plugin
    */
-  public void run() {
-    GomStreamManager newStreamManager = new GomStreamManager();
-    newStreamManager.initializeFromOptionManager(getOptionManager());
-    newStreamManager.prepareForInputFile(fileName);
-    argToRelay = new Object[]{ newStreamManager };
+  public void run(Map informationTracker) {
+    getStreamManager().initializeFromOptionManager(getOptionManager());
+    getStreamManager().prepareForInputFile(fileName);
+    argToRelay = new Object[]{ getGomEnvironment() };
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

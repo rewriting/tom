@@ -117,7 +117,7 @@ public class Expander extends TomGenericPlugin {
     super("Expander");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     setGenIntrospector(getOptionBooleanValue("genIntrospector"));

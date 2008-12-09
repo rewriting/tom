@@ -57,7 +57,17 @@ public class SymbolTable {
   protected String packageName = "";
 
   private Graph<String> sortDependences = new Graph<String>();
+ 
+  private GomEnvironment gomEnvironment;
   
+  public SymbolTable(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   public void fill(GomModuleList gml) {
     %match(gml) {
       ConcGomModule(_*,m,_*) -> { `fillFromGomModule(m); }
@@ -463,7 +473,7 @@ public class SymbolTable {
   }
 
   public boolean isExpressionType(String sort) {
-    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+    if(getGomEnvironment().isBuiltin(sort)) {
       return false;
     }
     try {
@@ -476,7 +486,7 @@ public class SymbolTable {
   }
 
   public boolean isPatternType(String sort) {
-    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+    if(getGomEnvironment().isBuiltin(sort)) {
       return false; 
     }
     try {
@@ -489,7 +499,7 @@ public class SymbolTable {
   }
 
   public boolean isAtomType(String sort) {
-    if(GomEnvironment.getInstance().isBuiltin(sort)) {
+    if(getGomEnvironment().isBuiltin(sort)) {
       return false;
     }
     try {
@@ -835,7 +845,7 @@ public class SymbolTable {
 
   private StringList getAccessibleAtoms
     (String sort, HashSet<String> visited)  {
-      if(GomEnvironment.getInstance().isBuiltin(sort) || visited.contains(sort)) {
+      if(getGomEnvironment().isBuiltin(sort) || visited.contains(sort)) {
         return `StringList();
       }
       visited.add(sort);
@@ -872,18 +882,18 @@ public class SymbolTable {
   private void computeSortDependences() {
     sortDependences.clear();
     for(String sort: getSorts()) {
-      if (GomEnvironment.getInstance().isBuiltin(sort)) continue;
+      if (getGomEnvironment().isBuiltin(sort)) continue;
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
-            if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
+            if(!getGomEnvironment().isBuiltin(`ty)) {
               sortDependences.addLink(sort,`ty);
             }
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
-              if(!GomEnvironment.getInstance().isBuiltin(`ty)) {
+              if(!getGomEnvironment().isBuiltin(`ty)) {
                 sortDependences.addLink(sort,`ty);
               }
             }
@@ -944,6 +954,5 @@ public class SymbolTable {
   public class InvalidConstructorException extends ConstructorException {
     public InvalidConstructorException(String n) { super(n); }
   }
-
 
 }

@@ -51,8 +51,9 @@ public class OperatorTemplate extends TemplateHookedClass {
                           GomClass gomClass,
                           TemplateClass mapping,
                           boolean multithread,
-                          boolean maximalsharing) {
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                          boolean maximalsharing,
+                          GomEnvironment gomEnvironment) {
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.multithread = multithread;
     this.maximalsharing = maximalsharing;
     %match(gomClass) {
@@ -69,6 +70,10 @@ public class OperatorTemplate extends TemplateHookedClass {
     }
     throw new GomRuntimeException(
         "Bad argument for OperatorTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -322,7 +327,7 @@ if(slots.isEmptyConcSlotField()) {
 SlotField head = slots.getHeadConcSlotField();
 slots = slots.getTailConcSlotField();
 
-if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
   writer.write(%[
       return new @className()@(@getMethod(head)@()]%);
 
@@ -334,7 +339,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 while(!slots.isEmptyConcSlotField()) {
   head = slots.getHeadConcSlotField();
   slots = slots.getTailConcSlotField();
-  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
    writer.write(%[,@getMethod(head)@()]%);
   } else {
   writer.write(%[,(@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
@@ -358,7 +363,7 @@ if(slots.isEmptyConcSlotField()) {
 } else {
 SlotField head = slots.getHeadConcSlotField();
 slots = slots.getTailConcSlotField();
-if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
   writer.write(%[
       return @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
       ]%);
@@ -372,7 +377,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 while(!slots.isEmptyConcSlotField()) {
   head = slots.getHeadConcSlotField();
   slots = slots.getTailConcSlotField();
-  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
     writer.write(%[
         && @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
         ]%);
@@ -513,7 +518,7 @@ writer.write(%[
         writer.write(fieldName(`fieldName));
         writer.write(" = ");
         writer.write(fieldName(`fieldName));
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
+        if (getGomEnvironment().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
           writer.write(".intern()");
         }
         writer.write(";\n");
@@ -680,7 +685,7 @@ writer.write(%[
     int index = 0;
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append("      case ");
           res.append(index);
           res.append(": return ");
@@ -713,7 +718,7 @@ writer.write(%[
             res.append(", ");
           }
           res.append(" ");
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(fieldName(`name));
         } else {
           res.append("new tom.library.sl.VisitableBuiltin<");
@@ -743,7 +748,7 @@ writer.write(%[
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
         if(index>0) { res.append(", "); }
-       if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
          res.append("(");
          res.append(fullClassName(`domain));
          res.append(") ");
@@ -784,7 +789,7 @@ private String generateMakeArgsFor(int argIndex, String argName) {
   %match(SlotFieldList slotList) {
     ConcSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
       if(index>0) { res.append(", "); }
-      if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+      if (getGomEnvironment().isBuiltinClass(`domain)) {
         res.append(getMethod(`slot));
         res.append("()");
       } else {
@@ -845,7 +850,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     }
     %match(SlotFieldList slotList) {
       ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (getGomEnvironment().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))
              || `domain.equals(`ClassName("","long"))
              || `domain.equals(`ClassName("","double"))
@@ -897,7 +902,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         writer.write("    "+accum+" += (");
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           writer.write(fieldName(`slotName)+".hashCode()");
         } else {
           if (`domain.equals(`ClassName("","int"))

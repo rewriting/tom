@@ -49,28 +49,60 @@ public class GraphExpander {
   %include { ../adt/symboltable/SymbolTable.tom}
 
   %typeterm GomStreamManager { implement { GomStreamManager } }
-  private static GomStreamManager streamManager;
-  private static SortDecl stringSortDecl;
-  private static SortDecl intSortDecl;
+  %typeterm GraphExpander { implement { GraphExpander } }
+  private SortDecl stringSortDecl;
+  private SortDecl intSortDecl;
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
   private boolean forTermgraph;
-  private static GomEnvironment envt = GomEnvironment.getInstance();
-  private static SymbolTable st = envt.getSymbolTable();
+  private GomEnvironment gomEnvironment;
   
-  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph) {
+  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph,GomEnvironment gomEnvironment) {
     this.forTermgraph = forTermgraph;
-    this.streamManager = streamManager;
-    stringSortDecl = envt.builtinSort("String");
-    intSortDecl = envt.builtinSort("int");
+    this.gomEnvironment = gomEnvironment;
+    stringSortDecl = gomEnvironment.builtinSort("String");
+    intSortDecl = gomEnvironment.builtinSort("int");
     //we mark them as used builtins:
     //String is used for labelling
-    envt.markUsedBuiltin("String");
+    gomEnvironment.markUsedBuiltin("String");
     //int is used for defining paths
-    envt.markUsedBuiltin("int");
+    gomEnvironment.markUsedBuiltin("int");
   }
 
-  private static String fullClassName(ClassName clsName) {
+  public GraphExpander(boolean forTermgraph,GomEnvironment gomEnvironment) {
+    this.forTermgraph = forTermgraph;
+    this.gomEnvironment = gomEnvironment;
+    stringSortDecl = gomEnvironment.builtinSort("String");
+    intSortDecl = gomEnvironment.builtinSort("int");
+    gomEnvironment.markUsedBuiltin("String");
+    gomEnvironment.markUsedBuiltin("int");
+  }
+
+  public GomStreamManager getStreamManager() {
+    return this.gomEnvironment.getStreamManager();
+  }
+
+  public SortDecl getStringSortDecl() {
+    return stringSortDecl;
+  }
+
+  public SortDecl getIntSortDecl() {
+    return intSortDecl;
+  }
+
+  public boolean getForTermgraph() {
+    return forTermgraph;
+  }
+  
+  public void setForTermgraph(boolean forTermgraph) {
+    this.forTermgraph = forTermgraph;
+  }
+  
+  public GomEnvironment getGomEnvironment() {
+    return gomEnvironment;
+  }
+
+  private String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
@@ -88,14 +120,14 @@ public class GraphExpander {
     ModuleList expandedList = `ConcModule();
     ArrayList hookList = new ArrayList();
     try {
-      expandedList = (ModuleList) `TopDown(ExpandSort(hookList)).visit(list);
+      expandedList = (ModuleList) `TopDown(ExpandSort(hookList,this)).visit(list);
     } catch(tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
     //add a global expand method in every ModuleDecl contained in the SortList
     try {
       `TopDown(
-          ExpandModule(streamManager,forTermgraph,hookList)).visit(expandedList);
+          ExpandModule(getStreamManager(),getForTermgraph(),hookList,this)).visit(expandedList);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
@@ -110,43 +142,42 @@ public class GraphExpander {
   %strategy ExpandModule(
       streamManager:GomStreamManager,
       forTermgraph:boolean,
-      hookList:ArrayList) extends Identity() {
+      hookList:ArrayList,
+      ge:GraphExpander) extends Identity() {
     visit Module {
       Module[
         MDecl=mdecl@ModuleDecl[ModuleName=moduleName],Sorts=sorts] -> {
-        hookList.add(expHooksModule(`moduleName,`sorts,`mdecl,streamManager.getPackagePath(`moduleName.getName()),forTermgraph));
+        hookList.add(ge.expHooksModule(`moduleName,`sorts,`mdecl,ge.getStreamManager().getPackagePath(`moduleName.getName()),ge.getForTermgraph()));
       }
     }
   }
 
-  %strategy ExpandSort(hookList:ArrayList) extends Identity() {
+  %strategy ExpandSort(hookList:ArrayList,ge:GraphExpander) extends Identity() {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],OperatorDecls=ops] -> {
          
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
         // for now, we need also to fill the symbol table 
-        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
-        st.addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
-        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
-        st.addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
-        OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(intSortDecl));
-        st.addVariadicConstructor("Path"+`sortname,"int",`sortname);
-        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
-        st.addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
-        hookList.add(pathHooks(pathOp,`sortdecl));
+        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()),Slot("term"+sortname,sortdecl))));
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
+        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(ge.getIntSortDecl()));
+        ge.getGomEnvironment().getSymbolTable().addVariadicConstructor("Path"+`sortname,"int",`sortname);
+        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        hookList.add(ge.pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
       }
     }
   }
 
-  private static HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
-
+  private HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
-
-    String prefixPkg = streamManager.getPackagePath(moduleName);
+    String prefixPkg = getStreamManager().getPackagePath(moduleName);
     String codeImport =%[
       import @((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
@@ -229,7 +260,7 @@ public class GraphExpander {
           BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
   }
 
-  private static HookDeclList expHooksModule(GomModuleName gomModuleName,
+  private HookDeclList expHooksModule(GomModuleName gomModuleName,
       SortList sorts,
       ModuleDecl mDecl,
       String packagePath,
@@ -516,14 +547,14 @@ public class GraphExpander {
    }
    ]%;
 
-    String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
+    String codeBlock = codeBlockCommon + codeStrategies + (getForTermgraph()?codeBlockTermGraph:codeBlockTermWithPointers);
 
     return `ConcHookDecl(
         ImportHookDecl(CutModule(mDecl),Code(codeImport)),
         BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
   }
 
-  private static String getStrategies(SortList sorts) {
+  private String getStrategies(SortList sorts) {
     StringBuilder strategiesCode = new StringBuilder();
     // for the CollectLabels strategy
     StringBuilder CollectLabelsCode = new StringBuilder();
@@ -766,5 +797,4 @@ public class GraphExpander {
     strategiesCode.append(NormalizeLabelCode);
     return strategiesCode.toString();
   }
-
 }

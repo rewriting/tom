@@ -25,6 +25,7 @@
 
 package tom.engine.typer;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class Typer extends TomGenericPlugin {
   /**
    * The run() method performs expansion for tom syntax, variables,...
    */
-  public void run() {
+  public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm typedTerm = null;

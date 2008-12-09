@@ -54,11 +54,19 @@ public class GraphRuleExpander {
   private String sortname;
   private String moduleName;
   private String pkgName;
-  private SymbolTable st;
+  private GomEnvironment gomEnvironment;
 
-  public GraphRuleExpander(ModuleList data) {
+  public GraphRuleExpander(ModuleList data, GomEnvironment gomEnvironment) {
     moduleList = data;
-    st = GomEnvironment.getInstance().getSymbolTable();
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   private static String fullClassName(ClassName clsName) {
@@ -512,7 +520,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
         //in the signature of the corresponding  sort
         //test if the variable is not at the root position 
         if(omega!=0) {
-          String sortvar = st.getChildSort(fathersymbol,omega);
+          String sortvar = getGomEnvironment().getSymbolTable().getChildSort(fathersymbol,omega);
           output.append("Var"+sortvar+"(\""+`name+"\")");
         } else {
           //it is necessary of the sort declared for the strategy

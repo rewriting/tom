@@ -46,11 +46,21 @@ public class Compiler {
 
   %include { ../adt/objects/Objects.tom}
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+  private GomEnvironment gomEnvironment;
+  private Map sortClassNameForSortDecl;
+
+  public Compiler(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+    sortClassNameForSortDecl = new HashMap(getGomEnvironment().builtinSortClassMap());
   }
 
-  Map sortClassNameForSortDecl = environment().builtinSortClassMap();
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
 
   public GomClassList compile(ModuleList moduleList, HookDeclList hookDecls) {
     GomClassList classList = `ConcGomClass();
@@ -209,7 +219,8 @@ public class Compiler {
         GomClassList allOperatorClasses = `ConcGomClass();
         GomClassList allSortClasses = `ConcGomClass();
         /* TODO improve this part : just for test */
-        ModuleDeclList modlist = environment().getModuleDependency(`moduleDecl);
+        // ModuleDeclList modlist = environment().getModuleDependency(`moduleDecl);
+        ModuleDeclList modlist = getGomEnvironment().getModuleDependency(`moduleDecl);
         while(!modlist.isEmptyConcModuleDecl()) {
           ModuleDecl imported = modlist.getHeadConcModuleDecl();
           modlist = modlist.getTailConcModuleDecl();
@@ -341,7 +352,7 @@ public class Compiler {
       Map classMap,
       ModuleDecl moduleDecl) {
     ClassNameList importedList = `ConcClassName();
-    ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
+    ModuleDeclList importedModulelist = getGomEnvironment().getModuleDependency(moduleDecl);
     while(!importedModulelist.isEmptyConcModuleDecl()) {
       ModuleDecl imported = importedModulelist.getHeadConcModuleDecl();
       importedModulelist = importedModulelist.getTailConcModuleDecl();

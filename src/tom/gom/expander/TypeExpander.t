@@ -40,14 +40,28 @@ public class TypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
-  private GomStreamManager streamManager;
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
+  private GomEnvironment gomEnvironment;
 
   public TypeExpander(GomStreamManager streamManager) {
-    this.streamManager = streamManager;
+    this.gomEnvironment.setStreamManager(streamManager);
   }
+  
+  public TypeExpander(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public TypeExpander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public GomStreamManager getStreamManager() {
+    return this.gomEnvironment.getStreamManager();
+  }
+  
   /**
     * We try here to get full sort definitions for each constructs
     * Once the structure is correctly build, we can attach the hooks
@@ -103,7 +117,7 @@ public class TypeExpander {
         declaredSorts = `ConcSortDecl(decl,declaredSorts*);
       }
       GomModuleName moduleName = module.getModuleName();
-      ModuleDecl mdecl = `ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()));
+      ModuleDecl mdecl = `ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()));
       sortsForModule.put(mdecl,declaredSorts);
     }
 
@@ -197,8 +211,8 @@ public class TypeExpander {
 
   private SortDecl declFromTypename(String typename,
                                     SortDeclList sortDeclList) {
-    if (environment().isBuiltinSort(typename)) {
-      return environment().builtinSort(typename);
+    if (getGomEnvironment().isBuiltinSort(typename)) {
+      return getGomEnvironment().builtinSort(typename);
     }
     %match(SortDeclList sortDeclList) {
       ConcSortDecl(_*,sortdecl@SortDecl[Name=name],_*) -> {
@@ -251,12 +265,12 @@ public class TypeExpander {
       GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(_,typeName),_*)),_*)),
             _*)) -> {
-        if (environment().isBuiltinSort(`typeName)) {
+        if (getGomEnvironment().isBuiltinSort(`typeName)) {
           getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
             new Object[]{(`typeName)});
-          result.add(environment().builtinSort(`typeName));
+          result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
         }
       }
     }
@@ -266,12 +280,12 @@ public class TypeExpander {
                 SortType[Type=GomType(_,typeName)],
             _*)),_*)),
             _*)) -> {
-        if (environment().isBuiltinSort(`typeName)) {
+        if (getGomEnvironment().isBuiltinSort(`typeName)) {
           getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
             new Object[]{(`typeName)});
-          result.add(environment().builtinSort(`typeName));
+          result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
         }
       }
     }
@@ -295,10 +309,10 @@ public class TypeExpander {
                     _*)),
                 _*)),
             _*)) -> {
-        if (environment().isBuiltinSort(`typeName)) {
-          result.add(environment().builtinSort(`typeName));
+        if (getGomEnvironment().isBuiltinSort(`typeName)) {
+          result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
         }
       }
     }
@@ -314,10 +328,10 @@ public class TypeExpander {
                     _*)],_*)),
                 _*)),
             _*)) -> {
-        if (environment().isBuiltinSort(`typeName)) {
-          result.add(environment().builtinSort(`typeName));
+        if (getGomEnvironment().isBuiltinSort(`typeName)) {
+          result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
         }
       }
     }
@@ -341,7 +355,7 @@ public class TypeExpander {
                   Import(modname@GomModuleName(name)),
                   _*)),
               _*) -> {
-            if (!environment().isBuiltin(`name)) {
+            if (!getGomEnvironment().isBuiltin(`name)) {
               imports.add(`modname);
             }
           }
@@ -387,14 +401,12 @@ public class TypeExpander {
         Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
-
-
           importsModuleDeclList = 
-            `ConcModuleDecl(ModuleDecl(importedModuleName,streamManager.getPackagePath(importedModuleName.getName())),
+            `ConcModuleDecl(ModuleDecl(importedModuleName,getStreamManager().getPackagePath(importedModuleName.getName())),
                 importsModuleDeclList*);
         }
-        environment().addModuleDependency(
-            `ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName())),importsModuleDeclList);
+        getGomEnvironment().addModuleDependency(
+            `ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName())),importsModuleDeclList);
       }
     }
   }

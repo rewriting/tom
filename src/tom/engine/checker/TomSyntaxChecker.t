@@ -29,6 +29,7 @@ package tom.engine.checker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -139,7 +140,7 @@ public class TomSyntaxChecker extends TomChecker {
     alreadyStudiedSymbols = new ArrayList();
   }
 
-  public void run() {       
+  public void run(Map informationTracker) {
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();

@@ -31,6 +31,7 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 import tom.platform.OptionManager;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
@@ -44,8 +45,9 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               List importList,
                               GomClass gomClass,
                               TemplateClass mapping,
-                              boolean maximalsharing){
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                              boolean maximalsharing,
+                              GomEnvironment gomEnvironment){
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
     %match(gomClass) {
       AbstractTypeClass[SortList=sortList] -> {
@@ -55,6 +57,10 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     }
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

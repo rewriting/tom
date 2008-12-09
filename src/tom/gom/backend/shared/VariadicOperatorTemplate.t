@@ -47,8 +47,9 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
                                   OptionManager manager,
                                   List importList, 	
                                   GomClass gomClass,
-                                  TemplateClass mapping) {
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                                  TemplateClass mapping,
+                                  GomEnvironment gomEnvironment) {
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     %match(gomClass) {
       VariadicOperatorClass[AbstractType=abstractType,
                             SortName=sortName,
@@ -63,6 +64,10 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     }
     throw new GomRuntimeException(
         "Wrong argument for VariadicOperatorTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

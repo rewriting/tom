@@ -97,7 +97,7 @@ public class TomBackend extends TomGenericPlugin {
   /**
    *
    */
-  public void run() {
+  public void run(Map informationTracker) {
     try {
       if(isActivated() == true) {
         TomAbstractGenerator generator = null;
@@ -143,7 +143,7 @@ public class TomBackend extends TomGenericPlugin {
           int line = -1;
           TomMessage.error(getLogger(),fileName,line,TomMessage.exceptionMessage, new Object[]{fileName});
           e.printStackTrace();
-          return;
+           return;
         }
         // set the generated File Name
         try {

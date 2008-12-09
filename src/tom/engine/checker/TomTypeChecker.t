@@ -28,6 +28,7 @@ package tom.engine.checker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -80,7 +81,7 @@ public class TomTypeChecker extends TomChecker {
     super("TomTypeChecker");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();

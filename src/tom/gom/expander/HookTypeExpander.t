@@ -34,6 +34,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 import tom.gom.expander.rule.RuleExpander;
 import tom.gom.expander.rule.GraphRuleExpander;
 
@@ -43,10 +44,20 @@ public class HookTypeExpander {
 
   private ModuleList moduleList;
   private ArrayList sortsWithGraphrules;
+  private GomEnvironment gomEnvironment;
 
-  public HookTypeExpander(ModuleList moduleList) {
+  public HookTypeExpander(ModuleList moduleList,GomEnvironment gomEnvironment) {
     this.moduleList = moduleList;
     sortsWithGraphrules = new ArrayList();
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -465,7 +476,7 @@ public class HookTypeExpander {
           getLogger().log(Level.SEVERE,
               "In graphrules hooks, the default strategies authorized are only Fail and Identity");
         }
-        GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
+        GraphRuleExpander rexpander = new GraphRuleExpander(moduleList,getGomEnvironment());
         if (sortsWithGraphrules.contains(sdecl)) {
           return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
         } else {

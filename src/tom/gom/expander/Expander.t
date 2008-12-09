@@ -49,16 +49,36 @@ import tom.gom.parser.GomLanguageParser;
 import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
-  private GomStreamManager streamManager;
-
   %include { ../adt/gom/Gom.tom}
 
+  private GomEnvironment gomEnvironment;
+  
   public Expander(GomStreamManager streamManager) {
-    this.streamManager = streamManager;
+    this.gomEnvironment.setStreamManager(streamManager);
   }
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+  public Expander(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public Expander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomStreamManager getStreamManager() {
+    return this.gomEnvironment.getStreamManager();
+  }
+
+  public void setStreamManager(GomStreamManager streamManager) {
+    this.gomEnvironment.setStreamManager(streamManager);
   }
 
   /*
@@ -80,7 +100,7 @@ public class Expander {
         GomModuleName moduleNameName = (GomModuleName)it.next();
         String moduleName = moduleNameName.getName();
 
-        if(!environment().isBuiltin(moduleName)) {
+        if(!getGomEnvironment().isBuiltin(moduleName)) {
           if(!alreadyParsedModule.contains(moduleNameName)) {
             GomModule importedModule = parse(moduleName);
             if(importedModule == null) {
@@ -91,7 +111,7 @@ public class Expander {
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
 	  }
         } else {
-          environment().markUsedBuiltin(moduleName); 
+          getGomEnvironment().markUsedBuiltin(moduleName); 
         }
       }
       moduleToAnalyse = newModuleToAnalyse;
@@ -143,7 +163,7 @@ public class Expander {
     }
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		GomLanguageParser parser = new GomLanguageParser(tokens,streamManager);
+		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
     try {
       Tree tree = (Tree)parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
@@ -165,7 +185,7 @@ public class Expander {
     if(f.exists()) {
       return f;
     }
-    return streamManager.findModuleFile(extendedModuleName);
+    return getStreamManager().findModuleFile(extendedModuleName);
   }
 
   /** the class logger instance*/

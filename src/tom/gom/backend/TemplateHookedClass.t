@@ -31,6 +31,7 @@ import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
+import tom.gom.tools.GomEnvironment;
 
 public abstract class TemplateHookedClass extends TemplateClass {
   protected HookList hooks;
@@ -43,8 +44,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
                              OptionManager manager,
                              File tomHomePath,
                              List importList,
-                             TemplateClass mapping) {
-    super(gomClass);
+                             TemplateClass mapping,
+                             GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     this.optionManager = manager;
     this.hooks = gomClass.getHooks();
     this.tomHomePath = tomHomePath;
@@ -53,6 +55,10 @@ public abstract class TemplateHookedClass extends TemplateClass {
   }
 
   %include { ../adt/objects/Objects.tom}
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
@@ -169,8 +175,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
         generate(gen);
         InputStream backupIn = System.in;
         System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
-        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-        //      int res = tom.engine.Tom.exec(params);
+        //
+        Map informationTracker = new HashMap();
+        informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+        //int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]),informationTracker);
+        //int res = tom.engine.Tom.exec(params);
         System.setIn(backupIn);
         if (res != 0 ) {
           getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});

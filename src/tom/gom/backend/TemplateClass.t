@@ -33,11 +33,15 @@ import java.io.*;
 public abstract class TemplateClass {
   protected GomClass gomClass;
   protected ClassName className;
+  protected GomEnvironment gomEnvironment;
 
-  public TemplateClass(GomClass gomClass) {
+  public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     this.gomClass = gomClass;
     this.className = gomClass.getClassName();
+    this.gomEnvironment = gomEnvironment;
   }
+
+  public abstract GomEnvironment getGomEnvironment();
 
   %include { ../adt/objects/Objects.tom}
 
@@ -157,7 +161,7 @@ public abstract class TemplateClass {
                                 String element, String buffer) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(%[@element@.toStringBuilder(@buffer@);
 ]%);
         } else {
@@ -275,7 +279,7 @@ public abstract class TemplateClass {
   public void toATermSlotField(StringBuilder res, SlotField slot) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(getMethod(slot));
           res.append("().toATerm()");
         } else {
@@ -322,7 +326,7 @@ public abstract class TemplateClass {
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           buffer.append(fullClassName(`domain));
           buffer.append(".fromTerm(");
           buffer.append(appl);
@@ -371,7 +375,7 @@ public abstract class TemplateClass {
   }
 
   protected File fileToGenerate() {
-    GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
+    GomStreamManager stream = getGomEnvironment().getStreamManager();
     File output = new File(stream.getDestDir(),fileName());
     return output;
   }

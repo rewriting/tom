@@ -162,7 +162,14 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public void run() {
+  public boolean isGomPlugin() {
+    return false;
+  }
+
+  /**
+   * From Plugin interface
+   */
+  public void run(Map informationTracker) {
     Plugin activatedPlugin = null;
     Iterator it = flagOwners.keySet().iterator();
     while(it.hasNext()) {
@@ -173,7 +180,7 @@ public class PluginFactory implements Plugin {
     }
     try{
       activatedPlugin.setArgs(argToRelay);
-      activatedPlugin.run();
+      activatedPlugin.run(informationTracker);
       argToRelay = activatedPlugin.getArgs();
     } catch(NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");

@@ -25,6 +25,7 @@
 package tom.gom.expander;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
@@ -32,6 +33,7 @@ import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 /**
  * The responsability of the Expander plugin is to
@@ -59,6 +61,14 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
     super("FreshExpander");
   }
 
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -66,11 +76,11 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomModuleList) {
       modules = (GomModuleList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+      setGomEnvironment((GomEnvironment)arg[1]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"FreshExpander", "[GomModuleList,GomStreamManager]",
+          new Object[]{"FreshExpander", "[GomModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -79,19 +89,19 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map informationTracker) {
     if(getOptionBooleanValue("fresh")) {
       boolean intermediate = 
         ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
       getLogger().log(Level.INFO, "Start expanding freshgom parts");
-      FreshExpander expander = new FreshExpander();
+      FreshExpander expander = new FreshExpander(getGomEnvironment());
       result = expander.expand(modules, 
           (String) getOptionManager().getOptionValue("package"));
       if(modules == null) {
         getLogger().log(Level.SEVERE, 
             GomMessage.expansionIssue.getMessage(),
-            streamManager.getInputFileName());
+            getStreamManager().getInputFileName());
       } else {
         java.io.StringWriter swriter = new java.io.StringWriter();
         try { tom.library.utils.Viewer.toTree(result,swriter); }
@@ -106,6 +116,7 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
     } else {
       result = modules;
     }
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -114,6 +125,6 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{result, getStreamManager()};
+    return new Object[]{result, getGomEnvironment()};
   }
 }

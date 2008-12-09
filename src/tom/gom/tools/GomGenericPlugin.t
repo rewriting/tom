@@ -26,6 +26,7 @@ package tom.gom.tools;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 
 import tom.platform.OptionManager;
 import tom.platform.Plugin;
@@ -40,6 +41,8 @@ public abstract class GomGenericPlugin implements Plugin {
 
   public GomGenericPlugin(String name) {
     pluginName = name;
+    //myadd
+    gomEnvironment = new GomEnvironment();
   }
 
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
@@ -54,7 +57,13 @@ public abstract class GomGenericPlugin implements Plugin {
   private OptionManager optionManager;
   
   /** The streamanager */
-  protected GomStreamManager streamManager;
+  //protected GomStreamManager streamManager;
+
+  /** myadd : GomEnvironment is not yet a Singleton class, therefore it has to be an attribute
+   * => need to modify environment() method => become abstract and defined in extended classes
+   * add get/set methods
+   */
+  protected GomEnvironment gomEnvironment;
 
   /**
    * An accessor method, so that the plugin can see its logger.
@@ -77,16 +86,33 @@ public abstract class GomGenericPlugin implements Plugin {
     return statusHandler;
   }
 
-  protected GomEnvironment environment() {
+  /*  
+    protected GomEnvironment environment() {
     return GomEnvironment.getInstance();
+  } */
+
+  // protected abstract GomEnvironment environment();
+
+  // myadd-begin
+  public abstract GomEnvironment getGomEnvironment();
+  public abstract void setGomEnvironment(GomEnvironment gomEnvironment);
+  /*protected GomEnvironment getGomEnvironment() {
+    return gomEnvironment;
   }
 
+  protected void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }*/
+  // myadd-end
+
   public GomStreamManager getStreamManager() {
-    return streamManager;
+    //return streamManager;
+    return gomEnvironment.getStreamManager();
   }
 
   public void setStreamManager(GomStreamManager m) {
-    streamManager = m;
+    //streamManager = m;
+    gomEnvironment.setStreamManager(m);
   }
 
   /**
@@ -100,7 +126,8 @@ public abstract class GomGenericPlugin implements Plugin {
    * The run() method is not implemented in GomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract void run();
+  //public abstract void run();
+  public abstract void run(Map informationTracker);
 
   /**
    * From Plugin interface

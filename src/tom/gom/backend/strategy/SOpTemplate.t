@@ -41,8 +41,8 @@ public class SOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public SOpTemplate(GomClass gomClass) {
-    super(gomClass);
+  public SOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
     %match(clsName) {
       ClassName(pkg,name) -> {
@@ -60,6 +60,10 @@ public class SOpTemplate extends TemplateClass {
     }
     throw new GomRuntimeException(
         "Wrong argument for SOpTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

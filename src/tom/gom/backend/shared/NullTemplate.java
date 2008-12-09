@@ -24,6 +24,7 @@
  **/
 
 package tom.gom.backend.shared;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.backend.TemplateClass;
 import java.io.*;
@@ -34,8 +35,12 @@ public class NullTemplate extends TemplateClass {
   /**
    * The NullTemplate class generates nothing.
    */
-  public NullTemplate(GomClass gomClass) {
-    super(gomClass);
+  public NullTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
