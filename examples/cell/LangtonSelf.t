@@ -31,11 +31,11 @@
  * 	LangtonSelf.java
  * 	par Emmanuel Hainry et Blaise Potard
  *
- * 	Fonction de transition de l'automate auto-réplicateur 
+ * 	Fonction de transition de l'automate auto-replicateur 
  * 	de Langton.
  * 	Remarque : les regles sont definies a rotation pres, 
  *	donc on commence par calculer un representant "canonique" 
- *	du membre gauche et seules les règles appliquées aux 
+ *	du membre gauche et seules les regles appliquÃ©es aux 
  *	representants canoniques sont ecrites.
  */
  
@@ -79,7 +79,7 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 	}
 
 	public int canonique(int N, int W, int C, int E, int S) {
-	// renvoie le représentant de NWCES modulo rotation 
+	// renvoie le representant de NWCES modulo rotation 
 	// tel que NESW soit minimal
 		int[] tableau = {N, E, S, W, N, E, S};
 		int min = 33333;// MAXINT=33333

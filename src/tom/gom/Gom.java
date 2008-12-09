@@ -68,7 +68,7 @@ public class Gom {
 
   public static void main(String[] args) {
     Map<String,String> informationTracker = new HashMap();
-    informationTracker.put(KEY_LAST_GEN_MAPPING,"");
+    informationTracker.put(KEY_LAST_GEN_MAPPING,null);
     int errno = exec(args,informationTracker);
     System.exit(errno);
   }

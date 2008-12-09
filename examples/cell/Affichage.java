@@ -69,10 +69,10 @@ class Affichage implements ActionListener {
         pb.setMinimum(reg.generationDebut);
         pb.setMaximum(reg.generationFin);
         e.dessine();
-        e.ChangeEtat(td.Suivant()); // passage à l'état suivant
+        e.ChangeEtat(td.Suivant()); // passage a l'etat suivant
 			if (reg.generationActuelle >= reg.generationFin)
           reg.lecture = false;
-        debut = reg.generationActuelle; // étonnant non ?
+        debut = reg.generationActuelle; // eonnant non ?
 		} else {
 			if (reg.generationDebut != debut && !reg.pause) {
             e.ChangeEtat(td.Generation(reg.generationDebut));

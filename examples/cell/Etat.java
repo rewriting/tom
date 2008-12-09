@@ -146,7 +146,7 @@ class Etat extends JPanel {
 		largeur = getSize().width;
 		hauteur = getSize().height;
 
-		/* pour obtenir un résultat (à peu près) harmonieux,
+		/* pour obtenir un resultat (a peu pres) harmonieux,
 		 * on essaie de garder des pixels de même dimensions horizontales
 		 * et verticales */
 

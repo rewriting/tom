@@ -31,6 +31,8 @@ package gom;
 import tom.gom.Gom;
 import tom.gom.tools.GomEnvironment;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.StringBufferInputStream;
@@ -48,13 +50,16 @@ class GomRunner {
       Huile = Clock()
       ]%;
 
+    GomEnvironment gomEnvironment = new GomEnvironment();
+    Map<String,String> informationTracker = new HashMap();
     String[] params = {"-X","/Users/tonio/workspace/jtom/src/dist/Gom.xml","-d", "gom/coin", "-"};
     InputStream tmpIn = System.in;
     System.setIn(new DataInputStream(new StringBufferInputStream(module)));
-    int res = Gom.exec(params);    
+    int res = Gom.exec(params,informationTracker);
     System.setIn(tmpIn);
     System.out.println("Generation: " + res);
 
-    System.out.println("Mapping: " + GomEnvironment.getInstance().getLastGeneratedMapping());
+    //System.out.println("Mapping: " + GomEnvironment.getInstance().getLastGeneratedMapping());
+    System.out.println("Mapping: " + gomEnvironment.getLastGeneratedMapping());
   }
 }

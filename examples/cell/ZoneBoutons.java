@@ -73,7 +73,7 @@ class ZoneBoutons extends JPanel
 	choixDelai.addChangeListener(new SliderListener());
 	p1.add(choixDelai, BorderLayout.CENTER);
 
-	String[] listeFigure = { "Données", "Couleurs"};
+	String[] listeFigure = { "Donnees", "Couleurs"};
 	choixFigure = new JComboBox(listeFigure);
 	choixFigure.addActionListener(new StyleListener(choixFigure));
 	p1.add(choixFigure, BorderLayout.SOUTH);
@@ -114,7 +114,7 @@ class ZoneBoutons extends JPanel
 	p2.add(progression, gbc);
 
 	gbc.gridwidth=1;
-	genDebL = new JLabel("Début");
+	genDebL = new JLabel("Debut");
 	p2.add(genDebL, gbc);
 
 	gbc.gridwidth=GridBagConstraints.REMAINDER;
@@ -189,11 +189,11 @@ class ZoneBoutons extends JPanel
           //int fin = (new Integer(genFin.getText())).intValue();
           int debut = ((Integer) genDeb.getValue()).intValue();
           int fin = ((Integer) genFin.getValue()).intValue();
-          //System.out.println("[ZoneBoutons]\tLecture de " + debut + " à " + fin);
+          //System.out.println("[ZoneBoutons]\tLecture de " + debut + " a " + fin);
 	      if ( debut > fin || debut < 1)
 	 	  {
 		      JOptionPane erreur = new JOptionPane();
-		      JOptionPane.showMessageDialog(null, "La génération de début ou de fin est erronée.", "Erreur", JOptionPane.ERROR_MESSAGE);
+		      JOptionPane.showMessageDialog(null, "La generation de debut ou de fin est erronee.", "Erreur", JOptionPane.ERROR_MESSAGE);
 		  }
 	      else
 	      {
@@ -240,4 +240,3 @@ class ZoneBoutons extends JPanel
     }
     
 }
-

@@ -79,7 +79,7 @@ class Matrice
 	void rapetisse() {
 		int i;
 		boolean b = true;
-		// La première colonne est-elle vide ?
+		// La premiere colonne est-elle vide ?
 		for (i=0; i<nblignes; i++) {
 			b = b && (matrice[i][0]==0);
 		}
@@ -92,10 +92,10 @@ class Matrice
 				}
 			}
 			matrice = m2;
-			//System.out.println("[Matrice]\trapetisse première colonne");
+			//System.out.println("[Matrice]\trapetisse premiere colonne");
 		}
 
-		//la dernière colonne est-elle vide ?
+		//la derniere colonne est-elle vide ?
 		b = true;
 		for (i=0; i<nblignes; i++) {
 			b = b && (matrice[i][nbcols-1]==0);
@@ -109,10 +109,10 @@ class Matrice
 				}
 			}
 			matrice = m2;
-			//System.out.println("[Matrice]\trapetisse dernière colonne");
+			//System.out.println("[Matrice]\trapetisse derniere colonne");
 		}
 
-		//la première ligne est-elle vide ?
+		//la premiere ligne est-elle vide ?
 		b = true;
 		for (i=0; i<nbcols; i++) {
 			b = b && (matrice[0][i] == 0);
@@ -123,10 +123,10 @@ class Matrice
 				m2[i] = matrice[i+1];
 			}
 			matrice = m2;
-			//System.out.println("[Matrice]\trapetisse première ligne");
+			//System.out.println("[Matrice]\trapetisse premiere ligne");
 		}
 
-		//la dernière ligne est-elle vide ?
+		//la derniere ligne est-elle vide ?
 		b = true;
 		for (i=0; i<nbcols; i++) {
 			b = b && (matrice[nblignes-1][i] == 0);
@@ -137,7 +137,7 @@ class Matrice
 				m2[i] = matrice[i];
 			}
 			matrice = m2;
-			//System.out.println("[Matrice]\trapetisse dernière ligne");
+			//System.out.println("[Matrice]\trapetisse derniere ligne");
 		}
 	}
 }

@@ -587,7 +587,7 @@ gomsignature [List list] throws TomException
     int res = 1;
     //res = tom.gom.Gom.exec(params);
     Map informationTracker = new HashMap();
-    informationTracker.put("lastGeneratedMapping","");
+    informationTracker.put("lastGeneratedMapping",null);
     res = tom.gom.Gom.exec(params,informationTracker);
     System.setIn(backupIn);
     if (res != 0 ) {
