@@ -73,7 +73,8 @@ public class AdapterPlugin extends GomGenericPlugin {
     if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
       moduleList = (ModuleList) arg[0];
       hookList = (HookDeclList) arg[1];
-      setStreamManager((GomStreamManager) arg[2]);
+      //setStreamManager((GomStreamManager) arg[2]);
+      setGomEnvironment((GomEnvironment) arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
