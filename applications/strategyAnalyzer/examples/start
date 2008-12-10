@@ -1,0 +1,3 @@
+let R1 = { a() -> b(), f(x) -> x } in 
+let R2 = { b() -> c() } in 
+R1;(R1<+R2);R1

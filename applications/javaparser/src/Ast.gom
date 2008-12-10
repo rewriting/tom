@@ -267,7 +267,7 @@ Expression =
  | BinaryMinus( lhs:Expression, rhs:Expression )
  | BinaryMult( lhs:Expression, rhs:Expression )
  | BinaryDiv( lhs:Expression, rhs:Expression )
- | BinaryModulo lhs:Expression, rhs:Expression )
+ | BinaryModulo( lhs:Expression, rhs:Expression )
 
 AssociativeOperation:make(op, ops) {
   %match(ExpressionList ops) {
