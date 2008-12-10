@@ -50,6 +50,8 @@ import tom.engine.TomMessage;
 import tom.engine.exception.*;
 import tom.engine.tools.SymbolTable;
 
+/* import tom.gom.tools.GomEnvironment; */
+
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -694,7 +696,10 @@ public HostParser(ParserSharedInputState state) {
 		params[i] = (String)preparams[i];
 		}
 		int res = 1;
-		res = tom.gom.Gom.exec(params);
+		//res = tom.gom.Gom.exec(params);
+		Map informationTracker = new HashMap();
+		informationTracker.put("lastGeneratedMapping",null);
+		res = tom.gom.Gom.exec(params,informationTracker);
 		System.setIn(backupIn);
 		if (res != 0 ) {
 		getLogger().log(
@@ -704,7 +709,8 @@ public HostParser(ParserSharedInputState state) {
 		currentFile, initialGomLine));
 		return;
 		}
-		String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
+		//String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
+		String generatedMapping = (String)informationTracker.get("lastGeneratedMapping");
 		
 		// Simulate the inclusion of generated Tom file
 		/*

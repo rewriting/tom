@@ -94,7 +94,7 @@ public class Viewer {
   }
 
   //TODO: adapt to traverse any data-structure using newsl
-  static class Print extends AbstractStrategy {
+  static private class Print extends AbstractStrategy {
 
     protected Writer w;
 
@@ -199,44 +199,44 @@ public class Viewer {
 
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch1NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ; aterm.ATermList  tomMatch1NameNumber_freshVar_2= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;if ( tomMatch1NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tomMatch1NameNumber_freshVar_4= tomMatch1NameNumber_freshVar_1.getName() ;
+      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch620NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ; aterm.ATermList  tomMatch620NameNumber_freshVar_2= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;if ( tomMatch620NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tomMatch620NameNumber_freshVar_4= tomMatch620NameNumber_freshVar_1.getName() ;
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
-            w.write("─"+tomMatch1NameNumber_freshVar_4);
+            w.write("─"+tomMatch620NameNumber_freshVar_4);
             return;
           } else if (a.getArity() == 1) {  // only one child
-            w.write("─" + tomMatch1NameNumber_freshVar_4+ "──");
-            deep = deep + tomMatch1NameNumber_freshVar_4.length() + 3;
-            ATermToTree(tomMatch1NameNumber_freshVar_2.getFirst(),w,context,deep);
+            w.write("─" + tomMatch620NameNumber_freshVar_4+ "──");
+            deep = deep + tomMatch620NameNumber_freshVar_4.length() + 3;
+            ATermToTree(tomMatch620NameNumber_freshVar_2.getFirst(),w,context,deep);
             return;
           } else {
-            int ndeep = deep + tomMatch1NameNumber_freshVar_4.length() + 3;
-            {{if ( tomMatch1NameNumber_freshVar_2 instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tomMatch1NameNumber_freshVar_2) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tomMatch1NameNumber_freshVar_2).isEmpty() )) { aterm.ATermList  tomMatch2NameNumber_freshVar_2= (( aterm.ATermList )tomMatch1NameNumber_freshVar_2).getNext() ; aterm.ATermList  tomMatch2NameNumber_end_5=tomMatch2NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch2NameNumber_freshVar_2,tomMatch2NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch2NameNumber_end_5.isEmpty() )) {if (  tomMatch2NameNumber_end_5.getNext() .isEmpty() ) {
+            int ndeep = deep + tomMatch620NameNumber_freshVar_4.length() + 3;
+            {{if ( tomMatch620NameNumber_freshVar_2 instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tomMatch620NameNumber_freshVar_2) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tomMatch620NameNumber_freshVar_2).isEmpty() )) { aterm.ATermList  tomMatch621NameNumber_freshVar_2= (( aterm.ATermList )tomMatch620NameNumber_freshVar_2).getNext() ; aterm.ATermList  tomMatch621NameNumber_end_5=tomMatch621NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch621NameNumber_freshVar_2,tomMatch621NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch621NameNumber_end_5.isEmpty() )) {if (  tomMatch621NameNumber_end_5.getNext() .isEmpty() ) {
 
                 // first child
-                w.write("─" + tomMatch1NameNumber_freshVar_4+ "─┬");
+                w.write("─" + tomMatch620NameNumber_freshVar_4+ "─┬");
                 context.push(ndeep-1); 
-                ATermToTree( (( aterm.ATermList )tomMatch1NameNumber_freshVar_2).getFirst() ,w,context,ndeep);
+                ATermToTree( (( aterm.ATermList )tomMatch620NameNumber_freshVar_2).getFirst() ,w,context,ndeep);
                 context.pop();
                 w.write('\n');
 
                 // 2 ... n-1
-                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch3NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch3NameNumber_end_4.isEmpty() )) {
+                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch622NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch622NameNumber_end_4.isEmpty() )) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch3NameNumber_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch622NameNumber_end_4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch3NameNumber_end_4.isEmpty() ) {tomMatch3NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch3NameNumber_end_4= tomMatch3NameNumber_end_4.getNext() ;}}} while(!( tomMatch3NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
+                  }if ( tomMatch622NameNumber_end_4.isEmpty() ) {tomMatch622NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch622NameNumber_end_4= tomMatch622NameNumber_end_4.getNext() ;}}} while(!( tomMatch622NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch2NameNumber_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch2NameNumber_end_5.isEmpty() ) {tomMatch2NameNumber_end_5=tomMatch2NameNumber_freshVar_2;} else {tomMatch2NameNumber_end_5= tomMatch2NameNumber_end_5.getNext() ;}}} while(!( tomMatch2NameNumber_end_5==tomMatch2NameNumber_freshVar_2 ));}}}}}
+                ATermToTree( tomMatch621NameNumber_end_5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch621NameNumber_end_5.isEmpty() ) {tomMatch621NameNumber_end_5=tomMatch621NameNumber_freshVar_2;} else {tomMatch621NameNumber_end_5= tomMatch621NameNumber_end_5.getNext() ;}}} while(!( tomMatch621NameNumber_end_5==tomMatch621NameNumber_freshVar_2 ));}}}}}
 
           }
         }}}}}
@@ -268,7 +268,7 @@ public class Viewer {
 
 
 
-  static class PrintStrategy extends AbstractStrategy {
+  static private class PrintStrategy extends AbstractStrategy {
 
     protected Writer w;
 
@@ -322,4 +322,3 @@ public class Viewer {
   }
 
 }
-

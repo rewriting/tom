@@ -25,6 +25,8 @@
  **/
 package tom.engine.compiler.propagator;
 
+import tom.engine.compiler.propagator.*;  
+
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -39,7 +41,7 @@ import tom.engine.TomBase;
 import tom.engine.compiler.Compiler;
 
 /**
- * Syntactic propagator
+ * Array propagator
  */
 public class ArrayPropagator implements IBasePropagator {
 
@@ -48,11 +50,43 @@ public class ArrayPropagator implements IBasePropagator {
 
 //--------------------------------------------------------
 
+  
+
+
+
+
+
+
+
+
+
+  private Compiler compiler;
+  private ConstraintPropagator constraintPropagator; // only present for compatibility 
+  private GeneralPurposePropagator generalPurposePropagator;  
+ 
+  public ArrayPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator; // only present for compatibility 
+    this.generalPurposePropagator = new GeneralPurposePropagator(this.compiler, this.constraintPropagator);
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public GeneralPurposePropagator getGeneralPurposePropagator() {
+    return this.generalPurposePropagator;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)tom_make_TopDown(tom_make_ArrayPatternMatching()).visitLight(constraint);		
+    return (Constraint)tom_make_TopDown(tom_make_ArrayPatternMatching(this)).visitLight(constraint);		
   }	
 
-  public static class ArrayPatternMatching extends tom.library.sl.BasicStrategy {public ArrayPatternMatching() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch166NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;if ( (tomMatch166NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch166NameNumber_freshVar_4= tomMatch166NameNumber_freshVar_1.getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch166NameNumber_freshVar_5= tomMatch166NameNumber_freshVar_1.getSlots() ;if ( ((tomMatch166NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch166NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch166NameNumber_freshVar_4.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch166NameNumber_freshVar_10= tomMatch166NameNumber_freshVar_4.getHeadconcTomName() ;if ( (tomMatch166NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if (  tomMatch166NameNumber_freshVar_4.getTailconcTomName() .isEmptyconcTomName() ) {boolean tomMatch166NameNumber_freshVar_12= false ;if ( ((tomMatch166NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch166NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( tomMatch166NameNumber_freshVar_5.isEmptyconcSlot() ) {tomMatch166NameNumber_freshVar_12= true ;}}if ((tomMatch166NameNumber_freshVar_12 ==  false )) {
+  public static class ArrayPatternMatching extends tom.library.sl.BasicStrategy {private  ArrayPropagator  ap;public ArrayPatternMatching( ArrayPropagator  ap) {super(( new tom.library.sl.Identity() ));this.ap=ap;}public  ArrayPropagator  getap() {return ap;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch166NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;if ( (tomMatch166NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch166NameNumber_freshVar_4= tomMatch166NameNumber_freshVar_1.getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch166NameNumber_freshVar_5= tomMatch166NameNumber_freshVar_1.getSlots() ;if ( ((tomMatch166NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch166NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch166NameNumber_freshVar_4.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch166NameNumber_freshVar_10= tomMatch166NameNumber_freshVar_4.getHeadconcTomName() ;if ( (tomMatch166NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if (  tomMatch166NameNumber_freshVar_4.getTailconcTomName() .isEmptyconcTomName() ) {boolean tomMatch166NameNumber_freshVar_12= false ;if ( ((tomMatch166NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch166NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( tomMatch166NameNumber_freshVar_5.isEmptyconcSlot() ) {tomMatch166NameNumber_freshVar_12= true ;}}if ((tomMatch166NameNumber_freshVar_12 ==  false )) {
 
 
 
@@ -65,9 +99,10 @@ public class ArrayPropagator implements IBasePropagator {
 
 
         // if this is not an array, nothing to do
-        if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
+        // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
+        if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
             getSymbolFromName( tomMatch166NameNumber_freshVar_10.getString() ))) { return (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg); }
-        Constraint detachedConstr = GeneralPurposePropagator.detachSublists((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg));
+        Constraint detachedConstr = ap.getGeneralPurposePropagator().detachSublists((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg));
         // if something changed
         if (detachedConstr != (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)) { return detachedConstr; }
       }}}}}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch166NameNumber_freshVar_14= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ; tom.engine.adt.tomterm.types.TomTerm  tomMatch166NameNumber_freshVar_15= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getSubject() ;if ( (tomMatch166NameNumber_freshVar_14 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch166NameNumber_freshVar_18= tomMatch166NameNumber_freshVar_14.getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch166NameNumber_freshVar_19= tomMatch166NameNumber_freshVar_14.getSlots() ;if ( ((tomMatch166NameNumber_freshVar_18 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch166NameNumber_freshVar_18 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch166NameNumber_freshVar_18.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch166NameNumber_freshVar_26= tomMatch166NameNumber_freshVar_18.getHeadconcTomName() ;if ( (tomMatch166NameNumber_freshVar_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { tom.engine.adt.tomname.types.TomName  tom_name= tomMatch166NameNumber_freshVar_18.getHeadconcTomName() ;boolean tomMatch166NameNumber_freshVar_29= false ;if ( (tomMatch166NameNumber_freshVar_15 instanceof tom.engine.adt.tomterm.types.tomterm.SymbolOf) ) {if ( (tomMatch166NameNumber_freshVar_15==tomMatch166NameNumber_freshVar_15) ) {tomMatch166NameNumber_freshVar_29= true ;}}if ((tomMatch166NameNumber_freshVar_29 ==  false )) {
@@ -82,15 +117,16 @@ public class ArrayPropagator implements IBasePropagator {
 
       
             // if this is not an array, nothing to do
-            if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
+            // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
+            if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
                 getSymbolFromName( tomMatch166NameNumber_freshVar_26.getString() ))) {return (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg);}        
             // declare fresh variable            
-            TomType termType = Compiler.getTermTypeFromTerm(tomMatch166NameNumber_freshVar_15);            
-            TomTerm freshVariable = Compiler.getFreshVariableStar(termType);
+            TomType termType = ap.getCompiler().getTermTypeFromTerm(tomMatch166NameNumber_freshVar_15);            
+            TomTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
             Constraint freshVarDeclaration =  tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(freshVariable, tomMatch166NameNumber_freshVar_15) ;
             
             // declare fresh index = 0            
-            TomTerm freshIndex = getFreshIndex();				
+            TomTerm freshIndex = ap.getFreshIndex();				
             Constraint freshIndexDeclaration =  tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(freshIndex,  tom.engine.adt.tomterm.types.tomterm.TargetLanguageToTomTerm.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("0") ) ) ;
             Constraint l =  tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ;
     match:  {{if ( (tomMatch166NameNumber_freshVar_19 instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( (( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19).isEmptyconcSlot() ) {
@@ -98,7 +134,7 @@ public class ArrayPropagator implements IBasePropagator {
                 l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.EmptyArrayConstraint.make(tom_name, freshVariable, freshIndex) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) );
               }}}}{if ( (tomMatch166NameNumber_freshVar_19 instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch167NameNumber_end_6=(( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19);do {{if (!( tomMatch167NameNumber_end_6.isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch167NameNumber_freshVar_10= tomMatch167NameNumber_end_6.getHeadconcSlot() ;if ( (tomMatch167NameNumber_freshVar_10 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch167NameNumber_freshVar_9= tomMatch167NameNumber_freshVar_10.getAppl() ; tom.engine.adt.tomslot.types.SlotList  tomMatch167NameNumber_freshVar_7= tomMatch167NameNumber_end_6.getTailconcSlot() ;
 
-                TomTerm newFreshIndex = getFreshIndex();                
+                TomTerm newFreshIndex = ap.getFreshIndex();                
           mAppl:{{if ( (tomMatch167NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch168NameNumber_freshVar_2= false ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch167NameNumber_freshVar_9) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {tomMatch168NameNumber_freshVar_2= true ;} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch167NameNumber_freshVar_9) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch168NameNumber_freshVar_2= true ;}}if ((tomMatch168NameNumber_freshVar_2 ==  true )) {
 
 
@@ -109,8 +145,8 @@ public class ArrayPropagator implements IBasePropagator {
                       l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch167NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetSliceArray.make(tom_name, freshVariable, freshIndex,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetSize.make(tom_name, freshVariable) ) ) ) ) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) )
 ;
                     } else {
-                      TomTerm beginIndex = getBeginIndex();
-                      TomTerm endIndex = getEndIndex();
+                      TomTerm beginIndex = ap.getBeginIndex();
+                      TomTerm endIndex = ap.getEndIndex();
                       l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(beginIndex, freshIndex) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(endIndex, freshIndex) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch167NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.VariableHeadArray.make(tom_name, freshVariable, beginIndex, endIndex) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshIndex, endIndex) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) )
 
 
@@ -120,7 +156,9 @@ public class ArrayPropagator implements IBasePropagator {
                     break mAppl;
                   }}}{if ( (tomMatch167NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
                     
-                    l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.Negate.make( tom.engine.adt.tomconstraint.types.constraint.EmptyArrayConstraint.make(tom_name, freshVariable, freshIndex) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch167NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetElement.make(tom_name, Compiler.getTermTypeFromTerm(tomMatch167NameNumber_freshVar_9), freshVariable, freshIndex) ) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshIndex,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.AddOne.make(freshIndex) ) ) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) )
+                    l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.Negate.make( tom.engine.adt.tomconstraint.types.constraint.EmptyArrayConstraint.make(tom_name, freshVariable, freshIndex) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(/**  tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch167NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetElement.make(tom_name, getCompiler().getTermTypeFromTerm(tomMatch167NameNumber_freshVar_9), freshVariable, freshIndex) ) ) .*/
+                         tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch167NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetElement.make(tom_name, ap.getCompiler().getTermTypeFromTerm(tomMatch167NameNumber_freshVar_9), freshVariable, freshIndex) ) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshIndex,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.AddOne.make(freshIndex) ) ) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) )
+
 
 
 ;
@@ -134,22 +172,22 @@ public class ArrayPropagator implements IBasePropagator {
               }}if ( tomMatch167NameNumber_end_6.isEmptyconcSlot() ) {tomMatch167NameNumber_end_6=(( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19);} else {tomMatch167NameNumber_end_6= tomMatch167NameNumber_end_6.getTailconcSlot() ;}}} while(!( (tomMatch167NameNumber_end_6==(( tom.engine.adt.tomslot.types.SlotList )tomMatch166NameNumber_freshVar_19)) ));}}}}
 // end match                        
             // add head equality condition + fresh var declaration + detached constraints
-            l =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshVarDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make( tom.engine.adt.tomterm.types.tomterm.RecordAppl.make( tomMatch166NameNumber_freshVar_14.getOption() , tomMatch166NameNumber_freshVar_18,  tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ,  tom.engine.adt.tomterm.types.tomterm.SymbolOf.make(freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshIndexDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(ConstraintPropagator.performDetach((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)),tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ) ) ) 
+            l =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshVarDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make( tom.engine.adt.tomterm.types.tomterm.RecordAppl.make( tomMatch166NameNumber_freshVar_14.getOption() , tomMatch166NameNumber_freshVar_18,  tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ,  tom.engine.adt.tomterm.types.tomterm.SymbolOf.make(freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshIndexDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(ap.getConstraintPropagator().performDetach((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)),tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ) ) ) 
 ;
             return l;
-        }}}}}}}}}return _visit_Constraint(tom__arg,introspector); }public  tom.engine.adt.tomconstraint.types.Constraint  _visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {return visit_Constraint((( tom.engine.adt.tomconstraint.types.Constraint )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ArrayPatternMatching() { return new ArrayPatternMatching();}
+        }}}}}}}}}return _visit_Constraint(tom__arg,introspector); }public  tom.engine.adt.tomconstraint.types.Constraint  _visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {return visit_Constraint((( tom.engine.adt.tomconstraint.types.Constraint )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ArrayPatternMatching( ArrayPropagator  t0) { return new ArrayPatternMatching(t0);}
 
 // end %strategy
 
-  private static TomTerm getBeginIndex() {
-    return Compiler.getBeginVariableStar(Compiler.getIntType());
+  private TomTerm getBeginIndex() {
+    return getCompiler().getBeginVariableStar(getCompiler().getIntType());
   }
 
-  private static TomTerm getEndIndex() {
-    return Compiler.getEndVariableStar(Compiler.getIntType());
+  private TomTerm getEndIndex() {
+    return getCompiler().getEndVariableStar(getCompiler().getIntType());
   }
 
-  private static TomTerm getFreshIndex() {
-    return Compiler.getFreshVariableStar(Compiler.getIntType());    
+  private TomTerm getFreshIndex() {
+    return getCompiler().getFreshVariableStar(getCompiler().getIntType());    
   }
 }

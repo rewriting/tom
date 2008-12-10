@@ -162,7 +162,14 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public void run() {
+  public boolean isGomPlugin() {
+    return false;
+  }
+
+  /**
+   * From Plugin interface
+   */
+  public void run(Map informationTracker) {
     Plugin activatedPlugin = null;
     Iterator it = flagOwners.keySet().iterator();
     while(it.hasNext()) {
@@ -173,7 +180,7 @@ public class PluginFactory implements Plugin {
     }
     try{
       activatedPlugin.setArgs(argToRelay);
-      activatedPlugin.run();
+      activatedPlugin.run(informationTracker);
       argToRelay = activatedPlugin.getArgs();
     } catch(NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");
@@ -245,18 +252,18 @@ public class PluginFactory implements Plugin {
     XmlTools xtools = new XmlTools();
     TNode docNode = ( xtools.convertXMLToTNode(xmlFile) ).getDocElem();
 
-    {{if ( (docNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )docNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) {if ( "factory".equals( (( tom.library.adt.tnode.types.TNode )docNode).getName() ) ) {if ( (( (( tom.library.adt.tnode.types.TNode )docNode).getAttrList()  instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ( (( tom.library.adt.tnode.types.TNode )docNode).getAttrList()  instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( (( tom.library.adt.tnode.types.TNode )docNode).getChildList()  instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ( (( tom.library.adt.tnode.types.TNode )docNode).getChildList()  instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {{{if ( ((( tom.library.adt.tnode.types.TNode )docNode) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )docNode)) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch618NameNumber_freshVar_1= (( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )docNode)).getChildList() ;
+    {{if ( (docNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )docNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) {if ( "factory".equals( (( tom.library.adt.tnode.types.TNode )docNode).getName() ) ) {if ( (( (( tom.library.adt.tnode.types.TNode )docNode).getAttrList()  instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ( (( tom.library.adt.tnode.types.TNode )docNode).getAttrList()  instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( (( tom.library.adt.tnode.types.TNode )docNode).getChildList()  instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ( (( tom.library.adt.tnode.types.TNode )docNode).getChildList()  instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {{{if ( ((( tom.library.adt.tnode.types.TNode )docNode) instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )docNode)) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch370NameNumber_freshVar_1= (( tom.library.adt.tnode.types.TNode )(( tom.library.adt.tnode.types.TNode )docNode)).getChildList() ;
 
 
 
 
-            while(!(tomMatch618NameNumber_freshVar_1.isEmptyconcTNode())) {
-              TNode pluginNode = tomMatch618NameNumber_freshVar_1.getHeadconcTNode();
+            while(!(tomMatch370NameNumber_freshVar_1.isEmptyconcTNode())) {
+              TNode pluginNode = tomMatch370NameNumber_freshVar_1.getHeadconcTNode();
 
-              {{if ( (pluginNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )pluginNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch619NameNumber_freshVar_2= (( tom.library.adt.tnode.types.TNode )pluginNode).getAttrList() ; tom.library.adt.tnode.types.TNodeList  tomMatch619NameNumber_freshVar_3= (( tom.library.adt.tnode.types.TNode )pluginNode).getChildList() ;if ( "plugin".equals( (( tom.library.adt.tnode.types.TNode )pluginNode).getName() ) ) {if ( ((tomMatch619NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch619NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) { tom.library.adt.tnode.types.TNodeList  tomMatch619NameNumber_end_9=tomMatch619NameNumber_freshVar_2;do {{if (!( tomMatch619NameNumber_end_9.isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch619NameNumber_freshVar_16= tomMatch619NameNumber_end_9.getHeadconcTNode() ;if ( (tomMatch619NameNumber_freshVar_16 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( "classpath".equals( tomMatch619NameNumber_freshVar_16.getName() ) ) {if ( ((tomMatch619NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch619NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch619NameNumber_freshVar_3.isEmptyconcTNode() ) {
- classPaths.add( tomMatch619NameNumber_freshVar_16.getValue() );/*System.out.println(cp);*/ }}}}}if ( tomMatch619NameNumber_end_9.isEmptyconcTNode() ) {tomMatch619NameNumber_end_9=tomMatch619NameNumber_freshVar_2;} else {tomMatch619NameNumber_end_9= tomMatch619NameNumber_end_9.getTailconcTNode() ;}}} while(!( (tomMatch619NameNumber_end_9==tomMatch619NameNumber_freshVar_2) ));}}}}}}tomMatch618NameNumber_freshVar_1
+              {{if ( (pluginNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )pluginNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch371NameNumber_freshVar_2= (( tom.library.adt.tnode.types.TNode )pluginNode).getAttrList() ; tom.library.adt.tnode.types.TNodeList  tomMatch371NameNumber_freshVar_3= (( tom.library.adt.tnode.types.TNode )pluginNode).getChildList() ;if ( "plugin".equals( (( tom.library.adt.tnode.types.TNode )pluginNode).getName() ) ) {if ( ((tomMatch371NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch371NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) { tom.library.adt.tnode.types.TNodeList  tomMatch371NameNumber_end_9=tomMatch371NameNumber_freshVar_2;do {{if (!( tomMatch371NameNumber_end_9.isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch371NameNumber_freshVar_16= tomMatch371NameNumber_end_9.getHeadconcTNode() ;if ( (tomMatch371NameNumber_freshVar_16 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( "classpath".equals( tomMatch371NameNumber_freshVar_16.getName() ) ) {if ( ((tomMatch371NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch371NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch371NameNumber_freshVar_3.isEmptyconcTNode() ) {
+ classPaths.add( tomMatch371NameNumber_freshVar_16.getValue() );/*System.out.println(cp);*/ }}}}}if ( tomMatch371NameNumber_end_9.isEmptyconcTNode() ) {tomMatch371NameNumber_end_9=tomMatch371NameNumber_freshVar_2;} else {tomMatch371NameNumber_end_9= tomMatch371NameNumber_end_9.getTailconcTNode() ;}}} while(!( (tomMatch371NameNumber_end_9==tomMatch371NameNumber_freshVar_2) ));}}}}}}tomMatch370NameNumber_freshVar_1
 
-= tomMatch618NameNumber_freshVar_1.getTailconcTNode();
+= tomMatch370NameNumber_freshVar_1.getTailconcTNode();
             }
           }}}}
 

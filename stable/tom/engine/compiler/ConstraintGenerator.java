@@ -27,6 +27,8 @@ package tom.engine.compiler;
 
 import java.util.*;
 
+import java.lang.reflect.*;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
@@ -37,6 +39,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.compiler.*;
 import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
@@ -54,13 +57,28 @@ public class ConstraintGenerator {
 
 
 //------------------------------------------------------------	
+
+  
+
+
+
+
+  private Compiler compiler;
+
+  public ConstraintGenerator(Compiler myCompiler) {
+    this.compiler = myCompiler; 
+  } 
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
  
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
 
-  public static Instruction performGenerations(Expression expression, Instruction action) 
-       throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
+  public Instruction performGenerations(Expression expression, Instruction action) 
+       throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
     // counts the generators that didn't change the instruction
     int genCounter = 0;
     int genNb = generatorsNames.length;
@@ -68,8 +86,11 @@ public class ConstraintGenerator {
     Expression result = null;
     // cache the generators
     IBaseGenerator[] gen = new IBaseGenerator[genNb];
+    Class[] classTab = new Class[]{Class.forName("tom.engine.compiler.Compiler"), Class.forName("tom.engine.compiler.ConstraintGenerator")};
     for(int i=0 ; i < genNb ; i++) {
-      gen[i] = (IBaseGenerator)Class.forName(generatorsPackage + generatorsNames[i]).newInstance();
+      Class myClass = Class.forName(generatorsPackage + generatorsNames[i]);
+      java.lang.reflect.Constructor constructor = myClass.getConstructor(classTab);
+      gen[i] = (IBaseGenerator)constructor.newInstance(this.getCompiler(),this);
     }
     
     // iterate until all generators are applied and nothing was changed 
@@ -92,10 +113,10 @@ public class ConstraintGenerator {
   /**
    * Converts the resulted expression (after generation) into instructions
    */
-  private static Instruction buildInstructionFromExpression(Expression expression, Instruction action)
+  private Instruction buildInstructionFromExpression(Expression expression, Instruction action)
       throws VisitFailure {		
     // it is done innermost because the expression is also simplified		
-    expression = (Expression)tom_make_TopDown(tom_make_ReplaceSubterms()).visitLight(expression);
+    expression = (Expression)tom_make_TopDown(tom_make_ReplaceSubterms(this)).visitLight(expression);
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     return automata;
@@ -104,7 +125,7 @@ public class ConstraintGenerator {
   /**
    * Generates the automata from the expression
    */
-  private static Instruction generateAutomata(Expression expression, Instruction action) throws VisitFailure {
+  private Instruction generateAutomata(Expression expression, Instruction action) throws VisitFailure {
     {{if ( (expression instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )expression) instanceof tom.engine.adt.tomexpression.types.expression.And) ) {
 
         Instruction subInstruction = generateAutomata( (( tom.engine.adt.tomexpression.types.Expression )expression).getArg2() ,action);
@@ -153,13 +174,13 @@ public class ConstraintGenerator {
   /**
    * Converts 'Subterm' to 'GetSlot'
    */
-  public static class ReplaceSubterms extends tom.library.sl.BasicStrategy {public ReplaceSubterms() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Subterm) ) { tom.engine.adt.tomname.types.TomName  tomMatch142NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ; tom.engine.adt.tomname.types.TomName  tomMatch142NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getSlotName() ;if ( (tomMatch142NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+  public static class ReplaceSubterms extends tom.library.sl.BasicStrategy {private  ConstraintGenerator  cg;public ReplaceSubterms( ConstraintGenerator  cg) {super(( new tom.library.sl.Identity() ));this.cg=cg;}public  ConstraintGenerator  getcg() {return cg;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Subterm) ) { tom.engine.adt.tomname.types.TomName  tomMatch142NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ; tom.engine.adt.tomname.types.TomName  tomMatch142NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getSlotName() ;if ( (tomMatch142NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-        TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName( tomMatch142NameNumber_freshVar_1.getString() );
+        TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName( tomMatch142NameNumber_freshVar_1.getString() );
         TomType subtermType = TomBase.getSlotType(tomSymbol, tomMatch142NameNumber_freshVar_2);	        	
         return  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.GetSlot.make(subtermType, tomMatch142NameNumber_freshVar_1, tomMatch142NameNumber_freshVar_2.getString(),  (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getGroundTerm() ) ) ;
-      }}}}}return _visit_TomTerm(tom__arg,introspector); }public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomterm.types.TomTerm )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ReplaceSubterms() { return new ReplaceSubterms();}
+      }}}}}return _visit_TomTerm(tom__arg,introspector); }public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomterm.types.TomTerm )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ReplaceSubterms( ConstraintGenerator  t0) { return new ReplaceSubterms(t0);}
 
 
   
@@ -169,7 +190,7 @@ public class ConstraintGenerator {
    * we are forced to duplication the action to have the same semantics as
    * without disjunctions
    */
-  private static Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
+  private Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
     {{if ( (orConnector instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orConnector).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orConnector)== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
         
         return  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(generateAutomata((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getHeadOrConnector() ):((( tom.engine.adt.tomexpression.types.Expression )orConnector))),action), tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(buildConstraintDisjunction((( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) )?( (( tom.engine.adt.tomexpression.types.Expression )orConnector).getTailOrConnector() ):( tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )),action)
@@ -204,16 +225,16 @@ public class ConstraintGenerator {
    * if (flag == true) ...
    *  
    */
-  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
+  private Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
     Instruction assignFlagTrue =  tom.engine.adt.tominstruction.types.instruction.Assign.make(flag,  tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ;
     Collection<TomTerm> freshVarList = new HashSet<TomTerm>();
     // collect variables    
     tom_make_TopDown(tom_make_CollectVar(freshVarList)).visitLight(orDisjunction);    
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
-    instruction =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(instruction, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(Compiler.getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
+    instruction =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(instruction, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(getCompiler().getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
 ;    
     // add fresh variables' declarations
     for(TomTerm var:freshVarList) {
@@ -223,7 +244,7 @@ public class ConstraintGenerator {
     return  tom.engine.adt.tominstruction.types.instruction.LetRef.make(flag,  tom.engine.adt.tomexpression.types.expression.FalseTL.make() , instruction) ;
   }
 
-  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue)
+  private Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue)
       throws VisitFailure {    
     {{if ( (orDisjunction instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( (((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrExpressionDisjunction) || ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction)) ) {if ( (  (( tom.engine.adt.tomexpression.types.Expression )orDisjunction).isEmptyOrExpressionDisjunction()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orDisjunction)== tom.engine.adt.tomexpression.types.expression.EmptyOrExpressionDisjunction.make() )  ) ) {
 
@@ -252,13 +273,13 @@ public class ConstraintGenerator {
    *    action;
    * }
    */
-  private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
+  private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());    
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());    
     Instruction assignFlagTrue =  tom.engine.adt.tominstruction.types.instruction.Assign.make(flag,  tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ;
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
-    Instruction result =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(automata, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(Compiler.getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.FalseTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
+    Instruction result =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(automata, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(getCompiler().getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.FalseTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
 ;
     return  tom.engine.adt.tominstruction.types.instruction.LetRef.make(flag,  tom.engine.adt.tomexpression.types.expression.FalseTL.make() , result) ;
   }
@@ -295,8 +316,8 @@ public class ConstraintGenerator {
    *   is_empty(l) || l==make_empty()
    *   this is needed because get_tail() may return the neutral element 
    */ 
-  public static Expression genIsEmptyList(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(opName.getString());
+  public Expression genIsEmptyList(TomName opName, TomTerm var) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(opName.getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
@@ -305,7 +326,7 @@ public class ConstraintGenerator {
     return  tom.engine.adt.tomexpression.types.expression.IsEmptyList.make(opName, var) ;
   }
   
-  private static Instruction buildNumericCondition(Constraint c, Instruction action) {
+  private Instruction buildNumericCondition(Constraint c, Instruction action) {
     {{if ( (c instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )c) instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch147NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )c).getPattern() ; tom.engine.adt.tomterm.types.TomTerm  tomMatch147NameNumber_freshVar_2= (( tom.engine.adt.tomconstraint.types.Constraint )c).getSubject() ; tom.engine.adt.tomconstraint.types.NumericConstraintType  tomMatch147NameNumber_freshVar_3= (( tom.engine.adt.tomconstraint.types.Constraint )c).getType() ;
         
         Expression leftExpr =  tom.engine.adt.tomexpression.types.expression.TomTermToExpression.make(tomMatch147NameNumber_freshVar_1) ;
@@ -320,9 +341,9 @@ public class ConstraintGenerator {
  return  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.LessOrEqualThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;}}}{if ( (tomMatch147NameNumber_freshVar_3 instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tomMatch147NameNumber_freshVar_3) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterThan) ) {
  return  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.GreaterThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;}}}{if ( (tomMatch147NameNumber_freshVar_3 instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tomMatch147NameNumber_freshVar_3) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumGreaterOrEqualThan) ) {
  return  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.GreaterOrEqualThan.make(leftExpr, rightExpr) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ;}}}{if ( (tomMatch147NameNumber_freshVar_3 instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tomMatch147NameNumber_freshVar_3) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumEqual) ) {
- TomType tomType = Compiler.getTermTypeFromTerm(tomMatch147NameNumber_freshVar_1);
+ TomType tomType = getCompiler().getTermTypeFromTerm(tomMatch147NameNumber_freshVar_1);
                                          return  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(tomType, tomMatch147NameNumber_freshVar_2, tomMatch147NameNumber_freshVar_1) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ; }}}{if ( (tomMatch147NameNumber_freshVar_3 instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ) {if ( ((( tom.engine.adt.tomconstraint.types.NumericConstraintType )tomMatch147NameNumber_freshVar_3) instanceof tom.engine.adt.tomconstraint.types.numericconstrainttype.NumDifferent) ) {
- TomType tomType = Compiler.getTermTypeFromTerm(tomMatch147NameNumber_freshVar_1);
+ TomType tomType = getCompiler().getTermTypeFromTerm(tomMatch147NameNumber_freshVar_1);
                                          return  tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.Negation.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(tomType, tomMatch147NameNumber_freshVar_2, tomMatch147NameNumber_freshVar_1) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) ; }}}}
 
       }}}}
@@ -360,15 +381,15 @@ public class ConstraintGenerator {
    * } while (counter < n)
    *  
    */
-  private static Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
-    TomTerm flag = Compiler.getFreshVariable(Compiler.getBooleanType());
+  private Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
     Instruction assignFlagTrue =  tom.engine.adt.tominstruction.types.instruction.Assign.make(flag,  tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ;
-    TomType intType = Compiler.getIntType();
-    TomTerm counter = Compiler.getFreshVariable(intType);    
+    TomType intType = getCompiler().getIntType();
+    TomTerm counter = getCompiler().getFreshVariable(intType);    
     // build the ifs
     Instruction instruction = buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
-    instruction =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(instruction, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(Compiler.getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
+    instruction =  tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make( tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(instruction, tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make( tom.engine.adt.tominstruction.types.instruction.If.make( tom.engine.adt.tomexpression.types.expression.EqualTerm.make(getCompiler().getBooleanType(), flag,  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.TrueTL.make() ) ) , action,  tom.engine.adt.tominstruction.types.instruction.Nop.make() ) , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ) ) ) 
 ;
     // counter++ : expression at the end of the loop 
     Instruction counterIncrement =  tom.engine.adt.tominstruction.types.instruction.Assign.make(counter,  tom.engine.adt.tomexpression.types.expression.AddOne.make(counter) ) ;
@@ -391,7 +412,7 @@ public class ConstraintGenerator {
    *
    * builds the ifs in a constraint disjunction (see buildConstraintDisjunction above for details)
    */
-  private static Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
+  private Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
       TomTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
     {{if ( (orConnector instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( (((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.ConsOrConnector) || ((( tom.engine.adt.tomexpression.types.Expression )orConnector) instanceof tom.engine.adt.tomexpression.types.expression.EmptyOrConnector)) ) {if (!( (  (( tom.engine.adt.tomexpression.types.Expression )orConnector).isEmptyOrConnector()  ||  ((( tom.engine.adt.tomexpression.types.Expression )orConnector)== tom.engine.adt.tomexpression.types.expression.EmptyOrConnector.make() )  ) )) {
         

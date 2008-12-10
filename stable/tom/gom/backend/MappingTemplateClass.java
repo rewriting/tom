@@ -26,13 +26,19 @@ package tom.gom.backend;
 import java.util.Map;
 import java.util.HashMap;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.GomEnvironment;
 
 public abstract class MappingTemplateClass extends TemplateClass {
-  public MappingTemplateClass(GomClass gomClass) {
-    super(gomClass);
+  
+  public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     this.templates = new HashMap();
   }
   protected Map templates;
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
 
   public void addTemplates(Map map) {
     this.templates.putAll(map);

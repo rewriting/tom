@@ -25,6 +25,8 @@
 
 package tom.platform;
 
+import java.util.Map;
+
 /**
  * This interface must be implemented by all plugins. It provides methods
  * to access options (inherited from the OptionOwner interface) as well as
@@ -43,7 +45,7 @@ public interface Plugin extends OptionOwner {
   /**
    * Runs the plugin.
    */
-  public void run();
+  public void run(Map informationTracker);
 
   /**
    * Retrieves the output of the plugin.

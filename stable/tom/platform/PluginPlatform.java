@@ -30,6 +30,7 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 import tom.library.adt.tnode.*;
+import tom.gom.tools.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.
@@ -61,7 +62,7 @@ public class PluginPlatform extends PluginPlatformBase {
 
   /** Radical of the logger */
   private String loggerRadical;
-  
+
   /**
    * The current file name to process - this is used in the status handler 
    * in order to have the file name when it was not passed at logging 
@@ -74,6 +75,7 @@ public class PluginPlatform extends PluginPlatformBase {
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     super(loggerRadical);  
     statusHandler = new StatusHandler();
+ 
     this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
     pluginsList = confManager.getPluginsList();
@@ -89,7 +91,8 @@ public class PluginPlatform extends PluginPlatformBase {
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  public int run() {
+  //public int run() {
+  public int run(Map informationTracker) {
     try {
       boolean globalSuccess = true;
       int globalNbOfErrors = 0;
@@ -141,7 +144,7 @@ public class PluginPlatform extends PluginPlatformBase {
             globalNbOfWarnings += statusHandler.nbOfWarnings();
             break;
           }
-          plugin.run();
+          plugin.run(informationTracker);
           if(statusHandler.hasError()) {
             getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
                 new Object[]{plugin.getClass().getName(), initArgument});

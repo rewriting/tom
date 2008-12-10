@@ -25,12 +25,14 @@
 package tom.gom.compiler;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.gom.types.*;
 
@@ -55,7 +57,14 @@ public class CompilerPlugin extends GomGenericPlugin {
   public CompilerPlugin() {
     super("GomCompiler");
   }
+  
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
 
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -64,12 +73,12 @@ public class CompilerPlugin extends GomGenericPlugin {
     if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
       moduleList = (ModuleList) arg[0];
       hookList = (HookDeclList) arg[1];
-      setStreamManager((GomStreamManager) arg[2]);
+      setGomEnvironment((GomEnvironment) arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{
-            "GomCompiler", "[ModuleList,HookDeclList,GomStreamManager]",
+            "GomCompiler", "[ModuleList,HookDeclList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -78,16 +87,15 @@ public class CompilerPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-
     getLogger().log(Level.INFO, "Start compilation");
-    Compiler compiler = new Compiler();
+    Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,
           GomMessage.compilationIssue.getMessage(),
-          streamManager.getInputFileName());
+          getStreamManager().getInputFileName());
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
@@ -99,6 +107,7 @@ public class CompilerPlugin extends GomGenericPlugin {
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
     }
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -107,7 +116,7 @@ public class CompilerPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{classList, getStreamManager()};
+    return new Object[]{classList, getGomEnvironment()};
   }
 
 }

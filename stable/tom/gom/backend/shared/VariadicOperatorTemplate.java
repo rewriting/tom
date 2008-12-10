@@ -47,8 +47,9 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
                                   OptionManager manager,
                                   List importList, 	
                                   GomClass gomClass,
-                                  TemplateClass mapping) {
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                                  TemplateClass mapping,
+                                  GomEnvironment gomEnvironment) {
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {
 
 
@@ -63,6 +64,10 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 
     throw new GomRuntimeException(
         "Wrong argument for VariadicOperatorTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -513,13 +518,13 @@ writer.write("\n}\n"
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
-    {{if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch449NameNumber_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{if (!( tomMatch449NameNumber_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch449NameNumber_freshVar_8= tomMatch449NameNumber_end_4.getHeadConcHook() ;if ( (tomMatch449NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
+    {{if ( (hooks instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )hooks) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch253NameNumber_end_4=(( tom.gom.adt.objects.types.HookList )hooks);do {{if (!( tomMatch253NameNumber_end_4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch253NameNumber_freshVar_8= tomMatch253NameNumber_end_4.getHeadConcHook() ;if ( (tomMatch253NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.hook.MappingHook) ) {
 
-        CodeGen.generateCode( tomMatch449NameNumber_freshVar_8.getCode() ,writer);
+        CodeGen.generateCode( tomMatch253NameNumber_freshVar_8.getCode() ,writer);
         hasHook = true;
         // if there is a mapping hook we stop here
         return; 
-      }}if ( tomMatch449NameNumber_end_4.isEmptyConcHook() ) {tomMatch449NameNumber_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch449NameNumber_end_4= tomMatch449NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch449NameNumber_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{{if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch450NameNumber_freshVar_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( ((tomMatch450NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || (tomMatch450NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch450NameNumber_freshVar_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch450NameNumber_freshVar_7= tomMatch450NameNumber_freshVar_1.getHeadConcSlotField() ;if ( (tomMatch450NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch450NameNumber_freshVar_4= tomMatch450NameNumber_freshVar_1.getTailConcSlotField() ;if (!( tomMatch450NameNumber_freshVar_4.isEmptyConcSlotField() )) {if (  tomMatch450NameNumber_freshVar_4.getTailConcSlotField() .isEmptyConcSlotField() ) {
+      }}if ( tomMatch253NameNumber_end_4.isEmptyConcHook() ) {tomMatch253NameNumber_end_4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch253NameNumber_end_4= tomMatch253NameNumber_end_4.getTailConcHook() ;}}} while(!( (tomMatch253NameNumber_end_4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}{{if ( (cons instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )cons) instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch254NameNumber_freshVar_1= (( tom.gom.adt.objects.types.GomClass )cons).getSlotFields() ;if ( ((tomMatch254NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || (tomMatch254NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) {if (!( tomMatch254NameNumber_freshVar_1.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch254NameNumber_freshVar_7= tomMatch254NameNumber_freshVar_1.getHeadConcSlotField() ;if ( (tomMatch254NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch254NameNumber_freshVar_4= tomMatch254NameNumber_freshVar_1.getTailConcSlotField() ;if (!( tomMatch254NameNumber_freshVar_4.isEmptyConcSlotField() )) {if (  tomMatch254NameNumber_freshVar_4.getTailConcSlotField() .isEmptyConcSlotField() ) {
 
 
 
@@ -528,7 +533,7 @@ writer.write("\n}\n"
 
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();
-    writer.write("\n%oplist "/* Generated by TOM (version 2.6): Do not edit this file */+className(sortName)+" "/* Generated by TOM (version 2.6): Do not edit this file */+className()+"("/* Generated by TOM (version 2.6): Do not edit this file */+className( tomMatch450NameNumber_freshVar_7.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(consClass)+") || ($t instanceof "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(emptyClass)+")) }\n  make_empty() { "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+getMethod( tomMatch450NameNumber_freshVar_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+getMethod( tomMatch450NameNumber_freshVar_4.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+isOperatorMethod(emptyClass)+"() }\n}\n"
+    writer.write("\n%oplist "/* Generated by TOM (version 2.6): Do not edit this file */+className(sortName)+" "/* Generated by TOM (version 2.6): Do not edit this file */+className()+"("/* Generated by TOM (version 2.6): Do not edit this file */+className( tomMatch254NameNumber_freshVar_7.getDomain() )+"*) {\n  is_fsym(t) { (($t instanceof "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(consClass)+") || ($t instanceof "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(emptyClass)+")) }\n  make_empty() { "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(emptyClass)+".make() }\n  make_insert(e,l) { "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(consClass)+".make($e,$l) }\n  get_head(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+getMethod( tomMatch254NameNumber_freshVar_1.getHeadConcSlotField() )+"() }\n  get_tail(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+getMethod( tomMatch254NameNumber_freshVar_4.getHeadConcSlotField() )+"() }\n  is_empty(l) { $l."/* Generated by TOM (version 2.6): Do not edit this file */+isOperatorMethod(emptyClass)+"() }\n}\n"
 
 
 

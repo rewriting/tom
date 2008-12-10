@@ -57,19 +57,27 @@ public class PreGenerator {
 
   // ------------------------------------------------------------
 
-  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure {
+  private ConstraintGenerator constraintGenerator;
+
+  public PreGenerator(ConstraintGenerator myConstraintGenerator) {
+    this.constraintGenerator = myConstraintGenerator;
+  } 
+
+  public ConstraintGenerator getConstraintGenerator() {
+    return this.constraintGenerator;
+  }
+
+  public Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure {
     constraint = orderConstraints(constraint);
     return constraintsToExpressions(constraint);
   }
 
-  private static Constraint orderConstraints(Constraint constraint) {
+  private Constraint orderConstraints(Constraint constraint) {
     {{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {boolean tomMatch157NameNumber_freshVar_12= false ;if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch157NameNumber_end_7=(( tom.engine.adt.tomconstraint.types.Constraint )constraint);do {{if (!( (  tomMatch157NameNumber_end_7.isEmptyAndConstraint()  ||  (tomMatch157NameNumber_end_7== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) )) {if ( (((( ((tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_7.getHeadAndConstraint() ):(tomMatch157NameNumber_end_7)) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( ((tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_7.getHeadAndConstraint() ):(tomMatch157NameNumber_end_7)) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {tomMatch157NameNumber_freshVar_12= true ;}}if ( (  tomMatch157NameNumber_end_7.isEmptyAndConstraint()  ||  (tomMatch157NameNumber_end_7== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) ) {tomMatch157NameNumber_end_7=(( tom.engine.adt.tomconstraint.types.Constraint )constraint);} else {tomMatch157NameNumber_end_7=(( ((tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_7 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_7.getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ));}}} while(!( (tomMatch157NameNumber_end_7==(( tom.engine.adt.tomconstraint.types.Constraint )constraint)) ));}if ((tomMatch157NameNumber_freshVar_12 ==  false )) {
 
-        //return repeatOrdering(constraint);
         return orderAndConstraint(constraint);
       }}}}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch157NameNumber_end_17=(( tom.engine.adt.tomconstraint.types.Constraint )constraint);do {{if (!( (  tomMatch157NameNumber_end_17.isEmptyAndConstraint()  ||  (tomMatch157NameNumber_end_17== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) )) {if ( (((( ((tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_17.getHeadAndConstraint() ):(tomMatch157NameNumber_end_17)) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraint) || ((( ((tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_17.getHeadAndConstraint() ):(tomMatch157NameNumber_end_17)) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyOrConstraint)) ) {
 
-        //return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
         return orderAndConstraint(tom_append_list_AndConstraint(tom_get_slice_AndConstraint((( tom.engine.adt.tomconstraint.types.Constraint )constraint),tomMatch157NameNumber_end_17, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ), tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(orderConstraints((( ((tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_17.getHeadAndConstraint() ):(tomMatch157NameNumber_end_17))),tom_append_list_AndConstraint((( ((tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_17.getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )), tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ));
       }}if ( (  tomMatch157NameNumber_end_17.isEmptyAndConstraint()  ||  (tomMatch157NameNumber_end_17== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) ) {tomMatch157NameNumber_end_17=(( tom.engine.adt.tomconstraint.types.Constraint )constraint);} else {tomMatch157NameNumber_end_17=(( ((tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || (tomMatch157NameNumber_end_17 instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( tomMatch157NameNumber_end_17.getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ));}}} while(!( (tomMatch157NameNumber_end_17==(( tom.engine.adt.tomconstraint.types.Constraint )constraint)) ));}}}}
 
@@ -84,7 +92,7 @@ public class PreGenerator {
     return constraint;
   }
 /*
-  private static Constraint repeatOrdering(Constraint constraint) {
+  private Constraint repeatOrdering(Constraint constraint) {
     Constraint result = constraint;
     do {
       constraint = result;
@@ -99,7 +107,7 @@ public class PreGenerator {
    * We use a loop and two nested match to be more efficient
    *
    */
-  private static Constraint orderAndConstraint(Constraint constraint) {
+  private Constraint orderAndConstraint(Constraint constraint) {
     Constraint toOrder = constraint;
     do {
       constraint = toOrder;
@@ -290,7 +298,7 @@ block: {{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constrai
   /**
    * Translates constraints into expressions
    */
-  private static Expression constraintsToExpressions(Constraint constraint) {
+  private Expression constraintsToExpressions(Constraint constraint) {
     {{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) ) {if (!( (  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).isEmptyAndConstraint()  ||  ((( tom.engine.adt.tomconstraint.types.Constraint )constraint)== tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )  ) )) {
 
         return  tom.engine.adt.tomexpression.types.expression.And.make(constraintsToExpressions((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getHeadAndConstraint() ):((( tom.engine.adt.tomconstraint.types.Constraint )constraint)))), constraintsToExpressions((( (((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint) || ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint)) )?( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getTailAndConstraint() ):( tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )))) ;
@@ -311,7 +319,7 @@ block: {{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constrai
         return  tom.engine.adt.tomexpression.types.expression.Negation.make(constraintsToExpressions( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getc() )) ;
       }}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyListConstraint) ) {
 
-        return ConstraintGenerator.genIsEmptyList( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getOpname() , (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getVariable() );
+        return getConstraintGenerator().genIsEmptyList( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getOpname() , (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getVariable() );
       }}}{if ( (constraint instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )constraint) instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyArrayConstraint) ) {
 
         return  tom.engine.adt.tomexpression.types.expression.IsEmptyArray.make( (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getOpname() ,  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getVariable() ,  (( tom.engine.adt.tomconstraint.types.Constraint )constraint).getIndex() ) ;

@@ -47,7 +47,7 @@ import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public class TomCGenerator extends TomCFamilyGenerator {
-  
+
   public TomCGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);

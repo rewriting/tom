@@ -24,6 +24,7 @@
 
 package tom.gom;
 
+import java.util.*;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -62,12 +63,17 @@ public class Gom {
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler;
 
+  //a tracker/logger which contains information ; we begin with a suingle piece of information : the lastgenerated mapping
+  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
+
   public static void main(String[] args) {
-    int errno = exec(args);
+    Map<String,String> informationTracker = new HashMap();
+    informationTracker.put(KEY_LAST_GEN_MAPPING,null);
+    int errno = exec(args,informationTracker);
     System.exit(errno);
   }
 
-  public static int exec(String[] commandLine) {
+  public static int exec(String[] commandLine, Map informationTracker) {
     try {
       initializeLogging();
     } catch(Exception e) {
@@ -84,7 +90,7 @@ public class Gom {
     if(platform == null) {
       return 1;
     }
-    return platform.run();
+    return platform.run(informationTracker);
   }
 
   /**

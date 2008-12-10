@@ -28,6 +28,7 @@ package tom.engine.tools;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 
 import tom.engine.Tom;
 import tom.engine.TomBase;
@@ -124,7 +125,7 @@ public abstract class TomGenericPlugin implements Plugin {
    * The run() method is not implemented in TomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract void run();
+  public abstract void run(Map informationTracker);
 
   /**
    * From Plugin interface 
@@ -180,7 +181,7 @@ public abstract class TomGenericPlugin implements Plugin {
   public void setOptionManager(OptionManager optionManager) {
     this.optionManager = optionManager;
   }
-  
+ 
   /**
    * From OptionOwner interface 
    * Returns an empty PlatformOptionList. By default, the plugin is considered

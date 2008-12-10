@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
@@ -36,6 +37,7 @@ import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -61,19 +63,27 @@ public class GomParserPlugin extends GomGenericPlugin {
     super("GomParser");
   }
 
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof GomStreamManager) {
-      setStreamManager((GomStreamManager)arg[0]);
+    if (arg[0] instanceof GomEnvironment) {
+      setGomEnvironment((GomEnvironment)arg[0]);
       inputReader = getStreamManager().getInputReader();
       inputFileName = getStreamManager().getInputFileName();
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomParser", "[GomStreamManager]",
+          new Object[]{"GomParser", "[GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -82,9 +92,8 @@ public class GomParserPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-
     if (inputReader == null)
       return;
     CharStream input = null;
@@ -99,7 +108,6 @@ public class GomParserPlugin extends GomGenericPlugin {
 		GomLanguageLexer lex = new GomLanguageLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-
     getLogger().log(Level.INFO, "Start parsing");
     try {
       // Parse the input expression
@@ -137,12 +145,12 @@ public class GomParserPlugin extends GomGenericPlugin {
         }
       }
     }
-
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }
+    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -151,7 +159,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{module, getStreamManager()};
+    return new Object[]{module, getGomEnvironment()};
   }
 
 }

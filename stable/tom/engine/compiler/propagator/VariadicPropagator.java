@@ -49,12 +49,44 @@ public class VariadicPropagator implements IBasePropagator {
 
 //--------------------------------------------------------
 
+  
+
+
+
+
+
+
+
+
+
+  private Compiler compiler;  
+  private GeneralPurposePropagator generalPurposePropagator; 
+  private ConstraintPropagator constraintPropagator; 
+ 
+  public VariadicPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+    this.generalPurposePropagator = new GeneralPurposePropagator(this.compiler, this.constraintPropagator);
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public GeneralPurposePropagator getGeneralPurposePropagator() {
+    return this.generalPurposePropagator;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    Constraint res =  (Constraint)tom_make_TopDown(tom_make_VariadicPatternMatching()).visitLight(constraint);		
+    Constraint res =  (Constraint)tom_make_TopDown(tom_make_VariadicPatternMatching(this)).visitLight(constraint);		
     return res;
   }	
 
-  public static class VariadicPatternMatching extends tom.library.sl.BasicStrategy {public VariadicPatternMatching() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch178NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;if ( (tomMatch178NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch178NameNumber_freshVar_4= tomMatch178NameNumber_freshVar_1.getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch178NameNumber_freshVar_5= tomMatch178NameNumber_freshVar_1.getSlots() ;if ( ((tomMatch178NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch178NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch178NameNumber_freshVar_4.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch178NameNumber_freshVar_10= tomMatch178NameNumber_freshVar_4.getHeadconcTomName() ;if ( (tomMatch178NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if (  tomMatch178NameNumber_freshVar_4.getTailconcTomName() .isEmptyconcTomName() ) {boolean tomMatch178NameNumber_freshVar_12= false ;if ( ((tomMatch178NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch178NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( tomMatch178NameNumber_freshVar_5.isEmptyconcSlot() ) {tomMatch178NameNumber_freshVar_12= true ;}}if ((tomMatch178NameNumber_freshVar_12 ==  false )) {
+  public static class VariadicPatternMatching extends tom.library.sl.BasicStrategy {private  VariadicPropagator  vp;public VariadicPatternMatching( VariadicPropagator  vp) {super(( new tom.library.sl.Identity() ));this.vp=vp;}public  VariadicPropagator  getvp() {return vp;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomconstraint.types.Constraint  visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch178NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg).getPattern() ;if ( (tomMatch178NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch178NameNumber_freshVar_4= tomMatch178NameNumber_freshVar_1.getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch178NameNumber_freshVar_5= tomMatch178NameNumber_freshVar_1.getSlots() ;if ( ((tomMatch178NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch178NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch178NameNumber_freshVar_4.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch178NameNumber_freshVar_10= tomMatch178NameNumber_freshVar_4.getHeadconcTomName() ;if ( (tomMatch178NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if (  tomMatch178NameNumber_freshVar_4.getTailconcTomName() .isEmptyconcTomName() ) {boolean tomMatch178NameNumber_freshVar_12= false ;if ( ((tomMatch178NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || (tomMatch178NameNumber_freshVar_5 instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( tomMatch178NameNumber_freshVar_5.isEmptyconcSlot() ) {tomMatch178NameNumber_freshVar_12= true ;}}if ((tomMatch178NameNumber_freshVar_12 ==  false )) {
 
 
 
@@ -67,11 +99,11 @@ public class VariadicPropagator implements IBasePropagator {
 
 
         // if this is not a list, nothing to do
-        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName( tomMatch178NameNumber_freshVar_10.getString() );
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName( tomMatch178NameNumber_freshVar_10.getString() );
         if(!TomBase.isListOperator(symb)) {
           return (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg); 
         }
-        Constraint detachedConstr = GeneralPurposePropagator.detachSublists((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg));
+        Constraint detachedConstr = vp.getGeneralPurposePropagator().detachSublists((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg));
         if(detachedConstr != (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)) {
           return detachedConstr; 
         }
@@ -94,13 +126,13 @@ public class VariadicPropagator implements IBasePropagator {
 
 
         // if this is not a list, nothing to do
-        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName( tomMatch178NameNumber_freshVar_26.getString() );
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName( tomMatch178NameNumber_freshVar_26.getString() );
         if(!TomBase.isListOperator(symb)) {
           return (( tom.engine.adt.tomconstraint.types.Constraint )tom__arg);
         }        
         // declare fresh variable
-        TomType listType = Compiler.getTermTypeFromTerm(tomMatch178NameNumber_freshVar_14);
-        TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
+        TomType listType = vp.getCompiler().getTermTypeFromTerm(tomMatch178NameNumber_freshVar_14);
+        TomTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
         Constraint freshVarDeclaration =  tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(freshVariable, tomMatch178NameNumber_freshVar_15) ;
         Constraint isSymbolConstr =  tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make( tom.engine.adt.tomterm.types.tomterm.RecordAppl.make( tomMatch178NameNumber_freshVar_14.getOption() , tomMatch178NameNumber_freshVar_18,  tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ,  tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() ) ,  tom.engine.adt.tomterm.types.tomterm.SymbolOf.make(freshVariable) ) ;
         Constraint l =  tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ;        
@@ -109,7 +141,7 @@ public class VariadicPropagator implements IBasePropagator {
             l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.EmptyListConstraint.make(tom_name, freshVariable) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) );
           }}}}{if ( (tomMatch178NameNumber_freshVar_19 instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomMatch178NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomMatch178NameNumber_freshVar_19) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch179NameNumber_end_6=(( tom.engine.adt.tomslot.types.SlotList )tomMatch178NameNumber_freshVar_19);do {{if (!( tomMatch179NameNumber_end_6.isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch179NameNumber_freshVar_10= tomMatch179NameNumber_end_6.getHeadconcSlot() ;if ( (tomMatch179NameNumber_freshVar_10 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch179NameNumber_freshVar_9= tomMatch179NameNumber_freshVar_10.getAppl() ; tom.engine.adt.tomslot.types.SlotList  tomMatch179NameNumber_freshVar_7= tomMatch179NameNumber_end_6.getTailconcSlot() ;
 
-            TomTerm newFreshVarList = Compiler.getFreshVariableStar(listType);            
+            TomTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
 mAppl:      {{if ( (tomMatch179NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch180NameNumber_freshVar_2= false ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch179NameNumber_freshVar_9) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {tomMatch180NameNumber_freshVar_2= true ;} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomMatch179NameNumber_freshVar_9) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch180NameNumber_freshVar_2= true ;}}if ((tomMatch180NameNumber_freshVar_2 ==  true )) {
 
                 
@@ -118,8 +150,8 @@ mAppl:      {{if ( (tomMatch179NameNumber_freshVar_9 instanceof tom.engine.adt.t
                   // we should only assign it, without generating a loop
                   l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch179NameNumber_freshVar_9, freshVariable) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) );
                 } else {
-                  TomTerm beginSublist = Compiler.getBeginVariableStar(listType);
-                  TomTerm endSublist = Compiler.getEndVariableStar(listType);              
+                  TomTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
+                  TomTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
                   l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(beginSublist, freshVariable) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(endSublist, freshVariable) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch179NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.VariableHeadList.make(tom_name, beginSublist, endSublist) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshVarList, endSublist) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) ) )
 
 
@@ -129,7 +161,7 @@ mAppl:      {{if ( (tomMatch179NameNumber_freshVar_9 instanceof tom.engine.adt.t
                 break mAppl;
               }}}{if ( (tomMatch179NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
 
-                l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.Negate.make( tom.engine.adt.tomconstraint.types.constraint.EmptyListConstraint.make(tom_name, freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch179NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ListHead.make(tom_name, Compiler.getTermTypeFromTerm(tomMatch179NameNumber_freshVar_9), freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshVarList,  tom.engine.adt.tomterm.types.tomterm.ListTail.make(tom_name, freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) )
+                l = tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.Negate.make( tom.engine.adt.tomconstraint.types.constraint.EmptyListConstraint.make(tom_name, freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(tomMatch179NameNumber_freshVar_9,  tom.engine.adt.tomterm.types.tomterm.ListHead.make(tom_name, vp.getCompiler().getTermTypeFromTerm(tomMatch179NameNumber_freshVar_9), freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make(newFreshVarList,  tom.engine.adt.tomterm.types.tomterm.ListTail.make(tom_name, freshVariable) ) , tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ) ) ) )
 
 
 ;
@@ -143,9 +175,9 @@ mAppl:      {{if ( (tomMatch179NameNumber_freshVar_9 instanceof tom.engine.adt.t
           }}if ( tomMatch179NameNumber_end_6.isEmptyconcSlot() ) {tomMatch179NameNumber_end_6=(( tom.engine.adt.tomslot.types.SlotList )tomMatch178NameNumber_freshVar_19);} else {tomMatch179NameNumber_end_6= tomMatch179NameNumber_end_6.getTailconcSlot() ;}}} while(!( (tomMatch179NameNumber_end_6==(( tom.engine.adt.tomslot.types.SlotList )tomMatch178NameNumber_freshVar_19)) ));}}}}
 // end match
         // fresh var declaration + add head equality condition + detached constraints
-        l =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshVarDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(isSymbolConstr, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(ConstraintPropagator.performDetach((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)),tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ) ) ;
+        l =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(freshVarDeclaration, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(isSymbolConstr, tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make(vp.getConstraintPropagator().performDetach((( tom.engine.adt.tomconstraint.types.Constraint )tom__arg)),tom_append_list_AndConstraint(l, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ) ) ;
         return l;
-      }}}}}}}}}return _visit_Constraint(tom__arg,introspector); }public  tom.engine.adt.tomconstraint.types.Constraint  _visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {return visit_Constraint((( tom.engine.adt.tomconstraint.types.Constraint )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_VariadicPatternMatching() { return new VariadicPatternMatching();}
+      }}}}}}}}}return _visit_Constraint(tom__arg,introspector); }public  tom.engine.adt.tomconstraint.types.Constraint  _visit_Constraint( tom.engine.adt.tomconstraint.types.Constraint  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visit(environment,introspector));} else {return (( tom.engine.adt.tomconstraint.types.Constraint )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {return visit_Constraint((( tom.engine.adt.tomconstraint.types.Constraint )v),introspector);}if (!((environment ==  null ))) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_VariadicPatternMatching( VariadicPropagator  t0) { return new VariadicPatternMatching(t0);}
 
 // end %strategy
 

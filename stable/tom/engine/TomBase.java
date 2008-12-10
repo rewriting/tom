@@ -68,7 +68,9 @@ public final class TomBase {
 
 
   public final static String DEFAULT_MODULE_NAME = "default"; 
-  
+  //size of cache 
+  private final static int LRUCACHE_SIZE = 5000;
+ 
   /** shortcut */
  
   /**
@@ -132,7 +134,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
     }
   }
 
-  private static HashMap tomNumberListToStringMap = new HashMap();
+  private static LRUCache tomNumberListToStringMap = new LRUCache(LRUCACHE_SIZE); 
   public static String tomNumberListToString(TomNumberList numberList) {
     String result = (String)tomNumberListToStringMap.get(numberList);
     if(result == null) {

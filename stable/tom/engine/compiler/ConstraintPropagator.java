@@ -27,12 +27,15 @@ package tom.engine.compiler;
 
 import java.util.ArrayList;
 
+import java.lang.reflect.*;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.compiler.*;
 import tom.engine.compiler.propagator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.library.sl.*;
@@ -50,12 +53,22 @@ public class ConstraintPropagator {
 
 //------------------------------------------------------
 
+  private Compiler compiler;
+
+  public ConstraintPropagator(Compiler myCompiler) {
+    this.compiler = myCompiler; 
+  } 
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
   private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator"};
 
-  public static Constraint performPropagations(Constraint constraintToCompile) 
-    throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{
+  public Constraint performPropagations(Constraint constraintToCompile) 
+    throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
     
     // counts the propagators that didn't change the expression
     int propCounter = 0;
@@ -63,8 +76,11 @@ public class ConstraintPropagator {
 
     // cache the propagators
     IBasePropagator[] prop = new IBasePropagator[propNb];
+    Class[] classTab = new Class[]{Class.forName("tom.engine.compiler.Compiler"), Class.forName("tom.engine.compiler.ConstraintPropagator")};
     for(int i=0 ; i < propNb ; i++) {
-      prop[i] = (IBasePropagator)Class.forName(propagatorsPackage + propagatorsNames[i]).newInstance();
+      Class myClass = Class.forName(propagatorsPackage + propagatorsNames[i]);
+      java.lang.reflect.Constructor constructor = myClass.getConstructor(classTab);
+      prop[i] = (IBasePropagator)constructor.newInstance(this.getCompiler(),this);
     }
     
     Constraint result= null;
@@ -96,7 +112,7 @@ public class ConstraintPropagator {
    * This is because the varStars can have at the rhs something that will generate loops,
    * and we don't want to duplicate that to the constraints  
    */
-  public static Constraint performDetach(Constraint subject) {    
+  public Constraint performDetach(Constraint subject) {    
     Constraint result =  tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() ; 
     {{if ( (subject instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )subject) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch151NameNumber_freshVar_1= (( tom.engine.adt.tomconstraint.types.Constraint )subject).getPattern() ;boolean tomMatch151NameNumber_freshVar_9= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch151NameNumber_freshVar_4= null ;if ( (tomMatch151NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch151NameNumber_freshVar_9= true ;tomMatch151NameNumber_freshVar_4= tomMatch151NameNumber_freshVar_1.getConstraints() ;}} else {if ( (tomMatch151NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch151NameNumber_freshVar_9= true ;tomMatch151NameNumber_freshVar_4= tomMatch151NameNumber_freshVar_1.getConstraints() ;}} else {if ( (tomMatch151NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {{tomMatch151NameNumber_freshVar_9= true ;tomMatch151NameNumber_freshVar_4= tomMatch151NameNumber_freshVar_1.getConstraints() ;}}}}if ((tomMatch151NameNumber_freshVar_9 ==  true )) {boolean tomMatch151NameNumber_freshVar_8= false ;if ( ((tomMatch151NameNumber_freshVar_4 instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || (tomMatch151NameNumber_freshVar_4 instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {if ( (tomMatch151NameNumber_freshVar_4==tomMatch151NameNumber_freshVar_4) ) {if ( tomMatch151NameNumber_freshVar_4.isEmptyconcConstraint() ) {tomMatch151NameNumber_freshVar_8= true ;}}}if ((tomMatch151NameNumber_freshVar_8 ==  false )) {{{if ( (tomMatch151NameNumber_freshVar_4 instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_4) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_4) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) { tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch152NameNumber_end_4=(( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_4);do {{if (!( tomMatch152NameNumber_end_4.isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch152NameNumber_freshVar_8= tomMatch152NameNumber_end_4.getHeadconcConstraint() ;if ( (tomMatch152NameNumber_freshVar_8 instanceof tom.engine.adt.tomconstraint.types.constraint.AssignTo) ) {
 
@@ -108,7 +124,7 @@ public class ConstraintPropagator {
 // end match   
       }}}}}{if ( (subject instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {if ( ((( tom.engine.adt.tomconstraint.types.Constraint )subject) instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch151NameNumber_freshVar_11= (( tom.engine.adt.tomconstraint.types.Constraint )subject).getPattern() ;boolean tomMatch151NameNumber_freshVar_20= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch151NameNumber_freshVar_15= null ; tom.engine.adt.tomtype.types.TomType  tomMatch151NameNumber_freshVar_14= null ;if ( (tomMatch151NameNumber_freshVar_11 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch151NameNumber_freshVar_20= true ;tomMatch151NameNumber_freshVar_14= tomMatch151NameNumber_freshVar_11.getAstType() ;tomMatch151NameNumber_freshVar_15= tomMatch151NameNumber_freshVar_11.getConstraints() ;}} else {if ( (tomMatch151NameNumber_freshVar_11 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {{tomMatch151NameNumber_freshVar_20= true ;tomMatch151NameNumber_freshVar_14= tomMatch151NameNumber_freshVar_11.getAstType() ;tomMatch151NameNumber_freshVar_15= tomMatch151NameNumber_freshVar_11.getConstraints() ;}}}if ((tomMatch151NameNumber_freshVar_20 ==  true )) {boolean tomMatch151NameNumber_freshVar_19= false ;if ( ((tomMatch151NameNumber_freshVar_15 instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || (tomMatch151NameNumber_freshVar_15 instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) {if ( (tomMatch151NameNumber_freshVar_15==tomMatch151NameNumber_freshVar_15) ) {if ( tomMatch151NameNumber_freshVar_15.isEmptyconcConstraint() ) {tomMatch151NameNumber_freshVar_19= true ;}}}if ((tomMatch151NameNumber_freshVar_19 ==  false )) {
         
-        TomTerm freshVariable = Compiler.getFreshVariableStar(tomMatch151NameNumber_freshVar_14);
+        TomTerm freshVariable = getCompiler().getFreshVariableStar(tomMatch151NameNumber_freshVar_14);
         {{if ( (tomMatch151NameNumber_freshVar_15 instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_15) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_15) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) { tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch153NameNumber_end_4=(( tom.engine.adt.tomconstraint.types.ConstraintList )tomMatch151NameNumber_freshVar_15);do {{if (!( tomMatch153NameNumber_end_4.isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch153NameNumber_freshVar_8= tomMatch153NameNumber_end_4.getHeadconcConstraint() ;if ( (tomMatch153NameNumber_freshVar_8 instanceof tom.engine.adt.tomconstraint.types.constraint.AssignTo) ) {
 
             result =  tom.engine.adt.tomconstraint.types.constraint.ConsAndConstraint.make( tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make( tomMatch153NameNumber_freshVar_8.getVariable() , freshVariable) ,tom_append_list_AndConstraint(result, tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() )) ;                                                                                                                       

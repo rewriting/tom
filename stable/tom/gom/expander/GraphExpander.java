@@ -49,34 +49,66 @@ public class GraphExpander {
 
 
 
-  private static GomStreamManager streamManager;
-  private static SortDecl stringSortDecl;
-  private static SortDecl intSortDecl;
+
+  private SortDecl stringSortDecl;
+  private SortDecl intSortDecl;
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
   private boolean forTermgraph;
-  private static GomEnvironment envt = GomEnvironment.getInstance();
-  private static SymbolTable st = envt.getSymbolTable();
+  private GomEnvironment gomEnvironment;
   
-  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph) {
+  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph,GomEnvironment gomEnvironment) {
     this.forTermgraph = forTermgraph;
-    this.streamManager = streamManager;
-    stringSortDecl = envt.builtinSort("String");
-    intSortDecl = envt.builtinSort("int");
+    this.gomEnvironment = gomEnvironment;
+    stringSortDecl = gomEnvironment.builtinSort("String");
+    intSortDecl = gomEnvironment.builtinSort("int");
     //we mark them as used builtins:
     //String is used for labelling
-    envt.markUsedBuiltin("String");
+    gomEnvironment.markUsedBuiltin("String");
     //int is used for defining paths
-    envt.markUsedBuiltin("int");
+    gomEnvironment.markUsedBuiltin("int");
   }
 
-  private static String fullClassName(ClassName clsName) {
-    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tomMatch1NameNumber_freshVar_1= (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ; String  tomMatch1NameNumber_freshVar_2= (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
+  public GraphExpander(boolean forTermgraph,GomEnvironment gomEnvironment) {
+    this.forTermgraph = forTermgraph;
+    this.gomEnvironment = gomEnvironment;
+    stringSortDecl = gomEnvironment.builtinSort("String");
+    intSortDecl = gomEnvironment.builtinSort("int");
+    gomEnvironment.markUsedBuiltin("String");
+    gomEnvironment.markUsedBuiltin("int");
+  }
 
-        if(tomMatch1NameNumber_freshVar_1.length()==0) {
-          return tomMatch1NameNumber_freshVar_2;
+  public GomStreamManager getStreamManager() {
+    return this.gomEnvironment.getStreamManager();
+  }
+
+  public SortDecl getStringSortDecl() {
+    return stringSortDecl;
+  }
+
+  public SortDecl getIntSortDecl() {
+    return intSortDecl;
+  }
+
+  public boolean getForTermgraph() {
+    return forTermgraph;
+  }
+  
+  public void setForTermgraph(boolean forTermgraph) {
+    this.forTermgraph = forTermgraph;
+  }
+  
+  public GomEnvironment getGomEnvironment() {
+    return gomEnvironment;
+  }
+
+  private String fullClassName(ClassName clsName) {
+    {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) { String  tomMatch306NameNumber_freshVar_1= (( tom.gom.adt.objects.types.ClassName )clsName).getPkg() ; String  tomMatch306NameNumber_freshVar_2= (( tom.gom.adt.objects.types.ClassName )clsName).getName() ;
+
+        if(tomMatch306NameNumber_freshVar_1.length()==0) {
+          return tomMatch306NameNumber_freshVar_2;
         } else {
-          return tomMatch1NameNumber_freshVar_1+"."+tomMatch1NameNumber_freshVar_2;
+          return tomMatch306NameNumber_freshVar_1+"."+tomMatch306NameNumber_freshVar_2;
         }
       }}}}
 
@@ -88,13 +120,13 @@ public class GraphExpander {
     ModuleList expandedList =  tom.gom.adt.gom.types.modulelist.EmptyConcModule.make() ;
     ArrayList hookList = new ArrayList();
     try {
-      expandedList = (ModuleList) tom_make_TopDown(tom_make_ExpandSort(hookList)).visit(list);
+      expandedList = (ModuleList) tom_make_TopDown(tom_make_ExpandSort(hookList,this)).visit(list);
     } catch(tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
     //add a global expand method in every ModuleDecl contained in the SortList
     try {
-      tom_make_TopDown(tom_make_ExpandModule(streamManager,forTermgraph,hookList))
+      tom_make_TopDown(tom_make_ExpandModule(getStreamManager(),getForTermgraph(),hookList,this))
 .visit(expandedList);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
@@ -107,15 +139,16 @@ public class GraphExpander {
     return  tom.gom.adt.gom.types.pair.ModHookPair.make(expandedList, hooks) ;
   }
 
-  public static class ExpandModule extends tom.library.sl.BasicStrategy {private  GomStreamManager  streamManager;private  boolean  forTermgraph;private  java.util.ArrayList  hookList;public ExpandModule( GomStreamManager  streamManager,  boolean  forTermgraph,  java.util.ArrayList  hookList) {super(( new tom.library.sl.Identity() ));this.streamManager=streamManager;this.forTermgraph=forTermgraph;this.hookList=hookList;}public  GomStreamManager  getstreamManager() {return streamManager;}public  boolean  getforTermgraph() {return forTermgraph;}public  java.util.ArrayList  gethookList() {return hookList;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Module  visit_Module( tom.gom.adt.gom.types.Module  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Module) ) {if ( ((( tom.gom.adt.gom.types.Module )tom__arg) instanceof tom.gom.adt.gom.types.module.Module) ) { tom.gom.adt.gom.types.ModuleDecl  tomMatch2NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Module )tom__arg).getMDecl() ;if ( (tomMatch2NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) { tom.gom.adt.gom.types.GomModuleName  tomMatch2NameNumber_freshVar_4= tomMatch2NameNumber_freshVar_1.getModuleName() ;
+  public static class ExpandModule extends tom.library.sl.BasicStrategy {private  GomStreamManager  streamManager;private  boolean  forTermgraph;private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandModule( GomStreamManager  streamManager,  boolean  forTermgraph,  java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.streamManager=streamManager;this.forTermgraph=forTermgraph;this.hookList=hookList;this.ge=ge;}public  GomStreamManager  getstreamManager() {return streamManager;}public  boolean  getforTermgraph() {return forTermgraph;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Module  visit_Module( tom.gom.adt.gom.types.Module  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Module) ) {if ( ((( tom.gom.adt.gom.types.Module )tom__arg) instanceof tom.gom.adt.gom.types.module.Module) ) { tom.gom.adt.gom.types.ModuleDecl  tomMatch307NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Module )tom__arg).getMDecl() ;if ( (tomMatch307NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) { tom.gom.adt.gom.types.GomModuleName  tomMatch307NameNumber_freshVar_4= tomMatch307NameNumber_freshVar_1.getModuleName() ;
 
 
 
 
 
 
-        hookList.add(expHooksModule(tomMatch2NameNumber_freshVar_4, (( tom.gom.adt.gom.types.Module )tom__arg).getSorts() ,tomMatch2NameNumber_freshVar_1,streamManager.getPackagePath(tomMatch2NameNumber_freshVar_4.getName()),forTermgraph));
-      }}}}}return _visit_Module(tom__arg,introspector); }public  tom.gom.adt.gom.types.Module  _visit_Module( tom.gom.adt.gom.types.Module  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Module )any.visit(environment,introspector));} else {return (( tom.gom.adt.gom.types.Module )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Module) ) {return visit_Module((( tom.gom.adt.gom.types.Module )v),introspector);}if (!( environment== null  )) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ExpandModule( GomStreamManager  t0,  boolean  t1,  java.util.ArrayList  t2) { return new ExpandModule(t0,t1,t2);}public static class ExpandSort extends tom.library.sl.BasicStrategy {private  java.util.ArrayList  hookList;public ExpandSort( java.util.ArrayList  hookList) {super(( new tom.library.sl.Identity() ));this.hookList=hookList;}public  java.util.ArrayList  gethookList() {return hookList;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Sort  visit_Sort( tom.gom.adt.gom.types.Sort  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Sort) ) {if ( ((( tom.gom.adt.gom.types.Sort )tom__arg) instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch3NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Sort )tom__arg).getDecl() ;if ( (tomMatch3NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch3NameNumber_freshVar_4= tomMatch3NameNumber_freshVar_1.getName() ;
+
+        hookList.add(ge.expHooksModule(tomMatch307NameNumber_freshVar_4, (( tom.gom.adt.gom.types.Module )tom__arg).getSorts() ,tomMatch307NameNumber_freshVar_1,ge.getStreamManager().getPackagePath(tomMatch307NameNumber_freshVar_4.getName()),ge.getForTermgraph()));
+      }}}}}return _visit_Module(tom__arg,introspector); }public  tom.gom.adt.gom.types.Module  _visit_Module( tom.gom.adt.gom.types.Module  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Module )any.visit(environment,introspector));} else {return (( tom.gom.adt.gom.types.Module )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Module) ) {return visit_Module((( tom.gom.adt.gom.types.Module )v),introspector);}if (!( environment== null  )) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ExpandModule( GomStreamManager  t0,  boolean  t1,  java.util.ArrayList  t2,  GraphExpander  t3) { return new ExpandModule(t0,t1,t2,t3);}public static class ExpandSort extends tom.library.sl.BasicStrategy {private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandSort( java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.hookList=hookList;this.ge=ge;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Sort  visit_Sort( tom.gom.adt.gom.types.Sort  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Sort) ) {if ( ((( tom.gom.adt.gom.types.Sort )tom__arg) instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch308NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Sort )tom__arg).getDecl() ;if ( (tomMatch308NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch308NameNumber_freshVar_4= tomMatch308NameNumber_freshVar_1.getName() ;
 
 
 
@@ -126,27 +159,25 @@ public class GraphExpander {
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
         // for now, we need also to fill the symbol table 
-        OperatorDecl labOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Lab"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch3NameNumber_freshVar_4, stringSortDecl) , tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("term"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_1) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ) ;
-        st.addConstructor("Lab"+tomMatch3NameNumber_freshVar_4,tomMatch3NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch3NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("term"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_4,  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ) ); 
-        OperatorDecl refOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Ref"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch3NameNumber_freshVar_4, stringSortDecl) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ;
-        st.addConstructor("Ref"+tomMatch3NameNumber_freshVar_4,tomMatch3NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch3NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ); 
-        OperatorDecl pathOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Path"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Variadic.make(intSortDecl) ) ;
-        st.addVariadicConstructor("Path"+tomMatch3NameNumber_freshVar_4,"int",tomMatch3NameNumber_freshVar_4);
-        OperatorDecl varOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Var"+tomMatch3NameNumber_freshVar_4, tomMatch3NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch3NameNumber_freshVar_4, stringSortDecl) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ;
-        st.addConstructor("Var"+tomMatch3NameNumber_freshVar_4,tomMatch3NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch3NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ); 
-        hookList.add(pathHooks(pathOp,tomMatch3NameNumber_freshVar_1));
+        OperatorDecl labOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Lab"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch308NameNumber_freshVar_4, ge.getStringSortDecl()) , tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("term"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_1) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ) ;
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Lab"+tomMatch308NameNumber_freshVar_4,tomMatch308NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch308NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("term"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_4,  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ) ); 
+        OperatorDecl refOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Ref"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch308NameNumber_freshVar_4, ge.getStringSortDecl()) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ;
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Ref"+tomMatch308NameNumber_freshVar_4,tomMatch308NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch308NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ); 
+        OperatorDecl pathOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Path"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Variadic.make(ge.getIntSortDecl()) ) ;
+        ge.getGomEnvironment().getSymbolTable().addVariadicConstructor("Path"+tomMatch308NameNumber_freshVar_4,"int",tomMatch308NameNumber_freshVar_4);
+        OperatorDecl varOp =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make("Var"+tomMatch308NameNumber_freshVar_4, tomMatch308NameNumber_freshVar_1,  tom.gom.adt.gom.types.typedproduction.Slots.make( tom.gom.adt.gom.types.slotlist.ConsConcSlot.make( tom.gom.adt.gom.types.slot.Slot.make("label"+tomMatch308NameNumber_freshVar_4, ge.getStringSortDecl()) , tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ) ) ) ;
+        ge.getGomEnvironment().getSymbolTable().addConstructor("Var"+tomMatch308NameNumber_freshVar_4,tomMatch308NameNumber_freshVar_4, tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make( tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make("label"+tomMatch308NameNumber_freshVar_4, "String",  tom.gom.adt.symboltable.types.status.SNone.make() ) , tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() ) ); 
+        hookList.add(ge.pathHooks(pathOp,tomMatch308NameNumber_freshVar_1));
         return (( tom.gom.adt.gom.types.Sort )tom__arg).setOperatorDecls(tom_append_list_ConcOperator( (( tom.gom.adt.gom.types.Sort )tom__arg).getOperatorDecls() , tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(labOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(refOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(pathOp, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(varOp, tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() ) ) ) ) ));
 
-      }}}}}return _visit_Sort(tom__arg,introspector); }public  tom.gom.adt.gom.types.Sort  _visit_Sort( tom.gom.adt.gom.types.Sort  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Sort )any.visit(environment,introspector));} else {return (( tom.gom.adt.gom.types.Sort )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Sort) ) {return visit_Sort((( tom.gom.adt.gom.types.Sort )v),introspector);}if (!( environment== null  )) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ExpandSort( java.util.ArrayList  t0) { return new ExpandSort(t0);}
+      }}}}}return _visit_Sort(tom__arg,introspector); }public  tom.gom.adt.gom.types.Sort  _visit_Sort( tom.gom.adt.gom.types.Sort  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Sort )any.visit(environment,introspector));} else {return (( tom.gom.adt.gom.types.Sort )any.visitLight(arg,introspector));} }public Object visitLight(Object v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Sort) ) {return visit_Sort((( tom.gom.adt.gom.types.Sort )v),introspector);}if (!( environment== null  )) {return any.visit(environment,introspector);} else {return any.visitLight(v,introspector);} }}public static  tom.library.sl.Strategy  tom_make_ExpandSort( java.util.ArrayList  t0,  GraphExpander  t1) { return new ExpandSort(t0,t1);}
 
 
 
-  private static HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
-
+  private HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
-
-    String prefixPkg = streamManager.getPackagePath(moduleName);
+    String prefixPkg = getStreamManager().getPackagePath(moduleName);
     String codeImport ="\n      import "/* Generated by TOM (version 2.6): Do not edit this file */+((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()+".types.*;\n    import tom.library.sl.*;\n    "
 
 
@@ -229,7 +260,7 @@ public class GraphExpander {
 ;
   }
 
-  private static HookDeclList expHooksModule(GomModuleName gomModuleName,
+  private HookDeclList expHooksModule(GomModuleName gomModuleName,
       SortList sorts,
       ModuleDecl mDecl,
       String packagePath,
@@ -248,12 +279,12 @@ public class GraphExpander {
 
     String codeStrategies = getStrategies(sorts);
 
-    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch4NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch4NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch4NameNumber_freshVar_8= tomMatch4NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch4NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch4NameNumber_freshVar_7= tomMatch4NameNumber_freshVar_8.getDecl() ;if ( (tomMatch4NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch4NameNumber_freshVar_9= tomMatch4NameNumber_freshVar_7.getName() ;
+    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch309NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch309NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch309NameNumber_freshVar_8= tomMatch309NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch309NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch309NameNumber_freshVar_7= tomMatch309NameNumber_freshVar_8.getDecl() ;if ( (tomMatch309NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch309NameNumber_freshVar_9= tomMatch309NameNumber_freshVar_7.getName() ;
 
-        codeImport += "\n          import "/* Generated by TOM (version 2.6): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.6): Do not edit this file */+moduleName.toLowerCase()+".types."/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch4NameNumber_freshVar_9.toLowerCase()+".Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch4NameNumber_freshVar_9+";\n        "
+        codeImport += "\n          import "/* Generated by TOM (version 2.6): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.6): Do not edit this file */+moduleName.toLowerCase()+".types."/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch309NameNumber_freshVar_9.toLowerCase()+".Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch309NameNumber_freshVar_9+";\n        "
 
 ;
-      }}}if ( tomMatch4NameNumber_end_4.isEmptyConcSort() ) {tomMatch4NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch4NameNumber_end_4= tomMatch4NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch4NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch309NameNumber_end_4.isEmptyConcSort() ) {tomMatch309NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch309NameNumber_end_4= tomMatch309NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch309NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
     String codeBlockCommon ="\n    %include{java/util/HashMap.tom}\n    %include{java/util/ArrayList.tom}\n    %include{sl.tom}\n\n    static int freshlabel =0; //to unexpand termgraphs\n    \n    %typeterm tom_Info {\n      implement { Info }\n      is_sort(t) { ($t instanceof Info) }\n    }\n\n\n    public static class Info {\n      public String label;\n      public Path path;\n      public "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(abstractType)+" term;\n    }\n\n    public "/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(abstractType)+" unexpand() {\n       HashMap map = getMapFromPositionToLabel();\n       try {\n         return ("/* Generated by TOM (version 2.6): Do not edit this file */+fullClassName(abstractType)+")`Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);\n       } catch (tom.library.sl.VisitFailure e) {\n         throw new RuntimeException(\"Unexpected strategy failure!\");\n       }\n    }\n\n    protected HashMap getMapFromPositionToLabel(){\n      HashMap map = new HashMap();\n      try {\n      `TopDown(CollectPositionsOfLabels(map)).visit(this);\n      return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    "
@@ -393,9 +424,9 @@ public class GraphExpander {
 
 ;
 
-  {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch5NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch5NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch5NameNumber_freshVar_8= tomMatch5NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch5NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch5NameNumber_freshVar_7= tomMatch5NameNumber_freshVar_8.getDecl() ;if ( (tomMatch5NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch5NameNumber_freshVar_9= tomMatch5NameNumber_freshVar_7.getName() ;
+  {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch310NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch310NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch310NameNumber_freshVar_8= tomMatch310NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch310NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch310NameNumber_freshVar_7= tomMatch310NameNumber_freshVar_8.getDecl() ;if ( (tomMatch310NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch310NameNumber_freshVar_9= tomMatch310NameNumber_freshVar_7.getName() ;
 
- codeBlockTermGraph += "\n        visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+" {\n          p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+"(_*) -> {\n            Position current = getEnvironment().getPosition(); \n            Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n            if(current.compare(dest)== -1) {\n                getEnvironment().followPath((Path)`p);\n                Position realDest = getEnvironment().getPosition(); \n            if(!realDest.equals(dest)) {\n                //the subterm pointed was a pos (in case of previous switch) \n                //and we must only update the relative position\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+".make(realDest.sub(current));\n            }  else {\n                //switch the rel position and the pointed subterm\n\n                // 1. construct the new relative position\n                "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+" relref = Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+".make(current.sub(dest));\n\n                // 2. update the part to change \n                `TopDown(UpdatePos(dest,current)).visit(getEnvironment());\n\n                // 3. save the subterm updated \n                "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+" subterm = ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch5NameNumber_freshVar_9+") getEnvironment().getSubject(); \n\n                // 4. replace at dest the subterm by the new relative pos\n                getEnvironment().setSubject(relref);\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return subterm; \n            }\n          }\n        }\n      }\n"
+ codeBlockTermGraph += "\n        visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+" {\n          p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+"(_*) -> {\n            Position current = getEnvironment().getPosition(); \n            Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n            if(current.compare(dest)== -1) {\n                getEnvironment().followPath((Path)`p);\n                Position realDest = getEnvironment().getPosition(); \n            if(!realDest.equals(dest)) {\n                //the subterm pointed was a pos (in case of previous switch) \n                //and we must only update the relative position\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+".make(realDest.sub(current));\n            }  else {\n                //switch the rel position and the pointed subterm\n\n                // 1. construct the new relative position\n                "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+" relref = Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+".make(current.sub(dest));\n\n                // 2. update the part to change \n                `TopDown(UpdatePos(dest,current)).visit(getEnvironment());\n\n                // 3. save the subterm updated \n                "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+" subterm = ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch310NameNumber_freshVar_9+") getEnvironment().getSubject(); \n\n                // 4. replace at dest the subterm by the new relative pos\n                getEnvironment().setSubject(relref);\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return subterm; \n            }\n          }\n        }\n      }\n"
 
 
 
@@ -429,7 +460,7 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch5NameNumber_end_4.isEmptyConcSort() ) {tomMatch5NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch5NameNumber_end_4= tomMatch5NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch5NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch310NameNumber_end_4.isEmptyConcSort() ) {tomMatch310NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch310NameNumber_end_4= tomMatch310NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch310NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
   codeBlockTermGraph += "\n    }\n\n   %strategy UpdatePos(source:Position,target:Position) extends Identity() {\n  "
@@ -439,9 +470,9 @@ public class GraphExpander {
 ;
 
 
-   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch6NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch6NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch6NameNumber_freshVar_8= tomMatch6NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch6NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch6NameNumber_freshVar_7= tomMatch6NameNumber_freshVar_8.getDecl() ;if ( (tomMatch6NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch6NameNumber_freshVar_9= tomMatch6NameNumber_freshVar_7.getName() ;
+   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch311NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch311NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch311NameNumber_freshVar_8= tomMatch311NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch311NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch311NameNumber_freshVar_7= tomMatch311NameNumber_freshVar_8.getDecl() ;if ( (tomMatch311NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch311NameNumber_freshVar_9= tomMatch311NameNumber_freshVar_7.getName() ;
 
-        codeBlockTermGraph += "\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+" {\n            p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              //relative pos from the source to the external\n              if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){\n                current = current.changePrefix(source,target);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the source\n              if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){\n                dest = dest.changePrefix(source,target); \n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the external\n              if(current.hasPrefix(target) && !dest.hasPrefix(source) && !dest.hasPrefix(target)){\n                current = current.changePrefix(target,source);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the target\n              if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){\n                dest = dest.changePrefix(target,source); \n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the source to the target\n              if(current.hasPrefix(source) && dest.hasPrefix(target)){\n                current = current.changePrefix(source,target);\n                dest = dest.changePrefix(target,source);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the source\n              if(current.hasPrefix(target) && dest.hasPrefix(source)){\n                current = current.changePrefix(target,source);\n                dest = dest.changePrefix(source,target);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch6NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n   \n            }\n          }\n    "
+        codeBlockTermGraph += "\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+" {\n            p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              //relative pos from the source to the external\n              if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){\n                current = current.changePrefix(source,target);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the source\n              if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){\n                dest = dest.changePrefix(source,target); \n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the external\n              if(current.hasPrefix(target) && !dest.hasPrefix(source) && !dest.hasPrefix(target)){\n                current = current.changePrefix(target,source);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the target\n              if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){\n                dest = dest.changePrefix(target,source); \n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the source to the target\n              if(current.hasPrefix(source) && dest.hasPrefix(target)){\n                current = current.changePrefix(source,target);\n                dest = dest.changePrefix(target,source);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the source\n              if(current.hasPrefix(target) && dest.hasPrefix(source)){\n                current = current.changePrefix(target,source);\n                dest = dest.changePrefix(source,target);\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch311NameNumber_freshVar_9+".make(dest.sub(current));\n              }\n   \n            }\n          }\n    "
 
 
 
@@ -487,7 +518,7 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch6NameNumber_end_4.isEmptyConcSort() ) {tomMatch6NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch6NameNumber_end_4= tomMatch6NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch6NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch311NameNumber_end_4.isEmptyConcSort() ) {tomMatch311NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch311NameNumber_end_4= tomMatch311NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch311NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
    codeBlockTermGraph += "\n   }\n\n   %strategy GlobalRedirection(source:Position,target:Position) extends Identity() {\n  "
@@ -496,9 +527,9 @@ public class GraphExpander {
 
 ;
 
-   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch7NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch7NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch7NameNumber_freshVar_8= tomMatch7NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch7NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch7NameNumber_freshVar_7= tomMatch7NameNumber_freshVar_8.getDecl() ;if ( (tomMatch7NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch7NameNumber_freshVar_9= tomMatch7NameNumber_freshVar_7.getName() ;
+   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch312NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch312NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch312NameNumber_freshVar_8= tomMatch312NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch312NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch312NameNumber_freshVar_7= tomMatch312NameNumber_freshVar_8.getDecl() ;if ( (tomMatch312NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch312NameNumber_freshVar_9= tomMatch312NameNumber_freshVar_7.getName() ;
 
-        codeBlockTermGraph += "\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch7NameNumber_freshVar_9+" {\n            p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch7NameNumber_freshVar_9+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              if(dest.equals(source)) {\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch7NameNumber_freshVar_9+".make(target.sub(current));\n              }\n            }\n          }\n    "
+        codeBlockTermGraph += "\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch312NameNumber_freshVar_9+" {\n            p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch312NameNumber_freshVar_9+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              if(dest.equals(source)) {\n                return Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch312NameNumber_freshVar_9+".make(target.sub(current));\n              }\n            }\n          }\n    "
 
 
 
@@ -509,21 +540,21 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch7NameNumber_end_4.isEmptyConcSort() ) {tomMatch7NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch7NameNumber_end_4= tomMatch7NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch7NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch312NameNumber_end_4.isEmptyConcSort() ) {tomMatch312NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch312NameNumber_end_4= tomMatch312NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch312NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
    codeBlockTermGraph += "\n   }\n   "
 
 ;
 
-    String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
+    String codeBlock = codeBlockCommon + codeStrategies + (getForTermgraph()?codeBlockTermGraph:codeBlockTermWithPointers);
 
     return  tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make( tom.gom.adt.gom.types.hookdecl.ImportHookDecl.make( tom.gom.adt.gom.types.decl.CutModule.make(mDecl) ,  tom.gom.adt.code.types.code.Code.make(codeImport) ) , tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make( tom.gom.adt.gom.types.hookdecl.BlockHookDecl.make( tom.gom.adt.gom.types.decl.CutModule.make(mDecl) ,  tom.gom.adt.code.types.code.Code.make(codeBlock) ) , tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() ) ) 
 
 ;
   }
 
-  private static String getStrategies(SortList sorts) {
+  private String getStrategies(SortList sorts) {
     StringBuilder strategiesCode = new StringBuilder();
     // for the CollectLabels strategy
     StringBuilder CollectLabelsCode = new StringBuilder();
@@ -591,10 +622,10 @@ public class GraphExpander {
 
 
 
-    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch8NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch8NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch8NameNumber_freshVar_8= tomMatch8NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch8NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch8NameNumber_freshVar_7= tomMatch8NameNumber_freshVar_8.getDecl() ;if ( (tomMatch8NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch8NameNumber_freshVar_9= tomMatch8NameNumber_freshVar_7.getName() ;
+    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch313NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch313NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch313NameNumber_freshVar_8= tomMatch313NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch313NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch313NameNumber_freshVar_7= tomMatch313NameNumber_freshVar_8.getDecl() ;if ( (tomMatch313NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tomMatch313NameNumber_freshVar_9= tomMatch313NameNumber_freshVar_7.getName() ;
 
   
-        strategiesCode.append("\n\n    %typeterm tom_Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n        implement { Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" }\n        is_sort(t) { ($t instanceof Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+") }\n    }\n\n    static class Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"{\n      public Position omegaRef;\n      public "/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch8NameNumber_freshVar_7) )+" sharedTerm;\n    }\n\n    "
+        strategiesCode.append("\n\n    %typeterm tom_Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n        implement { Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" }\n        is_sort(t) { ($t instanceof Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+") }\n    }\n\n    static class Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"{\n      public Position omegaRef;\n      public "/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch313NameNumber_freshVar_7) )+" sharedTerm;\n    }\n\n    "
 
 
 
@@ -609,7 +640,7 @@ public class GraphExpander {
 );
 
         // generate the code for the CollectLabels strategy
-        CollectLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+") getEnvironment().getSubject();\n        }\n      }\n        "
+        CollectLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+") getEnvironment().getSubject();\n        }\n      }\n        "
 
 
 
@@ -619,7 +650,7 @@ public class GraphExpander {
 );
         
         // generate the code for the CollectAndRemoveLabels strategy
-        CollectAndRemoveLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return `term;\n        }\n      }\n      "
+        CollectAndRemoveLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return `term;\n        }\n      }\n      "
 
 
 
@@ -629,7 +660,7 @@ public class GraphExpander {
 );
 
         // generate the code for the CollectPositionsOfLabels strategy
-        CollectPositionsOfLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=term]-> {\n          map.put(getEnvironment().getPosition().toString(),`label);\n          return ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+") getEnvironment().getSubject();\n        }\n      }\n      "
+        CollectPositionsOfLabelsCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"{\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=term]-> {\n          map.put(getEnvironment().getPosition().toString(),`label);\n          return ("/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+") getEnvironment().getSubject();\n        }\n      }\n      "
 
 
 
@@ -639,7 +670,7 @@ public class GraphExpander {
 );
 
        // generate the code for the Label2Path strategy
-        Label2PathCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n        Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label] -> {\n          if (map.containsKey(`label)) {\n            Position target = (Position) map.get(`label);\n            "/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch8NameNumber_freshVar_7) )+" ref = ("/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch8NameNumber_freshVar_7) )+") (Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+".make(target.sub(getEnvironment().getPosition())).getCanonicalPath());\n            return ref;\n          }\n        }\n      }\n      "
+        Label2PathCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n        Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label] -> {\n          if (map.containsKey(`label)) {\n            Position target = (Position) map.get(`label);\n            "/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch313NameNumber_freshVar_7) )+" ref = ("/* Generated by TOM (version 2.6): Do not edit this file */+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch313NameNumber_freshVar_7) )+") (Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+".make(target.sub(getEnvironment().getPosition())).getCanonicalPath());\n            return ref;\n          }\n        }\n      }\n      "
 
 
 
@@ -652,7 +683,7 @@ public class GraphExpander {
 );
 
         // generate the code for the CollectRef strategy
-        CollectRefCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n        p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(_*) -> {\n          //use String instead of Position because containskey method does\n          //not use the method equals to compare values\n          String target =\n            getEnvironment().getPosition().add((Path)`p).getCanonicalPath().toString();\n          if (map.containsKey(target)){\n            String label = (String) map.get(target);\n            return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label);\n          }\n          else{\n            freshlabel++;\n            String label = \"tom_label\"+freshlabel;\n            map.put(target,label);\n            return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label);\n          }\n        }\n      }\n   "
+        CollectRefCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n        p@Path"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(_*) -> {\n          //use String instead of Position because containskey method does\n          //not use the method equals to compare values\n          String target =\n            getEnvironment().getPosition().add((Path)`p).getCanonicalPath().toString();\n          if (map.containsKey(target)){\n            String label = (String) map.get(target);\n            return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label);\n          }\n          else{\n            freshlabel++;\n            String label = \"tom_label\"+freshlabel;\n            map.put(target,label);\n            return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label);\n          }\n        }\n      }\n   "
 
 
 
@@ -674,7 +705,7 @@ public class GraphExpander {
 );
    
         // generate the code for the AddLabel strategy
-        AddLabelCode.append("\n    visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n      t@!Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[] -> {\n        if (map.containsKey(getEnvironment().getPosition().toString())) {\n          String label = (String) map.get(getEnvironment().getPosition().toString());\n          return `Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label,t);\n        }\n      }\n    }\n   "
+        AddLabelCode.append("\n    visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n      t@!Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[] -> {\n        if (map.containsKey(getEnvironment().getPosition().toString())) {\n          String label = (String) map.get(getEnvironment().getPosition().toString());\n          return `Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label,t);\n        }\n      }\n    }\n   "
 
 
 
@@ -685,7 +716,7 @@ public class GraphExpander {
 
 );
         // generate the code for the NormalizeLabel strategy
-        NormalizeLabelCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n        Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label] -> {\n          if (! map.containsKey(`label)){\n            Position old = getEnvironment().getPosition();\n            Position rootpos = Position.make();\n            Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" info = new Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"();\n            info.omegaRef = old;\n            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           \n            `OnceTopDown(CollectSubterm"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label,info)).visit(getEnvironment());            \n            getEnvironment().followPath(old.sub(getEnvironment().getPosition()));\n            //test if it is not a ref to a cycle\n            if (info.sharedTerm!=null) {\n              map.put(`label,old);\n              return `Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label,info.sharedTerm);\n            }\n          }\n        }\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label] -> {\n          map.put(`label,getEnvironment().getPosition());\n        }\n      }\n    "
+        NormalizeLabelCode.append("\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n        Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label] -> {\n          if (! map.containsKey(`label)){\n            Position old = getEnvironment().getPosition();\n            Position rootpos = Position.make();\n            Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" info = new Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"();\n            info.omegaRef = old;\n            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           \n            `OnceTopDown(CollectSubterm"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label,info)).visit(getEnvironment());            \n            getEnvironment().followPath(old.sub(getEnvironment().getPosition()));\n            //test if it is not a ref to a cycle\n            if (info.sharedTerm!=null) {\n              map.put(`label,old);\n              return `Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label,info.sharedTerm);\n            }\n          }\n        }\n        Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label] -> {\n          map.put(`label,getEnvironment().getPosition());\n        }\n      }\n    "
 
 
 
@@ -710,7 +741,7 @@ public class GraphExpander {
 );
 
     // generate each strategy CollectSubterm<sortname>
-    strategiesCode.append("\n    %strategy CollectSubterm"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label:String,info:tom_Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+") extends Fail() {\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+" {\n        term@Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"=subterm] -> {\n          Position current = getEnvironment().getPosition();\n          if (label.equals(`label)) {\n            //test if it is not a cycle\n            if (!info.omegaRef.hasPrefix(current)) {\n              //return a ref\n              info.sharedTerm = `subterm;\n              return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch8NameNumber_freshVar_9+"(label);\n            }\n            else {\n              //do not return a ref and stop to collect\n              return `term;  \n            }\n          }\n        }\n      }\n    }\n    "
+    strategiesCode.append("\n    %strategy CollectSubterm"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label:String,info:tom_Info"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+") extends Fail() {\n      visit "/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+" {\n        term@Lab"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"[label"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=label,term"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"=subterm] -> {\n          Position current = getEnvironment().getPosition();\n          if (label.equals(`label)) {\n            //test if it is not a cycle\n            if (!info.omegaRef.hasPrefix(current)) {\n              //return a ref\n              info.sharedTerm = `subterm;\n              return `Ref"/* Generated by TOM (version 2.6): Do not edit this file */+tomMatch313NameNumber_freshVar_9+"(label);\n            }\n            else {\n              //do not return a ref and stop to collect\n              return `term;  \n            }\n          }\n        }\n      }\n    }\n    "
 
 
 
@@ -731,7 +762,7 @@ public class GraphExpander {
 
 
 );
-      }}}if ( tomMatch8NameNumber_end_4.isEmptyConcSort() ) {tomMatch8NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch8NameNumber_end_4= tomMatch8NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch8NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch313NameNumber_end_4.isEmptyConcSort() ) {tomMatch313NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch313NameNumber_end_4= tomMatch313NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch313NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
 
@@ -766,5 +797,4 @@ public class GraphExpander {
     strategiesCode.append(NormalizeLabelCode);
     return strategiesCode.toString();
   }
-
 }

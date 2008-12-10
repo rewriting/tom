@@ -431,20 +431,20 @@ public class SymbolTable {
   /** associate an inliner to a name */
   private Map<String,String> mapInliner = null;
 
-  private static String prefixIsFsym = "is_fsym_";
-  private static String prefixGetSlot = "get_slot_";
-  private static String prefixGetHead = "get_head_";
-  private static String prefixGetTail = "get_tail_";
-  private static String prefixGetElementArray = "get_element_array_";
-  private static String prefixGetSizeArray = "get_size_array_";
-  private static String prefixIsEmptyList = "is_empty_list_";
-  private static String prefixIsSort = "is_sort_";
-  private static String prefixMake = "make_";
-  private static String prefixMakeEmptyArray = "make_empty_array_";
-  private static String prefixMakeEmptyList = "make_empty_list_";
-  private static String prefixMakeAddArray = "make_append_";
-  private static String prefixMakeAddList = "make_insert_";
-  private static String prefixEqualTerm = "equal_";
+  private final static String prefixIsFsym = "is_fsym_";
+  private final static String prefixGetSlot = "get_slot_";
+  private final static String prefixGetHead = "get_head_";
+  private final static String prefixGetTail = "get_tail_";
+  private final static String prefixGetElementArray = "get_element_array_";
+  private final static String prefixGetSizeArray = "get_size_array_";
+  private final static String prefixIsEmptyList = "is_empty_list_";
+  private final static String prefixIsSort = "is_sort_";
+  private final static String prefixMake = "make_";
+  private final static String prefixMakeEmptyArray = "make_empty_array_";
+  private final static String prefixMakeEmptyList = "make_empty_list_";
+  private final static String prefixMakeAddArray = "make_append_";
+  private final static String prefixMakeAddList = "make_insert_";
+  private final static String prefixEqualTerm = "equal_";
 
   private void putInliner(String prefix, String opname, String code) {
     mapInliner.put(prefix+opname,code);

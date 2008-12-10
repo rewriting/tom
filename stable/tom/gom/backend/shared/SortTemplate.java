@@ -31,6 +31,7 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 import tom.platform.OptionManager;
 
 public class SortTemplate extends TemplateHookedClass {
@@ -47,8 +48,9 @@ public class SortTemplate extends TemplateHookedClass {
                       boolean maximalsharing,
                       List importList, 	
                       GomClass gomClass,
-                      TemplateClass mapping) {
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                      TemplateClass mapping,
+                      GomEnvironment gomEnvironment) {
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.maximalsharing = maximalsharing;
     {{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {if ( ((( tom.gom.adt.objects.types.GomClass )gomClass) instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {
 
@@ -64,6 +66,10 @@ public class SortTemplate extends TemplateHookedClass {
 
     throw new GomRuntimeException(
         "Bad argument for SortTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   protected String generateInterface() {
@@ -286,5 +292,4 @@ matchblock: {
 
 );
  }
-
 }

@@ -41,8 +41,8 @@ public class IsOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public IsOpTemplate(GomClass gomClass) {
-    super(gomClass);
+  public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
     {{if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {if ( ((( tom.gom.adt.objects.types.ClassName )clsName) instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
@@ -60,6 +60,10 @@ public class IsOpTemplate extends TemplateClass {
 
     throw new GomRuntimeException(
         "Wrong argument for IsOpTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
