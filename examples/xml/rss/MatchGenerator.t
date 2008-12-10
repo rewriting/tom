@@ -35,6 +35,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 import tom.library.xml.*;
@@ -50,6 +52,7 @@ public class MatchGenerator {
   private static XmlTools xtools = null;
   private static String rssFilename = null;
   private static String workDir = null;
+  private static Map<String,String> informationTracker;
     
   private static final String fileSep = System.getProperty("file.separator");
   
@@ -57,6 +60,7 @@ public class MatchGenerator {
   
   public MatchGenerator(){	  
 	  xtools = new XmlTools();
+    informationTracker = new HashMap();
 	   
 	  // for launching from eclipse  		
 	  rssFilename = System.getProperty("user.dir") + fileSep
@@ -98,7 +102,7 @@ public class MatchGenerator {
 	  generate(writer,className,pattern);	  
 	  // generate .java
 	  System.setProperty("tom.home",System.getenv("TOM_HOME"));
-	  int tomResult = Tom.exec(getTomParams(className));
+	  int tomResult = Tom.exec(getTomParams(className),informationTracker);
 	  System.out.println("Tom returned: " + tomResult);
 	  // compile class	  
 	  int javacResult = com.sun.tools.javac.Main.compile(new String[] {

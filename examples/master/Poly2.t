@@ -34,6 +34,7 @@ public class Poly2 {
 
   %gom {
     module Poly
+    imports int String
     abstract syntax
     Poly = m(coef:int,name:String,exp:int)
          | plus(pl:PolyList)

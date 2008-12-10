@@ -34,6 +34,7 @@ public class Matching3 {
 
   %gom {
     module Peano
+    imports String
     abstract syntax
     Nat = var(n:String)
         | zero()
