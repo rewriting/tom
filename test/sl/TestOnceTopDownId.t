@@ -24,19 +24,19 @@ public class TestOnceTopDownId extends TestCase {
   public void test1() throws VisitFailure{
     Term t = `f(a(),a());
     try {
-      t = (Term)`OnceTopDownId(Bug()).visitLight(t);
+      t = `OnceTopDownId(Bug()).visitLight(t);
       assertEquals("It should rewite one a()",`f(b(),a()),t);
     } catch (tom.library.sl.VisitFailure f) {
       fail("It should not fail");
     }
     try {
-      t = (Term)`OnceTopDownId(Bug()).visitLight(t);
+      t = `OnceTopDownId(Bug()).visitLight(t);
       fail("It should fail, but got "+t);
     } catch (tom.library.sl.VisitFailure f) {
     }
 
     Term t2 = `f(c(),c());
-    t = (Term)`OnceTopDownId(Bug()).visit(t2);
+    t = `OnceTopDownId(Bug()).visit(t2);
     assertEquals("they should be equal",t,t2);
   }
 

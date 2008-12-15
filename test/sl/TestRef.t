@@ -60,9 +60,9 @@ public class TestRef extends TestCase {
   public void testRef1() {
     Term subject = (Term) `g(g(a(),RefTerm("l")),LabTerm("l",a())).expand();
     try{
-      Term res = (Term) `TopDown(StrictDeRef(AB())).visit(subject);
-      res = (Term) `TopDown(DeRef(AB())).visit(subject);
-      res = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject);
+      Term res =  `TopDown(StrictDeRef(AB())).visit(subject);
+      res =  `TopDown(DeRef(AB())).visit(subject);
+      res =  `TopDownSeq(StrictDeRef(AB())).visit(subject);
       assertEquals(`g(g(a(),RefTerm("n")),LabTerm("n",b())).expand(),res);
     } catch (tom.library.sl.VisitFailure e) {
       fail("It should not fail");
@@ -72,10 +72,10 @@ public class TestRef extends TestCase {
   public void testRef2() {
     Term subject = (Term) `g(g(a(),RefTerm("l")),LabTerm("l",a())).expand();
     try{
-      Term res = (Term) `TopDown(StrictDeRef(AB())).visit(subject);
-      res = (Term) `TopDown(DeRef(AB())).visit(subject);
-      res = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject);
-      res = (Term) `TopDownSeq(DeRef(AB())).visit(subject);
+      Term res =  `TopDown(StrictDeRef(AB())).visit(subject);
+      res =  `TopDown(DeRef(AB())).visit(subject);
+      res =  `TopDownSeq(StrictDeRef(AB())).visit(subject);
+      res =  `TopDownSeq(DeRef(AB())).visit(subject);
       assertEquals(`g(g(b(),RefTerm("n")),LabTerm("n",c())).expand(),res);
     } catch (tom.library.sl.VisitFailure e) {
       fail("It should not fail");
@@ -83,11 +83,11 @@ public class TestRef extends TestCase {
   }
 
   public void testRef3() {
-    Term subject2 = (Term) `g(g(a(),LabTerm("l",a())),RefTerm("l")).expand();
+    Term subject2 =  (Term) `g(g(a(),LabTerm("l",a())),RefTerm("l")).expand();
     try{
-      Term res2 = (Term) `TopDown(StrictDeRef(AB())).visit(subject2);
-      res2 = (Term) `TopDown(DeRef(AB())).visit(subject2);
-      res2 = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject2);
+      Term res2 =  `TopDown(StrictDeRef(AB())).visit(subject2);
+      res2 =  `TopDown(DeRef(AB())).visit(subject2);
+      res2 =  `TopDownSeq(StrictDeRef(AB())).visit(subject2);
       assertEquals(`g(g(a(),LabTerm("n",b())),RefTerm("n")).expand(),res2);
     } catch (tom.library.sl.VisitFailure e) {
       fail("It should not fail");
@@ -97,10 +97,10 @@ public class TestRef extends TestCase {
   public void testRef4() {
     Term subject2 = (Term) `g(g(a(),LabTerm("l",a())),RefTerm("l")).expand();
     try{
-      Term res2 = (Term) `TopDown(StrictDeRef(AB())).visit(subject2);
-      res2 = (Term) `TopDown(DeRef(AB())).visit(subject2);
-      res2 = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject2);
-      res2 = (Term) `TopDownSeq(DeRef(AB())).visit(subject2);
+      Term res2 =  `TopDown(StrictDeRef(AB())).visit(subject2);
+      res2 =  `TopDown(DeRef(AB())).visit(subject2);
+      res2 =  `TopDownSeq(StrictDeRef(AB())).visit(subject2);
+      res2 =  `TopDownSeq(DeRef(AB())).visit(subject2);
       assertEquals(`g(g(b(),LabTerm("n",c())),RefTerm("n")).expand(),res2);
     } catch (tom.library.sl.VisitFailure e) {
       fail("It should not fail");

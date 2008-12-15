@@ -193,7 +193,7 @@ public class TestReflective extends TestCase {
   }
 
   public void testS1Id() throws VisitFailure{
-    Strategy s = (Strategy)`S1().visit(`Identity());
+    Strategy s = `S1().visit(`Identity());
     %match(s) {
       Identity() -> { fail("Id should rewrite to fail"); }
       Fail() -> { return; }
@@ -202,7 +202,7 @@ public class TestReflective extends TestCase {
   }
 
   public void testS1Fail() throws VisitFailure{
-    Strategy s = (Strategy)`S1().visit(`Fail());
+    Strategy s = `S1().visit(`Fail());
     %match(s) {
       Fail() -> { fail("Fail should rewrite to Identity"); }
       Identity() -> { return; }
@@ -211,7 +211,7 @@ public class TestReflective extends TestCase {
   }
 
   public void testS3Id() throws VisitFailure{
-    Strategy s = (Strategy)`S3().visit(`Identity());
+    Strategy s = `S3().visit(`Identity());
     %match(s) {
       Identity() -> { return; }
     }
@@ -219,7 +219,7 @@ public class TestReflective extends TestCase {
   }
 
   public void testS3All() throws VisitFailure{
-    Strategy s = (Strategy)`S3().visit(`All(Identity()));
+    Strategy s = `S3().visit(`All(Identity()));
     %match(s) {
       All[] -> { return; }
     }
@@ -228,7 +228,7 @@ public class TestReflective extends TestCase {
 
   public void testS3AllAllvisit() throws VisitFailure{
     try {
-      Strategy s = (Strategy)`S3().visitLight(`All(All(Identity())));
+      Strategy s = `S3().visitLight(`All(All(Identity())));
       %match(s) {
         All(All(Identity())) -> { fail("S3 did not rewrite s"); }
         All(Identity()) -> { return; }
@@ -240,7 +240,7 @@ public class TestReflective extends TestCase {
   }
 
   public void testS3AllAll() throws VisitFailure{
-    Strategy s = (Strategy)`S3().visit(`All(All(Identity())));
+    Strategy s = `S3().visit(`All(All(Identity())));
     %match(s) {
       All(All(Identity())) -> { fail("S3 did not rewrite s"); }
       All(Identity()) -> { return; }
@@ -249,14 +249,14 @@ public class TestReflective extends TestCase {
   }
 
   public void testS3Allllll() throws VisitFailure{
-    Strategy s = (Strategy)`S3().visit(`All(All(All(All(Identity())))));
+    Strategy s = `S3().visit(`All(All(All(All(Identity())))));
     %match(s) {
       All(Identity()) -> { fail("should not be here"); }
     }
   }
 
   public void testAlllllBU() throws VisitFailure{
-    Strategy s = (Strategy)`BottomUp(S3()).visit(`All(All(All(All(Identity())))));
+    Strategy s = `BottomUp(S3()).visit(`All(All(All(All(Identity())))));
     %match(s) {
       All(Identity()) -> { return; }
     }
@@ -272,7 +272,7 @@ public class TestReflective extends TestCase {
     Strategy s = `All(S2(0, "", All(All(Identity()))));
     assertEquals(
         "countAll should return 2 with `BottomUp(S3()).visit(`"+s+")", 2,
-        countAll((Strategy)`BottomUp(S3()).visit(s)));
+        countAll(`BottomUp(S3()).visit(s)));
   }
 
   public void testStratNoStrat() throws VisitFailure{
@@ -299,14 +299,14 @@ public class TestReflective extends TestCase {
     Strategy s = `All(S4(All(All(Identity())), 0, All(All(All(Identity())))));
     assertEquals(
         "countAll should return 3 with `BottomUp(S3()).visit("+s+")", 3,
-        countAll((Strategy)`BottomUp(S3()).visit(s)));
+        countAll(`BottomUp(S3()).visit(s)));
   }
 
   public void testcountAll5() throws VisitFailure{
     Strategy s = `S4(Identity(), 0, Fail());
     assertEquals(
         "countAll should return 2 with `BottomUp(S5()).visit(`"+s+")", 2,
-        countAll((Strategy)`BottomUp(S5()).visit(s)));
+        countAll(`BottomUp(S5()).visit(s)));
   }
 
   %strategy S1() extends `Identity() {

@@ -28,20 +28,20 @@ public class TestGetSubterm extends TestCase {
     Collection<Position> bag = new HashSet<Position>();
     Term t = `f(a(),a());
     try {
-      t = (Term)`TopDown(Bug(bag)).visit(t);
+      t = `TopDown(Bug(bag)).visit(t);
       assertEquals("There are two a()",2,bag.size());
     } catch (VisitFailure f) {
       fail("It should not fail");
     }
     for(Position p : bag) {
       Strategy sts = p.getSubterm();
-      Term st = (Term) sts.visit(t);
+      Term st =  sts.visit(t);
       assertEquals(`a(),st);
     }
     for(Position p : bag) {
       Strategy sts = p.getSubterm();
       try {
-        Term st = (Term) sts.visitLight(t);
+        Term st =  sts.visitLight(t);
         assertEquals(`a(),st);
       } catch (tom.library.sl.VisitFailure f) {
         fail("getsubterm should not fail there");
