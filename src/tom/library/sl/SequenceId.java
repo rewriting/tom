@@ -45,8 +45,8 @@ public class SequenceId   extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
-    Object v = visitors[FIRST].visitLight(subject, introspector);
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
+    T v = visitors[FIRST].visitLight(subject, introspector);
     if(v != subject) {
       return visitors[THEN].visitLight(v, introspector);
     } else {

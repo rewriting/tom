@@ -45,9 +45,9 @@ public class IfThenElse extends AbstractStrategy {
   }
 
 
-  public Object visitLight(Object x, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T x, Introspector introspector) throws VisitFailure {
     boolean success;
-    Object result;
+    T result;
     try {
       visitors[CONDITION].visitLight(x, introspector);
       success = true;

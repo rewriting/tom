@@ -44,9 +44,9 @@ public class AllSeq extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public final Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public final <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int childCount = introspector.getChildCount(any);
-    Object result = any;
+    T result = any;
     for (int i = 0; i < childCount; i++) {
       Object newChild = visitors[ARG].visitLight(introspector.getChildAt(result,i),introspector);
       result = introspector.setChildAt(result, i, newChild);

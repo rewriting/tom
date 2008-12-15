@@ -43,8 +43,8 @@ public class Identity extends AbstractStrategy {
     initSubterm();
   }
 
-  public Object visitLight(Object x, Introspector introspector) {
-    return x;
+  public <T> T visitLight(T any, Introspector introspector) {
+    return any;
   }
 
   public int visit(Introspector introspector) {

@@ -95,8 +95,8 @@ public abstract class AbstractStrategy implements Strategy {
     return (Visitable) visit(envt,VisitableIntrospector.getInstance());
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure{
-    return (Visitable) visit(any,VisitableIntrospector.getInstance());
+  public <T extends Visitable> T visit(T any) throws VisitFailure{
+    return visit(any,VisitableIntrospector.getInstance());
   }
 
   public Object visit(Environment envt, Introspector m) throws VisitFailure {
@@ -109,17 +109,17 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
-    return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
+  public <T extends Visitable> T visitLight(T any) throws VisitFailure {
+    return visitLight(any,VisitableIntrospector.getInstance());
   }
 
 
-  public Object visit(Object any, Introspector m) throws VisitFailure{
+  public <T> T visit(T any, Introspector m) throws VisitFailure{
     init();
     setRoot(any);
     int status = visit(m);
     if(status == Environment.SUCCESS) {
-      return getRoot();
+      return (T) getRoot();
     } else {
       throw new tom.library.sl.VisitFailure();
     }

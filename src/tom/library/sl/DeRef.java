@@ -60,7 +60,7 @@ public class DeRef extends AbstractStrategy {
   public boolean isRelative() { return relative; }
   public boolean isStrict() { return strict; }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     throw new RuntimeException("The strategy operator DeRef can be used only with the methods visit() and fire()");
   }
 

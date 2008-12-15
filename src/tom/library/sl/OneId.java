@@ -49,7 +49,7 @@ public class OneId extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws  VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws  VisitFailure {
     int childCount = introspector.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
       Object newSubterm = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);

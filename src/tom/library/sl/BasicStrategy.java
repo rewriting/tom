@@ -98,12 +98,12 @@ public abstract class BasicStrategy implements Strategy {
   }
 
 
-  public Object visit(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visit(T any, Introspector introspector) throws VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(introspector));
     environment.setRoot(any);
     int status = visit(introspector);
     if(status == tom.library.sl.Environment.SUCCESS) {
-      return environment.getRoot();
+      return (T) environment.getRoot();
     } else {
       throw new VisitFailure();
     }
@@ -118,7 +118,7 @@ public abstract class BasicStrategy implements Strategy {
     }
   }
 
-  public abstract Object visitLight(Object v, Introspector introspector) throws VisitFailure;
+  public abstract <T> T visitLight(T v, Introspector introspector) throws VisitFailure;
 
   public Visitable visit(Environment envt) throws VisitFailure {
     return (Visitable) visit(envt,VisitableIntrospector.getInstance());

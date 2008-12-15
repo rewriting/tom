@@ -41,7 +41,7 @@ public class Not extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Object visitLight(Object x, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T x, Introspector introspector) throws VisitFailure {
     try {
       visitors[ARG].visitLight(x, introspector);
     } catch (VisitFailure f) {

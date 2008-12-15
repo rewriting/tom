@@ -65,7 +65,7 @@ public class Pselect extends AbstractStrategy {
     return q;
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(q);
     if(randomInt < p) {
       return visitors[FIRST].visitLight(subject,introspector);
