@@ -57,7 +57,7 @@ public class Fail extends AbstractStrategy {
     this.message = message;
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     throw new VisitFailure(message);
   }
 

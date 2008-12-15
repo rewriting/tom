@@ -54,7 +54,7 @@ public class Omega extends AbstractStrategy {
     return indexPosition;
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     if(indexPosition==0) {
       return visitors[ARG].visitLight(any,introspector);
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(any)) {

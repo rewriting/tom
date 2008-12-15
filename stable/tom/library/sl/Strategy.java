@@ -48,14 +48,14 @@ public interface Strategy extends Visitable {
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
-  public Visitable visit(Visitable any) throws VisitFailure;
+  public <T extends Visitable> T visit(T any) throws VisitFailure;
 
   /**
    *  Visit the subject any in a light way (without environment)
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
-  public Visitable visitLight(Visitable any) throws VisitFailure;
+  public <T extends Visitable> T visitLight(T any) throws VisitFailure;
 
   /**
    * Execute the strategy in the given environment (on its current subject).
@@ -66,18 +66,18 @@ public interface Strategy extends Visitable {
   public Visitable visit(Environment envt) throws VisitFailure;
 
   /**
-   *  Visit the subject any by providing the environment
+   *  Visit the subject any by providing the introspector
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
-  public Object visit(Object any, Introspector m) throws VisitFailure;
+  public <T> T visit(T any, Introspector m) throws VisitFailure;
 
   /**
    *  Visits the subject any in a light way (without environment)
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
-  public Object visitLight(Object any, Introspector m) throws VisitFailure;
+  public <T> T visitLight(T any, Introspector m) throws VisitFailure;
 
   /**
    * Execute the strategy in the given environment (on its current subject).

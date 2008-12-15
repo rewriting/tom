@@ -49,7 +49,7 @@ public class Choice extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     try {
       return visitors[FIRST].visitLight(subject, introspector);
     } catch (VisitFailure f) {

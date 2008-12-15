@@ -57,7 +57,7 @@ public class One extends AbstractStrategy {
   /** Method herited from the apply() method of mutraveler library
    * @deprecated use fire() instead
    */ 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int childCount = introspector.getChildCount(any);
     for(int i = 0; i < childCount; i++) {
       try {

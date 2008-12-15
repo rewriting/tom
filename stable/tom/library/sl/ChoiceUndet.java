@@ -89,7 +89,7 @@ public class ChoiceUndet extends AbstractStrategy {
     }
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(size);
     return visitors[randomInt].visitLight(subject,introspector);
   }

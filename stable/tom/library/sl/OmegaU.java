@@ -50,7 +50,7 @@ public class OmegaU extends AbstractStrategy {
     }
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int arity = introspector.getChildCount(any);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {

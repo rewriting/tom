@@ -37,7 +37,7 @@ public interface Introspector {
    * @param o the object whose children are replace
    * @param children the new subterm of the object
    */
-  public Object setChildren(Object o, Object[] children);
+  public <T> T setChildren(T o, Object[] children);
 
   /**
    * Return the children of a given object
@@ -51,7 +51,7 @@ public interface Introspector {
    * @param i the index of the subterm
    * @param child the new subterm 
    */
-  public Object setChildAt( Object o, int i, Object child);
+  public <T> T setChildAt( T o, int i, Object child);
 
   /**
    * Return the i-th subterm of the object o

@@ -42,7 +42,7 @@ public class MuVar extends AbstractStrategy {
     }
   }
   
-  public final Object visitLight(Object any,Introspector i) throws VisitFailure {
+  public final <T> T visitLight(T any,Introspector i) throws VisitFailure {
     if(instance != null) {
       return instance.visitLight(any,i);
     } else {

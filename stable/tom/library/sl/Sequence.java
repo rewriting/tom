@@ -46,7 +46,7 @@ public class Sequence extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object visitable, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T visitable, Introspector introspector) throws VisitFailure {
     return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable,introspector),introspector);
   }
 
