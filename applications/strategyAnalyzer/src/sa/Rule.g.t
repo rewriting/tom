@@ -31,16 +31,17 @@ strategy :
        SEMICOLON s2=strategy
      | CHOICE s3=strategy
      )?
-     -> {s2!=null}? ^(Seq $s1 $s2)
-     -> {s3!=null}? ^(LChoice $s1 $s3)
+     -> {s2!=null}? ^(StratSequence $s1 $s2)
+     -> {s3!=null}? ^(StratChoice $s1 $s3)
      -> $s1
   ;
 
 elementarystrategy :
-    IDENTITY -> ^(Identity)
-  | FAIL -> ^(Fail)
-  | ID -> ^(RS ID)
+    IDENTITY -> ^(StratIdentity)
+  | FAIL -> ^(StratFail)
   | LPAR strategy RPAR -> strategy
+  | MU ID DOT LPAR s=strategy RPAR -> ^(StratMu ID $s)
+  | ID -> ^(StratName ID)
   ;
 
 ruleset :
@@ -81,6 +82,7 @@ SEMICOLON : ';' ;
 CHOICE : '<+' ;
 IDENTITY : 'identity';
 FAIL : 'fail';
+MU : 'mu';
 LET : 'let';
 IN : 'in';
 EQUALS : '=';

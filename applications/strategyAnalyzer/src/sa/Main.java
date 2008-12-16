@@ -17,6 +17,8 @@ public class Main {
       ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
       System.out.println("Result = " + expl);
       System.out.println( Pretty.toString(expl) );
+      ExpressionList expandl = Compiler.expand(expl);
+      System.out.println( Pretty.toString(expandl) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;
