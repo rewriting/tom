@@ -1,8 +1,7 @@
-let R1 = { f(x) -> x } in 
-let R2 = { b() -> c() } in 
-R1;(R1<+R2);R1
+//let R1 = { f(x) -> x } in 
+//let R2 = { b() -> c() } in 
+//R1;(R1<+R2);R1
 
-//let Repeat(s) = mu x . (s;x) <+ Identity in
-let R1 = { a() -> b() } in 
-mu x .((R1;x) <+ Identity) in
+let r1 = { a() -> b() } in mu x .((r1;x) <+ identity)
 
+//let r1 = { a() -> b() } in mu x .((r1;x))

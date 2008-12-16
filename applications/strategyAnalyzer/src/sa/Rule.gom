@@ -34,4 +34,6 @@ Strat = StratName(name:String)
 
 module Rule:rules() {
   StratExp(Set(RuleList(rule))) -> StratRule(rule)
+  StratName("Identity") -> StratIdentity()
+  StratName("Fail") -> StratFail()
 }
