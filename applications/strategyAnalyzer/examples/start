@@ -4,5 +4,11 @@
 
 //let r1 = { a() -> b() } in mu x .((r1;x) <+ identity)
 
+//let S=signature {a:0, f:1, g:2} in
+//let r1 = { a() -> b() } in all(r1)
+
+// repeat(obu(r1))
 let S=signature {a:0, f:1, g:2} in
-let r1 = { a() -> b() } in all(r1)
+let r1 = { a() -> b() } in 
+let obu = mu y.(one(x)<+r1) in
+mu x .((obu;x) <+ identity)
