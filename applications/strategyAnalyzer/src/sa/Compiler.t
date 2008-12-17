@@ -129,7 +129,7 @@ public class Compiler {
               // generate success rules
               // phi_n(!BOTTOM,...,!BOTTOM,x) -> x
               TermList args = `TermList(Var("x"));
-              for(int i=0 ; i<arity ; i++) {
+              for(int i=1 ; i<=arity ; i++) {
                 args = `TermList(Anti(BOTTOM),args*);
               }
               bag.add(`Rule(Appl(phi_n,args),Var("x")));
@@ -137,9 +137,9 @@ public class Compiler {
               // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
               // phi_n(...,BOTTOM,...,x) -> BOTTOM
               // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
-              for(int i=0 ; i<arity ; i++) {
+              for(int i=1 ; i<=arity ; i++) {
                 TermList diag = `TermList(Var("x"));
-                for(int j=arity-1 ; j>=0 ; j--) {
+                for(int j=arity ; j>0 ; j--) {
                   if(i==j) {
                     diag = `TermList(BOTTOM,diag*);
                   } else {
@@ -151,16 +151,16 @@ public class Compiler {
             }
           }
           // generate congruence rules
-          // phi(f(x1,...,xn)) -> phi_n(phi(x1),...,phi(xn), 
-          //                       f(phi_s(x1),...,phi_s(xn)))
-          TermList args_x = `TermList();
-          TermList args_phi = `TermList();
-          TermList args_phi_s = `TermList();
           if(arity==0) {
             bag.add(`Rule(Appl(phi,TermList(Appl(name,TermList()))),
                           Appl(name,TermList())));
 
           } else {
+            // phi(f(x1,...,xn)) -> phi_n(phi(x1),...,phi(xn), 
+            //                       f(phi_s(x1),...,phi_s(xn)))
+            TermList args_x = `TermList();
+            TermList args_phi = `TermList();
+            TermList args_phi_s = `TermList();
             for(int i=arity ; i>0 ; i--) {
               args_x = `TermList(Var("x"+i),args_x*);
               args_phi = `TermList(Appl(phi,TermList(Var("x"+i))),args_phi*);
@@ -173,6 +173,85 @@ public class Compiler {
 
         return phi;
       }
+
+      StratOne(s) -> {
+        String phi_s = compileStrat(bag,sig,`s);
+        String phi = getName();
+        Map<Integer,String> mapphi = new HashMap<Integer,String>();
+
+        Iterator<String> it = sig.keySet().iterator();
+        while(it.hasNext()) {
+          String name = it.next();
+          int arity = sig.get(name);
+          String phi_n = mapphi.get(arity);
+          if(phi_n == null) {
+            //phi_n = getName();
+            phi_n = phi+"_"+arity;
+            mapphi.put(arity,phi_n);
+            if(arity>0) {
+              // generate failure rules
+              // phi_n(BOTTOM,...,BOTTOM,x1,...,xn) -> BOTTOM
+              TermList args = `TermList();
+              for(int i=arity ; i>0 ; i--) {
+                args = `TermList(Var("x"+i),args*);
+              }
+              for(int i=0 ; i<arity ; i++) {
+                args = `TermList(BOTTOM,args*);
+              }
+              bag.add(`Rule(Appl(phi_n,args),BOTTOM));
+
+              // generate success rules
+              // phi_n(!BOTTOM,...,yn,x1,...,xn) -> x1
+              // phi_n(y1,...,!BOTTOM,x1,...,xn) -> xn
+              for(int i=1 ; i<=arity ; i++) {
+                TermList diag = `TermList();
+                for(int j=arity ; j>0 ; j--) {
+                  diag = `TermList(Var("x"+j),diag*);
+                }
+                for(int j=arity ; j>0 ; j--) {
+                  if(i==j) {
+                    diag = `TermList(Anti(BOTTOM),diag*);
+                  } else {
+                    diag = `TermList(Var("y"+j),diag*);
+                  }
+                }
+                bag.add(`Rule(Appl(phi_n,diag),Var("x"+i)));
+              }
+            }
+          }
+          // generate congruence rules
+          if(arity==0) {
+            bag.add(`Rule(Appl(phi,TermList(Appl(name,TermList()))),
+                          BOTTOM));
+
+          } else {
+          // phi(f(x1,...,xn)) -> phi_n(phi(x1),...,phi(xn),
+          //                f(phi_s(x1),...,xn),...,f(x1,...,phi_s(xn)))
+            TermList args_x = `TermList();
+            TermList args_phi = `TermList();
+            TermList args_f = `TermList();
+            for(int i=arity ; i>0 ; i--) {
+              args_x = `TermList(Var("x"+i),args_x*);
+              args_phi = `TermList(Appl(phi,TermList(Var("x"+i))),args_phi*);
+              TermList args_phi_s = `TermList();
+              for(int j=arity ; j>0 ; j--) {
+                if(i==j) {
+                  args_phi_s = `TermList(Appl(phi_s,TermList(Var("x"+i))),args_phi_s*);
+                } else {
+                  args_phi_s = `TermList(Var("x"+j),args_phi_s*);
+                }
+              }
+                args_f = `TermList(Appl(name,args_phi_s),args_f*);
+            }
+            bag.add(`Rule(Appl(phi,TermList(Appl(name,args_x))),
+                  Appl(phi_n,TermList(args_phi*,args_f*))));
+          }
+        }
+
+        return phi;
+      }
+
+
       // mu fix point: transform the startame into a function call
       StratName(name) -> {
         return `name;
