@@ -45,6 +45,19 @@ public class Pretty {
       Strat(s) -> {
         sb.append(`s);
       }
+      
+      Signature(symbollist) -> {
+        sb.append("signature { ");
+        %match(symbollist) {
+          SymbolList(_*,Symbol(name,arity),end*) -> {
+            sb.append(`name + ":" + `arity);
+            if(!`end.isEmptySymbolList()) {
+              sb.append(", ");
+            }
+          }
+        }
+        sb.append(" }");
+      }
 
 
     }

@@ -5,6 +5,10 @@ abstract syntax
 Expression = Let(name:String, v:Expression, t:Expression)
            | Set(list:RuleList)
            | Strat(strat:Strat)
+           | Signature(symbollist:SymbolList)
+
+Symbol = Symbol(name:String,arity:int)
+SymbolList = SymbolList(Symbol*)
 
 ExpressionList = ExpressionList(Expression*)
 
@@ -29,6 +33,8 @@ Strat = StratName(name:String)
       | StratChoice(s1:Strat, s2:Strat)
       | StratIdentity()
       | StratFail()
+      | StratAll(s:Strat)
+      | StratOne(s:Strat)
       | StratExp(e:Expression)
       | StratMu(name:String, s:Strat)
 

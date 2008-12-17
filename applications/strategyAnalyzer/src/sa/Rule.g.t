@@ -24,6 +24,8 @@ expression :
     LET ID EQUALS v=expression IN t=expression -> ^(Let ID $v $t)
   | LBRACE (rule (COMA rule)*)? RBRACE -> ^(Set ^(RuleList (rule)*))
   | strategy -> ^(Strat strategy)
+  | SIGNATURE LBRACE (symbol (COMA symbol)*)? RBRACE -> ^(Signature ^(SymbolList (symbol)*))
+
   ;
 
 strategy :
@@ -40,7 +42,9 @@ elementarystrategy :
     IDENTITY -> ^(StratIdentity)
   | FAIL -> ^(StratFail)
   | LPAR strategy RPAR -> strategy
-  | MU ID DOT LPAR s=strategy RPAR -> ^(StratMu ID $s)
+  | ALL LPAR strategy RPAR -> ^(StratAll strategy)
+  | ONE LPAR strategy RPAR -> ^(StratOne strategy)
+  | MU ID DOT LPAR strategy RPAR -> ^(StratMu ID strategy)
   | ID -> ^(StratName ID)
   ;
 
@@ -59,15 +63,20 @@ condition :
   ;
 pattern :
     ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
-  | '!'p=term -> ^(Anti $p)
+  | '!' term -> ^(Anti term)
 ;
 term :
     pattern
   | ID -> ^(Var ID)
   | builtin
 ;
+
 builtin :
   INT -> ^(BuiltinInt INT)
+;
+
+symbol :
+  ID COLON INT -> ^(Symbol ID INT)
 ;
 
 ARROW : '->' ;
@@ -82,9 +91,12 @@ SEMICOLON : ';' ;
 CHOICE : '<+' ;
 IDENTITY : 'identity';
 FAIL : 'fail';
+ALL : 'all';
+ONE : 'one';
 MU : 'mu';
 LET : 'let';
 IN : 'in';
+SIGNATURE : 'signature';
 EQUALS : '=';
 DOUBLEEQUALS : '==';
 NOTEQUALS : '!=';
