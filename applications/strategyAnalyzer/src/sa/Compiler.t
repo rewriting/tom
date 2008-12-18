@@ -11,6 +11,8 @@ public class Compiler {
   %include { java/util/types/Map.tom }
 
   private final static Term BOTTOM = `Appl("Bottom",TermList());
+  private final static Term X = `Var("x");
+
   private static int phiNumber = 0;
   private static String getName() {
     return "phi" + (phiNumber++);
@@ -46,7 +48,8 @@ public class Compiler {
       }
 
       Strat(s) -> {
-        compileStrat(bag,sig,`s);
+        String start = compileStrat(bag,sig,`s);
+        System.out.println("start: " + start);
       }
     }
   }
@@ -60,31 +63,42 @@ public class Compiler {
       StratRule(Rule(lhs,rhs)) -> {
         String phi = getName();
         bag.add(`Rule(Appl(phi,TermList(lhs)),rhs));
+        bag.add(`Rule(Appl(phi,TermList(Anti(lhs))),BOTTOM));
         return phi;
       }
 
+      /*
+       * TODO: fix non confluence here
+       */
       StratMu(name,s) -> {
         try {
           String phi_x = getName();
+          String phi2_x = getName();
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
           String phi_s = compileStrat(bag,sig,newStrat);
-          bag.add(`Rule(Appl(phi_x,TermList(Var("x"))),Appl(phi_s,TermList(Var("x")))));
-          bag.add(`Rule(Appl(phi_x,TermList(BOTTOM)),Appl(phi_s,TermList(BOTTOM))));
+          bag.add(`Rule(Appl(phi_x,TermList(X)),Appl(phi2_x,TermList(X,X))));
+          bag.add(`Rule(Appl(phi2_x,TermList(Anti(BOTTOM),X)),Appl(phi_s,TermList(X))));
+          bag.add(`Rule(Appl(phi2_x,TermList(BOTTOM,X)),BOTTOM));
           return phi_s;
         } catch(VisitFailure e) {
           System.out.println("failure in StratMu on: " + `s);
         }
       }
 
+      // mu fix point: transform the startame into a function call
+      StratName(name) -> {
+        return `name;
+      }
+
       StratIdentity() -> {
         String phi = getName();
-        bag.add(`Rule(Appl(phi,TermList(Var("x"))),Var("x")));
+        bag.add(`Rule(Appl(phi,TermList(X)),X));
         return phi;
       }
 
       StratFail() -> {
         String phi = getName();
-        bag.add(`Rule(Appl(phi,TermList(Var("x"))),BOTTOM));
+        bag.add(`Rule(Appl(phi,TermList(X)),BOTTOM));
         return phi;
       }
 
@@ -92,8 +106,8 @@ public class Compiler {
         String phi_s1 = compileStrat(bag,sig,`s1);
         String phi_s2 = compileStrat(bag,sig,`s2);
         String phi = getName();
-        bag.add(`Rule(Appl(phi,TermList(Var("x"))),
-              Appl(phi_s2,TermList(Appl(phi_s1,TermList(Var("x")))))));
+        bag.add(`Rule(Appl(phi,TermList(X)),
+              Appl(phi_s2,TermList(Appl(phi_s1,TermList(X))))));
         return phi;
       }
 
@@ -102,12 +116,12 @@ public class Compiler {
         String phi_s2 = compileStrat(bag,sig,`s2);
         String phi = getName();
         String phi2 = getName();
-        bag.add(`Rule(Appl(phi,TermList(Var("x"))),
-              Appl(phi2,TermList(Appl(phi_s1,TermList(Var("x"))), Var("x")))));
-        bag.add(`Rule(Appl(phi2,TermList(BOTTOM,Var("x"))),
-              Appl(phi_s2,TermList(Var("x")))));
-        bag.add(`Rule(Appl(phi2,TermList(Anti(BOTTOM),Var("x"))),
-              Appl(phi_s1,TermList(Var("x")))));
+        bag.add(`Rule(Appl(phi,TermList(X)),
+              Appl(phi2,TermList(Appl(phi_s1,TermList(X)), X))));
+        bag.add(`Rule(Appl(phi2,TermList(BOTTOM,X)),
+              Appl(phi_s2,TermList(X))));
+        bag.add(`Rule(Appl(phi2,TermList(Anti(BOTTOM),X)),
+              Appl(phi_s1,TermList(X))));
         return phi;
       }
 
@@ -128,17 +142,17 @@ public class Compiler {
             if(arity>0) {
               // generate success rules
               // phi_n(!BOTTOM,...,!BOTTOM,x) -> x
-              TermList args = `TermList(Var("x"));
+              TermList args = `TermList(X);
               for(int i=1 ; i<=arity ; i++) {
                 args = `TermList(Anti(BOTTOM),args*);
               }
-              bag.add(`Rule(Appl(phi_n,args),Var("x")));
+              bag.add(`Rule(Appl(phi_n,args),X));
               // generate failure rules
               // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
               // phi_n(...,BOTTOM,...,x) -> BOTTOM
               // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
               for(int i=1 ; i<=arity ; i++) {
-                TermList diag = `TermList(Var("x"));
+                TermList diag = `TermList(X);
                 for(int j=arity ; j>0 ; j--) {
                   if(i==j) {
                     diag = `TermList(BOTTOM,diag*);
@@ -156,18 +170,16 @@ public class Compiler {
                           Appl(name,TermList())));
 
           } else {
-            // phi(f(x1,...,xn)) -> phi_n(phi(x1),...,phi(xn), 
+            // phi(f(x1,...,xn)) -> phi_n(phi_s(x1),...,phi_s(xn), 
             //                       f(phi_s(x1),...,phi_s(xn)))
             TermList args_x = `TermList();
-            TermList args_phi = `TermList();
             TermList args_phi_s = `TermList();
             for(int i=arity ; i>0 ; i--) {
               args_x = `TermList(Var("x"+i),args_x*);
-              args_phi = `TermList(Appl(phi,TermList(Var("x"+i))),args_phi*);
               args_phi_s = `TermList(Appl(phi_s,TermList(Var("x"+i))),args_phi_s*);
             }
             bag.add(`Rule(Appl(phi,TermList(Appl(name,args_x))),
-                  Appl(phi_n,TermList(args_phi*,Appl(name,args_phi_s)))));
+                  Appl(phi_n,TermList(args_phi_s*,Appl(name,args_phi_s)))));
           }
         }
 
@@ -225,15 +237,15 @@ public class Compiler {
                           BOTTOM));
 
           } else {
-          // phi(f(x1,...,xn)) -> phi_n(phi(x1),...,phi(xn),
+          // phi(f(x1,...,xn)) -> phi_n(phi_s(x1),...,phi_s(xn),
           //                f(phi_s(x1),...,xn),...,f(x1,...,phi_s(xn)))
-            TermList args_x = `TermList();
-            TermList args_phi = `TermList();
-            TermList args_f = `TermList();
+            TermList args_x = `TermList(); // x1,...,xn
+            TermList args_phi_s_xi = `TermList(); // phi_s(x1),...,phi_s(xn)
+            TermList args_f = `TermList(); // f(...),...,f(...)
             for(int i=arity ; i>0 ; i--) {
               args_x = `TermList(Var("x"+i),args_x*);
-              args_phi = `TermList(Appl(phi,TermList(Var("x"+i))),args_phi*);
-              TermList args_phi_s = `TermList();
+              args_phi_s_xi = `TermList(Appl(phi_s,TermList(Var("x"+i))),args_phi_s_xi*);
+              TermList args_phi_s = `TermList(); // phi_s(x1),x2,...,xn or x1,phi_s(x2),...,xn
               for(int j=arity ; j>0 ; j--) {
                 if(i==j) {
                   args_phi_s = `TermList(Appl(phi_s,TermList(Var("x"+i))),args_phi_s*);
@@ -244,7 +256,7 @@ public class Compiler {
                 args_f = `TermList(Appl(name,args_phi_s),args_f*);
             }
             bag.add(`Rule(Appl(phi,TermList(Appl(name,args_x))),
-                  Appl(phi_n,TermList(args_phi*,args_f*))));
+                  Appl(phi_n,TermList(args_phi_s_xi*,args_f*))));
           }
         }
 
@@ -252,10 +264,6 @@ public class Compiler {
       }
 
 
-      // mu fix point: transform the startame into a function call
-      StratName(name) -> {
-        return `name;
-      }
 
     }
     return strat.toString();
