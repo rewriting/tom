@@ -24,8 +24,9 @@ public class Main {
       System.out.println( Pretty.toString(expandl) );
 
       Map<String,Integer> sig = new HashMap<String,Integer>();
+      Map<String,Integer> origsig = new HashMap<String,Integer>();
       Collection<Rule> bag = new ArrayList<Rule>();
-      Compiler.compile(bag,sig,expandl);
+      Compiler.compile(bag,origsig,sig,expandl);
 
       String classname = "Test";
       System.out.println( Pretty.generate(bag,sig,classname) );

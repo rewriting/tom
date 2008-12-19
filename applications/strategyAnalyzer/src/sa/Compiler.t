@@ -21,29 +21,30 @@ public class Compiler {
   /*
    * Compile a strategy into a rewrite system
    */
-  public static void compile(Collection<Rule> bag, Map<String,Integer> sig, ExpressionList expl) {
+  public static void compile(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, ExpressionList expl) {
     %match(expl) {
       ExpressionList(_*,x,_*) -> {
-        compileExp(bag,sig,`x);
+        compileExp(bag,origsig,sig,`x);
       }
     }
   }
 
-  private static void compileExp(Collection<Rule> bag, Map<String,Integer> sig, Expression e) {
+  private static void compileExp(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, Expression e) {
     //System.out.println("exp = " + e);
     %match(e) {
       Let(v,Signature(sl),body) -> {
         %match(sl) {
           SymbolList(_*,Symbol(name,arity),_*) -> {
+            origsig.put(`name,`arity);
             sig.put(`name,`arity);
           }
         }
-        System.out.println("sig = " + sig);
-        compileExp(bag,sig,`body);
+        System.out.println("Original sig= " + origsig);
+        compileExp(bag,origsig,sig,`body);
       }
 
       Strat(s) -> {
-        String start = compileStrat(bag,sig,`s);
+        String start = compileStrat(bag,origsig,sig,`s);
         System.out.println("start: " + start);
       }
     }
@@ -53,7 +54,10 @@ public class Compiler {
    * compile a strategy
    * return the name of the top symbol (phi) introduced
    */
-  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> sig, Strat strat) {
+  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, Strat strat) {
+//     System.out.println("sig = " + sig);
+//     System.out.println("strat = " + strat);
+
     %match(strat) {
       StratRule(Rule(lhs,rhs)) -> {
         String phi = getName();
@@ -73,7 +77,7 @@ public class Compiler {
           sig.put(phi_x,1);
           sig.put(phi2_x,2);
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
-          String phi_s = compileStrat(bag,sig,newStrat);
+          String phi_s = compileStrat(bag,origsig,sig,newStrat);
           bag.add(`Rule(Appl(phi_x,TermList(X)),Appl(phi2_x,TermList(X,X))));
           bag.add(`Rule(Appl(phi2_x,TermList(Anti(BOTTOM),X)),Appl(phi_s,TermList(X))));
           bag.add(`Rule(Appl(phi2_x,TermList(BOTTOM,X)),BOTTOM));
@@ -103,8 +107,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,sig,`s1);
-        String phi_s2 = compileStrat(bag,sig,`s2);
+        String phi_s1 = compileStrat(bag,origsig,sig,`s1);
+        String phi_s2 = compileStrat(bag,origsig,sig,`s2);
         String phi = getName();
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),
@@ -113,8 +117,8 @@ public class Compiler {
       }
 
       StratChoice(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,sig,`s1);
-        String phi_s2 = compileStrat(bag,sig,`s2);
+        String phi_s1 = compileStrat(bag,origsig,sig,`s1);
+        String phi_s2 = compileStrat(bag,origsig,sig,`s2);
         String phi = getName();
         String phi2 = getName();
         sig.put(phi,1);
@@ -129,12 +133,12 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(bag,sig,`s);
+        String phi_s = compileStrat(bag,origsig,sig,`s);
         String phi = getName();
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
-        Iterator<String> it = sig.keySet().iterator();
+        Iterator<String> it = origsig.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
           int arity = sig.get(name);
@@ -192,12 +196,11 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(bag,sig,`s);
+        String phi_s = compileStrat(bag,origsig,sig,`s);
         String phi = getName();
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
-
-        Iterator<String> it = sig.keySet().iterator();
+        Iterator<String> it = origsig.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
           int arity = sig.get(name);
