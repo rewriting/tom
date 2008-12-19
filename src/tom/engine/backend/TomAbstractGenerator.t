@@ -288,7 +288,12 @@ public abstract class TomAbstractGenerator {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
- 
+
+      Cast(tlType@TLType[],exp) -> {
+        buildExpCast(deep, `tlType, `exp, moduleName);
+        return;
+      }
+
       GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;

@@ -139,12 +139,15 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 			TomTypeAlone(code) -> {
 				output.write(deep," extends " + `code);
 			}
+      TLType(ITL(code)) -> {
+        output.write(deep," extends " + `code);
+      }
     }
     output.writeln(deep," {");
     int args = names.size();
     //write Declarations
     for(int i = 0 ; i < args ; i++) {
-	    output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
+      output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
     }
 
     //write constructor
@@ -267,11 +270,14 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       TomTypeAlone(throws) -> {
         output.write(deep," throws " + `throws);
       }
+      TLType(ITL(throws)) -> {
+        output.write(deep," throws " + `throws);
+      }
     }
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
     output.writeln(deep," }");
   }
-	
+
 }
