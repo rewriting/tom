@@ -132,7 +132,7 @@ public PILFactory() {
       }
 
       Assign(variable,src) -> {
-        return "assign " + prettyPrint(`variable) + " = " + prettyPrint(`src);
+        return prettyPrint(`variable) + " := " + prettyPrint(`src);
       }
 
       DoWhile(doInst,condition) ->{
@@ -184,8 +184,8 @@ public PILFactory() {
         return prettyPrint(`astTerm);
       }
 
-      IsSort[] -> {
-        return "isSort\n\t";
+      IsSort(type,var) -> {
+        return "isSort("+prettyPrint(`type)+","+prettyPrint(`var)+")";
       }
 
       IsFsym(name,term) -> {
@@ -194,6 +194,10 @@ public PILFactory() {
 
       Negation(exp) -> {
         return "not " + prettyPrint(`exp);
+      }
+
+      Or(exp1,exp2) -> {
+        return "("+prettyPrint(`exp1)+" || "+ prettyPrint(`exp2)+")"; 
       }
 
       IsEmptyList[Variable=kid1] -> {
@@ -219,9 +223,18 @@ public PILFactory() {
       GetSlot(_,astName,slotNameString,variable) -> {
         return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
       }
+
+      Conditional[Cond=Cond,Then=Then,Else=Else] -> {
+        return prettyPrint(`Cond)+"?"+prettyPrint(`Then)+":"+prettyPrint(`Else);
+      }
+
     }
 
     %match(TomTerm subject) {
+      ExpressionToTomTerm(term) -> {
+        return prettyPrint(`term);
+      }
+
       Variable(_,name,_,_) -> {
         return prettyPrint(`name);
       }
@@ -243,6 +256,10 @@ public PILFactory() {
         return `string;
       }
 
+    }
+
+    %match(TomType subject) {
+      Type[TomType = ASTTomType(name)] -> { return `name; }
     }
 
     %match(TomNumber subject) {
