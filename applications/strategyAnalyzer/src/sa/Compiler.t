@@ -21,15 +21,10 @@ public class Compiler {
   /*
    * Compile a strategy into a rewrite system
    */
-  public static void compile(ExpressionList expl) {
+  public static void compile(Collection<Rule> bag, Map<String,Integer> sig, ExpressionList expl) {
     %match(expl) {
       ExpressionList(_*,x,_*) -> {
-        Map<String,Integer> sig = new HashMap<String,Integer>();
-        Collection<Rule> bag = new ArrayList<Rule>();
         compileExp(bag,sig,`x);
-        for(Rule r:bag) {
-          System.out.println(Pretty.toString(r));
-        }
       }
     }
   }
@@ -62,6 +57,7 @@ public class Compiler {
     %match(strat) {
       StratRule(Rule(lhs,rhs)) -> {
         String phi = getName();
+        sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(lhs)),rhs));
         bag.add(`Rule(Appl(phi,TermList(Anti(lhs))),BOTTOM));
         return phi;
@@ -74,6 +70,8 @@ public class Compiler {
         try {
           String phi_x = getName();
           String phi2_x = getName();
+          sig.put(phi_x,1);
+          sig.put(phi2_x,2);
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
           String phi_s = compileStrat(bag,sig,newStrat);
           bag.add(`Rule(Appl(phi_x,TermList(X)),Appl(phi2_x,TermList(X,X))));
@@ -92,12 +90,14 @@ public class Compiler {
 
       StratIdentity() -> {
         String phi = getName();
+        sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),X));
         return phi;
       }
 
       StratFail() -> {
         String phi = getName();
+        sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),BOTTOM));
         return phi;
       }
@@ -106,6 +106,7 @@ public class Compiler {
         String phi_s1 = compileStrat(bag,sig,`s1);
         String phi_s2 = compileStrat(bag,sig,`s2);
         String phi = getName();
+        sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),
               Appl(phi_s2,TermList(Appl(phi_s1,TermList(X))))));
         return phi;
@@ -116,6 +117,8 @@ public class Compiler {
         String phi_s2 = compileStrat(bag,sig,`s2);
         String phi = getName();
         String phi2 = getName();
+        sig.put(phi,1);
+        sig.put(phi2,2);
         bag.add(`Rule(Appl(phi,TermList(X)),
               Appl(phi2,TermList(Appl(phi_s1,TermList(X)), X))));
         bag.add(`Rule(Appl(phi2,TermList(BOTTOM,X)),
@@ -128,6 +131,7 @@ public class Compiler {
       StratAll(s) -> {
         String phi_s = compileStrat(bag,sig,`s);
         String phi = getName();
+        sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
         Iterator<String> it = sig.keySet().iterator();
@@ -138,6 +142,7 @@ public class Compiler {
           if(phi_n == null) {
             //phi_n = getName();
             phi_n = phi+"_"+arity;
+            sig.put(phi_n,arity+1);
             mapphi.put(arity,phi_n);
             if(arity>0) {
               // generate success rules
@@ -189,6 +194,7 @@ public class Compiler {
       StratOne(s) -> {
         String phi_s = compileStrat(bag,sig,`s);
         String phi = getName();
+        sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
         Iterator<String> it = sig.keySet().iterator();
@@ -199,6 +205,7 @@ public class Compiler {
           if(phi_n == null) {
             //phi_n = getName();
             phi_n = phi+"_"+arity;
+            sig.put(phi_n,2*arity);
             mapphi.put(arity,phi_n);
             if(arity>0) {
               // generate failure rules

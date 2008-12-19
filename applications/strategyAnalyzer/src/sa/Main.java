@@ -5,6 +5,8 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 import sa.rule.RuleAdaptor;
 import sa.rule.types.*;
+import java.util.*;
+
 public class Main {
 
   public static void main(String[] args) {
@@ -21,7 +23,12 @@ public class Main {
       ExpressionList expandl = Compiler.expand(expl);
       System.out.println( Pretty.toString(expandl) );
 
-      Compiler.compile(expandl);
+      Map<String,Integer> sig = new HashMap<String,Integer>();
+      Collection<Rule> bag = new ArrayList<Rule>();
+      Compiler.compile(bag,sig,expandl);
+
+      String classname = "Test";
+      System.out.println( Pretty.generate(bag,sig,classname) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;

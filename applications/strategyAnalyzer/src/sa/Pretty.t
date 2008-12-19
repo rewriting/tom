@@ -104,5 +104,17 @@ public class Pretty {
     }
     return sb.toString();
   }
+
+  public static String generate(Collection<Rule> bag, Map<String,Integer> sig, String classname) {
+    StringBuffer sb = new StringBuffer();
+
+    System.out.println(sig);
+
+    for(Rule r:bag) {
+      System.out.println(Pretty.toString(r));
+    }
+    return sb.toString();
+  }
+
 }
 
