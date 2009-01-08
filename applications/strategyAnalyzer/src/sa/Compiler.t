@@ -39,13 +39,13 @@ public class Compiler {
             sig.put(`name,`arity);
           }
         }
-        System.out.println("Original sig= " + origsig);
+        //System.out.println("Original sig= " + origsig);
         compileExp(bag,origsig,sig,`body);
       }
 
       Strat(s) -> {
         String start = compileStrat(bag,origsig,sig,`s);
-        System.out.println("start: " + start);
+        System.out.println("// start: " + start);
       }
     }
   }

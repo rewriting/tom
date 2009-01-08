@@ -107,12 +107,42 @@ public class Pretty {
 
   public static String generate(Collection<Rule> bag, Map<String,Integer> sig, String classname) {
     StringBuffer sb = new StringBuffer();
-
-    System.out.println(sig);
-
-    for(Rule r:bag) {
-      System.out.println(Pretty.toString(r));
+    String lowercaseClassname = classname.toLowerCase();
+    sb.append(
+        %[
+import @lowercaseClassname@.m.types.*;
+public class @classname@ {
+  %gom {
+    module m
+      abstract syntax
+      T = Bottom()
+]%);
+    for(String name: sig.keySet()) {
+      int arity = sig.get(name);
+      String args = "";
+      for(int i=0 ; i<arity ; i++) {
+        args += "kid"+i+":T";
+        if(i+1<arity) { args += ","; }
+      }
+      sb.append("        | " + name + "(" + args + ")\n");
     }
+
+    sb.append("      module m:rules() {\n");
+    for(Rule r:bag) {
+      sb.append("        " + Pretty.toString(r) + "\n");
+    }
+    sb.append(%[
+    }
+  }
+  
+  public static void main(String[] args) {
+    T t = `phi8(c());
+    System.out.println(t);
+  }
+}
+    
+    ]%);
+
     return sb.toString();
   }
 

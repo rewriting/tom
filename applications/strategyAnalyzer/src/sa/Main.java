@@ -25,11 +25,11 @@ public class Main {
 
       Map<String,Integer> sig = new HashMap<String,Integer>();
       Map<String,Integer> origsig = new HashMap<String,Integer>();
-      Collection<Rule> bag = new ArrayList<Rule>();
-      Compiler.compile(bag,origsig,sig,expandl);
+      Collection<Rule> bagOfRule = new ArrayList<Rule>();
+      Compiler.compile(bagOfRule,origsig,sig,expandl);
 
       String classname = "Test";
-      System.out.println( Pretty.generate(bag,sig,classname) );
+      System.out.println( Pretty.generate(bagOfRule,sig,classname) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;
