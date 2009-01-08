@@ -111,6 +111,7 @@ public class Pretty {
     sb.append(
         %[
 import @lowercaseClassname@.m.types.*;
+import java.io.*;
 public class @classname@ {
   %gom {
     module m
@@ -136,8 +137,14 @@ public class @classname@ {
   }
   
   public static void main(String[] args) {
-    T t = `phi8(c());
-    System.out.println(t);
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+      T input = T.fromString(reader.readLine());
+      T t = `@Compiler.getTopName()@(input);
+      System.out.println(t);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
     

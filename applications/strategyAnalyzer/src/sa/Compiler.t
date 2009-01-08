@@ -18,6 +18,11 @@ public class Compiler {
     return "phi" + (phiNumber++);
   }
 
+  private static String topName = "";
+  public static String getTopName() {
+    return topName;
+  }
+
   /*
    * Compile a strategy into a rewrite system
    */
@@ -46,6 +51,7 @@ public class Compiler {
       Strat(s) -> {
         String start = compileStrat(bag,origsig,sig,`s);
         System.out.println("// start: " + start);
+        topName = start;
       }
     }
   }

@@ -17,11 +17,11 @@ public class Main {
       // Parse the input expression
       Tree b = (Tree) parser.expressionlist().getTree();
       ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
-      System.out.println("Result = " + expl);
-      System.out.println( Pretty.toString(expl) );
+      //System.out.println("Result = " + expl);
+      //System.out.println( Pretty.toString(expl) );
 
       ExpressionList expandl = Compiler.expand(expl);
-      System.out.println( Pretty.toString(expandl) );
+      //System.out.println( Pretty.toString(expandl) );
 
       Map<String,Integer> sig = new HashMap<String,Integer>();
       Map<String,Integer> origsig = new HashMap<String,Integer>();
