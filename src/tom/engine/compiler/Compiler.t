@@ -271,7 +271,6 @@ public class Compiler extends TomGenericPlugin {
    * @param subject the AST of the program
    */
   private static TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
-    System.out.println("SUBJECT:" + subject);
     // we use the symbol table as all AC the operators were marked as
     // used when the loop was generated
     SymbolTable symbolTable = Compiler.getSymbolTable();
@@ -287,7 +286,9 @@ public class Compiler extends TomGenericPlugin {
         // 1. computeLenght
         l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
         // 2. getMultiplicities
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);        
+        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
+        // 3. getTerm        
+        l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
       }
     }
     // make sure the variables are correctly defined
@@ -457,6 +458,82 @@ public class Compiler extends TomGenericPlugin {
     return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName+"_"+opNameString),
         concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);
   }  
+  
+  /**
+   * Generates the PIL for the following function (used by the AC algorithm):
+   * (tempSol contains the multiplicities of the elements of the current solution, 
+   *  while alpha contains all the multiplicities )
+   *  
+   * ex: 
+   *   subject = f(a,a,b,b,b);
+   *   alpha = [2,3]
+   *   tempSol = [1,2]; 
+   *   => the function should return f(a,b,b) if isComplement=false 
+   *                                 f(a,b) if isComplement=true                         
+   *    
+   * private OpType getTerm(int[] tempSol, int[] alpha, OpType subject, bool isComplement){
+   *  int tempSolVal = 0;
+   *  // a single element
+   *  if(!subj.isConsf()) {
+   *    tempSolVal = isComplement ? alpha[0] - tempSol[0] : tempSol[0]; 
+   *    if(tempSolVal == 0) {
+   *      return EmptyList(); 
+   *    } else {
+   *      return subject;      
+   *    }    
+   *  }
+   *  Term result = EmptyList();
+   *  Term old = null;
+   *  int elemCounter = 0;
+   *  int tempSolIndex = -1;
+   *  while(true) {
+   *    Term elem = null;
+   *    // the end of the list
+   *    if(subj.isConsf()) { 
+   *      elem = subj.getHeadf();
+   *    } else {
+   *      elem = subj;
+   *    }
+   *    // a new element
+   *    if (!elem.equals(old)){
+   *      tempSolIndex++;
+   *      old = elem;
+   *      elemCounter=0;
+   *    } 
+   *    
+   *    tempSolVal = isComplement ? alpha[tempSolIndex] - tempSol[tempSolIndex] : tempSol[tempSolIndex];
+   *    if (tempSolVal != 0 && elemCounter < tempSolVal) {
+   *      // we take this element
+   *      result = conc(result*,elem);
+   *      elemCounter++;
+   *    }
+   *    
+   *    // if we got to the end of the list
+   *    if(elem == subj) {
+   *      break;  // break the loop            
+   *    } else {
+   *      subj = subj.getTailf();
+   *    }
+   *  }     
+   *  return result;
+   * }    
+   * 
+   */
+  private static Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
+      
+      TomType intArrayType = symbolTable.getIntArrayType();
+      
+      // the arguments      
+      TomTerm tempSol = Compiler.getFreshVariable("tempSol",intArrayType);
+      TomTerm alpha = Compiler.getFreshVariable("alpha",intArrayType);
+      TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
+
+      // TODO
+      Instruction functionBody = `Nop();
+   
+      return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
+              concTomTerm(tempSol,alpha,subject),opType,EmptyType(),functionBody);
+  } 
   
   /********************************************************************************/
   

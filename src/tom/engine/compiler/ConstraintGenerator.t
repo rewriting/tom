@@ -64,8 +64,7 @@ public class ConstraintGenerator {
   // constants
   public static final String computeLengthFuncName = "__computeLenght";
   public static final String multiplicityFuncName = "__getMultiplicities";
-  public static final String getTermForMultiplicityFuncName = "__getTermForMult";
-  public static final String getComplTermForMultiplicityFuncName = "__getComplTermForMult";
+  public static final String getTermForMultiplicityFuncName = "__getTermForMult";  
  
   public static Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
@@ -411,8 +410,8 @@ public class ConstraintGenerator {
    *   }
    *   if (pos >= 0) { // we didn't finish      
    *     tempSol[pos] += 1;      
-   *     x = getTerm(tempSol,alpha,subject);
-   *     y = getComplementTerm(tempSol,alpha,subject);
+   *     x = getTerm(tempSol,alpha,subject,false);  
+   *     y = getTerm(tempSol,alpha,subject,true); // last boolean specifies if it is the complement that we want
    *     ... // action
    *     pos = length-1;
    *   }  
@@ -458,10 +457,10 @@ public class ConstraintGenerator {
         LetAssignArray(tempSol,position,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))),
             LetRef(x,TomTermToExpression(FunctionCall(
                 Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
-                subtermType,getTermArgs)),
+                subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(FalseTL())))),
             LetRef(y,TomTermToExpression(FunctionCall(
-                Name(ConstraintGenerator.getComplTermForMultiplicityFuncName + "_" + tomName),
-                subtermType,getTermArgs)),
+                Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
+                subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(TrueTL())))),
                 action))),LetRef(position,SubstractOne(length),Nop()))),
         Nop());
     

@@ -66,8 +66,7 @@ public class ACGenerator implements IBaseGenerator {
         if(!TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `ce; }
         
         // TODO - generate all the functions
-       
-        
+               
         System.out.println("Pattern:" + `pattern);
         
         return `ACMatchLoop(pattern, subject);
