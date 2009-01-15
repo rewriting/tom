@@ -113,8 +113,8 @@ public class TomBackend extends TomGenericPlugin {
             generator = new TomCGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("camlCode")) {
             generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
-          } else if(getOptionBooleanValue("pCode")) {
-            generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
+//          } else if(getOptionBooleanValue("pCode")) {
+//            generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("csCode")) {
             generator = new TomCSharpGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("jCode")) {
@@ -296,8 +296,7 @@ public class TomBackend extends TomGenericPlugin {
 
     visit Expression {
       (IsEmptyList|IsEmptyArray|GetHead|GetTail)[Opname=Name(name)] -> {
-        try {
-          // System.out.println("list check: " + `name);
+        try {          
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
@@ -356,8 +355,7 @@ public class TomBackend extends TomGenericPlugin {
         throw new tom.library.sl.VisitFailure();
       }
       (BuildTerm|BuildEmptyArray)[AstName=Name(name)] -> {
-        try {
-          // System.out.println("build: " + `name);
+        try {          
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
@@ -367,8 +365,7 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
       (BuildConsList|BuildEmptyList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
-        try {
-          // System.out.println("build: " + `name);
+        try {          
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 

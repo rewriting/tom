@@ -223,6 +223,11 @@ public abstract class TomAbstractGenerator {
         output.write(`name);
         output.write("]");
       }
+      ExpressionToTomTerm(Integer(x)) -> {
+        output.write("[");
+        output.write(`x);
+        output.write("]");  
+      }
     }    
   } 
 
@@ -544,7 +549,7 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateOption(int deep, Option subject, String moduleName) throws IOException {
+  public void generateOption(int deep, Option subject, String moduleName) throws IOException {      
     %match(Option subject) {
       DeclarationToOption(decl) -> {
         `generateDeclaration(deep, decl, moduleName);
@@ -564,7 +569,7 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateDeclaration(int deep, Declaration subject, String moduleName) throws IOException {
+  public void generateDeclaration(int deep, Declaration subject, String moduleName) throws IOException {      
     %match(Declaration subject) {
       EmptyDeclaration() -> {
         return;
@@ -611,7 +616,7 @@ public abstract class TomAbstractGenerator {
         return ;
       }
 
-      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
+      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {          
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
@@ -790,8 +795,8 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateOptionList(int deep, OptionList subject, String moduleName)
-    throws IOException {
+  public void generateOptionList(int deep, OptionList subject, String moduleName)  
+    throws IOException {      
     while(!subject.isEmptyconcOption()) {
       generateOption(deep,subject.getHeadconcOption(), moduleName);
       subject = subject.getTailconcOption();
