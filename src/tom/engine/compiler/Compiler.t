@@ -477,12 +477,13 @@ public class Compiler extends TomGenericPlugin {
    *  Term elem = null;
    *  int elemCounter = 0;
    *  int tempSolIndex = -1;
-   *  while(elem != subj) {    
+   *  while(subj != EmptyList) {    
    *    // the end of the list
    *    if(subj.isConsf()) { 
    *      elem = subj.getHeadf();
    *    } else {
    *      elem = subj;
+   *      subj = EmptyList();
    *    }
    *    // a new element
    *    if (!elem.equals(old)){
@@ -502,7 +503,7 @@ public class Compiler extends TomGenericPlugin {
    *    }
    *    
    *    // if we didn't get to the end of the list
-   *    if(elem != subj) {
+   *    if(subj != EmptyList() ) {
    *      subj = subj.getTailf();
    *    }
    *  }     
@@ -527,7 +528,8 @@ public class Compiler extends TomGenericPlugin {
       TomName opName = `Name(opNameString);
       Instruction isConsOpName = `If(IsFsym(opName,subject),
           LetAssign(elem,GetHead(opName,opType,subject),Nop()),
-          LetAssign(elem,TomTermToExpression(subject),Nop()));
+          LetAssign(elem,TomTermToExpression(subject),
+              LetAssign(subject,TomTermToExpression(BuildEmptyList(opName)),Nop())));
       TomTerm tempSolIndex = `Variable(concOption(),Name("tempSolIndex"),intType,concConstraint());
       TomTerm old = `Variable(concOption(),Name("old"),opType,concConstraint());
       Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,old)),
@@ -549,7 +551,7 @@ public class Compiler extends TomGenericPlugin {
       
       // if (tempSolVal != 0 && elemCounter < tempSolVal)      
       Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,ExpressionToTomTerm(Integer(0)))),
-              LessOrEqualThan(TomTermToExpression(elemCounter),TomTermToExpression(tempSolVal)));
+              LessThan(TomTermToExpression(elemCounter),TomTermToExpression(tempSolVal)));
       TomTerm result = `Variable(concOption(),Name("result"),opType,concConstraint());
       Instruction ifTakeElem = `If(ifCond,
                                    LetAssign(result,TomTermToExpression(BuildAppendList(opName,result,elem)),
@@ -560,12 +562,13 @@ public class Compiler extends TomGenericPlugin {
               UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
       
       // last if
-      Instruction lastIf = `If(Negation(EqualTerm(opType,elem,subject)),LetAssign(subject,GetTail(opName,subject),Nop()),Nop());
+      Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
+      Instruction lastIf = `If(notEmptySubj,LetAssign(subject,GetTail(opName,subject),Nop()),Nop());
       // the while
       Instruction whileBlock = `UnamedBlock(concInstruction(
               isConsOpName,isNewElem,tempSolValBlock,lastIf));                  
-      Instruction whileLoop = `WhileDo(Negation(EqualTerm(opType,elem,subject)),whileBlock);      
-      
+      Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);
+         
       Instruction functionBody = `LetRef(result,TomTermToExpression(BuildEmptyList(opName)),
                                       LetRef(old,Bottom(opType),
                                           LetRef(elem,Bottom(opType),

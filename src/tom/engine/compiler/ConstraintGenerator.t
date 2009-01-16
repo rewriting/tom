@@ -402,7 +402,7 @@ public class ConstraintGenerator {
    * int[] tempSol = new int[length];
    * int pos = lenght-1;
    *   
-   *  while(true) {
+   *  while(pos >= 0) {
    *   // reinitialize
    *   while(pos >= 0 && tempSol[pos] == alpha[pos] ) {        
    *     tempSol[pos] = 0;
@@ -464,7 +464,7 @@ public class ConstraintGenerator {
                 action))),LetRef(position,SubstractOne(length),Nop()))),
         Nop());
     
-    Instruction instruction = `WhileDo(TrueTL(),UnamedBlock(concInstruction(reinitializationLoop,lastTest)));
+    Instruction instruction = `WhileDo(positionGreaterOrEqThanZero,UnamedBlock(concInstruction(reinitializationLoop,lastTest)));
     
     instruction = `LetRef(position,SubstractOne(length),instruction);
     instruction = `LetRef(tempSol,TomTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
