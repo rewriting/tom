@@ -1,0 +1,9 @@
+%op Strategy TopDownWhenConstraint(s1:Strategy) {
+  make(v) {( `mu(MuVar("_x"),WhenConstraint(Sequence(v,All(MuVar("_x"))))) )}
+}
+
+%strategy WhenConstraint(s:Strategy) extends Identity() {
+  visit Constraint {
+    c -> { return s.visitLight(`c); }
+  }
+}
