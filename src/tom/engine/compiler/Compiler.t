@@ -472,22 +472,12 @@ public class Compiler extends TomGenericPlugin {
    *                                 f(a,b) if isComplement=true                         
    *    
    * private OpType getTerm(int[] tempSol, int[] alpha, OpType subject, bool isComplement){
-   *  int tempSolVal = 0;
-   *  // a single element
-   *  if(!subj.isConsf()) {
-   *    tempSolVal = isComplement ? alpha[0] - tempSol[0] : tempSol[0]; 
-   *    if(tempSolVal == 0) {
-   *      return EmptyList(); 
-   *    } else {
-   *      return subject;      
-   *    }    
-   *  }
    *  Term result = EmptyList();
    *  Term old = null;
+   *  Term elem = null;
    *  int elemCounter = 0;
    *  int tempSolIndex = -1;
-   *  while(true) {
-   *    Term elem = null;
+   *  while(elem != subj) {    
    *    // the end of the list
    *    if(subj.isConsf()) { 
    *      elem = subj.getHeadf();
@@ -501,17 +491,18 @@ public class Compiler extends TomGenericPlugin {
    *      elemCounter=0;
    *    } 
    *    
-   *    tempSolVal = isComplement ? alpha[tempSolIndex] - tempSol[tempSolIndex] : tempSol[tempSolIndex];
+   *    int tempSolVal = tempSol[tempSolIndex];
+   *    if (isComplement) {
+   *      tempSolVal = alpha[tempSolIndex] - tempSolVal;         
+   *    }       
    *    if (tempSolVal != 0 && elemCounter < tempSolVal) {
    *      // we take this element
    *      result = conc(result*,elem);
    *      elemCounter++;
    *    }
    *    
-   *    // if we got to the end of the list
-   *    if(elem == subj) {
-   *      break;  // break the loop            
-   *    } else {
+   *    // if we didn't get to the end of the list
+   *    if(elem != subj) {
    *      subj = subj.getTailf();
    *    }
    *  }     
@@ -522,17 +513,64 @@ public class Compiler extends TomGenericPlugin {
   private static Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
       
       TomType intArrayType = symbolTable.getIntArrayType();
-      
-      // the arguments      
-      TomTerm tempSol = Compiler.getFreshVariable("tempSol",intArrayType);
-      TomTerm alpha = Compiler.getFreshVariable("alpha",intArrayType);
+      TomType boolType = symbolTable.getBooleanType();
+      TomType intType = Compiler.getIntType();
+            
+      // the variables      
+      TomTerm tempSol = Compiler.getFreshVariable("tempSol",intArrayType);      
       TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
-
-      // TODO
-      Instruction functionBody = `Nop();
+      TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());
+      
+      TomTerm elemCounter = `Variable(concOption(),Name("elemCounter"),intType,concConstraint());
+            
+      // test if subj is consOpName
+      TomName opName = `Name(opNameString);
+      Instruction isConsOpName = `If(IsFsym(opName,subject),
+          LetAssign(elem,GetHead(opName,opType,subject),Nop()),
+          LetAssign(elem,TomTermToExpression(subject),Nop()));
+      TomTerm tempSolIndex = `Variable(concOption(),Name("tempSolIndex"),intType,concConstraint());
+      TomTerm old = `Variable(concOption(),Name("old"),opType,concConstraint());
+      Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,old)),
+          LetAssign(tempSolIndex,AddOne(tempSolIndex),
+              LetAssign(old,TomTermToExpression(elem),
+                  LetAssign(elemCounter,Integer(0),Nop()))),
+          Nop());  
+      // the if for the complement
+      TomTerm tempSolVal = `Variable(concOption(),Name("tempSolVal"),intType,concConstraint());
+      TomTerm alpha = Compiler.getFreshVariable("alpha",intArrayType);
+      TomTerm isComplement = Compiler.getFreshVariable("isComplement",boolType);
+      TomName intArrayName = `Name(symbolTable.getIntArrayOp());
+      Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,ExpressionToTomTerm(TrueTL())),
+          LetAssign(tempSolVal,
+                    Substract(ExpressionToTomTerm(GetElement(intArrayName,intType,alpha,tempSolIndex)),
+                              tempSolVal),
+                    Nop()),
+          Nop());
+      //declaration of tempSolVal      
+      Instruction tempSolValBlock = `LetRef(tempSolVal,
+              GetElement(intArrayName,intType,tempSol,tempSolIndex),ifIsComplement);
+      // if (tempSolVal != 0 && elemCounter < tempSolVal)      
+      Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,ExpressionToTomTerm(Integer(0)))),
+              LessOrEqualThan(TomTermToExpression(elemCounter),TomTermToExpression(tempSolVal)));
+      TomTerm result = `Variable(concOption(),Name("result"),opType,concConstraint());
+      Instruction ifTakeElem = `If(ifCond,
+                                   LetAssign(result,TomTermToExpression(BuildAppendList(opName,result,elem)),
+                                       LetAssign(elemCounter,AddOne(elemCounter),Nop())),Nop());
+      // last if
+      Instruction lastIf = `If(Negation(EqualTerm(opType,elem,subject)),LetAssign(subject,GetTail(opName,subject),Nop()),Nop());
+      // the while
+      Instruction whileBlock = `UnamedBlock(concInstruction(
+              isConsOpName,isNewElem,tempSolValBlock,ifTakeElem,lastIf));                  
+      Instruction whileLoop = `WhileDo(Negation(EqualTerm(opType,elem,subject)),whileBlock);      
+      
+      Instruction functionBody = `LetRef(result,TomTermToExpression(BuildEmptyList(opName)),
+                                      LetRef(old,Bottom(opType),
+                                          LetRef(elem,Bottom(opType),
+                                              LetRef(elemCounter,Integer(0),
+                                                   LetRef(tempSolIndex,Integer(-1),whileLoop))))); 
    
       return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
-              concTomTerm(tempSol,alpha,subject),opType,EmptyType(),functionBody);
+              concTomTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
   } 
   
   /********************************************************************************/

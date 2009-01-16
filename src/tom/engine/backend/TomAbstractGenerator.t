@@ -357,6 +357,11 @@ public abstract class TomAbstractGenerator {
         buildSubstractOne(deep, `exp, moduleName);
         return;
       }
+      
+      Substract(exp1,exp2) -> {
+        buildSubstract(deep, `exp1, `exp2, moduleName);
+        return;
+      }
 
       GetSize(opNameAST,exp) -> {
         buildExpGetSize(deep,`opNameAST,getTermType(`exp), `exp, moduleName);
@@ -924,6 +929,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
   protected abstract void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildSubstract(int deep, TomTerm var1, TomTerm var2, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,

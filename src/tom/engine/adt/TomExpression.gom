@@ -47,6 +47,11 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | IsEmptyArray(Opname:TomName,Variable:TomTerm,Index:TomTerm)
            | AddOne(Variable:TomTerm)
            | SubstractOne(Variable:TomTerm)
+           /**
+            *  <code>Substract(Term1:TomTerm,Term2:TomTerm)</code> performs Term1-Term2
+            *
+            */
+           | Substract(Term1:TomTerm,Term2:TomTerm)
            | GetSize(Opname:TomName,Variable:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Variable:TomTerm,Index:TomTerm)
            | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
