@@ -47,7 +47,8 @@ public class ArrayPropagator implements IBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { ../../../library/mapping/java/sl.tom}
+  %include { ../../../library/mapping/java/sl.tom }
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
 
   %typeterm ArrayPropagator {
@@ -83,7 +84,7 @@ public class ArrayPropagator implements IBasePropagator {
   }
  
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(ArrayPatternMatching(this)).visitLight(constraint);		
+    return (Constraint)`TopDownWhenConstraint(ArrayPatternMatching(this)).visitLight(constraint);		
   }	
 
   %strategy ArrayPatternMatching(ap:ArrayPropagator) extends Identity() {

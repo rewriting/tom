@@ -25,8 +25,6 @@
  **/
 package tom.engine.compiler.propagator;
 
-import tom.engine.compiler.propagator.*;  
-
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -49,7 +47,8 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
 
   %typeterm GeneralPurposePropagator {
@@ -59,7 +58,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
   private Compiler compiler;  
   private ConstraintPropagator constraintPropagator; 
- 
+
   public GeneralPurposePropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
     this.compiler = myCompiler;
     this.constraintPropagator = myConstraintPropagator;
@@ -68,13 +67,13 @@ public class GeneralPurposePropagator implements IBasePropagator {
   public Compiler getCompiler() {
     return this.compiler;
   }
- 
+
   public ConstraintPropagator getConstraintPropagator() {
     return this.constraintPropagator;
   }
- 
+
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(GeneralPropagations(this)).visitLight(constraint);
+    return (Constraint)`TopDownWhenConstraint(GeneralPropagations(this)).visitLight(constraint);
   }	
 
   %strategy GeneralPropagations(gpp:GeneralPurposePropagator) extends Identity() {
@@ -107,7 +106,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
       AndConstraint?(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
         // we cannot cache already renamed variables, because disjunctions have to be taken into account
         // for example: g(x) || f(x,x) -> ...
-        Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(varName,gpp)).visitLight(`Y*);
+        Constraint res = (Constraint)`TopDownWhenConstraint(ReplaceMatchConstraint(varName,gpp)).visitLight(`Y*);
         if(res != `Y*) {
           return `AndConstraint(X*,eq,res);
         }
@@ -134,7 +133,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
     }
   }// end %strategy
-  
+
   /**
    * Detach sublists
    * 
@@ -174,7 +173,7 @@ matchSlot:  %match(slot,TomName name) {
     // never gets here
     throw new TomRuntimeException("GeneralPurposePropagator:detachSublists - unexpected result");
   }
- 
+
   /*
    * x << s -> fresh << s ^ fresh==x
    */

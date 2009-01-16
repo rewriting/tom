@@ -46,7 +46,8 @@ public class VariadicPropagator implements IBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { ../../../library/mapping/java/sl.tom}
+  %include { ../../../library/mapping/java/sl.tom }
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
 
   %typeterm VariadicPropagator {
@@ -82,7 +83,7 @@ public class VariadicPropagator implements IBasePropagator {
   }
  
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    Constraint res =  (Constraint)`TopDown(VariadicPatternMatching(this)).visitLight(constraint);		
+    Constraint res =  (Constraint)`TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
     return res;
   }	
 

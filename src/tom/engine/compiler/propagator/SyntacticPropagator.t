@@ -45,7 +45,8 @@ public class SyntacticPropagator implements IBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
   
   %typeterm SyntacticPropagator {
@@ -74,7 +75,7 @@ public class SyntacticPropagator implements IBasePropagator {
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {   
     replacedVariables = new ArrayList(); 
-    return  (Constraint)`TopDown(SyntacticPatternMatching(this)).visitLight(constraint);
+    return  (Constraint)`TopDownWhenConstraint(SyntacticPatternMatching(this)).visitLight(constraint);
   }	
 
   %strategy SyntacticPatternMatching(sp:SyntacticPropagator) extends `Identity() {
