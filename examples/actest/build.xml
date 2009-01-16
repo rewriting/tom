@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the actest example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="actest" value="actest"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${actest}"/>
+    <delete dir="${examples.build}/${actest}"/>
+  </target>
+  <target name="build" depends="init">
+    <!--<gomcompile example="${actest}"/> -->
+    <!--
+    "Wait for the static %rule problem to be resolved"
+    <tomcompile example="${antipattern}"/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+			optimize="no"
+			optimize2="no"
+                destdir="${examples.gen}">          
+       <include name="${actest}/**/*.t"/>
+       <exclude name="${actest}/**/*.g.t"/>
+    </tom.preset>
+    <javacompile example="${actest}"/>
+  	<copy todir="${examples.build}/${actest}">
+      <fileset dir="${actest}">
+        <include name="*.txt"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${actest}/*.t"/>
+        <include name="${actest}/*.txt"/>
+        <include name="${actest}/Matching.java"/>
+        <include name="${actest}/*.gom"/>
+        <include name="${actest}/atermmapping.tom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

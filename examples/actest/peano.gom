@@ -1,0 +1,8 @@
+module Peano
+      abstract syntax
+      Nat = a()
+          | b()
+          | c()
+          | f(Nat*)
+          
+     f:ACU(){}  
