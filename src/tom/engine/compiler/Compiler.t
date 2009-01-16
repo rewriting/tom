@@ -517,7 +517,7 @@ public class Compiler extends TomGenericPlugin {
       TomType intType = Compiler.getIntType();
             
       // the variables      
-      TomTerm tempSol = Compiler.getFreshVariable("tempSol",intArrayType);      
+      TomTerm tempSol = `Variable(concOption(),Name("tempSol"),intArrayType,concConstraint());      
       TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
       TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());
       
@@ -537,8 +537,8 @@ public class Compiler extends TomGenericPlugin {
           Nop());  
       // the if for the complement
       TomTerm tempSolVal = `Variable(concOption(),Name("tempSolVal"),intType,concConstraint());
-      TomTerm alpha = Compiler.getFreshVariable("alpha",intArrayType);
-      TomTerm isComplement = Compiler.getFreshVariable("isComplement",boolType);
+      TomTerm alpha = `Variable(concOption(),Name("alpha"),intArrayType,concConstraint()); 
+      TomTerm isComplement = `Variable(concOption(),Name("isComplement"),boolType,concConstraint());
       TomName intArrayName = `Name(symbolTable.getIntArrayOp());
       Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,ExpressionToTomTerm(TrueTL())),
           LetAssign(tempSolVal,
@@ -546,9 +546,7 @@ public class Compiler extends TomGenericPlugin {
                               tempSolVal),
                     Nop()),
           Nop());
-      //declaration of tempSolVal      
-      Instruction tempSolValBlock = `LetRef(tempSolVal,
-              GetElement(intArrayName,intType,tempSol,tempSolIndex),ifIsComplement);
+      
       // if (tempSolVal != 0 && elemCounter < tempSolVal)      
       Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,ExpressionToTomTerm(Integer(0)))),
               LessOrEqualThan(TomTermToExpression(elemCounter),TomTermToExpression(tempSolVal)));
@@ -556,18 +554,24 @@ public class Compiler extends TomGenericPlugin {
       Instruction ifTakeElem = `If(ifCond,
                                    LetAssign(result,TomTermToExpression(BuildAppendList(opName,result,elem)),
                                        LetAssign(elemCounter,AddOne(elemCounter),Nop())),Nop());
+      //declaration of tempSolVal      
+      Instruction tempSolValBlock = `LetRef(tempSolVal,
+              GetElement(intArrayName,intType,tempSol,tempSolIndex),
+              UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
+      
       // last if
       Instruction lastIf = `If(Negation(EqualTerm(opType,elem,subject)),LetAssign(subject,GetTail(opName,subject),Nop()),Nop());
       // the while
       Instruction whileBlock = `UnamedBlock(concInstruction(
-              isConsOpName,isNewElem,tempSolValBlock,ifTakeElem,lastIf));                  
+              isConsOpName,isNewElem,tempSolValBlock,lastIf));                  
       Instruction whileLoop = `WhileDo(Negation(EqualTerm(opType,elem,subject)),whileBlock);      
       
       Instruction functionBody = `LetRef(result,TomTermToExpression(BuildEmptyList(opName)),
                                       LetRef(old,Bottom(opType),
                                           LetRef(elem,Bottom(opType),
                                               LetRef(elemCounter,Integer(0),
-                                                   LetRef(tempSolIndex,Integer(-1),whileLoop))))); 
+                                                   LetRef(tempSolIndex,Integer(-1),
+                                                       UnamedBlock(concInstruction(whileLoop,Return(result)))))))); 
    
       return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
               concTomTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
