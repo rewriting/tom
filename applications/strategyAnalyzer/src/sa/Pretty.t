@@ -1,10 +1,12 @@
 package sa;
 
 import sa.rule.types.*;
+import tom.library.sl.*; 
 import java.util.*;
 
 public class Pretty {
   %include { rule/Rule.tom }
+  %include { sl.tom }
 
   public static String toString(ExpressionList l) {
     StringBuffer sb = new StringBuffer();
@@ -105,6 +107,59 @@ public class Pretty {
     return sb.toString();
   }
 
+  %typeterm HashSet {
+          implement      { java.util.HashSet }
+  }
+
+  %strategy CollectVars(varSet:HashSet) extends Identity() {
+    visit Term {
+      Var(v)  -> {
+        varSet.add(`v);
+      }
+    }
+  }
+
+
+  public static String generateAprove(Collection<Rule> bag, Map<String,Integer> sig) 
+    throws VisitFailure{
+
+    StringBuffer rulesb = new StringBuffer();
+
+    HashSet<String> varSet = new HashSet<String>();
+    Strategy cv = `CollectVars(varSet);
+
+//     Set<String> symbols = sig.keySet();
+//     sb.append("SYMBOLS(");
+//     for(String name: symbols) {
+//       sb.append(name + ",");
+//     }
+//     sb.deleteCharAt(sb.length()-1);
+//     sb.append(")");
+
+    rulesb.append("\nRULES(\n");
+    for(Rule r:bag) {
+      %match(r){
+        Rule(lhs,rhs) -> {
+          `BottomUp(cv).visit(`lhs);
+        }
+      }
+      rulesb.append("        " + Pretty.toString(r) + "\n");
+    }
+    rulesb.append(")\n");
+
+    StringBuffer varsb = new StringBuffer();
+    varsb.append("VAR(");
+    for(String name: varSet) {
+      varsb.append(name + ",");
+    }
+    varsb.deleteCharAt(varsb.length()-1);
+    varsb.append(")");
+
+    return varsb.toString()+rulesb.toString();
+  }  
+
+
+
   public static String generate(Collection<Rule> bag, Map<String,Integer> sig, String classname) {
     StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
@@ -136,6 +191,7 @@ public class @classname@ {
     }
   }
   
+
   public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

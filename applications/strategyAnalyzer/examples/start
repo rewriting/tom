@@ -17,3 +17,8 @@ let r1 = { a() -> b() } in
 let obu = mu y.(one(y)<+r1) in
 mu x .((obu;x) <+ identity)
 
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let R1 = { f(x) -> x } in 
+// let R2 = { b() -> c() } in 
+// (R1<+R2)
+

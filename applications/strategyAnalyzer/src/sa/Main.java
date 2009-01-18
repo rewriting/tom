@@ -30,6 +30,8 @@ public class Main {
 
       String classname = "Test";
       System.out.println( Pretty.generate(bagOfRule,sig,classname) );
+
+      System.out.println( Pretty.generateAprove(bagOfRule,sig) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;
