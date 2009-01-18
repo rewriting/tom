@@ -8,34 +8,36 @@ public class Pretty {
   %include { rule/Rule.tom }
   %include { sl.tom }
 
-  public static String toString(ExpressionList l) {
+  private static HashMap<String,Term> varsig = new HashMap<String,Term>();
+
+  public static String toString(ExpressionList l, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(l) {
       ExpressionList(_*,x,_*) -> {
-        sb.append(Pretty.toString(`x)); 
+        sb.append(Pretty.toString(`x,forAprove)); 
         sb.append("\n");
       }
     }
     return sb.toString();
   }
 
-  public static String toString(Expression e) {
+  public static String toString(Expression e, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(e) {
       Let(x,v,t) -> {
         sb.append("let ");
         sb.append(`x);
         sb.append(" = ");
-        sb.append(Pretty.toString(`v));
+        sb.append(Pretty.toString(`v,forAprove));
         sb.append(" in ");
-        sb.append(Pretty.toString(`t));
+        sb.append(Pretty.toString(`t,forAprove));
       }
 
       Set(rulelist) -> {
         sb.append("{ ");
         %match(rulelist) {
           RuleList(_*,x,end*) -> {
-            sb.append(Pretty.toString(`x));
+            sb.append(Pretty.toString(`x,forAprove));
             if(!`end.isEmptyRuleList()) {
               sb.append(", ");
             }
@@ -66,19 +68,19 @@ public class Pretty {
     return sb.toString();
   }
   
-  public static String toString(Rule r) {
+  public static String toString(Rule r, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(r) {
     Rule(lhs,rhs) -> {
-      sb.append(Pretty.toString(`lhs));
+      sb.append(Pretty.toString(`lhs,forAprove));
       sb.append(" -> ");
-      sb.append(Pretty.toString(`rhs));
+      sb.append(Pretty.toString(`rhs,forAprove));
     }
     }
     return sb.toString();
   }
 
-  public static String toString(Term t) {
+  public static String toString(Term t, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
       Var(n) -> { sb.append(`n); }
@@ -87,21 +89,24 @@ public class Pretty {
 
       Anti(p) -> { 
         sb.append("!"); 
-        sb.append(Pretty.toString(`p));
+        sb.append(Pretty.toString(`p,forAprove));
       }
 
       Appl(symb,args) -> { 
         sb.append(`symb); 
-        sb.append("(");
-        %match(args) {
-          TermList(_*,x,end*) -> {
-            sb.append(Pretty.toString(`x));
-            if(!`end.isEmptyTermList()) {
-              sb.append(",");
+
+        if(!(`args.isEmptyTermList() && forAprove)){
+          sb.append("(");
+          %match(args) {
+            TermList(_*,x,end*) -> {
+              sb.append(Pretty.toString(`x,forAprove));
+              if(!`end.isEmptyTermList()) {
+                sb.append(",");
+              }
             }
           }
+          sb.append(")");
         }
-        sb.append(")");
       }
     }
     return sb.toString();
@@ -111,10 +116,33 @@ public class Pretty {
           implement      { java.util.HashSet }
   }
 
+  %typeterm HashMap {
+          implement      { java.util.HashMap }
+  }
+
+  // Collect the variables
   %strategy CollectVars(varSet:HashSet) extends Identity() {
     visit Term {
       Var(v)  -> {
         varSet.add(`v);
+      }
+    }
+  }
+
+  // Replace the !t by variable
+  %strategy ReplaceAnti() extends Identity() {
+    visit Term {
+      Anti(t)  -> {
+        %match(t) {
+          Appl(name,_) -> {
+            //             String n = `name;
+            return varsig.get(`name);
+          }
+          _ -> {
+            System.out.println("TTTT=" +`t);
+            return null; // TO CHANGE
+          }
+        }
       }
     }
   }
@@ -136,14 +164,46 @@ public class Pretty {
 //     sb.deleteCharAt(sb.length()-1);
 //     sb.append(")");
 
+    Map<String,Term> expsig = new HashMap<String,Term>();
+    for(String name: sig.keySet()) {
+      int arity = sig.get(name);
+      TermList tl = `TermList();
+      for(int i=0 ; i<arity ; i++) {
+        tl = `TermList(Var("kid"+i),tl*);
+      }
+      Term t = `Appl(name,tl);
+      expsig.put(name,t);
+    }
+    System.out.println(expsig+"\n");
+
+    // doesn't work when passed as parameter to ReplaceAnti
+    //     HashMap<String,Term> varsig = new HashMap<String,Term>();
+    int varn = 0;
+    varsig.put("Bottom",`Var("bang"+varn++));
+    for(String name: sig.keySet()) {
+      Term t = `Var("bang"+varn++);
+      varsig.put(name,t);
+    }
+    System.out.println(varsig+"\n");
+
+
+    Strategy replaceAnti = `ReplaceAnti();
+
     rulesb.append("\nRULES(\n");
     for(Rule r:bag) {
-      %match(r){
+      Rule newRULE = null;
+      %match(r){  
         Rule(lhs,rhs) -> {
-          `BottomUp(cv).visit(`lhs);
+          // replace !t by Var
+          Term newLHS = `BottomUp(replaceAnti).visit(`lhs);
+          // Collect the variables
+          //           `BottomUp(cv).visit(`lhs); 
+          `BottomUp(cv).visit(newLHS);
+          newRULE = `Rule(newLHS,rhs);
         }
       }
-      rulesb.append("        " + Pretty.toString(r) + "\n");
+      //       rulesb.append("        " + Pretty.toString(r) + "\n");
+      rulesb.append("        " + Pretty.toString(newRULE,true) + "\n");
     }
     rulesb.append(")\n");
 
@@ -185,7 +245,7 @@ public class @classname@ {
 
     sb.append("      module m:rules() {\n");
     for(Rule r:bag) {
-      sb.append("        " + Pretty.toString(r) + "\n");
+      sb.append("        " + Pretty.toString(r,false) + "\n");
     }
     sb.append(%[
     }
