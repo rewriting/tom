@@ -189,7 +189,7 @@ public class Pretty {
 
     Strategy replaceAnti = `ReplaceAnti();
 
-    rulesb.append("\nRULES(\n");
+    rulesb.append("\n(RULES\n");
     for(Rule r:bag) {
       Rule newRULE = null;
       %match(r){  
@@ -208,7 +208,7 @@ public class Pretty {
     rulesb.append(")\n");
 
     StringBuffer varsb = new StringBuffer();
-    varsb.append("VAR(");
+    varsb.append("(VAR ");
     for(String name: varSet) {
       varsb.append(name + ",");
     }
