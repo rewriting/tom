@@ -1,3 +1,6 @@
+2008-12-19
+  * use generics for visit methods
+
 2008-11-24
   * removed singleton pattern in gom module
   * changed static fields in gom module
