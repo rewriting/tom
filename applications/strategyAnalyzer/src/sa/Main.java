@@ -25,7 +25,7 @@ public class Main {
 
       Map<String,Integer> sig = new HashMap<String,Integer>();
       Map<String,Integer> origsig = new HashMap<String,Integer>();
-      Collection<Rule> bagOfRule = new ArrayList<Rule>();
+      List<Rule> bagOfRule = new ArrayList<Rule>();
       Compiler.compile(bagOfRule,origsig,sig,expandl);
 
       String classname = "Test";

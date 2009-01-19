@@ -112,6 +112,10 @@ public class Pretty {
     return sb.toString();
   }
 
+//   %typeterm TreeSet {
+//           implement      { java.util.TreeSet }
+//   }
+
   %typeterm HashSet {
           implement      { java.util.HashSet }
   }
@@ -194,25 +198,18 @@ public class Pretty {
     return termSet;
   }
 
-  public static String generateAprove(Collection<Rule> bag, Map<String,Integer> sig, Map<String,Integer> origsig) 
+  public static String generateAprove(List<Rule> bag, Map<String,Integer> sig, Map<String,Integer> origsig) 
     throws VisitFailure{
 
-    StringBuffer rulesb = new StringBuffer();
-
-    HashSet<String> varSet = new HashSet<String>();
-    Strategy collectVars = `CollectVars(varSet);
-
-    HashSet<String> allVarSet = new HashSet<String>();
-    Strategy collectAllVars = `CollectVars(allVarSet);
-
-    HashSet<Rule> ruleSet = new HashSet<Rule>();
-
+    // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
+    // use origsig since normally anti-patterns are only on symbols in signature + Bottom
     Map<String,Term> expsig = new HashMap<String,Term>();
+    origsig.put("Bottom",0);
     for(String name: origsig.keySet()) {
       int arity = origsig.get(name);
       TermList tl = `TermList();
       for(int i=0 ; i<arity ; i++) {
-        tl = `TermList(Var("kid"+i),tl*);
+        tl = `TermList(Var("Z"+i),tl*);
       }
       Term t = `Appl(name,tl);
       expsig.put(name,t);
@@ -221,17 +218,25 @@ public class Pretty {
 
     // doesn't work when passed as parameter to ReplaceAnti
     //     HashMap<String,Term> varsig = new HashMap<String,Term>();
+
+    // generate different variables for each symbol ()
+    // use origsig since normally anti-patterns are only on symbols in signature + Bottom
     int varn = 0;
-    varsig.put("Bottom",`Var("bang"+varn++));
-    for(String name: sig.keySet()) {
-      Term t = `Var("bang"+varn++);
+    for(String name: origsig.keySet()) {
+      Term t = `Var("Z"+varn++);
       varsig.put(name,t);
     }
     System.out.println(varsig+"\n");
 
+    // 1) RULES with anti-patterns replaced by variable
+    StringBuffer rulesb = new StringBuffer();
     Strategy replaceAnti = `ReplaceAnti();
 
-    //RULES with anti-pattern replaced by variable
+    HashSet<String> varSet = new HashSet<String>();
+    Strategy collectVars = `CollectVars(varSet);
+
+    Collections.sort(bag, new MyRuleComparator());
+
     rulesb.append("\n(RULES\n");
     for(Rule r:bag) {
       Rule newRULE = null;
@@ -242,18 +247,8 @@ public class Pretty {
           newRULE = `Rule(newLHS,rhs);
           // Collect the variables when replacing anti-pattern by var
           `BottomUp(collectVars).visit(newLHS);
-          // Generate rules without anti-pattern
-          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
-          for(Term t: termSet){
-            // generate rule for each lhs generated 
-            ruleSet.add(`Rule(t,rhs));
-            // Collect the variables when replacing anti-pattern by term
-            `BottomUp(collectAllVars).visit(t);
-          }
-          //           System.out.println("  SET for " + `lhs + " is \n" + termSet);
         }
       }
-      //       rulesb.append("        " + Pretty.toString(r) + "\n");
       rulesb.append("        " + Pretty.toString(newRULE,true) + "\n");
     }
     rulesb.append(")\n");
@@ -266,16 +261,42 @@ public class Pretty {
     varsb.deleteCharAt(varsb.length()-1);
     varsb.append(")");
 
-    //RULES with anti-pattern replaced by corresponding terms
+    //2) RULES with anti-pattern replaced by corresponding terms
     StringBuffer ruleallsb = new StringBuffer();
 
+    HashSet<String> allVarSet = new HashSet<String>();
+    Strategy collectAllVars = `CollectVars(allVarSet);
+
+    //     TreeSet<Rule> ruleSet = new TreeSet<Rule>();
+    HashSet<Rule> ruleSet = new HashSet<Rule>();
+
+    for(Rule r:bag) {
+      %match(r){  
+        Rule(lhs,rhs) -> {
+          // Generate LHSs without anti-pattern
+          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
+          for(Term t: termSet){
+            // generate rule for each lhs generated 
+            ruleSet.add(`Rule(t,rhs));
+            // Collect the variables when replacing anti-pattern by term
+            `BottomUp(collectAllVars).visit(t);
+          }
+        }
+      }
+    }
+
+
+    List<Rule> ruleList = new ArrayList<Rule>(ruleSet);
+    Collections.sort(ruleList, new MyRuleComparator());
+
     ruleallsb.append("\n(RULES\n");
-    for(Rule r:ruleSet) {
+    for(Rule r:ruleList) {
       ruleallsb.append("        " + Pretty.toString(r,true) + "\n");
     }
     ruleallsb.append(")\n");
 
     StringBuffer allvarsb = new StringBuffer();
+    allvarsb.append("\n(STRATEGY INNERMOST)\n");
     allvarsb.append("(VAR ");
     for(String name: allVarSet) {
       allvarsb.append(name + ",");

@@ -44,3 +44,10 @@ module Rule:rules() {
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
 }
+
+
+// sort Rule:block() {
+//   public int compareTo(Object r){
+//     return this.compareToLPO(r);
+//   }
+// }
