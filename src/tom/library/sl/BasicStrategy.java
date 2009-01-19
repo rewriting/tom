@@ -83,6 +83,14 @@ public abstract class BasicStrategy implements Strategy {
     }
   }
 
+  public Object getAncestor() {
+    if(environment!=null) {
+      return environment.getAncestor();
+    } else {
+      throw new RuntimeException("environment not initialized");
+    }
+  }
+
   public void setEnvironment(tom.library.sl.Environment env) {
     this.environment = env;
   }
