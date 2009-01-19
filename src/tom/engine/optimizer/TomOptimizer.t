@@ -105,6 +105,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
+    //System.out.println("(debug) I'm in the Tom optimizer : TSM"+getStreamManager().toString());
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       /* Initialize strategies */
       long startChrono = System.currentTimeMillis();

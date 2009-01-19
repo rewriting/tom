@@ -37,6 +37,7 @@ public class StatusHandler extends Handler {
   private Map inputAlert;
 
   /** Constructor */
+  //public StatusHandler() {
   public StatusHandler() {
     levelStats = new HashMap();
     inputAlert = new HashMap();

@@ -98,6 +98,7 @@ public class TomBackend extends TomGenericPlugin {
    *
    */
   public void run(Map informationTracker) {
+    //System.out.println("(debug) I'm in the Tom backend : TSM"+getStreamManager().toString());
     try {
       if(isActivated() == true) {
         TomAbstractGenerator generator = null;

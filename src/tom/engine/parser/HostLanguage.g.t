@@ -78,6 +78,7 @@ options{
 
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
+  //private static final Object lock = new Object();// verrou pour l'exec de Gom
 
   // the parser for tom constructs
   TomParser tomparser;
@@ -123,27 +124,27 @@ options{
     return skipComment;
 	}
 
-  private OptionManager getOptionManager() {
+  private synchronized OptionManager getOptionManager() {
     return optionManager;
   }
 
-  private TomStreamManager getStreamManager() {
+  private synchronized TomStreamManager getStreamManager() {
     return streamManager;
   }
 
-  public TokenStreamSelector getSelector(){
+  public synchronized TokenStreamSelector getSelector(){
     return selector;
   }
 
-  public String getCurrentFile(){
+  public synchronized String getCurrentFile(){
     return currentFile;
   }
 
-  public SymbolTable getSymbolTable() {
+  public synchronized SymbolTable getSymbolTable() {
     return getStreamManager().getSymbolTable();
   }
 
-  public void updatePosition(){
+  public synchronized void updatePosition(){
     updatePosition(getLine(),getColumn());
   }
 
@@ -200,7 +201,7 @@ options{
     return targetlexer.getColumn();
   }
 
-  private void includeFile(String fileName, List list)
+  private synchronized void includeFile(String fileName, List list)
     throws TomException, TomIncludeException {
     TomTerm astTom;
     InputStream input;
@@ -501,6 +502,7 @@ gomsignature [List list] throws TomException
     }
   }
   {
+    synchronized(Tom.getLock()) {
     tom.gom.parser.BlockParser blockparser = 
       tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
     gomCode = cleanCode(blockparser.block().trim());
@@ -584,11 +586,15 @@ gomsignature [List list] throws TomException
     for (int i = 0; i < preparams.length; i++) {
       params[i] = (String)preparams[i];
     }
+   
     int res = 1;
     //res = tom.gom.Gom.exec(params);
-    Map informationTracker = new HashMap();
+    Map<String,String> informationTracker = new HashMap();
     informationTracker.put("lastGeneratedMapping",null);
+    //Map<Long,String> informationTracker = new HashMap();
+    //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
+    //res = tom.gom.Gom.exec(params);
     System.setIn(backupIn);
     if (res != 0 ) {
        getLogger().log(
@@ -600,6 +606,8 @@ gomsignature [List list] throws TomException
     }
     //String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
     String generatedMapping = (String)informationTracker.get("lastGeneratedMapping");
+    /////// String generatedMapping = (String)informationTracker.get(java.lang.Thread.currentThread().getId());
+    //tests statiques String generatedMapping = (String)(tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().remove(java.lang.Thread.currentThread().getId()));
 
     // Simulate the inclusion of generated Tom file
     /*
@@ -611,8 +619,8 @@ gomsignature [List list] throws TomException
     if (generatedMapping != null){
     	includeFile(generatedMapping, list);
     }
-
     updatePosition();
+    } //synchronized
   }
 
 ;

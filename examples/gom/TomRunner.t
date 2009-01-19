@@ -41,7 +41,6 @@ import java.io.*;
 class TomRunner {
 
   public static void main(String[] args) {
-    Map<String,String> informationTracker = new HashMap();
     int maxiter = 1000;
     if (args.length >= 1) {
       maxiter = Integer.parseInt(args[0]);
@@ -64,7 +63,7 @@ class TomRunner {
     
     int cnt = 0;
     while(cnt++ < maxiter) {
-      int res = Tom.exec(params,informationTracker); 
+      int res = Tom.exec(params); 
       System.out.println("Generation: " + res);
       System.out.println("Iteration: "+cnt);
     }

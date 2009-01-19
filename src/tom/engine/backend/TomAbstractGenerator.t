@@ -481,17 +481,14 @@ public abstract class TomAbstractGenerator {
         output.write(deep, `t, `startLine, `endLine - `startLine);
         return;
       }
-      
       ITL(t) -> {
         output.write(`t);
         return;
       }
-
       Comment(t) -> {
         `buildComment(deep,t);
         return;
       }
-
       t -> {
         System.out.println("Cannot generate code for TL: " + `t);
         throw new TomRuntimeException("Cannot generate code for TL: " + `t);

@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.Iterator;
 
+import tom.engine.Tom;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
@@ -139,15 +140,15 @@ public class TomParserPlugin extends TomGenericPlugin {
    * inherited from plugin interface
    * Parse the input ans set the "Working" TomTerm to be compiled.
    */
-  public void run(Map informationTracker) {
+  public synchronized void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
+    //System.out.println("(debug) I'm in the Tom parserPlugin : TSM"+getStreamManager().toString());
     try {
       // looking for java package
       if(java && (!currentFileName.equals("-"))) {
-
         /* Do not exhaust the stream !! */
         TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
         String packageName = "";
@@ -156,7 +157,6 @@ public class TomParserPlugin extends TomGenericPlugin {
         } catch (TokenStreamException tse) {
           /* no package was found: ignore */
         }
- 
         // Update streamManager to take into account package information
         getStreamManager().setPackagePath(packageName);
       }
@@ -164,7 +164,6 @@ public class TomParserPlugin extends TomGenericPlugin {
       parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
-
       /*
        * we update codomains which are constrained by a symbolName
        * (come from the %strategy operator)
@@ -176,7 +175,6 @@ public class TomParserPlugin extends TomGenericPlugin {
         TomSymbol tomSymbol = getSymbolFromName(tomName);
         tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
       }
-
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );

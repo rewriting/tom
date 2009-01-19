@@ -117,6 +117,7 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
       result = modules;
     }
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

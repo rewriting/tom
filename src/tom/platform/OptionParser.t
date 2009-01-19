@@ -76,13 +76,16 @@ public class OptionParser {
   /**
    * An XMLTools for doing the stuff
    */
-  private static XmlTools xtools = new XmlTools();
+    // non static XmlTools
+  //private static XmlTools xtools = new XmlTools();
   
   /**
    * @return a PlatformOptionList extracted from the a String
    */
   public static PlatformOptionList xmlToOptionList(String xmlString) {
     InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
+    // non static XmlTools
+    XmlTools xtools = new XmlTools();
     TNode node = xtools.convertXMLToTNode(stream);
     return xmlNodeToOptionList(node.getDocElem());
   }

@@ -1,4 +1,11 @@
 2009-01-19
+  * implement multithreading in Tom
+  * add a new Tom option : --multithread
+    (be careful by using it since there is no thread smart management,
+    therefore performance could not be improved,
+    option deactivated by default)
+
+2009-01-19
   * re-implement the constraint scheduler using in-place swaping
   * de-activate the SwitchNumericConstraints rule (it does not terminate)
 

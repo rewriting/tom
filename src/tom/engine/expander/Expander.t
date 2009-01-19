@@ -125,6 +125,7 @@ public class Expander extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     setGenIntrospector(getOptionBooleanValue("genIntrospector"));
+    //System.out.println("(debug) I'm in the Tom expander : TSM"+getStreamManager().toString());
     try {
       //reinit the variable for intropsector generation
       setGeneratedIntrospector(false);

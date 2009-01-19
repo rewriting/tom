@@ -24,6 +24,8 @@
 
 package tom.gom;
 
+import java.lang.Thread;
+import java.lang.ThreadGroup;
 import java.util.*;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -42,7 +44,9 @@ import java.text.MessageFormat;
 import tom.platform.BasicFormatter;
 import tom.platform.PluginPlatform;
 import tom.platform.PluginPlatformFactory;
+import tom.platform.ConfigurationManager;
 
+import tom.gom.Gom;
 import tom.gom.GomMessage;
 
 public class Gom {
@@ -56,6 +60,15 @@ public class Gom {
   /** "java.util.logging.config.file" */
   private final static String LOGGINGPROPERTYFILE =
     "java.util.logging.config.file";
+  
+  /*private final static Object lockTomExec = new Object();// verrou pour l'exec de Tom
+
+  public synchronized static Object getLock() {
+    return lockTomExec;
+  }*/
+
+  /** The ConfigurationManager */
+  //private static ConfigurationManager configurationManager;
 
   /** The root logger */
   private final static Logger logger = Logger.getLogger(Gom.LOGRADICAL);
@@ -63,34 +76,103 @@ public class Gom {
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler;
 
-  //a tracker/logger which contains information ; we begin with a suingle piece of information : the lastgenerated mapping
   public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
 
   public static void main(String[] args) {
     Map<String,String> informationTracker = new HashMap();
-    informationTracker.put(KEY_LAST_GEN_MAPPING,null);
     int errno = exec(args,informationTracker);
     System.exit(errno);
   }
 
+  // different from the Tom.exec() -> need an informationTracker
   public static int exec(String[] commandLine, Map informationTracker) {
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println(
-          MessageFormat.format(
-            GomMessage.loggingInitializationFailure.getMessage(),
-            new Object[]{e.getMessage()})
-      );
+      System.err.println(MessageFormat.format(GomMessage.loggingInitializationFailure.getMessage(),new Object[]{e.getMessage()}));
       return 1;
     }
-    PluginPlatform platform = PluginPlatformFactory.getInstance().create(
-        commandLine,
-        Gom.LOGRADICAL);
+    // Retrieve the configuration file name
+    String configFileName =
+      PluginPlatformFactory.getInstance().extractConfigFileName(commandLine);
+    if(configFileName == null) {
+      return 1;
+    }
+    // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
+    ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
+    initConfigurationManager.initialize(commandLine);
+    // Retrieve the whole fileList that has to be compiled
+    List<String> wholeInputToCompileList =
+      initConfigurationManager.getOptionManager().getInputToCompileList();
+    int res=0;
+    
+    //multi thread
+    //List<Thread> threadsList = new ArrayList<Thread>();
+    
+    /* Create the group of the new threads pool :
+     * the new group name is obtained with the current thread ID
+     * Therefore, groups created by differents threads have different name
+     */
+    /*ThreadGroup gomThreadGroup = new ThreadGroup(Long.toString(Thread.currentThread().getId()));    
+    int i;
+    // Begin the creation/launching thread loop 
+    for (i=0;i<wholeInputToCompileList.size();i++) {
+      // Create a PluginPlatform, using only one element of the wholeInputToCompileList
+      // subList is used in order to be able to adapt the number of given files for one thread
+      PluginPlatform platform =
+        PluginPlatformFactory.getInstance().create(commandLine,Gom.LOGRADICAL,wholeInputToCompileList.subList(i,i+1),informationTracker); 
+      if(platform == null) {
+        return 1;
+      }
+      // Create a Thread whose thread group name is the current thread ID
+      Thread thread = new Thread(gomThreadGroup,platform);
+      // Add its unique ID in the informationTracker
+      PluginPlatformFactory.getInstance().putPluginPlatform(thread.getId(),platform);
+      // add the thread in the threads list
+      threadsList.add(thread);
+    }*/
+
+    // Launching created threads
+    /*for(i=0;i<threadsList.size();i++) {
+      //System.out.println("(GomDebug) Thread #"+i+" starts (threadId="+threadsList.get(i).getId()+")");
+      threadsList.get(i).start();
+    }*/
+
+    // while there are alive threads in the child group, the parent thread (current) sleeps/waits/gives resources to other threads
+    // Pb : gomThreadGroup.activeCount <- there is a problem here :
+    // This result seems to be an ESTIMATE and not the EXACT number of active threads in the group
+    // But strangely, this method give the exact number when concerning a Thread and not a ThreadGroup
+    // cf. Java API
+    // The stop condition could be changed ?
+    
+    // Parent Thread is waiting that no child thread is active
+    /*while(gomThreadGroup.activeCount()>0) {
+      try {
+        // Here, we use yield() (method which temporarly gives ressources to other running threads
+        Thread.yield();
+      } catch (Exception e) {
+          System.err.println("(Gom) Exception in wait section : "+e);
+      }
+    }
+
+    // Check the result of each thread
+    for(i=0;i<threadsList.size();i++) {
+      if (PluginPlatformFactory.getInstance().getPluginPlatform(threadsList.get(i).getId()).getRunResult() == 1) {
+        System.err.println("Error : pluginPlatForm #"+i+" (threadID ="+threadsList.get(i).getId()+") did not finish correctly !");
+        return 1;
+      }
+    }
+    //System.out.println("(Gom) Done !");
+    return 0;*/
+
+    //single Platform
+    PluginPlatform platform =
+      PluginPlatformFactory.getInstance().create(commandLine,Gom.LOGRADICAL,wholeInputToCompileList,informationTracker);
     if(platform == null) {
       return 1;
     }
-    return platform.run(informationTracker);
+    platform.run();
+    return platform.getRunResult();
   }
 
   /**

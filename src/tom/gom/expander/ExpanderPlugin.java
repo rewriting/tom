@@ -110,6 +110,7 @@ public class ExpanderPlugin extends GomGenericPlugin {
       }
     }
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

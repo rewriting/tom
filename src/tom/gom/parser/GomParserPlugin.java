@@ -92,7 +92,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run(Map informationTracker) {
+  public synchronized void run(Map informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     if (inputReader == null)
       return;
@@ -151,6 +151,7 @@ public class GomParserPlugin extends GomGenericPlugin {
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

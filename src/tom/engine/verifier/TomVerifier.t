@@ -92,6 +92,7 @@ public class TomVerifier extends TomGenericPlugin {
     boolean camlsemantics = getOptionBooleanValue("camlSemantics");
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean optimize2 = getOptionBooleanValue("optimize2");
+    //System.out.println("(debug) I'm in the Tom Verifier : TSM"+getStreamManager().toString());
 
     if(optimize2 && isActivated()) {
       getLogger().log(Level.SEVERE, TomMessage.verifierNotCompatibleWithOptimize.getMessage());

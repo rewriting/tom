@@ -29,6 +29,7 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
+import java.util.ArrayList;
 
 public abstract class TemplateClass {
   protected GomClass gomClass;

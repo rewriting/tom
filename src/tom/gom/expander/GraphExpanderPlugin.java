@@ -112,6 +112,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       referencedHookList = hookList;
     }
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

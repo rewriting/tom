@@ -97,6 +97,7 @@ public class Typer extends TomGenericPlugin {
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
+    //System.out.println("(debug) I'm in the Tom typer : TSM"+getStreamManager().toString());
     TomTerm typedTerm = null;
     try {
       kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());

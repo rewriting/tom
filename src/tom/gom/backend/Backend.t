@@ -111,10 +111,10 @@ public class Backend {
       it.next().addTemplates(generators);
     }
     Iterator<ClassName> itc = generators.keySet().iterator();
+
     while (itc.hasNext()) {
       generators.get(itc.next()).generateFile();
     }
-
     return 1;
   }
 

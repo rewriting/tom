@@ -27,6 +27,7 @@ package tom.gom.backend;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import tom.gom.Gom;
 import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
@@ -56,7 +57,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   %include { ../adt/objects/Objects.tom}
 
-  public GomEnvironment getGomEnvironment() {
+  public /*synchronized*/ GomEnvironment getGomEnvironment() {
     return this.gomEnvironment;
   }
 
@@ -126,7 +127,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         file_path = output.getCanonicalPath();
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
-      }
+}
 
       ArrayList tomParams = new ArrayList();      
 
@@ -163,7 +164,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
       tomParams.add("--output");
       tomParams.add(file_path);
-      tomParams.add("-");     
+      tomParams.add("-");
 
       //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
@@ -175,11 +176,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
         generate(gen);
         InputStream backupIn = System.in;
         System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
-        //
-        Map informationTracker = new HashMap();
-        informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
-        //int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]),informationTracker);
+        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+
+        //int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]),informationTracker);
         //int res = tom.engine.Tom.exec(params);
         System.setIn(backupIn);
         if (res != 0 ) {

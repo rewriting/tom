@@ -80,6 +80,7 @@ public class Starter extends GomGenericPlugin {
     getStreamManager().prepareForInputFile(fileName);
     argToRelay = new Object[]{ getGomEnvironment() };
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

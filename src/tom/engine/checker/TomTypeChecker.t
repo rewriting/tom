@@ -82,6 +82,7 @@ public class TomTypeChecker extends TomChecker {
   }
 
   public void run(Map informationTracker) {
+    //System.out.println("(debug) I'm in the Tom TypeChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();

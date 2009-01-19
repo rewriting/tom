@@ -164,6 +164,7 @@ public class Compiler extends TomGenericPlugin {
   protected static long startChrono = System.currentTimeMillis();
   public void run(Map informationTracker) {
     boolean intermediate = getOptionBooleanValue("intermediate");    
+    //System.out.println("(debug) I'm in the Tom compiler : TSM"+getStreamManager().toString());
     try {
       TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
