@@ -161,6 +161,14 @@ public final class Environment implements Cloneable {
   }
 
   /**
+   * get the term that corresponds to the ancestor of current position
+   * @return the ancestor of the current term
+   */
+  public Object getAncestor() {
+    return subterm[current-1];
+  }
+
+  /**
    * get the term that corresponds to the current position
    * @return the current term
    */
