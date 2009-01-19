@@ -34,9 +34,10 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+import tom.engine.tools.*;
 import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
-import java.util.ArrayList;
+import java.util.*;
 import tom.engine.compiler.Compiler;
 
 /**
@@ -136,10 +137,10 @@ public class VariadicPropagator implements IBasePropagator {
         TomTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
-        Constraint l = `AndConstraint();        
+        List<Constraint> l = new ArrayList<Constraint>();
         %match(slots) {
           concSlot() -> {
-            l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
+            l.add(`EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
             TomTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
@@ -149,26 +150,24 @@ mAppl:      %match(appl) {
                 // if it is the last element               
                 if(`X.length() == 0) {
                   // we should only assign it, without generating a loop
-                  l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
+                  l.add(`MatchConstraint(appl,freshVariable));
                 } else {
                   TomTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
                   TomTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
-                  l = `AndConstraint(l*,
-                      MatchConstraint(beginSublist,freshVariable),
-                      MatchConstraint(endSublist,freshVariable),             
-                      MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
-                      MatchConstraint(newFreshVarList,endSublist));
+                  l.add(`MatchConstraint(beginSublist,freshVariable));
+                  l.add(`MatchConstraint(endSublist,freshVariable));
+                  l.add(`MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)));
+                  l.add(`MatchConstraint(newFreshVarList,endSublist));
                 }
                 break mAppl;
               }
               _ -> {
-                l = `AndConstraint(l*,                      
-                    Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)),
-                    MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
+                l.add(`Negate(EmptyListConstraint(name,freshVariable)));
+                l.add(`MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)));
+                l.add(`MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if(`X.length() == 0) {                  
-                  l = `AndConstraint(l*, EmptyListConstraint(name,newFreshVarList));
+                  l.add(`EmptyListConstraint(name,newFreshVarList));
                 }
               }
             }// end match
@@ -176,8 +175,11 @@ mAppl:      %match(appl) {
           }
         }// end match
         // fresh var declaration + add head equality condition + detached constraints
-        l = `AndConstraint(freshVarDeclaration, isSymbolConstr, vp.getConstraintPropagator().performDetach(m),l*);
-        return l;
+        l.add(0,vp.getConstraintPropagator().performDetach(`m));
+        l.add(0,isSymbolConstr);
+        l.add(0,freshVarDeclaration);
+        return ASTFactory.makeAndConstraint(l);
+        //return `AndConstraint(freshVarDeclaration, isSymbolConstr, vp.getConstraintPropagator().performDetach(m),l*);
       }					
     }
   }// end %strategy

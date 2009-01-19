@@ -226,7 +226,7 @@ public class ConstraintGenerator {
    */
   private Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Collection<TomTerm> freshVarList = new HashSet<TomTerm>();
     // collect variables    
@@ -234,7 +234,7 @@ public class ConstraintGenerator {
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
     // add fresh variables' declarations
     for(TomTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -274,12 +274,12 @@ public class ConstraintGenerator {
    */
   private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());    
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());    
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
@@ -381,15 +381,15 @@ public class ConstraintGenerator {
    *  
    */
   private Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getBooleanType());
+    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
-    TomType intType = getCompiler().getIntType();
+    TomType intType = getCompiler().getSymbolTable().getIntType();
     TomTerm counter = getCompiler().getFreshVariable(intType);    
     // build the ifs
     Instruction instruction = `buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
     // counter++ : expression at the end of the loop 
     Instruction counterIncrement = `Assign(counter,AddOne(counter));
     //  stick the flag declaration and the counterIncrement   

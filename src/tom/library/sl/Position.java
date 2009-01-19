@@ -208,16 +208,17 @@ public class Position implements Cloneable,Path {
   }
 
   public Path getCanonicalPath() {
-    if(length()==0) {
+    int length = length();
+    if(length==0) {
       return make();
     }
     //System.out.println("omega = " + Arrays.toString(omega));
-    int[] array = new int[length()];
+    int[] array = new int[length];
     int j=0;
-    for(int i=0 ; i<length() ; i++) {
+    for(int i=0 ; i<length ; i++) {
       if(omega[i]!=0) {
-        if(i<length()-1) {
-          if(omega[i]!= -omega[i+1]) {
+        if(i<length-1) {
+          if(omega[i] != -omega[i+1]) {
             array[j++] = omega[i];
           } else {
             i++;

@@ -58,9 +58,8 @@ public class All extends AbstractStrategy {
    *  Visits the subject any without managing any environment
    */ 
   public final <T> T visitLight(T any, Introspector m) throws VisitFailure {
-    int childCount = m.getChildCount(any);
-    T result = any;
     Object[] childs = null;
+    int childCount = m.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
       Object oldChild = m.getChildAt(any,i);
       Object newChild = visitors[ARG].visitLight(oldChild,m);
@@ -72,10 +71,11 @@ public class All extends AbstractStrategy {
         childs[i] = newChild;
       }
     }
-    if(childs!=null) {
-      result = m.setChildren(any,childs);
+    if(childs==null) {
+      return any;
+    } else {
+      return m.setChildren(any,childs);
     }
-    return result;
   }
 
   /**

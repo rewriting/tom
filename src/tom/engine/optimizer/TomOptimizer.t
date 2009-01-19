@@ -113,7 +113,7 @@ public class TomOptimizer extends TomGenericPlugin {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
         if(getOptionBooleanValue("optimize2")) {
           Strategy optStrategy2 = `Sequence(
-              InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
+              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
               InnermostId(
                 ChoiceId(
                   Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
@@ -122,7 +122,7 @@ public class TomOptimizer extends TomGenericPlugin {
               );
 
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
+          renamedTerm = (TomTerm) `BottomUp(Inline(TrueConstraint())).visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
@@ -408,20 +408,19 @@ public class TomOptimizer extends TomGenericPlugin {
   /* strategies for Let inlining (using cps) */
   // comp = AssignCase(TypedActionCase(comp,BaseCase(all(comp),fail())),fail())
   %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) { 
-    make(variableName, info) { (
+    make(variableName, info) {
         `Try(
           mu(MuVar("comp"),
-            computeOccurenceLet_AssignCase( computeOccurenceLet_TypedActionCase( MuVar("comp"),
-                computeOccurenceLet_BaseCase( All(MuVar("comp")),
-                  variableName,
-                  info
-                  ),
+            computeOccurenceLet_AssignCase( 
+              computeOccurenceLet_TypedActionCase( MuVar("comp"),
+                computeOccurenceLet_BaseCase( All(MuVar("comp")), variableName, info),
                 variableName, 
                 info
                 ),
               info
               )
-            )) )
+            )
+          ) 
     }
   }
 

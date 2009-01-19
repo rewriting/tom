@@ -180,14 +180,14 @@ public class ArrayPropagator implements IBasePropagator {
   }// end %strategy
 
   private TomTerm getBeginIndex() {
-    return getCompiler().getBeginVariableStar(getCompiler().getIntType());
+    return getCompiler().getBeginVariableStar(getCompiler().getSymbolTable().getIntType());
   }
 
   private TomTerm getEndIndex() {
-    return getCompiler().getEndVariableStar(getCompiler().getIntType());
+    return getCompiler().getEndVariableStar(getCompiler().getSymbolTable().getIntType());
   }
 
   private TomTerm getFreshIndex() {
-    return getCompiler().getFreshVariableStar(getCompiler().getIntType());    
+    return getCompiler().getFreshVariableStar(getCompiler().getSymbolTable().getIntType());    
   }
 }

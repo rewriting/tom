@@ -103,12 +103,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
        * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
        */
-      AndConstraint?(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
+      AndConstraint(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
         // we cannot cache already renamed variables, because disjunctions have to be taken into account
         // for example: g(x) || f(x,x) -> ...
         Constraint res = (Constraint)`TopDownWhenConstraint(ReplaceMatchConstraint(varName,gpp)).visitLight(`Y*);
         if(res != `Y*) {
-          return `AndConstraint(X*,eq,res);
+          return `AndConstraint(X*,eq,res*);
         }
       }  
       /**

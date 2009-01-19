@@ -161,8 +161,8 @@ public class Compiler extends TomGenericPlugin {
     compilerEnvironment = new CompilerEnvironment();
   }
 
+  protected static long startChrono = System.currentTimeMillis();
   public void run(Map informationTracker) {
-    long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     try {
       TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
@@ -186,9 +186,9 @@ public class Compiler extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
 
-  public TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
+  private TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     getCompilerEnvironment().setSymbolTable(symbolTable);
-    // we use TopDown  and not TopDownIdStopOnSuccess to compile nested-match
+    // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
     return (TomTerm) `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
@@ -200,8 +200,8 @@ public class Compiler extends TomGenericPlugin {
   // 5. launch PostGenerator  
   // 6. transforms resulted expression into a CompiledMatch
   %strategy CompileMatch(compiler:Compiler) extends Identity() {
-    visit Instruction {			
-      Match(constraintInstructionList, matchOptionList)  -> {        
+    visit Instruction {
+      sub@Match(constraintInstructionList, matchOptionList)  -> {        
         compiler.getCompilerEnvironment().matchNumber++;
         compiler.getCompilerEnvironment().setRootpath(`concTomNumber(MatchNumber(compiler.getCompilerEnvironment().getMatchNumber())));
         compiler.getCompilerEnvironment().setFreshSubjectCounter(0);
@@ -220,15 +220,18 @@ public class Compiler extends TomGenericPlugin {
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
               Constraint newConstraint = (Constraint) `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
-              PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
               Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
+              //System.out.println("propag: " + actionNumber + "  " + Integer.valueOf((int)(System.currentTimeMillis()-Compiler.startChrono)) );
+              PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
+              //System.out.println("preGeneration: " + actionNumber + "  " + Integer.valueOf((int)(System.currentTimeMillis()-Compiler.startChrono)) );
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
               TomNumberList path = compiler.getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
-              automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
+              automataList = `concTomTerm(automata,automataList*); // insert in reverse order
+
             } catch(Exception e) {
               e.printStackTrace();
               throw new TomRuntimeException("Propagation or generation exception:" + e);
@@ -238,7 +241,7 @@ public class Compiler extends TomGenericPlugin {
         /*
          * return the compiled Match construction
          */        
-        InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
+        InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList.reverse());
         // the block is useful in case we have a label on the %match: we would like it to be on the whole Match instruction 
         return `UnamedBlock(concInstruction(CompiledMatch(AbstractBlock(astAutomataList), matchOptionList)));
       }
@@ -300,8 +303,9 @@ public class Compiler extends TomGenericPlugin {
       }
     }
   }
+
   private TomTerm getUniversalObjectForSubject(TomType subjectType){    
-    if (getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
+    if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {
       return getFreshVariable(getSymbolTable().getUniversalType());
@@ -366,16 +370,6 @@ public class Compiler extends TomGenericPlugin {
     return TomBase.getSlotType(tomSymbol,slotName);    
   } 
 
-  // [pem] really useful ?
-  public TomType getIntType() {
-    return getSymbolTable().getIntType();
-  }
-
-  // [pem] really useful ?
-  public TomType getBooleanType() {
-    return getSymbolTable().getBooleanType();
-  }
-
   public TomType getTermTypeFromTerm(TomTerm tomTerm) {    
     return TomBase.getTermType(tomTerm,getCompilerEnvironment().getSymbolTable());    
   }
@@ -423,7 +417,7 @@ public class Compiler extends TomGenericPlugin {
     visit Instruction {
       CompiledPattern(patternList,instruction) -> {
         // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
-        Collection newContext = new ArrayList();
+        Collection newContext = new HashSet();
         `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
         newContext.addAll(context);
         return (Instruction)`TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);

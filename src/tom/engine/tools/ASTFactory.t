@@ -119,65 +119,66 @@ public class ASTFactory {
     return list;
   }
 
-  public static ConstraintList makeConstraintList(List argumentList) {
+  public static ConstraintList makeConstraintList(List<Constraint> argumentList) {
     ConstraintList list = `concConstraint();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      Constraint term;
-      term = (Constraint)elt;
-      list = `concConstraint(term,list*);
+      list = `concConstraint(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static ConstraintInstructionList makeConstraintInstructionList(List argumentList) {
+  public static ConstraintInstructionList makeConstraintInstructionList(List<ConstraintInstruction> argumentList) {
     ConstraintInstructionList list = `concConstraintInstruction();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      ConstraintInstruction term;
-      term = (ConstraintInstruction)elt;
-      list = `concConstraintInstruction(term,list*);
+      list = `concConstraintInstruction(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static TomNameList makeNameList(List argumentList) {
+  public static Constraint makeAndConstraint(List<Constraint> argumentList) {
+    Constraint list = `AndConstraint();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `AndConstraint(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static Constraint makeOrConstraint(List<Constraint> argumentList) {
+    Constraint list = `OrConstraint();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `OrConstraint(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static TomNameList makeNameList(List<TomName> argumentList) {
     TomNameList list = `concTomName();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      TomName term = (TomName) elt;
-      list = `concTomName(term,list*);
+      list = `concTomName(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static SlotList makeSlotList(List argumentList) {
+  public static SlotList makeSlotList(List<Slot> argumentList) {
     SlotList list = `concSlot();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      Slot term = (Slot) elt;
-      list = `concSlot(term,list*);
+      list = `concSlot(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static PairNameDeclList makePairNameDeclList(List argumentList) {
+  public static PairNameDeclList makePairNameDeclList(List<PairNameDecl> argumentList) {
     PairNameDeclList list = `concPairNameDecl();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      PairNameDecl term = (PairNameDecl) elt;
-      list = `concPairNameDecl(term,list*);
+      list = `concPairNameDecl(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static TomVisitList makeTomVisitList(List argumentList) {
+  public static TomVisitList makeTomVisitList(List<TomVisit> argumentList) {
     TomVisitList list = `concTomVisit();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      TomVisit term;
-      term = (TomVisit)elt;
-      list = `concTomVisit(term,list*);
+      list = `concTomVisit(argumentList.get(i),list*);
     }
     return list;
   }
