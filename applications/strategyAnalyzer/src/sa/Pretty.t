@@ -185,7 +185,7 @@ public class Pretty {
           System.out.println(" PROBLEM "); 
         } // TO CHANGE
         
-        Set<String> gensig = expsig.keySet();
+        Set<String> gensig = new HashSet<String>(expsig.keySet());
         gensig.remove(symbolName); // all but current
         for(String sn: gensig) {
           Term t2p = (Term)pos.getReplace(expsig.get(sn)).visitLight(t);
@@ -310,7 +310,7 @@ public class Pretty {
 
 
 
-  public static String generate(Collection<Rule> bag, Map<String,Integer> sig, String classname) {
+  public static String generate(List<Rule> bag, Map<String,Integer> sig, String classname) {
     StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
@@ -332,6 +332,8 @@ public class @classname@ {
       }
       sb.append("        | " + name + "(" + args + ")\n");
     }
+
+    Collections.sort(bag, new MyRuleComparator());
 
     sb.append("      module m:rules() {\n");
     for(Rule r:bag) {
