@@ -111,6 +111,7 @@ public class AdapterPlugin extends GomGenericPlugin {
     adapter.generate(moduleList,hookList);
     getLogger().log(Level.INFO, "Adapter generation succeeded");
     informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
+    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

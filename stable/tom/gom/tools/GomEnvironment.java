@@ -38,7 +38,6 @@ public class GomEnvironment {
    * GomEnvironment uses the Singleton pattern.
    * Unique instance of the GomEnvironment
    */
-  // myadd
   // private static GomEnvironment instance;
 
   private GomStreamManager streamManager;
@@ -52,11 +51,8 @@ public class GomEnvironment {
   /**
    * A private constructor method to defeat instantiation
    */
-  // private GomEnvironment() { 
   public GomEnvironment() { 
-    //3
     streamManager = new GomStreamManager();
-
     importedModules = new HashMap();
     builtinSorts = new HashMap();
     initBuiltins();
@@ -85,11 +81,8 @@ public class GomEnvironment {
     symbolTable.fill(l);
   }
 
-  // this map is filled by the GomTypeExpander
-  //private Map importedModules = new HashMap();
   public ModuleDeclList getModuleDependency(ModuleDecl module) {
     ModuleDeclList modulesDecl = (ModuleDeclList)importedModules.get(module);
-    //ModuleDeclList modulesDecl = (ModuleDeclList)getImportedModules().get(module);
     return modulesDecl;
   }
   public void addModuleDependency(ModuleDecl module, ModuleDeclList imported) {
@@ -102,8 +95,7 @@ public class GomEnvironment {
     return streamManager;
   }
 
-  //private Map builtinSorts = new HashMap();
-  private void initBuiltins() {
+  public void initBuiltins() {
     builtinSorts.put("boolean", tom.gom.adt.objects.types.classname.ClassName.make("", "boolean") );
     builtinSorts.put("int", tom.gom.adt.objects.types.classname.ClassName.make("", "int") );
     builtinSorts.put("String", tom.gom.adt.objects.types.classname.ClassName.make("", "String") );
@@ -114,7 +106,6 @@ public class GomEnvironment {
     builtinSorts.put("ATerm", tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") );
     builtinSorts.put("ATermList", tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") );
   }
-  //private Map usedBuiltinSorts = new HashMap();
 
   /**
    * Check if the argument is a builtin module name

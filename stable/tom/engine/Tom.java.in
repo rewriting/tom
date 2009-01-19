@@ -25,6 +25,9 @@
 
 package tom.engine;
 
+import java.lang.Thread;
+import java.lang.ThreadGroup;
+import java.lang.Long;
 import java.util.*;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -43,6 +46,7 @@ import java.text.MessageFormat;
 import tom.platform.BasicFormatter;
 import tom.platform.PluginPlatform;
 import tom.platform.PluginPlatformFactory;
+import tom.platform.ConfigurationManager;
 
 /**
  * Main Tom project class
@@ -59,6 +63,14 @@ public class Tom {
   private final static String LOGGING_PROPERTY_FILE =
     "java.util.logging.config.file";
 
+  /** The ConfigurationManager */
+  // private static ConfigurationManager configurationManager;
+  private final static Object lockGomExec = new Object();// verrou pour l'exec de Gom
+
+  public synchronized static Object getLock() {
+    return lockGomExec;
+  }
+
   /** The root logger */
   private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL);
   
@@ -68,33 +80,105 @@ public class Tom {
   public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
 
   public static void main(String[] args) {
-    Map<String,String> informationTracker = new HashMap();
-    informationTracker.clear();
-    informationTracker.put(KEY_LAST_GEN_MAPPING,"");
-    //int errno = exec(args);
-    int errno = exec(args,informationTracker);
+    int errno = exec(args);
     System.exit(errno);
   }
-  
-  //public static int exec(String[] args) {
-  public static int exec(String[] args, Map informationTracker) {
+ 
+  public static int exec(String[] args) {
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println(
-          MessageFormat.format(TomMessage.loggingInitializationFailure.getMessage(),
-            new Object[]{e.getMessage()})
-      );
+      System.err.println(MessageFormat.format(TomMessage.loggingInitializationFailure.getMessage(),new Object[]{e.getMessage()}));
       return 1;
     }
-    PluginPlatform platform =
-      PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL); 
-    if(platform == null) {
+    // Retrieve the configuration file name
+    String configFileName =
+      PluginPlatformFactory.getInstance().extractConfigFileName(args);
+    if(configFileName == null) {
       return 1;
     }
-    return platform.run(informationTracker);
+    // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
+    ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
+    initConfigurationManager.initialize(args);
+    // Retrieve the whole fileList that has to be compiled
+    List<String> wholeInputToCompileList =
+      initConfigurationManager.getOptionManager().getInputToCompileList();
+    // here will be the choice between mono and multi thread
+    if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("multithread")).booleanValue()) {
+      //multi thread
+      List<Thread> threadsList = new ArrayList<Thread>();
+      /* Create the group of the new threads pool :
+       * the new group name is obtained with the current thread ID
+       * Therefore, groups created by differents threads have different name
+       */
+      ThreadGroup tomThreadGroup = new ThreadGroup(Long.toString(Thread.currentThread().getId()));
+      int i;
+      // Begin the creation/launching thread loop 
+      for (i=0;i<wholeInputToCompileList.size();i++) {
+        // Create a PluginPlatform, using only one element of the wholeInputToCompileList
+        // subList is used in order to be able to adapt the number of given files for one thread, but it's not optimal for a single file
+        PluginPlatform platform =
+          PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,Arrays.asList(wholeInputToCompileList.get(i))); 
+          //PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,wholeInputToCompileList.subList(i,i+1)); 
+        if(platform == null) {
+          return 1;
+        }
+        // Create a Thread whose thread group name is the current thread ID
+        Thread thread = new Thread(tomThreadGroup,platform);
+        // Add its unique ID in the informationTracker
+        PluginPlatformFactory.getInstance().putPluginPlatform(thread.getId(),platform);
+        // add the thread in the threads list
+        threadsList.add(thread);
+      }
+    
+      // Launching created threads
+      for(i=0;i<threadsList.size();i++) {
+        //System.out.println("(TomDebug) Thread #"+i+" starts (threadId="+threadsList.get(i).getId()+")");
+        threadsList.get(i).start();
+      }
+
+      // while there are alive threads in the child group, the parent thread (current) sleeps/waits/gives resources to other threads
+      // Pb : tomThreadGroup.activeCount <- there is a problem here :
+      // This result seems to be an ESTIMATE and not the EXACT number of active threads in the group
+      // But strangely, this method give the exact number when concerning a Thread and not a ThreadGroup
+      // cf. Java API
+      // The stop condition could be changed ?
+    
+      // Parent Thread is waiting that no child thread is active
+      while(tomThreadGroup.activeCount()>0) {
+        try {
+        // Here, we use yield() (method which temporarly gives ressources to other running threads
+        // seems that we lose perf with this loop : not a real passive wait
+        // we should find an other solution
+          
+          Thread.yield();
+          //Thread.sleep(1);
+        } catch (Exception e) {
+          System.err.println("(Tom) Exception in wait section : "+e);
+        }
+      }
+
+      // Check the result of each thread
+      for(i=0;i<threadsList.size();i++) {
+        if (PluginPlatformFactory.getInstance().getPluginPlatform(threadsList.get(i).getId()).getRunResult() == 1) {
+          System.err.println("Error : pluginPlatForm #"+i+" (threadID ="+threadsList.get(i).getId()+") did not finish correctly !");
+          return 1;
+        }
+      }
+      //System.out.println("(Tom) Done !");
+      return 0;
+    } else {
+      // Single PluginPlatform
+      PluginPlatform platform =
+        PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,wholeInputToCompileList);
+      if(platform == null) {
+        return 1;
+      }
+      platform.run();
+    return platform.getRunResult();
+    }
   }
-   
+  
   /**
    * This method should be used to change the Level of logging, instead of
    * directly accessing to the logger via Logger.getLogger("tom.engine").

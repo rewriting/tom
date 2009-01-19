@@ -138,13 +138,16 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
 
 				output.write(deep," extends " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getString() );
-			}}}}
+			}}}{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch72NameNumber_freshVar_4= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTl() ;if ( (tomMatch72NameNumber_freshVar_4 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+
+        output.write(deep," extends " +  tomMatch72NameNumber_freshVar_4.getCode() );
+      }}}}}
 
     output.writeln(deep," {");
     int args = names.size();
     //write Declarations
     for(int i = 0 ; i < args ; i++) {
-	    output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
+      output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
     }
 
     //write constructor
@@ -266,12 +269,15 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     {{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
 
         output.write(deep," throws " +  (( tom.engine.adt.tomtype.types.TomType )throwsType).getString() );
-      }}}}
+      }}}{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch74NameNumber_freshVar_4= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTl() ;if ( (tomMatch74NameNumber_freshVar_4 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+
+        output.write(deep," throws " +  tomMatch74NameNumber_freshVar_4.getCode() );
+      }}}}}
 
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
     output.writeln(deep," }");
   }
-	
+
 }

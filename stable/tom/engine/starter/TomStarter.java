@@ -55,7 +55,7 @@ public class TomStarter extends TomGenericPlugin {
    */
   public void setArgs(Object[] arg) {
     if (arg[0] instanceof String) {
-      fileName = (String)arg[0];  
+      fileName = (String)arg[0];
     } else {
       getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
                       new Object[]{"VasStarter", "[String]",
@@ -71,6 +71,7 @@ public class TomStarter extends TomGenericPlugin {
     TomStreamManager localStreamManager = new TomStreamManager();
     localStreamManager.initializeFromOptionManager(getOptionManager());
     localStreamManager.prepareForInputFile(fileName);
+    //System.out.println("(debug) I'm in the Tom Starter : file / TSM"+fileName+" / "+localStreamManager.toString());
     argToRelay = new Object[]{localStreamManager};
   }
   

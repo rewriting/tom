@@ -1,148 +1,4 @@
 
-    %op Strategy _Rule(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule._Rule)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rule._Rule($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_Rule(s:Strategy) {
-    make(s) { `Sequence(Is_Rule(),s) }
-  }
-
-  %op Strategy Is_Rule() {
-    make() { new tom.gom.adt.rule.strategy.rule.Is_Rule()}
-  }
-  
-%op Strategy Make_Rule(_lhs:Strategy, _rhs:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule.Make_Rule))) }
-
-  get_slot(_lhs, t) { $t._lhs }
-  get_slot(_rhs, t) { $t._rhs }
-  make( new_lhs,  new_rhs) { new tom.gom.adt.rule.strategy.rule.Make_Rule( $new_lhs,  $new_rhs) }
-}
-
-    %op Strategy _ConditionalRule(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule._ConditionalRule)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.rule._ConditionalRule($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_ConditionalRule(s:Strategy) {
-    make(s) { `Sequence(Is_ConditionalRule(),s) }
-  }
-
-  %op Strategy Is_ConditionalRule() {
-    make() { new tom.gom.adt.rule.strategy.rule.Is_ConditionalRule()}
-  }
-  
-%op Strategy Make_ConditionalRule(_lhs:Strategy, _rhs:Strategy, _cond:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule.Make_ConditionalRule))) }
-
-  get_slot(_lhs, t) { $t._lhs }
-  get_slot(_rhs, t) { $t._rhs }
-  get_slot(_cond, t) { $t._cond }
-  make( new_lhs,  new_rhs,  new_cond) { new tom.gom.adt.rule.strategy.rule.Make_ConditionalRule( $new_lhs,  $new_rhs,  $new_cond) }
-}
-
-    %op Strategy _EmptyRuleList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist._EmptyRuleList)))}
-      
-        make() { new tom.gom.adt.rule.strategy.rulelist._EmptyRuleList() }
-    }
-  
-  
-  %op Strategy When_EmptyRuleList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyRuleList(),s) }
-  }
-
-  %op Strategy Is_EmptyRuleList() {
-    make() { new tom.gom.adt.rule.strategy.rulelist.Is_EmptyRuleList()}
-  }
-  
-%op Strategy Make_EmptyRuleList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList))) }
-
-  make() { new tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList() }
-}
-
-    %op Strategy _ConsRuleList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist._ConsRuleList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rulelist._ConsRuleList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsRuleList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsRuleList(),s) }
-  }
-
-  %op Strategy Is_ConsRuleList() {
-    make() { new tom.gom.adt.rule.strategy.rulelist.Is_ConsRuleList()}
-  }
-  
-%op Strategy Make_ConsRuleList(_HeadRuleList:Strategy, _TailRuleList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList))) }
-
-  get_slot(_HeadRuleList, t) { $t._HeadRuleList }
-  get_slot(_TailRuleList, t) { $t._TailRuleList }
-  make( new_HeadRuleList,  new_TailRuleList) { new tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList( $new_HeadRuleList,  $new_TailRuleList) }
-}
-
-    %op Strategy _EmptyTermList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist._EmptyTermList)))}
-      
-        make() { new tom.gom.adt.rule.strategy.termlist._EmptyTermList() }
-    }
-  
-  
-  %op Strategy When_EmptyTermList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyTermList(),s) }
-  }
-
-  %op Strategy Is_EmptyTermList() {
-    make() { new tom.gom.adt.rule.strategy.termlist.Is_EmptyTermList()}
-  }
-  
-%op Strategy Make_EmptyTermList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList))) }
-
-  make() { new tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList() }
-}
-
-    %op Strategy _ConsTermList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist._ConsTermList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.gom.adt.rule.strategy.termlist._ConsTermList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsTermList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsTermList(),s) }
-  }
-
-  %op Strategy Is_ConsTermList() {
-    make() { new tom.gom.adt.rule.strategy.termlist.Is_ConsTermList()}
-  }
-  
-%op Strategy Make_ConsTermList(_HeadTermList:Strategy, _TailTermList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist.Make_ConsTermList))) }
-
-  get_slot(_HeadTermList, t) { $t._HeadTermList }
-  get_slot(_TailTermList, t) { $t._TailTermList }
-  make( new_HeadTermList,  new_TailTermList) { new tom.gom.adt.rule.strategy.termlist.Make_ConsTermList( $new_HeadTermList,  $new_TailTermList) }
-}
-
     %op Strategy _CondEquals(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._CondEquals)))}
       
@@ -408,6 +264,150 @@
   get_slot(_t1, t) { $t._t1 }
   get_slot(_t2, t) { $t._t2 }
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondMatch( $new_t1,  $new_t2) }
+}
+
+    %op Strategy _EmptyRuleList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist._EmptyRuleList)))}
+      
+        make() { new tom.gom.adt.rule.strategy.rulelist._EmptyRuleList() }
+    }
+  
+  
+  %op Strategy When_EmptyRuleList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyRuleList(),s) }
+  }
+
+  %op Strategy Is_EmptyRuleList() {
+    make() { new tom.gom.adt.rule.strategy.rulelist.Is_EmptyRuleList()}
+  }
+  
+%op Strategy Make_EmptyRuleList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList))) }
+
+  make() { new tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList() }
+}
+
+    %op Strategy _ConsRuleList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist._ConsRuleList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rulelist._ConsRuleList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsRuleList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsRuleList(),s) }
+  }
+
+  %op Strategy Is_ConsRuleList() {
+    make() { new tom.gom.adt.rule.strategy.rulelist.Is_ConsRuleList()}
+  }
+  
+%op Strategy Make_ConsRuleList(_HeadRuleList:Strategy, _TailRuleList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList))) }
+
+  get_slot(_HeadRuleList, t) { $t._HeadRuleList }
+  get_slot(_TailRuleList, t) { $t._TailRuleList }
+  make( new_HeadRuleList,  new_TailRuleList) { new tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList( $new_HeadRuleList,  $new_TailRuleList) }
+}
+
+    %op Strategy _Rule(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule._Rule)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rule._Rule($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_Rule(s:Strategy) {
+    make(s) { `Sequence(Is_Rule(),s) }
+  }
+
+  %op Strategy Is_Rule() {
+    make() { new tom.gom.adt.rule.strategy.rule.Is_Rule()}
+  }
+  
+%op Strategy Make_Rule(_lhs:Strategy, _rhs:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule.Make_Rule))) }
+
+  get_slot(_lhs, t) { $t._lhs }
+  get_slot(_rhs, t) { $t._rhs }
+  make( new_lhs,  new_rhs) { new tom.gom.adt.rule.strategy.rule.Make_Rule( $new_lhs,  $new_rhs) }
+}
+
+    %op Strategy _ConditionalRule(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule._ConditionalRule)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.rule._ConditionalRule($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_ConditionalRule(s:Strategy) {
+    make(s) { `Sequence(Is_ConditionalRule(),s) }
+  }
+
+  %op Strategy Is_ConditionalRule() {
+    make() { new tom.gom.adt.rule.strategy.rule.Is_ConditionalRule()}
+  }
+  
+%op Strategy Make_ConditionalRule(_lhs:Strategy, _rhs:Strategy, _cond:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.rule.Make_ConditionalRule))) }
+
+  get_slot(_lhs, t) { $t._lhs }
+  get_slot(_rhs, t) { $t._rhs }
+  get_slot(_cond, t) { $t._cond }
+  make( new_lhs,  new_rhs,  new_cond) { new tom.gom.adt.rule.strategy.rule.Make_ConditionalRule( $new_lhs,  $new_rhs,  $new_cond) }
+}
+
+    %op Strategy _EmptyTermList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist._EmptyTermList)))}
+      
+        make() { new tom.gom.adt.rule.strategy.termlist._EmptyTermList() }
+    }
+  
+  
+  %op Strategy When_EmptyTermList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyTermList(),s) }
+  }
+
+  %op Strategy Is_EmptyTermList() {
+    make() { new tom.gom.adt.rule.strategy.termlist.Is_EmptyTermList()}
+  }
+  
+%op Strategy Make_EmptyTermList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList))) }
+
+  make() { new tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList() }
+}
+
+    %op Strategy _ConsTermList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist._ConsTermList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.termlist._ConsTermList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsTermList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsTermList(),s) }
+  }
+
+  %op Strategy Is_ConsTermList() {
+    make() { new tom.gom.adt.rule.strategy.termlist.Is_ConsTermList()}
+  }
+  
+%op Strategy Make_ConsTermList(_HeadTermList:Strategy, _TailTermList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.termlist.Make_ConsTermList))) }
+
+  get_slot(_HeadTermList, t) { $t._HeadTermList }
+  get_slot(_TailTermList, t) { $t._TailTermList }
+  make( new_HeadTermList,  new_TailTermList) { new tom.gom.adt.rule.strategy.termlist.Make_ConsTermList( $new_HeadTermList,  $new_TailTermList) }
 }
 
     %op Strategy _Appl(arg0:Strategy, arg1:Strategy) {
@@ -711,16 +711,6 @@
   make( _HeadPathTerm,  new_TailPathTerm) { new tom.gom.adt.rule.strategy.term.Make_ConsPathTerm( $_HeadPathTerm,  $new_TailPathTerm) }
 }
 
-            %op Strategy _RuleList(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_RuleList"),Choice(_ConsRuleList(sub,MuVar("x_RuleList")),_EmptyRuleList())) }
-            }
-            
-            %op Strategy _TermList(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_TermList"),Choice(_ConsTermList(sub,MuVar("x_TermList")),_EmptyTermList())) }
-            }
-            
             %op Strategy _CondAnd(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_CondAnd"),Choice(_ConsCondAnd(sub,MuVar("x_CondAnd")),_EmptyCondAnd())) }
@@ -729,6 +719,16 @@
             %op Strategy _CondOr(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_CondOr"),Choice(_ConsCondOr(sub,MuVar("x_CondOr")),_EmptyCondOr())) }
+            }
+            
+            %op Strategy _RuleList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_RuleList"),Choice(_ConsRuleList(sub,MuVar("x_RuleList")),_EmptyRuleList())) }
+            }
+            
+            %op Strategy _TermList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_TermList"),Choice(_ConsTermList(sub,MuVar("x_TermList")),_EmptyTermList())) }
             }
             
             %op Strategy _PathTerm(sub:Strategy) {

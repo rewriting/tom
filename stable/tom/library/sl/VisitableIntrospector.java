@@ -47,7 +47,7 @@ public class VisitableIntrospector implements Introspector {
       return ((Visitable)o).setChildren((Visitable[])children); 
   }
 
-  public Object[] getChildren(Object o){
+  public Object[] getChildren(Object o) {
       return ((Visitable)o).getChildren();
   }
 

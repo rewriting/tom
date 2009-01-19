@@ -29,6 +29,7 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
+import java.util.ArrayList;
 
 public class NullTemplate extends TemplateClass {
 
@@ -45,6 +46,7 @@ public class NullTemplate extends TemplateClass {
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) { /* does nothing */ }
+
 
   public int generateFile() {
     // Do nothing, we don't need to generate empty files
