@@ -57,6 +57,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>optimize2</li>
  * <li>pretty</li>
  * <li>verbose</li>
+ * <li>multithread</li>
  * <li>failonerror</li>
  * <li>nowarn</li>
  * <li>fork</li>
@@ -82,6 +83,7 @@ public class TomTask extends MatchingTask {
   private String logPropertiesFile;
   private File outputFile;
   private boolean verbose = false;
+  private boolean multithread = false;
   private boolean nowarn = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
@@ -269,6 +271,22 @@ public class TomTask extends MatchingTask {
    */
   public boolean getVerbose() {
     return verbose;
+  }
+
+  /**
+   * If true, asks the compiler to be multithread
+   * @param multithread if true, asks the compiler to compile in parallel
+   */
+  public void setMultithread(boolean verbose) {
+    this.multithread = multithread;
+  }
+
+  /**
+   * Gets the multithread flag.
+   * @return the multithread flag
+   */
+  public boolean getMultithread() {
+    return multithread;
   }
 
   /**
@@ -614,6 +632,9 @@ public class TomTask extends MatchingTask {
       }
       if(verbose == true) {
         javaRunner.createArg().setValue("--verbose");
+      }
+      if(multithread == true) {
+        javaRunner.createArg().setValue("--multithread");
       }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
