@@ -47,7 +47,8 @@ import tom.engine.compiler.Compiler;
 public class SyntacticGenerator implements IBaseGenerator {
 
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }
+  %include { expressionstrategies.tom }	
 
   %typeterm SyntacticGenerator {
     implement { SyntacticGenerator }
@@ -71,7 +72,7 @@ public class SyntacticGenerator implements IBaseGenerator {
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return  (Expression)`TopDown(Generator(this)).visitLight(expression);
+    return  (Expression)`TopDownWhenExpression(Generator(this)).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

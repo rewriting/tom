@@ -46,7 +46,8 @@ import tom.engine.compiler.*;
 public class ArrayGenerator implements IBaseGenerator{
 
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { expressionstrategies.tom }	
 
   private tom.engine.compiler.Compiler compiler;  
   private ConstraintGenerator constraintGenerator; // only present for "compatibility" : cf. ConstraintGenerator.t and look around ".newInstance(this.getCompiler(),this);" 
@@ -65,7 +66,7 @@ public class ArrayGenerator implements IBaseGenerator{
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDown(Generator()).visitLight(expression);		
+    return (Expression)`TopDownWhenExpression(Generator()).visitLight(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
