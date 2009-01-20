@@ -104,10 +104,10 @@ public class ToolBox {
       map.put(accessObj[i],new Integer(accessFlags[i]));
     }
 
-    {{if ( (list instanceof tom.library.adt.bytecode.types.TAccessList) ) {if ( (((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.TAccessList  tomMatch619NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);do {{if (!( tomMatch619NameNumber_end_4.isEmptyAccessList() )) {
+    {{if ( (list instanceof tom.library.adt.bytecode.types.TAccessList) ) {if ( (((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.TAccessList  tomMatch1NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);do {{if (!( tomMatch1NameNumber_end_4.isEmptyAccessList() )) {
 
-        value = value | ((Integer)map.get( tomMatch619NameNumber_end_4.getHeadAccessList() )).intValue();
-      }if ( tomMatch619NameNumber_end_4.isEmptyAccessList() ) {tomMatch619NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);} else {tomMatch619NameNumber_end_4= tomMatch619NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch619NameNumber_end_4==(( tom.library.adt.bytecode.types.TAccessList )list)) ));}}}}
+        value = value | ((Integer)map.get( tomMatch1NameNumber_end_4.getHeadAccessList() )).intValue();
+      }if ( tomMatch1NameNumber_end_4.isEmptyAccessList() ) {tomMatch1NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);} else {tomMatch1NameNumber_end_4= tomMatch1NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch1NameNumber_end_4==(( tom.library.adt.bytecode.types.TAccessList )list)) ));}}}}
 
     return value;   
   }

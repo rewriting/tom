@@ -43,6 +43,7 @@
          <exclude name="**/error/**"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
                 destdir="${test.gen}">
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
@@ -57,6 +58,7 @@
       <exclude name="**/rule/**"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
                 destdir="${test.gen}"
                 options="--lazyType">
       <include name="Record.t"/>
@@ -152,6 +154,7 @@
            nowarn="${nowarnings}"
            optimize="${optimize}"
            optimize2="${optimize2}"
+           multithread="${multithread}"
            inline="${inline}"
            inlineplus="${inlineplus}"
       	   genIntrospector="${genIntrospector}"

@@ -69,10 +69,10 @@ public class ZenonBackend {
 
   public String genZTerm(ZTerm term) {
     {{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zvar) ) {
- return  (( tom.engine.adt.zenon.types.ZTerm )term).getVarname() ; }}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zappl) ) { tom.engine.adt.zenon.types.ZSymbol  tomMatch333NameNumber_freshVar_4= (( tom.engine.adt.zenon.types.ZTerm )term).getZsymb() ;if ( (tomMatch333NameNumber_freshVar_4 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {
+ return  (( tom.engine.adt.zenon.types.ZTerm )term).getVarname() ; }}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zappl) ) { tom.engine.adt.zenon.types.ZSymbol  tomMatch3NameNumber_freshVar_4= (( tom.engine.adt.zenon.types.ZTerm )term).getZsymb() ;if ( (tomMatch3NameNumber_freshVar_4 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {
  
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString( tomMatch333NameNumber_freshVar_4.getName() );
+        String realName = tomiltools.replaceNumbersByString( tomMatch3NameNumber_freshVar_4.getName() );
         return "(" + realName +" "+genZTermList( (( tom.engine.adt.zenon.types.ZTerm )term).getTermlist() )+")"; 
       }}}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zst) ) {
  
@@ -109,24 +109,24 @@ public class ZenonBackend {
       }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zexists) ) {
 
         return "exists "+genZTerm( (( tom.engine.adt.zenon.types.ZExpr )expr).getVar() )+" : "+genZType( (( tom.engine.adt.zenon.types.ZExpr )expr).getAztype() )+", "+genZExpr( (( tom.engine.adt.zenon.types.ZExpr )expr).getExpr() );
-      }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zand) ) { tom.engine.adt.zenon.types.ZExpr  tomMatch334NameNumber_freshVar_23= (( tom.engine.adt.zenon.types.ZExpr )expr).getLte() ; tom.engine.adt.zenon.types.ZExpr  tomMatch334NameNumber_freshVar_24= (( tom.engine.adt.zenon.types.ZExpr )expr).getRte() ;
+      }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zand) ) { tom.engine.adt.zenon.types.ZExpr  tomMatch4NameNumber_freshVar_23= (( tom.engine.adt.zenon.types.ZExpr )expr).getLte() ; tom.engine.adt.zenon.types.ZExpr  tomMatch4NameNumber_freshVar_24= (( tom.engine.adt.zenon.types.ZExpr )expr).getRte() ;
 
-        if(tomMatch334NameNumber_freshVar_23==  tom.engine.adt.zenon.types.zexpr.ztrue.make() ) {
-          return "("+ genZExpr(tomMatch334NameNumber_freshVar_24) +")";
+        if(tomMatch4NameNumber_freshVar_23==  tom.engine.adt.zenon.types.zexpr.ztrue.make() ) {
+          return "("+ genZExpr(tomMatch4NameNumber_freshVar_24) +")";
         }
-        else if (tomMatch334NameNumber_freshVar_24==  tom.engine.adt.zenon.types.zexpr.ztrue.make() ) {
-          return "("+ genZExpr(tomMatch334NameNumber_freshVar_23) +")";
+        else if (tomMatch4NameNumber_freshVar_24==  tom.engine.adt.zenon.types.zexpr.ztrue.make() ) {
+          return "("+ genZExpr(tomMatch4NameNumber_freshVar_23) +")";
         }
-        return "("+genZExpr(tomMatch334NameNumber_freshVar_23)+") /\\ ("+genZExpr(tomMatch334NameNumber_freshVar_24)+")";
-      }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zor) ) { tom.engine.adt.zenon.types.ZExpr  tomMatch334NameNumber_freshVar_27= (( tom.engine.adt.zenon.types.ZExpr )expr).getLte() ; tom.engine.adt.zenon.types.ZExpr  tomMatch334NameNumber_freshVar_28= (( tom.engine.adt.zenon.types.ZExpr )expr).getRte() ;
+        return "("+genZExpr(tomMatch4NameNumber_freshVar_23)+") /\\ ("+genZExpr(tomMatch4NameNumber_freshVar_24)+")";
+      }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zor) ) { tom.engine.adt.zenon.types.ZExpr  tomMatch4NameNumber_freshVar_27= (( tom.engine.adt.zenon.types.ZExpr )expr).getLte() ; tom.engine.adt.zenon.types.ZExpr  tomMatch4NameNumber_freshVar_28= (( tom.engine.adt.zenon.types.ZExpr )expr).getRte() ;
 
-        if(tomMatch334NameNumber_freshVar_27==  tom.engine.adt.zenon.types.zexpr.zfalse.make() ) {
-          return "("+ genZExpr(tomMatch334NameNumber_freshVar_28) +")";
+        if(tomMatch4NameNumber_freshVar_27==  tom.engine.adt.zenon.types.zexpr.zfalse.make() ) {
+          return "("+ genZExpr(tomMatch4NameNumber_freshVar_28) +")";
         }
-        else if (tomMatch334NameNumber_freshVar_28==  tom.engine.adt.zenon.types.zexpr.zfalse.make() ) {
-          return "("+ genZExpr(tomMatch334NameNumber_freshVar_27) +")";
+        else if (tomMatch4NameNumber_freshVar_28==  tom.engine.adt.zenon.types.zexpr.zfalse.make() ) {
+          return "("+ genZExpr(tomMatch4NameNumber_freshVar_27) +")";
         }
-        return "("+genZExpr(tomMatch334NameNumber_freshVar_27)+") \\/ ("+genZExpr(tomMatch334NameNumber_freshVar_28)+")";
+        return "("+genZExpr(tomMatch4NameNumber_freshVar_27)+") \\/ ("+genZExpr(tomMatch4NameNumber_freshVar_28)+")";
       }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.znot) ) {
  return "~("+genZExpr( (( tom.engine.adt.zenon.types.ZExpr )expr).getNex() )+")"; }}}{if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {if ( ((( tom.engine.adt.zenon.types.ZExpr )expr) instanceof tom.engine.adt.zenon.types.zexpr.zequiv) ) {
 

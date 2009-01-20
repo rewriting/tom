@@ -159,43 +159,43 @@ public class TomIlTools {
   }
 
   public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map, Set unamedVariableSet) {
-    {{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch285NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getNameList() ; tom.engine.adt.tomterm.types.TomList  tomMatch285NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getArgs() ;if ( ((tomMatch285NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch285NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch285NameNumber_freshVar_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch285NameNumber_freshVar_8= tomMatch285NameNumber_freshVar_1.getHeadconcTomName() ;if ( (tomMatch285NameNumber_freshVar_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+    {{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch3NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getNameList() ; tom.engine.adt.tomterm.types.TomList  tomMatch3NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getArgs() ;if ( ((tomMatch3NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch3NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch3NameNumber_freshVar_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch3NameNumber_freshVar_8= tomMatch3NameNumber_freshVar_1.getHeadconcTomName() ;if ( (tomMatch3NameNumber_freshVar_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
         // builds children list
         ZTermList zchild =  tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ;
         TomTerm hd = null;
-        while (!tomMatch285NameNumber_freshVar_2.isEmptyconcTomTerm()) {
-          hd = tomMatch285NameNumber_freshVar_2.getHeadconcTomTerm();
-          tomMatch285NameNumber_freshVar_2= tomMatch285NameNumber_freshVar_2.getTailconcTomTerm();
+        while (!tomMatch3NameNumber_freshVar_2.isEmptyconcTomTerm()) {
+          hd = tomMatch3NameNumber_freshVar_2.getHeadconcTomTerm();
+          tomMatch3NameNumber_freshVar_2= tomMatch3NameNumber_freshVar_2.getTailconcTomTerm();
           zchild = tom_append_list_concZTerm(zchild, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make(tomTermToZTerm(hd,map,unamedVariableSet), tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
         }
         // issue a warning here: this case is probably impossible
-        return  tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make( tomMatch285NameNumber_freshVar_8.getString() ) , zchild) ;
-      }}}}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch285NameNumber_freshVar_10= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch285NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getSlots() ;if ( ((tomMatch285NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch285NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch285NameNumber_freshVar_10.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch285NameNumber_freshVar_17= tomMatch285NameNumber_freshVar_10.getHeadconcTomName() ;if ( (tomMatch285NameNumber_freshVar_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch285NameNumber_freshVar_16= tomMatch285NameNumber_freshVar_17.getString() ;
+        return  tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make( tomMatch3NameNumber_freshVar_8.getString() ) , zchild) ;
+      }}}}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch3NameNumber_freshVar_10= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getNameList() ; tom.engine.adt.tomslot.types.SlotList  tomMatch3NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getSlots() ;if ( ((tomMatch3NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch3NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch3NameNumber_freshVar_10.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch3NameNumber_freshVar_17= tomMatch3NameNumber_freshVar_10.getHeadconcTomName() ;if ( (tomMatch3NameNumber_freshVar_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch3NameNumber_freshVar_16= tomMatch3NameNumber_freshVar_17.getString() ;
 
         // builds a map: slotName / TomTerm
         Map definedSlotMap = new HashMap();
         Slot hd = null;
-        while (!tomMatch285NameNumber_freshVar_11.isEmptyconcSlot()) {
-          hd = tomMatch285NameNumber_freshVar_11.getHeadconcSlot();
-          tomMatch285NameNumber_freshVar_11= tomMatch285NameNumber_freshVar_11.getTailconcSlot();
+        while (!tomMatch3NameNumber_freshVar_11.isEmptyconcSlot()) {
+          hd = tomMatch3NameNumber_freshVar_11.getHeadconcSlot();
+          tomMatch3NameNumber_freshVar_11= tomMatch3NameNumber_freshVar_11.getTailconcSlot();
           definedSlotMap.put(hd.getSlotName(),hd.getAppl());
         }
         // builds children list
         ZTermList zchild =  tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ;
         // take care to add unamedVariables for wildcards
-        TomSymbol symbol = TomBase.getSymbolFromName(tomMatch285NameNumber_freshVar_16,getSymbolTable());
+        TomSymbol symbol = TomBase.getSymbolFromName(tomMatch3NameNumber_freshVar_16,getSymbolTable());
         // process all slots from symbol
-        {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch286NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
+        {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch4NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
 
             // process all slots. If the slot is in childrens, use it
-            while(!tomMatch286NameNumber_freshVar_1.isEmptyconcPairNameDecl()) {
-              Declaration decl= tomMatch286NameNumber_freshVar_1.getHeadconcPairNameDecl().getSlotDecl();
-              tomMatch286NameNumber_freshVar_1= tomMatch286NameNumber_freshVar_1.getTailconcPairNameDecl();
-              {{if ( (decl instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )decl) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch287NameNumber_freshVar_1= (( tom.engine.adt.tomdeclaration.types.Declaration )decl).getSlotName() ;
+            while(!tomMatch4NameNumber_freshVar_1.isEmptyconcPairNameDecl()) {
+              Declaration decl= tomMatch4NameNumber_freshVar_1.getHeadconcPairNameDecl().getSlotDecl();
+              tomMatch4NameNumber_freshVar_1= tomMatch4NameNumber_freshVar_1.getTailconcPairNameDecl();
+              {{if ( (decl instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )decl) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch5NameNumber_freshVar_1= (( tom.engine.adt.tomdeclaration.types.Declaration )decl).getSlotName() ;
 
-                  if (definedSlotMap.containsKey(tomMatch287NameNumber_freshVar_1)) {
-                    zchild = tom_append_list_concZTerm(zchild, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make(tomTermToZTerm((TomTerm)definedSlotMap.get(tomMatch287NameNumber_freshVar_1),map,unamedVariableSet), tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
+                  if (definedSlotMap.containsKey(tomMatch5NameNumber_freshVar_1)) {
+                    zchild = tom_append_list_concZTerm(zchild, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make(tomTermToZTerm((TomTerm)definedSlotMap.get(tomMatch5NameNumber_freshVar_1),map,unamedVariableSet), tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
                   }
                   else {
                     // fake an UnamedVariable
@@ -208,18 +208,18 @@ public class TomIlTools {
             }
           }}}}
 
-        return  tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make(tomMatch285NameNumber_freshVar_16) , zchild) ;
-      }}}}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch285NameNumber_freshVar_19= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getAstName() ;if ( (tomMatch285NameNumber_freshVar_19 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch285NameNumber_freshVar_21= tomMatch285NameNumber_freshVar_19.getString() ;
+        return  tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make(tomMatch3NameNumber_freshVar_16) , zchild) ;
+      }}}}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch3NameNumber_freshVar_19= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getAstName() ;if ( (tomMatch3NameNumber_freshVar_19 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch3NameNumber_freshVar_21= tomMatch3NameNumber_freshVar_19.getString() ;
 
-        if (map.containsKey(tomMatch285NameNumber_freshVar_21)) {
-          return (ZTerm) map.get(tomMatch285NameNumber_freshVar_21);
+        if (map.containsKey(tomMatch3NameNumber_freshVar_21)) {
+          return (ZTerm) map.get(tomMatch3NameNumber_freshVar_21);
         } else {
-          System.out.println("tomTermToZTerm 1 Not in map: " + tomMatch285NameNumber_freshVar_21+ " map: " + map);
-          return  tom.engine.adt.zenon.types.zterm.zvar.make(tomMatch285NameNumber_freshVar_21) ;
+          System.out.println("tomTermToZTerm 1 Not in map: " + tomMatch3NameNumber_freshVar_21+ " map: " + map);
+          return  tom.engine.adt.zenon.types.zterm.zvar.make(tomMatch3NameNumber_freshVar_21) ;
         }
-      }}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch285NameNumber_freshVar_24= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getAstName() ;if ( (tomMatch285NameNumber_freshVar_24 instanceof tom.engine.adt.tomname.types.tomname.PositionName) ) {
+      }}}}{if ( (tomTerm instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tomTerm) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch3NameNumber_freshVar_24= (( tom.engine.adt.tomterm.types.TomTerm )tomTerm).getAstName() ;if ( (tomMatch3NameNumber_freshVar_24 instanceof tom.engine.adt.tomname.types.tomname.PositionName) ) {
 
-        String name = TomBase.tomNumberListToString( tomMatch285NameNumber_freshVar_24.getNumberList() );
+        String name = TomBase.tomNumberListToString( tomMatch3NameNumber_freshVar_24.getNumberList() );
         if (map.containsKey(name)) {
           return (ZTerm) map.get(name);
         } else {
@@ -274,15 +274,15 @@ public class TomIlTools {
       ZTermList list =  tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ;
       ZTerm abstractVariable =  tom.engine.adt.zenon.types.zterm.zvar.make("t") ;
       //ZExpr exists = null;
-      {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch289NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
+      {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch7NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
 
           // process all slots
-          while(!tomMatch289NameNumber_freshVar_1.isEmptyconcPairNameDecl()) {
-            Declaration hd= tomMatch289NameNumber_freshVar_1.getHeadconcPairNameDecl().getSlotDecl();
-            tomMatch289NameNumber_freshVar_1= tomMatch289NameNumber_freshVar_1.getTailconcPairNameDecl();
-            {{if ( (hd instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )hd) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch290NameNumber_freshVar_1= (( tom.engine.adt.tomdeclaration.types.Declaration )hd).getSlotName() ;if ( (tomMatch290NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          while(!tomMatch7NameNumber_freshVar_1.isEmptyconcPairNameDecl()) {
+            Declaration hd= tomMatch7NameNumber_freshVar_1.getHeadconcPairNameDecl().getSlotDecl();
+            tomMatch7NameNumber_freshVar_1= tomMatch7NameNumber_freshVar_1.getTailconcPairNameDecl();
+            {{if ( (hd instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )hd) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch8NameNumber_freshVar_1= (( tom.engine.adt.tomdeclaration.types.Declaration )hd).getSlotName() ;if ( (tomMatch8NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
-                list = tom_append_list_concZTerm(list, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make( tom.engine.adt.zenon.types.zterm.zsl.make(abstractVariable,  tomMatch290NameNumber_freshVar_1.getString() ) , tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
+                list = tom_append_list_concZTerm(list, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make( tom.engine.adt.zenon.types.zterm.zsl.make(abstractVariable,  tomMatch8NameNumber_freshVar_1.getString() ) , tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
               }}}}}
 
           }
@@ -305,23 +305,23 @@ public class TomIlTools {
       String name = (String) it.next();
       TomSymbol symbol = TomBase.getSymbolFromName(name,getSymbolTable());
       ZTermList list =  tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ;
-      {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch291NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
+      {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch9NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;
 
           // process all slots
-          int slotnumber =tomMatch291NameNumber_freshVar_1.length();
+          int slotnumber =tomMatch9NameNumber_freshVar_1.length();
           for (int i = 0; i < slotnumber;i++) {
             list = tom_append_list_concZTerm(list, tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make( tom.engine.adt.zenon.types.zterm.zvar.make("x"+i) , tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() ) );
           }
-          {{if ( (tomMatch291NameNumber_freshVar_1 instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ) {if ( (((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || ((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch292NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1);do {{if (!( tomMatch292NameNumber_end_4.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch292NameNumber_freshVar_8= tomMatch292NameNumber_end_4.getHeadconcPairNameDecl() ;if ( (tomMatch292NameNumber_freshVar_8 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch292NameNumber_freshVar_7= tomMatch292NameNumber_freshVar_8.getSlotName() ;if ( (tomMatch292NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch292NameNumber_freshVar_9= tomMatch292NameNumber_freshVar_7.getString() ;
+          {{if ( (tomMatch9NameNumber_freshVar_1 instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ) {if ( (((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || ((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch10NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1);do {{if (!( tomMatch10NameNumber_end_4.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch10NameNumber_freshVar_8= tomMatch10NameNumber_end_4.getHeadconcPairNameDecl() ;if ( (tomMatch10NameNumber_freshVar_8 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch10NameNumber_freshVar_7= tomMatch10NameNumber_freshVar_8.getSlotName() ;if ( (tomMatch10NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tomMatch10NameNumber_freshVar_9= tomMatch10NameNumber_freshVar_7.getString() ;
 
-              int index = tom_get_slice_concPairNameDecl((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1),tomMatch292NameNumber_end_4, tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ).length();
-              ZExpr axiom =  tom.engine.adt.zenon.types.zexpr.zeq.make( tom.engine.adt.zenon.types.zterm.zvar.make("x"+index) ,  tom.engine.adt.zenon.types.zterm.zsl.make( tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make(name) , list) , tomMatch292NameNumber_freshVar_9) ) 
+              int index = tom_get_slice_concPairNameDecl((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1),tomMatch10NameNumber_end_4, tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() ).length();
+              ZExpr axiom =  tom.engine.adt.zenon.types.zexpr.zeq.make( tom.engine.adt.zenon.types.zterm.zvar.make("x"+index) ,  tom.engine.adt.zenon.types.zterm.zsl.make( tom.engine.adt.zenon.types.zterm.zappl.make( tom.engine.adt.zenon.types.zsymbol.zsymbol.make(name) , list) , tomMatch10NameNumber_freshVar_9) ) 
 ;
               for (int j = 0; j < slotnumber;j++) {
                 axiom =  tom.engine.adt.zenon.types.zexpr.zforall.make( tom.engine.adt.zenon.types.zterm.zvar.make("x"+j) ,  tom.engine.adt.zenon.types.ztype.ztype.make("T") , axiom) ;
               }
-              res=tom_append_list_zby(res, tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( tom.engine.adt.zenon.types.zaxiom.zaxiom.make("st_"+tomMatch292NameNumber_freshVar_9+"_"+replaceNumbersByString(name), axiom) , tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make() ) );
-            }}}if ( tomMatch292NameNumber_end_4.isEmptyconcPairNameDecl() ) {tomMatch292NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1);} else {tomMatch292NameNumber_end_4= tomMatch292NameNumber_end_4.getTailconcPairNameDecl() ;}}} while(!( (tomMatch292NameNumber_end_4==(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch291NameNumber_freshVar_1)) ));}}}}
+              res=tom_append_list_zby(res, tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( tom.engine.adt.zenon.types.zaxiom.zaxiom.make("st_"+tomMatch10NameNumber_freshVar_9+"_"+replaceNumbersByString(name), axiom) , tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make() ) );
+            }}}if ( tomMatch10NameNumber_end_4.isEmptyconcPairNameDecl() ) {tomMatch10NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1);} else {tomMatch10NameNumber_end_4= tomMatch10NameNumber_end_4.getTailconcPairNameDecl() ;}}} while(!( (tomMatch10NameNumber_end_4==(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch9NameNumber_freshVar_1)) ));}}}}
 
         }}}}
 
@@ -334,12 +334,12 @@ public class TomIlTools {
 
     TomSymbol symbol = TomBase.getSymbolFromName(symbolName,getSymbolTable());
 
-    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch293NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;{{if ( (tomMatch293NameNumber_freshVar_1 instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ) {if ( (((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch293NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || ((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch293NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch294NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch293NameNumber_freshVar_1);do {{if (!( tomMatch294NameNumber_end_4.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch294NameNumber_freshVar_8= tomMatch294NameNumber_end_4.getHeadconcPairNameDecl() ;if ( (tomMatch294NameNumber_freshVar_8 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch294NameNumber_freshVar_7= tomMatch294NameNumber_freshVar_8.getSlotName() ;if ( (tomMatch294NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch11NameNumber_freshVar_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;{{if ( (tomMatch11NameNumber_freshVar_1 instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ) {if ( (((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch11NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || ((( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch11NameNumber_freshVar_1) instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch12NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch11NameNumber_freshVar_1);do {{if (!( tomMatch12NameNumber_end_4.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch12NameNumber_freshVar_8= tomMatch12NameNumber_end_4.getHeadconcPairNameDecl() ;if ( (tomMatch12NameNumber_freshVar_8 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch12NameNumber_freshVar_7= tomMatch12NameNumber_freshVar_8.getSlotName() ;if ( (tomMatch12NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
 
-            nameList.add( tomMatch294NameNumber_freshVar_7.getString() );
-          }}}if ( tomMatch294NameNumber_end_4.isEmptyconcPairNameDecl() ) {tomMatch294NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch293NameNumber_freshVar_1);} else {tomMatch294NameNumber_end_4= tomMatch294NameNumber_end_4.getTailconcPairNameDecl() ;}}} while(!( (tomMatch294NameNumber_end_4==(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch293NameNumber_freshVar_1)) ));}}}}
+            nameList.add( tomMatch12NameNumber_freshVar_7.getString() );
+          }}}if ( tomMatch12NameNumber_end_4.isEmptyconcPairNameDecl() ) {tomMatch12NameNumber_end_4=(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch11NameNumber_freshVar_1);} else {tomMatch12NameNumber_end_4= tomMatch12NameNumber_end_4.getTailconcPairNameDecl() ;}}} while(!( (tomMatch12NameNumber_end_4==(( tom.engine.adt.tomslot.types.PairNameDeclList )tomMatch11NameNumber_freshVar_1)) ));}}}}
 
       }}}}
 

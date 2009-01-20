@@ -277,7 +277,7 @@ public class TomTask extends MatchingTask {
    * If true, asks the compiler to be multithread
    * @param multithread if true, asks the compiler to compile in parallel
    */
-  public void setMultithread(boolean verbose) {
+  public void setMultithread(boolean multithread) {
     this.multithread = multithread;
   }
 

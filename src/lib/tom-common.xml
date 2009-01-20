@@ -5,6 +5,7 @@
   <property name="nowarnings"  value="false"/>
   <property name="optimize"    value="on"/>
   <property name="optimize2"   value="off"/>
+  <property name="multithread" value="off"/>
   <property name="inline"      value="off"/>
   <property name="inlineplus"  value="off"/>
   <property name="verbose"     value="off"/>
@@ -66,6 +67,7 @@
            nowarn="${nowarnings}"
            optimize="${optimize}"
            optimize2="${optimize2}"
+           multithread="${multithread}"
            inline="${inline}"
            inlineplus="${inlineplus}"
       	   genIntrospector="${genIntrospector}"
