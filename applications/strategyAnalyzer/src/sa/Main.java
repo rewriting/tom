@@ -75,7 +75,7 @@ public class Main {
       Collections.sort(generatedRules, new MyRuleComparator());
 
       if(options.classname != null) {
-        System.out.println(Pretty.generate(generatedRules,generatedSignature,classname) );
+        System.out.println( Pretty.generate(generatedRules,generatedSignature,options.classname) );
       } else if(options.aprove) {
         System.out.println( Pretty.generateAprove(generatedRules,extractedSignature,true) );
       }
