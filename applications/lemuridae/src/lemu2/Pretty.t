@@ -123,7 +123,7 @@ public class Pretty {
       RawfalseL(cn) -> { return %[falseL(@`cn@)]%; }
       RawandR(RawAndRPrem1(a,pa,M),RawAndRPrem2(b,pb,N),cn) -> { return %[andR(@`pr(a,pa,sp)@ @`pretty(M,sp+1)@,@`pr(b,pb,sp)@ @`pretty(N,sp+1)@,@`cn@)]%; }
       RawandL(RawAndLPrem1(x,px,y,py,M),n) -> { return %[andL(@`pr3(x,px,y,py,sp)@ @`pretty(M,sp+2)@,@`n@)]%; }
-      RaworR(RawOrRPrem1(a,pa,b,pb,M),cn) -> { return %[orR(<@`pr3(a,pa,b,pb,sp)@ @`pretty(M,sp+1)@,@`cn@)]%; }
+      RaworR(RawOrRPrem1(a,pa,b,pb,M),cn) -> { return %[orR(@`pr3(a,pa,b,pb,sp)@ @`pretty(M,sp+1)@,@`cn@)]%; }
       RaworL(RawOrLPrem1(x,px,M),RawOrLPrem2(y,py,N),n) -> { return %[orL(@`pr(x,px,sp)@ @`pretty(M,sp+1)@,@`pr(y,py,sp)@ @`pretty(N,sp+1)@,@`n@)]%; }
       RawimplyR(RawImplyRPrem1(x,px,a,pa,M),cn) -> { return %[implyR(@`pr3(x,px,a,pa,sp)@ @`pretty(M,sp+1)@,@`cn@)]%; }
       RawimplyL(RawImplyLPrem1(x,px,M),RawImplyLPrem2(a,pa,N),n) -> { return %[implyL(@`pr(x,px,sp)@ @`pretty(M,sp+1)@,@`pr(a,pa,sp)@ @`pretty(N,sp+1)@,@`n@)]%; }
