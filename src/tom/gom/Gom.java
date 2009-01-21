@@ -100,7 +100,9 @@ public class Gom {
     }
     // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
     ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
-    initConfigurationManager.initialize(commandLine);
+    if(initConfigurationManager.initialize(commandLine) == 1) {
+      return 1;
+    }
     // Retrieve the whole fileList that has to be compiled
     List<String> wholeInputToCompileList =
       initConfigurationManager.getOptionManager().getInputToCompileList();
