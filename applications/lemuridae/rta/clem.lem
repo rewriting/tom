@@ -1,0 +1,9 @@
+term modulo { }
+prop modulo { }
+prop fold   { }
+
+rootR(<app:(A/\B) => (A\/B)>
+implyR(<xp:A/\B><ap:A\/B>
+cut(
+  <a:A> andL(<y:A><z:B>ax(y,a),xp),<x:A> orR(<b:A><c:B>ax(x,b),ap)
+),app))
