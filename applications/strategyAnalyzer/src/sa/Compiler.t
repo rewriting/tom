@@ -14,8 +14,9 @@ public class Compiler {
   private final static Term X = `Var("x");
 
   private static int phiNumber = 0;
-  private static String getName() {
-    return "phi" + (phiNumber++);
+  private static String getName(String name) {
+//     return "phi" + (phiNumber++);
+    return name + (phiNumber++);
   }
 
   private static String topName = "";
@@ -66,7 +67,7 @@ public class Compiler {
 
     %match(strat) {
       StratRule(Rule(lhs,rhs)) -> {
-        String phi = getName();
+        String phi = getName("rule");
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(lhs)),rhs));
         bag.add(`Rule(Appl(phi,TermList(Anti(lhs))),BOTTOM));
@@ -78,8 +79,8 @@ public class Compiler {
        */
       StratMu(name,s) -> {
         try {
-          String phi_x = getName();
-          String phi2_x = getName();
+          String phi_x = getName("mu");
+          String phi2_x = getName("mu");
           sig.put(phi_x,1);
           sig.put(phi2_x,2);
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
@@ -99,14 +100,14 @@ public class Compiler {
       }
 
       StratIdentity() -> {
-        String phi = getName();
+        String phi = getName("id");
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),X));
         return phi;
       }
 
       StratFail() -> {
-        String phi = getName();
+        String phi = getName("fail");
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),BOTTOM));
         return phi;
@@ -115,7 +116,7 @@ public class Compiler {
       StratSequence(s1,s2) -> {
         String phi_s1 = compileStrat(bag,origsig,sig,`s1);
         String phi_s2 = compileStrat(bag,origsig,sig,`s2);
-        String phi = getName();
+        String phi = getName("seq");
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),
               Appl(phi_s2,TermList(Appl(phi_s1,TermList(X))))));
@@ -125,8 +126,8 @@ public class Compiler {
       StratChoice(s1,s2) -> {
         String phi_s1 = compileStrat(bag,origsig,sig,`s1);
         String phi_s2 = compileStrat(bag,origsig,sig,`s2);
-        String phi = getName();
-        String phi2 = getName();
+        String phi = getName("choice");
+        String phi2 = getName("choice");
         sig.put(phi,1);
         sig.put(phi2,2);
         bag.add(`Rule(Appl(phi,TermList(X)),
@@ -140,7 +141,7 @@ public class Compiler {
 
       StratAll(s) -> {
         String phi_s = compileStrat(bag,origsig,sig,`s);
-        String phi = getName();
+        String phi = getName("all");
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
@@ -203,7 +204,7 @@ public class Compiler {
 
       StratOne(s) -> {
         String phi_s = compileStrat(bag,origsig,sig,`s);
-        String phi = getName();
+        String phi = getName("one");
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
         Iterator<String> it = origsig.keySet().iterator();

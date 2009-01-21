@@ -36,11 +36,11 @@ public class Main {
       Collections.sort(ruleList, new MyRuleComparator());
 //       Collections.sort(ruleList, new BottomRuleComparator());
 
-//      System.out.println(Pretty.generate(bagOfRule,sig,classname) );
+//       System.out.println(Pretty.generate(bagOfRule,sig,classname) );
 //       System.out.println(Pretty.generate(ruleList,sig,classname) );
 
 //       System.out.println( Pretty.generateAprove(bagOfRule,origsig,false) );
-       System.out.println( Pretty.generateAprove(ruleList,origsig,true) );
+      System.out.println( Pretty.generateAprove(ruleList,origsig,true) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;
