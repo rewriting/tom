@@ -29,9 +29,18 @@ public class Main {
       Compiler.compile(bagOfRule,origsig,sig,expandl);
 
       String classname = "Test";
-      System.out.println( Pretty.generate(bagOfRule,sig,classname) );
+      Collections.sort(bagOfRule, new MyRuleComparator());
+//       Collections.sort(bagOfRule, new BottomRuleComparator());
+ 
+      List<Rule> ruleList = new ArrayList<Rule>(Pretty.generateRulesWithoutAntiPatterns(bagOfRule,origsig));
+      Collections.sort(ruleList, new MyRuleComparator());
+//       Collections.sort(ruleList, new BottomRuleComparator());
 
-      System.out.println( Pretty.generateAprove(bagOfRule,sig,origsig) );
+      System.out.println(Pretty.generate(bagOfRule,sig,classname) );
+//       System.out.println(Pretty.generate(ruleList,sig,classname) );
+
+//       System.out.println( Pretty.generateAprove(bagOfRule,origsig,false) );
+//       System.out.println( Pretty.generateAprove(ruleList,origsig,true) );
     } catch (Exception e) {
       System.err.println("exception: " + e);
       return;

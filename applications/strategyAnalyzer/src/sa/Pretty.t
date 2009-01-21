@@ -160,6 +160,43 @@ public class Pretty {
     }
   }
 
+
+  public static HashSet<Rule> generateRulesWithoutAntiPatterns(List<Rule> bag, Map<String,Integer> origsig) 
+    throws VisitFailure{
+
+    // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
+    // use origsig since normally anti-patterns are only on symbols in signature + Bottom
+    Map<String,Term> expsig = new HashMap<String,Term>();
+    origsig.put("Bottom",0);
+    for(String name: origsig.keySet()) {
+      int arity = origsig.get(name);
+      TermList tl = `TermList();
+      for(int i=0 ; i<arity ; i++) {
+        tl = `TermList(Var("Z"+i),tl*);
+      }
+      Term t = `Appl(name,tl);
+      expsig.put(name,t);
+    }
+    //     System.out.println(expsig+"\n");
+
+    HashSet<Rule> ruleSet = new HashSet<Rule>();
+
+    for(Rule r:bag) {
+      %match(r){  
+        Rule(lhs,rhs) -> {
+          // Generate LHSs without anti-pattern
+          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
+          for(Term t: termSet){
+            // generate rule for each lhs generated 
+            ruleSet.add(`Rule(t,rhs));
+          }
+        }
+      }
+    }
+
+    return ruleSet;
+  }
+
   public static HashSet<Term> generateTermsWithoutAntiPatterns(Term t, Map<String,Term> expsig) 
     throws VisitFailure{
 
@@ -198,23 +235,8 @@ public class Pretty {
     return termSet;
   }
 
-  public static String generateAprove(List<Rule> bag, Map<String,Integer> sig, Map<String,Integer> origsig) 
+  public static String generateAprove(List<Rule> bag, Map<String,Integer> origsig, boolean innermost) 
     throws VisitFailure{
-
-    // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
-    // use origsig since normally anti-patterns are only on symbols in signature + Bottom
-    Map<String,Term> expsig = new HashMap<String,Term>();
-    origsig.put("Bottom",0);
-    for(String name: origsig.keySet()) {
-      int arity = origsig.get(name);
-      TermList tl = `TermList();
-      for(int i=0 ; i<arity ; i++) {
-        tl = `TermList(Var("Z"+i),tl*);
-      }
-      Term t = `Appl(name,tl);
-      expsig.put(name,t);
-    }
-    System.out.println(expsig+"\n");
 
     // doesn't work when passed as parameter to ReplaceAnti
     //     HashMap<String,Term> varsig = new HashMap<String,Term>();
@@ -226,16 +248,14 @@ public class Pretty {
       Term t = `Var("Z"+varn++);
       varsig.put(name,t);
     }
-    System.out.println(varsig+"\n");
+    //     System.out.println(varsig+"\n");
 
-    // 1) RULES with anti-patterns replaced by variable
+    //  anti-patterns replaced by variable
     StringBuffer rulesb = new StringBuffer();
     Strategy replaceAnti = `ReplaceAnti();
 
     HashSet<String> varSet = new HashSet<String>();
     Strategy collectVars = `CollectVars(varSet);
-
-    Collections.sort(bag, new MyRuleComparator());
 
     rulesb.append("\n(RULES\n");
     for(Rule r:bag) {
@@ -254,6 +274,9 @@ public class Pretty {
     rulesb.append(")\n");
 
     StringBuffer varsb = new StringBuffer();
+    if(innermost){
+      varsb.append("(STRATEGY INNERMOST)\n");
+    }
     varsb.append("(VAR ");
     for(String name: varSet) {
       varsb.append(name + ",");
@@ -261,51 +284,7 @@ public class Pretty {
     varsb.deleteCharAt(varsb.length()-1);
     varsb.append(")");
 
-    //2) RULES with anti-pattern replaced by corresponding terms
-    StringBuffer ruleallsb = new StringBuffer();
-
-    HashSet<String> allVarSet = new HashSet<String>();
-    Strategy collectAllVars = `CollectVars(allVarSet);
-
-    //     TreeSet<Rule> ruleSet = new TreeSet<Rule>();
-    HashSet<Rule> ruleSet = new HashSet<Rule>();
-
-    for(Rule r:bag) {
-      %match(r){  
-        Rule(lhs,rhs) -> {
-          // Generate LHSs without anti-pattern
-          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
-          for(Term t: termSet){
-            // generate rule for each lhs generated 
-            ruleSet.add(`Rule(t,rhs));
-            // Collect the variables when replacing anti-pattern by term
-            `BottomUp(collectAllVars).visit(t);
-          }
-        }
-      }
-    }
-
-
-    List<Rule> ruleList = new ArrayList<Rule>(ruleSet);
-    Collections.sort(ruleList, new MyRuleComparator());
-
-    ruleallsb.append("\n(RULES\n");
-    for(Rule r:ruleList) {
-      ruleallsb.append("        " + Pretty.toString(r,true) + "\n");
-    }
-    ruleallsb.append(")\n");
-
-    StringBuffer allvarsb = new StringBuffer();
-    allvarsb.append("\n(STRATEGY INNERMOST)\n");
-    allvarsb.append("(VAR ");
-    for(String name: allVarSet) {
-      allvarsb.append(name + ",");
-    }
-    allvarsb.deleteCharAt(allvarsb.length()-1);
-    allvarsb.append(")");
-
-
-    return varsb.toString()+rulesb.toString()+allvarsb.toString()+ruleallsb.toString();
+    return varsb.toString()+rulesb.toString();
   }  
 
 
@@ -332,8 +311,6 @@ public class @classname@ {
       }
       sb.append("        | " + name + "(" + args + ")\n");
     }
-
-    Collections.sort(bag, new MyRuleComparator());
 
     sb.append("      module m:rules() {\n");
     for(Rule r:bag) {

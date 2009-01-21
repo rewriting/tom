@@ -8,8 +8,8 @@
 //mu x .(((r1<+r2);x) <+ identity)
 
 
-//let S=signature {a:0, b:0, f:1, g:2} in
-//let r1 = { a() -> b() } in all(r1)
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a() -> b() } in all(r1)
 
 // repeat(obu(r1))
 let S=signature {a:0, b:0, f:1, g:2} in
