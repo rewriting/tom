@@ -52,7 +52,7 @@ public class PersonSort {
     xtools.printXMLFromTNode(result);
 
     //System.out.println();
-    searchJu(term.getDocElem());
+    //searchJu(term.getDocElem());
 
   }
 
