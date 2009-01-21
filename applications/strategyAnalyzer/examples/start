@@ -13,7 +13,7 @@
 
 // repeat(obu(r1))
 let S=signature {a:0, b:0, f:1, g:2} in
-let r1 = { a() -> b() } in 
+let r1 = { a() -> f(b()) } in 
 let obu = mu y.(one(y)<+r1) in
 mu x .((obu;x) <+ identity)
 
@@ -22,3 +22,20 @@ mu x .((obu;x) <+ identity)
 // let R2 = { b() -> c() } in 
 // (R1<+R2)
 
+// td(try(r1))
+//let S=signature {a:0, b:0, f:1, g:2} in
+//let r1 = { a() -> f(b()) } in 
+//let td = mu y.((r1<+identity);all(y)) in
+//td
+
+// innermost(r1)
+//let S=signature {a:0, b:0, f:1, g:2} in
+//let r1 = { a() -> b() } in 
+//let innermost = mu x.(all(x);((r1;x)<+identity))
+//in innermost
+
+// repeat(r1)
+//let S=signature {a:0, b:0, f:1, g:2} in
+//let r1 = { a() -> f(b()) } in 
+//let repeat = mu y.(r1;y)<+identity in
+//repeat
