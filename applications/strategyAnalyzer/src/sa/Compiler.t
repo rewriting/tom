@@ -9,6 +9,7 @@ public class Compiler {
   %include { sl.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
+  %include { java/util/types/HashSet.tom }
 
   private final static Term BOTTOM = `Appl("Bottom",TermList());
   private final static Term X = `Var("x");
@@ -27,30 +28,30 @@ public class Compiler {
   /*
    * Compile a strategy into a rewrite system
    */
-  public static void compile(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, ExpressionList expl) {
+  public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, ExpressionList expl) {
     %match(expl) {
       ExpressionList(_*,x,_*) -> {
-        compileExp(bag,origsig,sig,`x);
+        compileExp(bag,extractedSignature,sig,`x);
       }
     }
   }
 
-  private static void compileExp(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, Expression e) {
+  private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, Expression e) {
     //System.out.println("exp = " + e);
     %match(e) {
       Let(v,Signature(sl),body) -> {
         %match(sl) {
           SymbolList(_*,Symbol(name,arity),_*) -> {
-            origsig.put(`name,`arity);
+            extractedSignature.put(`name,`arity);
             sig.put(`name,`arity);
           }
         }
-        //System.out.println("Original sig= " + origsig);
-        compileExp(bag,origsig,sig,`body);
+        //System.out.println("Original sig= " + extractedSignature);
+        compileExp(bag,extractedSignature,sig,`body);
       }
 
       Strat(s) -> {
-        String start = compileStrat(bag,origsig,sig,`s);
+        String start = compileStrat(bag,extractedSignature,sig,`s);
         System.out.println("// start: " + start);
         topName = start;
       }
@@ -61,7 +62,7 @@ public class Compiler {
    * compile a strategy
    * return the name of the top symbol (phi) introduced
    */
-  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> origsig, Map<String,Integer> sig, Strat strat) {
+  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, Strat strat) {
 //     System.out.println("sig = " + sig);
 //     System.out.println("strat = " + strat);
 
@@ -84,7 +85,7 @@ public class Compiler {
           sig.put(phi_x,1);
           sig.put(phi2_x,2);
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
-          String phi_s = compileStrat(bag,origsig,sig,newStrat);
+          String phi_s = compileStrat(bag,extractedSignature,sig,newStrat);
           bag.add(`Rule(Appl(phi_x,TermList(X)),Appl(phi2_x,TermList(X,X))));
           bag.add(`Rule(Appl(phi2_x,TermList(Anti(BOTTOM),X)),Appl(phi_s,TermList(X))));
           bag.add(`Rule(Appl(phi2_x,TermList(BOTTOM,X)),BOTTOM));
@@ -114,8 +115,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,origsig,sig,`s1);
-        String phi_s2 = compileStrat(bag,origsig,sig,`s2);
+        String phi_s1 = compileStrat(bag,extractedSignature,sig,`s1);
+        String phi_s2 = compileStrat(bag,extractedSignature,sig,`s2);
         String phi = getName("seq");
         sig.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),
@@ -124,8 +125,8 @@ public class Compiler {
       }
 
       StratChoice(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,origsig,sig,`s1);
-        String phi_s2 = compileStrat(bag,origsig,sig,`s2);
+        String phi_s1 = compileStrat(bag,extractedSignature,sig,`s1);
+        String phi_s2 = compileStrat(bag,extractedSignature,sig,`s2);
         String phi = getName("choice");
         String phi2 = getName("choice");
         sig.put(phi,1);
@@ -140,12 +141,12 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(bag,origsig,sig,`s);
+        String phi_s = compileStrat(bag,extractedSignature,sig,`s);
         String phi = getName("all");
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
-        Iterator<String> it = origsig.keySet().iterator();
+        Iterator<String> it = extractedSignature.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
           int arity = sig.get(name);
@@ -203,11 +204,11 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(bag,origsig,sig,`s);
+        String phi_s = compileStrat(bag,extractedSignature,sig,`s);
         String phi = getName("one");
         sig.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
-        Iterator<String> it = origsig.keySet().iterator();
+        Iterator<String> it = extractedSignature.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
           int arity = sig.get(name);
@@ -318,6 +319,86 @@ public class Compiler {
     visit Strat {
       StratName(n) && n==name -> {
         return `StratExp(exp);
+      }
+    }
+  }
+
+  public static HashSet<Rule> expandAntiPatterns(List<Rule> bag, Map<String,Integer> extractedSignature) 
+    throws VisitFailure {
+
+    // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
+    // use extractedSignature since normally anti-patterns are only on symbols in signature + Bottom
+      // expsig: associate f(Z1,...,ZN) to "f"
+    Map<String,Term> expsig = new HashMap<String,Term>();
+    extractedSignature.put("Bottom",0);
+    for(String name: extractedSignature.keySet()) {
+      int arity = extractedSignature.get(name);
+      TermList tl = `TermList();
+      for(int i=1 ; i<=arity ; i++) {
+        tl = `TermList(tl*,Var("Z"+i));
+      }
+      Term t = `Appl(name,tl);
+      expsig.put(name,t);
+    }
+    //     System.out.println(expsig+"\n");
+
+    HashSet<Rule> ruleSet = new HashSet<Rule>();
+    for(Rule r:bag) {
+      %match(r) {
+        Rule(lhs,rhs) -> {
+          // Generate LHSs without anti-pattern
+          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
+          for(Term t: termSet) {
+            // generate rule for each lhs generated 
+            ruleSet.add(`Rule(t,rhs));
+          }
+        }
+      }
+    }
+
+    return ruleSet;
+  }
+ 
+  public static HashSet<Term> generateTermsWithoutAntiPatterns(Term t, Map<String,Term> expsig) 
+    throws VisitFailure {
+
+    HashSet<Term> termSet = new HashSet<Term>();
+    HashSet<Position> posSet = new HashSet<Position>();
+
+    // Collect anti-patterns
+    `BottomUp(CollectAntiPatterns(posSet)).visit(t);
+
+    if(posSet.isEmpty()) {
+      termSet.add(t);
+    } else {
+      // Generate rules without anti-pattern
+      for(Position pos: posSet) {
+        Term at = (Term)pos.getSubterm().visitLight(t);
+        String symbolName = "DoesntExist";
+        %match(at) {
+          Anti(Appl(name,_)) -> { symbolName = `name;}
+        }
+        if(symbolName.compareTo("doesntexist")==0) {
+          System.out.println(" PROBLEM "); 
+        } // TO CHANGE
+        
+        Set<String> gensig = new HashSet<String>(expsig.keySet());
+        gensig.remove(symbolName); // all but current
+        for(String sn: gensig) {
+          Term t2p = (Term)pos.getReplace(expsig.get(sn)).visitLight(t);
+          termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
+          //           System.out.println(" replace with  " + expsig.get(sn) + "  :  " + t2p);
+        }
+      }
+    }
+    
+    return termSet;
+  }
+
+  %strategy CollectAntiPatterns(pos:HashSet) extends Identity() {
+    visit Term {
+      Anti(t)  -> {
+        pos.add(getEnvironment().getPosition());
       }
     }
   }
