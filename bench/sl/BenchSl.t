@@ -52,7 +52,7 @@ class BenchSl {
   }
 
   public static void run(Nat subject, int version, int count, Nat base) {
-    System.out.print("sl " + version + ": ");
+    System.out.print("sl [visit with envt] : ");
     try {
       Strategy s1 = `RepeatId(BottomUp(Rewrite(base)));
       Strategy s2 = `InnermostId(Rewrite(base));

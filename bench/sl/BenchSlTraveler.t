@@ -53,7 +53,7 @@ class BenchSlTraveler {
   }
 
   public static void run(Nat subject, int version,  int count, Nat base) {
-    System.out.print("sl traveler " + version + ": ");
+    System.out.print("sl [visit light] : ");
     try {
       Strategy s1 = `RepeatId(BottomUp(Rewrite(base)));
       Strategy s2 = `InnermostId(Rewrite(base));
