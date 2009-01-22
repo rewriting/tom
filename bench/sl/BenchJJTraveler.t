@@ -255,7 +255,7 @@ public static void run(Nat subject, int version,  int count, Nat base) {
         //System.out.println(s1.visit(subject));
       } else {
         s2.visit(subject);
-        //System.out.println("not available");
+        //System.out.println(s2.visit(subject));
       }
     }
     long stopChrono = System.currentTimeMillis();

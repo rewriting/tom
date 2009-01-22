@@ -38,17 +38,15 @@ class BenchSlTraveler {
 
   %strategy Rewrite(base:Nat) extends Identity() {
     visit Nat {
-      M() -> { return `Suc(Zero()); }
-      N() -> { return `Suc(Suc(Suc(Zero()))); }
-      P() -> { return base; }
-      C(Zero(),y) -> { return `y; }
-      C(Suc(x),y) -> { return `Suc(C(x,y)); }
-      F(x,y,Suc(z),t,u) -> { return `F(x,y,z,C(t,t),u); } 
-      F(x,Suc(y),Zero(),t,u) -> { return `F(x,y,P(),t,t); } 
-      F(Suc(x),Zero(),Zero(),t,u) -> {
-        return `F(x,N(),P(),Suc(Zero()),Zero());
-      }
-      F(Zero(),Zero(),Zero(),t,_) -> { return `t; } 
+      M() -> Suc(Zero())
+      N() -> Suc(Suc(Suc(Zero())))
+      P() -> base
+      C(Zero(),y) -> y
+      C(Suc(x),y) -> Suc(C(x,y))
+      F(x,y,Suc(z),t,u) -> F(x,y,z,C(t,t),u)
+      F(x,Suc(y),Zero(),t,u) -> F(x,y,P(),t,t)
+      F(Suc(x),Zero(),Zero(),t,u) -> F(x,N(),P(),Suc(Zero()),Zero())
+      F(Zero(),Zero(),Zero(),t,_) -> t
     }
   }
 
@@ -64,6 +62,7 @@ class BenchSlTraveler {
           //System.out.println(s1.visitLight(subject));
         } else {
           s2.visitLight(subject);
+          //System.out.println(s2.visitLight(subject));
         }
       }
       long stopChrono = System.currentTimeMillis();
