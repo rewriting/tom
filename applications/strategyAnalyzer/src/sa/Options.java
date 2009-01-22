@@ -13,16 +13,16 @@ public class Options {
     public boolean h;
 
   @Option(name="-withAP",usage="generate rules with anti-patterns")
-    public boolean withAP;
+    public boolean withAP = false;
 
   @Option(name="-aprove",usage="generate rules for Aprove")
-    public boolean aprove = true;
+    public boolean aprove = false;
   
   @Option(name="-tom",usage="generate a Tom program")
     public String classname;
 
   @Option(name="-o",usage="output to this file",metaVar="OUTPUT")
-    public File out = new File(".");
+    public File out = null;
 
   @Option(name="-i",usage="input this file",metaVar="INPUT")
     public File in = null;

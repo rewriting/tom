@@ -40,6 +40,7 @@ public class Main {
 
     System.out.println("withAP: " + options.withAP);
     System.out.println("aprove: " + options.aprove);
+    System.out.println("classname: " + options.classname);
     System.out.println("out: " + options.out);
     System.out.println("in: " + options.in);
 
@@ -74,13 +75,26 @@ public class Main {
       }
       Collections.sort(generatedRules, new MyRuleComparator());
 
+      System.out.println(generatedRules);
+
+      PrintStream outputfile = System.out;
+      if(options.out != null) {
+        outputfile = new PrintStream(options.out);
+      }
+      PrintStream tomoutputfile = System.out;
       if(options.classname != null) {
-        System.out.println( Pretty.generate(generatedRules,generatedSignature,options.classname) );
-      } else if(options.aprove) {
-        System.out.println( Pretty.generateAprove(generatedRules,extractedSignature,true) );
+        tomoutputfile = new PrintStream(options.classname+".t");
+      }
+
+      if(options.classname != null) {
+        tomoutputfile.println( Pretty.generate(generatedRules,generatedSignature,options.classname) );
+      } 
+      if(options.aprove) {
+        outputfile.println( Pretty.generateAprove(generatedRules,extractedSignature,true) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);
+      e.printStackTrace();
       return;
     }
   }
