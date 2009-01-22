@@ -75,7 +75,7 @@ public class Main {
       }
       Collections.sort(generatedRules, new MyRuleComparator());
 
-      System.out.println(generatedRules);
+//       System.out.println(generatedRules);
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
