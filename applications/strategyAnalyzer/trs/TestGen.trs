@@ -1,0 +1,44 @@
+(VAR Z Z0 Z1 Z2 x x1 x2)
+(RULES
+       choice10(x) -> choice11(seq8(x),x)
+
+       choice11(Bottom(Z),x) -> id9(x)
+       choice11(Appl(Z0,Z1),x) -> seq8(x)
+
+       choice6(x) -> choice7(one4(x),x)
+       choice7(Bottom(Z),x) -> rule5(x)
+       choice7(Appl(Z0,Z1),x) -> one4(x)
+
+       id9(x) -> x
+       mu0(x) -> mu1(x,x)
+       mu1(Bottom(Z),x) -> Bottom(Z)
+       mu1(Appl(Z0,Z1),x) -> choice10(x)
+
+       mu2(x) -> mu3(x,x)
+       mu3(Bottom(Z),x) -> Bottom(Z)
+       mu3(Appl(Z0,Z1),x) -> choice6(x)
+
+
+       one4(Appl(Z0,Z1)) -> one4_1(Appl(Z0,one4_2(Z1)))
+
+       one4_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+       one4_1(Appl(Z0,Cons(x1,x2))) -> Appl(Z0,Cons(x1,x2))
+
+       one4_2(Nil) -> BottomList(Nil)
+       one4_2(Cons(x1,x2)) -> one4_3(mu2(x1),x2)
+
+       one4_3(Appl(Z0,Z1),x2) -> Cons(Appl(Z0,Z1),x2)
+       one4_3(Bottom(Z),Nil) -> BottomList(Cons(Z,Nil))
+       one4_3(Bottom(Z),Cons(Z0,Z1)) -> Clean(Z, one4_2(Cons(Z0,Z1)))
+
+       Clean(Z,BottomList(Nil)) -> BottomList(Cons(Z,Nil))
+       Clean(Z,BottomList(Cons(Z1,Nil))) -> BottomList(Cons(Z,Cons(Z1,Nil)))
+       Clean(Z,Cons(Z0,Z1)) -> Cons(Z,Cons(Z0,Z1))
+
+       rule5(Bottom(Z)) -> Bottom(Z)
+       rule5(Appl(a,Nil)) -> Appl(b,Nil)
+       rule5(Appl(b,Z1)) -> Bottom(Appl(b,Z1))
+       rule5(Appl(f,Z1)) -> Bottom(Appl(f,Z1))
+       rule5(Appl(g,Z1)) -> Bottom(Appl(g,Z1))
+       seq8(x) -> mu0(choice6(x))
+)
