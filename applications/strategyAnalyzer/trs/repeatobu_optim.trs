@@ -1,0 +1,31 @@
+(VAR x2,Z0,y2,x1,y1,Z1,x)
+(RULES
+
+        choice11(Bottom,x) -> x
+        choice11(a,x) -> a
+        choice11(b,x) -> b
+        choice11(f(Z0),x) -> f(Z0)
+
+        choice7_1(Bottom) -> Bottom
+        choice7_1(a) -> a
+        choice7_1(b) -> b
+        choice7_1(f(Z0)) -> f(Z0)
+
+        mu0(Bottom) -> Bottom
+        mu0(a) -> choice11(mu0(f(b)),a)
+        mu0(b) -> b
+        mu0(f(Z0)) -> choice11(mu0(choice7_1(one4_1(mu2(Z0),f(mu2(Z0))))),f(Z0))
+
+        mu2(Bottom) -> Bottom
+        mu2(a) -> f(b)
+        mu2(b) -> Bottom
+        mu2(f(Z0)) -> choice7_1(one4_1(mu2(Z0),f(mu2(Z0))))
+
+        one4_1(Bottom,x1) -> Bottom
+        one4_1(a,x1) -> x1
+        one4_1(b,x1) -> x1
+        one4_1(f(Z0),x1) -> x1
+        
+)
+
+

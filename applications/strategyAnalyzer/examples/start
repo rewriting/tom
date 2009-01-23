@@ -9,10 +9,10 @@
 
 
 // let S=signature {a:0, b:0, f:1, g:2} in
-// let r1 = { a() -> b() } in all(r1)
+// let r1 = { a() -> b() } in one(r1)
 
 // repeat(obu(r1))
-let S=signature {a:0, b:0, f:1} in
+let S=signature {a:0, b:0, f:1, g:2} in
 let r1 = { a() -> f(b()) } in 
 let obu = mu y.(one(y)<+r1) in
 mu x .((obu;x) <+ identity)

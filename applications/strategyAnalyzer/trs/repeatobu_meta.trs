@@ -1,0 +1,41 @@
+(VAR x2 Z2 y2 x1 y1 Z1 x Z0)
+(RULES
+        choice10(x) -> choice11(seq8(x),x)
+
+        choice11(Bottom,x) -> id9(x)
+        choice11(Appl(Z0,Z1),x) -> seq8(x)
+
+        choice6(x) -> choice7(one4(x),x)
+        choice7(Bottom,x) -> rule5(x)
+        choice7(Appl(Z0,Z1),x) -> one4(x)
+        
+        id9(x) -> x
+        mu0(x) -> mu1(x,x)
+        mu1(Bottom,x) -> Bottom
+        mu1(Appl(Z0,Z1),x) -> choice10(x)
+
+        mu2(x) -> mu3(x,x)
+        mu3(Bottom,x) -> Bottom
+        mu3(Appl(Z0,Z1),x) -> choice6(x)
+
+
+        one4(Appl(Z0,Z1)) -> one4_1(Appl(Z0,one4_2(Z1)))
+
+        one4_1(Appl(Z0,Bottom)) -> Bottom
+        one4_1(Appl(Z0,Cons(x1,x2))) -> Appl(Z0,Cons(x1,x2))
+
+        one4_2(Nil) -> Bottom
+        one4_2(Cons(x1,x2)) -> one4_3(mu2(x1),x1,x2)
+
+        one4_3(Bottom,x1,Nil) -> Nil
+        one4_3(Bottom,x1,Cons(Z0,Z1)) -> Cons(x1,one4_2(Cons(Z0,Z1)))
+        one4_3(Appl(Z0,Z1),x1,x2) -> Cons(Appl(Z0,Z1),x2)
+
+        rule5(Bottom) -> Bottom
+        rule5(Appl(a,Nil)) -> Appl(b,Nil)
+        rule5(Appl(b,Z1)) -> Bottom
+        rule5(Appl(f,Z1)) -> Bottom
+        rule5(Appl(g,Z1)) -> Bottom
+        seq8(x) -> mu0(choice6(x))
+)
+
