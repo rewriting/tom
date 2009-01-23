@@ -92,6 +92,12 @@ public class Pretty {
         sb.append(Pretty.toString(`p,forAprove));
       }
 
+      At(var,term) -> { 
+        sb.append(Pretty.toString(`var,forAprove));
+        sb.append("@"); 
+        sb.append(Pretty.toString(`term,forAprove));
+      }
+
       Appl(symb,args) -> { 
         sb.append(`symb); 
 
@@ -220,7 +226,7 @@ public class @classname@ {
   %gom {
     module m
       abstract syntax
-      T = Bottom()
+      T = Bottom(term:T)
 ]%);
     for(String name: sig.keySet()) {
       int arity = sig.get(name);
