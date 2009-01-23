@@ -3,6 +3,8 @@ package sa;
 import sa.rule.types.*;
 import java.util.*;
 import tom.library.sl.*;
+import aterm.*;
+import aterm.pure.*;
 
 public class Compiler {
   %include { rule/Rule.tom }
@@ -16,10 +18,13 @@ public class Compiler {
 
   private static int phiNumber = 0;
   private static String getName(String name) {
-//     return "phi" + (phiNumber++);
     return name + (phiNumber++);
   }
 
+  /**
+   * getTopName
+   * @return the name of the strategy which starts the computation
+   */
   private static String topName = "";
   public static String getTopName() {
     return topName;
@@ -28,48 +33,86 @@ public class Compiler {
   /*
    * Compile a strategy into a rewrite system
    */
-  public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, ExpressionList expl) {
+  public static void compile(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, ExpressionList expl) {
     %match(expl) {
       ExpressionList(_*,x,_*) -> {
-        compileExp(bag,extractedSignature,sig,`x);
+        compileExp(bag,extractedSignature,generatedSignature,`x);
       }
     }
   }
 
-  private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, Expression e) {
+  /**
+   * encode: 
+   * @param exp the string representation of the term to meta-encode
+   * @return meta-encoding using Appl and TermList
+   */
+  private Term encode(String stringterm) {
+    ATermFactory factory = SingletonFactory.getInstance();
+    ATerm at = factory.parse(stringterm);
+    return encode(at);
+  }
+  private Term encode(ATerm at) {
+    switch(at.getType()) {
+	  	case ATerm.APPL:
+	  		ATermAppl appl = (ATermAppl) at;
+        String name = appl.getName();
+        ATermList args = appl.getArguments();
+        if(args.isEmpty() && (name.startsWith("_") || Character.isUpperCase(name.charAt(0)))) {
+          return `Var(name);
+        } else {
+          return `Appl(name,encodeList(args));
+        }
+    }
+
+    return X; // to be changed
+  }
+
+  private TermList encodeList(ATermList list) {
+    if(list.isEmpty()) {
+      return `TermList();
+    } else {
+      Term head = encode(list.getFirst());
+      TermList tail = encodeList(list.getNext());
+      return `TermList(head,tail*);
+    }
+  }
+
+  private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
     //System.out.println("exp = " + e);
     %match(e) {
       Let(v,Signature(sl),body) -> {
         %match(sl) {
           SymbolList(_*,Symbol(name,arity),_*) -> {
             extractedSignature.put(`name,`arity);
-            sig.put(`name,`arity);
+            generatedSignature.put(`name,`arity);
           }
         }
-        //System.out.println("Original sig= " + extractedSignature);
-        compileExp(bag,extractedSignature,sig,`body);
+        //System.out.println("Original generatedSignature= " + extractedSignature);
+        compileExp(bag,extractedSignature,generatedSignature,`body);
       }
 
       Strat(s) -> {
-        String start = compileStrat(bag,extractedSignature,sig,`s);
-        System.out.println("// start: " + start);
+        String start = compileStrat(bag,extractedSignature,generatedSignature,`s);
         topName = start;
       }
     }
   }
 
-  /*
-   * compile a strategy
+  /**
+   * compile a strategy in a classical way (without using meta-representation)
    * return the name of the top symbol (phi) introduced
+   * @param bag set of rule that is extended by compilation
+   * @param extractedSignature associates arity to a name, for all constructor of the initial strategy
+   * @param generatedSignature associates arity to a name, for all generated defined symbols
+   * @param strat the strategy to compile
+   * @return the name of the last compiled strategy
    */
-  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> sig, Strat strat) {
-//     System.out.println("sig = " + sig);
-//     System.out.println("strat = " + strat);
+  private static String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
 
     %match(strat) {
       StratRule(Rule(lhs,rhs)) -> {
         String phi = getName("rule");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(lhs)),rhs));
         bag.add(`Rule(Appl(phi,TermList(Anti(lhs))),BOTTOM));
         return phi;
@@ -82,10 +125,10 @@ public class Compiler {
         try {
           String phi_x = getName("mu");
           String phi2_x = getName("mu");
-          sig.put(phi_x,1);
-          sig.put(phi2_x,2);
+          generatedSignature.put(phi_x,1);
+          generatedSignature.put(phi2_x,2);
           Strat newStrat = `TopDown(ReplaceMuVar(name,phi_x)).visitLight(`s);
-          String phi_s = compileStrat(bag,extractedSignature,sig,newStrat);
+          String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
           bag.add(`Rule(Appl(phi_x,TermList(X)),Appl(phi2_x,TermList(X,X))));
           bag.add(`Rule(Appl(phi2_x,TermList(Anti(BOTTOM),X)),Appl(phi_s,TermList(X))));
           bag.add(`Rule(Appl(phi2_x,TermList(BOTTOM,X)),BOTTOM));
@@ -102,35 +145,35 @@ public class Compiler {
 
       StratIdentity() -> {
         String phi = getName("id");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),X));
         return phi;
       }
 
       StratFail() -> {
         String phi = getName("fail");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),BOTTOM));
         return phi;
       }
 
       StratSequence(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,extractedSignature,sig,`s1);
-        String phi_s2 = compileStrat(bag,extractedSignature,sig,`s2);
+        String phi_s1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
+        String phi_s2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String phi = getName("seq");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         bag.add(`Rule(Appl(phi,TermList(X)),
               Appl(phi_s2,TermList(Appl(phi_s1,TermList(X))))));
         return phi;
       }
 
       StratChoice(s1,s2) -> {
-        String phi_s1 = compileStrat(bag,extractedSignature,sig,`s1);
-        String phi_s2 = compileStrat(bag,extractedSignature,sig,`s2);
+        String phi_s1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
+        String phi_s2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String phi = getName("choice");
         String phi2 = getName("choice");
-        sig.put(phi,1);
-        sig.put(phi2,2);
+        generatedSignature.put(phi,1);
+        generatedSignature.put(phi2,2);
         bag.add(`Rule(Appl(phi,TermList(X)),
               Appl(phi2,TermList(Appl(phi_s1,TermList(X)), X))));
         bag.add(`Rule(Appl(phi2,TermList(BOTTOM,X)),
@@ -141,20 +184,20 @@ public class Compiler {
       }
 
       StratAll(s) -> {
-        String phi_s = compileStrat(bag,extractedSignature,sig,`s);
+        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String phi = getName("all");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
 
         Iterator<String> it = extractedSignature.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
-          int arity = sig.get(name);
+          int arity = generatedSignature.get(name);
           String phi_n = mapphi.get(arity);
           if(phi_n == null) {
             //phi_n = getName();
             phi_n = phi+"_"+arity;
-            sig.put(phi_n,arity+1);
+            generatedSignature.put(phi_n,arity+1);
             mapphi.put(arity,phi_n);
             if(arity>0) {
               // generate success rules
@@ -204,19 +247,19 @@ public class Compiler {
       }
 
       StratOne(s) -> {
-        String phi_s = compileStrat(bag,extractedSignature,sig,`s);
+        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
         String phi = getName("one");
-        sig.put(phi,1);
+        generatedSignature.put(phi,1);
         Map<Integer,String> mapphi = new HashMap<Integer,String>();
         Iterator<String> it = extractedSignature.keySet().iterator();
         while(it.hasNext()) {
           String name = it.next();
-          int arity = sig.get(name);
+          int arity = generatedSignature.get(name);
           String phi_n = mapphi.get(arity);
           if(phi_n == null) {
             //phi_n = getName();
             phi_n = phi+"_"+arity;
-            sig.put(phi_n,2*arity);
+            generatedSignature.put(phi_n,2*arity);
             mapphi.put(arity,phi_n);
             if(arity>0) {
               // generate failure rules

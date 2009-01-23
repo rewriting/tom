@@ -26,7 +26,8 @@ mu x .((obu;x) <+ identity)
 //let S=signature {a:0, b:0, f:1, g:2} in
 //let r1 = { a() -> f(b()) } in 
 //let td = mu y.((r1<+identity);all(y)) in
-//td
+//let bu = mu y.(all(y);(r1<+identity)) in
+//bu
 
 // innermost(r1)
 //let S=signature {a:0, b:0, f:1, g:2} in
