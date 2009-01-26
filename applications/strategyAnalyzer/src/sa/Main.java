@@ -66,16 +66,19 @@ public class Main {
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
-      List<Rule> generatedRules = new ArrayList<Rule>();
+      Collection<Rule> generatedRules = new HashSet<Rule>();
 
       // Transforms the strategy into a rewrite system
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
       if(options.withAP == false) {
-        generatedRules = new ArrayList<Rule>(Compiler.expandAntiPatterns(generatedRules,extractedSignature));
+        generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
-      Collections.sort(generatedRules, new MyRuleComparator());
+      if(options.withAT == false) {
+        generatedRules = Compiler.expandAt(generatedRules);
+      }
 
-//       System.out.println(generatedRules);
+      List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
+      Collections.sort(orderedRules, new MyRuleComparator());
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
@@ -87,10 +90,10 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generate(generatedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( Pretty.generate(orderedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
-        outputfile.println( Pretty.generateAprove(generatedRules,extractedSignature,true) );
+        outputfile.println( Pretty.generateAprove(orderedRules,extractedSignature,true) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);

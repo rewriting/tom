@@ -15,6 +15,9 @@ public class Options {
   @Option(name="-withAP",usage="generate rules with anti-patterns")
     public boolean withAP = false;
 
+  @Option(name="-withAT",usage="generate rules with at-annotations")
+    public boolean withAT = false;
+
   @Option(name="-aprove",usage="generate rules for Aprove")
     public boolean aprove = false;
   

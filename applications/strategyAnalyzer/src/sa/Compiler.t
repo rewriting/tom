@@ -407,8 +407,58 @@ public class Compiler {
       }
     }
   }
+ 
+  // search all At and store their values
+  %strategy CollectAt(map:Map) extends Identity() {
+    visit Term {
+      At(Var(name),t2)-> {
+        map.put(`name,`t2);
+      }
+    }
+  }
 
-  public static HashSet<Rule> expandAntiPatterns(List<Rule> bag, Map<String,Integer> extractedSignature) 
+  %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
+    visit Term {
+      Var(n) -> {
+        if(`n==name) {
+          return `term;
+        }
+      }
+    }
+  }
+  
+  %strategy EliminateAt() extends Identity() {
+    visit Term {
+      At(t,t) -> {
+          return `t;
+      }
+    }
+  }
+  
+  public static Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
+    Collection<Rule> res = new HashSet<Rule>();
+    for(Rule rule:bag) {
+      //System.out.println("rule: " + rule);
+      Map<String,Term> map = new HashMap<String,Term>();
+      `TopDown(CollectAt(map)).visitLight(rule);
+      if(map.keySet().isEmpty()) {
+        res.add(rule);
+      }
+      //System.out.println("at-map: " + map);
+      Rule newRule = rule;
+      for(String name:map.keySet()) {
+        Term t = map.get(name);
+        newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
+        //System.out.println("new rule (instantiate): " + newRule);
+        newRule = `TopDown(EliminateAt()).visitLight(newRule);
+        //System.out.println("new rule (elimAt): " + newRule);
+        res.add(newRule);
+      }
+    }
+    return res;
+  }
+
+  public static Collection<Rule> expandAntiPatterns(Collection<Rule> bag, Map<String,Integer> extractedSignature) 
     throws VisitFailure {
 
     // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
@@ -427,12 +477,12 @@ public class Compiler {
     }
     //     System.out.println(expsig+"\n");
 
-    HashSet<Rule> ruleSet = new HashSet<Rule>();
+    Collection<Rule> ruleSet = new HashSet<Rule>();
     for(Rule r:bag) {
       %match(r) {
         Rule(lhs,rhs) -> {
           // Generate LHSs without anti-pattern
-          HashSet<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
+          Collection<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
           for(Term t: termSet) {
             // generate rule for each lhs generated 
             ruleSet.add(`Rule(t,rhs));
@@ -444,7 +494,7 @@ public class Compiler {
     return ruleSet;
   }
  
-  public static HashSet<Term> generateTermsWithoutAntiPatterns(Term t, Map<String,Term> expsig) 
+  public static Collection<Term> generateTermsWithoutAntiPatterns(Term t, Map<String,Term> expsig) 
     throws VisitFailure {
 
     HashSet<Term> termSet = new HashSet<Term>();
