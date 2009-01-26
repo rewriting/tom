@@ -417,6 +417,7 @@ public class Compiler {
     }
   }
 
+  // replace x by t, and thus x@t by t@t
   %strategy ReplaceVariable(name:String, term:Term) extends Identity() {
     visit Term {
       Var(n) -> {
@@ -427,6 +428,7 @@ public class Compiler {
     }
   }
   
+    // replace t@t by t
   %strategy EliminateAt() extends Identity() {
     visit Term {
       At(t,t) -> {
@@ -434,7 +436,8 @@ public class Compiler {
       }
     }
   }
-  
+
+  // transforms a set of rule that contains x@t into a set of rules without @ 
   public static Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
     Collection<Rule> res = new HashSet<Rule>();
     for(Rule rule:bag) {
