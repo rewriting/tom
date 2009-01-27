@@ -205,7 +205,7 @@ public class Pretty {
     }
     varsb.append("(VAR ");
     for(String name: varSet) {
-      varsb.append(name + ",");
+      varsb.append(name + " ");
     }
     varsb.deleteCharAt(varsb.length()-1);
     varsb.append(")");

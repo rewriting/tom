@@ -20,6 +20,9 @@ public class Options {
 
   @Option(name="-aprove",usage="generate rules for Aprove")
     public boolean aprove = false;
+
+  @Option(name="-generic",usage="use a generic compilation scheme")
+    public boolean generic = false;
   
   @Option(name="-tom",usage="generate a Tom program")
     public String classname;

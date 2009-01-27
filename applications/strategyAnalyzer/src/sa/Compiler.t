@@ -57,7 +57,7 @@ public class Compiler {
   }
   
   private static Rule encodeRule(String stringterm) {
-    //System.out.println("encodeRule: " + stringterm);
+    System.out.println("encodeRule: " + stringterm);
     Rule res = null;
     ATermFactory factory = SingletonFactory.getInstance();
     ATerm at = factory.parse(stringterm);
@@ -73,7 +73,7 @@ public class Compiler {
         }
         break;
     }
-    //System.out.println("encodeRule: " + res);
+    System.out.println("encodeRule: " + res);
     return res;
   }
 
@@ -134,7 +134,12 @@ public class Compiler {
       }
 
       Strat(s) -> {
-        String start = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        String start = "";
+        if(Main.options.generic) {
+          compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+        } else {
+          compileStrat(bag,extractedSignature,generatedSignature,`s);
+        }
         topName = start;
       }
     }
@@ -239,7 +244,7 @@ public class Compiler {
               String rx = phi_s+"(X1)"; 
               for(int i=2 ; i<=arity ; i++) {
                 lx += ",X"+i;
-                rx += ",phi_s(X"+i+")";
+                rx += ","+phi_s+"(X"+i+")";
               }
               bag.add(encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
             }
@@ -252,7 +257,7 @@ public class Compiler {
               lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
               rx += ",X"+j;
             }
-            bag.add(encodeRule(%[rule(@all_n@(@lx@,_), @name@(@rx@))]%));
+            bag.add(encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
 
             // generate failure rules
             // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
@@ -272,6 +277,175 @@ public class Compiler {
           }
         }        
         return all;
+      }
+
+      StratOne(s) -> {
+        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        String one = getName("one");
+        generatedSignature.put(one,1);
+        Iterator<String> it = extractedSignature.keySet().iterator();
+        while(it.hasNext()) {
+          String name = it.next();
+          int arity = generatedSignature.get(name);
+          if(arity==0) {
+            bag.add(encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
+          } else {
+            String one_n = one+"_"+name;
+
+            {
+              // main case
+              // one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
+              String lx = "X1"; 
+              String rx = phi_s+"(X1)"; 
+              for(int i=2 ; i<=arity ; i++) {
+                lx += ",X"+i;
+                rx += ",X"+i;
+              }
+              bag.add(encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
+            }
+
+            for(int i=1 ; i<=arity ; i++) {
+              String one_n_i = one_n + "_"+i;
+              generatedSignature.put(one_n_i,arity);
+              if(i<arity) {
+                // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
+                // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
+                String lx = "Bottom(X1)";
+                String rx = "Bottom(X1)";
+                for(int j=2; j<=arity;j++) {
+                  if(j<=i) {
+                    lx += ",Bottom(X"+j+")";
+                    rx += ",Bottom(X"+j+")";
+                  } else if(j==i+1) {
+                    lx += ",X"+j;
+                    rx += ","+phi_s+"(X"+j+")";
+                  } else {
+                    lx += ",X"+j;
+                    rx += ",X"+j;
+                  }
+                }
+                String one_n_ii = one_n + "_"+(i+1);
+                generatedSignature.put(one_n_ii,arity);
+                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%));
+              } else {
+                // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
+                String lx = "Bottom(X1)";
+                String rx = "X1";
+                for(int j=2; j<=arity;j++) {
+                  lx += ",Bottom(X"+j+")";
+                  rx += ",X"+j;
+                }
+                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%));
+
+              }
+
+              {
+                // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
+                // -> f(x1,...,xi,...,xn)
+                String lx = (i==1)?"at(X1,anti(Bottom(Y)))":"Bottom(X1)";
+                String rx = "X1";
+                for(int j=2; j<=arity;j++) {
+                  if(j<i) {
+                    lx += ",Bottom(X"+j+")";
+                    rx += ",X"+j;
+                  } else if(j==i) {
+                    lx += ",at(X"+j+",anti(Bottom(Y)))";
+                    rx += ",X"+j;
+                  } else {
+                    lx += ",X"+j;
+                    rx += ",X"+j;
+                  }
+                }
+                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%));
+              }
+
+            }
+          }
+        }
+        return one;
+      }
+
+    }
+    return strat.toString();
+  }
+
+  /**
+   * compile a strategy in a classical way (without using meta-representation)
+   * return the name of the top symbol (phi) introduced
+   * @param bag set of rule that is extended by compilation
+   * @param extractedSignature associates arity to a name, for all constructor of the initial strategy
+   * @param generatedSignature associates arity to a name, for all generated defined symbols
+   * @param strat the strategy to compile
+   * @return the name of the last compiled strategy
+   */
+  private static String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
+
+    %match(strat) {
+      StratRule(Rule(lhs,rhs)) -> {
+        String r = getName("rule");
+        generatedSignature.put(r,1);
+        // use AST-syntax because lhs and rhs are already encoded
+        bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
+        bag.add(`Rule(Appl(r,TermList(At(X,Anti(lhs)))),encode("Bottom(X)")));
+        return r;
+      }
+
+      /*
+       * TODO: fix non confluence here
+       */
+      StratMu(name,s) -> {
+        try {
+          String mu = getName("mu");
+          generatedSignature.put(mu,1);
+          Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
+          String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
+          bag.add(encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
+          bag.add(encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+          return phi_s;
+        } catch(VisitFailure e) {
+          System.out.println("failure in StratMu on: " + `s);
+        }
+      }
+
+      // mu fix point: transform the startame into a function call
+      StratName(name) -> {
+        return `name;
+      }
+
+      StratIdentity() -> {
+        String id = getName("id");
+        generatedSignature.put(id,1);
+        bag.add(encodeRule(%[rule(@id@(X), X)]%));
+        return id;
+      }
+
+      StratFail() -> {
+        String fail = getName("fail");
+        generatedSignature.put(fail,1);
+        bag.add(encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+        return fail;
+      }
+
+      StratSequence(s1,s2) -> {
+        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
+        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String seq = getName("seq");
+        generatedSignature.put(seq,1);
+        bag.add(encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        return seq;
+      }
+
+      StratChoice(s1,s2) -> {
+        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
+        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String choice = getName("choice");
+        String choice2 = getName("choice");
+        generatedSignature.put(choice,1);
+        generatedSignature.put(choice2,1);
+        bag.add(encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
+        bag.add(encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
+        bag.add(encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
+        return choice;
       }
 
       StratOne(s) -> {
@@ -447,8 +621,8 @@ public class Compiler {
         //System.out.println("new rule (instantiate): " + newRule);
         newRule = `TopDown(EliminateAt()).visitLight(newRule);
         //System.out.println("new rule (elimAt): " + newRule);
-        res.add(newRule);
       }
+      res.add(newRule);
     }
     return res;
   }
