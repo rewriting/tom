@@ -57,7 +57,7 @@ public class Compiler {
   }
   
   private static Rule encodeRule(String stringterm) {
-    System.out.println("encodeRule: " + stringterm);
+    //System.out.println("encodeRule: " + stringterm);
     Rule res = null;
     ATermFactory factory = SingletonFactory.getInstance();
     ATerm at = factory.parse(stringterm);
@@ -73,7 +73,7 @@ public class Compiler {
         }
         break;
     }
-    System.out.println("encodeRule: " + res);
+    //System.out.println("encodeRule: " + res);
     return res;
   }
 
@@ -111,11 +111,13 @@ public class Compiler {
 
   private static TermList encodeList(ATermList list) {
     if(list.isEmpty()) {
-      return `TermList();
+      //return `TermList();
+      return `Nil();
     } else {
       Term head = encode(list.getFirst());
       TermList tail = encodeList(list.getNext());
-      return `TermList(head,tail*);
+      //return `TermList(head,tail*);
+      return `Cons(head,tail*);
     }
   }
 
@@ -385,8 +387,8 @@ public class Compiler {
         String r = getName("rule");
         generatedSignature.put(r,1);
         // use AST-syntax because lhs and rhs are already encoded
-        bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
-        bag.add(`Rule(Appl(r,TermList(At(X,Anti(lhs)))),encode("Bottom(X)")));
+        bag.add(`Rule(Appl(r,Cons(encode(lhs.toString()),Nil())),encode(rhs.toString())));
+        bag.add(`Rule(Appl(r,Cons(At(X,Anti(encode(lhs.toString()))),Nil())),encode("Bottom(X)")));
         return r;
       }
 
@@ -398,7 +400,7 @@ public class Compiler {
           String mu = getName("mu");
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
-          String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
+          String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
           bag.add(encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
           bag.add(encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
           return phi_s;
@@ -427,8 +429,8 @@ public class Compiler {
       }
 
       StratSequence(s1,s2) -> {
-        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
+        String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
         generatedSignature.put(seq,1);
         bag.add(encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
@@ -436,8 +438,8 @@ public class Compiler {
       }
 
       StratChoice(s1,s2) -> {
-        String n1 = compileStrat(bag,extractedSignature,generatedSignature,`s1);
-        String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
+        String n1 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s1);
+        String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
         String choice = getName("choice");
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
@@ -448,8 +450,62 @@ public class Compiler {
         return choice;
       }
 
+      StratAll(s) -> {
+        String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+        String all = getName("all");
+        generatedSignature.put(all,1);
+        Iterator<String> it = extractedSignature.keySet().iterator();
+        while(it.hasNext()) {
+          String name = it.next();
+          int arity = generatedSignature.get(name);
+          if(arity==0) {
+            bag.add(encodeRule(%[rule(@all@(@name@), @name@)]%));
+          } else {
+            String all_n = all+"_"+name;
+            generatedSignature.put(all_n,1);
+            {
+              // main case
+              // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
+              String lx = "X1"; 
+              String rx = phi_s+"(X1)"; 
+              for(int i=2 ; i<=arity ; i++) {
+                lx += ",X"+i;
+                rx += ","+phi_s+"(X"+i+")";
+              }
+              bag.add(encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
+            }
+
+            // generate success rules
+            // all_g(x1@!BOTTOM,...,xN@!BOTTOM,_) -> g(x1,...,xN)
+            String lx = "at(X1,anti(Bottom(Y1)))";
+            String rx = "X1"; 
+            for(int j=2; j<=arity;j++) {
+              lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
+              rx += ",X"+j;
+            }
+            bag.add(encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
+
+            // generate failure rules
+            // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
+            // phi_n(...,BOTTOM,...,x) -> BOTTOM
+            // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
+            for(int i=1 ; i<=arity ; i++) {
+              String llx = (i==1)?"Bottom(X1)":"X1";
+              for(int j=2; j<=arity;j++) {
+                if(j==i) {
+                  llx += ",Bottom(X"+j+")";
+                } else {
+                  llx += ",X"+j;
+                }
+              }
+              bag.add(encodeRule(%[rule(@all_n@(@llx@,Z), Z)]%));
+            }
+          }
+        }        
+        return all;
+      }
       StratOne(s) -> {
-        String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
+        String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
         generatedSignature.put(one,1);
         Iterator<String> it = extractedSignature.keySet().iterator();
@@ -708,69 +764,3 @@ public class Compiler {
   }
 
 }
-
-
-
-
-//       StratAll(s) -> {
-//         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
-//         String all = getName("all");
-//         generatedSignature.put(all,1);
-//         Map<Integer,String> mapphi = new HashMap<Integer,String>();
-
-//         Iterator<String> it = extractedSignature.keySet().iterator();
-//         while(it.hasNext()) {
-//           String name = it.next();
-//           int arity = generatedSignature.get(name);
-//           String phi_n = mapphi.get(arity);
-//           if(phi_n == null) {
-//             //phi_n = getName();
-//             phi_n = phi+"_"+arity;
-//             generatedSignature.put(phi_n,arity+1);
-//             mapphi.put(arity,phi_n);
-//             if(arity>0) {
-//               // generate success rules
-//               // phi_n(!BOTTOM,...,!BOTTOM,x) -> x
-//               TermList args = `TermList(X);
-//               for(int i=1 ; i<=arity ; i++) {
-//                 args = `TermList(Anti(BOTTOM),args*);
-//               }
-//               bag.add(`Rule(Appl(phi_n,args),X));
-//               // generate failure rules
-//               // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
-//               // phi_n(...,BOTTOM,...,x) -> BOTTOM
-//               // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
-//               for(int i=1 ; i<=arity ; i++) {
-//                 TermList diag = `TermList(X);
-//                 for(int j=arity ; j>0 ; j--) {
-//                   if(i==j) {
-//                     diag = `TermList(BOTTOM,diag*);
-//                   } else {
-//                     diag = `TermList(Var("y"+j),diag*);
-//                   }
-//                 }
-//                 bag.add(`Rule(Appl(phi_n,diag),BOTTOM));
-//               }
-//             }
-//           }
-//           // generate congruence rules
-//           if(arity==0) {
-//             bag.add(`Rule(Appl(phi,TermList(Appl(name,TermList()))),
-//                           Appl(name,TermList())));
-
-//           } else {
-//             // phi(f(x1,...,xn)) -> phi_n(phi_s(x1),...,phi_s(xn), 
-//             //                       f(phi_s(x1),...,phi_s(xn)))
-//             TermList args_x = `TermList();
-//             TermList args_phi_s = `TermList();
-//             for(int i=arity ; i>0 ; i--) {
-//               args_x = `TermList(Var("x"+i),args_x*);
-//               args_phi_s = `TermList(Appl(phi_s,TermList(Var("x"+i))),args_phi_s*);
-//             }
-//             bag.add(`Rule(Appl(phi,TermList(Appl(name,args_x))),
-//                   Appl(phi_n,TermList(args_phi_s*,Appl(name,args_phi_s)))));
-//           }
-//         }
-
-//         return phi;
-//       }

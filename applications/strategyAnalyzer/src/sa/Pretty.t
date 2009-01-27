@@ -7,6 +7,8 @@ import java.util.*;
 public class Pretty {
   %include { rule/Rule.tom }
   %include { sl.tom }
+  %include { java/util/types/Map.tom }
+  %include { java/util/types/HashSet.tom }
 
   private static HashMap<String,Term> varsig = new HashMap<String,Term>();
 
@@ -80,6 +82,27 @@ public class Pretty {
     return sb.toString();
   }
 
+  public static String toString(TermList t, boolean forAprove) {
+    StringBuffer sb = new StringBuffer();
+    %match(t) {
+      Cons(x,end) -> {
+        sb.append(Pretty.toString(`x,forAprove));
+        if(!`end.isNil()) {
+          sb.append(",");
+          sb.append(Pretty.toString(`end,forAprove));
+        }
+      }
+
+      TermList(_*,x,end*) -> {
+        sb.append(Pretty.toString(`x,forAprove));
+        if(!`end.isEmptyTermList()) {
+          sb.append(",");
+        }
+      }
+    }
+    return sb.toString();
+  }
+
   public static String toString(Term t, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
@@ -100,34 +123,14 @@ public class Pretty {
 
       Appl(symb,args) -> { 
         sb.append(`symb); 
-
-        if(!(`args.isEmptyTermList() && forAprove)){
+        if(!(`args.isEmptyTermList() && forAprove)) {
           sb.append("(");
-          %match(args) {
-            TermList(_*,x,end*) -> {
-              sb.append(Pretty.toString(`x,forAprove));
-              if(!`end.isEmptyTermList()) {
-                sb.append(",");
-              }
-            }
-          }
+          sb.append(Pretty.toString(`args,forAprove));
           sb.append(")");
         }
       }
     }
     return sb.toString();
-  }
-
-//   %typeterm TreeSet {
-//           implement      { java.util.TreeSet }
-//   }
-
-  %typeterm HashSet {
-          implement      { java.util.HashSet }
-  }
-
-  %typeterm HashMap {
-          implement      { java.util.HashMap }
   }
 
   // Collect the variables
