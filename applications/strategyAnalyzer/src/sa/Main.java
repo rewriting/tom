@@ -68,8 +68,11 @@ public class Main {
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
+      //       System.out.println(generatedRules);
+
       // Transforms the strategy into a rewrite system
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
+
       if(options.withAP == false) {
         generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
