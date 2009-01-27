@@ -274,12 +274,13 @@ public class Compiler {
                   llx += ",X"+j;
                 }
               }
-              bag.add(encodeRule(%[rule(@all_n@(@llx@,Z), Z)]%));
+              bag.add(encodeRule(%[rule(@all_n@(@llx@,Z), Bottom(Z))]%));
             }
           }
         }        
         return all;
       }
+
 
       StratOne(s) -> {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);

@@ -30,17 +30,20 @@
 // (R1<+R2)
 
 // td(try(r1))
-//let S=signature {a:0, b:0, f:1, g:2} in
-//let r1 = { a() -> f(b()) } in 
-//let td = mu y.((r1<+identity);all(y)) in
+let S=signature {a:0, b:0, f:1, g:2} in
+let r1 = { a() -> f(b()) } in 
+let td = mu y.((r1<+identity);all(y)) in
 //let bu = mu y.(all(y);(r1<+identity)) in
 //bu
+td
 
 // innermost(r1)
-//let S=signature {a:0, b:0, f:1, g:2} in
-//let r1 = { a() -> b() } in 
-//let innermost = mu x.(all(x);((r1;x)<+identity))
-//in innermost
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a() -> b() } in 
+// let innermost = mu x.(all(x);((r1;x)<+identity)) in
+// let td = mu y.((innermost<+identity);all(y)) in
+//  innermost
+// td
 
 // repeat(r1)
 //let S=signature {a:0, b:0, f:1, g:2} in
@@ -50,6 +53,6 @@
 
 
 // (r1))
-let S=signature {a:0, b:0, f:1, g:2} in
-let r1 = { a() -> f(b()) } in 
-all(r1)
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a() -> f(b()) } in 
+// all(r1)
