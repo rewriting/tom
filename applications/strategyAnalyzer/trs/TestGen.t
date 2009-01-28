@@ -70,8 +70,9 @@ public class TestGen {
        Clean(Z,BottomList(Cons(Z1,Nil()))) -> BottomList(Cons(Z,Cons(Z1,Nil())))
        Clean(Z,Cons(Z0,Z1)) -> Cons(Z,Cons(Z0,Z1))
 
-       rule5(Bottom(Z)) -> Bottom(Z)
        rule5(Appl(a(),Nil())) -> Appl(b(),Nil())
+
+       rule5(Bottom(Z)) -> Bottom(Z)
        rule5(Appl(b(),Z1)) -> Bottom(Appl(b(),Z1))
        rule5(Appl(f(),Z1)) -> Bottom(Appl(f(),Z1))
        rule5(Appl(g(),Z1)) -> Bottom(Appl(g(),Z1))

@@ -85,14 +85,6 @@ public class Pretty {
   public static String toString(TermList t, boolean forAprove) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
-      Cons(x,end) -> {
-        sb.append(Pretty.toString(`x,forAprove));
-        if(!`end.isNil()) {
-          sb.append(",");
-          sb.append(Pretty.toString(`end,forAprove));
-        }
-      }
-
       TermList(_*,x,end*) -> {
         sb.append(Pretty.toString(`x,forAprove));
         if(!`end.isEmptyTermList()) {
@@ -219,6 +211,13 @@ public class Pretty {
 
 
   public static String generate(List<Rule> bag, Map<String,Integer> sig, String classname) {
+    sig.put("Bottom",1);
+    if(Main.options.generic) {
+      sig.put("BottomList",1);
+      sig.put("Appl",2);
+      sig.put("Cons",2);
+      sig.put("Nil",0);
+    }
     StringBuffer sb = new StringBuffer();
     String lowercaseClassname = classname.toLowerCase();
     sb.append(
@@ -229,7 +228,7 @@ public class @classname@ {
   %gom {
     module m
       abstract syntax
-      T = Bottom(term:T)
+      T = 
 ]%);
     for(String name: sig.keySet()) {
       int arity = sig.get(name);

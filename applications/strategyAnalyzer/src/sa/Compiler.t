@@ -13,8 +13,7 @@ public class Compiler {
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
 
-  private final static Term BOTTOM = `Appl("Bottom",TermList());
-  private final static Term X = `Var("X");
+  private static Tools tools = new Tools();
 
   private static int phiNumber = 0;
   private static String getName(String name) {
@@ -41,85 +40,6 @@ public class Compiler {
     }
   }
 
-  /**
-   * encode: 
-   * @param exp the string representation of the term to meta-encode
-   * @return meta-encoding using Appl and TermList
-   */
-  private static Term encode(String stringterm) {
-    //System.out.println("encode: " + stringterm);
-    Term res = null;
-    ATermFactory factory = SingletonFactory.getInstance();
-    ATerm at = factory.parse(stringterm);
-    res = encode(at);
-    //System.out.println("encode: " + res);
-    return res;
-  }
-  
-  private static Rule encodeRule(String stringterm) {
-    //System.out.println("encodeRule: " + stringterm);
-    Rule res = null;
-    ATermFactory factory = SingletonFactory.getInstance();
-    ATerm at = factory.parse(stringterm);
-    switch(at.getType()) {
-	  	case ATerm.APPL:
-	  		ATermAppl appl = (ATermAppl) at;
-        String name = appl.getName();
-        ATermList args = appl.getArguments();
-        if(name.equals("rule") && args.getLength()==2) {
-          Term lhs = encode(args.getFirst());
-          Term rhs = encode(args.getNext().getFirst());
-          res = `Rule(lhs,rhs);
-        }
-        break;
-    }
-    //System.out.println("encodeRule: " + res);
-    return res;
-  }
-
-  private static boolean isVariableName(String name) {
-    boolean res = true;
-    for(int i=0 ; i<name.length(); i++) {
-      res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)));
-    } 
-    return res;
-  }
-
-  private static Term encode(ATerm at) {
-    Term res = null;
-    switch(at.getType()) {
-	  	case ATerm.APPL:
-	  		ATermAppl appl = (ATermAppl) at;
-        String name = appl.getName();
-        ATermList args = appl.getArguments();
-        if(args.isEmpty() && isVariableName(name)) {
-          res = `Var(name);
-        } else if(name.equals("anti") && args.getLength()==1) {
-          Term term = encode(args.getFirst());
-          res = `Anti(term);
-        } else if(name.equals("at") && args.getLength()==2) {
-          Term var = encode(args.getFirst());
-          Term term = encode(args.getNext().getFirst());
-          res = `At(var,term);
-        } else {
-          res = `Appl(name,encodeList(args));
-        }
-       break; 
-    }
-    return res;
-  }
-
-  private static TermList encodeList(ATermList list) {
-    if(list.isEmpty()) {
-      //return `TermList();
-      return `Nil();
-    } else {
-      Term head = encode(list.getFirst());
-      TermList tail = encodeList(list.getNext());
-      //return `TermList(head,tail*);
-      return `Cons(head,tail*);
-    }
-  }
 
   private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
     //System.out.println("exp = " + e);
@@ -138,9 +58,9 @@ public class Compiler {
       Strat(s) -> {
         String start = "";
         if(Main.options.generic) {
-          compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
+          start = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         } else {
-          compileStrat(bag,extractedSignature,generatedSignature,`s);
+          start = compileStrat(bag,extractedSignature,generatedSignature,`s);
         }
         topName = start;
       }
@@ -164,7 +84,7 @@ public class Compiler {
         generatedSignature.put(r,1);
         // use AST-syntax because lhs and rhs are already encoded
         bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
-        bag.add(`Rule(Appl(r,TermList(At(X,Anti(lhs)))),encode("Bottom(X)")));
+        bag.add(`Rule(Appl(r,TermList(At(tools.encode("X"),Anti(lhs)))),tools.encode("Bottom(X)")));
         return r;
       }
 
@@ -177,8 +97,8 @@ public class Compiler {
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
-          bag.add(encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
-          bag.add(encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+          bag.add(tools.encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
+          bag.add(tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
           return phi_s;
         } catch(VisitFailure e) {
           System.out.println("failure in StratMu on: " + `s);
@@ -193,14 +113,14 @@ public class Compiler {
       StratIdentity() -> {
         String id = getName("id");
         generatedSignature.put(id,1);
-        bag.add(encodeRule(%[rule(@id@(X), X)]%));
+        bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
         return id;
       }
 
       StratFail() -> {
         String fail = getName("fail");
         generatedSignature.put(fail,1);
-        bag.add(encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+        bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
         return fail;
       }
 
@@ -209,7 +129,7 @@ public class Compiler {
         String n2 = compileStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
         generatedSignature.put(seq,1);
-        bag.add(encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
         return seq;
       }
 
@@ -220,9 +140,9 @@ public class Compiler {
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        bag.add(encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
-        bag.add(encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
-        bag.add(encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
+        bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
+        bag.add(tools.encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
+        bag.add(tools.encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
         return choice;
       }
 
@@ -235,7 +155,7 @@ public class Compiler {
           String name = it.next();
           int arity = generatedSignature.get(name);
           if(arity==0) {
-            bag.add(encodeRule(%[rule(@all@(@name@), @name@)]%));
+            bag.add(tools.encodeRule(%[rule(@all@(@name@), @name@)]%));
           } else {
             String all_n = all+"_"+name;
             generatedSignature.put(all_n,1);
@@ -248,7 +168,7 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ","+phi_s+"(X"+i+")";
               }
-              bag.add(encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
+              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
             }
 
             // generate success rules
@@ -259,7 +179,7 @@ public class Compiler {
               lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
               rx += ",X"+j;
             }
-            bag.add(encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
+            bag.add(tools.encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
 
             // generate failure rules
             // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
@@ -274,13 +194,12 @@ public class Compiler {
                   llx += ",X"+j;
                 }
               }
-              bag.add(encodeRule(%[rule(@all_n@(@llx@,Z), Bottom(Z))]%));
+              bag.add(tools.encodeRule(%[rule(@all_n@(@llx@,Z), Bottom(Z))]%));
             }
           }
         }        
         return all;
       }
-
 
       StratOne(s) -> {
         String phi_s = compileStrat(bag,extractedSignature,generatedSignature,`s);
@@ -291,7 +210,7 @@ public class Compiler {
           String name = it.next();
           int arity = generatedSignature.get(name);
           if(arity==0) {
-            bag.add(encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
+            bag.add(tools.encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
           } else {
             String one_n = one+"_"+name;
 
@@ -304,7 +223,7 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ",X"+i;
               }
-              bag.add(encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
+              bag.add(tools.encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
             }
 
             for(int i=1 ; i<=arity ; i++) {
@@ -329,7 +248,7 @@ public class Compiler {
                 }
                 String one_n_ii = one_n + "_"+(i+1);
                 generatedSignature.put(one_n_ii,arity);
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%));
+                bag.add(tools.encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%));
               } else {
                 // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
                 String lx = "Bottom(X1)";
@@ -338,7 +257,7 @@ public class Compiler {
                   lx += ",Bottom(X"+j+")";
                   rx += ",X"+j;
                 }
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%));
+                bag.add(tools.encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%));
 
               }
 
@@ -359,7 +278,7 @@ public class Compiler {
                     rx += ",X"+j;
                   }
                 }
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%));
+                bag.add(tools.encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%));
               }
 
             }
@@ -388,8 +307,19 @@ public class Compiler {
         String r = getName("rule");
         generatedSignature.put(r,1);
         // use AST-syntax because lhs and rhs are already encoded
-        bag.add(`Rule(Appl(r,Cons(encode(lhs.toString()),Nil())),encode(rhs.toString())));
-        bag.add(`Rule(Appl(r,Cons(At(X,Anti(encode(lhs.toString()))),Nil())),encode("Bottom(X)")));
+        //System.out.println("lhs = " + `lhs);
+        //System.out.println("encode lhs = " + tools.encodeConsNil(`lhs));
+        //System.out.println("rhs = " + `rhs);
+        //System.out.println("encode rhs = " + tools.encodeConsNil(`rhs));
+        bag.add(`Rule(Appl(r,TermList(tools.metaEncodeConsNil(lhs))),tools.metaEncodeConsNil(rhs)));
+        for(String name:extractedSignature.keySet()) {
+          // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
+          generatedSignature.put("symb_"+name,0);
+          if(!name.equals(`lhs.getsymbol())) {// Not correct: the AP should be correclty compiled
+            String appl = %[Appl(symb_@name@,Z1)]%;
+            bag.add(`Rule(tools.encode(r+"("+appl+")"),tools.encode("Bottom("+appl+")")));
+          }
+        }
         return r;
       }
 
@@ -402,8 +332,8 @@ public class Compiler {
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,newStrat);
-          bag.add(encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
-          bag.add(encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
+          bag.add(tools.encodeRule(%[rule(@mu@(Appl(Z0,Z1)), @phi_s@(Appl(Z0,Z1)))]%));
+          bag.add(tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
           return phi_s;
         } catch(VisitFailure e) {
           System.out.println("failure in StratMu on: " + `s);
@@ -418,14 +348,14 @@ public class Compiler {
       StratIdentity() -> {
         String id = getName("id");
         generatedSignature.put(id,1);
-        bag.add(encodeRule(%[rule(@id@(X), X)]%));
+        bag.add(tools.encodeRule(%[rule(@id@(X), X)]%));
         return id;
       }
 
       StratFail() -> {
         String fail = getName("fail");
         generatedSignature.put(fail,1);
-        bag.add(encodeRule(%[rule(@fail@(X), Bottom(X))]%));
+        bag.add(tools.encodeRule(%[rule(@fail@(X), Bottom(X))]%));
         return fail;
       }
 
@@ -434,7 +364,7 @@ public class Compiler {
         String n2 = compileGenericStrat(bag,extractedSignature,generatedSignature,`s2);
         String seq = getName("seq");
         generatedSignature.put(seq,1);
-        bag.add(encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
+        bag.add(tools.encodeRule(%[rule(@seq@(X), @n2@(@n1@(X)))]%));
         return seq;
       }
 
@@ -445,9 +375,9 @@ public class Compiler {
         String choice2 = getName("choice");
         generatedSignature.put(choice,1);
         generatedSignature.put(choice2,1);
-        bag.add(encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
-        bag.add(encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
-        bag.add(encodeRule(%[rule(@choice2@(at(X,anti(Bottom(Y)))), X)]%));
+        bag.add(tools.encodeRule(%[rule(@choice@(X), @choice2@(@n1@(X)))]%));
+        bag.add(tools.encodeRule(%[rule(@choice2@(Bottom(X)), @n2@(X))]%));
+        bag.add(tools.encodeRule(%[rule(@choice2@(Appl(Z0,Z1)), Appl(Z0,Z1))]%));
         return choice;
       }
 
@@ -460,7 +390,7 @@ public class Compiler {
           String name = it.next();
           int arity = generatedSignature.get(name);
           if(arity==0) {
-            bag.add(encodeRule(%[rule(@all@(@name@), @name@)]%));
+            bag.add(tools.encodeRule(%[rule(@all@(@name@), @name@)]%));
           } else {
             String all_n = all+"_"+name;
             generatedSignature.put(all_n,1);
@@ -473,7 +403,7 @@ public class Compiler {
                 lx += ",X"+i;
                 rx += ","+phi_s+"(X"+i+")";
               }
-              bag.add(encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
+              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
             }
 
             // generate success rules
@@ -484,7 +414,7 @@ public class Compiler {
               lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
               rx += ",X"+j;
             }
-            bag.add(encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
+            bag.add(tools.encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
 
             // generate failure rules
             // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
@@ -499,95 +429,42 @@ public class Compiler {
                   llx += ",X"+j;
                 }
               }
-              bag.add(encodeRule(%[rule(@all_n@(@llx@,Z), Z)]%));
+              bag.add(tools.encodeRule(%[rule(@all_n@(@llx@,Z), Z)]%));
             }
           }
         }        
         return all;
       }
+
       StratOne(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
         generatedSignature.put(one,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
-          int arity = generatedSignature.get(name);
-          if(arity==0) {
-            bag.add(encodeRule(%[rule(@one@(@name@), Bottom(@name@))]%));
-          } else {
-            String one_n = one+"_"+name;
+        String one_1 = one+"_1";
+        generatedSignature.put(one_1,1);
+        String one_2 = one+"_2";
+        generatedSignature.put(one_2,1);
+        String one_3 = one+"_3";
+        generatedSignature.put(one_3,2);
+        String clean = getName("clean");
+        generatedSignature.put(clean,2);
+        // one
+        bag.add(tools.encodeRule(%[rule(@one@(Appl(Z0,Z1)), @one_1@(Appl(Z0,@one_2@(Z1))))]%));
+        // one_1
+        bag.add(tools.encodeRule(%[rule(@one_1@(Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z)))]%));
+        bag.add(tools.encodeRule(%[rule(@one_1@(Appl(Z0,Cons(X1,X2))), Appl(Z0,Cons(X1,X2)))]%));
+        // one_2
+        bag.add(tools.encodeRule(%[rule(@one_2@(Nil()), BottomList(Nil()))]%));
+        bag.add(tools.encodeRule(%[rule(@one_2@(Cons(X1,X2)), @one_3@(@phi_s@(X1),X2))]%));
+        // one_3
+        bag.add(tools.encodeRule(%[rule(@one_3@(Appl(Z0,Z1),X2), Cons(Appl(Z0,Z1),X2))]%));
+        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(Z),Nil()), BottomList(Cons(Z,Nil())))]%));
+        bag.add(tools.encodeRule(%[rule(@one_3@(Bottom(Z),Cons(Z0,Z1)), @clean@(Z,@one_2@(Cons(Z0,Z1))))]%));
+        // clean
+        bag.add(tools.encodeRule(%[rule(@clean@(Z,BottomList(Nil())), BottomList(Cons(Z,Nil())))]%));
+        bag.add(tools.encodeRule(%[rule(@clean@(Z,BottomList(Cons(Z1,Nil()))), BottomList(Cons(Z,Cons(Z1,Nil()))))]%));
+        bag.add(tools.encodeRule(%[rule(@clean@(Z,Cons(Z0,Z1)), Cons(Z,Cons(Z0,Z1)))]%));
 
-            {
-              // main case
-              // one(f(x1,...,xn)) -> one_n_1(phi_s(x1),x2,...,xn)
-              String lx = "X1"; 
-              String rx = phi_s+"(X1)"; 
-              for(int i=2 ; i<=arity ; i++) {
-                lx += ",X"+i;
-                rx += ",X"+i;
-              }
-              bag.add(encodeRule(%[rule(@one@(@name@(@lx@)), @one_n@_1(@rx@))]%));
-            }
-
-            for(int i=1 ; i<=arity ; i++) {
-              String one_n_i = one_n + "_"+i;
-              generatedSignature.put(one_n_i,arity);
-              if(i<arity) {
-                // one_f_i(Bottom(x1),...,Bottom(xi),xj,...,xn)
-                // -> one_f_(i+1)(Bottom(x1),...,Bottom(xi),phi_s(x_i+1),...,xn)
-                String lx = "Bottom(X1)";
-                String rx = "Bottom(X1)";
-                for(int j=2; j<=arity;j++) {
-                  if(j<=i) {
-                    lx += ",Bottom(X"+j+")";
-                    rx += ",Bottom(X"+j+")";
-                  } else if(j==i+1) {
-                    lx += ",X"+j;
-                    rx += ","+phi_s+"(X"+j+")";
-                  } else {
-                    lx += ",X"+j;
-                    rx += ",X"+j;
-                  }
-                }
-                String one_n_ii = one_n + "_"+(i+1);
-                generatedSignature.put(one_n_ii,arity);
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @one_n_ii@(@rx@))]%));
-              } else {
-                // one_f_n(Bottom(x1),...,Bottom(xn)) -> Bottom(f(x1,...,xn))
-                String lx = "Bottom(X1)";
-                String rx = "X1";
-                for(int j=2; j<=arity;j++) {
-                  lx += ",Bottom(X"+j+")";
-                  rx += ",X"+j;
-                }
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), Bottom(@name@(@rx@)))]%));
-
-              }
-
-              {
-                // one_f_i(Bottom(x1),...,xi@!Bottom(_),xj,...,xn)
-                // -> f(x1,...,xi,...,xn)
-                String lx = (i==1)?"at(X1,anti(Bottom(Y)))":"Bottom(X1)";
-                String rx = "X1";
-                for(int j=2; j<=arity;j++) {
-                  if(j<i) {
-                    lx += ",Bottom(X"+j+")";
-                    rx += ",X"+j;
-                  } else if(j==i) {
-                    lx += ",at(X"+j+",anti(Bottom(Y)))";
-                    rx += ",X"+j;
-                  } else {
-                    lx += ",X"+j;
-                    rx += ",X"+j;
-                  }
-                }
-                bag.add(encodeRule(%[rule(@one_n_i@(@lx@), @name@(@rx@))]%));
-              }
-
-            }
-          }
-        }
         return one;
       }
 
@@ -760,6 +637,80 @@ public class Compiler {
     visit Term {
       Anti(t)  -> {
         pos.add(getEnvironment().getPosition());
+      }
+    }
+  }
+ 
+  private static String genAbstractTerm(String name, int arity) {
+    if(arity==0) {
+      return name;
+    } else {
+      String args = "Z1";
+      for(int i=2 ; i<=arity ; i++) {
+        args += ", Z" + i;
+      }
+      return name + "(" + args + ")";
+    }
+  }
+  
+  public static Collection<Rule> expandAntiPattern2(Rule rule, Map<String,Integer> extractedSignature) {
+    Collection<Rule> res = new HashSet<Rule>();
+    try {
+      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
+      Collection<Rule> bag = new HashSet<Rule>();
+      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
+      for(Rule r:bag) {
+        res.addAll(expandAntiPattern2(r,extractedSignature));
+      }
+    } catch(VisitFailure e) {
+      res.add(rule);
+    }
+    return res;
+  }
+  
+  %strategy ContainsAntiPattern() extends Fail() {
+    visit Term {
+      t@Anti(_)  -> { return `t; }
+    }
+  }
+
+  %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map) extends Identity() {
+    visit Term {
+      Anti(t) -> {
+        boolean generic = Main.options.generic;
+        Term antiterm = (generic)?tools.decodeConsNil(`t):`t;
+        %match(antiterm) { 
+          Appl(name,args)  -> {
+            Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
+            // add g(Z1,...) ... h(Z1,...)
+            for(String otherName:signature.keySet()) {
+              if(`name != otherName) {
+                int arity = signature.get(otherName);
+                Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                if(generic) {
+                  newt = tools.metaEncodeConsNil(newt);
+                }
+                Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                //System.out.println("new rule: " + newr);
+                bag.add(newr);
+              }
+            }
+
+            // add f(!a1,...) ... f(a1,...,!an)
+            sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
+            int arity = tl.length();
+            Term[] array = new Term[arity];
+            array = tl.toArray(array);
+            for(int i=0 ; i<arity ; i++) {
+              array[i] = `Anti(array[i]);
+              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+              //System.out.println("newt: " + newt);
+              Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+              //System.out.println("newr: " + newr);
+              bag.add(newr);
+            }
+          }
+        }
       }
     }
   }
