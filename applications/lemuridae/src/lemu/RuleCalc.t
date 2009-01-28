@@ -64,7 +64,7 @@ public class RuleCalc {
     // looks for permutability problems
     %match(PropRuleList pruleList) {
       (r1*, r@proprule(_,prop) ,r2*) -> {
-        lastPos = forallNeg(`prop, 0, 1, new Position(new int[0]));
+        lastPos = forallNeg(`prop, 0, 1, Position.makeFromArray(new int[0]));
         if(lastPos != null) {
           // removing lastRule from the rules
           pruleList = `proprulelist(r1*,r2*);
