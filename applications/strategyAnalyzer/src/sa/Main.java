@@ -86,6 +86,7 @@ public class Main {
         generatedRules = Compiler.expandAt(generatedRules);
       }
 
+
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
       Collections.sort(orderedRules, new MyRuleComparator());
 

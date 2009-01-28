@@ -613,25 +613,67 @@ public class Compiler {
       for(Position pos: posSet) {
         Term at = (Term)pos.getSubterm().visitLight(t);
         String symbolName = "DoesntExist";
+        Term below_at = at;
         %match(at) {
-          Anti(Appl(name,_)) -> { symbolName = `name;}
+          Anti(bat@Appl(name,_)) -> { 
+            symbolName = `name;
+            below_at = `bat;
+          }
         }
         if(symbolName.compareTo("doesntexist")==0) {
           System.out.println(" PROBLEM "); 
         } // TO CHANGE
-        
-        Set<String> gensig = new HashSet<String>(expsig.keySet());
-        gensig.remove(symbolName); // all but current
-        for(String sn: gensig) {
-          Term t2p = (Term)pos.getReplace(expsig.get(sn)).visitLight(t);
+
+        // Generate all terms corresponding to a pattern
+        HashSet<Term> antiTerms = propagateAnti(below_at,expsig);
+        for(Term allt : antiTerms){
+          Term t2p = (Term)pos.getReplace(allt).visitLight(t);
           termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
-          //           System.out.println(" replace with  " + expsig.get(sn) + "  :  " + t2p);
         }
+        
+//         // SIMPLIFIED GENERATE 
+//         Set<String> gensig = new HashSet<String>(expsig.keySet());
+//         gensig.remove(symbolName); // all but current
+//         for(String sn: gensig) {
+//           Term t2p = (Term)pos.getReplace(expsig.get(sn)).visitLight(t);
+//           termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
+//           //           System.out.println(" replace with  " + expsig.get(sn) + "  :  " + t2p);
+//         }
       }
     }
     
     return termSet;
   }
+
+
+  public static HashSet<Term> propagateAnti(Term t, Map<String,Term> expsig) 
+    throws VisitFailure {
+
+    HashSet<Term> termSet = new HashSet<Term>();
+
+    %match(t) {
+      Appl(name,tl) -> {
+
+        Set<String> gensig = new HashSet<String>(expsig.keySet());
+        gensig.remove(`name); // all but current
+        for(String sn : gensig) {
+          termSet.add(expsig.get(sn));
+        }
+        
+        %match(tl) {
+          TermList(a*,arg,b*) -> {
+            HashSet<Term> antiArgs = propagateAnti(`arg,expsig);
+            for(Term curr_arg:antiArgs){
+              termSet.add(`Appl(name,TermList(a,curr_arg,b)));
+            }
+          }
+        }
+      }
+    }
+
+    return termSet; 
+  }
+
 
   %strategy CollectAntiPatterns(pos:HashSet) extends Identity() {
     visit Term {
