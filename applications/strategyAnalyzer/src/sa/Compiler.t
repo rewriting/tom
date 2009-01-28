@@ -656,6 +656,7 @@ public class Compiler {
 
         Set<String> gensig = new HashSet<String>(expsig.keySet());
         gensig.remove(`name); // all but current
+        gensig.remove("Bottom"); //  no Bottom when generating
         for(String sn : gensig) {
           termSet.add(expsig.get(sn));
         }
