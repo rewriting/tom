@@ -1,3 +1,9 @@
+2009-01-28 balland
+  * bootinstall
+
+2009-01-28 balland
+	*  In Gom, avoid Tom compiling when it is not necessary
+
 2009-01-21 jcb
   * Corrected the double display of Tom/Gom help
 
@@ -12,7 +18,7 @@
   * re-implement the constraint scheduler using in-place swaping
   * de-activate the SwitchNumericConstraints rule (it does not terminate)
 
-2008-12-19
+2008-12-19 balland
   * use generics for visit methods
 
 2008-11-24 jcb
