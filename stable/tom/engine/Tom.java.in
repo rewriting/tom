@@ -99,10 +99,15 @@ public class Tom {
     }
     // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
     ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
-    initConfigurationManager.initialize(args);
+    if(initConfigurationManager.initialize(args) == 1) {
+      return 1;
+    }
     // Retrieve the whole fileList that has to be compiled
     List<String> wholeInputToCompileList =
       initConfigurationManager.getOptionManager().getInputToCompileList();
+    //if(wholeInputToCompileList == null) {
+    //  return 1;
+    //}
     // here will be the choice between mono and multi thread
     if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("multithread")).booleanValue()) {
       //multi thread

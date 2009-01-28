@@ -252,52 +252,6 @@
   make( new_AstName) { new tom.engine.adt.tomname.strategy.tomnumber.Make_NameNumber( $new_AstName) }
 }
 
-    %op Strategy _EmptyconcTomNumber() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist._EmptyconcTomNumber)))}
-      
-        make() { new tom.engine.adt.tomname.strategy.tomnumberlist._EmptyconcTomNumber() }
-    }
-  
-  
-  %op Strategy When_EmptyconcTomNumber(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyconcTomNumber(),s) }
-  }
-
-  %op Strategy Is_EmptyconcTomNumber() {
-    make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_EmptyconcTomNumber()}
-  }
-  
-%op Strategy Make_EmptyconcTomNumber() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Make_EmptyconcTomNumber))) }
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_EmptyconcTomNumber() }
-}
-
-    %op Strategy _ConsconcTomNumber(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist._ConsconcTomNumber)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.tomname.strategy.tomnumberlist._ConsconcTomNumber($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsconcTomNumber(s:Strategy) {
-    make(s) { `Sequence(Is_ConsconcTomNumber(),s) }
-  }
-
-  %op Strategy Is_ConsconcTomNumber() {
-    make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_ConsconcTomNumber()}
-  }
-  
-%op Strategy Make_ConsconcTomNumber(_HeadconcTomNumber:Strategy, _TailconcTomNumber:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber))) }
-
-  get_slot(_HeadconcTomNumber, t) { $t._HeadconcTomNumber }
-  get_slot(_TailconcTomNumber, t) { $t._TailconcTomNumber }
-  make( new_HeadconcTomNumber,  new_TailconcTomNumber) { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber( $new_HeadconcTomNumber,  $new_TailconcTomNumber) }
-}
-
     %op Strategy _EmptyconcTomName() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnamelist._EmptyconcTomName)))}
       
@@ -342,6 +296,52 @@
   get_slot(_HeadconcTomName, t) { $t._HeadconcTomName }
   get_slot(_TailconcTomName, t) { $t._TailconcTomName }
   make( new_HeadconcTomName,  new_TailconcTomName) { new tom.engine.adt.tomname.strategy.tomnamelist.Make_ConsconcTomName( $new_HeadconcTomName,  $new_TailconcTomName) }
+}
+
+    %op Strategy _EmptyconcTomNumber() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist._EmptyconcTomNumber)))}
+      
+        make() { new tom.engine.adt.tomname.strategy.tomnumberlist._EmptyconcTomNumber() }
+    }
+  
+  
+  %op Strategy When_EmptyconcTomNumber(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyconcTomNumber(),s) }
+  }
+
+  %op Strategy Is_EmptyconcTomNumber() {
+    make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_EmptyconcTomNumber()}
+  }
+  
+%op Strategy Make_EmptyconcTomNumber() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Make_EmptyconcTomNumber))) }
+
+  make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_EmptyconcTomNumber() }
+}
+
+    %op Strategy _ConsconcTomNumber(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist._ConsconcTomNumber)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.tomname.strategy.tomnumberlist._ConsconcTomNumber($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsconcTomNumber(s:Strategy) {
+    make(s) { `Sequence(Is_ConsconcTomNumber(),s) }
+  }
+
+  %op Strategy Is_ConsconcTomNumber() {
+    make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_ConsconcTomNumber()}
+  }
+  
+%op Strategy Make_ConsconcTomNumber(_HeadconcTomNumber:Strategy, _TailconcTomNumber:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber))) }
+
+  get_slot(_HeadconcTomNumber, t) { $t._HeadconcTomNumber }
+  get_slot(_TailconcTomNumber, t) { $t._TailconcTomNumber }
+  make( new_HeadconcTomNumber,  new_TailconcTomNumber) { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber( $new_HeadconcTomNumber,  $new_TailconcTomNumber) }
 }
 
     %op Strategy _Name(arg0:Strategy) {
@@ -434,13 +434,13 @@
   make( new_Name) { new tom.engine.adt.tomname.strategy.tomname.Make_AntiName( $new_Name) }
 }
 
-            %op Strategy _concTomNumber(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_concTomNumber"),Choice(_ConsconcTomNumber(sub,MuVar("x_concTomNumber")),_EmptyconcTomNumber())) }
-            }
-            
             %op Strategy _concTomName(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_concTomName"),Choice(_ConsconcTomName(sub,MuVar("x_concTomName")),_EmptyconcTomName())) }
+            }
+            
+            %op Strategy _concTomNumber(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_concTomNumber"),Choice(_ConsconcTomNumber(sub,MuVar("x_concTomNumber")),_EmptyconcTomNumber())) }
             }
             
