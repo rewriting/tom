@@ -257,7 +257,7 @@ public class GraphExpander {
           ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
           InterfaceHookDecl(CutOperator(opDecl),
             Code("tom.library.sl.Path")),
-          BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
+          BlockHookDecl(CutOperator(opDecl),Code(codeBlock),true()));
   }
 
   private HookDeclList expHooksModule(GomModuleName gomModuleName,
@@ -551,7 +551,7 @@ public class GraphExpander {
 
     return `ConcHookDecl(
         ImportHookDecl(CutModule(mDecl),Code(codeImport)),
-        BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
+        BlockHookDecl(CutModule(mDecl),Code(codeBlock),true()));
   }
 
   private String getStrategies(SortList sorts) {

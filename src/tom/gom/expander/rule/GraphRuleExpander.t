@@ -355,7 +355,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     }
   }
 
-   return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
+   return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString()),true()),ImportHookDecl(sdecl,Code(imports)));
   }
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
@@ -439,7 +439,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   }
             ]%);
 
-          return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString())));
+          return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString()),true()));
   }
 
   private String genTerm(Term term) {

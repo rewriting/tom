@@ -254,7 +254,7 @@ matchblock: {
       }
     }
   */
-    if(!hooks.isEmptyConcHook()) {
+    if(hooks.containsTomCode()) {
       mapping.generate(writer); 
     }
   }

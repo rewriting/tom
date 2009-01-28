@@ -43,10 +43,12 @@ public class FreshExpander {
   %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
   %typeterm FreshExpander { implement { tom.gom.expander.FreshExpander } }
 
+  private SymbolTable st;
   private GomEnvironment gomEnvironment;
 
   public FreshExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
+    this.st = gomEnvironment.getSymbolTable();
   }
 
   public GomEnvironment getGomEnvironment() {
@@ -64,8 +66,8 @@ public class FreshExpander {
         `Sequence(
             TopDown(ExpandAtoms(list)),
             TopDown(UpdateSpecialization(list))).visitLight(m);
-      getGomEnvironment().getSymbolTable().setPackage(pack);
-      getGomEnvironment().getSymbolTable().fill(res);
+      st.setPackage(pack);
+      st.fill(res);
       res = addRawSortsAndConstructors(res);
       res = addAtomHooks(res);
       res = addSortHooks(res);
@@ -90,10 +92,10 @@ public class FreshExpander {
 
   private String alphamapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-        if (getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String aid = st.getFullSortClassName(a);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@InnerMap]%);
         } else 
@@ -107,10 +109,10 @@ public class FreshExpander {
 
   private String newAlphamapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String aid = st.getFullSortClassName(a);
       buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort) && getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
     }
     return buf.toString();
@@ -119,12 +121,12 @@ public class FreshExpander {
   private String exportmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true; 
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-        if (getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) {
+      String aid = st.getFullSortClassName(a);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.ExportMap<@aid@> @a@InnerMap]%);
         } else 
@@ -139,12 +141,12 @@ public class FreshExpander {
   private String newExportmapList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true; 
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ExportMap<@aid@>()]%);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort) && getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.ExportMap<@aid@>()]%);
     }
     return buf.toString();
@@ -153,12 +155,12 @@ public class FreshExpander {
   private String convertmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true; 
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-        if (getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) {
+      String aid = st.getFullSortClassName(a);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.ConvertMap<@aid@> @a@InnerMap]%);
         } else 
@@ -173,12 +175,12 @@ public class FreshExpander {
   private String newConvertmapList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true; 
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
-      if(getGomEnvironment().getSymbolTable().isPatternType(sort) && getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
         buf.append(%[,new tom.library.freshgom.ConvertMap<@aid@>()]%);
     }
     return buf.toString();
@@ -187,7 +189,7 @@ public class FreshExpander {
   /* call to expression field inside expression type */
   private String alphaRecCall1(String sort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(%[,@a@Map]%);
     }
     return buf.toString();
@@ -196,9 +198,9 @@ public class FreshExpander {
   /* call to pattern field inside expression type */
   private String alphaRecCall2(String sort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(%[,@a@Map]%);
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a))
+      if(st.getBoundAtoms(sort).contains(a))
         buf.append(%[,@a@InnerMap]%);
     }
     return buf.toString();
@@ -207,8 +209,8 @@ public class FreshExpander {
   /* call to inner field inside pattern type */
   private String alphaRecCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(fromsort).contains(a)) 
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(st.getBoundAtoms(fromsort).contains(a)) 
         buf.append(%[,@a@InnerMap]%);
       else
         buf.append(%[,@a@Map]%);
@@ -219,8 +221,8 @@ public class FreshExpander {
   /* call to outer field inside pattern type */
   private String alphaRecCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(fromsort).contains(a)) 
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(st.getBoundAtoms(fromsort).contains(a)) 
         buf.append(%[,@a@OuterMap]%);
       else
         buf.append(%[,@a@Map]%);
@@ -231,7 +233,7 @@ public class FreshExpander {
   /* call to neutral field inside pattern type */
   private String alphaRecCall5(String sort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(%[,@a@Map]%);
     }
     return buf.toString();
@@ -240,9 +242,9 @@ public class FreshExpander {
   /* call to pattern field inside pattern type */
   private String alphaRecCall6(String tosort) {
     StringBuffer buf = new StringBuffer();
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
+    for(String a: st.getAccessibleAtoms(tosort)) {
       // bound atoms have to be the same
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(tosort).contains(a)) {
+      if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(%[,@a@OuterMap]%);
         buf.append(%[,@a@InnerMap]%);
       } else buf.append(%[,@a@Map]%);
@@ -255,7 +257,7 @@ public class FreshExpander {
   private String recCall1(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(",");
       else first = false;
       buf.append(%[@a@Map]%);
@@ -267,11 +269,11 @@ public class FreshExpander {
   private String recCall2(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(",");
       else first = false;
       buf.append(%[@a@Map]%);
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(sort).contains(a))
+      if(st.getBoundAtoms(sort).contains(a))
         buf.append(%[,@a@InnerMap]%);
     }
     return buf.toString();
@@ -282,11 +284,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     // for(String a: st.getAccessibleAtoms(tosort)) {
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
+    for(String a: st.getAccessibleAtoms(tosort)) {
       if(!first) buf.append(",");
       else first = false;
       // if(st.getBoundAtoms(fromsort).contains(a)) 
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a)) 
         buf.append(%[@a@InnerMap]%);
       else
         buf.append(%[@a@Map]%);
@@ -298,10 +300,10 @@ public class FreshExpander {
   private String recCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
+    for(String a: st.getAccessibleAtoms(tosort)) {
       if(!first) buf.append(",");
       else first = false;
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a)) 
         buf.append(%[@a@OuterMap]%);
       else
         buf.append(%[@a@Map]%);
@@ -313,7 +315,7 @@ public class FreshExpander {
   private String recCall5(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
+    for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(",");
       else first = false;
       buf.append(%[@a@Map]%);
@@ -325,11 +327,11 @@ public class FreshExpander {
   private String recCall6(String tosort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(tosort)) {
+    for(String a: st.getAccessibleAtoms(tosort)) {
       if(!first) buf.append(",");
       else first = false;
       // bound atoms have to be the same
-      if(getGomEnvironment().getSymbolTable().getBoundAtoms(tosort).contains(a)) {
+      if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(%[@a@OuterMap]%);
         buf.append(%[,@a@InnerMap]%);
       } else buf.append(%[@a@Map]%);
@@ -341,10 +343,10 @@ public class FreshExpander {
   private String hashtableArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
+    for(String a: st.getBoundAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      String aid = st.getFullSortClassName(a);
       buf.append( %[java.util.Hashtable<@aid@,@aid@> @a@Map]% );
     }
     return buf.toString();
@@ -354,10 +356,10 @@ public class FreshExpander {
   private String newHashtableList(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
+    for(String a: st.getBoundAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      String aid = st.getFullSortClassName(a);
       buf.append(%[new java.util.Hashtable<@aid@,@aid@>()]%);
     }
     return buf.toString();
@@ -367,7 +369,7 @@ public class FreshExpander {
   private String hashtableRecursiveCall(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
+    for(String a: st.getBoundAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
       buf.append(%[@a@Map]%);
@@ -378,13 +380,13 @@ public class FreshExpander {
   /* generates "raw_f1,raw_f2,...,raw_fn" for fields of cons
    except for builtins where no new is added */
   private String rawArgList(String cons) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(cons);
+    String sort = st.getSort(cons);
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String f: getGomEnvironment().getSymbolTable().getFields(cons)) {
+    for(String f: st.getFields(cons)) {
       if(!first) buf.append(",");
       else first = false;
-      buf.append(getGomEnvironment().isBuiltin(getGomEnvironment().getSymbolTable().getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
+      buf.append(gomEnvironment.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
     }
     return buf.toString();
   }
@@ -392,13 +394,13 @@ public class FreshExpander {
   /* generates "f1,f2,...,fn" for fields of cons
    except for builtins where no new is added */
   private String convertArgList(String cons) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(cons);
+    String sort = st.getSort(cons);
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    for(String f: getGomEnvironment().getSymbolTable().getFields(cons)) {
+    for(String f: st.getFields(cons)) {
       if(!first) buf.append(",");
       else first = false;
-      buf.append(getGomEnvironment().isBuiltin(getGomEnvironment().getSymbolTable().getSort(cons,f))? getGomEnvironment().getSymbolTable().rawGetter(cons,f) :f);
+      buf.append(gomEnvironment.isBuiltin(st.getSort(cons,f))? st.rawGetter(cons,f) :f);
     }
     return buf.toString();
   }
@@ -419,7 +421,7 @@ public class FreshExpander {
   private GomModuleList addSortBlockHook
     (GomModuleList ml, String sort, String code) {
       Production hook = 
-        `Hook(KindSort(),sort,HookKind("block"),
+        `Hook(KindSort(),sort,HookKind("javablock"),
             ConcArg(),code,OptionList());
       try { 
         return (GomModuleList)
@@ -433,17 +435,17 @@ public class FreshExpander {
   /* add the hook next to the declaration of the constructor's sort */
   private GomModuleList addConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
-      String sort = getGomEnvironment().getSymbolTable().getSort(cons);
+      String sort = st.getSort(cons);
       IdKind kind = `KindOperator();
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(getGomEnvironment().getSymbolTable().isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) { 
         kind = `KindFutureOperator(FutureCons());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
-      } else if (getGomEnvironment().getSymbolTable().isGeneratedNil(cons)) { 
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
         kind = `KindFutureOperator(FutureNil());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
+        cons = st.getBaseName(cons);
       }
-      Production hook = `Hook(kind,cons,HookKind("block"),
+      Production hook = `Hook(kind,cons,HookKind("javablock"),
           ConcArg(),code,OptionList());
       try { 
         return (GomModuleList)
@@ -456,22 +458,22 @@ public class FreshExpander {
   /* add the hook next to the declaration of the constructor's sort */
   private GomModuleList addRawConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
-      String sort = getGomEnvironment().getSymbolTable().getSort(cons);
+      String sort = st.getSort(cons);
       IdKind kind = `KindOperator();
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(getGomEnvironment().getSymbolTable().isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) { 
         kind = `KindFutureOperator(FutureCons());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
-      } else if (getGomEnvironment().getSymbolTable().isGeneratedNil(cons)) { 
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
         kind = `KindFutureOperator(FutureNil());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
+        cons = st.getBaseName(cons);
       }
       Production hook = 
-        `Hook(kind,getGomEnvironment().getSymbolTable().rawCons(cons),HookKind("block"),
+        `Hook(kind,st.rawCons(cons),HookKind("javablock"),
             ConcArg(),code,OptionList());
       try { 
         return (GomModuleList)
-          `OnceTopDown(AddHook(getGomEnvironment().getSymbolTable().rawCons(sort),hook)).visitLight(ml); 
+          `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
         throw new RuntimeException("Should never happen"); 
@@ -496,15 +498,15 @@ public class FreshExpander {
   /* add the hook next to the declaration of the constructor's sort */
   private GomModuleList addConstructorMappingHook
     (GomModuleList ml, String cons, String code) {
-      String sort = getGomEnvironment().getSymbolTable().getSort(cons);
+      String sort = st.getSort(cons);
       IdKind kind = `KindOperator();
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(getGomEnvironment().getSymbolTable().isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) { 
         kind = `KindFutureOperator(FutureCons());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
-      } else if (getGomEnvironment().getSymbolTable().isGeneratedNil(cons)) { 
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
         kind = `KindFutureOperator(FutureNil());
-        cons = getGomEnvironment().getSymbolTable().getBaseName(cons);
+        cons = st.getBaseName(cons);
       }
       Production hook = `Hook(kind,cons,HookKind("mapping"),
           ConcArg(),code,OptionList());
@@ -519,8 +521,8 @@ public class FreshExpander {
   /* -- sort hooks -- */
 
   private GomModuleList addSortHooks(GomModuleList ml) {
-    for(String s: getGomEnvironment().getSymbolTable().getSorts()) 
-      if(getGomEnvironment().getSymbolTable().isExpressionType(s) || getGomEnvironment().getSymbolTable().isPatternType(s))
+    for(String s: st.getSorts()) 
+      if(st.isExpressionType(s) || st.isPatternType(s))
         ml = addSortBlockHook(ml,s,sortBlockHookString(s));
     return ml;
   }
@@ -531,11 +533,11 @@ public class FreshExpander {
     String newalphamaps = newAlphamapList(sort);
     String exportmapargs = exportmapArgList(sort);
     String newexportmaps = newExportmapList(sort);
-    String rawsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(sort);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String rawsortid = st.qualifiedRawSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = "{";
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String aid = st.getFullSortClassName(a);
       res += %[ 
         public abstract @sortid@ 
           rename@a@(java.util.Hashtable<@aid@,@aid@> map); 
@@ -568,7 +570,7 @@ public class FreshExpander {
       public abstract @rawsortid@ _export(@exportmapargs@);
     ]%;
 
-    if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
+    if(st.isPatternType(sort)) {
       String newhashtables = newHashtableList(sort);
       String hashtableargs = hashtableArgList(sort);
       res += %[ 
@@ -579,8 +581,8 @@ public class FreshExpander {
         public abstract @sortid@ _refresh(@hashtableargs@); 
       ]%;
 
-      for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
-        String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.getFullSortClassName(a);
         res += %[
           public java.util.Set<@aid@> getBound@a@() {
             java.util.HashSet<@aid@> res = new java.util.HashSet<@aid@>();
@@ -604,9 +606,9 @@ public class FreshExpander {
   /* -- raw sort hooks -- */
 
   private GomModuleList addRawSortHooks(GomModuleList ml) {
-    for(String s: getGomEnvironment().getSymbolTable().getSorts()) 
-      if(getGomEnvironment().getSymbolTable().isExpressionType(s) || getGomEnvironment().getSymbolTable().isPatternType(s))
-        ml = addSortBlockHook(ml,getGomEnvironment().getSymbolTable().rawSort(s),rawSortBlockHookString(s));
+    for(String s: st.getSorts()) 
+      if(st.isExpressionType(s) || st.isPatternType(s))
+        ml = addSortBlockHook(ml,st.rawSort(s),rawSortBlockHookString(s));
     return ml;
   }
 
@@ -614,7 +616,7 @@ public class FreshExpander {
   private String rawSortBlockHookString(String sort) {
     String convertmapargs = convertmapArgList(sort);
     String newconvertmaps = newConvertmapList(sort);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = %[{
      /**
@@ -627,9 +629,9 @@ public class FreshExpander {
       public abstract @sortid@ _convert(@convertmapargs@);
     ]%;
 
-    if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-      for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
-        String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    if(st.isPatternType(sort)) {
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.getFullSortClassName(a);
         res += %[
           public tom.library.freshgom.ConvertMap<@aid@> getBound@a@Map() {
             tom.library.freshgom.ConvertMap<@aid@> res = 
@@ -649,29 +651,29 @@ public class FreshExpander {
   /* -- non variadic constructor hooks -- */
 
   private GomModuleList addConstructorHooks(GomModuleList ml) {
-    for(String s: getGomEnvironment().getSymbolTable().getSorts()) 
-      if(getGomEnvironment().getSymbolTable().isExpressionType(s) || getGomEnvironment().getSymbolTable().isPatternType(s))
-        for(String c: getGomEnvironment().getSymbolTable().getConstructors(s))
-          if(! getGomEnvironment().getSymbolTable().isVariadic(c))
+    for(String s: st.getSorts()) 
+      if(st.isExpressionType(s) || st.isPatternType(s))
+        for(String c: st.getConstructors(s))
+          if(! st.isVariadic(c))
             ml = addConstructorBlockHook(ml,c,constructorBlockHookString(c));
     return ml;
   }
 
   private String renameRecursiveCalls(String c, String atomSort) {
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(getGomEnvironment().getSymbolTable().getSort(c));
+    String sortid = st.getFullSortClassName(st.getSort(c));
     String res = %[@sortid@ res = this;]%; 
-    String atomSortId = getGomEnvironment().getSymbolTable().getFullSortClassName(atomSort);
-    for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+    String atomSortId = st.getFullSortClassName(atomSort);
+    for(String f: st.getFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort))
           res += %[ 
             @atomSortId@ n_@f@ = map.get(get@f@());
         if (n_@f@ != null) res = res.set@f@(n_@f@); 
         ]%;
       } else {
-        if (!getGomEnvironment().getSymbolTable().getAccessibleAtoms(fsort).contains(atomSort)) continue;
+        if (!st.getAccessibleAtoms(fsort).contains(atomSort)) continue;
         res += %[ res = res.set@f@(get@f@().rename@atomSort@(map)); ]%;
       }
     }
@@ -679,14 +681,14 @@ public class FreshExpander {
   }
 
   private String refreshRecursiveCalls(String c) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
     String res = %[@sortid@ res = this;]%; 
-    for(String f: getGomEnvironment().getSymbolTable().getPatternFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
-        String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        String fsortid = st.getFullSortClassName(fsort);
         res += %[
           @fsortid@ @f@ = get@f@();
           if (@fsort@Map.containsKey(@f@))
@@ -702,11 +704,11 @@ public class FreshExpander {
         res += %[res = res.set@f@(get@f@()._refresh(@arglist@));]%;
       }
     }
-    for(String f: getGomEnvironment().getSymbolTable().getInnerFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
-        if (getGomEnvironment().getSymbolTable().getAccessibleAtoms(fsort).contains(a))
+    for(String f: st.getInnerFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      for(String a: st.getBoundAtoms(sort)) {
+        if (st.getAccessibleAtoms(fsort).contains(a))
           res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
       }
     }
@@ -714,37 +716,37 @@ public class FreshExpander {
   }
 
   private String alphaRecursiveCalls(String c) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
-    if(getGomEnvironment().getSymbolTable().isExpressionType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) {
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) {
           res += %[
             if (get@f@() != o.get@f@()) 
               throw new tom.library.freshgom.AlphaMap.AlphaException();
            ]%;
         } else {
-          String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-          String rawfsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(fsort);
-          if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+          String fsortid = st.getFullSortClassName(fsort);
+          String rawfsortid = st.qualifiedRawSortId(fsort);
+          if (st.isAtomType(fsort)) {
             res += %[
               if (!@fsort@Map.equal(get@f@(),o.get@f@()))
                 throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
-          } else if (getGomEnvironment().getSymbolTable().isExpressionType(fsort)) {
+          } else if (st.isExpressionType(fsort)) {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall1(fsort)@);]%;
-          } else if (getGomEnvironment().getSymbolTable().isPatternType(fsort)) {
+          } else if (st.isPatternType(fsort)) {
             res += %[
               { /* to limit declared variables scope */
               @fsortid@ @f@ = get@f@();;
               @fsortid@ o_@f@ = o.get@f@();
             ]%;
-            for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(fsort)) {
-              String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+            for(String a: st.getBoundAtoms(fsort)) {
+              String aid = st.getFullSortClassName(a);
               res += %[
                 tom.library.freshgom.AlphaMap<@aid@> @f@_bound@a@
                   = new tom.library.freshgom.AlphaMap<@aid@>();
@@ -761,19 +763,19 @@ public class FreshExpander {
     /* if c is a constructor in pattern position --
        the args are of the form 
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
-    } else if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) {
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) {
           res += %[
             if (get@f@() != o.get@f@()) 
               throw new tom.library.freshgom.AlphaMap.AlphaException();
           ]%;
         } else {
-          String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-          String rawfsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(fsort);
-          if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
-            if (getGomEnvironment().getSymbolTable().isBound(c,f)) 
+          String fsortid = st.getFullSortClassName(fsort);
+          String rawfsortid = st.qualifiedRawSortId(fsort);
+          if (st.isAtomType(fsort)) {
+            if (st.isBound(c,f)) 
               res += %[
                 if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
                   throw new tom.library.freshgom.AlphaMap.AlphaException();
@@ -783,11 +785,11 @@ public class FreshExpander {
                     if (!@fsort@Map.equal(get@f@(),o.get@f@()))
                       throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
-          } else if (getGomEnvironment().getSymbolTable().isInner(c,f)) /* must be expression type */ {
+          } else if (st.isInner(c,f)) /* must be expression type */ {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall3(fsort,sort)@);]%;
-          } else if (getGomEnvironment().getSymbolTable().isOuter(c,f)) /* must be expression type */ {
+          } else if (st.isOuter(c,f)) /* must be expression type */ {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall4(fsort,sort)@);]%;
-          } else if (getGomEnvironment().getSymbolTable().isNeutral(c,f)) /* must be expression type */ {
+          } else if (st.isNeutral(c,f)) /* must be expression type */ {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall5(fsort)@);]%;
           } else /* must be pattern type */ {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall6(fsort)@);]%;
@@ -799,30 +801,30 @@ public class FreshExpander {
   }
 
   private String exportRecursiveCalls(String c) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
-    if(getGomEnvironment().getSymbolTable().isExpressionType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) continue;
-        String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-        String rawfsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(fsort);
-        if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) continue;
+        String fsortid = st.getFullSortClassName(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
           res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
-        } else if (getGomEnvironment().getSymbolTable().isExpressionType(fsort)) {
+        } else if (st.isExpressionType(fsort)) {
           res += %[@rawfsortid@ raw_@f@ 
             = get@f@()._export(@recCall1(fsort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isPatternType(fsort)) {
+        } else if (st.isPatternType(fsort)) {
           res += %[
             /* declaration before scoping */
             @rawfsortid@ raw_@f@ = null; ]%;
           res += %[{ /* to limit declared variables scope */]%;
           res += %[@fsortid@ @f@ = get@f@();]%;
-          for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(fsort)) {
-            String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+          for(String a: st.getBoundAtoms(fsort)) {
+            String aid = st.getFullSortClassName(a);
             res += %[
               java.util.Set<@aid@> @f@_bound@a@ = @f@.getBound@a@();
               tom.library.freshgom.ExportMap<@aid@> @a@InnerMap 
@@ -836,24 +838,24 @@ public class FreshExpander {
     /* if c is a constructor in pattern position --
        the args are of the form 
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
-    } else if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) continue;
-        String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-        String rawfsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(fsort);
-        if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
-          if (getGomEnvironment().getSymbolTable().isBound(c,f))
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) continue;
+        String fsortid = st.getFullSortClassName(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          if (st.isBound(c,f))
             res += %[String raw_@f@ = @fsort@InnerMap.get(get@f@());]%;
           else
             res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
-        } else if (getGomEnvironment().getSymbolTable().isInner(c,f)) /* must be expression type */ {
+        } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
             = get@f@()._export(@recCall3(fsort,sort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isOuter(c,f)) /* must be expression type */ {
+        } else if (st.isOuter(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
             = get@f@()._export(@recCall4(fsort,sort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isNeutral(c,f)) /* must be expression type */ {
+        } else if (st.isNeutral(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
             = get@f@()._export(@recCall5(fsort)@);]%;
         } else /* must be pattern type */ {
@@ -862,21 +864,21 @@ public class FreshExpander {
         }
       }
     }
-    return res + %[return `@getGomEnvironment().getSymbolTable().rawCons(c)@(@rawArgList(c)@);]%;
+    return res + %[return @st.qualifiedRawConstructorId(c)@.make(@rawArgList(c)@);]%;
   }
 
   private String getBoundRecursiveCalls(String c, String atomSort) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
     String res = ""; 
-    for(String f: getGomEnvironment().getSymbolTable().getPatternFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[atoms.add(get@f@());]%;
         }
-      } else if (getGomEnvironment().getSymbolTable().getBoundAtoms(fsort).contains(atomSort)) {
+      } else if (st.getBoundAtoms(fsort).contains(atomSort)) {
         res += %[get@f@().getBound@atomSort@(atoms);]%;
       }
     }
@@ -884,21 +886,21 @@ public class FreshExpander {
   }
 
   private String getBound2RecursiveCalls(String c, String a) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
-    String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
+    String aid = st.getFullSortClassName(a);
     String res = ""; 
-    for(String f: getGomEnvironment().getSymbolTable().getPatternFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
         if (fsort.equals(a)) {
           res += %[
             @aid@ @f@ = get@f@();
             m.put(@f@,o.get@f@(),@aid@.fresh@a@(@f@));
           ]%;
         }
-      } else if (getGomEnvironment().getSymbolTable().getBoundAtoms(fsort).contains(a)) {
+      } else if (st.getBoundAtoms(fsort).contains(a)) {
         res += %[get@f@().getBound@a@2(o.get@f@(),m);]%;
       }
     }
@@ -906,15 +908,15 @@ public class FreshExpander {
   }
 
   private String constructorBlockHookString(String c) {
-    String cid = getGomEnvironment().getSymbolTable().getFullConstructorClassName(c);
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
+    String cid = st.getFullConstructorClassName(c);
+    String sort = st.getSort(c);
     String alphamapargs = alphamapArgList(sort);
     String exportmapargs = exportmapArgList(sort);
-    String rawsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(sort);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String rawsortid = st.qualifiedRawSortId(sort);
+    String sortid = st.getFullSortClassName(sort);
     String res = "{";
-    for(String a: getGomEnvironment().getSymbolTable().getAccessibleAtoms(sort)) {
-      String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String aid = st.getFullSortClassName(a);
       res += %[
         public @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map) {
           @renameRecursiveCalls(c,a)@
@@ -940,15 +942,15 @@ public class FreshExpander {
     }
     ]%;
 
-    if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
+    if(st.isPatternType(sort)) {
       res += %[ 
         public @sortid@ _refresh(@hashtableArgList(sort)@) {
           @refreshRecursiveCalls(c)@
         }
       ]%;
 
-      for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
-        String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.getFullSortClassName(a);
         res += %[ 
           public void getBound@a@(java.util.Set<@aid@> atoms) {
             @getBoundRecursiveCalls(c,a)@
@@ -972,63 +974,64 @@ public class FreshExpander {
   /* -- non variadic raw constructor hooks -- */
 
   private GomModuleList addRawConstructorHooks(GomModuleList ml) {
-    for(String s: getGomEnvironment().getSymbolTable().getSorts()) 
-      if(getGomEnvironment().getSymbolTable().isExpressionType(s) || getGomEnvironment().getSymbolTable().isPatternType(s))
-        for(String c: getGomEnvironment().getSymbolTable().getConstructors(s))
-          if(! getGomEnvironment().getSymbolTable().isVariadic(c))
+    for(String s: st.getSorts()) 
+      if(st.isExpressionType(s) || st.isPatternType(s))
+        for(String c: st.getConstructors(s))
+          if(! st.isVariadic(c))
             ml = addRawConstructorBlockHook(
                 ml,c,rawConstructorBlockHookString(c));
     return ml;
   }
 
   private String getBoundMapRecursiveCalls(String c, String atomSort) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
-    String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(atomSort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
+    String aid = st.getFullSortClassName(atomSort);
     String res = ""; 
-    for(String f: getGomEnvironment().getSymbolTable().getPatternFields(c)) {
-      String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-      if (getGomEnvironment().isBuiltin(fsort)) continue;
-      if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[
-            String @f@ = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@;
+            String @f@ = @st.rawGetter(c,f)@;
             m.put(@f@,@aid@.fresh@atomSort@(@f@));
           ]%;
         }
-      } else if (getGomEnvironment().getSymbolTable().getBoundAtoms(fsort).contains(atomSort)) {
-        res += %[@getGomEnvironment().getSymbolTable().rawGetter(c,f)@.getBound@atomSort@Map(m);]%;
+      } else if (st.getBoundAtoms(fsort).contains(atomSort)) {
+        res += %[@st.rawGetter(c,f)@.getBound@atomSort@Map(m);]%;
       }
     }
     return res;
   }
 
   private String convertRecursiveCalls(String c) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sort = st.getSort(c);
+    String sortid = st.getFullSortClassName(sort);
+    String opid = st.getFullConstructorClassName(c);
     String res = ""; 
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
-    if(getGomEnvironment().getSymbolTable().isExpressionType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) continue;
-        String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-        String rawfsortid = getGomEnvironment().getSymbolTable().qualifiedRawSortId(fsort);
-        if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
-          res += %[@fsortid@ @f@ = @fsort@Map.get(@getGomEnvironment().getSymbolTable().rawGetter(c,f)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isExpressionType(fsort)) {
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) continue;
+        String fsortid = st.getFullSortClassName(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
+        } else if (st.isExpressionType(fsort)) {
           res += %[@fsortid@ @f@ 
-            = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@._convert(@recCall1(fsort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isPatternType(fsort)) {
+            = @st.rawGetter(c,f)@._convert(@recCall1(fsort)@);]%;
+        } else if (st.isPatternType(fsort)) {
           res += %[
             /* declaration before scoping */
             @fsortid@ @f@ = null;
           ]%;
           res += %[{ /* to limit declared variables scope */]%;
-          res += %[@rawfsortid@ raw_@f@ = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@;]%;
-          for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(fsort)) {
-            String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+          res += %[@rawfsortid@ raw_@f@ = @st.rawGetter(c,f)@;]%;
+          for(String a: st.getBoundAtoms(fsort)) {
+            String aid = st.getFullSortClassName(a);
             res += %[
               tom.library.freshgom.ConvertMap<@aid@> raw_@f@_bound@a@ 
                 = raw_@f@.getBound@a@Map();
@@ -1043,38 +1046,38 @@ public class FreshExpander {
     /* if c is a constructor in pattern position --
        the args are of the form 
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
-    } else if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-      for(String f: getGomEnvironment().getSymbolTable().getFields(c)) {
-        String fsort = getGomEnvironment().getSymbolTable().getSort(c,f);
-        if (getGomEnvironment().isBuiltin(fsort)) continue;
-        String fsortid = getGomEnvironment().getSymbolTable().getFullSortClassName(fsort);
-        if (getGomEnvironment().getSymbolTable().isAtomType(fsort)) {
-          if (getGomEnvironment().getSymbolTable().isBound(c,f))
-            res += %[@fsortid@ @f@ = @fsort@InnerMap.get(@getGomEnvironment().getSymbolTable().rawGetter(c,f)@);]%;
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (gomEnvironment.isBuiltin(fsort)) continue;
+        String fsortid = st.getFullSortClassName(fsort);
+        if (st.isAtomType(fsort)) {
+          if (st.isBound(c,f))
+            res += %[@fsortid@ @f@ = @fsort@InnerMap.get(@st.rawGetter(c,f)@);]%;
           else
-            res += %[@fsortid@ @f@ = @fsort@Map.get(@getGomEnvironment().getSymbolTable().rawGetter(c,f)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isInner(c,f)) /* must be expression type */ {
+            res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
+        } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@._convert(@recCall3(fsort,sort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isOuter(c,f)) /* must be expression type */ {
+            = @st.rawGetter(c,f)@._convert(@recCall3(fsort,sort)@);]%;
+        } else if (st.isOuter(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@._convert(@recCall4(fsort,sort)@);]%;
-        } else if (getGomEnvironment().getSymbolTable().isNeutral(c,f)) /* must be expression type */ {
+            = @st.rawGetter(c,f)@._convert(@recCall4(fsort,sort)@);]%;
+        } else if (st.isNeutral(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@._convert(@recCall5(fsort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall5(fsort)@);]%;
         } else /* must be pattern type */ {
           res += %[@fsortid@ @f@ 
-            = @getGomEnvironment().getSymbolTable().rawGetter(c,f)@._convert(@recCall6(fsort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall6(fsort)@);]%;
         }
       }
     }
-    return res + %[return `@c@(@convertArgList(c)@);]%;
+    return res + %[return @opid@.make(@convertArgList(c)@);]%;
   }
 
   private String rawConstructorBlockHookString(String c) {
-    String sort = getGomEnvironment().getSymbolTable().getSort(c);
+    String sort = st.getSort(c);
     String convertmapargs = convertmapArgList(sort);
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sortid = st.getFullSortClassName(sort);
 
     String res = %[{
       /**
@@ -1085,9 +1088,9 @@ public class FreshExpander {
       }
     ]%;
 
-    if(getGomEnvironment().getSymbolTable().isPatternType(sort)) {
-      for(String a: getGomEnvironment().getSymbolTable().getBoundAtoms(sort)) {
-        String aid = getGomEnvironment().getSymbolTable().getFullSortClassName(a);
+    if(st.isPatternType(sort)) {
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.getFullSortClassName(a);
         res += %[
           public void 
             getBound@a@Map(tom.library.freshgom.ConvertMap<@aid@> m) {
@@ -1103,7 +1106,7 @@ public class FreshExpander {
   /* -- atom hooks -- */
 
   private GomModuleList addAtomHooks(GomModuleList ml) {
-    for(String s: getGomEnvironment().getSymbolTable().getAtoms()) {
+    for(String s: st.getAtoms()) {
       ml = addSortBlockHook(ml,s,atomBlockHookString(s));
       ml = addSortInterfaceHook(ml,s,atomInterfaceHookString);
     }
@@ -1111,7 +1114,7 @@ public class FreshExpander {
   }
 
   private String atomBlockHookString(String sort) {
-    String sortid = getGomEnvironment().getSymbolTable().getFullSortClassName(sort);
+    String sortid = st.getFullSortClassName(sort);
     return %[{
       private static int counter = 0;
 
@@ -1122,7 +1125,7 @@ public class FreshExpander {
 
       public static @sortid@ 
         fresh@sort@(String hint) { 
-          return `@sort@(++counter,hint.split("[0-9]")[0]); 
+          return @st.getFullConstructorClassName(sort)@.make(++counter,hint.split("[0-9]")[0]); 
         }
 
       public boolean equals(@sort@ o) {
@@ -1141,7 +1144,7 @@ public class FreshExpander {
   /* -- rawification -- */
 
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
-    try { return (GomModuleList) `TopDown(AddRaw(getGomEnvironment().getSymbolTable(),this)).visitLight(res); }
+    try { return (GomModuleList) `TopDown(AddRaw(st,this)).visitLight(res); }
     catch(VisitFailure e) { 
       throw new RuntimeException("should never happen"); 
     }
@@ -1201,8 +1204,8 @@ public class FreshExpander {
   /* -- tweaked mappings generation */
 
   private GomModuleList addMappingHooks(GomModuleList ml) {
-    for(String c: getGomEnvironment().getSymbolTable().getFreshConstructors()) 
-      if(getGomEnvironment().getSymbolTable().containsRefreshPoint(c)) 
+    for(String c: st.getFreshConstructors()) 
+      if(st.containsRefreshPoint(c)) 
         ml = addConstructorMappingHook(ml,c,mappingString(c));
     return ml;
   }
@@ -1214,10 +1217,10 @@ public class FreshExpander {
   private String typedConsArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
-    for(String arg: getGomEnvironment().getSymbolTable().getFields(c)) {
+    for(String arg: st.getFields(c)) {
       if (!first) buf.append(",");
       else first = false;
-      buf.append(arg+":"+getGomEnvironment().getSymbolTable().getSort(c,arg));
+      buf.append(arg+":"+st.getSort(c,arg));
     }
     return buf.toString();
   }
@@ -1228,7 +1231,7 @@ public class FreshExpander {
   private String consArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
-    for(String arg: getGomEnvironment().getSymbolTable().getFields(c)) {
+    for(String arg: st.getFields(c)) {
       if (!first) buf.append(",");
       else first = false;
       buf.append(arg);
@@ -1242,7 +1245,7 @@ public class FreshExpander {
   private String dollarConsArgList(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
-    for(String arg: getGomEnvironment().getSymbolTable().getFields(c)) {
+    for(String arg: st.getFields(c)) {
       if (!first) buf.append(",");
       else first = false;
       buf.append("$" + arg);
@@ -1258,8 +1261,8 @@ public class FreshExpander {
   private String slotDescriptions(String c) {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
-    for(String arg: getGomEnvironment().getSymbolTable().getFields(c)) {
-      if(getGomEnvironment().getSymbolTable().isRefreshPoint(c,arg))
+    for(String arg: st.getFields(c)) {
+      if(st.isRefreshPoint(c,arg))
         buf.append(%[get_slot(@arg@,t) { $t.get@arg@().refresh() }]% + "\n");
       else
         buf.append(%[get_slot(@arg@,t) { $t.get@arg@() }]% + "\n");
@@ -1268,14 +1271,14 @@ public class FreshExpander {
   }
 
   private String mappingString(String c) {
-    String s = getGomEnvironment().getSymbolTable().getSort(c);
-    if (getGomEnvironment().getSymbolTable().isVariadic(c)) {
-      String codomain = getGomEnvironment().getSymbolTable().getCoDomain(c);
-      String domain = getGomEnvironment().getSymbolTable().getDomain(c);
-      String consid = getGomEnvironment().getSymbolTable().getFullConstructorClassName("Cons" + c);
-      String nilid = getGomEnvironment().getSymbolTable().getFullConstructorClassName("Empty" + c);
+    String s = st.getSort(c);
+    if (st.isVariadic(c)) {
+      String codomain = st.getCoDomain(c);
+      String domain = st.getDomain(c);
+      String consid = st.getFullConstructorClassName("Cons" + c);
+      String nilid = st.getFullConstructorClassName("Empty" + c);
       String gethead = null;
-      if(getGomEnvironment().getSymbolTable().isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
+      if(st.isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
       else gethead = %[getHead@c@()]%;
       return %[{
         %oplist @codomain@ @c@(@domain@*) {
@@ -1288,7 +1291,7 @@ public class FreshExpander {
         }
       }]%;
     } else {
-      String cid = getGomEnvironment().getSymbolTable().getFullConstructorClassName(c);
+      String cid = st.getFullConstructorClassName(c);
       return %[{
         %op @s@ @c@(@typedConsArgList(c)@) {
           is_fsym(t) { ($t instanceof @cid@) }

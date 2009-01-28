@@ -313,8 +313,11 @@ public class @filename()@Adaptor {
         } else if ("String".equals(`name)) {
           code = `CodeList(code,
               Code(tree + ".getText()"));
+        } else if ("boolean".equals(`name)) {
+          code = `CodeList(code,
+              Code("Boolean.valueOf(" + tree + ".getText())"));
         } else {
-          throw new RuntimeException("Unsupported builtin");
+          throw new RuntimeException("Unsupported builtin "+`name);
         }
       }
     }

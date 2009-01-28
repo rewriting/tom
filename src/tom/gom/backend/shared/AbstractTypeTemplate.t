@@ -83,7 +83,7 @@ public abstract class @className()@ implements tom.library.sl.Visitable, Cloneab
 ]%);
 }
 
-    if (! hooks.isEmptyConcHook()) {
+    if (hooks.containsTomCode()) {
       mapping.generate(writer); 
     }
     writer.write(

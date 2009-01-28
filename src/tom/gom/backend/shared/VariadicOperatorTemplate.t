@@ -488,7 +488,7 @@ writer.write(%[
   }
 
 ]%);
-    if (! hooks.isEmptyConcHook()) {
+    if (hooks.containsTomCode()) {
       mapping.generate(writer); 
     }
 

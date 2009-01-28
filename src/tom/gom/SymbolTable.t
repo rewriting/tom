@@ -366,7 +366,7 @@ public class SymbolTable {
     }
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
-        return getFullSortClassName(`s) + "." + `rawCons(cons); 
+        return qualifiedRawSortId(`s).toLowerCase() + "." + `rawCons(cons); 
       }
     }
     throw new RuntimeException("non exhaustive match");

@@ -128,7 +128,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   ]%);
 }
 
-  if (!hooks.isEmptyConcHook()) {
+  if (hooks.containsTomCode()) {
     mapping.generate(writer); 
   }
   generateMembers(writer);
@@ -1005,7 +1005,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         /* skip non Make hooks */
         return generateMakeHooks(`tail, oArgs, writer);
       }
-      ConcHook(MakeHook(args, code),tail*) -> {
+      ConcHook(MakeHook[HookArguments=args, Code=code],tail*) -> {
         /* Rename the previous arguments according to new, if needed */
         if(oArgs != null && oArgs != `args) {
           recVarNameRemap(oArgs,`args, writer);

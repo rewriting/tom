@@ -55,7 +55,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     this.mapping = mapping;
   }
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../adt/objects/Objects.tom }
+  %include { boolean.tom }
 
   public /*synchronized*/ GomEnvironment getGomEnvironment() {
     return this.gomEnvironment;
@@ -65,7 +66,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
     %match(HookList h) {
-      ConcHook(_*,BlockHook(code),_*) -> {
+      ConcHook(_*,BlockHook[Code=code],_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -103,20 +104,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
    * necessary (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if(hooks.isEmptyConcHook()) {
-      try {
-        File output = fileToGenerate();
-        // make sure the directory exists
-        output.getParentFile().mkdirs();
-        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-        generate(writer);
-        writer.flush();
-        writer.close();
-      } catch(Exception e) {
-        e.printStackTrace();
-        return 1;
-      }
-    } else { /* We need to call Tom to generate the file */
+    if (hooks.containsTomCode()) {
+      /* We need to call Tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
@@ -127,7 +116,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         file_path = output.getCanonicalPath();
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
-}
+      }
 
       ArrayList tomParams = new ArrayList();      
 
@@ -188,6 +177,22 @@ public abstract class TemplateHookedClass extends TemplateClass {
       } catch (IOException e) {
         getLogger().log(Level.SEVERE,
             "Failed generate Tom code: " + e.getMessage());
+      }
+
+
+
+    } else {
+      try {
+        File output = fileToGenerate();
+        // make sure the directory exists
+        output.getParentFile().mkdirs();
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+        generate(writer);
+        writer.flush();
+        writer.close();
+      } catch(Exception e) {
+        e.printStackTrace();
+        return 1;
       }
     }
     return 0;

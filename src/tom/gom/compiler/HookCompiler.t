@@ -236,12 +236,12 @@ public class HookCompiler {
   // private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
   private Hook makeHooksFromHookDecl(HookDecl hookDecl) {
     %match(hookDecl) {
-      MakeHookDecl[SlotArgs=slotArgs,Code=hookCode] -> {
+      MakeHookDecl[SlotArgs=slotArgs,Code=hookCode,HasTomCode=HasTomCode] -> {
         SlotFieldList newArgs = makeSlotFieldListFromSlotList(`slotArgs);
-        return `MakeHook(newArgs,hookCode);
+        return `MakeHook(newArgs,hookCode,HasTomCode);
       }
-      BlockHookDecl[Code=hookCode] -> {
-        return `BlockHook(hookCode);
+      BlockHookDecl[Code=hookCode,HasTomCode=HasTomCode] -> {
+        return `BlockHook(hookCode,HasTomCode);
       }
       InterfaceHookDecl[Code=hookCode] -> {
         return `InterfaceHook(hookCode);

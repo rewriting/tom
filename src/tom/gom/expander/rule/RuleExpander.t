@@ -100,7 +100,7 @@ public class RuleExpander {
             generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
           hookList =
             `ConcHookDecl(hookList*,
-                MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
+                MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules"),true()));
         }
         /* Variadic operator */
         Variadic[Sort=sort] -> {
@@ -118,7 +118,7 @@ public class RuleExpander {
                 generateHookCode(`ConcSlot(),`RuleList(rule));
               hookList =
                 `ConcHookDecl(hookList*,
-                    MakeHookDecl(CutOperator(opDecl),ConcSlot(),Code(hookCode),HookKind("rules")));
+                    MakeHookDecl(CutOperator(opDecl),ConcSlot(),Code(hookCode),HookKind("rules"),true()));
             }
           }
           if (count>1) {
@@ -132,7 +132,7 @@ public class RuleExpander {
               generateVariadicHookCode(args, nonEmptyRules);
             hookList =
               `ConcHookDecl(hookList*,
-                  MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
+                  MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules"),true()));
           }
         }
       }

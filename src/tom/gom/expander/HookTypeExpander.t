@@ -190,7 +190,11 @@ public class HookTypeExpander {
           %match(HookKind `hkind) {
             HookKind("block") -> {
               newHookList = `ConcHookDecl(
-                  BlockHookDecl(mdecl,Code(trimBracket(scode))));
+                  BlockHookDecl(mdecl,Code(trimBracket(scode)),true()));
+            }
+            HookKind("javablock") -> {
+              newHookList = `ConcHookDecl(
+                  BlockHookDecl(mdecl,Code(trimBracket(scode)),false()));
             }
             HookKind("interface") -> {
               newHookList = `ConcHookDecl(
@@ -213,12 +217,12 @@ public class HookTypeExpander {
                 return `ConcHookDecl();
               }
               newHookList = `ConcHookDecl(
-                  MakeHookDecl(mdecl,typedArgs,Code(scode),kind));
+                  MakeHookDecl(mdecl,typedArgs,Code(scode),kind,true()));
             }
             HookKind("Free") -> {
               /* Even there is no code associated, we generate a MakeHook to prevent FL hooks to be automatically generated */
               return `ConcHookDecl(
-                  MakeHookDecl(mdecl,ConcSlot(),Code(""),HookKind("Free")));
+                  MakeHookDecl(mdecl,ConcSlot(),Code(""),HookKind("Free"),false()));
             }
             HookKind("FL") -> {
               /* FL: flattened list */
@@ -529,7 +533,7 @@ public class HookTypeExpander {
             Code(") {\n"),
             Code("    "),FullSortClass(domain),Code(" tmpHd = head;\n"),
             Code("    head = tail.getHead" + opName + "();\n"),
-            Code("    tail = `" + opName + "(tmpHd,tail.getTail" + opName + "());\n"),
+            Code("    tail = `"+opName+"(tmpHd,tail.getTail" + opName + "());\n"),
             Code("  }\n"),
             Code("} else {\n"),
             Code("  if (0 < "),
@@ -540,7 +544,7 @@ public class HookTypeExpander {
             Code("    tail = tmpHd;\n"),
             Code("  }\n"),
             Code("}\n")
-            ),HookKind("ACU")),
+            ),HookKind("ACU"),true()),
             acHooks*);
     return acHooks;
   }
@@ -560,7 +564,7 @@ public class HookTypeExpander {
     if(userNeutral.length() > 0) {
       /* The hook body is the name of the neutral element */
       auHooks = `ConcHookDecl(
-          MakeHookDecl(mdecl,ConcSlot(),Code("return "+userNeutral+";"),HookKind("AU")),
+          MakeHookDecl(mdecl,ConcSlot(),Code("return "+userNeutral+";"),HookKind("AU"),true()),
           auHooks*);
       /* 
        * Remove neutral:
@@ -574,7 +578,7 @@ public class HookTypeExpander {
             CodeList(
               Code("if (head == "+userNeutral+") { return tail; }\n"),
               Code("if (tail ==  "+userNeutral+") { return head; }\n")
-              ),HookKind("AU")),
+              ),HookKind("AU"),true()),
           auHooks*);
     }
     /* getODecl call is safe here, since mdecl was checked by getSortAndCheck */
@@ -598,7 +602,7 @@ public class HookTypeExpander {
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
             Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n")
-            ),HookKind("AU")),
+            ),HookKind("AU"),false()),
         auHooks*);
 
     return auHooks;
@@ -645,7 +649,7 @@ public class HookTypeExpander {
             Code(" && !"),
             IsEmpty("tail",mdecl.getODecl()),
             Code(") { return make(head,make(tail,Empty" + opName + ".make())); }\n")
-            ),HookKind("FL")),
+            ),HookKind("FL"),false()),
         hooks*);
 
     return hooks;

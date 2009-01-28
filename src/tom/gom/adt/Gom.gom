@@ -1,9 +1,10 @@
 module Gom
-imports String Code int 
+imports String Code int boolean
 abstract syntax
 
 Option = Origin(Line:int)
        | OptionList(Option*)
+       | HasTomCode(Value:boolean)
 
 /* Output from the parser */
 GomModule = GomModule(ModuleName:GomModuleName, SectionList:SectionList)
@@ -66,8 +67,8 @@ Decl = CutModule(MDecl:ModuleDecl)
      | CutFutureOperator(ODecl:OperatorDecl,ConsOrNil:Future)
 Future = FutureNil()
        | FutureCons()
-HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code,HookType:HookKind)
-         | BlockHookDecl(Pointcut:Decl,Code:Code)
+HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code,HookType:HookKind,HasTomCode:boolean)
+         | BlockHookDecl(Pointcut:Decl,Code:Code,HasTomCode:boolean)
          | InterfaceHookDecl(Pointcut:Decl,Code:Code)
          | ImportHookDecl(Pointcut:Decl,Code:Code)
          | MappingHookDecl(Pointcut:Decl,Code:Code)
