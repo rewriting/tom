@@ -1,0 +1,23 @@
+Early tests of Tom C# compiler
+
+You need: 
+	a recent mono (free dotnet, mono-project.com) installation
+	a recent ikvm (java <-> mono translators) installation
+
+Get it runing:
+	make
+	./Test.exe
+
+
+How it works:
+	ikvmc converts TOM_HOME/lib/*.jar into one big dotnet dll
+	ikvmc converts gom generated java classes into another dll
+	Test.t compiles to C# thanks to the new backend
+
+	We still need to substitute some keywords with
+	sed on the generated Test.cs:
+		- gom does not output C#
+		- the 'super' java keyword is 'base' in C#
+		  but it is generated in Compiler.t and
+		  can not be handled by the C# backend
+

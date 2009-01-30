@@ -1,0 +1,80 @@
+module antipattern.Term    
+imports String int
+abstract syntax
+Term = Variable(name:String)
+     | ConsVariable(var:Term, upTerm: String)	
+     | Appl(name:String, args:TermList)
+     | ApplCons(name:String, args:TermList, cons:AConstraintList)
+     | Anti(pattern:Term)
+     | TermDiff(term1:Term, term2:Term)
+     | GenericGroundTerm(termName:String)         
+     | Subterm(nr:int,groundTerm:Term)
+     | SymbolOf(groundTerm:Term)
+     | FalseTerm()
+
+TermList = concTerm(Term*)
+
+Constraint = True()
+           | False()
+           | LessThan(objectToCompare:Term, objectToCompareTo:Term)
+           | GreaterThan(objectToCompare:Term, objectToCompareTo:Term)
+           | InList(objectToCompare:Term, list:TermList)   
+           | Neg(c:Constraint)
+           | Match(pattern:Term, subject:Term)
+           | And(cla:AConstraintList)
+           | Or(clo:OConstraintList)
+           | Equal(pattern:Term, genTerm:Term)
+           | NEqual(pattern:Term, genTerm:Term)
+           | Exists(var:Term,cons:Constraint)
+           | ForAll(var:Term,cons:Constraint)
+                        
+AConstraintList = concAnd(Constraint*)
+OConstraintList = concOr(Constraint*)
+
+And:make(cl){
+	%match(cl){
+		concAnd(X*,And(concAnd(Y*)),Z*) ->{
+			return `And(concAnd(X*,Y*,Z*));
+		}
+		concAnd() ->{
+			return `True();
+		}
+		concAnd(x) ->{
+			return `x;
+		}
+	}
+}
+
+Or:make(cl){			
+	%match(cl){
+		concOr(X*,Or(concOr(Y*)),Z*) ->{
+			return `Or(concOr(X*,Y*,Z*));
+		}	
+		concOr() ->{
+			return `False();
+		}
+	} 
+}
+// normalize modulo neutral element
+Appl:make(name,args){
+	if (name.endsWith("_a")){
+		Object neutralElement = `Appl("e_" + ((String)name).substring(0,name.indexOf("_")),concTerm()); 
+		%match(args){
+			concTerm(elem1,elem2) ->{
+				if (`elem1 == neutralElement){				
+					return `elem2;
+				}
+				if (`elem2 == neutralElement){
+					return `elem1;
+				}				
+			}		
+		}// end match 		
+	}	
+}
+
+
+
+
+
+
+

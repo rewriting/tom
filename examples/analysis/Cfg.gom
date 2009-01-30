@@ -1,0 +1,12 @@
+module Cfg
+imports Ast int
+abstract syntax
+
+Cfg = BeginIf(ast:Ast,refSuccess:Cfg,refFailure:Cfg)
+    | Affect(ast:Ast,ref:Cfg)
+    | Free(var:Variable,ref:Cfg)
+    | BeginWhile(ast:Ast,ref:Cfg)
+    | FailWhile(ref:Cfg)
+    | Nil(ref:Cfg)
+    | End()
+    | ConcCfg(Cfg*)

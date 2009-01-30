@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the p3p example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="p3p"/>
+  <target name="build" depends="init">
+    <tomcompile/>
+    <javacompile/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.xml"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

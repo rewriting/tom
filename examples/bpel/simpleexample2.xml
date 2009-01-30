@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process>
+  <flow>
+    <sequence>
+      <invoke operation="A" />
+      <flow>
+        <invoke operation="B">
+          <source linkName="toto" /> 
+        </invoke>
+        <invoke operation="C">
+          <source linkName="titi" />
+        </invoke>
+        <invoke operation="E">
+          <source linkName="tata" />
+        </invoke>
+     </flow>
+    </sequence>
+    <invoke operation="D">
+      <joincondition >
+        titi AND toto 
+      </joincondition>
+      <target linkName="titi" />
+      <target linkName="toto" />
+      <target linkName="tata" />
+    </invoke>
+  </flow>
+</process>
+
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the mgs example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="mgs"/>
+  <target name="build" depends="init">
+    <gomcompile/>
+    <!-- <tomcompile/> -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+                destdir="${examples.gen}">          
+       <include name="${example}/**/*.t"/>
+    </tom.preset>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

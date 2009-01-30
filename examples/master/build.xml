@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the master example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="master"/>
+  <property name="distribute" value="true"/>
+</project>

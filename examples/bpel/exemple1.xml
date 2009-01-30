@@ -1,0 +1,104 @@
+<process name="loanApprovalProcess"
+targetNamespace="http://acme.com/loanprocessing"
+suppressJoinFailure="yes"
+xmlns="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+xmlns:lns="http://loans.org/wsdl/loan-approval"
+xmlns:loandef="http://tempuri.org/services/loandefinitions"
+xmlns:asns="http://tempuri.org/services/loanassessor"
+xmlns:apns="http://tempuri.org/services/loanapprover">
+
+<containers>
+<container name="request"
+messageType="loandef:creditInformationMessage"/>
+<container name="riskAssessment"
+messageType="asns:riskAssessmentMessage"/>
+<container name="approvalInfo"
+messageType="apns:approvalMessage"/>
+<container name="error"
+messageType="loandef:loanRequestErrorMessage"/>
+</containers>
+
+<partners>
+<partner name="customer"
+serviceLinkType="lns:loanApprovalLinkType"
+myRole="approver"/>
+<partner name="approver"
+serviceLinkType="lns:loanApprovalLinkType"
+partnerRole="approver"/>
+<partner name="assessor"
+serviceLinkType="lns:riskAssessmentLinkType"
+partnerRole="assessor"/>
+</partners>
+
+<faultHandlers>
+<catch faultName="lns:loanProcessFault"
+faultContainer="error">
+<reply partner="customer"
+portType="apns:loanApprovalPT"
+operation="approve"
+container="error"
+faultName="invalidRequest"/>
+</catch>
+</faultHandlers>
+<sequence>
+<flow>
+<links>
+<link name="receive-to-assess"/>
+<link name="receive-to-approval"/>
+<link name="approval-to-reply"/>
+<link name="assess-to-setMessage"/>
+<link name="setMessage-to-reply"/>
+<link name="assess-to-approval"/>
+
+</links>
+
+<receive name="receive1" partner="customer"
+portType="apns:loanApprovalPT"
+operation="approve" container="request"
+createInstance="yes">
+<source linkName="receive-to-assess"
+transitionCondition="bpws:getContainerData('request', 'amount')&lt;10000"/>
+<source linkName="receive-to-approval"
+transitionCondition="bpws:getContainerData('request', 'amount')&gt;=10000"/>
+</receive>
+
+<invoke name="invokeAssessor" partner="assessor"
+portType="asns:riskAssessmentPT"
+operation="check"
+inputContainer="request"
+outputContainer="riskAssessment">
+<target linkName="receive-to-assess"/>
+<source linkName="assess-to-setMessage"
+transitionCondition="bpws:getContainerData('riskAssessment', 'risk')='low'"/>
+<source linkName="assess-to-approval"
+transitionCondition="bpws:getContainerData('riskAssessment', 'risk')!='low'"/>
+</invoke>
+
+<assign name="assign">
+<target linkName="assess-to-setMessage"/>
+<source linkName="setMessage-to-reply"/>
+<copy>
+<from expression="'yes'"/>
+<to container="approvalInfo" part="accept"/>
+</copy>
+</assign>
+
+<invoke name="invokeapprover"
+partner="approver" portType="apns:loanApprovalPT"
+operation="approve"
+inputContainer="request"
+outputContainer="approvalInfo">
+<target linkName="receive-to-approval"/>
+<target linkName="assess-to-approval"/>
+<source linkName="approval-to-reply" />
+</invoke>
+
+<reply name="reply" partner="customer" portType="apns:loanApprovalPT"
+operation="approve" container="approvalInfo">
+<target linkName="setMessage-to-reply"/>
+<target linkName="approval-to-reply"/>
+</reply>
+</flow>
+</sequence>
+</process>
+

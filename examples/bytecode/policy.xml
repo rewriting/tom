@@ -1,0 +1,48 @@
+<Policy PolicyId="SamplePolicy" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <!--  This Policy only applies to read action
+  -->
+  <Target>
+    <Subjects>
+      <AnySubject />
+    </Subjects>
+    <Resources>
+      <AnyResource />
+    </Resources>
+    <Actions>
+      <AnyAction />
+    </Actions>
+  </Target>
+
+  <!--  Rule to see if we should allow the Subject to read
+  -->
+  <Rule RuleId="ReadRule" Effect="Permit">
+    <Target>
+      <Subjects>
+        <AnySubject/>
+      </Subjects>
+      <Resources>
+        <AnyResource/>
+      </Resources>
+      <Actions>
+        <Action>
+          <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">read</AttributeValue>
+            <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+              AttributeId="FileAction"/>
+          </ActionMatch>
+        </Action>
+      </Actions>
+    </Target>
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+        <ResourceAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+          AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"/>
+      </Apply>
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bytecode/policy.xml</AttributeValue>
+    </Condition>
+  </Rule>
+
+  <!--  A final, "fall-through" Rule that always Denies
+  -->
+  <Rule RuleId="FinalRule" Effect="Deny" />
+</Policy>

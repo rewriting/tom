@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>BoulderDash and Tom</title>
+  </head>
+
+  <body>
+    <h1>BoulderDash and Tom using HashMap as topology</h1>
+    
+    To create a gravity system using Tom rewriting system leeds to these basic rules (exprimed in Tom + Java):<br>
+<blockquote>
+      public boolean gravity(HashMap newSpace, Bead b) {<br>
+      <blockquote>
+	%match(Bead b) {<br>
+	
+	beadRock[s=empty()] -> {<br>
+	<blockquote>
+	  Bead newBead = `bead(getSouthPosition(b.getPos()),b.getValue());<br>
+	  marked.add(b);<br>
+	  putBead(newSpace,newBead);<br>
+	  return true;<br>
+	</blockquote>
+	}<br>
+	
+	beadRock[s=s@beadRock[e=empty()],e=empty()] -> {
+	<blockquote>
+	  Bead newBead = `bead(getEastPosition(getSouthPosition(b.getPos())),b.getValue());<br>
+	  putBead(newSpace,newBead);<br>
+	  putBead(newSpace,s);<br>
+	  marked.add(b);<br>
+	  marked.add(s);<br>
+	  return true;<br>
+	</blockquote>
+	}<br>
+	
+	beadRock[s=s@beadRock[w=empty()],w=empty()] -> {<br>
+	<blockquote>
+	  Bead newBead = `bead(getWestPosition(getSouthPosition(b.getPos())),b.getValue());<br>
+	  putBead(newSpace,newBead);<br>
+	  putBead(newSpace,s);<br>
+	  marked.add(b);<br>
+	  marked.add(s);<br>
+	  return true;<br>
+	</blockquote>
+	}<br>
+	
+	bead[pos=p] -> {<br>
+	<blockquote>
+	  newSpace.put(p,b);<br>
+	  return false;<br>
+	</blockquote>
+	}<br>
+      }<br> 
+      </blockquote>
+      return false;<br>
+      }<br>
+    </blockquote>
+    <hr>
+    <applet codebase="." code="boulderdash.BoulderDash2D.class" archive="boulder.jar" width=400 height=440>
+      <param name=fps value="15">
+    </applet>
+
+    <hr>
+    <address><a href="mailto:julien.guyon@loria.fr">Julien Guyon</a></address>
+<!-- Created: Fri Jun 27 10:22:15 CEST 2003 -->
+<!-- hhmts start -->
+Last modified: Tue Jul  1 09:15:12 CEST 2003
+<!-- hhmts end -->
+  </body>
+</html>

@@ -1,0 +1,7 @@
+module gomoku.Gomoku
+imports int
+abstract syntax
+  Pawn = pawn(color:int)
+       | empty(x:int,y:int)
+  PawnList = concPawn(Pawn*)
+  PawnListList = concPawnList(PawnList*)

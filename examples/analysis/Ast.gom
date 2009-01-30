@@ -1,0 +1,25 @@
+module Ast
+imports String 
+abstract syntax
+Ast = If(condition:Expression,succesInst:Ast,failureInst:Ast)
+    | WhileDo(condition:Expression,doInst:Ast) 
+    | Let(variable:Variable,t:Term,instr:Ast)
+    | LetRef(variable:Variable,t:Term,instr:Ast)
+    | LetAssign(variable:Variable,t:Term)
+    | Nop()
+    | concAst(Ast*)
+
+Expression = Negation(arg:Expression)
+           | And(arg1:Expression,arg2:Expression)
+           | Or(arg1:Expression,arg2:Expression)
+           | True() 
+           | False()
+           | EqualTerm(kid1:Term,kid2:Term)
+
+Variable = Name(string:String)
+
+Term = a()
+     | b() 
+     | f(arg1: Term, arg2:Term)
+     | g(arg:Term)
+     | Var(v:Variable)

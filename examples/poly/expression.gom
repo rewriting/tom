@@ -1,0 +1,11 @@
+module poly.expression
+imports String int
+abstract syntax
+Expression = zero()
+	   | one()
+	   | mult(arg1:Expression,arg2:Expression)
+	   | plus(arg1:Expression,arg2:Expression)
+	   | exp(arg1:Expression)
+	   | variable(string:String)
+	   | constant(string:String)
+	   | number(integer:int)

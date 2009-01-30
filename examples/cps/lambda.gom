@@ -1,0 +1,44 @@
+module cps.lambda
+imports boolean int String
+abstract syntax
+
+atom LVar 
+
+LTerm = App(t1:LTerm,t2:LTerm)
+      | Abs(a:<Lam>)
+      | Let(b:<Letin>)
+      | Fix(c:<Fixpoint>)
+      | Var(x:LVar)
+      | Unit()
+      | CallCC(t:LTerm)
+      | Throw(t1:LTerm,t2:LTerm)
+// builtins
+      | Integer(i:int)
+      | Branch(cond:LTerm,t:LTerm,e:LTerm)
+      | True()
+      | False()
+      | Eq(t1:LTerm,t2:LTerm)
+      | Or(t1:LTerm,t2:LTerm)
+      | And(t1:LTerm,t2:LTerm)
+      | LNot(t1:LTerm)
+      | Plus(t1:LTerm,t2:LTerm)
+      | Minus(t1:LTerm,t2:LTerm)
+      | Times(t1:LTerm,t2:LTerm)
+      | GT(t1:LTerm,t2:LTerm)
+      | LT(t1:LTerm,t2:LTerm)
+// side effects
+      | Print(t:LTerm)
+
+Lam binds LVar = lam(x:LVar, inner t:LTerm)
+Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
+Fixpoint binds LVar = fixpoint(x:LVar, inner t:LTerm)
+
+
+EnvItem = EPair(var:LVar,v:Value)
+Env = Env(EnvItem*)
+
+Value = VUnit()
+      | VInt(i:int)
+      | VBool(b:boolean)
+      | VClos(t:LTerm,e:Env)
+

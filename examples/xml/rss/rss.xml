@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet title="XSL_formatting" type="text/xsl" href="/shared/bsp/xsl/rss/nolsol.xsl"?>
+<rss version="2.0"><channel>
+	<title>BBC News | News Front Page | World Edition</title>
+	<link>http://news.bbc.co.uk/go/rss/-/2/hi/default.stm</link>
+	<description>Visit BBC News for up-to-the-minute news, breaking news, video, audio and feature stories. BBC News provides trusted World and UK news as well as local and regional perspectives. Also entertainment, business, science, technology and health news.</description>
+	<language>en-gb</language>
+	<lastBuildDate>Mon, 30 Oct 2006 08:42:51 GMT</lastBuildDate>
+	<copyright>Copyright: (c) British Broadcasting Corporation, see http://news.bbc.co.uk/2/hi/help/rss/4498287.stm for terms and conditions of reuse</copyright>
+	<docs>http://www.bbc.co.uk/syndication/</docs>
+	<ttl>15</ttl>
+		
+		<image>
+			<title>BBC News</title>
+			<url>http://news.bbc.co.uk/nol/shared/img/bbc_news_120x60.gif</url>
+			<link>http://news.bbc.co.uk/go/rss/-/2/hi/default.stm</link>
+		</image>
+		
+			
+				
+				
+					<item>
+        <title>Many casualties in Baghdad blast</title>
+        <description>A bomb blast in the Shia Sadr City district of Baghdad kills at least 29 people and wounds more than 50.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/middle_east/6097688.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/middle_east/6097688.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 08:30:26 GMT</pubDate>
+		<category>Middle East</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Pakistan madrassa raid 'kills 20'</title>
+        <description>At least 80 militants are killed by Pakistani forces in a raid on a madrassa (religious school), the army says.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/south_asia/6097636.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/south_asia/6097636.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 08:41:13 GMT</pubDate>
+		<category>South Asia</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Climate change 'brings huge cost'</title>
+        <description>Climate change could end up shrinking the global economy by up to 20% unless action is taken, a key report warns.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/business/6096084.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/business/6096084.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 01:26:28 GMT</pubDate>
+		<category>Business</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Meat row Imam seeks leave</title>
+        <description>Australia's controversial top Muslim cleric asks for indefinite leave after being rushed to hospital.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/asia-pacific/6097798.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/asia-pacific/6097798.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 08:27:13 GMT</pubDate>
+		<category>Asia-Pacific</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Nigeria opens air crash inquiry</title>
+        <description>Nigeria's president orders an inquiry after a plane crashes near the capital, carrying at least 104 people.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/africa/6097616.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/africa/6097616.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 04:40:20 GMT</pubDate>
+		<category>Africa</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Brazil re-elects President Lula</title>
+        <description>Brazilian President Luiz Inacio Lula da Silva wins a second term in office, with a clear victory at the polls.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/americas/6095820.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/americas/6095820.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 01:28:54 GMT</pubDate>
+		<category>Americas</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Mexico riot police re-take Oaxaca</title>
+        <description>Mexican riot police seize control back of Oaxaca, ending a five-month occupation by protesters.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/americas/6096960.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/americas/6096960.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 05:25:02 GMT</pubDate>
+		<category>Americas</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Security firms 'abusing Iraqis'</title>
+        <description>Private security firms operating in Iraq are committing human rights abuses, a charity claims.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/uk_news/6097372.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/uk_news/6097372.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 08:09:08 GMT</pubDate>
+		<category>UK</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>World discusses internet future</title>
+        <description>The future of the net is under discussion at the first-ever global Internet Governance Forum.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/technology/6087174.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/technology/6087174.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 06:52:39 GMT</pubDate>
+		<category>Technology</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Cricket: Australia reach semis</title>
+        <description>Australia beat India by six wickets to book their place in the Champions Trophy semi-finals and knock the hosts out of the tournament.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/sport2/hi/cricket/6093794.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/sport2/hi/cricket/6093794.stm</guid>
+		<pubDate>Sun, 29 Oct 2006 16:28:43 GMT</pubDate>
+		<category>Cricket</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>DR Congo votes in landmark poll</title>
+        <description>The people of DR Congo vote in a presidential run-off, seen as one of Africa's most significant elections for years.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/africa/6095754.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/africa/6095754.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 00:10:15 GMT</pubDate>
+		<category>Africa</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Climate change 'hitting Africa'</title>
+        <description>Climate change is already hitting Africa and will wipe out anti-poverty efforts unless action is taken, a report says.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/africa/6092564.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/africa/6092564.stm</guid>
+		<pubDate>Sat, 28 Oct 2006 23:44:57 GMT</pubDate>
+		<category>Africa</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>US debates 'hidden' food fats ban</title>
+        <description>Public hearings to discuss a ban on trans fatty acids from fast food outlets in New York begin on Monday.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/americas/6097676.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/americas/6097676.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 06:11:23 GMT</pubDate>
+		<category>Americas</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>US critics pan Dylan musical</title>
+        <description>US critics pan a  Broadway musical featuring the songs of Bob Dylan, following its debut last week.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/entertainment/6097066.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/entertainment/6097066.stm</guid>
+		<pubDate>Sun, 29 Oct 2006 18:34:12 GMT</pubDate>
+		<category>Entertainment</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Fierce storm lashes Philippines</title>
+        <description>Powerful Typhoon Cimaron sweeps across the northern Philippines, as at least two people are reported dead.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/asia-pacific/6096606.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/asia-pacific/6096606.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 07:22:59 GMT</pubDate>
+		<category>Asia-Pacific</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>US general expects fresh NK test</title>
+        <description>The top US general in South Korea says he expects more N Korean nuclear tests, but pledges US support to Seoul.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/asia-pacific/6097658.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/asia-pacific/6097658.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 06:02:17 GMT</pubDate>
+		<category>Asia-Pacific</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Serbia backs draft constitution</title>
+        <description>Serbia votes for a new constitution asserting Kosovo is part of the country, paving the way for elections.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/europe/6097344.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/europe/6097344.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 03:15:12 GMT</pubDate>
+		<category>Europe</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>EU says Ukraine not ready to join</title>
+        <description>EU leaders tell Ukraine it needs to implement more reforms before membership talks could begin.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/europe/6090644.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/europe/6090644.stm</guid>
+		<pubDate>Fri, 27 Oct 2006 16:06:06 GMT</pubDate>
+		<category>Europe</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Katsav rejects suspension calls</title>
+        <description>Israel's President Katsav rejects  suspension calls,  saying he is innocent of all charges against him.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/middle_east/6096044.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/middle_east/6096044.stm</guid>
+		<pubDate>Sun, 29 Oct 2006 22:08:04 GMT</pubDate>
+		<category>Middle East</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>No Qatar trip for senior Israeli</title>
+        <description>Israel's foreign minister cancels a visit to Qatar as Hamas representatives would be at the same conference.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/middle_east/6095846.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/middle_east/6095846.stm</guid>
+		<pubDate>Sun, 29 Oct 2006 13:20:39 GMT</pubDate>
+		<category>Middle East</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Indian shares break 13,000 mark</title>
+        <description>India's main stock index, the Sensex, hits another record high as it breaks the 13,000 points barrier.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/business/6097788.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/business/6097788.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 07:22:51 GMT</pubDate>
+		<category>Business</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Singh wins Volvo Masters golf </title>
+        <description>India's Jeev Milkha Singh caps a brilliant golfing year by winning the Volvo Masters in Valderrama.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/sport2/hi/golf/6097694.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/sport2/hi/golf/6097694.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 06:21:20 GMT</pubDate>
+		<category>Golf</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Expert witness changes proposed</title>
+        <description>A system for providing expert witnesses to family courts will be suggested by England's chief medical officer.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/health/6092946.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/health/6092946.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 01:21:12 GMT</pubDate>
+		<category>Health</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>ABN to cut jobs as profits drop</title>
+        <description>The Netherlands' biggest bank, ABN Amro, will cut jobs after reporting a 5.6% drop in third-quarter profit.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/business/6097724.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/business/6097724.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 06:45:21 GMT</pubDate>
+		<category>Business</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>'Sperm stopping' male pill hope</title>
+        <description>Scientists are developing a male contraceptive drug which stops the development process of sperm.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/health/6091582.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/health/6091582.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 00:03:39 GMT</pubDate>
+		<category>Health</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Experts crack cancer 'gene codes'</title>
+        <description>Scientists crack the entire genetic code of breast and colon cancers, offering new treatment hopes.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/health/5325206.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/health/5325206.stm</guid>
+		<pubDate>Sat, 28 Oct 2006 22:23:27 GMT</pubDate>
+		<category>Health</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Copying own CDs 'should be legal'</title>
+        <description>People should be given a right to copy their own CDs and DVDs for personal use, a think tank says.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/uk_news/6095612.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/uk_news/6095612.stm</guid>
+		<pubDate>Sun, 29 Oct 2006 09:34:45 GMT</pubDate>
+		<category>UK</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>Saw III carves up US box office</title>
+        <description>Horror film Saw III proves the top movie at North American cinemas on the weekend before Halloween.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/entertainment/6097858.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/entertainment/6097858.stm</guid>
+		<pubDate>Mon, 30 Oct 2006 08:25:18 GMT</pubDate>
+		<category>Entertainment</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+			
+				
+				
+					<item>
+        <title>The Green Room</title>
+        <description>Hunting bans on vulnerable species, such as African elephants, may do more harm than good, a conservationist says.</description>
+        <link>http://news.bbc.co.uk/go/rss/-/2/hi/science/nature/6091334.stm</link>
+	
+		<guid isPermaLink="false">http://news.bbc.co.uk/2/hi/science/nature/6091334.stm</guid>
+		<pubDate>Fri, 27 Oct 2006 18:42:18 GMT</pubDate>
+		<category>Science/Nature</category>
+		
+	
+	
+</item>
+				
+			
+			
+       		
+
+	
+	
+	
+</channel>
+</rss>
+

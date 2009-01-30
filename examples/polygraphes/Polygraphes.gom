@@ -1,0 +1,40 @@
+module polygraphes.Polygraphes
+imports int String
+abstract syntax
+TwoPath = 
+      | id(Value:int)
+      | g(Name:String, Source:int, Target:int)
+      | c0( TwoPath* )
+      | c1( TwoPath* )
+
+/*
+ * C0(0,G) = G
+ * C0(G,0) = G
+ */
+c0:AU() { `id(0) }
+c0:make_insert(x,y) {
+  %match(x,y) {
+    c1(),g -> { return `g; }
+    g,c1() -> { return `g; }
+    /* id(m),id(n) is handled by AU :-) */
+    id(m),c0?(id(n),tail*) -> { return `c0(id(n+m),tail*); }
+  }
+}
+
+/*
+ * C1(m,G) = G if m=G.source
+ * C1(G,n) = G if n=G.target
+ */
+c1:AU() {}
+c1:make_insert(x,y) {
+  if(polygraphes.Polygraphes.t(x)!=polygraphes.Polygraphes.s(y)) {
+    System.out.println("t(x) = " + polygraphes.Polygraphes.t(x));
+    System.out.println("s(y) = " + polygraphes.Polygraphes.s(y));
+    throw new RuntimeException("bad number of lines: " + x + " " + y);
+  }
+  %match(TwoPath x, TwoPath y) {
+    id(m), g -> { return `g; }
+    g, id(n) -> { return `g; }
+  }
+}
+

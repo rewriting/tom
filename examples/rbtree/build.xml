@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the rbtree example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="rbtree"/>
+  <property name="distribute" value="yes"/>
+</project>

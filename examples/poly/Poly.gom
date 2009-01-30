@@ -1,0 +1,9 @@
+module poly.Poly
+abstract syntax
+
+Term = zero() | one()
+      | a() | b() | c()
+      | X() | Y()
+      | mult(arg1:Term, arg2:Term)
+      | plus(arg1:Term,arg2:Term)
+

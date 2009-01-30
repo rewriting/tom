@@ -1,0 +1,21 @@
+* Fibonacci1.t
+* Fibonacci2.t
+* List1.t
+* Matching.t
+  generic syntactic matching (linear) implemented with rules
+* Matching1.t
+  specialized matching for Peano (linear), with rules
+* Matching2.t
+  generic syntactic matching implemented with rules, and associative operator
+* Matching3.t
+  specialized matching for Peano, with match, and mergingClash
+* Matching4.t
+  specialized matching for Peano, with match, and mergingClash, and
+	 associative operator --> stack overflow
+* Peano1.t
+* Peano2.t
+* PeanoVas.t
+* Poly1.t
+	Polynom derivates with syntactic matching
+* Poly2.t
+	Polynom derivates with associative matching

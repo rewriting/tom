@@ -1,0 +1,7 @@
+module addressbook.Data
+imports int String
+
+abstract syntax
+Date = date(year:int, month:int, day:int)
+Person = person(firstname:String, lastname:String, birthdate:Date)
+PersonList = concPerson( Person* )

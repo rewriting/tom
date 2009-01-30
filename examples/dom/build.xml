@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the dom example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="dom"/>
+  <target name="build" depends="common.build">
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

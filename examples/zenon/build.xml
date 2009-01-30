@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the zenon example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="zenon"/>
+  <target name="build" depends="init">
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      optimize="no"
+      optimize2="no"
+      options="-I ${tom.home}/share/jtom --verify">
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/*.g.t"/>
+    </tom.preset>
+    <javacompile/>
+    <antcall target="zenon.make"/>
+  </target>
+  <target name="zenon.make" if="zvtov.bin">
+    <apply dir="${examples.gen}/${example}" 
+           dest="${examples.gen}/${example}"
+           failonerror="yes"
+	   executable="${zvtov.bin}">
+      <srcfile/>
+      <fileset dir="${examples.gen}">
+        <include name="${example}/**/*.zv"/>
+      </fileset>
+      <mapper type="glob" from="*.zv" to="*.v"/>
+    </apply>
+  </target>
+  <property name="distribute" value="yes"/>
+  <target name="dist" depends="common.dist" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/*.coz"/>
+        <include name="${example}/*.v"/>
+        <include name="${example}/*.zv"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

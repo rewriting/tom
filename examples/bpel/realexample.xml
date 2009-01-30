@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="purchaseOrderProcess"
+	targetNamespace="http://acme.com/ws-bp/purchase"
+	xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+	xmlns:lns="http://manufacturing.org/wsdl/purchase">
+	<partnerLinks>
+		<partnerLink name="purchasing"
+			partnerLinkType="lns:purchasingLT" myRole="purchaseService" />
+		<partnerLink name="invoicing" partnerLinkType="lns:invoicingLT"
+			myRole="invoiceRequester" partnerRole="invoiceService" />
+		<partnerLink name="shipping" partnerLinkType="lns:shippingLT"
+			myRole="shippingRequester" partnerRole="shippingService" />
+		<partnerLink name="scheduling"
+			partnerLinkType="lns:schedulingLT" partnerRole="schedulingService" />
+	</partnerLinks>
+	<variables>
+		<variable name="PO" messageType="lns:POMessage" />
+		<variable name="Invoice" messageType="lns:InvMessage" />
+		<variable name="POFault" messageType="lns:orderFaultType" />
+		<variable name="shippingRequest"
+			messageType="lns:shippingRequestMessage" />
+		<variable name="shippingInfo"
+			messageType="lns:shippingInfoMessage" />
+		<variable name="shippingSchedule"
+			messageType="lns:scheduleMessage" />
+	</variables>
+	<faultHandlers>
+		<catch faultName="lns:cannotCompleteOrder"
+			faultVariable="POFault">
+			<reply partnerLink="purchasing"
+				portType="lns:purchaseOrderPT" operation="sendPurchaseOrder"
+				variable="POFault" faultName="cannotCompleteOrder" />
+		</catch>
+	</faultHandlers>
+	<sequence>
+		<receive partnerLink="purchasing" portType="lns:purchaseOrderPT"
+			operation="sendPurchaseOrder" variable="PO">
+		</receive>
+		<flow>
+			<links>
+				<link name="ship-to-invoice" />
+				<link name="ship-to-scheduling" />
+			</links>
+			<sequence>
+				<assign>
+					<copy>
+						<from variable="PO" part="customerInfo" />
+						<to variable="shippingRequest"
+							part="customerInfo" />
+					</copy>
+				</assign>
+				<invoke partnerLink="shipping" portType="lns:shippingPT"
+					operation="requestShipping" inputVariable="shippingRequest"
+					outputVariable="shippingInfo">
+					<source linkName="ship-to-invoice" />
+				</invoke>
+				<receive partnerLink="shipping"
+					portType="lns:shippingCallbackPT" operation="sendSchedule"
+					variable="shippingSchedule">
+					<source linkName="ship-to-scheduling" />
+				</receive>
+			</sequence>
+			<sequence>
+				<invoke partnerLink="invoicing"
+					portType="lns:computePricePT" operation="initiatePriceCalculation"
+					inputVariable="PO">
+				</invoke>
+				<invoke partnerLink="invoicing"
+					portType="lns:computePricePT" operation="sendShippingPrice"
+					inputVariable="shippingInfo">
+					<target linkName="ship-to-invoice" />
+				</invoke>
+				<receive partnerLink="invoicing"
+					portType="lns:invoiceCallbackPT" operation="sendInvoice"
+					variable="Invoice" />
+			</sequence>
+			<sequence>
+				<invoke partnerLink="scheduling"
+					portType="lns:schedulingPT" operation="requestProductionScheduling"
+					inputVariable="PO">
+				</invoke>
+				<invoke partnerLink="scheduling"
+					portType="lns:schedulingPT" operation="sendShippingSchedule"
+					inputVariable="shippingSchedule">
+					<target linkName="ship-to-scheduling" />
+				</invoke>
+			</sequence>
+		</flow>
+		<reply partnerLink="purchasing" portType="lns:purchaseOrderPT"
+			operation="sendPurchaseOrder" variable="Invoice" />
+	</sequence>
+</process>

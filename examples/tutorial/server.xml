@@ -1,0 +1,31 @@
+<POLICIES xmlns="http://www.w3.org/2002/01/P3Pv1">
+<POLICY name="mypolicy" discuri="http://www.ibm.com/privacy/"
+    opturi="http://www.ibm.com/privacy/"
+    xml:lang="en">
+    
+    
+  <STATEMENT>
+        <RECIPIENT>
+      <ours/><same /><delivery/>
+    </RECIPIENT>
+    <PURPOSE>
+      <admin/><contact /><current/><develop/><pseudo-analysis/><pseudo-decision/><individual-analysis /><individual-decision /><tailoring/><telemarketing />
+    </PURPOSE>
+
+    
+
+    <DATA-GROUP>
+      <DATA ref="#dynamic.clickstream"/>
+      <DATA ref="#dynamic.http"/>
+      <DATA ref="#dynamic.clientevents"/>
+      <DATA ref="#user.home-info.postal.country"/>
+      <DATA ref="#dynamic.cookies">
+        <CATEGORIES>
+	  <computer/><content/><demographic/><interactive/><navigation/><online/><physical/><preference/><purchase/><state/><uniqueid/>
+	</CATEGORIES>
+      </DATA>
+    </DATA-GROUP>
+  </STATEMENT>
+  
+</POLICY>
+</POLICIES>

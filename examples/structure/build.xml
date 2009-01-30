@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the structure example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="structure"/>
+  <target name="build" depends="init">
+    <!-- build adt -->    
+    <gombuild/>
+    <!-- build tom -->
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
+      <!-- stamp not yet ready for apigen list -->
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/StructuresParser.g.t"/>
+      <!--      <exclude name="${example}/**/StructureCDT.t"/> -->
+    </tom.preset>
+    <tom.preset outputfile="${examples.gen}/${example}/StructuresParser.g"
+                options="-I ${examples.gen}/${example}"
+                srcdir="${examples.dir}"> 
+      <include name="${example}/**/StructuresParser.g.t"/>
+    </tom.preset>
+    <!-- build parser -->
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/StructuresParser.g"
+              outputdirectory="${examples.gen}/${example}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <!-- build java source -->
+    <javacompile/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="examples"/>
+      </fileset>
+    </copy>
+    <!-- Create a jar for the applet -->
+    <path id="strategy.path"> <!-- ugly hack to find the jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="**/sl*.jar"/>
+      </fileset>
+    </path>
+    <property name="sl.jar" refid="strategy.path"/>
+    <jar jarfile="${examples.build}/${example}/example.jar">
+      <fileset dir="${examples.build}">
+        <include name="${example}/**/*.class"/>
+        <include name="${example}/**/*.gif"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar"/>
+      <zipfileset src="${tom.home}/lib/tools/antlr-2.7.7.jar"/>
+      <zipfileset src="${tom.home}/lib/runtime/aterm.jar"/>
+    </jar>
+  </target>
+  <property name="distribute" value="yes"/>
+  <target name="dist" depends="common.dist" if="distrib.zip">
+    <zip destfile="${distrib.zip}" update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/examples*"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

@@ -1,0 +1,46 @@
+module poly.polynom
+imports int String
+abstract syntax
+
+Poly = | Plus(Poly*)
+       | Mult(Poly*)
+       | Max(Poly*)
+       | Number(value:int)
+       | Variable(name:String)
+       | Parameter(name:String)
+Plus:FL(){}
+Plus:make_insert(e,l) {
+  %match(Poly l) {
+    Plus() -> { return e; }
+  }
+  %match(Poly e) {
+    Max() -> { return l; }
+    Mult() -> { return `Plus(Number(1),l*); }
+    Plus() -> { return l; }
+    Plus(X*) -> { return `Plus(X*,l); }
+  }
+}
+Max:FL(){}
+Max:make_insert(e,l) {
+  %match(Poly l) {
+    Max() -> { return e; }
+  }
+  %match(Poly e) {
+    Plus() -> { return l; }
+    Mult() -> { return `Max(Number(1),l*); }
+    Max() -> { return l; }
+    Max(X*) -> { return `Max(X*,l*); }
+  }
+}
+Mult:FL(){}
+Mult:make_insert(e,l) {
+  %match(Poly l) {
+    Mult() -> { return e; }
+  }
+  %match(Poly e) {
+    Plus() -> { return `Plus(); }
+    Max() -> { return `Max(); }
+    Mult() -> { return l; }
+    Mult(X*) -> { return `Mult(X*,l*); }
+  }
+}

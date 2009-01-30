@@ -1,0 +1,5 @@
+module builtin.term
+imports String int
+abstract syntax
+Term = Name(string:String)
+     | Age(age:int)

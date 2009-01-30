@@ -1,0 +1,32 @@
+<Actions>
+    <Action Label="begin">
+      <Comp Label="begin" Type="Send" Index="1"/>
+      <Comp Label="epsilon" Type="" Index="2"/>
+      <Comp Label="begin" Type="Wait" Index="3"/>
+    </Action>
+    <Action Label="fin">
+      <Comp Label="fin" Type="Send" Index="1"/>
+      <Comp Label="epsilon" Type="" Index="2"/>
+      <Comp Label="fin" Type="Wait" Index="3"/>
+    </Action>
+    <Action Label="begin">
+      <Comp Label="epsilon" Type="" Index="1"/>
+      <Comp Label="begin" Type="Send" Index="2"/>
+      <Comp Label="begin" Type="Wait" Index="3"/>
+    </Action>
+    <Action Label="fin" Type="">
+      <Comp Label="epsilon" Type="" Index="1"/>
+      <Comp Label="fin" Type="Send" Index="2"/>
+      <Comp Label="fin" Type="Wait" Index="3"/>
+    </Action>
+    <Action Label="CD">
+      <Comp Label="CD" Type="Wait" Index="1"/>
+      <Comp Label="CD" Type="Wait" Index="2"/>
+      <Comp Label="CD" Type="Send" Index="3"/>
+    </Action>
+    <Action Label="busy">
+      <Comp Label="busy" Type="Wait" Index="1"/>
+      <Comp Label="busy" Type="Wait" Index="2"/>
+      <Comp Label="busy" Type="Send" Index="3"/>
+    </Action>  
+</Actions>
