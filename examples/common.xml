@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="common">
+  <property environment="env"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <property name="nowarnings"  value="false"/>
+  <import file="${tom.common.path}/tom-common.xml"/>
+
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
+  <!-- some used directory location -->
+  <property name="examples.dir"   location="."/>
+  <property name="examples.dist"  location="dist"/>
+
+  <property name="examples.lib"   value="lib"/>
+
+  <!-- where the examples a build: javac destDir -->
+  <property name="examples.gen"   location="gen"/>
+  <property name="examples.build" location="build"/>
+
+  <target name="init" depends="tom.init">
+    <!-- to have something correct, check tom.home is defined to something meaningful
+    <fail unless="TOM_HOME"
+          message="TOM_HOME has to be defined in your environment, 
+          to find the Tom classes"/>-->
+    <mkdir dir="${examples.build}"/>
+    <mkdir dir="${examples.gen}"/>
+    <path id="tom.examples.classpath">
+      <fileset dir="${examples.dir}/${examples.lib}">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${tom.classpath}"/>
+    </path>
+
+    <macrodef name="tomcompile">
+      <sequential>
+        <tom.preset srcdir="${examples.dir}"
+                    destdir="${examples.gen}">          
+          <include name="${example}/**/*.t"/>
+          <exclude name="${example}/**/*.g.t"/>
+        </tom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomcompile">
+      <sequential>
+        <gom.preset srcdir="${examples.dir}"
+                    package="${example}" 
+                    destdir="${examples.gen}">
+          <include name="${example}/**/*.gom"/>
+        </gom.preset>
+      </sequential>
+    </macrodef>
+  <macrodef name="gompointercompile">
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="${example}" 
+        termpointer="true"
+        destdir="${examples.gen}">
+        <include name="${example}/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+  <macrodef name="gomtermgraphcompile">
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="${example}" 
+        termgraph="true" 
+        destdir="${examples.gen}">
+        <include name="${example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+  <macrodef name="gomfreshcompile">
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="${example}" 
+        fresh="true" 
+        destdir="${examples.gen}">
+        <include name="${example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+    <!-- The gombuild macro do not pass the package argument -->
+    <macrodef name="gombuild">
+      <sequential>
+	<gom.preset srcdir="${examples.dir}"
+	  destdir="${examples.gen}">
+	  <include name="${example}/**/*.gom"/>
+	</gom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomantlradapterbuild">
+      <attribute name="grammar"/>
+      <sequential>
+        <gomantlradapter.preset srcdir="${examples.dir}"
+                                package="${example}" 
+                                destdir="${examples.gen}"
+                                grammar="@{grammar}">
+          <include name="${example}/**/*.gom"/>
+        </gomantlradapter.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="javacompile">
+      <sequential>
+        <javac.preset destdir="${examples.build}" >
+          <src path="${examples.dir}"/>
+          <src path="${examples.gen}"/>
+          <include name="${example}/**/*.java"/>
+          <classpath refid="tom.examples.classpath"/>
+	  <!--compilerarg value="-Xlint:unchecked"/-->
+        </javac.preset>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="prepare.examples">
+    <mkdir dir="${examples.dist}"/>
+  </target>
+  
+  <!-- target debug to help finding properties problems -->
+  <target name="debug"> 
+    <echoproperties/>
+  </target>
+  
+  <target name="clean.examples" description="Cleans examples directory">
+    <delete dir="${examples.gen}"/>
+    <delete dir="${examples.build}"/>
+  </target>
+
+  <target name="clean.dist" description="Mr proper" depends="clean.examples">
+    <delete dir="${examples.dist}"/>
+  </target>
+
+  <target name="clean" description="Cleans example directory" if="example">
+    <delete dir="${examples.gen}/${example}"/>
+    <delete dir="${examples.build}/${example}"/>
+  </target>
+
+  <target name="build" depends="init" if="example">
+    <gombuild/>
+    <tomcompile/>
+    <javacompile/>
+  </target>
+
+  <target name="should-dist">
+    <condition property="can-be-distributed">
+      <and>
+        <isset property="distrib.zip"/>
+        <istrue value="${distribute}"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="dist" depends="should-dist, prepare.examples" if="can-be-distributed">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/**/*.t"/>
+        <include name="${example}/**/*.tom"/>
+        <include name="${example}/**/*.gom"/>
+        <include name="${example}/**/*.java"/>
+        <include name="${example}/**/*.g"/>
+        <include name="${example}/**/*.ml"/>
+        <include name="${example}/**/*.xml"/>
+        <include name="${example}/**/*.txt"/>
+        <include name="${example}/**/Makefile"/>
+        <include name="${example}/**/*.html"/>
+        <include name="${example}/**/*.gif"/>
+        <include name="${example}/README"/>
+        <include name="${example}/*.sty"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+  <target name="report.init" if="examples.report">
+    <mkdir dir="${examples.report}"/>
+  </target>
+
+  <target name="junit" depends="tom.init,report.init,build" if="example"
+    description="Runs junit acceptance tests">
+    <tom.junit printsummary="on"
+	    fork="on"
+	    haltonfailure="false"
+	    failureproperty="tests.failed"
+	    showoutput="true">
+      <formatter type="brief" usefile="no"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+      <sysproperty key="basedir" value="${examples.dir}"/>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+</project>
