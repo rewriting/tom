@@ -54,21 +54,22 @@ public class TestGenOpt {
        mu3(Appl(Z0,Z1)) -> choice6(Appl(Z0,Z1))
 
 
-       one4(Appl(Z0,Z1)) -> one4_1(Appl(Z0,one4_2(Z1)))
+       // all_1 SAME AS one_1
+       all(Appl(Z0,Z1)) -> all_1(Appl(Z0,all_2(Z1)))
 
-       one4_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
-       one4_1(Appl(Z0,Cons(x1,x2))) -> Appl(Z0,Cons(x1,x2))
+       all_1(Appl(Z0,BottomList(Z))) -> Bottom(Appl(Z0,Z))
+       all_1(Appl(Z0,Cons(x1,x2))) -> Appl(Z0,Cons(x1,x2))
+       all_1(Appl(Z0,Nill)) -> Appl(Z0,Nill)
 
-       one4_2(Nil()) -> BottomList(Nil())
-       one4_2(Cons(x1,x2)) -> one4_3(mu2(x1),x2)
+       all_2(Nil()) -> Nil()
+       all_2(Cons(x1,x2)) -> all_3(mu2(x1),x2,Cons(x1,Nil))
 
-       one4_3(Appl(Z0,Z1),x2) -> Cons(Appl(Z0,Z1),x2)
-       one4_3(Bottom(Z),Nil()) -> BottomList(Cons(Z,Nil()))
-       one4_3(Bottom(Z),Cons(Z0,Z1)) -> Clean(Z, one4_2(Cons(Z0,Z1)))
+       all_3(Appl(Z0,Z1),Nil,Y) -> Cons(Appl(Z0,Z1),Nil)
+       all_3(Appl(Z0,Z1),Cons(x1,x2),Y) -> all_3(mu2(x1),x2,Cons(Appl(Z0,Z1),Y))
+       all_3(Bottom(Z),x2,Y) -> BottomList(Concat(Y,Cons(Z,x2)))
 
-       Clean(Z,BottomList(Nil())) -> BottomList(Cons(Z,Nil()))
-       Clean(Z,BottomList(Cons(Z1,Nil()))) -> BottomList(Cons(Z,Cons(Z1,Nil())))
-       Clean(Z,Cons(Z0,Z1)) -> Cons(Z,Cons(Z0,Z1))
+       Concat(Nil,Z) -> Z
+       Concat(Cons(X,Y),Z) -> Cons(X,Concat(Y,Z))
 
        rule5(Bottom(Z)) -> Bottom(Z)
        rule5(Appl(a(),Nil())) -> Appl(b(),Nil())

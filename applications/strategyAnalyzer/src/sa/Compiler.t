@@ -385,57 +385,34 @@ public class Compiler {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String all = getName("all");
         generatedSignature.put(all,1);
-        Iterator<String> it = extractedSignature.keySet().iterator();
-        while(it.hasNext()) {
-          String name = it.next();
-          int arity = generatedSignature.get(name);
-          if(arity==0) {
-            bag.add(tools.encodeRule(%[rule(@all@(@name@), @name@)]%));
-          } else {
-            String all_n = all+"_"+name;
-            generatedSignature.put(all_n,1);
-            {
-              // main case
-              // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))
-              String lx = "X1"; 
-              String rx = phi_s+"(X1)"; 
-              for(int i=2 ; i<=arity ; i++) {
-                lx += ",X"+i;
-                rx += ","+phi_s+"(X"+i+")";
-              }
-              bag.add(tools.encodeRule(%[rule(@all@(@name@(@lx@)), @all_n@(@rx@,@name@(@lx@)))]%));
-            }
+        String all_1 = all+"_1";
+        generatedSignature.put(all_1,1);
+        String all_2 = all+"_2";
+        generatedSignature.put(all_2,1);
+        String all_3 = all+"_3";
+        generatedSignature.put(all_3,3);
+        String concat = getName("concat");
+        generatedSignature.put(concat,2); 
+ 
+        // all
+        bag.add(tools.encodeRule(%[rule(@all@(Appl(Z0,Z1)), @all_1@(Appl(Z0,@all_2@(Z1))))]%));
+        // all_1
+        bag.add(tools.encodeRule(%[rule(@all_1@(Appl(Z0,BottomList(Z))), Bottom(Appl(Z0,Z)))]%));
+        bag.add(tools.encodeRule(%[rule(@all_1@(Appl(Z0,Cons(Z1,Z2))), Appl(Z0,Cons(Z1,Z2)))]%));
+        bag.add(tools.encodeRule(%[rule(@all_1@(Appl(Z0,Nil)) , Appl(Z0,Nil))]%));
+        
+        bag.add(tools.encodeRule(%[rule(@all_2@(Nil()) , Nil())]%));
+        bag.add(tools.encodeRule(%[rule(@all_2@(Cons(Z1,Z2)) , @all_3@(@phi_s@(Z1),Z2,Cons(Z1,Nil)))]%));
+        
+        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(Z0,Z1),Nil,Y) , Cons(Appl(Z0,Z1),Nil))]%));
+        bag.add(tools.encodeRule(%[rule(@all_3@(Appl(Z0,Z1),Cons(X1,X2),Y) , @all_3@(@phi_s@(X1),X2,Cons(Appl(Z0,Z1),Y)))]%));
+        bag.add(tools.encodeRule(%[rule(@all_3@(Bottom(Z),X2,Y) , BottomList(@concat@(Y,X2)))]%));
 
-            // generate success rules
-            // all_g(x1@!BOTTOM,...,xN@!BOTTOM,_) -> g(x1,...,xN)
-            String lx = "at(X1,anti(Bottom(Y1)))";
-            String rx = "X1"; 
-            for(int j=2; j<=arity;j++) {
-              lx += ",at(X"+j+",anti(Bottom(Y"+j+")))";
-              rx += ",X"+j;
-            }
-            bag.add(tools.encodeRule(%[rule(@all_n@(@lx@,Z), @name@(@rx@))]%));
-
-            // generate failure rules
-            // phi_n(BOTTOM,_,...,_,x) -> BOTTOM
-            // phi_n(...,BOTTOM,...,x) -> BOTTOM
-            // phi_n(_,...,_,BOTTOM,x) -> BOTTOM
-            for(int i=1 ; i<=arity ; i++) {
-              String llx = (i==1)?"Bottom(X1)":"X1";
-              for(int j=2; j<=arity;j++) {
-                if(j==i) {
-                  llx += ",Bottom(X"+j+")";
-                } else {
-                  llx += ",X"+j;
-                }
-              }
-              bag.add(tools.encodeRule(%[rule(@all_n@(@llx@,Z), Z)]%));
-            }
-          }
-        }        
+        bag.add(tools.encodeRule(%[rule(@concat@(Nil,Z), Z)]%));
+        bag.add(tools.encodeRule(%[rule(@concat@(Cons(X,Y),Z), Cons(X,@concat@(Y,Z)))]%));
+    
         return all;
       }
-
       StratOne(s) -> {
         String phi_s = compileGenericStrat(bag,extractedSignature,generatedSignature,`s);
         String one = getName("one");
@@ -447,7 +424,7 @@ public class Compiler {
         String one_3 = one+"_3";
         generatedSignature.put(one_3,2);
         String clean = getName("clean");
-        generatedSignature.put(clean,2);
+        generatedSignature.put(clean,2); 
         // one
         bag.add(tools.encodeRule(%[rule(@one@(Appl(Z0,Z1)), @one_1@(Appl(Z0,@one_2@(Z1))))]%));
         // one_1
