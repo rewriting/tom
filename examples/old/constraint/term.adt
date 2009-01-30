@@ -1,9 +1,0 @@
-[ 
-constructor(Tuple,empty,empty),
-constructor(Tuple,vector,vector(<c1(int)>,<c2(int)>,<c3(int)>,<c4(int)>)),
-constructor(Integ,i,i(<value(int)>)),
-constructor(Csop,state,state(<solution(Tuple)>,<value(int)>,<constraints(TupleList)>,<rhs(IntList)>,<objectiveFunction(Tuple)>,<neighborgs(TupleList)>,<satisfiableNeighborgs(TupleList)>)), 
-constructor(Csop,fail,fail),                     
-list(IntList, Integ),
-list(TupleList, Tuple)
-]

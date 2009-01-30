@@ -1,7 +1,0 @@
-module term
-abstract syntax
-
-Term = f(t1:Term,t2:Term)
-     | a()
-     | b()
-

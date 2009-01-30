@@ -1,8 +1,0 @@
-definition
-module Peano
-exports
-  sorts Nat
-  context-free syntax
-    zero -> Nat     {cons("cons-zero")} 
-    suc(pred:Nat) -> Nat {cons("cons-suc")} 
-
