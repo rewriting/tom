@@ -310,16 +310,20 @@ public class Compiler {
         //System.out.println("lhs = " + `lhs);
         //System.out.println("encode lhs = " + tools.encodeConsNil(`lhs));
         //System.out.println("rhs = " + `rhs);
-        //System.out.println("encode rhs = " + tools.encodeConsNil(`rhs));
+        //System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs)));
         bag.add(`Rule(Appl(r,TermList(tools.metaEncodeConsNil(lhs))),tools.metaEncodeConsNil(rhs)));
+        bag.add(`Rule(Appl(r,TermList(At(tools.encode("X"),Anti(tools.metaEncodeConsNil(lhs))))),tools.encode("Bottom(X)")));
         for(String name:extractedSignature.keySet()) {
           // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
           generatedSignature.put("symb_"+name,0);
+        }
+          /*
           if(!name.equals(`lhs.getsymbol())) {// Not correct: the AP should be correclty compiled
             String appl = %[Appl(symb_@name@,Z1)]%;
             bag.add(`Rule(tools.encode(r+"("+appl+")"),tools.encode("Bottom("+appl+")")));
           }
         }
+        */
         return r;
       }
 
@@ -676,7 +680,9 @@ public class Compiler {
   public static Collection<Rule> expandAntiPattern2(Rule rule, Map<String,Integer> extractedSignature) {
     Collection<Rule> res = new HashSet<Rule>();
     try {
+      //System.out.println("expand AP: " + rule);
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
+      //System.out.println("contains AP: " + rule);
       Collection<Rule> bag = new HashSet<Rule>();
       `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
       for(Rule r:bag) {
@@ -698,15 +704,18 @@ public class Compiler {
     visit Term {
       Anti(t) -> {
         boolean generic = Main.options.generic;
+        //System.out.println("decode = " + `t);
         Term antiterm = (generic)?tools.decodeConsNil(`t):`t;
+        //System.out.println("antiterm = " + antiterm);
         %match(antiterm) { 
           Appl(name,args)  -> {
             Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
             // add g(Z1,...) ... h(Z1,...)
             for(String otherName:signature.keySet()) {
-              if(`name != otherName) {
+              if(!`name.equals(otherName)) {
                 int arity = signature.get(otherName);
                 Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                //System.out.println("new lhs: " + newt);
                 if(generic) {
                   newt = tools.metaEncodeConsNil(newt);
                 }
@@ -715,7 +724,7 @@ public class Compiler {
                 bag.add(newr);
               }
             }
-
+            
             // add f(!a1,...) ... f(a1,...,!an)
             sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
             int arity = tl.length();
@@ -725,10 +734,14 @@ public class Compiler {
               array[i] = `Anti(array[i]);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
               //System.out.println("newt: " + newt);
+              if(generic) {
+                newt = tools.metaEncodeConsNil(newt);
+              }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
               //System.out.println("newr: " + newr);
               bag.add(newr);
             }
+           
           }
         }
       }

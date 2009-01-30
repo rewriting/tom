@@ -97,7 +97,7 @@ public class Tools {
   }
 
   /**
-    * encodeConsNil: transforms a Term representation into a generic term representation
+    * metaEncodeConsNil: transforms a Term representation into a generic term representation
     * for instance, Appl("f",TermList(Appl("b",TermList()))) is transformed into
     * the string "Appl(symb_f,Cons(Appl(symb_b,Nil()),Nil()))"
     * this string can be encoded into a Term, using the "encode" method
@@ -115,6 +115,11 @@ public class Tools {
       Var(name) -> {
         return `name;
       }
+
+      Anti(term) -> {
+        //System.out.println("ENCODE ANTI: " + `term);
+        return "anti(" + encodeConsNil(`term) + ")";
+      }
     }
     return null;
   }
@@ -131,17 +136,37 @@ public class Tools {
     return "null";
   }
 
+  /*
+   * go from
+   * Appl("Appl",TermList(Appl("symb_f",TermList()),Appl("Cons",TermList(Appl("Appl",TermList(Appl("symb_a",TermList()),Appl("Nil",TermList()))),Appl("Nil",TermList())))))
+    * to Appl("f",TermList(Appl("b",TermList())))
+     *
+     */
   public static Term decodeConsNil(Term t) {
-    return t;
-    /*
     %match(t) {
-      Appl("Appl",TermList(name,args)) -> {
-        return `Appl(name,decodeConsNil(args));
+      Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
+        String name = `symb_name.substring("symb_".length());
+        return `Appl(name,decodeConsNilList(args));
+      }
+      
+    }
+    // identity to not decode an already decoded term
+    return t;
+  }
+
+  public static TermList decodeConsNilList(Term t) {
+    %match(t) {
+      Appl("Cons",TermList(head,tail)) -> {
+        TermList newTail = decodeConsNilList(`tail);
+        return `TermList(decodeConsNil(head), newTail*);
+      }
+
+      Appl("Nil",TermList()) -> {
+        return `TermList();
       }
 
     }
-    return "null";
-    */
+    return null;
   }
 
 }

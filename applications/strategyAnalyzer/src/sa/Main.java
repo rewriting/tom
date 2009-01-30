@@ -76,6 +76,7 @@ public class Main {
       if(options.withAP == false) {
         Collection<Rule> tmp = new HashSet<Rule>();
         for(Rule r:generatedRules) { 
+          //System.out.println("expand AP: " + r);
          tmp.addAll(Compiler.expandAntiPattern2(r,extractedSignature));
         }
         generatedRules = tmp;
