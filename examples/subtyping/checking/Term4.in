@@ -1,0 +1,12 @@
+Context(SigOf("plus",Composed(TyList(Atom("int"),Atom("int")),Atom("int"))),
+        SigOf("uminus",Composed(TyList(Atom("nat_p")),Atom("nat_n"))),
+        SigOf("aminus",Composed(TyList(Atom("nat_n")),Atom("nat_p"))),
+        SigOf("x",Atom("nat_n")),
+	SigOf("y",Atom("nat_p"))),
+
+CList(Subtype("nat_p","int"),Subtype("nat_n","int"),Subtype("nat_p","nat_p"),Subtype("nat_n","nat_n"),Subtype("int","int")),
+
+Fun("plus",TeList(Fun("aminus",TeList(Var("x"))),Fun("uminus",TeList(Var("y"))))),
+
+Atom("int")
+

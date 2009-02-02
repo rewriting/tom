@@ -1,0 +1,34 @@
+module subtyping.Definition
+imports String int
+abstract syntax
+
+Input = Input(ctx: Context, cl: ConstraintList, t: Term, ty: Type)
+
+Type = Atom(name: String)
+     | Composed(dom: TypeList, codom: Type)
+
+TypeList = TyList(Type*)
+
+Term = Var(name: String)
+     | Fun(name: String, args: TermList)
+
+TermList = TeList(Term*)
+
+Constraint = Subtype(type1: String, type2: String)
+
+ConstraintList = CList(Constraint*)
+
+Jugement = SigOf(name: String, sig: Type)
+
+Mapping = TypeOf(term: Term, sig: Type)
+   
+Context = Context(Jugement*)
+
+Statement = Statement(name: String, path: PathTree, ctx: Context, consequence: Mapping)
+
+Tree = SList(Statement*)
+
+Label = Label(num: int)
+
+PathTree = PTree(Label*)
+
