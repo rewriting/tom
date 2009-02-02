@@ -46,12 +46,12 @@
 // td
 
 // innermost(r1)
-let S=signature {a:0, b:0, f:1, g:2} in
-let r1 = { f(g(a(),b())) -> a() } in 
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { f(b()) -> a() } in 
 // let innermost = mu x.(all(x);((r1;x)<+identity)) in
-let td = mu y.(r1;all(y)) in
+// let td = mu y.(r1;all(y)) in
 //  innermost
-td
+// td
 
 // repeat(r1)
 //let S=signature {a:0, b:0, f:1, g:2} in
@@ -61,6 +61,9 @@ td
 
 
 // (r1))
-// let S=signature {a:0, b:0, f:1, g:2} in
-// let r1 = { f(a()) -> f(b()) } in 
-// all(r1)
+let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { g(a(),a()) -> a() } in 
+let r1 = { f(x) -> x } in 
+r1
+
+

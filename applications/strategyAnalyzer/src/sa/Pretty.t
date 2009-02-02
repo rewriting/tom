@@ -162,35 +162,14 @@ public class Pretty {
     // doesn't work when passed as parameter to ReplaceAnti
     //     HashMap<String,Term> varsig = new HashMap<String,Term>();
 
-    // generate different variables for each symbol ()
-    // use extractedSignature since normally anti-patterns are only on symbols in signature + Bottom
-    int varn = 0;
-    for(String name: extractedSignature.keySet()) {
-      Term t = `Var("Z"+varn++);
-      varsig.put(name,t);
-    }
-    //     System.out.println(varsig+"\n");
-
-    //  anti-patterns replaced by variable
     StringBuffer rulesb = new StringBuffer();
-    Strategy replaceAnti = `ReplaceAnti();
 
     HashSet<String> varSet = new HashSet<String>();
     Strategy collectVars = `CollectVars(varSet);
 
     rulesb.append("\n(RULES\n");
     for(Rule r:bag) {
-      Rule newRULE = null;
-      %match(r){  
-        Rule(lhs,rhs) -> {
-          // replace !t by Var
-          Term newLHS = `BottomUp(replaceAnti).visit(`lhs);
-          newRULE = `Rule(newLHS,rhs);
-          // Collect the variables when replacing anti-pattern by var
-          `BottomUp(collectVars).visit(newLHS);
-        }
-      }
-      rulesb.append("        " + Pretty.toString(newRULE,true) + "\n");
+      rulesb.append("        " + Pretty.toString(r,true) + "\n");
     }
     rulesb.append(")\n");
 
