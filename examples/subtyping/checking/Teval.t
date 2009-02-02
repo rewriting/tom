@@ -139,7 +139,7 @@ public class Teval {
       if (args.length > 0)
         path = args[0];
       else {
-        System.out.println("Please enter the file path that contain the Input information: ");
+        System.out.println("Please enter the file path that contains the Input information: ");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         path = reader.readLine();
       }
