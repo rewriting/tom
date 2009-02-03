@@ -1,0 +1,14 @@
+module logo.Ast
+imports String int
+abstract syntax
+
+Instruction = LC()
+            | PC()
+            | AV(distance:Expression)
+            | TG(angle:Expression)
+            | TD(angle:Expression)
+
+Expression = Cst(value:int)
+           | Plus(e1:Expression,e2:Expression)
+
+InstructionList = InstructionList(Instruction*)
