@@ -48,10 +48,6 @@ elementarystrategy :
   | ID -> ^(StratName ID)
   ;
 
-ruleset :
-  (rule)* -> ^(RuleList (rule)*)
-  ;
-
 rule :
   pattern ARROW term (IF cond=condition)?
     -> { cond == null }? ^(Rule pattern term)

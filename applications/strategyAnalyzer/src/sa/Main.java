@@ -13,6 +13,7 @@ public class Main {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
+    Pretty pretty = new Pretty();
 
     CmdLineParser optionParser = new CmdLineParser(options);
     optionParser.setUsageWidth(80);
@@ -76,17 +77,15 @@ public class Main {
       if(options.withAP == false) {
         Collection<Rule> tmp = new HashSet<Rule>();
         for(Rule r:generatedRules) { 
-          //System.out.println("expand AP: " + r);
-         tmp.addAll(Compiler.expandAntiPattern2(r,extractedSignature));
+          // add new rules to generatedRules (for each anti-pattern)
+         Compiler.expandAntiPattern2(tmp,r,extractedSignature);
         }
         generatedRules = tmp;
-
 //         generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
       if(options.withAT == false) {
         generatedRules = Compiler.expandAt(generatedRules);
       }
-
 
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
       Collections.sort(orderedRules, new MyRuleComparator());
@@ -101,10 +100,10 @@ public class Main {
       }
 
       if(options.classname != null) {
-        tomoutputfile.println( Pretty.generate(orderedRules,generatedSignature,options.classname) );
+        tomoutputfile.println( pretty.generateTom(orderedRules,generatedSignature,options.classname) );
       } 
       if(options.aprove) {
-        outputfile.println( Pretty.generateAprove(orderedRules,extractedSignature,true) );
+        outputfile.println( pretty.generateAprove(orderedRules,extractedSignature,true) );
       }
     } catch (Exception e) {
       System.err.println("exception: " + e);

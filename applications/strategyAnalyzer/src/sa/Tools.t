@@ -82,8 +82,9 @@ public class Tools {
     boolean res = true;
     for(int i=0 ; i<name.length(); i++) {
       res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)));
-    } 
+    }
     return name.startsWith("var_") || res;
+    //return name.startsWith("var_") || res;
   }
 
   private static TermList encodeList(ATermList list) {
@@ -113,8 +114,7 @@ public class Tools {
       }
 
       Var(name) -> {
-        return "var_"+`name;
-//         return `name;
+        return "var_" + `name;
       }
 
       Anti(term) -> {
@@ -153,7 +153,6 @@ public class Tools {
       }
 
       Var(symb_name) -> {
-//         System.out.println("VAR = "+ `t);
         String name = `symb_name.substring("var_".length());
         return `Var(name);
       }

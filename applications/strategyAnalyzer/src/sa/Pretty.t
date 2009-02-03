@@ -7,39 +7,38 @@ import java.util.*;
 public class Pretty {
   %include { rule/Rule.tom }
   %include { sl.tom }
-  %include { java/util/types/Map.tom }
-  %include { java/util/types/HashSet.tom }
+  %include { java/util/types/Collection.tom }
 
-  private static HashMap<String,Term> varsig = new HashMap<String,Term>();
+  private HashMap<String,Term> varsig = new HashMap<String,Term>();
 
-  public static String toString(ExpressionList l, boolean forAprove) {
+  public String toString(ExpressionList l) {
     StringBuffer sb = new StringBuffer();
     %match(l) {
       ExpressionList(_*,x,_*) -> {
-        sb.append(Pretty.toString(`x,forAprove)); 
+        sb.append(toString(`x)); 
         sb.append("\n");
       }
     }
     return sb.toString();
   }
 
-  public static String toString(Expression e, boolean forAprove) {
+  public String toString(Expression e) {
     StringBuffer sb = new StringBuffer();
     %match(e) {
       Let(x,v,t) -> {
         sb.append("let ");
         sb.append(`x);
         sb.append(" = ");
-        sb.append(Pretty.toString(`v,forAprove));
+        sb.append(toString(`v));
         sb.append(" in ");
-        sb.append(Pretty.toString(`t,forAprove));
+        sb.append(toString(`t));
       }
 
       Set(rulelist) -> {
         sb.append("{ ");
         %match(rulelist) {
           RuleList(_*,x,end*) -> {
-            sb.append(Pretty.toString(`x,forAprove));
+            sb.append(toString(`x));
             if(!`end.isEmptyRuleList()) {
               sb.append(", ");
             }
@@ -65,28 +64,32 @@ public class Pretty {
         sb.append(" }");
       }
 
-
     }
     return sb.toString();
   }
   
-  public static String toString(Rule r, boolean forAprove) {
-    StringBuffer sb = new StringBuffer();
+  public String toString(Rule r) {
     %match(r) {
-    Rule(lhs,rhs) -> {
-      sb.append(Pretty.toString(`lhs,forAprove));
-      sb.append(" -> ");
-      sb.append(Pretty.toString(`rhs,forAprove));
+      Rule(lhs,rhs) -> {
+        return toString(`lhs) + " -> " + toString(`rhs);
+      }
     }
-    }
-    return sb.toString();
+    return "toString(Rule): error";
   }
 
-  public static String toString(TermList t, boolean forAprove) {
+  public String addBrace(String name) {
+    if(Main.options.aprove) {
+      return name;
+    } else {
+      return name + "()";
+    }
+  }
+
+  public String toString(TermList t) {
     StringBuffer sb = new StringBuffer();
     %match(t) {
       TermList(_*,x,end*) -> {
-        sb.append(Pretty.toString(`x,forAprove));
+        sb.append(toString(`x));
         if(!`end.isEmptyTermList()) {
           sb.append(",");
         }
@@ -95,38 +98,29 @@ public class Pretty {
     return sb.toString();
   }
 
-  public static String toString(Term t, boolean forAprove) {
-    StringBuffer sb = new StringBuffer();
+  public String toString(Term t) {
     %match(t) {
-      Var(n) -> { sb.append(`n); }
+      Var(n) -> { return `n; }
 
-      BuiltinInt(n) -> { sb.append(`n); }
+      BuiltinInt(n) -> { return ""+`n; }
 
-      Anti(p) -> { 
-        sb.append("!"); 
-        sb.append(Pretty.toString(`p,forAprove));
-      }
+      Anti(p) -> { return "!" + toString(`p); }
 
-      At(var,term) -> { 
-        sb.append(Pretty.toString(`var,forAprove));
-        sb.append("@"); 
-        sb.append(Pretty.toString(`term,forAprove));
-      }
+      At(var,term) -> { return toString(`var) + "@" + toString(`term); }
 
-      Appl(symb,args) -> { 
-        sb.append(`symb); 
-        if(!(`args.isEmptyTermList() && forAprove)) {
-          sb.append("(");
-          sb.append(Pretty.toString(`args,forAprove));
-          sb.append(")");
+      Appl(symb,args) -> {
+        if(`args.isEmptyTermList()) {
+          return addBrace(`symb);
+        } else {
+          return `symb + "(" + toString(`args) + ")";
         }
       }
     }
-    return sb.toString();
+    return "toString(Term): error";
   }
 
   // Collect the variables
-  %strategy CollectVars(varSet:HashSet) extends Identity() {
+  %strategy CollectVars(varSet:Collection) extends Identity() {
     visit Term {
       Var(v)  -> {
         varSet.add(`v);
@@ -134,47 +128,20 @@ public class Pretty {
     }
   }
 
-  // Collect anti-patterns
-
-
-  // Replace the !t by variable
-  %strategy ReplaceAnti() extends Identity() {
-    visit Term {
-      Anti(t)  -> {
-        %match(t) {
-          Appl(name,_) -> {
-            //             String n = `name;
-            return varsig.get(`name);
-          }
-          _ -> {
-            System.out.println("TTTT=" +`t);
-            return `Var("BOBO"); // TO CHANGE
-          }
-        }
-      }
-    }
-  }
-
-
-  public static String generateAprove(List<Rule> bag, Map<String,Integer> extractedSignature, boolean innermost) 
-    throws VisitFailure{
-
-    // doesn't work when passed as parameter to ReplaceAnti
-    //     HashMap<String,Term> varsig = new HashMap<String,Term>();
-
+  public String generateAprove(List<Rule> bag, Map<String,Integer> extractedSignature, boolean innermost) 
+    throws VisitFailure {
     StringBuffer rulesb = new StringBuffer();
-
-    HashSet<String> varSet = new HashSet<String>();
-    Strategy collectVars = `CollectVars(varSet);
+    Collection<String> varSet = new HashSet<String>();
 
     rulesb.append("\n(RULES\n");
     for(Rule r:bag) {
-      rulesb.append("        " + Pretty.toString(r,true) + "\n");
+      `BottomUp(CollectVars(varSet)).visit(r);
+      rulesb.append("        " + toString(r) + "\n");
     }
     rulesb.append(")\n");
 
     StringBuffer varsb = new StringBuffer();
-    if(innermost){
+    if(innermost) {
       varsb.append("(STRATEGY INNERMOST)\n");
     }
     varsb.append("(VAR ");
@@ -187,9 +154,7 @@ public class Pretty {
     return varsb.toString()+rulesb.toString();
   }  
 
-
-
-  public static String generate(List<Rule> bag, Map<String,Integer> sig, String classname) {
+  public String generateTom(List<Rule> bag, Map<String,Integer> sig, String classname) {
     sig.put("Bottom",1);
     if(Main.options.generic) {
       sig.put("BottomList",1);
@@ -221,14 +186,13 @@ public class @classname@ {
 
     sb.append("      module m:rules() {\n");
     for(Rule r:bag) {
-      sb.append("        " + Pretty.toString(r,false) + "\n");
+      sb.append("        " + toString(r) + "\n");
     }
     sb.append(%[
     }
   }
   
-
-  public static void main(String[] args) {
+  public void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       T input = T.fromString(reader.readLine());
@@ -239,11 +203,9 @@ public class @classname@ {
     }
   }
 }
-    
-    ]%);
+]%);
 
     return sb.toString();
   }
 
 }
-

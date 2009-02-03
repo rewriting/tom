@@ -79,12 +79,16 @@ public class Compiler {
   private static String compileStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
 
     %match(strat) {
-      StratRule(Rule(lhs,rhs)) -> {
+      StratExp(Set(rulelist)) -> {
         String r = getName("rule");
         generatedSignature.put(r,1);
-        // use AST-syntax because lhs and rhs are already encoded
-        bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
-        bag.add(`Rule(Appl(r,TermList(At(tools.encode("X"),Anti(lhs)))),tools.encode("Bottom(X)")));
+        %match(rulelist) {
+          RuleList(_*,Rule(lhs,rhs),_*) -> {
+            // use AST-syntax because lhs and rhs are already encoded
+            bag.add(`Rule(Appl(r,TermList(lhs)),rhs));
+            bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(lhs)))),tools.encode("Bottom(INTERNALX)")));
+          }
+        }
         return r;
       }
 
@@ -97,7 +101,7 @@ public class Compiler {
           generatedSignature.put(mu,1);
           Strat newStrat = `TopDown(ReplaceMuVar(name,mu)).visitLight(`s);
           String phi_s = compileStrat(bag,extractedSignature,generatedSignature,newStrat);
-          bag.add(tools.encodeRule(%[rule(@mu@(at(X,anti(Bottom(Y)))), @phi_s@(X))]%));
+          bag.add(tools.encodeRule(%[rule(@mu@(at(INTERNALX,anti(Bottom(Y)))), @phi_s@(INTERNALX))]%));
           bag.add(tools.encodeRule(%[rule(@mu@(Bottom(X)), Bottom(X))]%));
           return phi_s;
         } catch(VisitFailure e) {
@@ -303,27 +307,25 @@ public class Compiler {
   private static String compileGenericStrat(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Strat strat) {
 
     %match(strat) {
-      StratRule(Rule(lhs,rhs)) -> {
+      StratExp(Set(rulelist)) -> {
         String r = getName("rule");
         generatedSignature.put(r,1);
-        // use AST-syntax because lhs and rhs are already encoded
-        //System.out.println("lhs = " + `lhs);
-        //System.out.println("encode lhs = " + tools.encodeConsNil(`lhs));
-        //System.out.println("rhs = " + `rhs);
-        //System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs)));
-        bag.add(`Rule(Appl(r,TermList(tools.metaEncodeConsNil(lhs))),tools.metaEncodeConsNil(rhs)));
-        bag.add(`Rule(Appl(r,TermList(At(tools.encode("X"),Anti(tools.metaEncodeConsNil(lhs))))),tools.encode("Bottom(X)")));
+        %match(rulelist) {
+          RuleList(_*,Rule(lhs,rhs),_*) -> {
+            // use AST-syntax because lhs and rhs are already encoded
+            //System.out.println("lhs = " + `lhs);
+            //System.out.println("encode lhs = " + tools.encodeConsNil(`lhs));
+            //System.out.println("rhs = " + `rhs);
+            //System.out.println("decode(encode rhs) = " + tools.decodeConsNil(tools.metaEncodeConsNil(`rhs)));
+            bag.add(`Rule(Appl(r,TermList(tools.metaEncodeConsNil(lhs))),tools.metaEncodeConsNil(rhs)));
+            bag.add(`Rule(Appl(r,TermList(At(tools.encode("INTERNALX"),Anti(tools.metaEncodeConsNil(lhs))))),tools.encode("Bottom(INTERNALX)")));
+          }
+        }
+
         for(String name:extractedSignature.keySet()) {
           // add symb_a(), symb_b(), symb_f(), symb_g() in the signature
           generatedSignature.put("symb_"+name,0);
         }
-          /*
-          if(!name.equals(`lhs.getsymbol())) {// Not correct: the AP should be correclty compiled
-            String appl = %[Appl(symb_@name@,Z1)]%;
-            bag.add(`Rule(tools.encode(r+"("+appl+")"),tools.encode("Bottom("+appl+")")));
-          }
-        }
-        */
         return r;
       }
 
@@ -513,7 +515,7 @@ public class Compiler {
   %strategy EliminateAt() extends Identity() {
     visit Term {
       At(t,t) -> {
-          return `t;
+        return `t;
       }
     }
   }
@@ -521,23 +523,29 @@ public class Compiler {
   // transforms a set of rule that contains x@t into a set of rules without @ 
   public static Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
     Collection<Rule> res = new HashSet<Rule>();
+    Collection<Term> bag_lhs = new HashSet<Term>();
     for(Rule rule:bag) {
-      //System.out.println("rule: " + rule);
+      //System.out.println("expand at rule: " + rule);
       Map<String,Term> map = new HashMap<String,Term>();
       `TopDown(CollectAt(map)).visitLight(rule);
       if(map.keySet().isEmpty()) {
         res.add(rule);
+        bag_lhs.add(rule.getlhs());
       }
       //System.out.println("at-map: " + map);
       Rule newRule = rule;
       for(String name:map.keySet()) {
         Term t = map.get(name);
+        //System.out.println("replace variable: " + name);
         newRule = `TopDown(ReplaceVariable(name,t)).visitLight(newRule);
         //System.out.println("new rule (instantiate): " + newRule);
         newRule = `TopDown(EliminateAt()).visitLight(newRule);
         //System.out.println("new rule (elimAt): " + newRule);
       }
-      res.add(newRule);
+      if(!bag_lhs.contains(newRule.getlhs())) {
+        // do not add a rule if the lhs is already there
+        res.add(newRule);
+      }
     }
     return res;
   }
@@ -672,21 +680,28 @@ public class Compiler {
     }
   }
   
-  public static Collection<Rule> expandAntiPattern2(Rule rule, Map<String,Integer> extractedSignature) {
-    Collection<Rule> res = new HashSet<Rule>();
+  public static void expandAntiPattern2(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
     try {
       //System.out.println("expand AP: " + rule);
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
       //System.out.println("contains AP: " + rule);
       Collection<Rule> bag = new HashSet<Rule>();
+      Collection<Term> bag_lhs = new HashSet<Term>();
+      // perform one-step expansion
       `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
-      for(Rule r:bag) {
-        res.addAll(expandAntiPattern2(r,extractedSignature));
+
+      for(Rule r:generatedRules) {
+        bag_lhs.add(r.getlhs());
+      }
+      for(Rule expandr:bag) {
+        // add rules of bag, if the lhs is not already in generatedRules
+        if(!bag_lhs.contains(expandr.getlhs())) {
+          expandAntiPattern2(generatedRules,expandr,extractedSignature);
+        }
       }
     } catch(VisitFailure e) {
-      res.add(rule);
+      generatedRules.add(rule);
     }
-    return res;
   }
   
   %strategy ContainsAntiPattern() extends Fail() {
@@ -698,9 +713,8 @@ public class Compiler {
   %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map) extends Identity() {
     visit Term {
       Anti(t) -> {
-        boolean generic = Main.options.generic;
         //System.out.println("decode = " + `t);
-        Term antiterm = (generic)?tools.decodeConsNil(`t):`t;
+        Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
         //System.out.println("antiterm = " + antiterm);
         %match(antiterm) { 
           Appl(name,args)  -> {
@@ -711,7 +725,7 @@ public class Compiler {
                 int arity = signature.get(otherName);
                 Term newt = tools.encode(genAbstractTerm(otherName,arity));
                 //System.out.println("new lhs: " + newt);
-                if(generic) {
+                if(Main.options.generic) {
                   newt = tools.metaEncodeConsNil(newt);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
@@ -729,7 +743,7 @@ public class Compiler {
               array[i] = `Anti(array[i]);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
               //System.out.println("newt: " + newt);
-              if(generic) {
+              if(Main.options.generic) {
                 newt = tools.metaEncodeConsNil(newt);
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);

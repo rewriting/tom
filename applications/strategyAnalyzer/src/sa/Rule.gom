@@ -40,7 +40,6 @@ Strat = StratName(name:String)
       | StratMu(name:String, s:Strat)
 
 module Rule:rules() {
-  StratExp(Set(RuleList(rule))) -> StratRule(rule)
   StratExp(Strat(s)) -> s
   StratName("Identity") -> StratIdentity()
   StratName("Fail") -> StratFail()
