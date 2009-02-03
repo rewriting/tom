@@ -83,7 +83,7 @@ public class Tools {
     for(int i=0 ; i<name.length(); i++) {
       res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)));
     } 
-    return res;
+    return name.startsWith("var_") || res;
   }
 
   private static TermList encodeList(ATermList list) {
@@ -113,7 +113,8 @@ public class Tools {
       }
 
       Var(name) -> {
-        return `name;
+        return "var_"+`name;
+//         return `name;
       }
 
       Anti(term) -> {
@@ -143,12 +144,19 @@ public class Tools {
      *
      */
   public static Term decodeConsNil(Term t) {
+
+//     System.out.println("IN DECODE = "+ `t);
     %match(t) {
       Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
-        String name = `symb_name.substring("symb_".length());
-        return `Appl(name,decodeConsNilList(args));
+          String name = `symb_name.substring("symb_".length());
+          return `Appl(name,decodeConsNilList(args));
       }
-      
+
+      Var(symb_name) -> {
+//         System.out.println("VAR = "+ `t);
+        String name = `symb_name.substring("var_".length());
+        return `Var(name);
+      }
     }
     // identity to not decode an already decoded term
     return t;
@@ -157,6 +165,8 @@ public class Tools {
   public static TermList decodeConsNilList(Term t) {
     %match(t) {
       Appl("Cons",TermList(head,tail)) -> {
+//         System.out.println("HEAD = "+ `head);
+//         System.out.println("TAIL = "+ `tail);
         TermList newTail = decodeConsNilList(`tail);
         return `TermList(decodeConsNil(head), newTail*);
       }

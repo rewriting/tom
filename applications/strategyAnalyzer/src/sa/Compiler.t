@@ -565,6 +565,10 @@ public class Compiler {
     for(Rule r:bag) {
       %match(r) {
         Rule(lhs,rhs) -> {
+
+          System.out.println("TERM with ANTI = " + `lhs);
+          System.out.println("DECO with ANTI = " + tools.decodeConsNil(`lhs));
+
           // Generate LHSs without anti-pattern
           Collection<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
           for(Term t: termSet) {
@@ -611,15 +615,6 @@ public class Compiler {
           Term t2p = (Term)pos.getReplace(allt).visitLight(t);
           termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
         }
-        
-//         // SIMPLIFIED GENERATE 
-//         Set<String> gensig = new HashSet<String>(expsig.keySet());
-//         gensig.remove(symbolName); // all but current
-//         for(String sn: gensig) {
-//           Term t2p = (Term)pos.getReplace(expsig.get(sn)).visitLight(t);
-//           termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
-//           //           System.out.println(" replace with  " + expsig.get(sn) + "  :  " + t2p);
-//         }
       }
     }
     
