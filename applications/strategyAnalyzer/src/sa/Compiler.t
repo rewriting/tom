@@ -14,6 +14,7 @@ public class Compiler {
   %include { java/util/types/HashSet.tom }
 
   private static Tools tools = new Tools();
+  private static Pretty pp = new Pretty();
 
   private static int phiNumber = 0;
   private static String getName(String name) {
@@ -557,7 +558,7 @@ public class Compiler {
     // use extractedSignature since normally anti-patterns are only on symbols in signature + Bottom
       // expsig: associate f(Z1,...,ZN) to "f"
     Map<String,Term> expsig = new HashMap<String,Term>();
-    extractedSignature.put("Bottom",1);
+    //     extractedSignature.put("Bottom",1);
     for(String name: extractedSignature.keySet()) {
       int arity = extractedSignature.get(name);
       TermList tl = `TermList();
@@ -579,11 +580,13 @@ public class Compiler {
 
           // Generate LHSs without anti-pattern
           Collection<Term> termSet = generateTermsWithoutAntiPatterns(decodedLHS,expsig);
+
           for(Term t: termSet) {
             // generate rule for each lhs generated 
             // if generic version than encode the generated lhs
             Term newLHS = (generic)?tools.generalMetaEncodeConsNil(t,extractedSignature.keySet()):`t;
             ruleSet.add(`Rule(newLHS,rhs));
+            //             System.out.println(" PROBLEM = "+ pp.toString(`Rule(newLHS,rhs))); 
           }
         }
       }
@@ -639,26 +642,63 @@ public class Compiler {
 
     %match(t) {
       Appl(name,tl) -> {
-
+        // First level corresponding anti-terms (a,b,f(x),... for !g(...))
         Set<String> gensig = new HashSet<String>(expsig.keySet());
         gensig.remove(`name); // all but current
-        gensig.remove("Bottom"); //  no Bottom when generating
+        //         gensig.remove("Bottom"); //  no Bottom when generating
         for(String sn : gensig) {
           termSet.add(expsig.get(sn));
         }
         
-        %match(tl) {
-          TermList(a*,arg,b*) -> {
-            HashSet<Term> antiArgs = propagateAnti(`arg,expsig);
-            for(Term curr_arg:antiArgs){
-              termSet.add(`Appl(name,TermList(a,curr_arg,b)));
-            }
+        // go down into the arguments
+        HashSet<TermList> antiArgs = propagateAntiList(`tl,expsig);
+        for(TermList curr_arg:antiArgs){
+          //           System.out.println("  ADD of " + pp.toString(`Appl(name,curr_arg)) );
+          termSet.add(`Appl(name,curr_arg));
+        }
+      }
+    }
+    return termSet; 
+  }
+
+
+  public static HashSet<TermList> propagateAntiList(TermList tl, Map<String,Term> expsig) 
+    throws VisitFailure {
+
+    HashSet<TermList> termListSet = new HashSet<TermList>();
+
+    %match(tl) {
+      //       TermList() -> {
+      //         return termListSet;
+      //       }
+
+      // singleton
+      TermList(h) -> {
+        HashSet<Term> termSet = propagateAnti(`h,expsig);
+        for(Term arg:termSet){
+          termListSet.add(`TermList(arg));
+        }
+        termListSet.add(`TermList(h));
+      }
+
+      TermList(h,tail*) -> {
+        HashSet<Term> termSet = propagateAnti(`h,expsig);
+        //         System.out.println("  TERM SET of " + pp.toString(`h) + "  ==  "+ termSet);
+        HashSet<TermList> tailSet = propagateAntiList(`tail,expsig);
+        //         System.out.println("  TAIL SET of " + pp.toString(`tail) + "  ==  "+ tailSet);
+
+        for(TermList rest:tailSet){
+          for(Term arg:termSet){
+            termListSet.add(`TermList(arg,rest*));
+            //             System.out.println("  ADD " + pp.toString(`TermList(arg,rest*))+"\n      SET="+termListSet );
           }
+          termListSet.add(`TermList(h,rest*));
+          //           System.out.println("  ADD " + pp.toString(`TermList(h,rest*))+"\n      SET="+termListSet );
         }
       }
     }
 
-    return termSet; 
+    return termListSet; 
   }
 
 

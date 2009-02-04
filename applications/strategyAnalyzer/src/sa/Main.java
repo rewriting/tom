@@ -84,10 +84,21 @@ public class Main {
 
         generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
+      
+      System.out.println("RULES without ANTI");
+      for(Rule r:generatedRules) { 
+        System.out.println(pretty.toString(r));
+      }
+      
       if(options.withAT == false) {
         generatedRules = Compiler.expandAt(generatedRules);
       }
 
+      System.out.println("RULES without AT");
+      for(Rule r:generatedRules) { 
+        System.out.println(pretty.toString(r));
+      }
+      
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
       Collections.sort(orderedRules, new MyRuleComparator());
 
