@@ -573,15 +573,17 @@ public class Compiler {
     for(Rule r:bag) {
       %match(r) {
         Rule(lhs,rhs) -> {
-
-          System.out.println("TERM with ANTI = " + `lhs);
-          System.out.println("DECO with ANTI = " + tools.decodeConsNil(`lhs));
+          // if generic version than decode LHS
+          boolean generic = Main.options.generic;
+          Term decodedLHS = (generic)?tools.generalDecodeConsNil(`lhs):`lhs;
 
           // Generate LHSs without anti-pattern
-          Collection<Term> termSet = generateTermsWithoutAntiPatterns(`lhs,expsig);
+          Collection<Term> termSet = generateTermsWithoutAntiPatterns(decodedLHS,expsig);
           for(Term t: termSet) {
             // generate rule for each lhs generated 
-            ruleSet.add(`Rule(t,rhs));
+            // if generic version than encode the generated lhs
+            Term newLHS = (generic)?tools.generalMetaEncodeConsNil(t,extractedSignature.keySet()):`t;
+            ruleSet.add(`Rule(newLHS,rhs));
           }
         }
       }

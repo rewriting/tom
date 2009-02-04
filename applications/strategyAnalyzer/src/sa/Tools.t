@@ -12,6 +12,7 @@ public class Tools {
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
   %include { java/util/types/HashSet.tom }
+  %include { java/util/types/Set.tom }
 
   /**
    * encode: transform a string "f(a,X)" into its Term representation
@@ -177,5 +178,111 @@ public class Tools {
     }
     return null;
   }
+
+
+
+
+
+  public static TermList generalDecodeConsNilList(TermList t) {
+    %match(t) {
+      TermList(head,tail*) -> { 
+        TermList newTail = generalDecodeConsNilList(`tail);
+        return `TermList(generalDecodeConsNil(head),newTail*);
+      }
+    }
+    return t; // liste vide
+  }
+
+  /** 
+   * Decodes (the) encoded (part of) terms
+   * The term can contain Anti and At - only the encoded parts are decoded
+   */
+  public static Term generalDecodeConsNil(Term t) {
+    %match(t) {
+      Appl("Appl",TermList(Appl(symb_name,TermList()),args)) -> {
+          String name = `symb_name.substring("symb_".length());
+          return `Appl(name,generalDecodeConsNilList(args));
+      }
+      Appl(rule_name,args) -> {
+          return `Appl(rule_name,generalDecodeConsNilList(args));
+      }
+      Var(symb_name) -> {
+        String name = `symb_name.startsWith("var_")?`symb_name.substring("var_".length()):`symb_name;
+        return `Var(name);
+      }
+      At(var_name,term) -> {
+          return `At(var_name,generalDecodeConsNil(term));
+      }
+      Anti(term) -> {
+          return `Anti(generalDecodeConsNil(term));
+      }      
+    }
+    // never
+    return t;
+  }
+
+  public static TermList generalDecodeConsNilList(Term t) {
+    %match(t) {
+      Appl("Cons",TermList(head,tail)) -> {
+        TermList newTail = generalDecodeConsNilList(`tail);
+        return `TermList(generalDecodeConsNil(head), newTail*);
+      }
+
+      Appl("Nil",TermList()) -> {
+        return `TermList();
+      }
+
+    }
+    // never
+    return `TermList();
+  }
+
+
+  /**
+    * generalMetaEncodeConsNil: transforms a Term representation into a generic term representation
+    * - the term can contain Anti and At - only the terms in the original signature are encoded
+    */
+
+  public static Term generalMetaEncodeConsNil(Term t, Set<String> extractedSignature) {
+    %match(t) {
+      Appl(symb,args) -> {
+        if(extractedSignature.contains(`symb)){
+          return encode("Appl(symb_" + `symb + "," + encodeConsNil(`args) + ")");
+        } else {
+          return `Appl(symb,generalMetaEncodeConsNil(args,extractedSignature));
+        }
+      }
+      // could be default
+      Var(name) -> {
+        return `Var(name);
+      }
+      Anti(term) -> {
+        return `Anti(generalMetaEncodeConsNil(term,extractedSignature));
+      }
+      At(t1,t2) -> {
+        return `At(generalMetaEncodeConsNil(t1,extractedSignature),generalMetaEncodeConsNil(t2,extractedSignature));
+      }
+    }
+    return t;
+  }
+
+  private static TermList generalMetaEncodeConsNil(TermList t, Set<String> extractedSignature) {
+    %match(t) {
+      TermList(head,tail*) -> {
+        Term headEnc = generalMetaEncodeConsNil(`head,extractedSignature);
+        TermList tailEnc = generalMetaEncodeConsNil(`tail,extractedSignature);
+        return `TermList(headEnc,tailEnc*);
+      }
+      // could be default
+      TermList() -> {
+        return `TermList();
+      }
+    }
+    return t;
+  }
+
+
+
+
 
 }

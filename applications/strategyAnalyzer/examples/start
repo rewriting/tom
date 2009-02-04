@@ -62,7 +62,9 @@
 
 // (r1))
 let S=signature {a:0, b:0, f:1, g:2} in
-let r1 = { g(a(),a()) -> a(), f(x) -> x } in 
+let r1 = { g(a(),x) -> f(x) } in 
+// let r1 = { g(a(),a()) -> a(), f(x) -> x } in 
+// let r1 = { f(a()) -> x } in 
 r1
 
 
