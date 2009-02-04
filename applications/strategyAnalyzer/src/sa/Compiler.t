@@ -581,6 +581,20 @@ public class Compiler {
           // Generate LHSs without anti-pattern
           Collection<Term> termSet = generateTermsWithoutAntiPatterns(decodedLHS,expsig);
 
+          // remove the starting term if it contained an anti-pattern
+          HashSet<Position> posSet = new HashSet<Position>();
+          // Collect anti-patterns
+          `BottomUp(CollectAntiPatterns(posSet)).visit(decodedLHS);
+          for(Position pos: posSet) {
+            Term at = (Term)pos.getSubterm().visitLight(decodedLHS);
+            %match(at) {
+              Anti(term) -> { 
+                Term newTerm = (Term)pos.getReplace(`term).visitLight(decodedLHS);
+                termSet.remove(newTerm);    
+              }
+            }
+          }
+
           for(Term t: termSet) {
             // generate rule for each lhs generated 
             // if generic version than encode the generated lhs
@@ -603,7 +617,7 @@ public class Compiler {
 
     // Collect anti-patterns
     `BottomUp(CollectAntiPatterns(posSet)).visit(t);
-
+ 
     if(posSet.isEmpty()) {
       termSet.add(t);
     } else {
@@ -630,7 +644,7 @@ public class Compiler {
         }
       }
     }
-    
+
     return termSet;
   }
 
