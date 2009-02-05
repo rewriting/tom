@@ -728,9 +728,10 @@ public class Compiler {
     if(arity==0) {
       return name;
     } else {
-      String args = "Z1";
+      String z = getName("Z");
+      String args = z+"_"+"1";
       for(int i=2 ; i<=arity ; i++) {
-        args += ", Z" + i;
+        args += ", " + z+"_"+i;
       }
       return name + "(" + args + ")";
     }
@@ -794,10 +795,17 @@ public class Compiler {
             sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
             int arity = tl.length();
             Term[] array = new Term[arity];
-            array = tl.toArray(array);
+            Term[] tarray = new Term[arity];
+            tarray = tl.toArray(tarray);
+            //String z = getName("Z");
+            String z = "Z";
             for(int i=0 ; i<arity ; i++) {
-              array[i] = `Anti(array[i]);
+              array[i] = tools.encode(z+"_"+i);
+            }
+            for(int i=0 ; i<arity ; i++) {
+              array[i] = `Anti(tarray[i]);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+              array[i] = tools.encode(z+"_"+i);
               //System.out.println("newt: " + newt);
               if(Main.options.generic) {
                 newt = tools.metaEncodeConsNil(newt);

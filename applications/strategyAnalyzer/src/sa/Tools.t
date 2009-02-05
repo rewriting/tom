@@ -82,7 +82,7 @@ public class Tools {
   private static boolean isVariableName(String name) {
     boolean res = true;
     for(int i=0 ; i<name.length(); i++) {
-      res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)));
+      res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)) || name.charAt(i)=='_');
     }
     return name.startsWith("var_") || res;
     //return name.startsWith("var_") || res;

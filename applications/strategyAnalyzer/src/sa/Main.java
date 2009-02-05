@@ -75,14 +75,14 @@ public class Main {
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
 
       if(options.withAP == false) {
-//         Collection<Rule> tmp = new HashSet<Rule>();
-//         for(Rule r:generatedRules) { 
-//           // add new rules to generatedRules (for each anti-pattern)
-//          Compiler.expandAntiPattern2(tmp,r,extractedSignature);
-//         }
-//         generatedRules = tmp;
+         Collection<Rule> tmp = new HashSet<Rule>();
+         for(Rule r:generatedRules) { 
+           // add new rules to generatedRules (for each anti-pattern)
+          Compiler.expandAntiPattern2(tmp,r,extractedSignature);
+         }
+         generatedRules = tmp;
 
-        generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
+        //generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
       
 //       System.out.println("RULES without ANTI");
