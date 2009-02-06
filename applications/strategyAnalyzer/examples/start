@@ -62,6 +62,8 @@
 
 // (r1))
 let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a()->b(), f(a())->a(), g(a(),a()) -> b() } in 
+let r1 = { a()->b(), f(f(X))->X, g(a(),a()) -> b() } in 
 let r1 = { a()->b(), f(X)->X, g(a(),a()) -> b() } in 
 r1
 
