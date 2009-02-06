@@ -192,7 +192,7 @@ public class @classname@ {
     }
   }
   
-  public void main(String[] args) {
+  public static void main(String[] args) {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       T input = T.fromString(reader.readLine());
