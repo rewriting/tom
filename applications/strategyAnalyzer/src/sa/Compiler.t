@@ -553,11 +553,10 @@ public class Compiler {
   public static Collection<Rule> expandAntiPatterns(Collection<Rule> bag, Map<String,Integer> extractedSignature) 
     throws VisitFailure {
 
-    // generate depth 1 replacement terms for each symbol in the signature (+Bottom)
-    // use extractedSignature since normally anti-patterns are only on symbols in signature + Bottom
+    // generate depth 1 replacement terms for each symbol in the signature
+    // use extractedSignature since normally anti-patterns are only on symbols in signature 
       // expsig: associate f(Z1,...,ZN) to "f"
     Map<String,Term> expsig = new HashMap<String,Term>();
-    //     extractedSignature.put("Bottom",1);
     for(String name: extractedSignature.keySet()) {
       int arity = extractedSignature.get(name);
       TermList tl = `TermList();
@@ -636,7 +635,7 @@ public class Compiler {
         } // TO CHANGE
 
         // Generate all terms corresponding to a pattern
-        HashSet<Term> antiTerms = propagateAnti(below_at,expsig);
+        HashSet<Term> antiTerms = propagateAntiSmart(below_at,expsig);
         for(Term allt : antiTerms){
           Term t2p = (Term)pos.getReplace(allt).visitLight(t);
           termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
@@ -645,6 +644,52 @@ public class Compiler {
     }
 
     return termSet;
+  }
+
+
+  public static HashSet<Term> propagateAntiSmart(Term t, Map<String,Term> expsig) 
+    throws VisitFailure {
+
+    HashSet<Term> termSet = new HashSet<Term>();
+
+    %match(t) {
+      Appl(name,args) -> {
+        // First level corresponding anti-terms (a,b,f(x),... for !g(...))
+        Set<String> gensig = new HashSet<String>(expsig.keySet());
+        gensig.remove(`name); // all but current
+        for(String sn : gensig) {
+          termSet.add(expsig.get(sn));
+        }
+        
+        %match(args){ 
+          TermList(a*,tl,b*) -> {
+            // go down into the arguments
+            HashSet<Term> antiArgs = propagateAntiSmart(`tl,expsig);
+            for(Term curr_arg:antiArgs){
+              //           System.out.println("  ADD of " + pp.toString(`Appl(name,curr_arg)) );
+              TermList na = generateVarArgs(`a);
+              TermList nb = generateVarArgs(`b);
+              termSet.add(`Appl(name,TermList(na*,ConsTermList(curr_arg,nb))));
+              //                     termSet.add(`Appl(name,TermList(curr_arg)));
+            }
+          }
+        }
+      }
+    }
+    return termSet; 
+  }
+
+  public static TermList generateVarArgs(TermList a){
+    TermList args = `TermList();
+    %match(a){
+      TermList(head,tail*) -> {
+        Term nh = `Var(getName("Z"));
+        TermList nt = generateVarArgs(`tail);
+        return `ConsTermList(nh,nt);
+        //         return `ConsTermList(Var(getName("Z")),generateVarArgs(tail));
+      }
+    }
+    return args;
   }
 
 
