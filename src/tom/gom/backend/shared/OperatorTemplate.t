@@ -82,6 +82,7 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
+import tom.gom.tools.*;
 ]%);
 
 if (maximalsharing) {
@@ -421,12 +422,13 @@ generateGetters(writer);
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
+    trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(symbolName.equals(appl.getName())) {
         return make(
-@generatefromATermChilds("appl")@
+@generatefromATermChilds("appl","atConv")@
         );
       }
     }
@@ -568,7 +570,7 @@ writer.write(%[
     return res.toString();
   }
 
-  private String generatefromATermChilds(String appl) {
+  private String generatefromATermChilds(String appl, String atConv) {
     StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
@@ -578,7 +580,7 @@ writer.write(%[
       if (res.length()!=0) {
         res.append(", ");
       }
-      fromATermSlotField(res,head, appl+".getArgument("+index+")");
+      fromATermSlotField(res,head, appl+".getArgument("+index+")",atConv);
       index++;
     }
     return res.toString();

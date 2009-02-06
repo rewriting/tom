@@ -75,6 +75,8 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;
 @generateImport()@
+import tom.gom.tools.*;
+
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
 @generateBlock()@
 ]%);
@@ -195,7 +197,8 @@ writer.write(%[
     return res;
   }
 
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
+    trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if("@className()@".equals(appl.getName())) {
@@ -203,7 +206,7 @@ writer.write(%[
 
         aterm.ATerm array[] = appl.getArgumentArray();
         for(int i = array.length-1; i>=0; --i) {
-          @domainClassName@ elem = @fromATermElement("array[i]")@;
+          @domainClassName@ elem = @fromATermElement("array[i]","atConv")@;
           res = @fullClassName(cons.getClassName())@.make(elem,res);
         }
         return res;
@@ -215,7 +218,7 @@ writer.write(%[
       @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
       try {
         while(!list.isEmpty()) {
-          @domainClassName@ elem = @fromATermElement("list.getFirst()")@;
+          @domainClassName@ elem = @fromATermElement("list.getFirst()","atConv")@;
           res = @fullClassName(cons.getClassName())@.make(elem,res);
           list = list.getNext();
         }
@@ -508,10 +511,10 @@ writer.write(%[
     return res.toString();
   }
 
-  private String fromATermElement(String term) {
+  private String fromATermElement(String term, String atConv) {
     SlotField slot = cons.getSlotFields().getHeadConcSlotField();
     StringBuilder buffer = new StringBuilder();
-    fromATermSlotField(buffer,slot,term);
+    fromATermSlotField(buffer,slot,term,atConv);
     return buffer.toString();
   }
 

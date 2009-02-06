@@ -324,13 +324,15 @@ public abstract class TemplateClass {
     }
   }
 
-  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
+  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
           buffer.append(fullClassName(`domain));
           buffer.append(".fromTerm(");
           buffer.append(appl);
+          buffer.append(",");
+          buffer.append(atConv);
           buffer.append(")");
         } else {
           if (`domain.equals(`ClassName("","int"))) {

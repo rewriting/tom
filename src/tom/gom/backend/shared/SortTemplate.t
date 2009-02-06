@@ -82,6 +82,7 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
+import tom.gom.tools.*;
 //import @getPackage()@.@className().toLowerCase()@.*;
 //import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
@@ -127,27 +128,45 @@ writer.write(%[
 
     /* fromTerm method, dispatching to operator classes */
     writer.write(%[
+
+  public static IdConverter idConv = new IdConverter();
+
   public aterm.ATerm toATerm() {
     // returns null to indicates sub-classes that they have to work
     return null;
   }
 
   public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
+    return fromTerm(trm,idConv);
+  }
+
+  public static @fullClassName()@ fromString(String s) {
+    return fromTerm(atermFactory.parse(s),idConv);
+  }
+
+  public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
+    return fromTerm(atermFactory.readFromFile(stream),idConv);
+  }
+
+  public static @fullClassName()@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
     @fullClassName()@ tmp;
+    aterm.ATerm convertedTerm = atConv.convert(trm);
+
 ]%);
-    generateFromTerm(writer,"trm","tmp");
+    generateFromTerm(writer,"convertedTerm","atConv","tmp");
     writer.write(%[
     throw new IllegalArgumentException("This is not a @className()@ " + trm);
   }
 
-  public static @fullClassName()@ fromString(String s) {
-    return fromTerm(atermFactory.parse(s));
+  public static @fullClassName()@ fromString(String s, ATermConverter atConv) {
+    return fromTerm(atermFactory.parse(s),atConv);
   }
 
-  public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
-    return fromTerm(atermFactory.readFromFile(stream));
+  public static @fullClassName()@ fromStream(java.io.InputStream stream, ATermConverter atConv) throws java.io.IOException {
+    return fromTerm(atermFactory.readFromFile(stream),atConv);
   }
 ]%);
+
     
     /* abstract method to compare two terms represented by objects without maximal sharing */
     /* used in the mapping */
@@ -259,13 +278,13 @@ matchblock: {
     }
   }
 
-  private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
+  private void generateFromTerm(java.io.Writer writer, String trm, String conv,String tmp) throws java.io.IOException {
     ClassNameList consum = `ConcClassName(operatorList*,variadicOperatorList*);
     while(!consum.isEmptyConcClassName()) {
       ClassName operatorName = consum.getHeadConcClassName();
       consum = consum.getTailConcClassName();
       writer.write(%[
-    @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@);
+    @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@,@conv@);
     if (@tmp@ != null) {
       return tmp;
     }
