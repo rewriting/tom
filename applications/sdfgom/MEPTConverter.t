@@ -127,7 +127,7 @@ public class MEPTConverter implements ATermConverter {
           }
 
         } else if(name.equals("non-assoc")) { // subcase : "non-assoc -> non_assoc" / arity = 0
-          AFun myAFun = factory.makeAFun("non_assoc",1,false);
+          AFun myAFun = factory.makeAFun("non_assoc",0,false);
           at = factory.makeAppl(myAFun);
 
         } else if(name.equals("iter-plus")) { // subcase : "iter-plus -> iter" / arity = 1

@@ -15,6 +15,7 @@ public class TestATerm {
      TermList = conc1( A* )
               | conc2( B* )
               | conc3( Term* )
+              | conc4( A* )
 
  }        
 

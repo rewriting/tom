@@ -83,6 +83,7 @@ public class SortTemplate extends TemplateHookedClass {
 package @getPackage()@;        
 @generateImport()@
 import tom.gom.tools.*;
+import java.util.Vector;
 //import @getPackage()@.@className().toLowerCase()@.*;
 //import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
@@ -149,13 +150,31 @@ writer.write(%[
   }
 
   public static @fullClassName()@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
-    @fullClassName()@ tmp;
+    Vector<@fullClassName()@> tmp = new Vector<@fullClassName()@>();
     aterm.ATerm convertedTerm = atConv.convert(trm);
-
+    int nbr = 0;
+    @fullClassName()@ res = null;
 ]%);
     generateFromTerm(writer,"convertedTerm","atConv","tmp");
     writer.write(%[
-    throw new IllegalArgumentException("This is not a @className()@ " + trm);
+    for(int i=0;i<tmp.size();i++) {
+      if(tmp.get(i) != null) {
+        nbr++;
+        if (res == null) {
+          res = tmp.get(i);
+        }
+      }
+    }
+    switch(nbr) {
+      case 0:
+        throw new IllegalArgumentException("This is not a @className()@ " + trm);
+      case 1:
+        return res;
+      default:
+        System.out.println("WARNING : There were many possibilities but the first one was chosen : " + res.toString());
+        break;
+    }
+    return res;
   }
 
   public static @fullClassName()@ fromString(String s, ATermConverter atConv) {
@@ -284,10 +303,7 @@ matchblock: {
       ClassName operatorName = consum.getHeadConcClassName();
       consum = consum.getTailConcClassName();
       writer.write(%[
-    @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@,@conv@);
-    if (@tmp@ != null) {
-      return tmp;
-    }
+    tmp.addElement(@fullClassName(operatorName)@.fromTerm(@trm@,@conv@));
 ]%);
     }
   }
