@@ -37,7 +37,6 @@ public class Main {
     }
 
     // this will redirect the output to the specified output
-    System.out.println(options.out);
 
     System.out.println("withAP: " + options.withAP);
     System.out.println("aprove: " + options.aprove);
@@ -75,12 +74,11 @@ public class Main {
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
 
       if(options.withAP == false) {
-         Collection<Rule> tmp = new HashSet<Rule>();
-         for(Rule r:generatedRules) { 
+         //Collection<Rule> tmp = new HashSet<Rule>();
+         for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
-          Compiler.expandAntiPattern2(tmp,r,extractedSignature);
+          Compiler.expandAntiPattern2(generatedRules,r,extractedSignature);
          }
-         generatedRules = tmp;
 
         //generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
@@ -121,6 +119,13 @@ public class Main {
       System.err.println("exception: " + e);
       e.printStackTrace();
       return;
+    }
+  }
+
+
+  private static  class MyRuleComparator implements Comparator<Rule> {
+    public int compare(Rule r1, Rule r2) {
+      return r1.getlhs().toString().compareTo(r2.getlhs().toString());
     }
   }
 }

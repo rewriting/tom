@@ -524,14 +524,12 @@ public class Compiler {
   // transforms a set of rule that contains x@t into a set of rules without @ 
   public static Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
     Collection<Rule> res = new HashSet<Rule>();
-    Collection<Term> bag_lhs = new HashSet<Term>();
     for(Rule rule:bag) {
       //System.out.println("expand at rule: " + rule);
       Map<String,Term> map = new HashMap<String,Term>();
       `TopDown(CollectAt(map)).visitLight(rule);
       if(map.keySet().isEmpty()) {
         res.add(rule);
-        bag_lhs.add(rule.getlhs());
       }
       //System.out.println("at-map: " + map);
       Rule newRule = rule;
@@ -543,14 +541,15 @@ public class Compiler {
         newRule = `TopDown(EliminateAt()).visitLight(newRule);
         //System.out.println("new rule (elimAt): " + newRule);
       }
-      if(!bag_lhs.contains(newRule.getlhs())) {
-        // do not add a rule if the lhs is already there
-        res.add(newRule);
-      }
+      res.add(newRule);
     }
     return res;
   }
 
+  /*
+   * Expand an anti-pattern
+   * HC's version
+   */
   public static Collection<Rule> expandAntiPatterns(Collection<Rule> bag, Map<String,Integer> extractedSignature) 
     throws VisitFailure {
 
@@ -724,6 +723,72 @@ public class Compiler {
     }
   }
  
+  
+  /**
+   * Expand an anti-pattern
+   * PEM's version
+   * @param generatedRules initial set of rules
+   * @param rule the rule to expand
+   * @param extractedSignature the signature
+   * @return nothing, but modifies generatedRules
+   */
+  public static void expandAntiPattern2(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
+    try {
+      //System.out.println("expand AP: " + rule);
+      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
+      generatedRules.remove(rule); // remove the rule since it will be expanded
+      //System.out.println("contains AP: " + rule);
+      Collection<Rule> bag = new HashSet<Rule>();
+      // perform one-step expansion
+      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
+
+      /*
+       * add rules from bag into generatedRules only if
+       * they do not overlap with previous rules (from generatedRules)
+       */
+      for(Rule expandr:bag) {
+        //System.out.println("add?: " + expandr);
+        boolean toAdd = true;
+        for(Rule r:generatedRules) {
+          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs()));
+        }
+        if(toAdd) {
+          //System.out.println("YES");
+          expandAntiPattern2(generatedRules,expandr,extractedSignature);
+        } else {
+          // do not add expandr
+          //System.out.println("NO");
+        }
+      }
+    } catch(VisitFailure e) {
+      // add the rule since it contains no more anti-pattern
+      generatedRules.add(rule);
+    }
+  }
+
+  private static boolean matchModuloAt(Term pattern, Term subject) {
+    try {
+      Term p = `TopDown(RemoveAtAndRenameVariables()).visitLight(pattern);
+      Term s = `TopDown(RemoveAtAndRenameVariables()).visitLight(subject);
+      //System.out.println(pattern + " <--> " + subject + " ==> " + (p==s));
+      return p==s;
+    } catch(VisitFailure e) {}
+    throw new RuntimeException("should not be there");
+  }
+ 
+  /*
+   * put terms in normal form to detect redundant patterns
+   */
+  %strategy RemoveAtAndRenameVariables() extends Identity() {
+    visit Term {
+      At(t1,t2)  -> { return `t2; }
+      Var(_)  -> { return `Var("_"); }
+    }
+  }
+
+  /*
+   * generate a term for the form f(Z1,...,Zn)
+   */
   private static String genAbstractTerm(String name, int arity) {
     if(arity==0) {
       return name;
@@ -736,37 +801,16 @@ public class Compiler {
       return name + "(" + args + ")";
     }
   }
-  
-  public static void expandAntiPattern2(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
-    try {
-      //System.out.println("expand AP: " + rule);
-      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
-      //System.out.println("contains AP: " + rule);
-      Collection<Rule> bag = new HashSet<Rule>();
-      Collection<Term> bag_lhs = new HashSet<Term>();
-      // perform one-step expansion
-      `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
 
-      for(Rule r:generatedRules) {
-        bag_lhs.add(r.getlhs());
-      }
-      for(Rule expandr:bag) {
-        // add rules of bag, if the lhs is not already in generatedRules
-        if(!bag_lhs.contains(expandr.getlhs())) {
-          expandAntiPattern2(generatedRules,expandr,extractedSignature);
-        }
-      }
-    } catch(VisitFailure e) {
-      generatedRules.add(rule);
-    }
-  }
-  
   %strategy ContainsAntiPattern() extends Fail() {
     visit Term {
       t@Anti(_)  -> { return `t; }
     }
   }
 
+  /*
+   * perform one-step expansion
+   */
   %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map) extends Identity() {
     visit Term {
       Anti(t) -> {

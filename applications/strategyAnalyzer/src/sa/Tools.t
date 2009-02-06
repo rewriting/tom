@@ -85,7 +85,6 @@ public class Tools {
       res &= (Character.isUpperCase(name.charAt(i)) || Character.isDigit(name.charAt(i)) || name.charAt(i)=='_');
     }
     return name.startsWith("var_") || res;
-    //return name.startsWith("var_") || res;
   }
 
   private static TermList encodeList(ATermList list) {
