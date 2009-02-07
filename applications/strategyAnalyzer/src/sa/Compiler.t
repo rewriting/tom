@@ -41,7 +41,6 @@ public class Compiler {
     }
   }
 
-
   private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
     //System.out.println("exp = " + e);
     %match(e) {
@@ -886,8 +885,7 @@ public class Compiler {
             Term[] array = new Term[arity];
             Term[] tarray = new Term[arity];
             tarray = tl.toArray(tarray);
-            //String z = getName("Z");
-            String z = "Z";
+            String z = getName("Z");
             for(int i=0 ; i<arity ; i++) {
               array[i] = tools.encode(z+"_"+i);
             }

@@ -1,0 +1,125 @@
+// repeat(obu(r1))
+  let S=signature {
+          one2:1
+        , one2_h2_2:2
+        , rule3:1
+        , h1:2
+        , choice9:1
+        , id7:1
+        , one2_h1_2:2
+        , choice5:1
+        , mu1:1
+        , g:2
+        , mu0:1
+        , b:0
+        , one2_g_1:2
+        , choice8:1
+        , h2:2
+        , choice4:1
+        , one2_g_2:2
+        , a:0
+        , f:1
+        , one2_h1_1:2
+        , one2_h2_1:2
+        , seq6:1
+        , Bottom:1
+        , one2_f_1:1
+  } in
+  let r1 = { 
+        choice4(X) -> choice5(one2(X))
+       , choice5(Bottom(X)) -> rule3(X)
+       , choice5(a()) -> a()
+       , choice5(b()) -> b()
+       , choice5(f(Z27_1)) -> f(Z27_1)
+       , choice5(g(Z29_1,Z29_2)) -> g(Z29_1,Z29_2)
+       , choice5(h1(Z28_1,Z28_2)) -> h1(Z28_1,Z28_2)
+       , choice5(h2(Z26_1,Z26_2)) -> h2(Z26_1,Z26_2)
+       , choice8(X) -> choice9(seq6(X))
+       , choice9(Bottom(X)) -> id7(X)
+       , choice9(a()) -> a()
+       , choice9(b()) -> b()
+       , choice9(f(Z15_1)) -> f(Z15_1)
+       , choice9(g(Z17_1,Z17_2)) -> g(Z17_1,Z17_2)
+       , choice9(h1(Z16_1,Z16_2)) -> h1(Z16_1,Z16_2)
+       , choice9(h2(Z14_1,Z14_2)) -> h2(Z14_1,Z14_2)
+       , id7(X) -> X
+       , mu0(Bottom(X)) -> Bottom(X)
+       , mu0(a()) -> choice8(a())
+       , mu0(b()) -> choice8(b())
+       , mu0(f(Z51_1)) -> choice8(f(Z51_1))
+       , mu0(g(Z53_1,Z53_2)) -> choice8(g(Z53_1,Z53_2))
+       , mu0(h1(Z52_1,Z52_2)) -> choice8(h1(Z52_1,Z52_2))
+       , mu0(h2(Z50_1,Z50_2)) -> choice8(h2(Z50_1,Z50_2))
+       , mu1(Bottom(X)) -> Bottom(X)
+       , mu1(a()) -> choice4(a())
+       , mu1(b()) -> choice4(b())
+       , mu1(f(Z47_1)) -> choice4(f(Z47_1))
+       , mu1(g(Z49_1,Z49_2)) -> choice4(g(Z49_1,Z49_2))
+       , mu1(h1(Z48_1,Z48_2)) -> choice4(h1(Z48_1,Z48_2))
+       , mu1(h2(Z46_1,Z46_2)) -> choice4(h2(Z46_1,Z46_2))
+       , one2(a()) -> Bottom(a())
+       , one2(b()) -> Bottom(b())
+       , one2(f(X1)) -> one2_f_1(mu1(X1))
+       , one2(g(X1,X2)) -> one2_g_1(mu1(X1),X2)
+       , one2(h1(X1,X2)) -> one2_h1_1(mu1(X1),X2)
+       , one2(h2(X1,X2)) -> one2_h2_1(mu1(X1),X2)
+       , one2_f_1(Bottom(X1)) -> Bottom(f(X1))
+       , one2_f_1(a()) -> f(a())
+       , one2_f_1(b()) -> f(b())
+       , one2_f_1(f(Z11_1)) -> f(f(Z11_1))
+       , one2_f_1(g(Z13_1,Z13_2)) -> f(g(Z13_1,Z13_2))
+       , one2_f_1(h1(Z12_1,Z12_2)) -> f(h1(Z12_1,Z12_2))
+       , one2_f_1(h2(Z10_1,Z10_2)) -> f(h2(Z10_1,Z10_2))
+       , one2_g_1(Bottom(X1),X2) -> one2_g_2(Bottom(X1),mu1(X2))
+       , one2_g_1(a(),X2) -> g(a(),X2)
+       , one2_g_1(b(),X2) -> g(b(),X2)
+       , one2_g_1(f(Z19_1),X2) -> g(f(Z19_1),X2)
+       , one2_g_1(g(Z21_1,Z21_2),X2) -> g(g(Z21_1,Z21_2),X2)
+       , one2_g_1(h1(Z20_1,Z20_2),X2) -> g(h1(Z20_1,Z20_2),X2)
+       , one2_g_1(h2(Z18_1,Z18_2),X2) -> g(h2(Z18_1,Z18_2),X2)
+       , one2_g_2(Bottom(X1),Bottom(X2)) -> Bottom(g(X1,X2))
+       , one2_g_2(Bottom(X1),a()) -> g(X1,a())
+       , one2_g_2(Bottom(X1),b()) -> g(X1,b())
+       , one2_g_2(Bottom(X1),f(Z39_1)) -> g(X1,f(Z39_1))
+       , one2_g_2(Bottom(X1),g(Z41_1,Z41_2)) -> g(X1,g(Z41_1,Z41_2))
+       , one2_g_2(Bottom(X1),h1(Z40_1,Z40_2)) -> g(X1,h1(Z40_1,Z40_2))
+       , one2_g_2(Bottom(X1),h2(Z38_1,Z38_2)) -> g(X1,h2(Z38_1,Z38_2))
+       , one2_h1_1(Bottom(X1),X2) -> one2_h1_2(Bottom(X1),mu1(X2))
+       , one2_h1_1(a(),X2) -> h1(a(),X2)
+       , one2_h1_1(b(),X2) -> h1(b(),X2)
+       , one2_h1_1(f(Z55_1),X2) -> h1(f(Z55_1),X2)
+       , one2_h1_1(g(Z57_1,Z57_2),X2) -> h1(g(Z57_1,Z57_2),X2)
+       , one2_h1_1(h1(Z56_1,Z56_2),X2) -> h1(h1(Z56_1,Z56_2),X2)
+       , one2_h1_1(h2(Z54_1,Z54_2),X2) -> h1(h2(Z54_1,Z54_2),X2)
+       , one2_h1_2(Bottom(X1),Bottom(X2)) -> Bottom(h1(X1,X2))
+       , one2_h1_2(Bottom(X1),a()) -> h1(X1,a())
+       , one2_h1_2(Bottom(X1),b()) -> h1(X1,b())
+       , one2_h1_2(Bottom(X1),f(Z43_1)) -> h1(X1,f(Z43_1))
+       , one2_h1_2(Bottom(X1),g(Z45_1,Z45_2)) -> h1(X1,g(Z45_1,Z45_2))
+       , one2_h1_2(Bottom(X1),h1(Z44_1,Z44_2)) -> h1(X1,h1(Z44_1,Z44_2))
+       , one2_h1_2(Bottom(X1),h2(Z42_1,Z42_2)) -> h1(X1,h2(Z42_1,Z42_2))
+       , one2_h2_1(Bottom(X1),X2) -> one2_h2_2(Bottom(X1),mu1(X2))
+       , one2_h2_1(a(),X2) -> h2(a(),X2)
+       , one2_h2_1(b(),X2) -> h2(b(),X2)
+       , one2_h2_1(f(Z35_1),X2) -> h2(f(Z35_1),X2)
+       , one2_h2_1(g(Z37_1,Z37_2),X2) -> h2(g(Z37_1,Z37_2),X2)
+       , one2_h2_1(h1(Z36_1,Z36_2),X2) -> h2(h1(Z36_1,Z36_2),X2)
+       , one2_h2_1(h2(Z34_1,Z34_2),X2) -> h2(h2(Z34_1,Z34_2),X2)
+       , one2_h2_2(Bottom(X1),Bottom(X2)) -> Bottom(h2(X1,X2))
+       , one2_h2_2(Bottom(X1),a()) -> h2(X1,a())
+       , one2_h2_2(Bottom(X1),b()) -> h2(X1,b())
+       , one2_h2_2(Bottom(X1),f(Z31_1)) -> h2(X1,f(Z31_1))
+       , one2_h2_2(Bottom(X1),g(Z33_1,Z33_2)) -> h2(X1,g(Z33_1,Z33_2))
+       , one2_h2_2(Bottom(X1),h1(Z32_1,Z32_2)) -> h2(X1,h1(Z32_1,Z32_2))
+       , one2_h2_2(Bottom(X1),h2(Z30_1,Z30_2)) -> h2(X1,h2(Z30_1,Z30_2))
+       , rule3(a()) -> f(b())
+       , rule3(b()) -> Bottom(b())
+       , rule3(f(Z23_1)) -> Bottom(f(Z23_1))
+       , rule3(g(Z25_1,Z25_2)) -> Bottom(g(Z25_1,Z25_2))
+       , rule3(h1(Z24_1,Z24_2)) -> Bottom(h1(Z24_1,Z24_2))
+       , rule3(h2(Z22_1,Z22_2)) -> Bottom(h2(Z22_1,Z22_2))
+       , seq6(X) -> mu0(choice4(X))
+  } in 
+  let obu = mu y.(one(y)<+r1) in
+  mu x .((obu;x) <+ identity)
+
