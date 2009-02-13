@@ -160,6 +160,9 @@ public class Rewriting {
     catch (VisitFailure e) { throw new RuntimeException("nevers happens"); }
   }
 
+  /**
+   * rewrites p using r
+   **/
   public static Prop rewrite(Prop p, PropRewriteRule r) {
     %match(r) {
       proprrule(_,prule(_,lhs,rhs)) -> {
@@ -171,11 +174,28 @@ public class Rewriting {
     throw new RuntimeException("non exhaustive patterns");
   }
 
+  /**
+   * returns null if no rule matches,
+   * rewrite with one that matches otherwise
+   **/
   public static Prop rewrite(Prop p, PropRewriteRules rs) {
     %match(rs) {
       proprrules(_*,r,_*) -> { 
         Prop q = `rewrite(p,r); 
         if(q!=null) return q;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * returns null if no rule matches, one that matches otherwise
+   **/
+  public static PropRewriteRule rewrites(Prop p, PropRewriteRules rs) {
+    %match(rs) {
+      proprrules(_*,r@proprrule(_,prule(_,lhs,rhs)),_*) -> {
+        FoSubst s = `match(p,lhs);
+        if(s!=null) return `r;
       }
     }
     return null;

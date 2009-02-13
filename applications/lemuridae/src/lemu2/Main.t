@@ -24,6 +24,8 @@ public class Main {
       res += "\n";
       res += "  typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,pr);
       res += "\n";
+      res += "  typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pr);
+      res += "\n";
     }
     return res;
   }
@@ -45,6 +47,7 @@ public class Main {
       System.out.println("typechecks LKFM          : " + TypeChecker.typecheck(pt,rrules,prules,pfrules));
       System.out.println("typechecks LKM1          : " + LKM1TypeChecker.typecheck(pt,prules));
       System.out.println("typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,prules));
+      System.out.println("typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pfrules));
       System.out.println();
       System.out.println("normal forms :");
       System.out.println(prettyNormalForms(Evaluation.reduce(pt),rrules,prules,pfrules));
