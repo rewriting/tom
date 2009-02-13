@@ -17,8 +17,12 @@ public class Main {
     String res = "";
     for (ProofTerm pt: c) {
       res += "- " + Pretty.pretty(pt.export());
+      res += "\n\n";
+      res += "  typechecks LKFM          : " + TypeChecker.typecheck(pt,tr,pr,pfr);
       res += "\n";
-      res += "  typechecks : " + TypeChecker.typecheck(pt,tr,pr,pfr);
+      res += "  typechecks LKM1          : " + LKM1TypeChecker.typecheck(pt,pr);
+      res += "\n";
+      res += "  typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,pr);
       res += "\n";
     }
     return res;
@@ -38,8 +42,11 @@ public class Main {
       ProofTerm pt = parser.proofterm().convert();
       System.out.println(Pretty.pretty(pt.export()));
       System.out.println();
-      System.out.println("typechecks : " + TypeChecker.typecheck(pt,rrules,prules,pfrules));
-      System.out.println("normal forms : ");
+      System.out.println("typechecks LKFM          : " + TypeChecker.typecheck(pt,rrules,prules,pfrules));
+      System.out.println("typechecks LKM1          : " + LKM1TypeChecker.typecheck(pt,prules));
+      System.out.println("typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,prules));
+      System.out.println();
+      System.out.println("normal forms :");
       System.out.println(prettyNormalForms(Evaluation.reduce(pt),rrules,prules,pfrules));
     } catch(Exception e) {
       e.printStackTrace();

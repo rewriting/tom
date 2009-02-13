@@ -189,7 +189,7 @@ class PrettyPrinter {
 
       // set theory pretty print
       relationAppl("in",(x,y)) -> {
-        return toLatex(`x) + " \\in " + toLatex(`y);
+        return toLatex(`x) + " : " + toLatex(`y);
       }
       relationAppl("subset",(x,y)) -> {
         return toLatex(`x) + " \\subset " + toLatex(`y);
@@ -245,6 +245,7 @@ class PrettyPrinter {
     }	
 
     %match(TermList term) {
+      () -> { return ""; }
       (x) -> { return toLatex(`x); }
       (h,t*) -> { return toLatex(`h) + ", " + toLatex(`t); }
     }
@@ -353,6 +354,22 @@ class PrettyPrinter {
      funAppl("lappl",(p,x*)) -> {
        return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
      }
+      // Emilie 
+      funAppl("int",()) -> { return %[{\bf int}]%; }
+      funAppl("string",()) -> { return %[{\bf string}]%; }
+      funAppl("unit",()) -> { return %[{\bf unit}]%; }
+      funAppl("est_pair",()) -> { return %[\mbox{``est pair''}]%; }
+      funAppl("est_impair",()) -> { return %[\mbox{``est impair''}]%; }
+      funAppl("let_in",(funAppl("var",(x)),t,u)) -> { return %[{\bf let~var}~@`toLatex(x)@~{\bf :=}~(@`toLatex(t)@)~{\bf in}~(@`toLatex(u)@)~{\bf end}]%; }
+      funAppl("let_in",(funAppl("defun",(f)),T,u,v)) -> { return %[{\bf let~defun}~@`toLatex(f)@() : @`toLatex(T)@ = (@`toLatex(u)@)~{\bf in}~(@`toLatex(v)@)~{\bf end}]%; }
+      funAppl("let_in",(funAppl("defun",(f,x1,T1)),T,u,v)) -> { return %[{\bf let~defun}~@`toLatex(f)@(@`toLatex(x1)@ : @`toLatex(T1)@) : @`toLatex(T)@ = (@`toLatex(u)@)~{\bf in}~(@`toLatex(v)@)~{\bf end}]%; }
+      funAppl("range",(dom,T)) -> { return %[@`toLatex(dom)@ \rightarrow @`toLatex(T)@]%; }
+      funAppl("dom",()) -> { return %[\langle~\rangle]%; }
+      funAppl("dom",(x)) -> { return %[\langle @`toLatex(x)@ \rangle]%; }
+      funAppl("dom",(x,y)) -> { return %[\langle @`toLatex(x)@ \times @`toLatex(y)@ \rangle]%; }
+      funAppl("while",(u,v)) -> { return %[{\bf while}~(@`toLatex(u)@)~{\bf do}~(@`toLatex(v)@)]%; }
+
+
 
       // Hoare triples
       funAppl("substitute",(P,x,e))  -> {
@@ -360,10 +377,10 @@ class PrettyPrinter {
           + `toLatex(e) + "/" + `toLatex(x) + "]";
       }
       funAppl("var",(funAppl(x,())))  -> {
-        return "\\overline{" + `x + "}"; 
+        return `x; 
       }
       funAppl("seq",(x,y))  -> {
-        return `toLatex(x) + ";" + `toLatex(y); 
+        return `toLatex(x) + "~;~" + `toLatex(y); 
       }
       funAppl("and",(a,b)) -> {
         return `toLatex(a) + "\\dot{\\land}" + `toLatex(b);
@@ -372,7 +389,7 @@ class PrettyPrinter {
         return `toLatex(a) + "\\dot{\\rightArrow}" + `toLatex(b);
       }
       funAppl("if_then_else",(a,b,c)) -> {
-        return "if (" + `toLatex(a) + ") then (" + `toLatex(b) + ") else (" + `toLatex(c) + ")";
+        return %[{\bf if}~(@`toLatex(a)@)~{\bf then}~(@`toLatex(b)@)~{\bf else}~(@`toLatex(c)@)]%;
       }
       l@funAppl("arg_cons",(x,y)) -> {
         if(endedByArgNil(`l)) return argListToLatex(`l) ; 
@@ -486,6 +503,7 @@ class PrettyPrinter {
     return null;
     
   }
+
 
   // Hoare pretty-print
   private static boolean endedByArgNil(Term l) {
@@ -654,6 +672,19 @@ class PrettyPrinter {
       Var(('@',n*)) -> { return `n; }
       Var(x) -> { return `x;}
 
+      // Emilie 
+      funAppl("est_pair",()) -> { return %["est pair"]%; }
+      funAppl("est_impair",()) -> { return %["est impair"]%; }
+      funAppl("let_in",(funAppl("var",(x)),t,u)) -> { return %[let var @`prettyPrint(x)@ := (@`prettyPrint(t)@) in (@`prettyPrint(u)@) end]%; }
+      funAppl("let_in",(funAppl("defun",(f)),T,u,v)) -> { return %[let defun @`prettyPrint(f)@() : @`prettyPrint(T)@ = (@`prettyPrint(u)@) in (@`prettyPrint(v)@) end]%; }
+      funAppl("let_in",(funAppl("defun",(f,x1,T1)),T,u,v)) -> { return %[let defun @`prettyPrint(f)@(@`prettyPrint(x1)@ : @`prettyPrint(T1)@) : @`prettyPrint(T)@ = (@`prettyPrint(u)@) in (@`prettyPrint(v)@) end]%; }
+      funAppl("range",(dom,T)) -> { return %[@`prettyPrint(dom)@ -> @`prettyPrint(T)@]%; }
+      funAppl("dom",()) -> { return "<>"; }
+      funAppl("dom",(x)) -> { return "<"+ `prettyPrint(x) + ">"; }
+      funAppl("dom",(x,y)) -> { return %[<@`prettyPrint(x)@ x @`prettyPrint(y)@>]%; }
+      funAppl("while",(u,v)) -> { return %[while (@`prettyPrint(u)@) do (@`prettyPrint(v)@)]%; }
+
+
       // arithmetic pretty print
       funAppl("z",()) -> { return "0"; }
       i@funAppl("succ",_) -> {
@@ -743,7 +774,7 @@ class PrettyPrinter {
         return "\"" + `x + "\""; 
       }
       funAppl("seq",(x,y))  -> {
-        return `prettyPrint(x) + ";" + `prettyPrint(y); 
+        return `prettyPrint(x) + " ; " + `prettyPrint(y); 
       }
       funAppl("and",(a,b)) -> {
         return `prettyPrint(a) + " && " + `prettyPrint(b);

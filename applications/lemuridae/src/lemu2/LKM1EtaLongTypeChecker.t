@@ -6,7 +6,7 @@ import java.util.Collection;
 import tom.library.freshgom.*;
 import tom.library.sl.*;
 
-public class LKM1TypeChecker {
+public class LKM1EtaLongTypeChecker {
 
   %include { proofterms/proofterms.tom } 
   %include { sl.tom } 
@@ -78,10 +78,6 @@ public class LKM1TypeChecker {
     catch (VisitFailure e) { throw new RuntimeException("never happens"); }
   }
 
-  private static Prop norm(Prop p, PropRewriteRules prs) {
-    return Rewriting.normalize(p,`termrrules(),prs);
-  }
-
   /* checks p1 and p2 alpha-equivalence with free the set of free vars */
   private static boolean alpha(Prop p1, Prop p2, FoVarList free) {
     if (p1 == null || p2 == null) return false;
@@ -114,7 +110,9 @@ public class LKM1TypeChecker {
         seq(free,gamma,delta) -> {
           %match(pt) {
             ax(n,cn) -> {
-              return `alpha(norm(lookup(gamma,n),prs),norm(lookup(delta,cn),prs),free);
+              Prop p = `lookup(gamma,n);
+              Prop q = `lookup(delta,cn);
+              return p.isrelApp() && q.isrelApp() && `alpha(p,q,free);
             }
             cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
               return `alpha(pa,px,free) 
