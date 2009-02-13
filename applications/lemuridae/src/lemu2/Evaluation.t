@@ -740,7 +740,7 @@ public class Evaluation {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,M1),CutPrem2(y,py,cut(CutPrem1(c,pc,M2),CutPrem2(z,pz,N))))));
           c.add(subst(getPosition(),last,
-                `cut(CutPrem1(c,pc,M1),CutPrem2(z,pz,cut(CutPrem1(b,pb,M1),CutPrem2(y,py,N))))));
+                `cut(CutPrem1(c,pc,M2),CutPrem2(z,pz,cut(CutPrem1(b,pb,M1),CutPrem2(y,py,N))))));
         }
       }
       // \/ cut -- non determinism

@@ -171,7 +171,7 @@ public class Rewriting {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static Prop rewrite(Prop p, PropRewriteRules rs) {
+  public static Prop rewrite(Prop p, PropRewriteRules rs) {
     %match(rs) {
       proprrules(_*,r,_*) -> { 
         Prop q = `rewrite(p,r); 
