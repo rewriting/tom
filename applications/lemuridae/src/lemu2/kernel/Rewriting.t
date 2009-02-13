@@ -1,13 +1,15 @@
-package lemu2;
+package lemu2.kernel;
 
-import lemu2.proofterms.types.*;
-import lemu2.proofterms.types.fovarlist.fovarList;
+import lemu2.kernel.proofterms.types.*;
+import lemu2.kernel.proofterms.types.fovarlist.fovarList;
+import lemu2.util.*;
+
 import java.util.Collection;
 import tom.library.sl.*;
 
 public class Rewriting {
 
-  %include { proofterms/proofterms.tom } 
+  %include { kernel/proofterms/proofterms.tom } 
   %include { sl.tom } 
 
   /* returns null if v not in dom(s) */

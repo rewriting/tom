@@ -3,11 +3,11 @@ grammar Lemu;
 
 @header {
   package lemu2;
-  import lemu2.proofterms.types.*;
+  import lemu2.kernel.proofterms.types.*;
 }
 
 @members {
-  %include { proofterms/proofterms.tom }
+  %include { kernel/proofterms/proofterms.tom }
 
   private RawTermList append(RawTermList l, RawTerm t) {
     %match(l) {

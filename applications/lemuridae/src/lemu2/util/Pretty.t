@@ -1,9 +1,10 @@
-package lemu2;
-import lemu2.proofterms.types.*;
+package lemu2.util;
+
+import lemu2.kernel.proofterms.types.*;
 
 public class Pretty {
 
-  %include { proofterms/proofterms.tom } 
+  %include { kernel/proofterms/proofterms.tom } 
 
   /* raw propositions */
 

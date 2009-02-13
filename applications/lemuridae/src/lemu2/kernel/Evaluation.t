@@ -1,16 +1,18 @@
-package lemu2;
+package lemu2.kernel;
 
 import tom.library.sl.*;
-import lemu2.proofterms.types.*;
-import lemu2.proofterms.types.namelist.nameList;
-import lemu2.proofterms.types.conamelist.conameList;
+
+import lemu2.kernel.proofterms.types.*;
+import lemu2.kernel.proofterms.types.namelist.nameList;
+import lemu2.kernel.proofterms.types.conamelist.conameList;
+import lemu2.util.*;
 
 import java.util.HashSet;
 import java.util.Collection;
 
 public class Evaluation {
 
-  %include { proofterms/proofterms.tom } 
+  %include { kernel/proofterms/proofterms.tom } 
   %include { sl.tom } 
 
   private static boolean topIntroducedName(ProofTerm pt, Name name) { 
@@ -783,7 +785,7 @@ public class Evaluation {
     }
   }
 
-  static Collection<ProofTerm> reduce(ProofTerm pt) {
+  public static Collection<ProofTerm> reduce(ProofTerm pt) {
     Collection<ProofTerm> res = new HashSet<ProofTerm>();
     Collection<ProofTerm> swap;
     res.add(pt);

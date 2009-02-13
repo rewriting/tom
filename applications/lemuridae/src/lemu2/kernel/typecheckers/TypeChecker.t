@@ -1,14 +1,17 @@
-package lemu2;
+package lemu2.kernel.typecheckers;
 
-import lemu2.proofterms.types.*;
-import lemu2.proofterms.types.fovarlist.fovarList;
+import lemu2.kernel.proofterms.types.*;
+import lemu2.kernel.proofterms.types.fovarlist.fovarList;
+import lemu2.kernel.*;
+import lemu2.util.*;
+
 import java.util.Collection;
 import tom.library.freshgom.*;
 import tom.library.sl.*;
 
 public class TypeChecker {
 
-  %include { proofterms/proofterms.tom } 
+  %include { kernel/proofterms/proofterms.tom } 
   %include { sl.tom } 
 
   private static Prop lookup(LCtx ctx, Name n) {
