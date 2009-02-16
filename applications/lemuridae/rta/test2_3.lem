@@ -1,0 +1,12 @@
+term modulo { }
+
+prop modulo { 
+  r0 : [n,m] Eq(s(n),s(m)) -> Eq(n,m)
+}
+
+prop fold { }
+
+
+rootR(
+  <r:Eq(s(s(s(s(s(s(s(s(s(s(z())))))))))),s(s(s(s(s(s(s(s(s(s(z()))))))))))) => Eq(z(),z())> implyR(
+    <x:Eq(z(),z())><a:Eq(z(),z())> ax(x,a),r))
