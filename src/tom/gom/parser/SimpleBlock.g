@@ -88,4 +88,4 @@ ML_COMMENT
   ;
 
 // the rule for the filter: just append the text to the buffer
-TARGET : ( text=~('/'|'{'|'}'|'"') )+ ;
+TARGET : ( text=~('{'|'}'|'"') )+ ;
