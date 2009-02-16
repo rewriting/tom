@@ -15,6 +15,7 @@ public class LKMToLKF {
 
   private static ProofTerm 
     eta(NProp left, CNProp right, PropRewriteRules prs, FoVarList free) {
+      //System.out.println("eta on " + left.getn() + " " + Pretty.pretty(left.getp()) + " " + right.getcn() + " " + Pretty.pretty(right.getp()));
       %match(left, right) {
         nprop(x,A@relApp[]), cnprop(a,B@relApp[]) -> {
           if (U.`alpha(A,B,free)) return `ax(x,a);
@@ -88,13 +89,45 @@ public class LKMToLKF {
       }
       return null;
   }
+
   public static ProofTerm 
     convert(ProofTerm pt, PropRewriteRules prs) {
       return convert(pt,`seq(fovarList(),lctx(),rctx()),prs);
     }
 
+  private static ProofTerm unfold(Prop P, ProofTerm M, CoName cn, FoVarList free, LCtx gamma, RCtx delta, PropRewriteRules prs) {
+      PropRewriteRule rule = Rewriting.rewrites(P,prs);
+      if (rule != null) {
+        String ruleid = rule.getid();
+        Prop PP = Rewriting.rewrite(P,rule);
+        CoName fresh = CoName.freshCoName(cn);
+        Sequent se1 = `seq(free,gamma,rctx(cnprop(fresh,PP),delta*));
+        ProofTerm prem = convert(U.reconame(M,cn,fresh),se1,prs);
+        return `foldR(ruleid,FoldRPrem1(fresh,PP,prem),cn);
+      } else return null;
+  }
+
+  private static ProofTerm unfold(Prop P, ProofTerm M, Name n, FoVarList free, LCtx gamma, RCtx delta, PropRewriteRules prs) {
+      PropRewriteRule rule = Rewriting.rewrites(P,prs);
+      if (rule != null) {
+        String ruleid = rule.getid();
+        Prop PP = Rewriting.rewrite(P,rule);
+        Name fresh = Name.freshName(n);
+        Sequent se1 = `seq(free,lctx(nprop(fresh,PP),gamma*),delta);
+        ProofTerm prem = convert(U.rename(M,n,fresh),se1,prs);
+        return `foldL(ruleid,FoldLPrem1(fresh,PP,prem),n);
+      } else return null;
+  }
+
   private static ProofTerm 
     convert(ProofTerm pt, Sequent se, PropRewriteRules prs) {
+      /*
+      System.out.println("--------------------------------------------");
+      System.out.println();
+      System.out.println(Pretty.pretty(pt));
+      System.out.println();
+      System.out.println(Pretty.pretty(se));
+      */
       %match(se) {
         seq(free,gamma,delta) -> {
           %match(pt) {
@@ -108,29 +141,55 @@ public class LKMToLKF {
             implyR(ImplyRPrem1(x,A,a,B,M),cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
-                relApp[] -> {
-                  PropRewriteRule rule = Rewriting.rewrites(`P,prs);
-                  if (rule != null) {
-                    String ruleid = rule.getid();
-                    Prop PP = Rewriting.rewrite(`P,rule);
-                    CoName fresh = CoName.freshCoName(`cn);
-                    Sequent se1 = `seq(free,gamma,rctx(cnprop(fresh,PP),delta*));
-                    ProofTerm prem = `convert(U.reconame(M,cn,fresh),se1,prs);
-                    return `foldR(ruleid,FoldRPrem1(fresh,PP,prem),cn);
-                  }
-                }
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
                 implies(A1,B1) -> {
-                  Sequent se1 = 
-                    `seq(free,lctx(nprop(x,A1),gamma*),rctx(cnprop(a,B1),delta*));
+                  Sequent se1 = `seq(free,lctx(nprop(x,A1),gamma*),rctx(cnprop(a,B1),delta*));
                   ProofTerm prem = `convert(M,se1,prs);
                   return `implyR(ImplyRPrem1(x,A1,a,B1,prem),cn);
                 }
-              } return null;
+              } 
+            }
+            implyL(ImplyLPrem1(x,B,M1),ImplyLPrem2(a,A,M2),n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                implies(A1,B1) -> {
+                  Sequent se1 = `seq(free,lctx(nprop(x,B1),gamma*),delta);
+                  Sequent se2 = `seq(free,gamma,rctx(cnprop(a,A1),delta*));
+                  ProofTerm prem1 = `convert(M1,se1,prs);
+                  ProofTerm prem2 = `convert(M2,se2,prs);
+                  return `implyL(ImplyLPrem1(x,B1,prem1),ImplyLPrem2(a,A1,prem2),n);
+                }
+              } 
+            }
+            andR(AndRPrem1(a,A,M1),AndRPrem2(b,B,M2),cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
+                and(A1,B1) -> {
+                  Sequent se1 = `seq(free,gamma,rctx(cnprop(a,A1),delta*));
+                  Sequent se2 = `seq(free,gamma,rctx(cnprop(b,B1),delta*));
+                  ProofTerm prem1 = `convert(M1,se1,prs);
+                  ProofTerm prem2 = `convert(M2,se2,prs);
+                  return `andR(AndRPrem1(a,A1,prem1),AndRPrem2(b,B1,prem2),cn);
+                }
+              } 
+            }
+            andL(AndLPrem1(x,A,y,B,M),n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                and(A1,B1) -> {
+                  Sequent se1 = `seq(free,lctx(nprop(x,A1),nprop(y,B1),gamma*),delta);
+                  ProofTerm prem1 = `convert(M,se1,prs);
+                  return `andL(AndLPrem1(x,A1,y,B1,prem1),n);
+                }
+              } 
             }
           }
         }
       }
       return null;
-  }
+    }
 
 }

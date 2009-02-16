@@ -92,6 +92,7 @@
     </antlr3>
 
     <javac.preset destdir="${lemu.build}" fork="yes">
+      <!-- <compilerarg value="-Xlint" /> -->
       <src path="${lemu.src}"/>
       <src path="${lemu.gen}"/>
       <classpath refid="tom.classpath"/>
