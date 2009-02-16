@@ -64,7 +64,6 @@ public class LKMToLKF {
                       OrLPrem2(z,B2,prem2),x)),a);
         }
         nprop(x,l@implies(A1,B1)), cnprop(a,r@implies(A2,B2)) -> {
-          System.out.println("eta on : " + Pretty.pretty(`l) + " |- " + Pretty.pretty(`r));
           Name y = Name.freshName(`x);
           Name z = Name.freshName(`x);
           CoName b = CoName.freshCoName(`a);
@@ -75,6 +74,16 @@ public class LKMToLKF {
                     y,A2,b,B2,implyL(
                       ImplyLPrem1(z,B1,prem1),
                       ImplyLPrem2(c,A1,prem2),x)),a);
+        }
+        nprop(x,forall(Fa(fx,A))), cnprop(a,forall(Fa(fy,B))) -> {
+          Name y = Name.freshName(`x);
+          CoName b = CoName.freshCoName(`a);
+          FoVarList free1 = `fovarList(fy,free*);
+          Prop A1 = U.`substFoVar(A,fx,var(fy));
+          ProofTerm prem = `eta(nprop(y,A1),cnprop(b,B),prs,free1);
+          return `forallR(ForallRPrem1(
+                    b,B,fy,forallL(ForallLPrem1(
+                      y,A1,prem),var(fy),x)),a);
         }
       }
       return null;

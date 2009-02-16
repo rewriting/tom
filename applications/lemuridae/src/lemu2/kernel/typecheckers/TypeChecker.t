@@ -70,7 +70,7 @@ public class TypeChecker {
             }
             existsL(ExistsLPrem1(x,px,fx,M),n) -> {
               return U.`alpha(U.norm(U.lookup(gamma,n),trs,prs),U.norm(exists(Ex(fx,px)),trs,prs),free)
-                && !((fovarList)`free).contains(`fx)
+                /* && !((fovarList)`free).contains(`fx) //useless */
                 && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),trs,prs,pfrs); 
             }
             rootL(RootLPrem1(x,px,M)) -> {
@@ -109,7 +109,7 @@ public class TypeChecker {
             }
             forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
               return U.`alpha(U.norm(U.lookup(delta,cn),trs,prs),U.norm(forall(Fa(fx,pa)),trs,prs),free)
-                && !((fovarList)`free).contains(`fx)
+                /* && !((fovarList)`free).contains(`fx) //useless */
                 && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),trs,prs,pfrs);
             }
             rootR(RootRPrem1(a,pa,M)) -> {

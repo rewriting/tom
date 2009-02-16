@@ -124,12 +124,12 @@ public class LKM1EtaLongTypeChecker {
               %match(q) {
                 exists[] -> {
                   return U.`alpha(q,exists(Ex(fx,px)),free)
-                    && !((fovarList)`free).contains(`fx)
+                    /* && !((fovarList)`free).contains(`fx) //useless */
                     && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),prs); 
                 }
                 relApp[] -> {
                   return U.`alpha(Rewriting.rewrite(q,prs),exists(Ex(fx,px)),free)
-                    && !((fovarList)`free).contains(`fx)
+                    /* && !((fovarList)`free).contains(`fx) //useless */
                     && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),prs); 
                 }
               }
@@ -214,12 +214,12 @@ public class LKM1EtaLongTypeChecker {
               %match(q) {
                 forall[]    -> {
                   return U.`alpha(q,forall(Fa(fx,pa)),free)
-                    && !((fovarList)`free).contains(`fx)
+                    /* && !((fovarList)`free).contains(`fx) //useless */
                     && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),prs);
                 }
                 relApp[] -> { 
                   return U.`alpha(Rewriting.rewrite(q,prs),forall(Fa(fx,pa)),free)
-                    && !((fovarList)`free).contains(`fx)
+                    /* && !((fovarList)`free).contains(`fx) //useless */
                     && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),prs);
                 }
               }

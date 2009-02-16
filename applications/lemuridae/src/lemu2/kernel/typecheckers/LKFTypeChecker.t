@@ -69,7 +69,7 @@ public class LKFTypeChecker {
             }
             existsL(ExistsLPrem1(x,px,fx,M),n) -> {
               return U.`alpha(U.lookup(gamma,n),exists(Ex(fx,px)),free)
-                && !((fovarList)`free).contains(`fx)
+                /* && !((fovarList)`free).contains(`fx) //useless */
                 && `typecheck(M,seq(fovarList(fx,free*),lctx(nprop(x,px),gamma*),delta),prs); 
             }
             foldL(id,FoldLPrem1(x,px,M),n) -> {
@@ -108,7 +108,7 @@ public class LKFTypeChecker {
             }
             forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
               return U.`alpha(U.lookup(delta,cn),forall(Fa(fx,pa)),free)
-                && !((fovarList)`free).contains(`fx)
+                /* && !((fovarList)`free).contains(`fx) //useless */
                 && `typecheck(M,seq(fovarList(fx,free*),gamma,rctx(cnprop(a,pa),delta*)),prs);
             }
             foldR(id,FoldRPrem1(a,pa,M),cn) -> {
