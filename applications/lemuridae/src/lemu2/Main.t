@@ -6,6 +6,7 @@ import lemu2.kernel.proofterms.types.*;
 import lemu2.kernel.proofterms.types.namelist.nameList;
 import lemu2.kernel.proofterms.types.conamelist.conameList;
 import lemu2.kernel.typecheckers.*;
+import lemu2.kernel.converters.*;
 import lemu2.kernel.*;
 import lemu2.util.*;
 
@@ -53,6 +54,11 @@ public class Main {
       System.out.println("typechecks LKM1          : " + LKM1TypeChecker.typecheck(pt,prules));
       System.out.println("typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,prules));
       System.out.println("typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pfrules));
+      System.out.println();
+      ProofTerm pt_eta = LKMToLKF.convert(pt,prules);
+      System.out.println("conversion: " + Pretty.pretty(pt_eta.export()));
+      System.out.println("conversion typechecks in LKFM  : " + TypeChecker.typecheck(pt_eta,rrules,`proprrules(),prules));
+      System.out.println("conversion typechecks in LKF  : " + LKFTypeChecker.typecheck(pt_eta,prules));
       System.out.println();
       System.out.println("normal forms :");
       System.out.println(prettyNormalForms(Evaluation.reduce(pt),rrules,prules,pfrules));

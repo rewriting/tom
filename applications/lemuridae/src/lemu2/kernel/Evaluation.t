@@ -29,7 +29,7 @@ public class Evaluation {
     return false;
   }
 
-  public static boolean topIntroducedCoName(ProofTerm pt, CoName coname) { 
+  private static boolean topIntroducedCoName(ProofTerm pt, CoName coname) { 
     %match (pt) {
       ax(_,cn) -> { return `coname == `cn; }
       trueR(cn) -> { return `coname == `cn; }
@@ -43,7 +43,7 @@ public class Evaluation {
     return false;
   }
 
-  public static nameList getFreeNames(NameList ctx, ProofTerm pt) {
+  private static nameList getFreeNames(NameList ctx, ProofTerm pt) {
     nameList c = (nameList) ctx;
     %match (pt) {
       ax(n,_) -> {
@@ -116,15 +116,15 @@ public class Evaluation {
     return `getFreeNames(nameList(),pt);
   }
 
-  public static boolean nameAppears(ProofTerm pt, Name n) {
+  private static boolean nameAppears(ProofTerm pt, Name n) {
     return getFreeNames(pt).contains(n);
   }
 
-  public static boolean freshlyIntroducedName(ProofTerm pt, Name n) {
+  private static boolean freshlyIntroducedName(ProofTerm pt, Name n) {
     return topIntroducedName(pt,n) && !isImplicitContraction(pt);
   }
 
-  public static conameList getFreeCoNames(CoNameList ctx, ProofTerm pt) {
+  private static conameList getFreeCoNames(CoNameList ctx, ProofTerm pt) {
     conameList c = (conameList) ctx;
     %match (pt) {
       ax(_,cn) -> {
@@ -198,15 +198,15 @@ public class Evaluation {
     return `getFreeCoNames(conameList(),pt);
   }
 
-  public static boolean conameAppears(ProofTerm pt, CoName cn) {
+  private static boolean conameAppears(ProofTerm pt, CoName cn) {
     return getFreeCoNames(pt).contains(cn);
   }
 
-  public static boolean freshlyIntroducedCoName(ProofTerm pt, CoName cn) {
+  private static boolean freshlyIntroducedCoName(ProofTerm pt, CoName cn) {
     return topIntroducedCoName(pt,cn) && !isImplicitContraction(pt);
   }
 
-  public static boolean isImplicitContraction(ProofTerm pt) {
+  private static boolean isImplicitContraction(ProofTerm pt) {
     %match (pt) {
       // left rules
       andL(AndLPrem1(x,_,y,_,M),n) -> { return `nameAppears(M,n); }
@@ -226,161 +226,10 @@ public class Evaluation {
     return false;
   }
 
-  private static ProofTerm rename(ProofTerm pt, Name n1, Name n2) { 
-    %match(pt) {
-      ax(n,cn) -> {
-        if (`n == n1) 
-          return `ax(n2,cn);
-        else 
-          return `ax(n,cn); 
-      }
-      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
-        return `cut(CutPrem1(a,pa,rename(M1,n1,n2)),CutPrem2(x,px,rename(M2,n1,n2)));
-      }
-      // left rules
-      andL(AndLPrem1(x,px,y,py,M),n) -> {
-        if (`n == n1)
-          return `andL(AndLPrem1(x,px,y,py,rename(M,n1,n2)),n2); 
-        else
-          return `andL(AndLPrem1(x,px,y,py,rename(M,n1,n2)),n); 
-      }
-      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
-        if (`n == n1)
-          return `orL(OrLPrem1(x,px,rename(M1,n1,n2)),OrLPrem2(y,py,rename(M2,n1,n2)),n2);
-        else
-          return `orL(OrLPrem1(x,px,rename(M1,n1,n2)),OrLPrem2(y,py,rename(M2,n1,n2)),n);
-      }
-      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
-        if (`n == n1)
-          return `implyL(ImplyLPrem1(x,px,rename(M1,n1,n2)),ImplyLPrem2(a,pa,rename(M2,n1,n2)),n2);
-        else
-          return `implyL(ImplyLPrem1(x,px,rename(M1,n1,n2)),ImplyLPrem2(a,pa,rename(M2,n1,n2)),n);
-      }
-      forallL(ForallLPrem1(x,px,M),t,n) -> {
-        if (`n == n1)
-          return `forallL(ForallLPrem1(x,px,rename(M,n1,n2)),t,n2);
-        else
-          return `forallL(ForallLPrem1(x,px,rename(M,n1,n2)),t,n);
-      }
-      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
-        if (`n == n1)
-          return `existsL(ExistsLPrem1(x,px,fx,rename(M,n1,n2)),n2);
-        else
-          return `existsL(ExistsLPrem1(x,px,fx,rename(M,n1,n2)),n);
-      }
-      rootL(RootLPrem1(x,px,M)) -> {
-        return `rootL(RootLPrem1(x,px,rename(M,n1,n2)));
-      }
-      foldL(id,FoldLPrem1(x,px,M),n) -> {
-        if (`n == n1)
-          return `foldL(id,FoldLPrem1(x,px,rename(M,n1,n2)),n2);
-        else
-          return `foldL(id,FoldLPrem1(x,px,rename(M,n1,n2)),n);
-      }
-      // right rules
-      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
-        return `orR(OrRPrem1(a,pa,b,pb,rename(M,n1,n2)),cn);
-      }
-      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
-        return `andR(AndRPrem1(a,pa,rename(M1,n1,n2)),AndRPrem2(b,pb,rename(M2,n1,n2)),cn);
-      }
-      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
-        return `implyR(ImplyRPrem1(x,px,a,pa,rename(M,n1,n2)),cn);
-      }
-      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
-        return `existsR(ExistsRPrem1(a,pa,rename(M,n1,n2)),t,cn);
-      }
-      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
-        return `forallR(ForallRPrem1(a,pa,fx,rename(M,n1,n2)),cn);
-      }
-      rootR(RootRPrem1(a,pa,M)) -> {
-        return `rootR(RootRPrem1(a,pa,rename(M,n1,n2)));
-      }
-      foldR(id,FoldRPrem1(a,pa,M),cn) -> {
-        return `foldR(id,FoldRPrem1(a,pa,rename(M,n1,n2)),cn); 
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
-  private static ProofTerm reconame(ProofTerm pt, CoName cn1, CoName cn2) { 
-    %match(pt) {
-      ax(n,cn) -> {
-        return `cn == cn1 ? `ax(n,cn2) : `ax(n,cn); 
-      }
-      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
-        return `cut(CutPrem1(a,pa,reconame(M1,cn1,cn2)),CutPrem2(x,px,reconame(M2,cn1,cn2)));
-      }
-      // left rules
-      andL(AndLPrem1(x,px,y,py,M),n) -> {
-        return `andL(AndLPrem1(x,px,y,py,reconame(M,cn1,cn2)),n); 
-      }
-      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
-        return `orL(OrLPrem1(x,px,reconame(M1,cn1,cn2)),OrLPrem2(y,py,reconame(M2,cn1,cn2)),n);
-      }
-      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
-        return `implyL(ImplyLPrem1(x,px,reconame(M1,cn1,cn2)),ImplyLPrem2(a,pa,reconame(M2,cn1,cn2)),n);
-      }
-      forallL(ForallLPrem1(x,px,M),t,n) -> {
-        return `forallL(ForallLPrem1(x,px,reconame(M,cn1,cn2)),t,n);
-      }
-      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
-        return `existsL(ExistsLPrem1(x,px,fx,reconame(M,cn1,cn2)),n);
-      }
-      rootL(RootLPrem1(x,px,M)) -> {
-        return `rootL(RootLPrem1(x,px,reconame(M,cn1,cn2)));
-      }
-      foldL(id,FoldLPrem1(x,px,M),n) -> {
-        return `foldL(id,FoldLPrem1(x,px,reconame(M,cn1,cn2)),n);
-      }
-      // right rules
-      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
-        if (`cn == cn1)
-          return `orR(OrRPrem1(a,pa,b,pb,reconame(M,cn1,cn2)),cn2);
-        else
-          return `orR(OrRPrem1(a,pa,b,pb,reconame(M,cn1,cn2)),cn);
-      }
-      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
-        if (`cn == cn1)
-          return `andR(AndRPrem1(a,pa,reconame(M1,cn1,cn2)),AndRPrem2(b,pb,reconame(M2,cn1,cn2)),cn2);
-        else
-          return `andR(AndRPrem1(a,pa,reconame(M1,cn1,cn2)),AndRPrem2(b,pb,reconame(M2,cn1,cn2)),cn);
-      }
-      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
-        if (`cn == cn1)
-          return `implyR(ImplyRPrem1(x,px,a,pa,reconame(M,cn1,cn2)),cn2);
-        else
-          return `implyR(ImplyRPrem1(x,px,a,pa,reconame(M,cn1,cn2)),cn);
-      }
-      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
-        if (`cn == cn1)
-          return `existsR(ExistsRPrem1(a,pa,reconame(M,cn1,cn2)),t,cn2);
-        else
-          return `existsR(ExistsRPrem1(a,pa,reconame(M,cn1,cn2)),t,cn);
-      }
-      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
-        if (`cn == cn1)
-          return `forallR(ForallRPrem1(a,pa,fx,reconame(M,cn1,cn2)),cn2);
-        else
-          return `forallR(ForallRPrem1(a,pa,fx,reconame(M,cn1,cn2)),cn);
-      }
-      rootR(RootRPrem1(a,pa,M)) -> {
-        return `rootR(RootRPrem1(a,pa,reconame(M,cn1,cn2)));
-      }
-      foldR(id,FoldRPrem1(a,pa,M),cn) -> {
-        if (`cn == cn1)
-          return `foldR(id,FoldRPrem1(a,pa,reconame(M,cn1,cn2)),cn2); 
-        else
-          return `foldR(id,FoldRPrem1(a,pa,reconame(M,cn1,cn2)),cn); 
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
   private static ProofTerm substName(ProofTerm pt, Name n1, CoName cn1, Prop prop, ProofTerm P) {
     %match(pt, Name n1) {
       ax(n,cn), n -> {
-        return `reconame(P,cn1,cn);
+        return U.`reconame(P,cn1,cn);
       }
       andL(AndLPrem1(x,px,y,py,M),n), n -> {
         return `cut(
@@ -490,7 +339,7 @@ public class Evaluation {
   private static ProofTerm substCoName(ProofTerm pt, CoName cn1, Name n1, Prop prop, ProofTerm P) {
     %match(pt, CoName cn1) {
       ax(n,cn), cn -> {
-        return `rename(P,n1,n);
+        return U.`rename(P,n1,n);
       }
       orR(OrRPrem1(a,pa,b,pb,M),cn), cn -> {
         return `cut(
@@ -687,7 +536,7 @@ public class Evaluation {
 
   %typeterm PTCollection { implement { java.util.Collection<ProofTerm> } }
 
-  public static ProofTerm subst(Position w, ProofTerm orig, ProofTerm st) {
+  private static ProofTerm subst(Position w, ProofTerm orig, ProofTerm st) {
     try { return (ProofTerm) w.getReplace(st).visit(orig); }
     catch (VisitFailure e) { throw new RuntimeException("never happens"); }
   }
@@ -707,12 +556,12 @@ public class Evaluation {
       cut(CutPrem1(a,pa,M),CutPrem2(x,px,ax(x,b))) -> {
         if (`freshlyIntroducedCoName(M,a)) 
           c.add(subst(getPosition(),last,
-                `reconame(M,a,b)));
+                U.`reconame(M,a,b)));
       }
       cut(CutPrem1(a,pa,ax(y,a)),CutPrem2(x,px,M)) -> {
         if (`freshlyIntroducedName(M,x)) 
           c.add(subst(getPosition(),last,
-                `rename(M,x,y)));
+                U.`rename(M,x,y)));
       }
       // top and bottom cuts
       cut(CutPrem1(a,pa,trueR(a)),CutPrem2(x,px,M)) -> {
