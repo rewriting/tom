@@ -16,12 +16,13 @@ public class TestATerm {
               | conc2( B* )
               | conc3( Term* )
               | conc4( A* )
+              | conc5( A* )
 
  }        
 
  public static void main(String[] args) {
    PureFactory factory = SingletonFactory.getInstance();
-   ATerm at = factory.parse("g([f([a()],[b()])])");
+   ATerm at = factory.parse("g([f([a()],[a()])])");
    System.out.println("at = " + at);
 
    Term t = Term.fromTerm(at);
