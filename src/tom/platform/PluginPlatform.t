@@ -66,7 +66,6 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
   /** informationTracker */
   private Map<String,String> informationTracker;
-  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
 
   /** Result of the run() method which is collected with all the run() results */
   private int runResult;
@@ -93,7 +92,6 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
     this.inputToCompileList = inputToCompileList;
     //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
     this.informationTracker = new HashMap();
-    informationTracker.put("lastGeneratedMapping",null);
     runResult = 0; //init
   }
 

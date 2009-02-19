@@ -61,6 +61,7 @@ public class GomEnvironment {
     symbolTable = new SymbolTable(this);
   }
 
+
   /**
    * Part of the Singleton pattern, get the instance or create it.
    * @returns the instance of the GomEnvironment

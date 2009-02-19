@@ -33,6 +33,7 @@ import tom.library.sl.*;
 import tom.gom.backend.CodeGen;
 import tom.gom.GomMessage;
 import tom.gom.SymbolTable;
+import tom.gom.exception.*;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;

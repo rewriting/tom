@@ -109,8 +109,7 @@ public class ExpanderPlugin extends GomGenericPlugin {
             + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());
       }
     }
-    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
-    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

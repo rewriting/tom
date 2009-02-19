@@ -61,7 +61,7 @@ public class TypeExpander {
   public GomStreamManager getStreamManager() {
     return this.gomEnvironment.getStreamManager();
   }
-  
+
   /**
     * We try here to get full sort definitions for each constructs
     * Once the structure is correctly build, we can attach the hooks
@@ -221,7 +221,7 @@ public class TypeExpander {
         }
       }
     }
-
+    
     getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
         new Object[]{typename});
     /* If the sort is not known, assume it is a builtin */

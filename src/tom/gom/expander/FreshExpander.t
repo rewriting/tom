@@ -26,12 +26,14 @@ package tom.gom.expander;
 
 import java.util.logging.Level;
 import tom.gom.GomStreamManager;
+import tom.gom.GomMessage;
 import tom.gom.SymbolTable;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
 import java.util.Set;
 import tom.gom.SymbolTable.*;
+import tom.gom.exception.*;
 import tom.gom.tools.GomEnvironment;
 
 public class FreshExpander {
@@ -77,13 +79,14 @@ public class FreshExpander {
       res = addMappingHooks(res);
       return res;
     } catch (VisitFailure e) {
-      throw new RuntimeException("should not happen");
-    } catch (SymbolTable.SortException e) {
+      throw new GomRuntimeException("Should never happen");
+    } catch (SortException e) {
       e.printStackTrace();
-      throw new RuntimeException("should not happen");
-    } catch (SymbolTable.ConstructorException e) {
+      throw new GomRuntimeException("Should never happen");
+    //} catch (SymbolTable.ConstructorException e) {
+    } catch (ConstructorException e) {
       e.printStackTrace();
-      throw new RuntimeException("should not happen");
+      throw new GomRuntimeException("Should never happen");
     }
   }
   
@@ -427,8 +430,8 @@ public class FreshExpander {
         return (GomModuleList)
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       }
-      catch (VisitFailure e) { 
-        throw new RuntimeException("Should never happen"); 
+      catch (VisitFailure e) {
+        throw new GomRuntimeException("Should never happen");
       }
     }
 
@@ -450,8 +453,8 @@ public class FreshExpander {
       try { 
         return (GomModuleList)
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
-      } catch (VisitFailure e) { 
-        throw new RuntimeException("Should never happen"); 
+      } catch (VisitFailure e) {
+        throw new GomRuntimeException("Should never happen");
       }
     }
 
@@ -476,7 +479,7 @@ public class FreshExpander {
           `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
-        throw new RuntimeException("Should never happen"); 
+        throw new GomRuntimeException("Should never happen");
       }
     }
 
@@ -491,7 +494,7 @@ public class FreshExpander {
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
-        throw new RuntimeException("Should never happen"); 
+        throw new GomRuntimeException("Should never happen");
       }
     }
 
@@ -514,7 +517,7 @@ public class FreshExpander {
         return (GomModuleList)
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       } catch (VisitFailure e) { 
-        throw new RuntimeException("Should never happen"); 
+        throw new GomRuntimeException("Should never happen");
       }
     }
 
@@ -1146,7 +1149,7 @@ public class FreshExpander {
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
     try { return (GomModuleList) `TopDown(AddRaw(st,this)).visitLight(res); }
     catch(VisitFailure e) { 
-      throw new RuntimeException("should never happen"); 
+      throw new GomRuntimeException("Should never happen");
     }
   }
 
@@ -1179,7 +1182,7 @@ public class FreshExpander {
       }
       e@EmptyConcProduction() -> { return `e; }
     }
-    throw new RuntimeException("non exhaustive patterns");
+    throw new GomRuntimeException("Non exhaustive patterns");
   }
 
   %strategy Rawify(st:SymbolTable,fe:FreshExpander) extends Identity() {
@@ -1197,7 +1200,7 @@ public class FreshExpander {
   private Production rawify(Production p, SymbolTable st) {
     try { return (Production) `TopDown(Rawify(st,this)).visitLight(p); }
     catch(VisitFailure f) { 
-      throw new RuntimeException("should never happen"); 
+      throw new GomRuntimeException("Should never happen");
     }
   }
 

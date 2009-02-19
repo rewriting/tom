@@ -55,6 +55,9 @@ public abstract class TomGenericPlugin implements Plugin {
   
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
 
+  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
+  public final static String KEY_LAST_READ_LINE = "lastReadLine";
+  
   /** The name of the plugin. */
   private String pluginName;
 

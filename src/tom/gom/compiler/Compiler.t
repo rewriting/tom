@@ -219,7 +219,6 @@ public class Compiler {
         GomClassList allOperatorClasses = `ConcGomClass();
         GomClassList allSortClasses = `ConcGomClass();
         /* TODO improve this part : just for test */
-        // ModuleDeclList modlist = environment().getModuleDependency(`moduleDecl);
         ModuleDeclList modlist = getGomEnvironment().getModuleDependency(`moduleDecl);
         while(!modlist.isEmptyConcModuleDecl()) {
           ModuleDecl imported = modlist.getHeadConcModuleDecl();

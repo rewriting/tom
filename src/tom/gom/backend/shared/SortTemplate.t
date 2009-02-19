@@ -82,8 +82,12 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
+import tom.gom.GomMessage;
 import tom.gom.tools.*;
 import java.util.Vector;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import @getPackage()@.@className().toLowerCase()@.*;
 //import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
@@ -171,7 +175,8 @@ writer.write(%[
       case 1:
         return res;
       default:
-        System.out.println("WARNING : There were many possibilities but the first one was chosen : " + res.toString());
+        Logger.getLogger("@className()@").log(Level.WARNING,GomMessage.gomChoiceWarning.getMessage(),new Object[] {"@fullClassName()@", res.toString()});
+        //System.out.println("WARNING: There were many possibilities in @fullClassName()@ but the first one was chosen : " + res.toString());
         break;
     }
     return res;

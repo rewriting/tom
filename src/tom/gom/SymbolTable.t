@@ -36,7 +36,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import tom.gom.exception.*;
 import tom.gom.tools.GomEnvironment;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class SymbolTable {
 
@@ -120,6 +124,8 @@ public class SymbolTable {
     SortDescription desc = sorts.get(sort);
     if(desc==null) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return null;
     }
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
@@ -127,20 +133,26 @@ public class SymbolTable {
           + `m.toLowerCase() + ".types." + sort; 
       }
     }
-    throw new RuntimeException("non exhaustive match");
+    throw new GomRuntimeException("Non exhaustive match");
+    //getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    //return null;
   }
 
   public String getFullConstructorClassName(String cons) {
     ConstructorDescription desc = constructors.get(cons);
     if(desc==null) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return null;
     }
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
         return getFullSortClassName(`s).toLowerCase() + "." + cons; 
       }
     }
-    throw new RuntimeException("non exhaustive match");
+    throw new GomRuntimeException("Non exhaustive match");
+    //getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    //return null;
   }
 
   public boolean isBuiltin(String sort) {
@@ -205,6 +217,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return false;
     }
   }
 
@@ -219,6 +233,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return false;
     }
   }
 
@@ -233,6 +249,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return false;
     }
   }
 
@@ -247,6 +265,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return false;
     }
   }
 
@@ -349,6 +369,8 @@ public class SymbolTable {
     SortDescription desc = sorts.get(sort);
     if(desc==null) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return null;
     }
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
@@ -356,20 +378,26 @@ public class SymbolTable {
           + `m.toLowerCase() + ".types." + rawSort(sort); 
       }
     }
-    throw new RuntimeException("non exhaustive match");
+    throw new GomRuntimeException("Non exhaustive match");
+    //getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    //return null;
   }
 
   public String qualifiedRawConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
     if(desc==null) {
       throw new UndeclaredConstructorException(cons);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      //return null;
     }
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
         return qualifiedRawSortId(`s).toLowerCase() + "." + `rawCons(cons); 
       }
     }
-    throw new RuntimeException("non exhaustive match");
+    throw new GomRuntimeException("Non exhaustive match");
+    //getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    //return null;
   }
 
   private static StringList convertBoundAtoms(AtomList al) {
@@ -482,6 +510,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return false;
     }
   }
 
@@ -495,6 +525,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return false;
     }
   }
 
@@ -508,6 +540,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return false;
     }
   }
 
@@ -521,6 +555,8 @@ public class SymbolTable {
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredSortException(sort);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      //return false;
     }
   }
 
@@ -551,7 +587,7 @@ public class SymbolTable {
         ConstructorDescription ncd = (ConstructorDescription)
           `TopDown(SetRefreshPoints(this,codom)).visit(cd);
         constructors.put(c,ncd);
-      } catch(Exception ex) { throw new RuntimeException(); }
+      } catch(Exception ex) { throw new GomRuntimeException(); }
     }
   }
 
@@ -566,6 +602,8 @@ public class SymbolTable {
       return constructors.get(constructor).getSortSymbol(); 
     } catch(NullPointerException e) {
       throw new UndeclaredConstructorException(constructor);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), constructor);
+      //return null;
     }
   }
 
@@ -589,8 +627,12 @@ public class SymbolTable {
       }
     } catch(NullPointerException e) {
       throw new UndeclaredConstructorException(constructor);
+      //getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), constructor);
+      //return null;
     }
-    throw new RuntimeException("Cannot access to the "+omega+"ith child of the constructor "+constructor);
+    throw new GomRuntimeException("Cannot access to the "+omega+"ith child of the constructor "+constructor);
+    //getLogger().log(Level.SEVERE, GomMessage.cannotAccessToChildConstructor.getMessage(), new Object[] {omega,constructor});
+    //return null;
   }
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
@@ -600,6 +642,8 @@ public class SymbolTable {
           sorts.get(sort).getFreshInfo().getAccessibleAtoms();
       } catch(NullPointerException e) {
         throw new UndeclaredSortException(sort);
+        //getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+        //return null;
       }
     }
 
@@ -706,7 +750,9 @@ public class SymbolTable {
         if (`n.equals(field)) return `sort;
       }
     }
-    throw new RuntimeException("sould never happen");
+    throw new GomRuntimeException("Should never happen");
+    //getLogger().log(Level.SEVERE,GomMessage.shouldNeverHappen.getMessage(),new Object[]{cons,field});
+    //return null;
   }
 
   public boolean containsRefreshPoint(String cons) {
@@ -798,7 +844,9 @@ public class SymbolTable {
     %match(d) {
       VariadicConstructorDescription[Domain=dom] -> { return `dom; }
     }
-    throw new RuntimeException("not a variadic operator");
+    throw new GomRuntimeException("Non variadic operator");
+    //getLogger().log(Level.SEVERE,GomMessage.nonVariadicOperator.getMessage());
+    //return null;
   }
 
   /**
@@ -809,7 +857,9 @@ public class SymbolTable {
     %match(d) {
       VariadicConstructorDescription[SortSymbol=s] -> { return `s; }
     }
-    throw new RuntimeException("not a variadic operator");
+    throw new GomRuntimeException("Non variadic operator");
+    //getLogger().log(Level.SEVERE,GomMessage.nonVariadicOperator.getMessage());
+    //return null;
   }
 
 
@@ -914,7 +964,12 @@ public class SymbolTable {
   }
 
   /* TODO: use GomMessage and the logger instead of RutimeException */
+//getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
 
+  public Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
+/*
   public class SortException extends RuntimeException {
     protected String sortName;
 
@@ -954,5 +1009,5 @@ public class SymbolTable {
   public class InvalidConstructorException extends ConstructorException {
     public InvalidConstructorException(String n) { super(n); }
   }
-
+*/
 }

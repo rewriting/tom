@@ -133,8 +133,7 @@ public class BackendPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
-    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
-    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
     
   }
 
