@@ -164,7 +164,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage tomFailure =
     new GomMessage("An error occured running Tom when generating {0}");
   public static final GomMessage gomChoiceWarning =
-    new GomMessage("There were many possibilities in {0} but the first one was chosen : {1}");
+    new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
 
   public String toString() {
     return message;

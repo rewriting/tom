@@ -85,7 +85,7 @@ package @getPackage()@;
 import tom.gom.GomMessage;
 import tom.library.utils.ATermConverter;
 import tom.library.utils.IdConverter;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -155,7 +155,8 @@ writer.write(%[
   }
 
   public static @fullClassName()@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
-    Vector<@fullClassName()@> tmp = new Vector<@fullClassName()@>();
+    ArrayList<@fullClassName()@> tmp = new ArrayList<@fullClassName()@>();
+    ArrayList<@fullClassName()@> table = new ArrayList<@fullClassName()@>();
     aterm.ATerm convertedTerm = atConv.convert(trm);
     int nbr = 0;
     @fullClassName()@ res = null;
@@ -165,6 +166,7 @@ writer.write(%[
     for(int i=0;i<tmp.size();i++) {
       if(tmp.get(i) != null) {
         nbr++;
+        table.add(tmp.get(i));
         if (res == null) {
           res = tmp.get(i);
         }
@@ -176,7 +178,7 @@ writer.write(%[
       case 1:
         return res;
       default:
-        Logger.getLogger("@className()@").log(Level.WARNING,GomMessage.gomChoiceWarning.getMessage(),new Object[] {"@fullClassName()@", res.toString()});
+        Logger.getLogger("@className()@").log(Level.WARNING,GomMessage.gomChoiceWarning.getMessage(),new Object[] {table.toString(), "@fullClassName()@", res.toString()});
         //System.out.println("WARNING: There were many possibilities in @fullClassName()@ but the first one was chosen : " + res.toString());
         break;
     }
@@ -309,7 +311,8 @@ matchblock: {
       ClassName operatorName = consum.getHeadConcClassName();
       consum = consum.getTailConcClassName();
       writer.write(%[
-    tmp.addElement(@fullClassName(operatorName)@.fromTerm(@trm@,@conv@));
+    tmp.add(@fullClassName(operatorName)@.fromTerm(@trm@,@conv@));
+
 ]%);
     }
   }
