@@ -49,6 +49,7 @@ public class Main {
       System.out.println(Pretty.pretty(pfrules.export()));
       ProofTerm pt = parser.proofterm().convert();
       System.out.println(Pretty.pretty(pt.export()));
+			lemu2.util.Latex.display(pt.export());
       System.out.println();
       System.out.println("typechecks LKFM          : " + TypeChecker.typecheck(pt,rrules,prules,pfrules));
       System.out.println("typechecks LKM1          : " + LKM1TypeChecker.typecheck(pt,prules));
@@ -57,6 +58,7 @@ public class Main {
       System.out.println();
       ProofTerm pt_eta = LKMToLKF.convert(pt,prules);
       System.out.println("conversion: " + Pretty.pretty(pt_eta.export()));
+			lemu2.util.Latex.display(pt_eta.export());
       System.out.println("conversion typechecks in LKFM  : " + TypeChecker.typecheck(pt_eta,rrules,`proprrules(),prules));
       System.out.println("conversion typechecks in LKF  : " + LKFTypeChecker.typecheck(pt_eta,prules));
       System.out.println();

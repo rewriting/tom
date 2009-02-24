@@ -267,7 +267,7 @@ public class Pretty {
       falseL(cn) -> { return %[falseL(@`pretty(cn)@)]%; }
       andR(AndRPrem1(a,pa,M),AndRPrem2(b,pb,N),cn) -> { return %[andR(@`pr(pretty(a),pa,sp)@ @`pretty(M,sp+1)@,@`pr(pretty(b),pb,sp)@ @`pretty(N,sp+1)@,@`pretty(cn)@)]%; }
       andL(AndLPrem1(x,px,y,py,M),n) -> { return %[andL(@`pr3(pretty(x),px,pretty(y),py,sp)@ @`pretty(M,sp+2)@,@`pretty(n)@)]%; }
-      orR(OrRPrem1(a,pa,b,pb,M),cn) -> { return %[orR(<@`pr3(pretty(a),pa,pretty(b),pb,sp)@ @`pretty(M,sp+1)@,@`pretty(cn)@)]%; }
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> { return %[orR(@`pr3(pretty(a),pa,pretty(b),pb,sp)@ @`pretty(M,sp+1)@,@`pretty(cn)@)]%; }
       orL(OrLPrem1(x,px,M),OrLPrem2(y,py,N),n) -> { return %[orL(@`pr(pretty(x),px,sp)@ @`pretty(M,sp+1)@,@`pr(pretty(y),py,sp)@ @`pretty(N,sp+1)@,@`pretty(n)@)]%; }
       implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> { return %[implyR(@`pr3(pretty(x),px,pretty(a),pa,sp)@ @`pretty(M,sp+1)@,@`pretty(cn)@)]%; }
       implyL(ImplyLPrem1(x,px,M),ImplyLPrem2(a,pa,N),n) -> { return %[implyL(@`pr(pretty(x),px,sp)@ @`pretty(M,sp+1)@,@`pr(pretty(a),pa,sp)@ @`pretty(N,sp+1)@,@`pretty(n)@)]%; }
