@@ -66,6 +66,8 @@ TReturnDescriptor = ReturnDescriptor(type:TFieldDescriptor)
                   | Void()
 
 TLabel = Label(id:int)
+       | Ref(inst:TInstruction)
+
 TLabelList = LabelList(TLabel*)
 
 TValue = StringValue(s:String)
@@ -129,33 +131,11 @@ TInstruction = Anchor(label:TLabel)
              | Bipush(operand:int)
              | Sipush(operand:int)
              | Ldc(cst:TValue)
-/*             | Ldc_w(cst:TValue)
-             | Ldc2_w(cst:TValue)*/
              | Iload(var:int)
              | Lload(var:int)
              | Fload(var:int)
              | Dload(var:int)
              | Aload(var:int)
-/*             | Iload_0()
-             | Iload_1()
-             | Iload_2()
-             | Iload_3()
-             | Lload_0()
-             | Lload_1()
-             | Lload_2()
-             | Lload_3()
-             | Fload_0()
-             | Fload_1()
-             | Fload_2()
-             | Fload_3()
-             | Dload_0()
-             | Dload_1()
-             | Dload_2()
-             | Dload_3()
-             | Aload_0()
-             | Aload_1()
-             | Aload_2()
-             | Aload_3()*/
              | Iaload()
              | Laload()
              | Faload()
@@ -169,26 +149,6 @@ TInstruction = Anchor(label:TLabel)
              | Fstore(var:int)
              | Dstore(var:int)
              | Astore(var:int)
-/*             | Istore_0()
-             | Istore_1()
-             | Istore_2()
-             | Istore_3()
-             | Lstore_0()
-             | Lstore_1()
-             | Lstore_2()
-             | Lstore_3()
-             | Fstore_0()
-             | Fstore_1()
-             | Fstore_2()
-             | Fstore_3()
-             | Dstore_0()
-             | Dstore_1()
-             | Dstore_2()
-             | Dstore_3()
-             | Astore_0()
-             | Astore_1()
-             | Astore_2()
-             | Astore_3()*/
              | Iastore()
              | Lastore()
              | Fastore()
@@ -308,11 +268,29 @@ TInstruction = Anchor(label:TLabel)
              | Multianewarray(typeDesc:String, dims:int)
              | Ifnull(label:TLabel)
              | Ifnonnull(label:TLabel)
-//             | Goto_w(label:TLabel)
-//             | Jsr_w(label:TLabel)
-//             | Wide()
-//             | Breakpoint()
-//             | Impdep1()
-//             | Impdep2()
-//             | Xxxunusedxxx1()
 
+sort TMethod : block() {
+
+  %include{ sl.tom }
+
+  public TMethod getCfg() {
+    try {
+      return (TMethod) `TopDown(toCfg()).visitLight(this).expand();
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new RuntimeException("Unexpected failure during cfg transformation");
+    }
+  }
+
+  %strategy toCfg() extends Identity() {
+    visit TInstructionList {
+      ConsInstructionList(Anchor(Label(id)), InstructionList(i,tail*)) -> { return `InstructionList(LabTInstruction("l"+id,i),tail*); }
+    }
+    visit TInstruction {
+      Anchor(Label(id)) -> { return `LabTInstruction("l"+id,Nop()); }
+    }
+    visit TLabel {
+      Label(id) -> { return `Ref(RefTInstruction("l"+id)); }
+    } 
+  }
+
+}

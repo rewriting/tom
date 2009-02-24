@@ -49,7 +49,7 @@ import tom.library.adt.bytecode.types.*;
  * This class generates a control flow graph for each method of a class.
  */
 public class CFGViewer {
-  %include { adt/bytecode/Bytecode.tom }
+  
   %include { ../mapping/java/bytecode/cfg.tom }
 
   %typeterm Writer { 
@@ -387,25 +387,26 @@ public class CFGViewer {
     }
   }
 
-
   /**
    * Generates the dot control flow graphs for each method of the specified class.
    * Usage : java bytecode.CFGViewer <class name>
    * Ex: java bytecode.CFGViewer bytecode.Subject
    * @param args args[0] : the class name
    */
-    public static void main(String[] args) {
-      if(args.length <= 0) {
-        System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer bytecode.Subject");
-        return;
-      }
-      BytecodeReader cg = new BytecodeReader(args[0]);
-      TClass c = cg.getTClass();
-      try {
-      classToDot(c);
-      } catch (VisitFailure e) {
-        System.out.println("Unexpected failure in strategies");
-      }
-    }
-  }
+   public static void main(String[] args) {
+     if(args.length <= 0) {
+       System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer MyClass");
+       return;
+     }
+     BytecodeReader cg = new BytecodeReader(args[0]);
+     TClass c = cg.getTClass();
+     try {
+       classToDot(c);
+     } catch (VisitFailure e) {
+       System.out.println("Unexpected failure in strategies");
+     }
+   }
+
+}
+
 
