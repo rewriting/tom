@@ -3,10 +3,12 @@ imports String int
 abstract syntax
 
 Instruction = LC()
-            | PC()
+            | BC()
             | AV(distance:Expression)
+            | RE(distance:Expression)
             | TG(angle:Expression)
             | TD(angle:Expression)
+            | REP(nb:int,il:InstructionList)
 
 Expression = Cst(value:int)
            | Plus(e1:Expression,e2:Expression)

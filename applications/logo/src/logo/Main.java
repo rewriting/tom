@@ -45,7 +45,7 @@ public class Main {
       LangageLexer lexer = new LangageLexer(new ANTLRInputStream(fileinput));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LangageParser ruleParser = new LangageParser(tokens);
-      Tree b = (Tree) ruleParser.instructionlist().getTree();
+      Tree b = (Tree) ruleParser.program().getTree();
       InstructionList il = (InstructionList) AstAdaptor.getTerm(b);
       il = Compiler.optimize(il);
       Compiler.eval(il);

@@ -25,13 +25,18 @@ public class Compiler {
         System.out.println("leve crayon"); 
       }
 
-      PC() -> {
-        System.out.println("pose crayon"); 
+      BC() -> {
+        System.out.println("baisse crayon"); 
       }
 
       AV(dist) -> {
         int value = eval(`dist);
         System.out.println("avance " + value);
+      }
+
+      RE(dist) -> {
+        int value = eval(`dist);
+        System.out.println("recule " + value);
       }
 
       TG(angle) -> {
@@ -42,6 +47,12 @@ public class Compiler {
       TD(angle) -> {
         int value = eval(`angle);
         System.out.println("tourne droite " + value);
+      }
+
+      REP(n,il) -> {
+        for(int i=0 ; i<`n ; i++) {
+          eval(`il);
+        }
       }
 
     }
@@ -60,11 +71,9 @@ public class Compiler {
     return 0;
   }
   
-
-
   public static InstructionList optimize(InstructionList il) {
     try {
-      InstructionList res = `TopDown(EvalExp()).visitLight(il);
+      InstructionList res = `InnermostId(StaticEval()).visitLight(il);
       System.out.println("res = " + res);
       return res;
     } catch (VisitFailure e) {
@@ -73,9 +82,18 @@ public class Compiler {
     return null;
   }
 
-  %strategy EvalExp() extends Identity() {
+  %strategy StaticEval() extends Identity() {
     visit Expression {
       Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1+v2); }
+    }
+
+    visit InstructionList {
+      x -> { System.out.println("opt: " + `x); }
+
+      InstructionList(TG(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x + y)),tail*); }
+      InstructionList(TD(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x + y)),tail*); }
+      InstructionList(TG(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x - y)),tail*); }
+      InstructionList(TD(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x - y)),tail*); }
     }
   }
 
