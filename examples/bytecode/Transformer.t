@@ -50,7 +50,7 @@ public class Transformer {
     visit TInstructionList {
     
       //Case 1: new FileReader(nameFile).read();
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+      InstructionList(before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        Astore(nombre2),middle*,Aload(nombre2),Aload(nombre1),
        Invokevirtual("java/io/FileReader","read",MethodDescriptor(ConsFieldDescriptorList(ArrayType(C()),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
@@ -68,7 +68,7 @@ public class Transformer {
       }
 
       //Case 2: FileReader r = new FileReader(nameFile); ... ; r.read()
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+      InstructionList(before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        middle*,
        Invokevirtual[owner ="java/io/FileReader",name="read"], 
@@ -79,6 +79,7 @@ public class Transformer {
             New("bytecode/SecureAccess"),
             Dup(),
             Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+            middle*,
             Aload(nombre),
             Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
             Pop(),
@@ -87,7 +88,7 @@ public class Transformer {
       }
 
       //Case 3
-      (before*,Aload(nombre), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
+      InstructionList(before*,Aload(nombre), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
         return `InstructionList(before*,
             New("bytecode/SecureAccess"),
             Dup(),

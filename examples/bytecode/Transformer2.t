@@ -75,7 +75,7 @@ public class Transformer2 {
 
   %strategy NewFileReader(index:IntWrapper) extends Identity() {
     visit TInstructionList {
-      c@(New("java/io/FileReader"),Dup(),Aload(file),
+      InstructionList(New("java/io/FileReader"),Dup(),Aload(file),
           Invokespecial[owner="java/io/FileReader", name="<init>"],
           Astore(reader),_*) -> {
         index.set(`reader,`file);
@@ -87,7 +87,7 @@ public class Transformer2 {
 
   %strategy NewFileReaderAndCallToRead() extends Fail() {
     visit TInstructionList {
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+      InstructionList(before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        Invokevirtual[owner ="java/io/FileReader",name="read"], 
        Pop(),
@@ -108,7 +108,7 @@ public class Transformer2 {
 
   %strategy CallToSRead(index:IntWrapper) extends Identity() {
     visit TInstructionList {
-      c@(Aload(i),
+      InstructionList(Aload(i),
           Invokevirtual[owner="java/io/FileReader",name="read"],
           Pop(), tail*)-> {
         if(index.getReaderIndex()==`i){ 
@@ -140,7 +140,7 @@ public class Transformer2 {
 
   %strategy Print() extends Identity() {
     visit TInstructionList {
-      (i,_*) -> {
+      InstructionList(i,_*) -> {
         Position current = getEnvironment().getPosition();
         System.out.println("at pos "+current);
         System.out.println(`i);
