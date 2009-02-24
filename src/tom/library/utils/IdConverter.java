@@ -23,23 +23,17 @@
  *
  **/
 
-package tom.gom.tools;
+package tom.library.utils;
 
 import aterm.ATerm;
+import tom.library.utils.ATermConverter;
 
-/**
- * This interface contains a method that converts specific ATerm to Tom usable ATerm
- * Its purpose is to open Gom to other external format, from other tools
- */
-  
-public interface ATermConverter {
+/* This class does nothing : no treatment arer done in its methods */
 
-  /**
-   * Method triggered when importing ATerm with an external format
-   *
-   * @param at the ATerm which needs to be converted
-   * @return an usable ATerm
-   */
-  public ATerm convert(ATerm at);
+public class IdConverter implements ATermConverter {
   
-} //ATermConverter
+  public ATerm convert(ATerm at) {
+    return at;
+  }
+
+} //IdConverter

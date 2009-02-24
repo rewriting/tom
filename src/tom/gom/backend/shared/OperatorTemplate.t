@@ -82,7 +82,8 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-import tom.gom.tools.*;
+import tom.library.utils.ATermConverter;
+import tom.library.utils.IdConverter;
 ]%);
 
 if (maximalsharing) {

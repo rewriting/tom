@@ -34,7 +34,7 @@ import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
 import mept.*;
 import mept.types.*;
-import tom.gom.tools.ATermConverter;
+import tom.library.utils.ATermConverter;
 
 public class MEPTConverter implements ATermConverter {
 

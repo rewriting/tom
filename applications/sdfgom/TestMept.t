@@ -12,8 +12,8 @@ import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
 import mept.*;
 import mept.types.*;
-import tom.gom.tools.ATermConverter;
-import tom.gom.tools.IdConverter;
+import tom.library.utils.ATermConverter;
+import tom.library.utils.IdConverter;
 import sdfgom.MEPTConverter;
 
 public class TestMept {

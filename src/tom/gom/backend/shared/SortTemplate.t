@@ -83,7 +83,8 @@ public class SortTemplate extends TemplateHookedClass {
 package @getPackage()@;        
 @generateImport()@
 import tom.gom.GomMessage;
-import tom.gom.tools.*;
+import tom.library.utils.ATermConverter;
+import tom.library.utils.IdConverter;
 import java.util.Vector;
 import java.util.logging.Handler;
 import java.util.logging.Level;

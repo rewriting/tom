@@ -75,7 +75,8 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;
 @generateImport()@
-import tom.gom.tools.*;
+import tom.library.utils.ATermConverter;
+import tom.library.utils.IdConverter;
 
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
 @generateBlock()@
