@@ -191,7 +191,10 @@ public class TomOptimizer extends TomGenericPlugin {
         return `body; 
       } 
 
-      Let((Variable|VariableStar)[AstName=name],exp,body) &&
+      /* only for generated variables */  
+      /* Let x <- y in body where y is a variable ==> inline */  
+      /* Let x <- (T) y in body where y is a variable ==> inline */  
+      Let((Variable|VariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
         (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
          Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
           return (Instruction) `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
@@ -203,8 +206,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
-        // count the occurend of name
-        // and inspect the body to 
+        // count the occurence of name
         InfoVariable infoBody = new InfoVariable();
         infoBody.setAssignment(`exp,getPosition());
         getEnvironment().down(3); // 3 = body
