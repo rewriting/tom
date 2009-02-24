@@ -1,0 +1,5 @@
+module firewall.Ast
+imports String int
+abstract syntax
+
+Instruction = Accept()
