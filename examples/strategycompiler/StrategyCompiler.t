@@ -178,12 +178,12 @@ public class StrategyCompiler {
     // Iterates over each methods to find the `visit' definition.
     boolean visitMethodFlag = false;
     TMethodList mList = clazz.getmethods();    
-    %match(TMethodList mList) {
-      (_*,
+    %match(mList) {
+      MethodList(_*,
        Method(
          MethodInfo(
            owner,
-           accessList,
+           _,
            "visit",
            MethodDescriptor(
              FieldDescriptorList(ObjectType("tom/library/sl/Visitable")),
@@ -236,7 +236,7 @@ public class StrategyCompiler {
           methodCollector.addInstruction(`Anchor(methodEnd));
 
           // Adds local variables and try/catch blocks into the collector.
-          %match(TMethodCode newCode) {
+          %match(newCode) {
             MethodCode(_, var, tcb) -> {
               methodCollector.addVarList(`var);
               methodCollector.addTryCatchBlockList(`tcb);
@@ -304,16 +304,16 @@ public class StrategyCompiler {
       // If a (Get|Put)(static|field) is matched, then the corresponding
       // field must be added to the compiled class field list (into collector).
       // The field is renamed too.
-      x@(Getstatic|Putstatic|Getfield|Putfield)[name=name, owner=owner, fieldDesc=fieldDesc] -> {
+      x@(Getstatic|Putstatic|Getfield|Putfield)[name=name] -> {
         // FIXME ugly !
-        %match(String name){
+        %match(name){
           //we do not need to create vistors fields after inlining
           //if we create them they are duplicated
           !"visitors" ->{
             //Renaming of fields is not necessar 
             //String newName = subject.toString().replace('.', '_').replace('@', '_') + "_" + `name;
-            %match(TFieldList subjectFieldList, String `name) {
-              (_*, f@Field[name=fName], _*), fname -> {
+            %match(subjectFieldList, String `name) {
+              FieldList(_*, f@Field[name=fname], _*), fname -> {
                 //classCollector.addField(`f.setname(newName));
                 classCollector.addField(`f);
               }
@@ -373,7 +373,7 @@ public class StrategyCompiler {
       // corresponding strategy is pushed into strategy stack of the collector.
       // The captured instructions are removed because they will be useless
       // after inlining.
-      (Aload(0),
+      InstructionList(Aload(0),
        Getfield[],
        index,
        Aaload[],
@@ -415,8 +415,8 @@ public class StrategyCompiler {
       // being pushed into the symbol table.
       // Special cases as `Mu' and `%strategy' are handle properly into the
       // `handleVisit' method.
-      (Invokeinterface(
-                       owner,
+      InstructionList(Invokeinterface(
+                       _,
                        "visit",
                        MethodDescriptor(
                          ConsFieldDescriptorList(
@@ -482,7 +482,7 @@ public class StrategyCompiler {
    */
   %strategy Clean() extends Identity() {
     visit TInstructionList {
-      (Goto(x), a@Anchor(x), tail*) -> { return `InstructionList(a, tail*); }
+      InstructionList(Goto(x), a@Anchor(x), tail*) -> { return `InstructionList(a, tail*); }
     }
   }
 
@@ -495,8 +495,8 @@ public class StrategyCompiler {
    * @return true is a method with the given name is find, false else.
    */
   private static boolean methodExists(String methodName, TMethodList methodList) {
-    %match(TMethodList methodList, String methodName) {
-      (_*, Method(MethodInfo(_, _, name, _, _, _), _), _*), name -> {
+    %match(methodList, String methodName) {
+      MethodList(_*, Method(MethodInfo(_, _, name, _, _, _), _), _*), name -> {
         return true;
       }
     }

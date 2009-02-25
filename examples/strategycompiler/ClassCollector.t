@@ -38,8 +38,8 @@ public class ClassCollector {
   }
 
   public void addField(TField field) {
-    %match(TFieldList fieldList, TField field) {
-      (_*, x, _*), x -> {
+    %match(fieldList, TField field) {
+      FieldList(_*, x, _*), x -> {
         return;
       }
     }
