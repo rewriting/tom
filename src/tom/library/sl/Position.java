@@ -212,35 +212,16 @@ public class Position implements Cloneable,Path {
     if(length==0) {
       return make();
     }
-    //System.out.println("omega = " + Arrays.toString(omega));
-    int[] array = new int[length];
-    int j=0;
+    int[] stack = new int[length];
+    int top = -1;
     for(int i=0 ; i<length ; i++) {
-      if(omega[i]!=0) {
-        if(i<length-1) {
-          if(omega[i] != -omega[i+1]) {
-            array[j++] = omega[i];
-          } else {
-            i++;
-          }
-        } else {
-          array[j++] = omega[i];
-        }
+      if(top>=0 && stack[top] == -omega[i]) {
+        top--;
+      } else {
+        stack[++top] = omega[i];
       }
     }
-    Position pos = makeFromSubarray(array,0,j);
-
-    // we check here that the result is in normal form
-    for(int i=0 ; i<j ; i++) {
-      if(i<j-1) {
-        if(omega[i] == -omega[i+1]) {
-          //System.out.println("array = " + Arrays.toString(array));
-          //System.out.println("j = " + j);
-          return pos.getCanonicalPath();
-        }
-      }
-    }
-    return pos;
+    return makeFromSubarray(stack,0,top+1);
   }
 
   public int[] toIntArray() {
