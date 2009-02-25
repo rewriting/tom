@@ -643,7 +643,7 @@ public class GraphExpander {
         // generate the code for the CollectLabels strategy
         CollectLabelsCode.append(%[
       visit @`sortName@{
-        Lab@`sortName@[label@`sortName@=label,term@`sortName@=term]-> {
+        Lab@`sortName@[label@`sortName@=label]-> {
           map.put(`label,getEnvironment().getPosition());
           return (@`sortName@) getEnvironment().getSubject();
         }
@@ -663,7 +663,7 @@ public class GraphExpander {
         // generate the code for the CollectPositionsOfLabels strategy
         CollectPositionsOfLabelsCode.append(%[
       visit @`sortName@{
-        Lab@`sortName@[label@`sortName@=label,term@`sortName@=term]-> {
+        Lab@`sortName@[label@`sortName@=label]-> {
           map.put(getEnvironment().getPosition().toString(),`label);
           return (@`sortName@) getEnvironment().getSubject();
         }
