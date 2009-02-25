@@ -90,7 +90,7 @@ public class Fakir {
 
     try {
       for(int i=0 ; i<BALLCNT ; i++) {
-        table = (Element) balldrop.visitLight(table);
+        table = balldrop.visitLight(table);
       }
       printResults(table);
     } catch(VisitFailure e) {
