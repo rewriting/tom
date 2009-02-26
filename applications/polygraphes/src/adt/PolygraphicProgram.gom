@@ -184,7 +184,7 @@ sort TwoPath:block(){
 					TwoC1(head,tail*) -> { return `head.source(); }
 		}
 		//return `OneId();//actually useless
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 		}
 
 	//returns the target 1-Path of any 2-Path
@@ -196,7 +196,7 @@ sort TwoPath:block(){
 					TwoC1(head*,tail) -> { return `tail.target(); }
 		}
 		//return `OneId();//actually useless
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 		}
 	
 	//returns true if the path is valid (=well-constructed)
@@ -268,7 +268,7 @@ sort ThreePath:block(){
 					ThreeC2(head,tail*) -> { return `head.oneSource(); }
 		}
 		//return `OneId();
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 	}
 
 	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
@@ -281,7 +281,7 @@ sort ThreePath:block(){
 					ThreeC2(head,tail*) -> { return `head.oneTarget(); }
 		}
 		//return `OneId();
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 	}
 	
 	//returns the source 2-Path of any 3-Path
@@ -294,7 +294,7 @@ sort ThreePath:block(){
 					ThreeC2(head,tail*) -> { return `head.source(); }
 		}
 		//return `TwoId(OneId());
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 	}
 
 	//returns the target 2-Path of any 3-Path
@@ -307,7 +307,7 @@ sort ThreePath:block(){
 					ThreeC2(head*,tail) -> { return `tail.target(); }
 		}
 		//return `TwoId(OneId());
-		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		throw new RuntimeException("strange term: "+this);
 	}
 	
 	//returns true if the path is valid (=well-constructed)

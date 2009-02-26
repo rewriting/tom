@@ -29,18 +29,19 @@ public class Compiler {
 						if(!programFile.exists()){programFile.createNewFile();}
 						XMLhandler.save(makeTomFile(programPath),programFile);
 						//create gom file
-						String path=(new Compiler()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+						String srcpath=(new Compiler()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            //System.out.println("path = " + srcpath);
 						File gomFile=new File(outputFolderPath+"adt/"+programName+".gom");
 						(new File(outputFolderPath+"adt/")).mkdir();
 						if(!gomFile.exists()){gomFile.createNewFile();}
-						String gomFileContent=XMLhandler.load(path+"adt/PolygraphicProgram.gom");
+						String gomFileContent=XMLhandler.load(srcpath+"../src/adt/PolygraphicProgram.gom");
 						gomFileContent=gomFileContent.replace("PolygraphicProgram", programName);
 						XMLhandler.save(gomFileContent,gomFile);
 						//create xmlhandler file
 						File xmlHandlerFile=new File(outputFolderPath+"library/"+programName+"Tools.t");
 						(new File(outputFolderPath+"library/")).mkdir();
 						if(!xmlHandlerFile.exists()){xmlHandlerFile.createNewFile();}
-						String XmlhandlerFileContent=XMLhandler.load(path+"library/XMLhandler.t");
+						String XmlhandlerFileContent=XMLhandler.load(srcpath+"../src/library/XMLhandler.t");
 						XmlhandlerFileContent=XmlhandlerFileContent.replace("XMLhandler",programName+"Tools");
 						XmlhandlerFileContent=XmlhandlerFileContent.replace("package compiler;","");
 						XmlhandlerFileContent=XmlhandlerFileContent.replace("polygraphicprogram.types",programName.toLowerCase()+".types");

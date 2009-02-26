@@ -17,31 +17,19 @@ tokens {
 }
 
 LeveCrayon : 'LC' | 'leve crayon';
-PoseCrayon : 'BC' | 'baisse crayon';
-TourneGauche : 'TG' | 'gauche' | 'tourne gauche';
-TourneDroite : 'TD' | 'droite' |'tourne droite';
+BaisseCrayon : 'BC' | 'baisse crayon';
 Avance : 'AV' | 'avance';
-Recule : 'RE' | 'recule';
-Repete : 'repete';
-
-
 PLUS : '+';
-
-program :
-  instructionlist EOF -> instructionlist
-  ;
-instructionlist :
-  (instruction)* -> ^(InstructionList (instruction)*)
-  ;
 
 instruction :
     LeveCrayon -> ^(LC)
-  | PoseCrayon -> ^(BC)
+  | BaisseCrayon -> ^(BC)
   | Avance e=expression -> ^(AV $e)
-  | Recule e=expression -> ^(RE $e)
   | TourneGauche e=expression -> ^(TG $e)
   | TourneDroite e=expression -> ^(TD $e)
+  | Recule e=expression -> ^(RE $e)
   | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
+
   ;
 
 expression :
@@ -54,6 +42,20 @@ elementaryexpression :
     INT -> ^(Cst INT)
 ;
 
+instructionlist :
+  (instruction)* -> ^(InstructionList (instruction)*)
+  ;
+
+program :
+  instructionlist EOF -> instructionlist
+  ;
+
+
+
+TourneGauche : 'TG' | 'gauche' | 'tourne gauche';
+TourneDroite : 'TD' | 'droite' |'tourne droite';
+Recule : 'RE' | 'recule';
+Repete : 'repete';
 
 INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;

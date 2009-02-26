@@ -118,7 +118,7 @@ public class XMLProgramHandler {
 			return myPath;
 		}
 		catch(VisitFailure e) {
-			throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
+			throw new RuntimeException("strange term: " + myPath);
 			}
 			}
 			]%;
@@ -185,7 +185,7 @@ public class XMLProgramHandler {
 			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visitLight(path);
 		}
 		catch(VisitFailure e) {
-			throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
+			throw new RuntimeException("strange term: "+path);
 		}
 		return path;
 	}

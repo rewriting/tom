@@ -82,7 +82,6 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
-import tom.gom.GomMessage;
 import tom.library.utils.ATermConverter;
 import tom.library.utils.IdConverter;
 import java.util.ArrayList;
@@ -178,8 +177,7 @@ writer.write(%[
       case 1:
         return res;
       default:
-        Logger.getLogger("@className()@").log(Level.WARNING,GomMessage.gomChoiceWarning.getMessage(),new Object[] {table.toString(), "@fullClassName()@", res.toString()});
-        //System.out.println("WARNING: There were many possibilities in @fullClassName()@ but the first one was chosen : " + res.toString());
+        Logger.getLogger("@className()@").log(Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {table.toString(), "@fullClassName()@", res.toString()});
         break;
     }
     return res;

@@ -34,11 +34,6 @@ public class Compiler {
         System.out.println("avance " + value);
       }
 
-      RE(dist) -> {
-        int value = eval(`dist);
-        System.out.println("recule " + value);
-      }
-
       TG(angle) -> {
         int value = eval(`angle);
         System.out.println("tourne gauche " + value);
@@ -49,12 +44,16 @@ public class Compiler {
         System.out.println("tourne droite " + value);
       }
 
+      RE(dist) -> {
+        int value = eval(`dist);
+        System.out.println("recule " + value);
+      }
+
       REP(n,il) -> {
         for(int i=0 ; i<`n ; i++) {
           eval(`il);
         }
       }
-
     }
   }
 
@@ -84,17 +83,20 @@ public class Compiler {
 
   %strategy StaticEval() extends Identity() {
     visit Expression {
-      Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1+v2); }
+      Plus(Cst(v1),Cst(v2)) -> {
+        return `Cst(v1+v2); 
+      }
+
     }
 
+    
     visit InstructionList {
-      x -> { System.out.println("opt: " + `x); }
-
       InstructionList(TG(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x + y)),tail*); }
       InstructionList(TD(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x + y)),tail*); }
       InstructionList(TG(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x - y)),tail*); }
       InstructionList(TD(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x - y)),tail*); }
     }
+   
   }
 
 }
