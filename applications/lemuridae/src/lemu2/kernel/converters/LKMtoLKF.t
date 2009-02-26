@@ -4,14 +4,9 @@ import lemu2.kernel.proofterms.types.*;
 import lemu2.kernel.*;
 import lemu2.util.*;
 
-//import java.util.Collection;
-//import tom.library.freshgom.*;
-//import tom.library.sl.*;
-
-public class LKMToLKF {
+public class LKMtoLKF {
   
   %include { kernel/proofterms/proofterms.tom } 
-  //%include { sl.tom } 
 
   private static ProofTerm 
     eta(NProp left, CNProp right, PropRewriteRules prs, FoVarList free) {
@@ -137,6 +132,27 @@ public class LKMToLKF {
             }
             ax(x,a) -> { 
               return `eta(nprop(x,U.lookup(gamma,x)),cnprop(a,U.lookup(delta,a)),prs,free); 
+            }
+            cut(CutPrem1(a,A,M1),CutPrem2(x,B,M2)) -> {
+              Sequent se1 = `seq(free,gamma,rctx(cnprop(a,A),delta*));
+              ProofTerm prem1 = `convert(M1,se1,prs);
+              Sequent se2 = `seq(free,lctx(nprop(x,A),gamma*),delta);
+              ProofTerm prem2 = `convert(M2,se2,prs);
+              return `cut(CutPrem1(a,A,prem1),CutPrem2(x,A,prem2));
+            }
+            trueR(cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
+                top() -> { return `trueR(cn); }
+              } 
+            }
+            falseL(n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                bottom() -> { return `falseL(n); }
+              } 
             }
             implyR(ImplyRPrem1(x,A,a,B,M),cn) -> {
               Prop P = U.`lookup(delta,cn);

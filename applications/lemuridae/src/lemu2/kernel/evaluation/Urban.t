@@ -1,230 +1,21 @@
-package lemu2.kernel;
+package lemu2.kernel.evaluation;
 
 import tom.library.sl.*;
 
 import lemu2.kernel.proofterms.types.*;
 import lemu2.kernel.proofterms.types.namelist.nameList;
 import lemu2.kernel.proofterms.types.conamelist.conameList;
+import lemu2.kernel.*;
 import lemu2.util.*;
 
 import java.util.HashSet;
 import java.util.Collection;
 
-public class Evaluation {
+public class Urban {
 
   %include { kernel/proofterms/proofterms.tom } 
   %include { sl.tom } 
 
-  private static boolean topIntroducedName(ProofTerm pt, Name name) { 
-    %match (pt) {
-      ax(n,_) -> { return `name == `n; }
-      falseL(n) -> { return `name == `n; }
-      andL(_,n) -> { return `name == `n; }
-      orL(_,_,n) -> { return `name == `n; }
-      implyL(_,_,n) -> { return `name == `n; }
-      forallL(_,_,n) -> { return `name == `n; }
-      existsL(_,n) -> { return `name == `n; }
-      foldL(_,_,n) -> { return `name == `n; }
-    }
-    return false;
-  }
-
-  private static boolean topIntroducedCoName(ProofTerm pt, CoName coname) { 
-    %match (pt) {
-      ax(_,cn) -> { return `coname == `cn; }
-      trueR(cn) -> { return `coname == `cn; }
-      orR(_,cn) -> { return `coname == `cn; }
-      andR(_,_,cn) -> { return `coname == `cn; }
-      implyR(_,cn) -> { return `coname == `cn; }
-      existsR(_,_,cn) -> { return `coname == `cn; }
-      forallR(_,cn) -> { return `coname == `cn; }
-      foldR(_,_,cn) -> { return `coname == `cn; }
-    }
-    return false;
-  }
-
-  private static nameList getFreeNames(NameList ctx, ProofTerm pt) {
-    nameList c = (nameList) ctx;
-    %match (pt) {
-      ax(n,_) -> {
-        return (nameList) (c.contains(`n) ? `nameList() : `nameList(n));
-      }
-      cut(CutPrem1(_,_,M1),CutPrem2(x,_,M2)) -> {
-        NameList M1names = `getFreeNames(c,M1);
-        NameList M2names = `getFreeNames(nameList(x,c*),M2);
-        return (nameList) `nameList(M1names*,M2names*); 
-      }
-      // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> {
-        NameList Mnames = `getFreeNames(nameList(x,y,c*),M);
-        return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
-      }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> {
-        NameList M1names = `getFreeNames(nameList(x,c*),M1);
-        NameList M2names = `getFreeNames(nameList(y,c*),M2);
-        return (nameList) (c.contains(`n) ? `nameList(M1names*,M2names*) : `nameList(n,M1names*,M2names*));
-      }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(_,_,M2),n) -> {
-        NameList M1names = `getFreeNames(nameList(x,c*),M1);
-        NameList M2names = `getFreeNames(c,M2);
-        return (nameList) (c.contains(`n) ? `nameList(M1names*,M2names*) : `nameList(n,M1names*,M2names*)); 
-      }
-      forallL(ForallLPrem1(x,_,M),_,n) -> {
-        NameList Mnames = `getFreeNames(nameList(x,c*),M);
-        return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
-      }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> {
-        NameList Mnames = `getFreeNames(nameList(x,c*),M);
-        return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
-      }
-      rootL(RootLPrem1(x,_,M)) -> {
-        return `getFreeNames(nameList(x,c*),M);
-      }
-      foldL(_,FoldLPrem1(x,_,M),n) -> {
-        NameList Mnames = `getFreeNames(nameList(x,c*),M);
-        return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
-      }
-      // right rules
-      orR(OrRPrem1(_,_,_,_,M),cn) -> {
-        return `getFreeNames(c,M);
-      }
-      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),cn) -> {
-        NameList M1names = `getFreeNames(c,M1);
-        NameList M2names = `getFreeNames(c,M2);
-        return (nameList) `nameList(M1names*,M2names*); 
-      }
-      implyR(ImplyRPrem1(x,_,_,_,M),cn) -> {
-        return `getFreeNames(nameList(x,c*),M);
-      }
-      existsR(ExistsRPrem1(_,_,M),_,cn) -> {
-        return `getFreeNames(c,M);
-      }
-      forallR(ForallRPrem1(_,_,_,M),cn) -> {
-        return `getFreeNames(c,M);
-      }
-      rootR(RootRPrem1(_,_,M)) -> {
-        return `getFreeNames(c,M);
-      }
-      foldR(_,FoldRPrem1(_,_,M),cn) -> {
-        return `getFreeNames(c,M);
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
-  private static nameList getFreeNames(ProofTerm pt) {
-    return `getFreeNames(nameList(),pt);
-  }
-
-  private static boolean nameAppears(ProofTerm pt, Name n) {
-    return getFreeNames(pt).contains(n);
-  }
-
-  private static boolean freshlyIntroducedName(ProofTerm pt, Name n) {
-    return topIntroducedName(pt,n) && !isImplicitContraction(pt);
-  }
-
-  private static conameList getFreeCoNames(CoNameList ctx, ProofTerm pt) {
-    conameList c = (conameList) ctx;
-    %match (pt) {
-      ax(_,cn) -> {
-        return (conameList) (c.contains(`cn) ? `conameList() : `conameList(cn));
-      }
-      cut(CutPrem1(a,_,M1),CutPrem2(_,_,M2)) -> {
-        CoNameList M1conames = `getFreeCoNames(conameList(a,c*),M1);
-        CoNameList M2conames = `getFreeCoNames(c,M2);
-        return (conameList) `conameList(M1conames*,M2conames*); 
-      }
-      // left rules
-      andL(AndLPrem1(_,_,_,_,M),n) -> {
-        return `getFreeCoNames(c,M);
-      }
-      orL(OrLPrem1(_,_,M1),OrLPrem2(_,_,M2),n) -> {
-        CoNameList M1conames = `getFreeCoNames(c,M1);
-        CoNameList M2conames = `getFreeCoNames(c,M2);
-        return (conameList) `conameList(M1conames*,M2conames*); 
-      }
-      implyL(ImplyLPrem1(_,_,M1),ImplyLPrem2(a,_,M2),n) -> {
-        CoNameList M1names = `getFreeCoNames(c,M1);
-        CoNameList M2names = `getFreeCoNames(conameList(a,c*),M2);
-        return (conameList) `conameList(M1names*,M2names*); 
-      }
-      forallL(ForallLPrem1(_,_,M),_,n) -> {
-        return `getFreeCoNames(c,M);
-      }
-      existsL(ExistsLPrem1(_,_,_,M),n) -> {
-        return `getFreeCoNames(c,M);
-      }
-      rootL(RootLPrem1(_,_,M)) -> {
-        return `getFreeCoNames(c,M);
-      }
-      foldL(_,FoldLPrem1(_,_,M),n) -> {
-        return `getFreeCoNames(c,M);
-      }
-      // right rules
-      orR(OrRPrem1(a,_,b,_,M),cn) -> {
-        CoNameList Mconames = `getFreeCoNames(conameList(a,b,c*),M);
-        return (conameList) (c.contains(`cn) ? Mconames : `conameList(cn,Mconames*)); 
-      }
-      andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> {
-        CoNameList M1conames = `getFreeCoNames(conameList(a,c*),M1);
-        CoNameList M2conames = `getFreeCoNames(conameList(b,c*),M2);
-        return (conameList) (c.contains(`cn)  ? `conameList(M1conames*,M2conames*) : `conameList(cn,M1conames*,M2conames*)); 
-      }
-      implyR(ImplyRPrem1(_,_,a,_,M),cn) -> {
-        CoNameList Mconames = `getFreeCoNames(conameList(a,c*),M);
-        return (conameList) (c.contains(`cn) ? Mconames : `conameList(cn,Mconames*)); 
-      }
-      existsR(ExistsRPrem1(a,_,M),_,cn) -> {
-        CoNameList Mconames = `getFreeCoNames(conameList(a,c*),M);
-        return (conameList) (c.contains(`cn) ? Mconames : `conameList(cn,Mconames*)); 
-      }
-      forallR(ForallRPrem1(a,_,_,M),cn) -> {
-        CoNameList Mconames = `getFreeCoNames(conameList(a,c*),M);
-        return (conameList) (c.contains(`cn) ? Mconames : `conameList(cn,Mconames*)); 
-      }
-      rootR(RootRPrem1(a,_,M)) -> {
-        return `getFreeCoNames(conameList(a,c*),M);
-      }
-      foldR(_,FoldRPrem1(a,_,M),cn) -> {
-        CoNameList Mconames = `getFreeCoNames(conameList(a,c*),M);
-        return (conameList) (c.contains(`cn) ? Mconames : `conameList(cn,Mconames*)); 
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
-  private static conameList getFreeCoNames(ProofTerm pt) {
-    return `getFreeCoNames(conameList(),pt);
-  }
-
-  private static boolean conameAppears(ProofTerm pt, CoName cn) {
-    return getFreeCoNames(pt).contains(cn);
-  }
-
-  private static boolean freshlyIntroducedCoName(ProofTerm pt, CoName cn) {
-    return topIntroducedCoName(pt,cn) && !isImplicitContraction(pt);
-  }
-
-  private static boolean isImplicitContraction(ProofTerm pt) {
-    %match (pt) {
-      // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> { return `nameAppears(M,n); }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(a,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
-      forallL(ForallLPrem1(x,_,M),_,n) -> { return `nameAppears(M,n); }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> { return `nameAppears(M,n); }
-      foldL(_,FoldLPrem1(x,_,M),n) -> { return `nameAppears(M,n); }
-      // right rules
-      orR(OrRPrem1(a,_,b,_,M),cn) -> { return `conameAppears(M,cn); }
-      andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> { return `conameAppears(M1,cn) || `conameAppears(M2,cn); }
-      implyR(ImplyRPrem1(x,_,a,_,M),cn) -> { return `conameAppears(M,cn); }
-      existsR(ExistsRPrem1(a,_,M),_,cn) -> { return `conameAppears(M,cn); }
-      forallR(ForallRPrem1(a,_,_,M),cn) -> { return `conameAppears(M,cn); }
-      foldR(_,FoldRPrem1(a,_,M),cn) -> { return `conameAppears(M,cn); }
-    }
-    return false;
-  }
 
   private static ProofTerm substName(ProofTerm pt, Name n1, CoName cn1, Prop prop, ProofTerm P) {
     %match(pt, Name n1) {
@@ -545,38 +336,38 @@ public class Evaluation {
     visit ProofTerm {
       // commuting cut -- non determinism
       cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
-        if (!`freshlyIntroducedCoName(M1,a)) 
+        if (!U.`freshlyIntroducedCoName(M1,a)) 
           c.add(subst(getPosition(),last,
                 `substCoName(M1,a,x,pa,M2)));
-        if (!`freshlyIntroducedName(M2,x))
+        if (!U.`freshlyIntroducedName(M2,x))
           c.add(subst(getPosition(),last,
                 `substName(M2,x,a,px,M1)));
       }
       // axiom cuts -- non determinism 
       cut(CutPrem1(a,pa,M),CutPrem2(x,px,ax(x,b))) -> {
-        if (`freshlyIntroducedCoName(M,a)) 
+        if (U.`freshlyIntroducedCoName(M,a)) 
           c.add(subst(getPosition(),last,
                 U.`reconame(M,a,b)));
       }
       cut(CutPrem1(a,pa,ax(y,a)),CutPrem2(x,px,M)) -> {
-        if (`freshlyIntroducedName(M,x)) 
+        if (U.`freshlyIntroducedName(M,x)) 
           c.add(subst(getPosition(),last,
                 U.`rename(M,x,y)));
       }
       // top and bottom cuts
       cut(CutPrem1(a,pa,trueR(a)),CutPrem2(x,px,M)) -> {
-        if (`freshlyIntroducedName(M,x))
+        if (U.`freshlyIntroducedName(M,x))
           c.add(subst(getPosition(),last,`M));
       }
       cut(CutPrem1(a,pa,M),CutPrem2(x,px,falseL(x))) -> {
-        if (`freshlyIntroducedCoName(M,a))
+        if (U.`freshlyIntroducedCoName(M,a))
           c.add(subst(getPosition(),last,`M));
       }
       // => cut -- non determinism
       cut(
           CutPrem1(b,pb,p1@implyR(ImplyRPrem1(x,px,a,pa,M),b)),
           CutPrem2(z,pz,p2@implyL(ImplyLPrem1(y,py,P),ImplyLPrem2(c,pc,N),z))) -> {
-        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,z)) {
+        if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,z)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,pa,cut(CutPrem1(c,pc,N),CutPrem2(x,px,M))),CutPrem2(y,py,P))));
           c.add(subst(getPosition(),last,
@@ -587,7 +378,7 @@ public class Evaluation {
       cut(
           CutPrem1(a,pa,p1@andR(AndRPrem1(b,pb,M1),AndRPrem2(c,pc,M2),a)),
           CutPrem2(x,px,p2@andL(AndLPrem1(y,py,z,pz,N),x))) -> {
-        if (`freshlyIntroducedCoName(p1,a) && `freshlyIntroducedName(p2,x)) {
+        if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,M1),CutPrem2(y,py,cut(CutPrem1(c,pc,M2),CutPrem2(z,pz,N))))));
           c.add(subst(getPosition(),last,
@@ -598,7 +389,7 @@ public class Evaluation {
       cut(
           CutPrem1(a,pa,p1@orR(OrRPrem1(b,pb,c,pc,M),a)),
           CutPrem2(x,px,p2@orL(OrLPrem1(y,py,N1),OrLPrem2(z,pz,N2),x))) -> {
-        if (`freshlyIntroducedCoName(p1,a) && `freshlyIntroducedName(p2,x)) {
+        if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,cut(CutPrem1(c,pc,M),CutPrem2(z,pz,N2))),CutPrem2(y,py,N1))));
           c.add(subst(getPosition(),last,
@@ -609,7 +400,7 @@ public class Evaluation {
       cut(
           CutPrem1(b,pb,p1@existsR(ExistsRPrem1(a,pa,M),t,b)),
           CutPrem2(y,py,p2@existsL(ExistsLPrem1(x,px,fx,N),y))) -> {
-        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y))
+        if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y))
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,pa,M),CutPrem2(x,substFoVar(px,fx,t),substFoVar(N,fx,t)))));
 
@@ -617,7 +408,7 @@ public class Evaluation {
       cut(
           CutPrem1(b,pb,p1@forallR(ForallRPrem1(a,pa,fx,M),b)),
           CutPrem2(y,py,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
-        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y)) {
+        if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,substFoVar(pa,fx,t),substFoVar(M,fx,t)),CutPrem2(x,px,N))));
         }
@@ -626,7 +417,7 @@ public class Evaluation {
       cut(
           CutPrem1(a,pa,p1@foldR(id,FoldRPrem1(b,pb,M),a)),
           CutPrem2(x,px,p2@foldL(id,FoldLPrem1(y,py,N),x))) -> {
-        if (`freshlyIntroducedCoName(p1,a) && `freshlyIntroducedName(p2,x)) {
+        if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,M),CutPrem2(y,py,N))));
         }

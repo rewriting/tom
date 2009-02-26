@@ -6,6 +6,33 @@ public class Pretty {
 
   %include { kernel/proofterms/proofterms.tom } 
 
+  /* raw lambda-mu terms */
+
+  private static String pr(String var, RawProp prop) {
+    return churchStyle ? %[@var@:@pretty(prop)@]% : %[@var@]%;
+  }
+
+  public static String pretty(RawLTerm t) {
+    %match(t) {
+      Rawlvar(v) -> { return `v; }
+      Rawlam(RawLam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
+      Rawflam(RawFLam(x,u)) -> { return %[\@`x@.@`pretty(u)@]%; }
+      Rawactiv(RawAct(x,ty,u)) -> { return "\u03BC" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
+      Rawlapp(u@(Rawlapp|Rawfapp|Rawlvar)[],v) -> { 
+        return %[@`pretty(u)@ @`pretty(v)@]%; 
+      }
+      Rawlapp(u,v) -> { return %[(@`pretty(u)@) @`pretty(v)@]%; }
+      Rawfapp(u@(Rawlapp|Rawfapp|Rawlvar)[],v) -> { 
+        return %[@`pretty(u)@ @`pretty(v)@]%; 
+      }
+      Rawfapp(u,v) -> { return %[(@`pretty(u)@) @`pretty(v)@]%; }
+      Rawpassiv(mv,Rawlvar(x)) -> { return %[[@`mv@]@`x@]%; }
+      Rawpassiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+
   /* raw propositions */
 
   public static String pretty(RawProp p) {
@@ -23,7 +50,7 @@ public class Pretty {
       RawrelApp("eq",(x,y)) -> { return %[@`pretty(x)@ = @`pretty(y)@]%; }
       RawrelApp("gt",(x,y)) -> { return %[@`pretty(x)@ > @`pretty(y)@]%; }
       RawrelApp("lt",(x,y)) -> { return %[@`pretty(x)@ < @`pretty(y)@]%; }
-      RawrelApp("le",(x,y)) -> { return %[@`pretty(x)@ >= @`pretty(y)@]%; }
+      RawrelApp("le",(x,y)) -> { return %[@`pretty(x)@ <= @`pretty(y)@]%; }
       // set theory prettyprint
       RawrelApp("in",(x,y)) -> { return `pretty(x) + " \u2208 " + `pretty(y); }
       RawrelApp(r,x) -> { return %[@`r@(@`pretty(x)@)]%; }
@@ -251,7 +278,7 @@ public class Pretty {
     %match(n) { CoName(p,i) -> { return `i + `p; } }
     throw new RuntimeException("non exhaustive patterns"); 
   }
-  
+
   private static String pretty(FoVar n) {
     %match(n) { FoVar(p,i) -> { return `i + `p; } }
     throw new RuntimeException("non exhaustive patterns"); 
@@ -307,7 +334,7 @@ public class Pretty {
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
-  
+
   private static String pretty(RCtx ctx) {
     %match(ctx) {
       rctx() -> { return ""; }

@@ -110,3 +110,18 @@ Sequent = seq(free:FoVarList,l:LCtx,r:RCtx)
 FoMap = fomap(v:FoVar,t:Term)
 FoSubst = fosubst(FoMap*)
 
+
+// lambda-mu
+
+LTerm = lvar(v:Name)
+      | lam(labs:<Lam>)
+      | flam(fabs:<FLam>)
+      | lapp(t:LTerm,u:LTerm)
+      | fapp(t:LTerm,ft:Term)
+      | activ(mabs:<Act>)
+      | passiv(mv:CoName,t:LTerm)
+
+
+Lam binds Name = Lam(x:Name, outer ty:Prop, inner t:LTerm)
+Act binds CoName = Act(x:CoName, outer ty:Prop, inner t:LTerm)
+FLam binds FoVar = FLam(x:FoVar, inner t:LTerm)
