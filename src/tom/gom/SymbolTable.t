@@ -58,8 +58,6 @@ public class SymbolTable {
   private Hashtable<String,ConstructorDescription> constructors =  
     new Hashtable<String,ConstructorDescription>();
   
-  protected String packageName = "";
-
   private Graph<String> sortDependences = new Graph<String>();
  
   private GomEnvironment gomEnvironment;
@@ -120,6 +118,15 @@ public class SymbolTable {
     constructors.clear();
   }
 
+  public String getFullModuleName(String moduleName) {
+    String packageName = gomEnvironment.getStreamManager().getPackagePath(moduleName);
+    return (packageName.equals("") ? "" : packageName + ".")+moduleName.toLowerCase();
+  }
+
+  public String getFullAbstractTypeClassName(String moduleName) {
+    return getFullModuleName(moduleName)+"."+moduleName+"AbstractType";
+  }
+
   public String getFullSortClassName(String sort) {
     SortDescription desc = sorts.get(sort);
     if(desc==null) {
@@ -129,6 +136,7 @@ public class SymbolTable {
     }
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
+        String packageName = gomEnvironment.getStreamManager().getPackagePath(`m);
         return (packageName.equals("") ? "" : packageName + ".") 
           + `m.toLowerCase() + ".types." + sort; 
       }
@@ -149,21 +157,13 @@ public class SymbolTable {
       ConstructorDescription[SortSymbol=s] -> {
         return getFullSortClassName(`s).toLowerCase() + "." + cons; 
       }
+       VariadicConstructorDescription[SortSymbol=s] -> {
+        return getFullSortClassName(`s).toLowerCase() + "." + cons; 
+      }
     }
     throw new GomRuntimeException("Non exhaustive match");
     //getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
     //return null;
-  }
-
-  public boolean isBuiltin(String sort) {
-    %match(sort) {
-      "boolean" | "String" | "int" -> { return true; }
-    }
-    return false;
-  }
-
-  public void setPackage(String packageName) {
-    this.packageName = packageName;
   }
 
   public void generateConsAndNils() {
@@ -373,7 +373,8 @@ public class SymbolTable {
       //return null;
     }
     %match(desc) {
-      SortDescription[ModuleSymbol=m] -> { 
+      SortDescription[ModuleSymbol=m] -> {
+        String packageName = gomEnvironment.getStreamManager().getPackagePath(`m);
         return (packageName.equals("") ? "" : packageName + ".") 
           + `m.toLowerCase() + ".types." + rawSort(sort); 
       }

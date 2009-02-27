@@ -34,11 +34,6 @@ import java.util.*;
 public class GomEnvironment {
 
   %include { ../adt/objects/Objects.tom}
-  /**
-   * GomEnvironment uses the Singleton pattern.
-   * Unique instance of the GomEnvironment
-   */
-  // private static GomEnvironment instance;
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;
@@ -60,18 +55,6 @@ public class GomEnvironment {
     // symbolTable = new SymbolTable();
     symbolTable = new SymbolTable(this);
   }
-
-
-  /**
-   * Part of the Singleton pattern, get the instance or create it.
-   * @returns the instance of the GomEnvironment
-   */
-  /* public static GomEnvironment getInstance() {
-    if(instance == null) {
-      instance = new GomEnvironment();
-    }
-    return instance;
-  }*/
 
   public SymbolTable getSymbolTable() {
     return symbolTable; 

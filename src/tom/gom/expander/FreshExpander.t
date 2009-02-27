@@ -68,7 +68,6 @@ public class FreshExpander {
         `Sequence(
             TopDown(ExpandAtoms(list)),
             TopDown(UpdateSpecialization(list))).visitLight(m);
-      st.setPackage(pack);
       st.fill(res);
       res = addRawSortsAndConstructors(res);
       res = addAtomHooks(res);
@@ -77,6 +76,8 @@ public class FreshExpander {
       res = addConstructorHooks(res);
       res = addRawConstructorHooks(res);
       res = addMappingHooks(res);
+      st.clear();
+      st.fill(res);
       return res;
     } catch (VisitFailure e) {
       throw new GomRuntimeException("Should never happen");

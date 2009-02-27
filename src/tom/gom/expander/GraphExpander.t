@@ -49,30 +49,20 @@ public class GraphExpander {
   %include { ../adt/gom/Gom.tom}
   %include { ../adt/symboltable/SymbolTable.tom}
 
-  %typeterm GomStreamManager { implement { GomStreamManager } }
   %typeterm GraphExpander { implement { GraphExpander } }
+
   private SortDecl stringSortDecl;
   private SortDecl intSortDecl;
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
   private boolean forTermgraph;
   private GomEnvironment gomEnvironment;
-  
-  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph,GomEnvironment gomEnvironment) {
-    this.forTermgraph = forTermgraph;
-    this.gomEnvironment = gomEnvironment;
-    stringSortDecl = gomEnvironment.builtinSort("String");
-    intSortDecl = gomEnvironment.builtinSort("int");
-    //we mark them as used builtins:
-    //String is used for labelling
-    gomEnvironment.markUsedBuiltin("String");
-    //int is used for defining paths
-    gomEnvironment.markUsedBuiltin("int");
-  }
+  private SymbolTable st;
 
   public GraphExpander(boolean forTermgraph,GomEnvironment gomEnvironment) {
     this.forTermgraph = forTermgraph;
     this.gomEnvironment = gomEnvironment;
+    st = gomEnvironment.getSymbolTable();
     stringSortDecl = gomEnvironment.builtinSort("String");
     intSortDecl = gomEnvironment.builtinSort("int");
     gomEnvironment.markUsedBuiltin("String");
@@ -103,18 +93,8 @@ public class GraphExpander {
     return gomEnvironment;
   }
 
-  private String fullClassName(ClassName clsName) {
-    %match(ClassName clsName) {
-      ClassName[Pkg=pkgPrefix,Name=name] -> {
-        if(`pkgPrefix.length()==0) {
-          return `name;
-        } else {
-          return `pkgPrefix+"."+`name;
-        }
-      }
-    }
-    throw new GomRuntimeException(
-        "GraphExpander:fullClassName got a strange ClassName "+clsName);
+  public SymbolTable getSymbolTable() {
+    return st;
   }
 
   public Pair expand(ModuleList list, HookDeclList hooks) {
@@ -128,7 +108,7 @@ public class GraphExpander {
     //add a global expand method in every ModuleDecl contained in the SortList
     try {
       `TopDown(
-          ExpandModule(getStreamManager(),getForTermgraph(),hookList,this)).visit(expandedList);
+          ExpandModule(getForTermgraph(),hookList,this)).visit(expandedList);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
@@ -141,14 +121,13 @@ public class GraphExpander {
   }
 
   %strategy ExpandModule(
-      streamManager:GomStreamManager,
       forTermgraph:boolean,
       hookList:ArrayList,
       ge:GraphExpander) extends Identity() {
     visit Module {
       Module[
         MDecl=mdecl@ModuleDecl[ModuleName=moduleName],Sorts=sorts] -> {
-        hookList.add(ge.expHooksModule(`moduleName,`sorts,`mdecl,ge.getStreamManager().getPackagePath(`moduleName.getName()),ge.getForTermgraph()));
+        hookList.add(ge.expHooksModule(`moduleName.getName(),`sorts,`mdecl,ge.getForTermgraph()));
       }
     }
   }
@@ -161,13 +140,13 @@ public class GraphExpander {
         //the last one is only used to implement the termgraph rewriting step
         // for now, we need also to fill the symbol table 
         OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()),Slot("term"+sortname,sortdecl))));
-        ge.getGomEnvironment().getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
+        ge.getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
         OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
-        ge.getGomEnvironment().getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        ge.getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(ge.getIntSortDecl()));
-        ge.getGomEnvironment().getSymbolTable().addVariadicConstructor("Path"+`sortname,"int",`sortname);
+        ge.getSymbolTable().addVariadicConstructor("Path"+`sortname,"int",`sortname);
         OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
-        ge.getGomEnvironment().getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        ge.getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         hookList.add(ge.pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
@@ -180,7 +159,7 @@ public class GraphExpander {
     String sortName = sort.getName();
     String prefixPkg = getStreamManager().getPackagePath(moduleName);
     String codeImport =%[
-      import @((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()@.types.*;
+    import @((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
 
@@ -261,18 +240,16 @@ public class GraphExpander {
           BlockHookDecl(CutOperator(opDecl),Code(codeBlock),true()));
   }
 
-  private HookDeclList expHooksModule(GomModuleName gomModuleName,
+  private HookDeclList expHooksModule(String gomModuleName,
       SortList sorts,
       ModuleDecl mDecl,
-      String packagePath,
       boolean forTermgraph) {
-    String moduleName = gomModuleName.getName();
-    ClassName abstractType = `ClassName(packagePath+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
+    String fullAbstractTypeClassName = st.getFullAbstractTypeClassName(gomModuleName);
+    String fullModuleName = st.getFullModuleName(gomModuleName);
 
-    String prefix = (("".equals(packagePath))?"":packagePath+".")+moduleName.toLowerCase();
     String codeImport =%[
-    import @prefix@.types.*;
-    import @prefix@.*;
+    import @fullModuleName@.types.*;
+    import @fullModuleName@.*;
     import tom.library.sl.*;
     import java.util.ArrayList;
     import java.util.HashMap;
@@ -283,7 +260,7 @@ public class GraphExpander {
     %match(sorts){
       ConcSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
         codeImport += %[
-          import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
+          import @st.getFullConstructorClassName("Path"+`sortName)@;
         ]%;
       }
     }
@@ -304,13 +281,13 @@ public class GraphExpander {
     public static class Info {
       public String label;
       public Path path;
-      public @fullClassName(abstractType)@ term;
+      public @fullAbstractTypeClassName@ term;
     }
 
-    public @fullClassName(abstractType)@ unexpand() {
+    public @fullAbstractTypeClassName@ unexpand() {
        HashMap map = getMapFromPositionToLabel();
        try {
-         return (@fullClassName(abstractType)@)`Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
+         return (@fullAbstractTypeClassName@)`Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
@@ -331,11 +308,11 @@ public class GraphExpander {
 
     String codeBlockTermWithPointers =%[
 
-      public @fullClassName(abstractType)@ expand(){
+      public @fullAbstractTypeClassName@ expand(){
         HashMap map = new HashMap();
         Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
         try {
-          return (@fullClassName(abstractType)@) `label2path.visit(this);
+          return (@fullAbstractTypeClassName@) `label2path.visit(this);
         } catch (tom.library.sl.VisitFailure e) {
           throw new RuntimeException("Unexpected strategy failure!");
         }}
@@ -343,29 +320,29 @@ public class GraphExpander {
 
     String codeBlockTermGraph =%[
 
-   public @fullClassName(abstractType)@ expand() {
+   public @fullAbstractTypeClassName@ expand() {
        HashMap map = new HashMap();
        try {
-         return ((@fullClassName(abstractType)@)`InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand())).label2path();
+         return ((@fullAbstractTypeClassName@)`InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand())).label2path();
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
      }
 
-    public @fullClassName(abstractType)@ normalizeWithLabels() {
+    public @fullAbstractTypeClassName@ normalizeWithLabels() {
       HashMap map = new HashMap();
       try {
-        return ((@fullClassName(abstractType)@)`InnermostIdSeq(NormalizeLabel(map)).visit(this));
+        return ((@fullAbstractTypeClassName@)`InnermostIdSeq(NormalizeLabel(map)).visit(this));
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-    public @fullClassName(abstractType)@ label2path() {
+    public @fullAbstractTypeClassName@ label2path() {
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
       try {
-        return (@fullClassName(abstractType)@) label2path.visit(this);
+        return (@fullAbstractTypeClassName@) label2path.visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -391,17 +368,17 @@ public class GraphExpander {
       }
     }
 
-    public @fullClassName(abstractType)@ normalize() {
+    public @fullAbstractTypeClassName@ normalize() {
       try {
-         return (@fullClassName(abstractType)@)`InnermostIdSeq(Normalize()).visit(this); 
+         return (@fullAbstractTypeClassName@)`InnermostIdSeq(Normalize()).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-    public @fullClassName(abstractType)@ applyGlobalRedirection(Position p1,Position p2) {
+    public @fullAbstractTypeClassName@ applyGlobalRedirection(Position p1,Position p2) {
       try {
-         return (@fullClassName(abstractType)@) globalRedirection(p1,p2).visit(this); 
+         return (@fullAbstractTypeClassName@) globalRedirection(p1,p2).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -411,12 +388,12 @@ public class GraphExpander {
         return `TopDown(GlobalRedirection(p1,p2)); 
     }
 
-    public @fullClassName(abstractType)@ swap(Position p1, Position p2) {
+    public @fullAbstractTypeClassName@ swap(Position p1, Position p2) {
       try {
-        @fullClassName(abstractType)@ updatedSubject =  (@fullClassName(abstractType)@ ) `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);
-        @fullClassName(abstractType)@ subterm_p1 = (@fullClassName(abstractType)@) p1.getSubterm().visit(updatedSubject);
-        @fullClassName(abstractType)@ subterm_p2 = (@fullClassName(abstractType)@) p2.getSubterm().visit(updatedSubject);
-        return (@fullClassName(abstractType)@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
+        @fullAbstractTypeClassName@ updatedSubject =  (@fullAbstractTypeClassName@ ) `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);
+        @fullAbstractTypeClassName@ subterm_p1 = (@fullAbstractTypeClassName@) p1.getSubterm().visit(updatedSubject);
+        @fullAbstractTypeClassName@ subterm_p2 = (@fullAbstractTypeClassName@) p2.getSubterm().visit(updatedSubject);
+        return (@fullAbstractTypeClassName@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
       } catch (VisitFailure e) { 
         throw new RuntimeException("Unexpected strategy failure!");
       }
