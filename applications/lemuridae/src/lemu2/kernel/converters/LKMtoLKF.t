@@ -202,6 +202,41 @@ public class LKMtoLKF {
                 }
               } 
             }
+            orR(OrRPrem1(a,A,b,B,M),cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
+                or(A1,B1) -> {
+                  Sequent se1 = `seq(free,gamma,rctx(cnprop(a,A1),cnprop(b,B1),delta*));
+                  ProofTerm prem1 = `convert(M,se1,prs);
+                  return `orR(OrRPrem1(a,A1,b,B1,prem1),cn);
+                }
+              } 
+            }
+            orL(OrLPrem1(x,A,M1),OrLPrem2(y,B,M2),n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                or(A1,B1) -> {
+                  Sequent se1 = `seq(free,lctx(nprop(x,A1),gamma*),delta);
+                  Sequent se2 = `seq(free,lctx(nprop(y,B1),gamma*),delta);
+                  ProofTerm prem1 = `convert(M1,se1,prs);
+                  ProofTerm prem2 = `convert(M2,se2,prs);
+                  return `orL(OrLPrem1(x,A1,prem1),OrLPrem2(y,B1,prem2),n);
+                }
+              }
+            }
+            forallR(ForallRPrem1(a,A,fx,M),cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
+                forall(Fa(fy,A1)) -> {
+                  Sequent se1 = `seq(fovarList(fy,free),gamma,rctx(cnprop(a,A1),delta*));
+                  ProofTerm prem1 = `convert(U.substFoVar(M,fx,var(fy)),se1,prs);
+                  return `forallR(ForallRPrem1(a,A1,fy,prem1),cn);
+                }
+              } 
+            }
           }
         }
       }

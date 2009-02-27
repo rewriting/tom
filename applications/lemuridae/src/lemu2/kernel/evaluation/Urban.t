@@ -234,97 +234,6 @@ public class Urban {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  %strategy SubstFoVarInTerm(FoVar x, Term u) extends Identity() {
-    visit Term {
-     var(y) && y == x -> { return `u; }
-    }
-  }
-
-  private static Term substFoVar(Term t, FoVar x, Term u) {
-    try { return (Term) `TopDown(SubstFoVarInTerm(x,u)).visit(t); }
-    catch (VisitFailure e) { throw new RuntimeException("never happens"); }
-  }
-
-  private static TermList substFoVar(TermList tl, FoVar x, Term u) {
-    %match(tl) {
-      termList() -> { return `EmptytermList(); }
-      termList(t,ts*) -> { return `ConstermList(substFoVar(t,x,u),substFoVar(ts,x,u)); }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
-  private static Prop substFoVar(Prop prop, FoVar x, Term t) {
-    %match(prop) {
-      relApp(r,tl) -> { return `relApp(r,substFoVar(tl,x,t)); }
-      and(p,q) -> { return `and(substFoVar(p,x,t),substFoVar(q,x,t)); }
-      or(p,q) -> { return `or(substFoVar(p,x,t),substFoVar(q,x,t)); }
-      implies(p,q) -> { return `implies(substFoVar(p,x,t),substFoVar(q,x,t)); }
-      forall(Fa(y,p)) -> { return `forall(Fa(y,substFoVar(p,x,t))); }
-      exists(Ex(y,p)) -> { return `exists(Ex(y,substFoVar(p,x,t))); }
-      bottom() -> { return `bottom(); }
-      top() -> { return `top(); }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
-  private static ProofTerm substFoVar(ProofTerm pt, FoVar x1, Term t1) {
-    %match(pt) { 
-      ax(n,cn) -> {
-        return `ax(n,cn); 
-      }
-      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
-        return `cut(
-            CutPrem1(a,substFoVar(pa,x1,t1),substFoVar(M1,x1,t1)),
-            CutPrem2(x,substFoVar(px,x1,t1),substFoVar(M2,x1,t1)));
-      }
-      // left rules
-      andL(AndLPrem1(x,px,y,py,M),n) -> {
-        return `andL(AndLPrem1( x,substFoVar(px,x1,t1), y,substFoVar(py,x1,t1), substFoVar(M,x1,t1)),n); 
-      }
-      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
-        return `orL(
-            OrLPrem1(x,substFoVar(px,x1,t1),substFoVar(M1,x1,t1)),
-            OrLPrem2(y,substFoVar(py,x1,t1),substFoVar(M2,x1,t1)),n);
-      }
-      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
-        return `implyL(
-            ImplyLPrem1(x,substFoVar(px,x1,t1),substFoVar(M1,x1,t1)),
-            ImplyLPrem2(a,substFoVar(pa,x1,t1),substFoVar(M2,x1,t1)),n);
-      }
-      forallL(ForallLPrem1(x,px,M),t,n) -> {
-        return `forallL(ForallLPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),substFoVar(t,x1,t1),n);
-      }
-      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
-        return `existsL(ExistsLPrem1(x,substFoVar(px,x1,t1),fx,substFoVar(M,x1,t1)),n);
-      }
-      foldL(id,FoldLPrem1(x,px,M),n) -> {
-        return `foldL(id,FoldLPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),n);
-      }
-      // right rules
-      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
-        return `orR(OrRPrem1(a,substFoVar(pa,x1,t1),b,substFoVar(pb,x1,t1),substFoVar(M,x1,t1)),cn);
-      }
-      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
-        return `andR(
-            AndRPrem1(a,substFoVar(pa,x1,t1),substFoVar(M1,x1,t1)),
-            AndRPrem2(b,substFoVar(pb,x1,t1),substFoVar(M2,x1,t1)),cn);
-      }
-      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
-        return `implyR(ImplyRPrem1(x,substFoVar(px,x1,t1),a,substFoVar(pa,x1,t1),substFoVar(M,x1,t1)),cn);
-      }
-      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
-        return `existsR(ExistsRPrem1(a,substFoVar(pa,x1,t1),substFoVar(M,x1,t1)),substFoVar(t,x1,t1),cn);
-      }
-      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
-        return `forallR(ForallRPrem1(a,substFoVar(pa,x1,t1),fx,substFoVar(M,x1,t1)),cn);
-      }
-      foldR(id,FoldRPrem1(x,px,M),cn) -> {
-        return `foldR(id,FoldRPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),cn);
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
-
   %typeterm PTCollection { implement { java.util.Collection<ProofTerm> } }
 
   private static ProofTerm subst(Position w, ProofTerm orig, ProofTerm st) {
@@ -402,7 +311,7 @@ public class Urban {
           CutPrem2(y,py,p2@existsL(ExistsLPrem1(x,px,fx,N),y))) -> {
         if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y))
           c.add(subst(getPosition(),last,
-                `cut(CutPrem1(a,pa,M),CutPrem2(x,substFoVar(px,fx,t),substFoVar(N,fx,t)))));
+                `cut(CutPrem1(a,pa,M),CutPrem2(x,U.substFoVar(px,fx,t),U.substFoVar(N,fx,t)))));
 
       }
       cut(
@@ -410,7 +319,7 @@ public class Urban {
           CutPrem2(y,py,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
         if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y)) {
           c.add(subst(getPosition(),last,
-                `cut(CutPrem1(a,substFoVar(pa,fx,t),substFoVar(M,fx,t)),CutPrem2(x,px,N))));
+                `cut(CutPrem1(a,U.substFoVar(pa,fx,t),U.substFoVar(M,fx,t)),CutPrem2(x,px,N))));
         }
       }
       // fold cuts

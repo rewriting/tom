@@ -15,6 +15,10 @@ public class LambdaMu {
       lapp(lam(Lam(x,px,M)),N) -> { return U.`substName(M,x,N); }
       lapp(activ(Act(a,pa,M)),N) -> { return `activ(Act(a,pa,structSubst(M,a,N))); }
       fapp(flam(FLam(fx,M)),ft) -> { return U.`substFoVar(M,fx,ft); }
+      proj1(pair(t,u)) -> { return `t; }
+      proj2(pair(t,u)) -> { return `u; }
+      caseof(left(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(N,x,M); }
+      caseof(right(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(Q,y,M); }
       passiv(a,activ(Act(b,_,M))) -> { return U.`reconame(M,b,a); }
     }
   }
@@ -39,5 +43,17 @@ public class LambdaMu {
     try { return `Outermost(Red()).visit(pt); }
     catch(VisitFailure e) { throw new RuntimeException("should never happen"); }
   }
+
+  %strategy MuEta() extends Fail() {
+    visit LTerm {
+      activ(Act(a,pa,passiv(a,M))) -> { if (!U.`freeIn(a,M)) return `M; }
+    }
+  }
+
+  public static LTerm mueta(LTerm pt) {
+    try { return `Outermost(MuEta()).visit(pt); }
+    catch(VisitFailure e) { throw new RuntimeException("should never happen"); }
+  }
+
 }
 

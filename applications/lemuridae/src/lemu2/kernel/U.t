@@ -80,21 +80,97 @@ public class U {
   }
   */
 
-  %strategy SubstFoVar(FoVar x, Term u) extends Identity() {
+  %strategy SubstFoVarInTerm(FoVar x, Term u) extends Identity() {
     visit Term {
-      var(y) && y == x -> { return `u; }
+     var(y) && y == x -> { return `u; }
     }
   }
 
-  public static Prop substFoVar(Prop p, FoVar x, Term u) {
-    try { return `TopDown(SubstFoVar(x,u)).visit(p); }
+  public static Term substFoVar(Term t, FoVar x, Term u) {
+    try { return (Term) `TopDown(SubstFoVarInTerm(x,u)).visit(t); }
     catch (VisitFailure e) { throw new RuntimeException("never happens"); }
   }
 
-  public static Term substFoVar(Term t, FoVar x, Term u) {
-    try { return `TopDown(SubstFoVar(x,u)).visit(t); }
-    catch (VisitFailure e) { throw new RuntimeException("never happens"); }
+  private static TermList substFoVar(TermList tl, FoVar x, Term u) {
+    %match(tl) {
+      termList() -> { return `EmptytermList(); }
+      termList(t,ts*) -> { return `ConstermList(substFoVar(t,x,u),substFoVar(ts,x,u)); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
   }
+
+  public static Prop substFoVar(Prop prop, FoVar x, Term t) {
+    %match(prop) {
+      relApp(r,tl) -> { return `relApp(r,substFoVar(tl,x,t)); }
+      and(p,q) -> { return `and(substFoVar(p,x,t),substFoVar(q,x,t)); }
+      or(p,q) -> { return `or(substFoVar(p,x,t),substFoVar(q,x,t)); }
+      implies(p,q) -> { return `implies(substFoVar(p,x,t),substFoVar(q,x,t)); }
+      forall(Fa(y,p)) -> { return `forall(Fa(y,substFoVar(p,x,t))); }
+      exists(Ex(y,p)) -> { return `exists(Ex(y,substFoVar(p,x,t))); }
+      bottom() -> { return `bottom(); }
+      top() -> { return `top(); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static ProofTerm substFoVar(ProofTerm pt, FoVar x1, Term t1) {
+    %match(pt) { 
+      ax(n,cn) -> {
+        return `ax(n,cn); 
+      }
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(
+            CutPrem1(a,substFoVar(pa,x1,t1),substFoVar(M1,x1,t1)),
+            CutPrem2(x,substFoVar(px,x1,t1),substFoVar(M2,x1,t1)));
+      }
+      // left rules
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        return `andL(AndLPrem1( x,substFoVar(px,x1,t1), y,substFoVar(py,x1,t1), substFoVar(M,x1,t1)),n); 
+      }
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        return `orL(
+            OrLPrem1(x,substFoVar(px,x1,t1),substFoVar(M1,x1,t1)),
+            OrLPrem2(y,substFoVar(py,x1,t1),substFoVar(M2,x1,t1)),n);
+      }
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        return `implyL(
+            ImplyLPrem1(x,substFoVar(px,x1,t1),substFoVar(M1,x1,t1)),
+            ImplyLPrem2(a,substFoVar(pa,x1,t1),substFoVar(M2,x1,t1)),n);
+      }
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        return `forallL(ForallLPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),substFoVar(t,x1,t1),n);
+      }
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        return `existsL(ExistsLPrem1(x,substFoVar(px,x1,t1),fx,substFoVar(M,x1,t1)),n);
+      }
+      foldL(id,FoldLPrem1(x,px,M),n) -> {
+        return `foldL(id,FoldLPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),n);
+      }
+      // right rules
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        return `orR(OrRPrem1(a,substFoVar(pa,x1,t1),b,substFoVar(pb,x1,t1),substFoVar(M,x1,t1)),cn);
+      }
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        return `andR(
+            AndRPrem1(a,substFoVar(pa,x1,t1),substFoVar(M1,x1,t1)),
+            AndRPrem2(b,substFoVar(pb,x1,t1),substFoVar(M2,x1,t1)),cn);
+      }
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        return `implyR(ImplyRPrem1(x,substFoVar(px,x1,t1),a,substFoVar(pa,x1,t1),substFoVar(M,x1,t1)),cn);
+      }
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        return `existsR(ExistsRPrem1(a,substFoVar(pa,x1,t1),substFoVar(M,x1,t1)),substFoVar(t,x1,t1),cn);
+      }
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        return `forallR(ForallRPrem1(a,substFoVar(pa,x1,t1),fx,substFoVar(M,x1,t1)),cn);
+      }
+      foldR(id,FoldRPrem1(x,px,M),cn) -> {
+        return `foldR(id,FoldRPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),cn);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
 
   public static Prop norm(Prop p, TermRewriteRules trs, PropRewriteRules prs) {
     return Rewriting.normalize(p,trs,prs);
@@ -486,6 +562,17 @@ public class U {
       activ(Act(a,pa,u)) -> { return `activ(Act(a,pa,substName(u,x,t))); }
       lapp(u,v) -> { return `lapp(substName(u,x,t), substName(v,x,t)); }
       fapp(u,ft) -> { return `fapp(substName(u,x,t), ft); }
+      pair(u,v) -> { return `pair(substName(u,x,t), substName(v,x,t)); }
+      proj1(u) -> { return `proj1(substName(u,x,t)); }
+      proj2(u) -> { return `proj2(substName(u,x,t)); }
+      caseof(u,Alt(y,py,v),Alt(z,pz,w)) -> { 
+        return `caseof(substName(u,x,t),
+            Alt(y,py,substName(v,x,t)),
+            Alt(z,pz,substName(w,x,t)));
+      }
+      left(u) -> { return `left(substName(u,x,t)); }
+      right(u) -> { return `right(substName(u,x,t)); }
+      //letin(Letin(fx,y,
       passiv(mv,u) -> { return `passiv(mv,substName(u,x,t)); }
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -502,6 +589,16 @@ public class U {
       activ(Act(a,pa,u)) -> { return `activ(Act(a,pa,substFoVar(u,fx,ft))); }
       lapp(u,v) -> { return `lapp(substFoVar(u,fx,ft), substFoVar(v,fx,ft)); }
       fapp(u,fu) -> { return `fapp(substFoVar(u,fx,ft), substFoVar(fu,fx,ft)); }
+      pair(u,v) -> { return `pair(substFoVar(u,fx,ft), substFoVar(v,fx,ft)); }
+      proj1(u) -> { return `proj1(substFoVar(u,fx,ft)); }
+      proj2(u) -> { return `proj2(substFoVar(u,fx,ft)); }
+      caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
+        return `caseof(substFoVar(u,fx,ft),
+            Alt(x,px,substFoVar(v,fx,ft)),
+            Alt(y,py,substFoVar(w,fx,ft)));
+      }
+      left(u) -> { return `left(substFoVar(u,fx,ft)); }
+      right(u) -> { return `right(substFoVar(u,fx,ft)); }
       passiv(mv,u) -> { return `passiv(mv,substFoVar(u,fx,ft)); }
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -519,12 +616,64 @@ public class U {
       activ(Act(c,pc,u)) -> { return `activ(Act(c,pc,reconame(u,a,b))); }
       lapp(u,v) -> { return `lapp(reconame(u,a,b), reconame(v,a,b)); }
       fapp(u,ft) -> { return `fapp(reconame(u,a,b), ft); }
+      pair(u,v) -> { return `pair(reconame(u,a,b), reconame(v,a,b)); }
+      proj1(u) -> { return `proj1(reconame(u,a,b)); }
+      proj2(u) -> { return `proj2(reconame(u,a,b)); }
+      caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
+        return `caseof(reconame(u,a,b),
+            Alt(x,px,reconame(v,a,b)),
+            Alt(y,py,reconame(w,a,b)));
+      }
+      left(u) -> { return `left(reconame(u,a,b)); }
+      right(u) -> { return `right(reconame(u,a,b)); }
       passiv(c,u) -> {
         if (`c == a) return `passiv(b,reconame(u,a,b)); 
         else         return `passiv(c,reconame(u,a,b)); 
       }
     }
     throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static conameList getFreeCoNames(conameList ctx, LTerm pt) {
+    %match(pt) {
+      lvar(v) -> { return (conameList) `conameList(); }
+      lam(Lam(y,py,u)) -> { return `getFreeCoNames(ctx,u); }
+      flam(FLam(fx,u)) -> { return `getFreeCoNames(ctx,u); }
+      activ(Act(c,pc,u)) -> { return `getFreeCoNames(conameList(c,ctx*),u); }
+      lapp(u,v) -> {
+        conameList ucn = `getFreeCoNames(ctx,u); 
+        conameList vcn = `getFreeCoNames(ctx,v); 
+        return (conameList) `conameList(ucn*,vcn*); 
+      }
+      fapp(u,ft) -> { return `getFreeCoNames(ctx,u); }
+      pair(u,v) -> { 
+        conameList ucn = `getFreeCoNames(ctx,u); 
+        conameList vcn = `getFreeCoNames(ctx,v); 
+        return (conameList) `conameList(ucn*,vcn*); 
+      }
+      proj1(u) -> { return `getFreeCoNames(ctx,u); }
+      proj2(u) -> { return `getFreeCoNames(ctx,u); }
+      caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
+        conameList ucn = `getFreeCoNames(ctx,u); 
+        conameList vcn = `getFreeCoNames(ctx,v); 
+        conameList wcn = `getFreeCoNames(ctx,v); 
+        return (conameList) `conameList(ucn*,vcn*,wcn*); 
+      }
+      left(u) -> { return `getFreeCoNames(ctx,u); }
+      right(u) -> { return `getFreeCoNames(ctx,u); }
+      passiv(c,u) -> {
+        return ctx.contains(`c) ? `conameList() : `conameList(c); 
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static conameList getFreeCoNames(LTerm pt) {
+    return `getFreeCoNames(conameList(),pt);
+  }
+  
+  public static boolean freeIn(CoName a, LTerm pt) {
+    return getFreeCoNames(pt).contains(a);
   }
 
 }

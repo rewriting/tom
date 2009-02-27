@@ -52,10 +52,12 @@ public class Main {
       System.out.println(Pretty.pretty(pt.export()));
       System.out.println();
 			//Latex.display(pt.export());
-      Pretty.setChurchStyle(false);
+      //Pretty.setChurchStyle(false);
       LTerm lmupt = LKtoLambdaMu.convert(pt);
       System.out.println("lambda-mu conversion : " + Pretty.pretty(lmupt.export()));
+      System.out.println("after eta-reduction  : " + Pretty.pretty(LambdaMu.mueta(lmupt).export()));
       System.out.println("after normalisation  : " + Pretty.pretty(LambdaMu.norm(lmupt).export()));
+      System.out.println("after norm+eta       : " + Pretty.pretty(LambdaMu.mueta(LambdaMu.norm(lmupt)).export()));
       Pretty.setChurchStyle(true);
       System.out.println();
       System.out.println("typechecks LKFM          : " + TypeChecker.typecheck(pt,rrules,prules,pfrules));

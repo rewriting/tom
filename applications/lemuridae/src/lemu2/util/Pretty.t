@@ -26,6 +26,18 @@ public class Pretty {
         return %[@`pretty(u)@ @`pretty(v)@]%; 
       }
       Rawfapp(u,v) -> { return %[(@`pretty(u)@) @`pretty(v)@]%; }
+      Rawpair(u,v) -> { return %[(@`pretty(u)@,@`pretty(v)@)]%; }
+      Rawproj1(u) -> { return %[fst @`pretty(u)@]%; }
+      Rawproj2(u) -> { return %[snd @`pretty(u)@]%; }
+      Rawcaseof(u,RawAlt(x,px,v),RawAlt(y,py,w)) -> { 
+        return %[(case @`pretty(u)@ of (left @`pr(x,px)@) -> @`pretty(v)@ | (right @`pr(y,py)@) -> @`pretty(w)@)]%;
+      }
+      Rawletin(RawLetin(fx,x,px,u,v)) -> { 
+        return %[(let <@`fx@,@`x@> = @`pretty(u)@ in @`pretty(v)@)]%;
+      }
+      Rawwitness(ft,u) -> { return %[<@`pretty(ft)@,@`pretty(u)@>]%; }
+      Rawleft(u) -> { return %[left @`pretty(u)@]%; }
+      Rawright(u) -> { return %[right @`pretty(u)@]%; }
       Rawpassiv(mv,Rawlvar(x)) -> { return %[[@`mv@]@`x@]%; }
       Rawpassiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
     }

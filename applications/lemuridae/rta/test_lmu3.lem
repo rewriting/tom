@@ -9,8 +9,8 @@ rootR(
   <r:(A=>B)=>(A=>B)> implyR(
     <x:A=>B><a:A=>B> implyR(
       <y:A><b:B> cut(
-        <c:A> ax(y,c),
-        <z:A> implyL(
+        <c:A=>B> ax(x,c),
+        <z:A=>B> implyL(
           <w:B> ax(w,b),
-          <d:A> ax(y,d),x)),a),r))
+          <d:A> ax(y,d),z)),a),r))
  
