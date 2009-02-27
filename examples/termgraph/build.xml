@@ -11,15 +11,30 @@
     <gomtermgraphcompile/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
-                options="-I ${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-                <include name="${example}/**/LambdaTermParser.g.t"/>
+      options="-I ${examples.gen}/${example}"
+      srcdir="${examples.dir}"> 
+      <include name="${example}/**/LambdaTermParser.g.t"/>
+    </tom.preset>
+    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
+      options="-I ${examples.gen}/${example}"
+      srcdir="${examples.dir}"> 
+      <include name="${example}/**/Lambda.g.t"/>
     </tom.preset>
     <mkdir dir="${examples.gen}/${example}"/>
     <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"
-              outputdirectory="${examples.gen}/${example}">
+      outputdirectory="${examples.gen}/${example}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${examples.gen}/${example}/Lambda.g"
+      outputdirectory="${examples.gen}/${example}"
+      libdirectory="${examples.gen}/${example}"
+      multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
     <tomcompile/>
     <javacompile/>
   </target>
