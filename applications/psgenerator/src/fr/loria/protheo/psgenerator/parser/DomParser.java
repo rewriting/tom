@@ -1,7 +1,7 @@
 /*
  * Created on 14-sep-2004
  *
- * Copyright (c) 2004-2007, Michael Moossen
+ * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

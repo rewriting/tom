@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2007-2008, INRIA
+ * Copyright (c) 2007-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
