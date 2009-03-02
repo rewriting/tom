@@ -1,0 +1,17 @@
+module coc
+imports String int 
+
+abstract syntax
+
+atom CoCAtom
+
+CoCTerm = cocVar(v:CoCAtom)
+        | cocLam(lam:<CoCLam>)
+        | cocPi(pi:<CoCPi>)
+        | cocApp(t:CoCTerm,u:CoCTerm)
+        | cocConst(c:String)
+
+CoCLam binds CoCAtom = CoCLam(x:CoCAtom,outer ty:CoCTerm,inner t:CoCTerm)
+CoCPi  binds CoCAtom = CoCPi(x:CoCAtom,outer ty:CoCTerm,inner t:CoCTerm)
+
+

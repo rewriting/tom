@@ -675,5 +675,4 @@ public class U {
   public static boolean freeIn(CoName a, LTerm pt) {
     return getFreeCoNames(pt).contains(a);
   }
-
 }

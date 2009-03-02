@@ -13,13 +13,13 @@ public class LambdaMu {
   %strategy Red() extends Fail() {
     visit LTerm {
       lapp(lam(Lam(x,px,M)),N) -> { return U.`substName(M,x,N); }
-      lapp(activ(Act(a,pa,M)),N) -> { return `activ(Act(a,pa,structSubst(M,a,N))); }
+      lapp(activ(Act(a,implies(pa,pb),M)),N) -> { return `activ(Act(a,pb,structSubst(M,a,N))); }
       fapp(flam(FLam(fx,M)),ft) -> { return U.`substFoVar(M,fx,ft); }
       proj1(pair(t,u)) -> { return `t; }
       proj2(pair(t,u)) -> { return `u; }
       caseof(left(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(N,x,M); }
       caseof(right(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(Q,y,M); }
-      passiv(a,activ(Act(b,_,M))) -> { return U.`reconame(M,b,a); }
+      activ(Act(a,pa,passiv(b,activ(Act(c,_,M))))) -> { return `activ(Act(a,pa,U.reconame(M,c,b))); }
     }
   }
 

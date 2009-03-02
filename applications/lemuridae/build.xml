@@ -15,6 +15,7 @@
 
   <property name="lemu.dir"      location="."/>
   <property name="lemu.src"      location="src"/>
+  <property name="lemu.libs"     location="libs"/>
   <property name="lemu.gen"      location="gen"/>
   <property name="lemu.build"    location="build"/>
 
@@ -95,7 +96,10 @@
       <!-- <compilerarg value="-Xlint" /> -->
       <src path="${lemu.src}"/>
       <src path="${lemu.gen}"/>
-      <classpath refid="tom.classpath"/>
+      <classpath refid="tom.classpath" />
+      <classpath>
+        <pathelement location="${lemu.libs}/functionaljava.jar" />
+      </classpath>
       <include name="**/*.java"/>
     </javac.preset>
 

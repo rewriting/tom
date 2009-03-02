@@ -1,10 +1,12 @@
 package lemu2.util;
 
 import lemu2.kernel.proofterms.types.*;
+import lemu2.kernel.coc.types.*;
 
 public class Pretty {
 
   %include { kernel/proofterms/proofterms.tom } 
+  %include { kernel/coc/coc.tom } 
 
   /* raw lambda-mu terms */
 
@@ -377,5 +379,33 @@ public class Pretty {
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
+
+  /* --------------- coc terms -------------- */
+
+  public static String pretty(CoCTerm t) {
+    %match(t) {
+      cocVar(CoCAtom(x,i)) -> { return `x + `i; }
+      cocLam(CoCLam(CoCAtom(x,i),ty,u)) -> { 
+        return %[(fun @`x + `i@:@`pretty(ty)@ => @`pretty(u)@)]%; }
+      cocPi(CoCPi(CoCAtom(x,i),ty,u)) -> { 
+        return %[(forall @`x + `i@:@`pretty(ty)@, @`pretty(u)@)]%; 
+      }
+      cocApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      cocConst(c) -> { return `c; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawCoCTerm t) {
+    %match(t) {
+      RawcocVar(x) -> { return `x; }
+      RawcocLam(RawCoCLam(x,ty,u)) -> { return %[(fun @`x@:@`pretty(ty)@ => @`pretty(u)@)]%; }
+      RawcocPi(RawCoCPi(x,ty,u)) -> { return %[(forall @`x@:@`pretty(ty)@, @`pretty(u)@)]%; }
+      RawcocApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      RawcocConst(c) -> { return `c; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
 }
 
