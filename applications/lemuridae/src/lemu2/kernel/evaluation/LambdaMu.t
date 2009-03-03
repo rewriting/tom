@@ -17,8 +17,8 @@ public class LambdaMu {
       fapp(flam(FLam(fx,M)),ft) -> { return U.`substFoVar(M,fx,ft); }
       proj1(pair(t,u)) -> { return `t; }
       proj2(pair(t,u)) -> { return `u; }
-      caseof(left(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(N,x,M); }
-      caseof(right(M),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(Q,y,M); }
+      caseof(left(M,pb),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(N,x,M); }
+      caseof(right(M,pa),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(Q,y,M); }
       activ(Act(a,pa,passiv(b,activ(Act(c,_,M))))) -> { return `activ(Act(a,pa,U.reconame(M,c,b))); }
     }
   }

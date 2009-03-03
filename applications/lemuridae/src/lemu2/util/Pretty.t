@@ -37,9 +37,9 @@ public class Pretty {
       Rawletin(RawLetin(fx,x,px,u,v)) -> { 
         return %[(let <@`fx@,@`x@> = @`pretty(u)@ in @`pretty(v)@)]%;
       }
-      Rawwitness(ft,u) -> { return %[<@`pretty(ft)@,@`pretty(u)@>]%; }
-      Rawleft(u) -> { return %[left @`pretty(u)@]%; }
-      Rawright(u) -> { return %[right @`pretty(u)@]%; }
+      Rawwitness(ft,u,p) -> { return %[(<@`pretty(ft)@,@`pretty(u)@>:@`pretty(p)@)]%; }
+      Rawleft(u,p) -> { return %[left{@`pretty(p)@} @`pretty(u)@]%; }
+      Rawright(u,p) -> { return %[right{@`pretty(p)@} @`pretty(u)@]%; }
       Rawpassiv(mv,Rawlvar(x)) -> { return %[[@`mv@]@`x@]%; }
       Rawpassiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
     }

@@ -570,8 +570,8 @@ public class U {
             Alt(y,py,substName(v,x,t)),
             Alt(z,pz,substName(w,x,t)));
       }
-      left(u) -> { return `left(substName(u,x,t)); }
-      right(u) -> { return `right(substName(u,x,t)); }
+      left(u,p) -> { return `left(substName(u,x,t),p); }
+      right(u,p) -> { return `right(substName(u,x,t),p); }
       //letin(Letin(fx,y,
       passiv(mv,u) -> { return `passiv(mv,substName(u,x,t)); }
     }
@@ -597,8 +597,8 @@ public class U {
             Alt(x,px,substFoVar(v,fx,ft)),
             Alt(y,py,substFoVar(w,fx,ft)));
       }
-      left(u) -> { return `left(substFoVar(u,fx,ft)); }
-      right(u) -> { return `right(substFoVar(u,fx,ft)); }
+      left(u,p) -> { return `left(substFoVar(u,fx,ft),p); }
+      right(u,p) -> { return `right(substFoVar(u,fx,ft),p); }
       passiv(mv,u) -> { return `passiv(mv,substFoVar(u,fx,ft)); }
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -624,8 +624,8 @@ public class U {
             Alt(x,px,reconame(v,a,b)),
             Alt(y,py,reconame(w,a,b)));
       }
-      left(u) -> { return `left(reconame(u,a,b)); }
-      right(u) -> { return `right(reconame(u,a,b)); }
+      left(u,p) -> { return `left(reconame(u,a,b),p); }
+      right(u,p) -> { return `right(reconame(u,a,b),p); }
       passiv(c,u) -> {
         if (`c == a) return `passiv(b,reconame(u,a,b)); 
         else         return `passiv(c,reconame(u,a,b)); 
@@ -659,8 +659,14 @@ public class U {
         conameList wcn = `getFreeCoNames(ctx,v); 
         return (conameList) `conameList(ucn*,vcn*,wcn*); 
       }
-      left(u) -> { return `getFreeCoNames(ctx,u); }
-      right(u) -> { return `getFreeCoNames(ctx,u); }
+      left(u,p) -> { return `getFreeCoNames(ctx,u); }
+      right(u,p) -> { return `getFreeCoNames(ctx,u); }
+      witness(ft,u,p) -> { return `getFreeCoNames(ctx,u); }
+      letin(Letin(fx,x,px,u,v)) -> {
+        conameList ucn = `getFreeCoNames(ctx,u); 
+        conameList vcn = `getFreeCoNames(ctx,v); 
+        return (conameList) `conameList(ucn*,vcn*);
+      }
       passiv(c,u) -> {
         return ctx.contains(`c) ? `conameList() : `conameList(c); 
       }

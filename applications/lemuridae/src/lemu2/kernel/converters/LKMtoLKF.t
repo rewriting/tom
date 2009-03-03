@@ -237,6 +237,39 @@ public class LKMtoLKF {
                 }
               } 
             }
+            forallL(ForallLPrem1(x,A,M),ft,n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                forall(Fa(fx,A1)) -> {
+                  Sequent se1 = `seq(free,lctx(nprop(x,U.substFoVar(A1,fx,ft)),gamma*),delta);
+                  ProofTerm prem1 = `convert(U.substFoVar(M,fx,ft),se1,prs);
+                  return `forallL(ForallLPrem1(x,U.substFoVar(A1,fx,ft),prem1),ft,n);
+                }
+              } 
+            }
+            existsR(ExistsRPrem1(a,A,M),ft,cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
+                exists(Ex(fx,A1)) -> {
+                  Sequent se1 = `seq(free,gamma,rctx(cnprop(a,U.substFoVar(A1,fx,ft)),delta*));
+                  ProofTerm prem1 = `convert(U.substFoVar(M,fx,ft),se1,prs);
+                  return `existsR(ExistsRPrem1(a,U.substFoVar(A1,fx,ft),prem1),ft,cn);
+                }
+              } 
+            }
+            existsL(ExistsLPrem1(x,A,fx,M),n) -> {
+              Prop P = U.`lookup(gamma,n);
+              %match(P) {
+                relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
+                exists(Ex(fy,A1)) -> {
+                  Sequent se1 = `seq(fovarList(fx,free*),lctx(nprop(x,A1),gamma*),delta);
+                  ProofTerm prem1 = `convert(U.substFoVar(M,fx,var(fy)),se1,prs);
+                  return `existsL(ExistsLPrem1(x,A1,fy,prem1),n);
+                }
+              } 
+            }
           }
         }
       }
