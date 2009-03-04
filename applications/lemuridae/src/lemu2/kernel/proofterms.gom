@@ -91,6 +91,7 @@ ForallLPrem1 binds Name = ForallLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 
 FoldRPrem1 binds CoName = FoldRPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)
 FoldLPrem1 binds Name = FoldLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
+
 /* -- data structures used by Evaluation.t -- */
 
 NameList = nameList(Name*)
@@ -110,6 +111,9 @@ Sequent = seq(free:FoVarList,l:LCtx,r:RCtx)
 FoMap = fomap(v:FoVar,t:Term)
 FoSubst = fosubst(FoMap*)
 
+/* theories */
+NamedAx = namedAx(n:String,ax:Prop)
+Theory  = theory(NamedAx*)
 
 // lambda-mu
 

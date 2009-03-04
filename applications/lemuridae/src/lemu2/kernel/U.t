@@ -43,6 +43,13 @@ public class U {
     throw new RuntimeException("rule " + id + " not in scope");
   }
 
+  public static NamedAx lookup(Theory th, String id) {
+    %match(th) {
+      theory(_*,r@namedAx(n,_),_*) && n == id -> { return `r; }
+    }
+    throw new RuntimeException("rule " + id + " not in scope");
+  }
+
   /*
   public static fovarList freeFoVars(TermList tl, fovarList ctx) {
     %match(tl) {
