@@ -1,10 +1,10 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import testmatchinference.test.types.*;
 
-public class TestMatchInference extends TestCase {
+public class TestMatchInference {
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestMatchInference.class));
+    org.junit.runner.JUnitCore.runClasses(TestMatchInference.class);
 	}
   
 %gom {
@@ -15,6 +15,7 @@ public class TestMatchInference extends TestCase {
        | f(s:Term)
 }
 
+  @Test
   public void test1() {
     %match(5) {
       4 -> { fail("4 does not match"); }
@@ -24,6 +25,7 @@ public class TestMatchInference extends TestCase {
     fail("5 should match");
   }
 
+  @Test
   public void test2() {
     %match(5,"foo") {
       5,"goo" -> { fail("5,goo does not match"); }
@@ -35,6 +37,7 @@ public class TestMatchInference extends TestCase {
   }
 
   private Term ff(Term x) { return `f(x); }
+  @Test
   public void test3() {
     %match(f(a()),ff(a())) {
       f(a()),a() -> { fail(); }

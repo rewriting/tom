@@ -30,13 +30,13 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.b.u.i.l.t.i.n.builtin.types.*;
 import aterm.ATermFactory;
 import aterm.pure.SingletonFactory;
 
-public class TestBuiltin extends TestCase {
+public class TestBuiltin {
 
   %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
 
@@ -50,12 +50,14 @@ public class TestBuiltin extends TestCase {
     return factory.makeList(factory.makeInt(e1),factory.makeList(factory.makeInt(e2),factory.makeList(factory.makeInt(e3),factory.makeList())));
   }
 
+  @Test
   public void testInt() {
     Wrapper t1 = `Int(10);
     Wrapper t2 = `Int(10);
     assertTrue(t1 == t2);
   }
 
+  @Test
   public void testString() {
     String a = "Germain";
     String b = new String("Germain");
@@ -65,6 +67,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(na == nb);
   }
 
+  @Test
   public void testDouble() {
     Double a = new Double(1.23);
     Double b = new Double(1.23);
@@ -73,6 +76,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(na == nb);
   }
 
+  @Test
   public void testATerm() {
     aterm.ATerm a = constructNode("n1",2);
     aterm.ATerm b = constructNode("n1",2);
@@ -82,12 +86,14 @@ public class TestBuiltin extends TestCase {
     assertTrue(na == nb);
   }
 
+  @Test
   public void testATermList() {
     aterm.ATermList a = constructList(1,2,3);
     aterm.ATermList b = constructList(1,2,3);
     assertTrue(a == b);
   }
 
+  @Test
   public void testMatchInt() {
     String res = "";
     Wrapper t = `Int(32);
@@ -98,6 +104,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res.equals("32"));
   }
 
+  @Test
   public void testMatchLong() {
     String res = "";
     Wrapper t = `Long(1234567890);
@@ -108,6 +115,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res.equals("1234567890l"));
   }
 
+  @Test
   public void testMatchChar() {
     String res = "";
     Wrapper t = `Char('b');
@@ -118,6 +126,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res.equals("b"));
   }
 
+  @Test
   public void testMatchString() {
     String res = "";
     Wrapper nm = `Name("Germain");
@@ -128,6 +137,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res.equals("G"));
   }
 
+  @Test
   public void testDisjunctionInt() {
     boolean res = false;
     Wrapper wi = `Int(42);
@@ -137,6 +147,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res);
   }
 
+  @Test
   public void testDisjunctionString() {
     boolean res = false;
     Wrapper wi = `Name("42");
@@ -146,6 +157,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(res);
   }
 
+  @Test
   public void testBoolean() {
     Wrapper t1 = `Bool(true);
     Wrapper t2 = `Bool(true);
@@ -156,6 +168,7 @@ public class TestBuiltin extends TestCase {
     assertTrue(t1 == t2);
   }
 
+  @Test
   public void testMatchBoolean() {
     boolean res = false;
     Wrapper nm = `Bool(true());
@@ -173,6 +186,7 @@ public class TestBuiltin extends TestCase {
     assertFalse("Match in the first branch",res);
   }
 
+  @Test
   public void testFromString() {
     String s = "Bool(1)";
     Wrapper test = Wrapper.fromString(s);
@@ -181,6 +195,7 @@ public class TestBuiltin extends TestCase {
         "Bool(1)");
   }
 
+  @Test
   public void testFrom_int() {
     Wrapper test = `Int(123456);
     Wrapper testBis = Wrapper.fromString(test.toString());
@@ -188,7 +203,7 @@ public class TestBuiltin extends TestCase {
   }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
+    org.junit.runner.JUnitCore.runClasses(TestBuiltin.class);
   }
 
 }

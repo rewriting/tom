@@ -31,10 +31,10 @@ package sl;
 
 import sl.testreduceall.reduce.types.*;
 import tom.library.sl.Strategy;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestReduceAll extends TestCase {
+public class TestReduceAll {
 
   %include { sl.tom }
   %gom {
@@ -61,9 +61,10 @@ public class TestReduceAll extends TestCase {
   }
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestReduceAll.class));
+    org.junit.runner.JUnitCore.runClasses(TestReduceAll.class);
 	}
 
+  @Test
   public void testOneRed() {
     Term subject = `f(a(),b());
     Strategy s = `One(AB());
@@ -83,6 +84,7 @@ public class TestReduceAll extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testAllRed_Visit() {
     Term subject = `f(a(),b());
     Strategy s = `All(AB());
@@ -95,6 +97,7 @@ public class TestReduceAll extends TestCase {
     }
   }
 
+  @Test
   public void testAllRed_Fire() {
     Term subject = `f(a(),b());
     Strategy s = `All(AB());
@@ -107,6 +110,7 @@ public class TestReduceAll extends TestCase {
     }
   }
 
+  @Test
   public void testCongruenceRed_Visit() {
     Term subject = `f(a(),b());
     Strategy s = `_f(AB(),AB());
@@ -119,6 +123,7 @@ public class TestReduceAll extends TestCase {
     }
   }
 
+  @Test
   public void testCongruenceRed_Fire() {
     Term subject = `f(a(),b());
     Strategy s = `_f(AB(),AB());
@@ -139,6 +144,7 @@ public class TestReduceAll extends TestCase {
     }
   }
 
+  @Test
   public void testOutermost() {
     Term subject = `g(f(a(),a()));
     Strategy s = `Outermost(G());

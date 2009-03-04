@@ -29,12 +29,12 @@
 
 package antipatterns;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import antipatterns.testantipattern2.m.types.*;
 
-public class TestAntiPattern2 extends TestCase {
+public class TestAntiPattern2 {
   %gom {
     module M
       abstract syntax
@@ -45,6 +45,7 @@ public class TestAntiPattern2 extends TestCase {
       | c1( TwoPath* )
   }
 
+  @Test
   public void test1() {
     TwoPath res = `c1(c0(g(),id()),c0(id(),g()));
     %match(res) {
@@ -56,6 +57,7 @@ public class TestAntiPattern2 extends TestCase {
     }
   }
 
+  @Test
   public void test2() {
     TwoPath t = `g();
     %match(t) {
@@ -64,6 +66,7 @@ public class TestAntiPattern2 extends TestCase {
     fail();
   }
 
+  @Test
   public void test3() {
     TwoPath p1 = `c0(g(),id());
     TwoPath p2 = `c0(id(),g());
@@ -77,7 +80,7 @@ public class TestAntiPattern2 extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAntiPattern2.class));
+    org.junit.runner.JUnitCore.runClasses(TestAntiPattern2.class);
   }
 
 }

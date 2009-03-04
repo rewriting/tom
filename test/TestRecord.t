@@ -1,10 +1,10 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestRecord extends TestCase {
+public class TestRecord {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestRecord.class));
+    org.junit.runner.JUnitCore.runClasses(TestRecord.class);
 	}
 
     // ------------------------------------------------------------
@@ -185,46 +185,55 @@ public class TestRecord extends TestCase {
     return new IntExp(0);
   }
 
+  @Test
 	public void testPrettyPrint() {
     String s1 = prettyPrint(buildExp1());
     assertEquals("Pretty print Exp1 :", s1,"Mult(Plus(2,3),4)");
 	}
 
+  @Test
   public void testPrettyPrintInv() {
     String s2 = prettyPrintInv(buildExp1());
     assertEquals("PrettyPrintInv Exp1 :", s2,"2 3 Plus 4 Mult");
   }
 
+  @Test
   public void testPrettyPrintTraversal() {
     String s3 = prettyPrint(traversalSimplify(buildExp1()));
     assertEquals("PrettyPrint with Traversal Exp1 :", s3,"20");
   }
 
+  @Test
   public void testPrettyPrint2() {
     String s = prettyPrint(buildExp2());
     assertEquals("Pretty print Exp2 :", s,"Mult(Plus(a,0),1)");
   }
 
+  @Test
   public void testPrettyPrintInv2() {
     String s = prettyPrintInv(buildExp2());
     assertEquals("PrettyPrintInv Exp2 :", s,"a 0 Plus 1 Mult");
   }
 
+  @Test
   public void testPrettyPrintTraversal2() {
     String s = prettyPrint(traversalSimplify(buildExp2()));
     assertEquals("PrettyPrint with Traversal Exp2 :", s,"a");
   }
 
+  @Test
   public void testPrettyPrint3() {
     String s = prettyPrint(buildExp3());
     assertEquals("Pretty print Exp3 :", s,"Plus(Mult(Plus(a,0),1),Uminus(a))");
   }
 
+  @Test
   public void testPrettyPrintInv3() {
     String s = prettyPrintInv(buildExp3());
 		assertEquals("PrettyPrintInv Exp3 :", s,"a 0 Plus 1 Mult a Uminus Plus");
   }
 
+  @Test
   public void testPrettyPrintTraversal3() {
     String s = prettyPrint(traversalSimplify(buildExp3()));
 		assertEquals("PrettyPrint with Traversal Exp3 :", s,"0");

@@ -3,19 +3,20 @@ package gom;
 import gom.ying.types.*;
 import gom.yang.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestYingYang extends TestCase {
+public class TestYingYang {
 
   %include { ying/Ying.tom }
 
+  @Test
   public void testToString() {
     Moon m = `ping(pong(ping(shi()))); 
     assertEquals("ping(pong(ping(shi())))",m.toString());
   }
   
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestYingYang.class));
+    org.junit.runner.JUnitCore.runClasses(TestYingYang.class);
   }
 }

@@ -1,12 +1,13 @@
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-public class TestArray extends TestCase {
+public class TestArray {
 
   private static ATermFactory factory = SingletonFactory.getInstance();
   
@@ -71,9 +72,10 @@ public class TestArray extends TestCase {
 
   public static void main(String[] args) {
     level = Level.INFO;
-    junit.textui.TestRunner.run(new TestSuite(TestArray.class));
+    org.junit.runner.JUnitCore.runClasses(TestArray.class);
   }
 
+  @Before
   protected void setUp() {
     logger = Logger.getLogger(getClass().getName());
 
@@ -103,42 +105,49 @@ public class TestArray extends TestCase {
 
   }
 
+  @Test
   public void testSort1() {
     assertEquals(
         "sort1 should return a sorted list",
         sort1(unsortedlist), sortedlist);
   }
 
+  @Test
   public void testSort2() {
     assertEquals(
         "sort2 should return a sorted list",
         sort2(unsortedlist), sortedlist);
   }
 
+  @Test
   public void testDouble1() {
     assertEquals(
         "double1 should remove all double element in a list",
         double1(sort1(listwithdoubles)),listwithoutdoubles);
   }
 
+  @Test
   public void testDouble2() {
     assertEquals(
         "double2 should remove all double element in a list",
         double2(sort2(listwithdoubles)),listwithoutdoubles);
   }
 
+  @Test
   public void testDouble3() {
     assertEquals(
         "double3 should remove all double element in a list",
         double3(sort2(listwithdoubles)),listwithoutdoubles);
   }
 
+  @Test
   public void testDouble4() {
     assertEquals(
         "double4 should remove all double element in a list",
         double4(sort2(listwithdoubles)),listwithoutdoubles);
   }
 
+  @Test
   public void testDouble5() {
     assertEquals(
         "double5 should remove all double element in a list",
@@ -215,6 +224,7 @@ public class TestArray extends TestCase {
     return l; 
   }
 
+  @Test
   public void testVariableStar1() {
     int nbSol = 0;
     ArrayList l = `conc(a(),b());

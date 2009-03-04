@@ -27,12 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import testvarvarstar.m.types.*;
 
-public class TestVarVarStar extends TestCase {
+public class TestVarVarStar {
 
   %gom{
     module M
@@ -41,7 +41,8 @@ public class TestVarVarStar extends TestCase {
       B = b()
       BList = conc(B*)
   }
-
+ 
+  @Test 
   public void test1() {
     A a = `a(conc(),conc());
     %match(a) {
@@ -50,6 +51,7 @@ public class TestVarVarStar extends TestCase {
     fail();
   }
   
+  @Test 
   public void test2() {
     A a = `a(conc(b()),conc(b()));
     %match(a) {
@@ -58,6 +60,7 @@ public class TestVarVarStar extends TestCase {
     fail();
   }
   
+  @Test 
   public void test3() {
     int counter = 0;
     A a = `a(conc(b()),conc(b(),b()));
@@ -68,7 +71,7 @@ public class TestVarVarStar extends TestCase {
   }
   
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestVarVarStar.class));
+    org.junit.runner.JUnitCore.runClasses(TestVarVarStar.class);
   }
 
 

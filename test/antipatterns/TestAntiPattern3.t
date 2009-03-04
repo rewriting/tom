@@ -29,13 +29,13 @@
 
 package antipatterns;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.*;
 import antipatterns.testantipattern3.peano.types.*;
 
-public class TestAntiPattern3 extends TestCase {
+public class TestAntiPattern3 {
   %gom {
     module Peano
       abstract syntax
@@ -61,6 +61,7 @@ public class TestAntiPattern3 extends TestCase {
     return bag;
   }
 
+  @Test
   public void test1() {
     Collection bag = evaluate(`zero());
     assertTrue(!bag.contains(1));
@@ -75,6 +76,7 @@ public class TestAntiPattern3 extends TestCase {
     assertTrue(!bag.contains(10));
   }
 
+  @Test
   public void test2() {
     Collection bag = evaluate(`plus(zero(),zero()));
     assertTrue("1",!bag.contains(1));
@@ -89,6 +91,7 @@ public class TestAntiPattern3 extends TestCase {
     assertTrue("10",!bag.contains(10));
   }
 
+  @Test
   public void test3() {
     Collection bag = evaluate(`plus(zero(),suc(zero())));
     assertTrue("1",!bag.contains(1));
@@ -103,6 +106,7 @@ public class TestAntiPattern3 extends TestCase {
     assertTrue("10",!bag.contains(10));
   }
 
+  @Test
   public void test4() {
     Collection bag = evaluate(`plus(suc(zero()),zero()));
     assertTrue("1",!bag.contains(1));
@@ -117,6 +121,7 @@ public class TestAntiPattern3 extends TestCase {
     assertTrue("10",!bag.contains(10));
   }
 
+  @Test
   public void test5() {
     Collection bag = evaluate(`plus(suc(zero()),suc(suc(zero()))));
     assertTrue("1",!bag.contains(1));
@@ -132,7 +137,7 @@ public class TestAntiPattern3 extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAntiPattern3.class));
+    org.junit.runner.JUnitCore.runClasses(TestAntiPattern3.class);
   }
 
 }

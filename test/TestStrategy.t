@@ -1,5 +1,5 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import tom.library.sl.*;
 
@@ -7,7 +7,7 @@ import teststrategy.term.types.*;
 
 import java.util.*;
 
-public class TestStrategy extends TestCase {
+public class TestStrategy {
 
   %include { sl.tom }
   %include { boolean.tom }
@@ -37,12 +37,13 @@ public class TestStrategy extends TestCase {
   static boolean bool0 = true;
 
   public static void main(String[] args) throws VisitFailure{
-    junit.textui.TestRunner.run(new TestSuite(TestStrategy.class));
+    org.junit.runner.JUnitCore.runClasses(TestStrategy.class);
   }
 
   public void setUp() {
   }
 
+  @Test
   public void testS() {
     
     Hashtable hashtable = new Hashtable();
@@ -79,6 +80,7 @@ public class TestStrategy extends TestCase {
     }
   }
 
+  @Test
   public void testPosition() throws VisitFailure {
     //3 positions for now
     Hashtable positions = new Hashtable(3);
@@ -181,6 +183,7 @@ public class TestStrategy extends TestCase {
     }
   }
 
+  @Test
   public void testFnc() {
     try {
       assertEquals(`fnc().visitLight(`Unary()), `Variadic(Variadic(Unary())));

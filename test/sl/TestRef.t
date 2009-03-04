@@ -32,10 +32,10 @@ package sl;
 import sl.testsl.types.*;
 import sl.testsl.*;
 import tom.library.sl.Strategy;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestRef extends TestCase {
+public class TestRef {
 
   %include { sl.tom }
   %include { sl/graph.tom }
@@ -54,9 +54,10 @@ public class TestRef extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRef.class));
+    org.junit.runner.JUnitCore.runClasses(TestRef.class);
   }
 
+  @Test
   public void testRef1() {
     Term subject = (Term) `g(g(a(),RefTerm("l")),LabTerm("l",a())).expand();
     try{
@@ -69,6 +70,7 @@ public class TestRef extends TestCase {
     }
   }
 
+  @Test
   public void testRef2() {
     Term subject = (Term) `g(g(a(),RefTerm("l")),LabTerm("l",a())).expand();
     try{
@@ -82,6 +84,7 @@ public class TestRef extends TestCase {
     }
   }
 
+  @Test
   public void testRef3() {
     Term subject2 =  (Term) `g(g(a(),LabTerm("l",a())),RefTerm("l")).expand();
     try{
@@ -94,6 +97,7 @@ public class TestRef extends TestCase {
     }
   }
 
+  @Test
   public void testRef4() {
     Term subject2 = (Term) `g(g(a(),LabTerm("l",a())),RefTerm("l")).expand();
     try{

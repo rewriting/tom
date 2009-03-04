@@ -1,13 +1,14 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestLabel extends TestCase {
+public class TestLabel {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestLabel.class));
+    org.junit.runner.JUnitCore.runClasses(TestLabel.class);
   }
   
   %include { string.tom }
 
+  @Test
   public void test1() {
     int a = 0;
     int b = 0;

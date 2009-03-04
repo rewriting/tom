@@ -22,11 +22,11 @@
 
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testau.l.types.*;
 
-public class TestAU extends TestCase {
+public class TestAU {
 
   %gom {
     module l
@@ -56,38 +56,45 @@ public class TestAU extends TestCase {
 //   }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAU.class));
+    org.junit.runner.JUnitCore.runClasses(TestAU.class);
   }
 
+  @Test
   public void testFlatten1() {
     assertEquals(`concAU(a(),b(),a()),`concAU(a(),concAU(b()),a()));
   }
 
+  @Test
   public void testFlatten2() {
     L l1 = `listAU(bb(),bb());
     L l2 = `listAU(bb(),bb());
     assertEquals(`listAU(l1,l2),`listAU(bb(),bb(),bb(),bb()));
   }
 
+  @Test
   public void testFlatten3() {
     L l1 = `listAU(bb(),bb());
     L l2 = `listAU(bb(),bb());
     assertEquals(`listAU(l1,l2),`listAU(l1*,l2*));
   }
 
+  @Test
   public void testFlatten4() {
     L l1 = `listAU(bb(),bb());
     assertEquals(`ConslistAU(l1,bb()),`listAU(l1*,bb()));
   }
 
+  @Test
   public void testNeutral1() {
     assertEquals(`listAU(),`aa());
   }
 
+  @Test
   public void testNeutral2() {
     assertEquals(`listAU(aa(),aa()),`aa());
   }
 
+  @Test
   public void testNeutral3() {
     L l = `bb();
     int cnt = 0;
@@ -107,6 +114,7 @@ public class TestAU extends TestCase {
     assertEquals("Incomplete matching",cnt,5);
   }
 
+  @Test
   public void testNeutral4() {
     T t = `b();
     int cnt = 0;
@@ -126,6 +134,7 @@ public class TestAU extends TestCase {
     assertEquals("Incomplete matching",cnt,5);
   }
 
+  @Test
   public void testNeutral5() {
     NAU t = `m();
     int cnt = 0;
@@ -137,6 +146,7 @@ public class TestAU extends TestCase {
     assertEquals("m() does not match p(x*,y*)",cnt,0);
   }
 
+  @Test
   public void testMatch1() {
     L l = `listAU(listAU(aa(),bb()),listAU(aa()),listAU(bb(),aa()));
     int cnt = 0;

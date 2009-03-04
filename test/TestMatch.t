@@ -1,18 +1,20 @@
 import aterm.*;
 import aterm.pure.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestMatch extends TestCase {
+public class TestMatch {
   private static ATerm ok,fail;
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
   private static ATermFactory factory = SingletonFactory.getInstance();
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestMatch.class));
+    org.junit.runner.JUnitCore.runClasses(TestMatch.class);
   }
 	
+  @Before
   public void setUp() {
     ok   = factory.parse("ok");
     fail = factory.parse("fail");
@@ -93,7 +95,7 @@ public class TestMatch extends TestCase {
     get_slot(s1,t) { ((ATermAppl)$t).getArgument(1)  }
   }
 
-	static class TestData {
+	public class TestData {
 		String question;
 		String answer;
 		public TestData(String question, String answer) {
@@ -102,7 +104,7 @@ public class TestMatch extends TestCase {
 		}
 	}
 
-	static class TestData2 {
+	public class TestData2 {
 		String question1;
 		String question2;
 		String answer;
@@ -113,6 +115,7 @@ public class TestMatch extends TestCase {
 		}
 	}
 
+  @Test
   public void test1() {
 		TestData[] TEST = new TestData[] {
 			new TestData("g(a,a)"                     ,"pattern1"), 
@@ -145,6 +148,7 @@ public class TestMatch extends TestCase {
     return res;
   }
       
+  @Test
   public void test2() {
 		TestData2[] TEST = new TestData2[] {
 			new TestData2("g(a,b)"      ,"f(a)","pattern1 "), 
@@ -171,6 +175,7 @@ public class TestMatch extends TestCase {
     return res;
   }
 
+ @Test
   public void test3() {
 		TestData[] TEST = new TestData[] {
 			new TestData("h(l([a,b,a,b]),a)"               ,"pattern1"), 
@@ -201,6 +206,7 @@ public class TestMatch extends TestCase {
     return res;
   }
     
+  @Test
 	public void test4() {
 		TestData[] TEST = new TestData[] {
 			new TestData("h(a, l([a,b,f(b),a]))",     "pattern1"), 
@@ -233,6 +239,7 @@ public class TestMatch extends TestCase {
     return res;
   }
     
+  @Test
   public void test5() {
     assertTrue(pattern1 == match5(factory.parse("h(a, l([f(a),f(b),f(a),f(c)]))")));
     assertTrue(fail == match5(factory.parse("h(a, l([f(a),f(b),f(c)]))")));
@@ -250,6 +257,7 @@ public class TestMatch extends TestCase {
     return res;
   } 
 
+  @Test
   public void test6() {
     ATerm res = match6(factory.parse("h(a(),b())"));
     assertTrue("slot s1 of \"h\" is a(), it should match, but got "+res, 

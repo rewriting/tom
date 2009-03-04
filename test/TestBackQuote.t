@@ -1,11 +1,11 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import testbackquote.thing.*;
 import testbackquote.thing.types.*;
 
-public class TestBackQuote extends TestCase {
+public class TestBackQuote {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestBackQuote.class));
+    org.junit.runner.JUnitCore.runClasses(TestBackQuote.class);
   }
 
   %gom {
@@ -16,6 +16,7 @@ public class TestBackQuote extends TestCase {
       E = a() | b() | c() | d()
   }
 	
+  @Test
   public void test1() {
     L l = `conc(a(), b(), c(), a(), b());
     L l2 = `conc();
@@ -45,6 +46,7 @@ public class TestBackQuote extends TestCase {
     return `conc(a(),b(),c());
   }
 
+  @Test
   public void test2() {
     assertEquals(`conc(a(),b(),c()),`conc(abc()));
   }

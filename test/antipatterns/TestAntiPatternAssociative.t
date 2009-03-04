@@ -29,12 +29,13 @@
 
 package antipatterns;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import antipatterns.testantipatternassociative.antipatternassociative.types.*;
 
-public class TestAntiPatternAssociative extends TestCase {	  
+public class TestAntiPatternAssociative { 
 	
   %gom {
     module AntiPatternAssociative
@@ -62,9 +63,10 @@ public class TestAntiPatternAssociative extends TestCase {
   }
 	
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestAntiPatternAssociative.class));
+    org.junit.runner.JUnitCore.runClasses(TestAntiPatternAssociative.class);
 	}
-	
+
+  @Before
 	public void setUp() {
 	}
 	
@@ -77,6 +79,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp1() {		
 		assertTrue(match1(`concTerm(b(),a(),c())) == `True());
 		assertTrue(match1(`concTerm(b(),f(a(),c()),c())) == `False());
@@ -91,6 +94,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp2() {		
 		assertTrue(match2(`concTerm(b(),a(),c())) == `False());
 		assertTrue(match2(`concTerm(b(),f(a(),c()),c())) == `True());
@@ -106,6 +110,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp3() {		
 		assertTrue(match3(`concTerm(b(),a(),c())) == `True());
 		assertTrue(match3(`concTerm(b(),f(a(),c()),c())) == `True());
@@ -123,6 +128,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp4() {		
 		assertTrue(match4(`concTerm(b(),a(),c())) == `False());
 		assertTrue(match4(`concTerm(b(),f(a(),c()),c())) == `False());
@@ -140,6 +146,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp4_1() {		
 		assertTrue(match4_1(`concTerm(b(),a(),c())) == `False());
 		assertTrue(match4_1(`concTerm(b(),f(a(),c()),c())) == `False());
@@ -159,6 +166,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp5() {		
 		assertTrue(match5(`concTerm(b(),a(),c())) == `True());
 		assertTrue(match5(`concTerm(b(),f(a(),c()),c())) == `True());
@@ -178,6 +186,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp6() {		
 		assertTrue(match6(`concTerm(b(),a(),c())) == `True());
 		assertTrue(match6(`concTerm(b(),f(a(),c()),c())) == `True());
@@ -196,6 +205,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp7() {		
 		assertTrue(match7(`concTerm(b(),a(),c())) == `True());
 		assertTrue(match7(`concTerm(b(),f(a(),c()),c())) == `True());
@@ -215,6 +225,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp8() {		
 		assertTrue(match8(`concTerm(b(),a(),c())) == `False());
 		assertTrue(match8(`concTerm(b(),f(a(),c()),c())) == `False());
@@ -235,6 +246,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp9() {		
 		assertTrue(match9(`concTerm(b(),a(),c())) == `False());
 		assertTrue(match9(`concTerm(b(),f(a(),c()),c())) == `False());
@@ -254,6 +266,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp10() {
 		assertTrue(match10(`f(a(),l(concTerm(b(),a(),c())))) == `True());
 		assertTrue(match10(`f(a(),l(concTerm(b(),c(),c())))) == `False());
@@ -270,6 +283,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp10_1() {		
 		assertTrue(match10_1(`f(a(),l(concTerm(b(),a(),c())))) == `False());
 		assertTrue(match10_1(`f(a(),l(concTerm(b(),c(),c())))) == `True());
@@ -286,6 +300,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp11() {
 		assertTrue(match11(`f(a(),l(concTerm(b(),a(),c())))) == `False());
 		assertTrue(match11(`f(a(),l(concTerm(b(),c(),c())))) == `True());
@@ -303,6 +318,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp12() {
 		assertTrue(match12(`f(a(),l(concTerm(b(),a(),c())))) == `False());
 		assertTrue(match12(`f(a(),l(concTerm(b(),c(),c())))) == `True());
@@ -343,6 +359,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 	
+  @Test
 	public void testAp15() {
     Term s = `lst(lst(f(a(),a()),f(a(),b()),f(a(),a())),lst(f(a(),a()),f(a(),b()),f(a(),a())));
 		assertTrue(match15(s) == `True());
@@ -357,6 +374,7 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();	
 	}
 
+  @Test
 	public void testAp16() {
 		TermList tLst = `concTerm(
 				lst(f(b(),a()),f(c(),a()),f(d(),a())),

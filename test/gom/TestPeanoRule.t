@@ -30,14 +30,14 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testpeanorule.peano.types.*;
 
-public class TestPeanoRule extends TestCase {
+public class TestPeanoRule {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPeanoRule.class));
+    org.junit.runner.JUnitCore.runClasses(TestPeanoRule.class);
   }
 
   %gom {
@@ -83,6 +83,7 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testPlus() {
     for(int i=0 ; i<100 ; i++) {
       Term N = int2peano(i);
@@ -91,6 +92,7 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testFib1() {
     for(int i=0 ; i<15 ; i++) {
       Term N = int2peano(i);
@@ -99,6 +101,7 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testFib5() {
     for(int i=0 ; i<15 ; i++) {
       Term N = int2peano(i);
@@ -107,18 +110,21 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testFib5bis() {
     Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
     assertTrue("Testing fib5 with N =" + peano2int(N) + ": ",
                peano2int(`Fib5(N)) == fibint(peano2int(N)));
   }
 
+  @Test
   public void testFib5ter() {
     Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
     assertTrue("Testing fib5 with N =" + peano2int(N)+1 + ": ",
                peano2int(`Fib5(Suc(N))) == fibint(peano2int(N)+1));
   }
 
+  @Test
   public void testFib6() {
     for(int i=0 ; i<15 ; i++) {
       Term N = int2peano(i);
@@ -127,23 +133,27 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testFib6bis() {
     Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
     assertTrue("Testing fib6 with N =" + peano2int(N) + ": ",
                peano2int(`Fib6(N)) == fibint(peano2int(N)));
   }
 
+  @Test
   public void testFib6ter() {
     Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
     assertTrue("Testing fib6 with N =" + peano2int(N)+1 + ": ",
                peano2int(`Fib6(Suc(N))) == fibint(peano2int(N)+1));
   }
 
+  @Test
   public void testnonZ1() {
     Term N = `Zero();
     assertEquals("NonZ is not zero", `NonZ(N), `Suc(Zero()));
   }
 
+  @Test
   public void testnonZ2() {
     Term N = `Suc(Zero());
     assertEquals("NonZ is id for non Zero", `NonZ(N), N);
@@ -157,6 +167,7 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
+  @Test
   public void testInt2p() {
     assertEquals("int2peano should return sssss(tzero) for 5",
         int2peano(5),`Suc(Suc(Suc(Suc(Suc(Zero()))))));
@@ -170,6 +181,7 @@ public class TestPeanoRule extends TestCase {
     return N;
   }
 
+  @Test
   public void testPeano2int() {
     assertEquals("peano2int should return 5 for sssss(tzero)",
         peano2int(`Suc(Suc(Suc(Suc(Suc(Zero())))))),5);

@@ -28,13 +28,13 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testtermgraph.m.types.*;
 import gom.testtermgraph.m.*;
 import tom.library.sl.*;
 
-public class TestTermgraph extends TestCase {
+public class TestTermgraph {
 
   %include{sl.tom}
 
@@ -83,21 +83,24 @@ public class TestTermgraph extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestTermgraph.class));
+    org.junit.runner.JUnitCore.runClasses(TestTermgraph.class);
   }
 
+  @Test
   public void testExpand() {
     Term subject = `g(g(g(LabTerm("a1",a()),LabTerm("g",g(RefTerm("a1"),RefTerm("a2")))),LabTerm("a2",a())),RefTerm("g"));
     Term expanded = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     assertEquals(expanded,subject.expand());
   }
 
+  @Test
   public void testExpandCycle() {
     Term subject = `LabTerm("l",f(RefTerm("l")));
     Term expanded = `f(PathTerm(-1));
     assertEquals(expanded,subject.expand());
   }
 
+  @Test
   public void testGraphRules1() {
     Term t1 = (Term) `g(RefTerm("a"),LabTerm("a",a())).expand();
     try {
@@ -109,6 +112,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules2() {
     Term t2 = (Term) `f(g(g(a(),RefTerm("b")),LabTerm("b",b()))).expand();
     try {
@@ -120,6 +124,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules3() {
     Term t3 = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     try {
@@ -131,6 +136,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules4() {
     Term t4 = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
     try {
@@ -142,6 +148,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules51() {
     Term fk = `f(k(PathTerm(-1,-1)));
     try {
@@ -151,6 +158,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules52() {
     Term fk = `f(k(PathTerm(-1,-1)));
     try {
@@ -160,6 +168,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules6() {
     Term t = `g(f(a()),PathTerm(-2,1,1));
     try {
@@ -170,6 +179,7 @@ public class TestTermgraph extends TestCase {
   }
 
   /* collapse rule */
+  @Test
   public void testGraphRules7() {
     Term t = `f(PathTerm(-1));
     try {
@@ -179,6 +189,7 @@ public class TestTermgraph extends TestCase {
     }
   }
 
+  @Test
   public void testGraphRules8() {
   Term t = `g(a(),PathTerm(-2,1));
     try {
@@ -189,6 +200,7 @@ public class TestTermgraph extends TestCase {
   }
 
   /* test for subsitution in multi-sort */
+  @Test
   public void testGraphRules9() {
   Term t = `g(h(d()),h(PathTerm2(-1,-2,1,1)));
     try {

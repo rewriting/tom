@@ -29,12 +29,12 @@ package andor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import andor.testandorconstraintonly.m.types.*;
 
-public class TestAndOrConstraintOnly extends TestCase {
+public class TestAndOrConstraintOnly {
   %gom {
     module M
       abstract syntax
@@ -49,7 +49,8 @@ public class TestAndOrConstraintOnly extends TestCase {
 
       TermList = termList(Term*)
   }
-  
+ 
+  @Test
   public void test1() {
     %match {
       f(_x,_y) << f(a(),b())  && ( _x << a() || _x << b() ) -> {        
@@ -59,6 +60,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test2() {
     %match {
       f(_x,_y) << f(b(),b()) && ( _x << a() || _x << b() ) -> {        
@@ -68,6 +70,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test3() {
     %match {
       f(_x,_y) << f(c(),b()) && ( _x << a() || _x << b() ) -> {
@@ -76,6 +79,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test4() {
     %match {
       f(_x,_y) << f(c(),b()) && ( _x << g(a()) || _x << b() ) -> {
@@ -84,6 +88,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test5() {
     %match {
       f(_x,_y) << f(c(),b()) && ( _x << g(a()) || _x << b() ) -> {
@@ -92,6 +97,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test6() {
     %match {
       f(_x,_y) << f(g(a()),b()) && ( _x << g(a()) || _x << b() ) -> {
@@ -101,6 +107,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test7() {
     Term s = `f(g(a()),b());
     %match {
@@ -111,6 +118,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     return;
   }
   
+  @Test
   public void test8() {
     Term s = `f(g(a()),b());
     %match {
@@ -121,6 +129,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test9() {
     Term s = `f(g(a()),b());
     %match {
@@ -135,6 +144,7 @@ public class TestAndOrConstraintOnly extends TestCase {
    * completeness tests
    */
   
+  @Test
   public void test10() {
     Term s = `f(g(a()),b());
     int counter = 0;
@@ -148,6 +158,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test11() {
     Term s = `f(g(a()),b());
     int counter = 0;
@@ -161,6 +172,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test12() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -174,6 +186,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
 
+  @Test
   public void test13() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -187,6 +200,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test14() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -200,6 +214,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }    
   }
 
+  @Test
   public void test15() {
     Term t = `f(a(),b());
     %match {
@@ -213,6 +228,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test16() {
     Term t = `f(g(a()),b());
     %match {
@@ -226,6 +242,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test17() {
     Term t = `f(g(a()),b());
     %match {
@@ -239,6 +256,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  @Test
   public void test18() {
     Term l = `list(a(),b(),g(a()),c());
     %match {
@@ -252,6 +270,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test19() {
     Term l = `list(a(),b(),g(a()),c());
     %match {
@@ -265,6 +284,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test20() {
     Term s = `a();
     int cnt = 0;
@@ -276,6 +296,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
+  @Test
   public void test21() {    
     Term s = `a();   
     int cnt = 0;
@@ -292,7 +313,8 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
   
-  public static void test22() {
+  @Test
+  public void test22() {
     Term s = `g(a());
     int cnt = 0;
     %match {
@@ -309,6 +331,7 @@ public class TestAndOrConstraintOnly extends TestCase {
   }
   
 //operators' priority
+  @Test
   public void test23() {
     %match {
       a() << a() || a() << a() && a() << b()  -> {        
@@ -318,6 +341,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  @Test
   public void test24() {
     %match {
       (a() << a() || a() << a()) && a() << b()  -> {        
@@ -326,6 +350,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }    
   }
   
+  @Test
   public void test25() {
     %match {
       (a() << a() && a() << b()) || (a() << a() && b()<<b())   -> {        
@@ -335,6 +360,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  @Test
   public void test26() {
     int cpt = 0;
     %match {
@@ -348,6 +374,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     }
   }
 
+  @Test
   public void test27() {
     int cpt = 0;
     %match {
@@ -361,7 +388,7 @@ public class TestAndOrConstraintOnly extends TestCase {
   }
   
 //tests for free vars in disjunctions
-
+  @Test
   public void test28() {
     %match {
       f(x,y) << f(a(),b()) || x << a()  -> {
@@ -372,6 +399,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  @Test
   public void test29() {
     %match {
       ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
@@ -382,6 +410,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   
+  @Test
   public void test30() {
     %match {
       ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
@@ -399,6 +428,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  @Test
   public void test31() {
     %match {
       f(t1,t2) << f(a(),a()) && t1==t2 -> {
@@ -408,7 +438,7 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
   public static void main(String[] args) {
-   junit.textui.TestRunner.run(new TestSuite(TestAndOrConstraintOnly.class));
+    org.junit.runner.JUnitCore.runClasses(TestAndOrConstraintOnly.class);
   }
 
 }

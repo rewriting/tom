@@ -1,16 +1,16 @@
 package sl;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import java.util.Collection;
 import java.util.HashSet;
 import sl.testgetsubterm.test.types.*;
 import tom.library.sl.*;
 import tom.library.sl.Position;
 
-public class TestGetSubterm extends TestCase {
+public class TestGetSubterm {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestGetSubterm.class));
+    org.junit.runner.JUnitCore.runClasses(TestGetSubterm.class);
   }
   
   %include { sl.tom }
@@ -24,6 +24,7 @@ public class TestGetSubterm extends TestCase {
          | f(t1:Term,t2:Term)
   }
 
+  @Test
   public void test1() throws VisitFailure{
     Collection<Position> bag = new HashSet<Position>();
     Term t = `f(a(),a());

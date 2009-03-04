@@ -27,12 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import testnonvarsubjects.m.types.*;
 
-public class TestNonVarSubjects extends TestCase {
+public class TestNonVarSubjects {
   %gom {
     module M
       abstract syntax
@@ -46,7 +46,8 @@ public class TestNonVarSubjects extends TestCase {
 
       TermList = termList(Term*)
   }
-  
+ 
+  @Test
   public void test1() {    
     %match(list(a())) {
       _x -> { return; }
@@ -55,7 +56,7 @@ public class TestNonVarSubjects extends TestCase {
   }  
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestNonVarSubjects.class));
+    org.junit.runner.JUnitCore.runClasses(TestNonVarSubjects.class);
   }
 
 }

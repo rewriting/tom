@@ -4,14 +4,15 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import java.io.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-public class TestEncoding extends TestCase {
+public class TestEncoding {
 
   %include{adt/tnode/TNode.tom}
 
@@ -19,6 +20,7 @@ public class TestEncoding extends TestCase {
   private static Logger logger;
   private static Level level = Level.FINE;
 
+  @Before
 	public void setUp() {
     logger = Logger.getLogger(getClass().getName());
     xtools = new XmlTools();
@@ -27,9 +29,10 @@ public class TestEncoding extends TestCase {
 
   public static void main(String[] args) {
     level = Level.INFO;
-    junit.textui.TestRunner.run(new TestSuite(TestEncoding.class));
+    org.junit.runner.JUnitCore.runClasses(TestEncoding.class);
   }
 
+  @Test
   public void testFr(){
     TNode fileNode = xtools.convertXMLToTNode("xml/data.xml");
 

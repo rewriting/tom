@@ -1,9 +1,10 @@
 import aterm.*;
 import aterm.pure.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestWhen extends TestCase {
+public class TestWhen {
 
   %include { boolean.tom }
 
@@ -48,23 +49,27 @@ public class TestWhen extends TestCase {
   }
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestWhen.class));
+    org.junit.runner.JUnitCore.runClasses(TestWhen.class);
 	}
 
+  @Before
   public void setUp() {
     this.factory = new PureFactory(16);
   }
 
+  @Test
   public void testMatch() {
     assertTrue("Testing macth with when (1 arg) : ", 
 								match(`f(a())) == 12 );
 	}
 
+  @Test
   public void testMatchBis() {
     assertTrue("Testing macth in a match : ", 
 								matchBis(`f(a())) == 1 );
 	}
 
+  @Test
   public void testMatch2() {
     assertTrue("Testing macth with when (2 args) : ", 
 								match2(`f(a()),`f(a())) == 2 );

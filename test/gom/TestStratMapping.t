@@ -1,11 +1,11 @@
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import tom.library.sl.Strategy;
 import gom.teststratmapping.m.types.*;
 
-public class TestStratMapping extends TestCase {
+public class TestStratMapping {
 
   %include { sl.tom }
   %gom(--strategies-mapping) {
@@ -16,7 +16,7 @@ public class TestStratMapping extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestStratMapping.class));
+    org.junit.runner.JUnitCore.runClasses(TestStratMapping.class);
   }
 
   %strategy Strat() extends Identity() {
@@ -25,6 +25,7 @@ public class TestStratMapping extends TestCase {
     }
   }
 
+  @Test
   public void testCongruenceConstant() {
     S t = `f(f(a(),b()),f(b(),a()));
     Strategy s1 = `_f(Strat(),Strat());

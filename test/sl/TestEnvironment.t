@@ -32,10 +32,10 @@ package sl;
 import sl.testenvironment.term.types.*;
 import tom.library.sl.Environment;
 import tom.library.sl.Position;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestEnvironment extends TestCase {
+public class TestEnvironment {
 
   %gom {
     module term
@@ -45,9 +45,10 @@ public class TestEnvironment extends TestCase {
   }
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestEnvironment.class));
+    org.junit.runner.JUnitCore.runClasses(TestEnvironment.class);
 	}
 
+  @Test
   public void testEqual(){
     Environment e1 = new Environment();
     Environment e2 = new Environment();
@@ -67,6 +68,7 @@ public class TestEnvironment extends TestCase {
   }
 
 
+  @Test
   public void testUpAndDown(){
     Environment e1 = new Environment();
     Environment e2 = new Environment();

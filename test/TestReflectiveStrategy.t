@@ -1,14 +1,13 @@
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import tom.library.sl.*;
 
-public class TestReflectiveStrategy extends TestCase {
+public class TestReflectiveStrategy {
   %include { sl.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestReflectiveStrategy.class));
+    org.junit.runner.JUnitCore.runClasses(TestReflectiveStrategy.class);
   }
 
   /**
@@ -25,126 +24,157 @@ public class TestReflectiveStrategy extends TestCase {
   public void tearDown() {
   }
 
+  @Test
   public void test1() {
     assertTrue("matchIdentity should return true with `Identity()", matchIdentity(`Identity()));
   }
 
+  @Test
   public void test2() {
     assertFalse("matchIdentity should return false with `Fail()", matchIdentity(`Fail()));
   }
 
+  @Test
   public void test3() {
     assertTrue("matchS1 should return true with `S1()", matchS1(`S1()));
   }
 
+  @Test
   public void test4() {
     assertFalse("matchS1 should return false with `Identity()", matchS1(`Identity()));
   }
 
+  @Test
   public void test5() {
     assertTrue("matchSequence1 should return true with `Sequence(Identity(), Fail())", matchSequence1(`Sequence(Identity(), Fail())));
   }
 
+  @Test
   public void test6() {
     assertFalse("matchSequence1 should return false with `Sequence(Identity(), S1())", matchSequence1(`Sequence(Identity(), S1())));
   }
 
+  @Test
   public void test7() {
     assertTrue("matchSequence2 should return true with `Sequence(Identity(), S1())", matchSequence2(`Sequence(Identity(), S1())));
   }
 
+  @Test
   public void test8() {
     assertFalse("matchSequence2 should return false with `Sequence(Identity(), Fail())", matchSequence2(`Sequence(Identity(), Fail())));
   }
 
+  @Test
   public void test9() {
     assertTrue("matchSequence3 should return true with `Sequence(Identity(), Fail())", matchSequence3(`Sequence(Identity(), Fail())));
   }
 
+  @Test
   public void test10() {
     assertFalse("matchSequence3 should return false with `Sequence(Identity(), S1())", matchSequence3(`Sequence(Identity(), S1())));
   }
 
+  @Test
   public void test11() {
     assertTrue("matchSequence4 should return true with `Sequence(Identity(), S1())", matchSequence4(`Sequence(Identity(), S1())));
   }
 
+  @Test
   public void test12() {
     assertFalse("matchSequence4 should return false with `Sequence(Identity(), Fail())", matchSequence4(`Sequence(Identity(), Fail())));
   }
 
+  @Test
   public void test13() {
     assertEquals("matchS2 should return 1 with `S2(0, \"msg\", Identity())", 1, matchS2(`S2(0, "msg", Identity())));
   }
 
+  @Test
   public void test14() {
     assertEquals("matchS2 should return 2 with `S2(1, \"msg\", Identity())", 2, matchS2(`S2(1, "msg", Identity())));
   }
 
+  @Test
   public void test15() {
     assertEquals("matchS2 should return 3 with `S2(1, \"\", Identity())", 3, matchS2(`S2(1, "", Identity())));
   }
 
+  @Test
   public void test16() {
     assertEquals("matchS2 should return 4 with `S2(1, \"\", S1())", 4, matchS2(`S2(1, "", S1())));
   }
 
+  @Test
   public void test17() {
     assertEquals("matchS2 should return 0 with `S2(1, \"\", Fail())", 0, matchS2(`S2(1, "", Fail())));
   }
 
+  @Test
   public void test18() {
     assertEquals("matchAll should return 0 with `Identity()", 0, matchAll(`Identity()));
   }
 
+  @Test
   public void test19() {
     assertEquals("matchAll should return 1 with `All(Identity())", 1, matchAll(`All(Identity())));
   }
 
+  @Test
   public void test20() {
     assertEquals("matchAll should return 2 with `All(All(Identity()))", 2, matchAll(`All(All(Identity()))));
   }
 
+  @Test
   public void test21() throws tom.library.sl.VisitFailure {
     assertTrue("matchIdentity should return true with `S3().visitLight(`Identity())", matchIdentity((Strategy)`S3().visitLight(`Identity())));
   }
 
+  @Test
   public void test22() throws tom.library.sl.VisitFailure {
     assertEquals("matchAll should return 1 with `S3().visitLight(`All(Identity())", 1, matchAll((Strategy)`S3().visitLight(`All(Identity()))));
   }
 
+  @Test
   public void test23() throws tom.library.sl.VisitFailure  {
     assertEquals("matchAll should return 1 with `S3().visitLight(`All(All(Identity())))", 1, matchAll((Strategy)`S3().visitLight(`All(All(Identity())))));
   }
 
+  @Test
   public void test24() throws tom.library.sl.VisitFailure {
     assertEquals("matchAll should return 1 with `TopDown(S3()).visitLight(`All(All(All(All(Identity())))))", 2, matchAll((Strategy)`TopDown(S3()).visitLight(`All(All(All(All(Identity())))))));
   }
 
+  @Test
   public void test25() throws tom.library.sl.VisitFailure {
     assertEquals("matchAll should return 1 with `BottomUp(S3()).visitLight(`All(All(All(All(Identity())))))", 1, matchAll((Strategy)`BottomUp(S3()).visitLight(`All(All(All(All(Identity())))))));
   }
 
+  @Test
   public void test26() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 3 with `All(S2(0, \"\", All(All(Identity()))))", 3, countAll(`All(S2(0, "", All(All(Identity()))))));
   }
 
+  @Test
   public void test27() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 2 with `BottomUp(S3()).visitLight(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((Strategy)`BottomUp(S3()).visitLight(`All(S2(0, "", All(All(Identity())))))));
   }
 
+  @Test
   public void test28() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 6 with `All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 6, countAll(`All(S4(All(All(Identity())), 0, All(All(All(Identity())))))));
   }
 
+  @Test
   public void test29() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 3 with `BottomUp(S3()).visitLight(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((Strategy)`BottomUp(S3()).visitLight(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
   }
 
+  @Test
   public void test30() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 2 with `BottomUp(S5()).visitLight(`S4(Identity(), 0, Fail()))", 2, countAll((Strategy)`BottomUp(S5()).visitLight(`S4(Identity(), 0, Fail()))));
   }
   
+  @Test
   public void test31() throws tom.library.sl.VisitFailure {
     Counter c = new Counter();
     Strategy s = `mu(MuVar("x"),TopDownCollect(CollectExceptFirst(MuVar("x"),c)));

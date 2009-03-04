@@ -29,12 +29,12 @@ package andor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import andor.testandor.m.types.*;
 
-public class TestAndOr extends TestCase {
+public class TestAndOr {
   %gom {
     module M
       abstract syntax
@@ -50,6 +50,7 @@ public class TestAndOr extends TestCase {
       TermList = termList(Term*)
   }
   
+  @Test
   public void test1() {
     %match(f(a(),b())) {
       f(_x,_y) && ( _x << a() || _x << b() ) -> {        
@@ -59,6 +60,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test2() {
     %match(f(b(),b())) {
       f(_x,_y) && ( _x << a() || _x << b() ) -> {        
@@ -68,6 +70,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test3() {
     %match(f(c(),b())) {
       f(_x,_y) && ( _x << a() || _x << b() ) -> {
@@ -76,6 +79,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test4() {
     %match(f(c(),b())) {
       f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
@@ -84,6 +88,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test5() {
     %match(f(c(),b())) {
       f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
@@ -92,6 +97,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test6() {
     %match(f(g(a()),b())) {
       f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
@@ -101,6 +107,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test7() {
     Term s = `f(g(a()),b());
     %match(s) {
@@ -111,6 +118,7 @@ public class TestAndOr extends TestCase {
     return;
   }
   
+  @Test
   public void test8() {
     Term s = `f(g(a()),b());
     %match(s) {
@@ -121,6 +129,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test9() {
     Term s = `f(g(a()),b());
     %match(s) {
@@ -135,6 +144,7 @@ public class TestAndOr extends TestCase {
    * completeness tests
    */
   
+  @Test
   public void test10() {
     Term s = `f(g(a()),b());
     int counter = 0;
@@ -148,6 +158,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test11() {
     Term s = `f(g(a()),b());
     int counter = 0;
@@ -161,6 +172,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test12() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -174,6 +186,7 @@ public class TestAndOr extends TestCase {
     }
   }
 
+  @Test
   public void test13() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -187,6 +200,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test14() {
     Term s = `f(g(a()),g(b()));
     int counter = 0;
@@ -200,6 +214,7 @@ public class TestAndOr extends TestCase {
     }    
   }
 
+  @Test
   public void test15() {
     Term t = `f(a(),b());
     %match(t) {
@@ -213,6 +228,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test16() {
     Term t = `f(g(a()),b());
     %match(t) {
@@ -226,6 +242,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test17() {
     Term t = `f(g(a()),b());
     %match(t) {
@@ -239,6 +256,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
 
+  @Test
   public void test18() {
     Term l = `list(a(),b(),g(a()),c());
     %match(l) {
@@ -252,6 +270,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test19() {
     Term l = `list(a(),b(),g(a()),c());
     %match(l) {
@@ -265,6 +284,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test20() {
     Term s = `a();
     int cnt = 0;
@@ -276,6 +296,7 @@ public class TestAndOr extends TestCase {
     }
   }
   
+  @Test
   public void test21() {    
     Term s = `a();   
     int cnt = 0;
@@ -292,7 +313,8 @@ public class TestAndOr extends TestCase {
     }
   }
   
-  public static void test22() {
+  @Test
+  public void test22() {
     Term s = `g(a());
     int cnt = 0;
     %match(s) {
@@ -309,6 +331,7 @@ public class TestAndOr extends TestCase {
   }
   
   // allow any number of parantheses
+  @Test
   public void test23() {
     %match(f(a(),b())) {
       f(_x,_y) && ((((( _x << a() || _x << b() ))))) -> {        
@@ -318,6 +341,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test24() {
     %match(f(a(),b())) {
       f(_x,_y) && (( _x << a() || _x << b() )) -> {        
@@ -327,6 +351,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test25() {
     %match(f(a(),b())) {
       f(_x,_y) && (( (_x << a()) || ((_x << b())) )) -> {        
@@ -336,6 +361,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test26() {
     %match(f(a(),b())) {
       f(_x,_y) && ( (_x << a() && _x << a()) || ( _x << b() && _x << b() ) ) -> {        
@@ -346,6 +372,7 @@ public class TestAndOr extends TestCase {
   }
 
   
+  @Test
   public void test27() {
     %match(f(a(),b())) {
       f(_x,_y) && ( (((_x << a())) && _x << a()) || ( _x << b() && _x << b() ) ) -> {        
@@ -355,6 +382,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test28() {
     Term l = `list(a(),b(),g(a()),c());
     %match(l) {
@@ -365,6 +393,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
+  @Test
   public void test29() {
     Term l = `f(a(),a());
     %match(l) {
@@ -375,6 +404,7 @@ public class TestAndOr extends TestCase {
     fail();
   }
 
+  @Test
   public void test30() {
     Term l = `f(a(),b());
     %match(l) {
@@ -386,7 +416,7 @@ public class TestAndOr extends TestCase {
   }
 
   public static void main(String[] args) {
-   junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
+    org.junit.runner.JUnitCore.runClasses(TestAndOr.class);
   }
 
 }

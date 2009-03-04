@@ -30,11 +30,11 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testsorthook.m.types.*;
 
-public class TestSortHook extends TestCase {
+public class TestSortHook {
 
   %gom {
     module m
@@ -67,24 +67,28 @@ public class TestSortHook extends TestCase {
     }
   }
 
+  @Test
   public void testHook1a() {
     Sort1 my = `a();
     String res = my.hookSort1();
     assertEquals("1a",res);
   }
 
+  @Test
   public void testHook1b() {
     Sort1 my = `b();
     String res = my.hookSort1();
     assertEquals("1b",res);
   }
 
+  @Test
   public void testHook2c() {
     Sort2 my = `c();
     String res = my.hookSort2();
     assertEquals("2c",res);
   }
 
+  @Test
   public void testHook2d() {
     Sort2 my = `d();
     String res = my.hookSort2();
@@ -92,6 +96,6 @@ public class TestSortHook extends TestCase {
   }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestSortHook.class));
+    org.junit.runner.JUnitCore.runClasses(TestSortHook.class);
   }
 }

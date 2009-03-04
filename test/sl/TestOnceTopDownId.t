@@ -1,13 +1,13 @@
 package sl;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import sl.testoncetopdownid.test.types.*;
 import tom.library.sl.*;
 
-public class TestOnceTopDownId extends TestCase {
+public class TestOnceTopDownId {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestOnceTopDownId.class));
+    org.junit.runner.JUnitCore.runClasses(TestOnceTopDownId.class);
   }
   
   %include { sl.tom }
@@ -21,6 +21,7 @@ public class TestOnceTopDownId extends TestCase {
          | f(t1:Term,t2:Term)
   }
 
+  @Test
   public void test1() throws VisitFailure{
     Term t = `f(a(),a());
     try {

@@ -29,12 +29,13 @@
 
 package antipatterns;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import antipatterns.testantipattern.antipattern.types.*;
 
-public class TestAntiPattern extends TestCase {	  
+public class TestAntiPattern {	  
 
   %gom {
     module AntiPattern
@@ -58,9 +59,10 @@ public class TestAntiPattern extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAntiPattern.class));
+    org.junit.runner.JUnitCore.runClasses(TestAntiPattern.class);
   }
 
+  @Before
   public void setUp() {
 
   }
@@ -74,8 +76,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp1() {		
-
     assertTrue(match1(`a()) == `True());
     assertTrue(match1(`b()) == `False());
   }
@@ -90,8 +92,8 @@ public class TestAntiPattern extends TestCase {
   }
 
 
+  @Test
   public void testAp2() {		
-
     assertTrue(match2(`a()) == `False());
     assertTrue(match2(`b()) == `True());
   }
@@ -105,8 +107,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp3() {
-
     assertTrue(match3(`f(a(),a())) == `True());
     assertTrue(match3(`f(a(),c())) == `True());
     assertTrue(match3(`f(a(),b())) == `False());
@@ -122,8 +124,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp3_1() {
-
     assertTrue(match3_1(`f(a(),a())) == `False());
     assertTrue(match3_1(`f(a(),c())) == `False());
     assertTrue(match3_1(`f(a(),b())) == `False());
@@ -140,8 +142,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp3_2() {
-
     assertTrue(match3_2(`f(a(),a())) == `False());
     assertTrue(match3_2(`a()) == `True());		
   }
@@ -155,8 +157,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp3_3() {
-
     assertTrue(match3_3(`f(a(),a())) == `False());
     assertTrue(match3_3(`a()) == `True());		
   }
@@ -170,8 +172,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp3_4() {
-
     assertTrue(match3_4(`f(a(),a())) == `False());
     assertTrue(match3_4(`ff(a(),a())) == `False());
     assertTrue(match3_4(`f(a(),b())) == `True());
@@ -191,8 +193,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp4() {
-
     assertTrue(match4(`f(a(),a())) == `False());
     assertTrue(match4(`f(a(),c())) == `False());
     assertTrue(match4(`f(a(),b())) == `True());
@@ -210,8 +212,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp5() {
-
     assertTrue(match5(`f(a(),a())) == `Equal("x",a()));
     assertTrue(match5(`f(a(),b())) == `False());		
   }
@@ -225,8 +227,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp7() {
-
     assertTrue(match7(`f(a(),a())) == `False());
     assertTrue(match7(`f(a(),b())) == `True());
     assertTrue(match7(`g(a())) == `True());
@@ -242,8 +244,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp8() {
-
     assertTrue(match8(`f(a(),b())) == `Equal("x",a()));
     assertTrue(match8(`f(a(),g(b()))) == `Equal("x",a()));
     assertTrue(match8(`f(b(),g(b()))) == `False());
@@ -259,8 +261,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp8_1() {
-
     assertTrue(match8_1(`f(b(),a())) == `Equal("x",a()));
     assertTrue(match8_1(`f(g(b()),a())) == `Equal("x",a()));
     assertTrue(match8_1(`f(g(b()),b())) == `False());
@@ -276,8 +278,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp9() {
-
     assertTrue(match9(`f(a(),b())) == `False());
     assertTrue(match9(`f(a(),g(b()))) == `False());
     assertTrue(match9(`f(b(),g(b()))) == `True());
@@ -292,8 +294,9 @@ public class TestAntiPattern extends TestCase {
     }
     return `False();
   }
-  public void testAp9_1() {		
 
+  @Test
+  public void testAp9_1() {
     assertTrue(match9_1(`f(b(),g(b()))) == `True());
     assertTrue(match9_1(`f(a(),g(b()))) == `True());
     assertTrue(match9_1(`f(a(),a())) == `False());		
@@ -308,8 +311,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
-  public void testAp10() {		
-
+  @Test
+  public void testAp10() {
     assertTrue(match10(`f(a(),a())) == `False());
     assertTrue(match10(`f(a(),b())) == `Equal("x",a()));				
   }
@@ -323,8 +326,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
-  public void testAp11() {		
-
+  @Test
+  public void testAp11() {
     assertTrue(match11(`f(g(a()),g(b()))) == `False());						
   }	
 
@@ -337,8 +340,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp12() {		
-
     assertTrue(match12(`f(g(a()),g(b()))) == `True());						
   }
 
@@ -351,8 +354,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp13() {		
-
     assertTrue(match13(`f(a(),a())) == `False());
     assertTrue(match13(`f(a(),b())) == `False());						
   }
@@ -375,8 +378,8 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp15() {		
-
     assertTrue(match15(`f(a(),a())) == `False());
     assertTrue(match15(`f(a(),b())) == `False());
     assertTrue(match15(`b()) == `False());
@@ -392,8 +395,8 @@ public class TestAntiPattern extends TestCase {
   }
 
 
-  public void testAp16() {	
-
+  @Test
+  public void testAp16() {
     assertTrue(match16(`f(b(),f(a(),f(a(),g(b()))))) == `False());
     assertTrue(match16(`f(b(),f(a(),f(a(),g(a()))))) == `And(Equal("x",b()),Equal("y",a())));
     assertTrue(match16(`f(a(),f(a(),f(b(),b())))) == `And(Equal("x",a()),Equal("y",b())));
@@ -409,6 +412,7 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp17() {		
     assertTrue(match17(`i(1)) == `False());
     assertTrue(match17(`i(2)) == `True());
@@ -423,6 +427,7 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp18() {		
     assertTrue(match18(`i(1)) == `False());
     assertTrue(match18(`i(2)) == `Equal("j(x)",j(2)));
@@ -437,6 +442,7 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp19() {		
     assertTrue(match19(`ff(i(1),i(2))) == `False());
     assertTrue(match19(`ff(i(2),i(2))) == `Equal("j(x)",j(2)));
@@ -451,6 +457,7 @@ public class TestAntiPattern extends TestCase {
     return `False();
   }
 
+  @Test
   public void testAp20() {		
     assertTrue(match20(`ff(a(),a())) == `False());
     assertTrue(match20(`ff(a(),b())) == `False());

@@ -29,20 +29,21 @@
 
 package sl;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import tom.library.sl.*;
 
-public class TestReflective extends TestCase {
+public class TestReflective {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestReflective.class));
+    org.junit.runner.JUnitCore.runClasses(TestReflective.class);
   }
 
+  @Test
   public void testMatchId() {
     Strategy s = `Identity();
     %match(s) {
@@ -51,6 +52,7 @@ public class TestReflective extends TestCase {
     fail("Identity should have matched");
   }
 
+  @Test
   public void testMatchIdFail() {
     Strategy s = `Fail();
     %match(s) {
@@ -58,6 +60,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchS1() {
     Strategy s = `S1();
     %match(s) {
@@ -66,6 +69,7 @@ public class TestReflective extends TestCase {
     fail("S1 should have matched");
   }
 
+  @Test
   public void testMatchS1Fail() {
     Strategy s = `Fail();
     %match(s) {
@@ -73,6 +77,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchSequence1() {
     Strategy s = `Sequence(Identity(), Fail());
     %match(s) {
@@ -81,6 +86,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testMatchSequence2() {
     Strategy s = `Sequence(Identity(), S1());
     %match(Strategy s) {
@@ -88,6 +94,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchSequence3() {
     Strategy s = `Sequence(Identity(), S1());
     %match(s) {
@@ -96,6 +103,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testMatchSequence4() {
     Strategy s = `Sequence(Identity(), Fail());
     %match(s) {
@@ -103,6 +111,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchSequenceVar() {
     Strategy s = `Sequence(Identity(), Fail());
     %match(s) {
@@ -117,6 +126,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testSequenceVarS1() {
     Strategy s = `Sequence(Identity(), S1());
     %match(s) {
@@ -129,6 +139,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testMatchS2() {
     Strategy s = `S2(0, "msg", Identity());
     %match(s) {
@@ -143,6 +154,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testMatchS2in() {
     Strategy s = `S2(1, "msg", Identity());
     %match(s) {
@@ -157,6 +169,7 @@ public class TestReflective extends TestCase {
     fail("match should success");
   }
 
+  @Test
   public void testMatchS2Fail() {
     Strategy s = `S2(1, "msg", S1());
     %match(s) {
@@ -166,6 +179,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchAll1() {
     Strategy s = `Identity();
     %match(s) {
@@ -174,6 +188,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testMatchAll2() {
     Strategy s = `All(Identity());
     %match(s) {
@@ -183,6 +198,7 @@ public class TestReflective extends TestCase {
     fail("no !");
   }
 
+  @Test
   public void testMatchAll3() {
     Strategy s = `All(All(Identity()));
     %match(s) {
@@ -192,6 +208,7 @@ public class TestReflective extends TestCase {
     fail("no !");
   }
 
+  @Test
   public void testS1Id() throws VisitFailure{
     Strategy s = `S1().visit(`Identity());
     %match(s) {
@@ -201,6 +218,7 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  @Test
   public void testS1Fail() throws VisitFailure{
     Strategy s = `S1().visit(`Fail());
     %match(s) {
@@ -210,6 +228,7 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  @Test
   public void testS3Id() throws VisitFailure{
     Strategy s = `S3().visit(`Identity());
     %match(s) {
@@ -218,6 +237,7 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  @Test
   public void testS3All() throws VisitFailure{
     Strategy s = `S3().visit(`All(Identity()));
     %match(s) {
@@ -226,6 +246,7 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  @Test
   public void testS3AllAllvisit() throws VisitFailure{
     try {
       Strategy s = `S3().visitLight(`All(All(Identity())));
@@ -239,6 +260,7 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  @Test
   public void testS3AllAll() throws VisitFailure{
     Strategy s = `S3().visit(`All(All(Identity())));
     %match(s) {
@@ -248,6 +270,7 @@ public class TestReflective extends TestCase {
     fail("should not be here with "+s);
   }
 
+  @Test
   public void testS3Allllll() throws VisitFailure{
     Strategy s = `S3().visit(`All(All(All(All(Identity())))));
     %match(s) {
@@ -255,6 +278,7 @@ public class TestReflective extends TestCase {
     }
   }
 
+  @Test
   public void testAlllllBU() throws VisitFailure{
     Strategy s = `BottomUp(S3()).visit(`All(All(All(All(Identity())))));
     %match(s) {
@@ -263,11 +287,13 @@ public class TestReflective extends TestCase {
     fail("should not be here with "+s);
   }
 
+  @Test
   public void testcountAll1() throws VisitFailure {
     Strategy s = `All(S2(0, "", All(All(Identity()))));
     assertEquals("countAll should return 3 with "+s, 3, countAll(s));
   }
 
+  @Test
   public void testCountAll2() throws VisitFailure{
     Strategy s = `All(S2(0, "", All(All(Identity()))));
     assertEquals(
@@ -275,11 +301,13 @@ public class TestReflective extends TestCase {
         countAll(`BottomUp(S3()).visit(s)));
   }
 
+  @Test
   public void testStratNoStrat() throws VisitFailure{
     assertEquals("S3 on something that is not a strat fails back to Id",
         `a(),`S3().visit(`a()));
   }
 
+  @Test
   public void testStratNoStratFail() throws VisitFailure{
     try {
       `S4(S1(),0,S1()).visit(`a());
@@ -290,11 +318,13 @@ public class TestReflective extends TestCase {
     fail("The Exception should have been catched");
   }
 
+  @Test
   public void testcountAll3() throws VisitFailure {
     Strategy s = `All(S4(All(All(Identity())), 0, All(All(All(Identity())))));
     assertEquals("countAll should return 6 with `"+s, 6, countAll(s));
   }
 
+  @Test
   public void testcountAll4() throws VisitFailure{
     Strategy s = `All(S4(All(All(Identity())), 0, All(All(All(Identity())))));
     assertEquals(
@@ -302,6 +332,7 @@ public class TestReflective extends TestCase {
         countAll(`BottomUp(S3()).visit(s)));
   }
 
+  @Test
   public void testcountAll5() throws VisitFailure{
     Strategy s = `S4(Identity(), 0, Fail());
     assertEquals(

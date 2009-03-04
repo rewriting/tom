@@ -27,12 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import testsublists.m.types.*;
 
-public class TestSublists extends TestCase {
+public class TestSublists {
   %gom {
     module M
       abstract syntax
@@ -46,6 +46,7 @@ public class TestSublists extends TestCase {
       TermList = termList(Term*)
   }
 
+  @Test
   public void test1() {
     Term res = `list(a(),b(),c());
     %match(res) {
@@ -56,6 +57,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test2() {
     Term res = `list(a(),b(),c());
     %match(res) {
@@ -66,6 +68,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test2_1() {
     Term res = `list(a(),b(),c());
     %match(res) {
@@ -76,6 +79,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test3() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
@@ -91,6 +95,7 @@ public class TestSublists extends TestCase {
   }
 
 
+  @Test
   public void test4() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
@@ -107,6 +112,7 @@ public class TestSublists extends TestCase {
 
   //////// domain != codomain ///////////
 
+  @Test
   public void test5() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -116,6 +122,7 @@ public class TestSublists extends TestCase {
     }
   }
 
+  @Test
   public void test6() {
     TermList res = `termList(a(),list(b(),b()),c());
     %match(res) {
@@ -126,6 +133,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test7() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -136,6 +144,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test8() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -150,6 +159,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test9() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -164,6 +174,7 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  @Test
   public void test10() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -175,6 +186,7 @@ public class TestSublists extends TestCase {
     }
   }
 
+  @Test
   public void test11() {
     TermList t = `termList(termList(a(),b()));
     %match(t) {
@@ -186,7 +198,7 @@ public class TestSublists extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
+    org.junit.runner.JUnitCore.runClasses(TestSublists.class);
   }
 
 }

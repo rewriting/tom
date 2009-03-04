@@ -30,26 +30,28 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.multihook.types.*;
 
-public class TestMultiHook extends TestCase {
+public class TestMultiHook {
 
   %include { multihook/MultiHook.tom }
 
+  @Test
   public void testInt() {
     Wrapper t = `Int(10);
     assertEquals(t.geti(),22);
   }
 
+  @Test
   public void testOInt() {
     Wrapper t = `OInt(10);
     assertEquals(t.geti(),22);
   }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestMultiHook.class));
+    org.junit.runner.JUnitCore.runClasses(TestMultiHook.class);
   }
 
 }

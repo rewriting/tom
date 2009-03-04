@@ -1,15 +1,15 @@
 import aterm.*;
 import aterm.pure.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestBuiltin extends TestCase {
+public class TestBuiltin {
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
   private static ATermFactory factory = SingletonFactory.getInstance();
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
+    org.junit.runner.JUnitCore.runClasses(TestBuiltin.class);
 	}
   
   public void setUp() {
@@ -210,30 +210,37 @@ public class TestBuiltin extends TestCase {
 		return 0; 
   }
 
+  @Test
   public void test1() {
     assertTrue(89 == fib(10));
   }
 
+  @Test
   public void test2() {
     assertTrue(89 == `fibE(int(10)));
   }
   
+  @Test
   public void test3() {
     assertTrue(89 == fibLong(10));
   }
 
+  @Test
   public void test4() {
     assertTrue(89 == `fibLongE(long(10)));
   }
 
+  @Test
   public void testMatchString1() {
     assertTrue("Albert".equals(matchString("Albert")));
   }
 
+  @Test
   public void testMatchString2() {
     assertTrue("Roger".equals(matchString("Roger")));
   }
   
+  @Test
   public void testMatchString3() {
     String s = "abcaabbccabc";
     int a = 0;
@@ -267,70 +274,87 @@ public class TestBuiltin extends TestCase {
     assertEquals(abc,2);
   }
 
+  @Test
   public void testMatchStringDefault() {
     assertTrue("Unknown".equals(matchString("Marcel")));
   }
 
+  @Test
   public void testMatchStringE1() {
     assertTrue("Albert".equals(matchStringE(`string("Albert"))));
   }
 
+  @Test
   public void testMatchStringE2() {
     assertTrue("Roger".equals(matchStringE(`string("Roger"))));
   }
 
+  @Test
   public void testMatchStringEdefault() {
     assertTrue("Unknown".equals(matchStringE(`string("Marcel"))));
   }
 
+  @Test
   public void testDouble1() {
     assertTrue(1.23 == matchDouble(1.23));
   }
 
+  @Test
   public void testDouble2() {
     assertTrue(3.14 == matchDouble(3.14));
   }
 
+  @Test
   public void testDoubleDefault() {
     assertTrue(0 == matchDouble(2.71));
   }
 
+  @Test
   public void testDoubleE1() {
     assertTrue(1.23 == matchDoubleE(`double(1.23)));
   }
 
+  @Test
   public void testDoubleE2() {
     assertTrue(3.14 == matchDoubleE(`double(3.14)));
   }
 
+  @Test
   public void testDoubleEdefault() {
     assertTrue(0 == matchDoubleE(`double(2.71)));
   }
 
+  @Test
   public void testChar1() {
     assertTrue('a' == matchChar('a'));
   }
 
+  @Test
   public void testChar2() {
     assertTrue('b' == matchChar('b'));
   }
 
+  @Test
   public void testCharDefault() {
     assertTrue('-' == matchChar('z'));
   }
 
+  @Test
   public void testCharE1() {
     assertTrue('a' == matchCharE(`char('a')));
   }
 
+  @Test
   public void testCharE2() {
     assertTrue('b' == matchCharE(`char('b')));
   }
 
+  @Test
   public void testCharEdefault() {
     assertTrue('-' == matchCharE(`char('k')));
   }
 
+  @Test
   public void testInt() {
     assertTrue(-1 == matchInt(`(-1)));
     assertTrue(-2 == matchInt(`(-2)));

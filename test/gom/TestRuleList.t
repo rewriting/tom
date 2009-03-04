@@ -30,83 +30,116 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.rulelist.types.*;
 
-public class TestRuleList extends TestCase {
+public class TestRuleList {
   %include { rulelist/RuleList.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRuleList.class));
+    org.junit.runner.JUnitCore.runClasses(TestRuleList.class);
   }
 
-   public void testf1() {
+  @Test
+  public void testf1() {
     assertEquals(`f(b()),`f(a()));
-   }
+  }
 
-   public void testconc1() {
+  @Test
+  public void testconc1() {
     assertEquals(`conc(a(),c()),`conc(a(),c()));
-   }
+  }
 
-   public void testconcsingle() {
+  @Test
+  public void testconcsingle() {
     assertEquals(`conc(b()),`conc(a()));
-   }
+  }
 
-   public void testflat1() {
+  @Test
+  public void testflat1() {
     assertEquals(`conc(a(),b()),`conc(a(),a()));
-   }
-   public void testflat2() {
+  }
+  
+  @Test
+  public void testflat2() {
     assertNotSame(`conc(b(),b()),`conc(a(),a()));
-   }
-   public void testflat3() {
+  }
+  
+  @Test
+  public void testflat3() {
     assertEquals(`conc(b(),b()),`conc(b(),a()));
-   }
-   public void testflat4() {
+  }
+  
+  @Test
+  public void testflat4() {
     assertEquals(`conc(f(c())),`conc(f(a())));
-   }
-   public void testflat5() {
+  }
+  
+  @Test
+  public void testflat5() {
     assertEquals(`conc(f(c()),b()),`conc(f(a()),a()));
   }
 
+  @Test
   public void test2() {
     assertEquals(`conc(f(c())),`conc(f(b())));
   }
+  
+  @Test
   public void test3() {
     assertEquals(`conc(f(c()),f(c())),`conc(f(b()),f(b())));
   }
+  
+  @Test
   public void test4() {
     assertEquals(`conc(f(c()),f(c())),`conc(f(a()),f(a())));
   }
+  
+  @Test
   public void test5() {
     assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(a()),a()));
   }
+  
+  @Test
   public void test6() {
     assertEquals(`conc(a(),f(c())),`conc(a(),f(b())));
   }
+  
+  @Test
   public void test7() {
     // tricky test: a() there because there is no reduction
     assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(c()),a()));
   }
 
+  @Test
   public void test31() {
     assertEquals(`g(conc(f(d()))),`g(conc(f(a()))));
     // Note: we have a b() be because C1* can be reduced when rewriting f(b()) into f(c())
   }
+  
+  @Test
   public void test32() {
     assertEquals(`g(conc(b(),f(d()))),`g(conc(a(),f(a()))));
   }
+  
+  @Test
   public void test33() {
     assertEquals(`g(conc(f(d()),f(d()))),`g(conc(f(a()),f(a()))));
   }
+  
+  @Test
   public void test34() {
     //tricky test: b() is the middle should really be there!
     assertEquals(`g(conc(b(),f(d()),b(),f(d()),b())),`g(conc(a(),f(a()),a(),f(a()),a())));
   }
-  
+
+  @Test
   public void testUnderscore_1() {
     assertEquals(`a(),`h(b()));
   }
+
+  @Test
   public void testUnderscore_2() {
     assertEquals(`a(),`k(b(),a(),b(),b()));
   }

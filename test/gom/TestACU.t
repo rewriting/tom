@@ -22,11 +22,11 @@
 
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testacu.acu.types.*;
 
-public class TestACU extends TestCase {
+public class TestACU {
 
   %gom {
     module acu
@@ -51,39 +51,46 @@ public class TestACU extends TestCase {
     list:ACU() { `aa() }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestACU.class));
+    org.junit.runner.JUnitCore.runClasses(TestACU.class);
   }
 
   /* First make sure simple test of the AU functionality do pass */
+  @Test
   public void testFlatten1() {
     assertEquals(`conc(a(),b(),a()),`conc(a(),conc(b()),a()));
   }
 
+  @Test
   public void testFlatten2() {
     L l1 = `list(bb(),bb());
     L l2 = `list(bb(),bb());
     assertEquals(`list(l1,l2),`list(bb(),bb(),bb(),bb()));
   }
 
+  @Test
   public void testFlatten3() {
     L l1 = `list(bb(),bb());
     L l2 = `list(bb(),bb());
     assertEquals(`list(l1,l2),`list(l1*,l2*));
   }
 
+  @Test
   public void testFlatten4() {
     L l1 = `list(bb(),bb());
     assertEquals(`Conslist(l1,bb()),`list(l1*,bb()));
   }
 
+  @Test
   public void testNeutral1() {
     assertEquals(`list(),`aa());
   }
 
+  @Test
   public void testNeutral2() {
     assertEquals(`list(aa(),aa()),`aa());
   }
 
+  @Test
   public void testNeutral3() {
     L l = `bb();
     int cnt = 0;
@@ -103,6 +110,7 @@ public class TestACU extends TestCase {
     assertEquals("Incomplete matching",cnt,5);
   }
 
+  @Test
   public void testNeutral4() {
     T t = `b();
     int cnt = 0;
@@ -122,6 +130,7 @@ public class TestACU extends TestCase {
     assertEquals("Incomplete matching",cnt,5);
   }
 
+  @Test
   public void testNeutral5() {
     NAU t = `m();
     int cnt = 0;
@@ -133,36 +142,42 @@ public class TestACU extends TestCase {
     assertEquals("m() does not match p(x*,y*)",cnt,0);
   }
 
+  @Test
   public void testOrder1() {
     T t1 = `conc(a(), b(), c(), d());    
     T t2 = `conc(b(), d(), a(), c());    
     assertEquals(t1,t2);
   }
 
+  @Test
   public void testOrder2() {
     T t2 = `conc(b(), d(), a(), c());    
     T t3 = `conc(d(), b(), c(), a());    
     assertEquals(t2,t3);
   }
 
+  @Test
   public void testOrderFlatten1() {
     T t1 = `conc(a(), b(), conc(b(), a(), c()), c(), d());    
     T t2 = `conc(b(), conc(a(), b(), c()), d(), a(), c());    
     assertEquals(t1,t2);
   }
 
+  @Test
   public void testOrderFlatten2() {
     T t2 = `conc(b(), conc(a(), b(), c()), d(), a(), c());    
     T t3 = `conc(d(), b(), c(), a(), conc(c(), b(), a()));    
     assertEquals(t2,t3);
   }
 
+  @Test
   public void testOrderN1() {
     L t1 = `list(aa(), bb(), cc(), dd());    
     L t2 = `list(bb(), dd(), aa(), cc());    
     assertEquals(t1,t2);
   }
 
+  @Test
   public void testOrderN2() {
     L t2 = `list(bb(), dd(), aa(), cc());    
     L t3 = `list(dd(), bb(), cc(), aa());    

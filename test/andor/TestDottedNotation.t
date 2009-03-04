@@ -29,12 +29,12 @@ package andor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import andor.testdottednotation.m.types.*;
 
-public class TestDottedNotation extends TestCase {
+public class TestDottedNotation {
   %gom {
     module M
       abstract syntax
@@ -55,6 +55,7 @@ public class TestDottedNotation extends TestCase {
     static Term b = `b();
   }
 
+  @Test
   public void test1() {
     %match(f(a(),b())) {
       f(_x,_y) && ( _x <<Term C.a || _x <<Term C.b ) -> {        
@@ -65,7 +66,7 @@ public class TestDottedNotation extends TestCase {
   }
   
   public static void main(String[] args) {
-   junit.textui.TestRunner.run(new TestSuite(TestDottedNotation.class));
+    org.junit.runner.JUnitCore.runClasses(TestDottedNotation.class);
   }
 
 }

@@ -22,11 +22,11 @@
 
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testfl.l.types.*;
 
-public class TestFL extends TestCase {
+public class TestFL {
 
   %gom {
     module l
@@ -63,42 +63,52 @@ public class TestFL extends TestCase {
 
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestFL.class));
+    org.junit.runner.JUnitCore.runClasses(TestFL.class);
   }
 
+  @Test
   public void testFlatten1_1() {
     assertEquals(`conc(conc(conc()),conc(conc())),`conc());
   }
+  @Test
   public void testFlatten1_2() {
     assertEquals(`conc(conc(),a(),conc()),`conc(a()));
   }
+  @Test
   public void testFlatten1_3() {
     assertEquals(`conc(conc(),conc(conc(),a()),conc(),b(),conc()),`conc(a(),b()));
   }
+  @Test
   public void testFlatten1_4() {
     assertEquals(`conc(conc(a(),a()),conc(b(),b())),`conc(a(),a(),b(),b()));
   }
 
+  @Test
   public void testFlatten2_1() {
     T t = `conc();
     assertTrue(t.isEmptyconc());
   }
+  @Test
   public void testFlatten2_2() {
     T t = `conc(conc(),a());
     assertFalse(t.isEmptyconc());
   }
+  @Test
   public void testFlatten2_3() {
     T t = `conc(conc(conc(),a()),a());
     assertTrue(t.isConsconc());
   }
+  @Test
   public void testFlatten2_4() {
     T t = `conc(conc(conc(conc(),a()),a()),a());
     assertEquals(t.getHeadconc(),`a());
   }
+  @Test
   public void testFlatten2_5() {
     T t = `conc(conc(),a());
     assertTrue(t.getTailconc().isEmptyconc());
   }
+  @Test
   public void testFlatten2_6() {
     T t = `conc(
         conc(conc(conc(conc(conc(),a()),a()),a()),a()),
@@ -107,6 +117,7 @@ public class TestFL extends TestCase {
     assertEquals(t,`conc(a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a()));
   }
 
+  @Test
   public void testFlatten3() {
     T t = `conc();
     for(int i=0 ; i<10 ; i++) {
@@ -121,6 +132,7 @@ public class TestFL extends TestCase {
     assertEquals(cpt,10);
   }
 
+  @Test
   public void testMatch1() {
     T t = `conc(conc(conc(),b()),conc(conc()),conc(b(),conc()));
     int cnt = 0;
@@ -135,39 +147,51 @@ public class TestFL extends TestCase {
     assertEquals("Incomplete matching",cnt,6);
   }
 
+  @Test
   public void testHook1_1() {
     assertEquals(`and(t(),t()),`and(t()));
   }
+  @Test
   public void testHook1_2() {
     assertEquals(`and(t(),f()),`and(f()));
   }
+  @Test
   public void testHook1_3() {
     assertEquals(`and(f(),t()),`and(f()));
   }
+  @Test
   public void testHook1_4() {
     assertEquals(`and(f(),f()),`and(f()));
   }
+  @Test
   public void testHook1_5() {
     assertEquals(`and(t()),`and());
   }
+  @Test
   public void testHook1_6() {
     assertEquals(`or(t(),t()),`or(t()));
   }
+  @Test
   public void testHook1_7() {
     assertEquals(`or(t(),f()),`or(t()));
   }
+  @Test
   public void testHook1_8() {
     assertEquals(`or(f(),t()),`or(t()));
   }
+  @Test
   public void testHook1_9() {
     assertEquals(`or(f(),f()),`or(f()));
   }
+  @Test
   public void testHook1_10() {
     assertEquals(`or(f()),`or());
   }
+  @Test
   public void testHook1_11() {
     assertEquals(`and(or(f(),t()),or(t(),f())),`and(t()));
   }
+  @Test
   public void testHook1_12() {
     assertEquals(`or(and(f(),t()),and(t(),f())),`or(f()));
   }

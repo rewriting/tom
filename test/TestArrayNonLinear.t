@@ -1,10 +1,10 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import java.util.ArrayList;
 
-public class TestArrayNonLinear extends TestCase {
+public class TestArrayNonLinear {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestArrayNonLinear.class));
+    org.junit.runner.JUnitCore.runClasses(TestArrayNonLinear.class);
   }
 
 %include { util/ArrayList.tom }
@@ -27,6 +27,7 @@ public class TestArrayNonLinear extends TestCase {
   make(t) { new F($t) }
 }
 
+  @Test
   public void test1() {
     ArrayList l1 = `concArrayList(a(),b(),c());
     ArrayList l2 = `concArrayList(a(),b(),c());

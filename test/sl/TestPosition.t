@@ -31,21 +31,23 @@ package sl;
 
 import tom.library.sl.Position;
 import tom.library.sl.Path;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestPosition extends TestCase {
+public class TestPosition {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestPosition.class));
+    org.junit.runner.JUnitCore.runClasses(TestPosition.class);
 	}
 
+  @Test
   public void testNormalize(){
     Position p = Position.makeFromArray(new int[]{1,-1,2,-2,1,2,3,-3,1,1});
     Path pp = p.getCanonicalPath();
     assertEquals(pp,Position.makeFromArray(new int[]{1,2,1,1}));
   }
 
+  @Test
   public void testAdd(){
     Position p1 = Position.makeFromArray(new int[]{1,1,2,1});
     Position p2 = Position.makeFromArray(new int[]{1,2,1,2,1});
@@ -54,6 +56,7 @@ public class TestPosition extends TestCase {
     assertEquals(r,Position.makeFromArray(new int[]{1,2,1,2,1,1,1,2,1}));
   }
 
+  @Test
   public void testInverse(){
     Position p = Position.makeFromArray(new int[]{1,1,2});
     Path r = p.inverse();
@@ -61,6 +64,7 @@ public class TestPosition extends TestCase {
     assertEquals(r,Position.makeFromArray(new int[]{-2,-1,-1}));
   }
 
+  @Test
   public void testSub(){
     Position p1 = Position.makeFromArray(new int[]{1,1,2,1});
     Position p2 = Position.makeFromArray(new int[]{1,2,1,2,1});
@@ -69,12 +73,14 @@ public class TestPosition extends TestCase {
     assertEquals(r,Position.makeFromArray(new int[]{-1, -2, -1, 2, 1, 2, 1}));
   }
 
+  @Test
   public void testEquals() {
     Position p1 = Position.makeFromArray(new int[]{1,1});
     Position p2 = Position.makeFromArray(new int[]{1,1});
     assertEquals("Similar objects should be equal" ,p1,p2);
   }
 
+  @Test
   public void testHashCode() {
     Position p1 = Position.makeFromArray(new int[]{1,1});
     Position p2 = Position.makeFromArray(new int[]{1,1});

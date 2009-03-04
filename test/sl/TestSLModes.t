@@ -31,17 +31,17 @@ package sl;
 
 import sl.testsl.types.*;
 import tom.library.sl.Strategy;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestSLModes extends TestCase {
+public class TestSLModes {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
   %include { testsl/_testsl.tom }
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestSLModes.class));
+    org.junit.runner.JUnitCore.runClasses(TestSLModes.class);
 	}
 
   %strategy R1() extends `Identity() {
@@ -72,6 +72,7 @@ public class TestSLModes extends TestCase {
     }
   }
 
+  @Test
   public void testIdentity() {
     Term subject = `f(a());
     Strategy s = `Identity();
@@ -92,6 +93,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testR1() {
     Term subject = `f(a());
     Strategy s = `R1();
@@ -112,6 +114,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testR1Fail() {
     Term subject = `f(b());
     Strategy s = `R1();
@@ -132,6 +135,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testR2() {
     Term subject = `f(a());
     Strategy s = `R2();
@@ -152,6 +156,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testR2Fail() {
     Term subject = `f(b());
     Strategy s = `R2();
@@ -173,6 +178,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testOne() {
     Term subject = `f(b());
     Strategy s = `One(R1());
@@ -193,6 +199,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testOneFail() {
     Term subject = `f(a());
     Strategy s = `One(R2());
@@ -214,6 +221,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testOnceBottomUp() {
     Term subject = `g(f(a()),b());
     Strategy s = `OnceBottomUp((R2()));
@@ -280,6 +288,7 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
   }
 
+  @Test
   public void testAll() {
     Term subject = `g(f(a()),b());
     Strategy s = `All((R2()));
@@ -316,6 +325,7 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
   }
 
+  @Test
   public void testAllFail() {
     Term subject = `g(f(b()),b());
     Strategy s = `All((R2()));
@@ -335,6 +345,7 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
   }
 
+  @Test
   public void testOmega0() {
     Term subject = `f(a());
     Strategy s = `Omega(0,R2());
@@ -355,6 +366,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testOmega1() {
     Term subject = `g(f(a()),b());
     Strategy s = `Omega(1,R2());
@@ -375,6 +387,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testOmega2() {
     Term subject = `g(f(a()),b());
     Strategy s = `Omega(2,R2());
@@ -395,6 +408,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testOmega1Fail() {
     Term subject = `g(f(b()),b());
     Strategy s = `Omega(1,R2());
@@ -414,6 +428,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testOmegaAritOverflow() {
     Term subject = `g(f(b()),b());
     Strategy s = `Omega(3,R2());
@@ -433,6 +448,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testMake_a() {
     Term subject = `f(c());
     Strategy s = `Make_a();
@@ -453,6 +469,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testMake_gfab() {
     Term subject = `f(c());
     Strategy s = `Make_g(Make_f(Make_a()),Make_b());
@@ -473,6 +490,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testIfThenElse1() {
     Term subject = `f(a());
     Strategy s = `IfThenElse(R2(),Make_a(),Make_b());
@@ -493,6 +511,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testIfThenElse2() {
     Term subject = `f(b());
     Strategy s = `IfThenElse(R2(),Make_a(),Make_b());
@@ -513,6 +532,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testSequence() {
     Term subject = `f(a());
     Strategy s = `Sequence(R2(),R3());
@@ -533,6 +553,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testSequenceFail1() {
     Term subject = `f(c());
     Strategy s = `Sequence(R2(),Identity());
@@ -552,6 +573,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testSequenceFail2() {
     Term subject = `f(c());
     Strategy s = `Sequence(Identity(),R3());
@@ -571,6 +593,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testWhen() {
     Term subject = `f(a());
     Strategy s = `When_f(R2());
@@ -591,6 +614,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testWhenFail() {
     Term subject = `f(b());
     Strategy s = `When_f(R2());
@@ -610,6 +634,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testCongruence() {
     Term subject = `g(f(a()),b());
     Strategy s = `_g(R1(),R2());
@@ -630,6 +655,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testNotR2() {
     Term subject = `f(b());
     Strategy s = `Not(R2());
@@ -650,6 +676,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testNotR2Fail() {
     Term subject = `f(a());
     Strategy s = `Not(R2());
@@ -671,6 +698,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testSequenceId() {
     Term subject = `f(a());
     Strategy s = `SequenceId(R1(),R4());
@@ -691,6 +719,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testSequenceIdFail1() {
     Term subject = `f(c());
     Strategy s = `SequenceId(R1(),Identity());
@@ -711,6 +740,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testChoice1() {
     Term subject = `f(a());
     Strategy s = `Choice(R2(),R3());
@@ -731,6 +761,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testChoice2() {
     Term subject = `f(a());
     Strategy s = `Choice(R3(),R2());
@@ -751,6 +782,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testChoiceFail() {
     Term subject = `f(a());
     Strategy s = `Choice(R3(),R3());
@@ -770,6 +802,7 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  @Test
   public void testChoiceId1() {
     Term subject = `f(a());
     Strategy s = `ChoiceId(R2(),R3());
@@ -790,6 +823,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testChoiceId2() {
     Term subject = `f(a());
     Strategy s = `ChoiceId(Identity(),R2());
@@ -810,6 +844,7 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  @Test
   public void testChoiceIdFail1() {
     Term subject = `f(b());
     Strategy s = `ChoiceId(R2(),R2());

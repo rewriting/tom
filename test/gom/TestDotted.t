@@ -30,18 +30,19 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import gom.dotted.types.*;
 
-public class TestDotted extends TestCase {
+public class TestDotted {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestDotted.class));
+    org.junit.runner.JUnitCore.runClasses(TestDotted.class);
   }
   %include{ dotted/Dotted.tom }
-  
+ 
+  @Test
   public void test1() {
     Nop n = `BinaryNop(UnaryNop(EmptyNop()),UnaryNop(EmptyNop()));
     %match(n) {

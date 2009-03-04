@@ -22,15 +22,12 @@
 
 package gom;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.extensions.ActiveTestSuite;
-import junit.extensions.RepeatedTest;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testgomwithoutmaximalsharing.term.types.*;
 import tom.library.sl.*;
 
-public class TestGomWithoutMaximalSharing extends TestCase {
+public class TestGomWithoutMaximalSharing {
 
   %gom(--nosharing) {
     module term
@@ -45,9 +42,10 @@ public class TestGomWithoutMaximalSharing extends TestCase {
   %include{ sl.tom }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestGomWithoutMaximalSharing.class));
+    org.junit.runner.JUnitCore.runClasses(TestGomWithoutMaximalSharing.class);
   }
 
+  @Test
   public void testBuild() {
     T t1 = `f(g(a()),g(b()));
     T t2 = `f(g(a()),g(b()));
@@ -56,6 +54,7 @@ public class TestGomWithoutMaximalSharing extends TestCase {
   }
 
 
+  @Test
   public void testMatch() {
     T t = `f(g(a()),g(b()));
     %match (t) {
@@ -75,6 +74,7 @@ public class TestGomWithoutMaximalSharing extends TestCase {
   }
 
 
+  @Test
   public void testStrategy() {
     T t = `f(g(a()),g(b()));
     try {
@@ -86,6 +86,7 @@ public class TestGomWithoutMaximalSharing extends TestCase {
   }
 
 
+  @Test
   public void testIdentity() {
     T t = `f(g(a()),g(b()));
     try {

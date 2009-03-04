@@ -30,17 +30,18 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.rulebool.types.*;
 
-public class TestRuleBool extends TestCase {
+public class TestRuleBool {
 
   %include { rulebool/RuleBool.tom }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRuleBool.class));
+    org.junit.runner.JUnitCore.runClasses(TestRuleBool.class);
   }
 
+  @Test
   public void testNot() {
     Bool test = `Not(And(True(),True()));
     assertEquals(test,`Or(False(),False()));

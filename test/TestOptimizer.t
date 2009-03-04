@@ -1,14 +1,15 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestOptimizer extends TestCase {
+public class TestOptimizer {
 
 	%include { string.tom }
 	
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestOptimizer.class));
+    org.junit.runner.JUnitCore.runClasses(TestOptimizer.class);
 	}
 
+  @Test
 	public void test1() {
 		String s = "";
 		// used to make the optimizer fail

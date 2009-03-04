@@ -1,11 +1,11 @@
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testlist.list.types.*;
 import gom.testlist.list.types.list.conc;
 
-public class TestList extends TestCase {
+public class TestList {
 
   %gom {
     module list
@@ -16,9 +16,10 @@ public class TestList extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestList.class));
+    org.junit.runner.JUnitCore.runClasses(TestList.class);
   }
 
+  @Test
   public void testException() {
     Element a = `a();
     try {
@@ -29,20 +30,24 @@ public class TestList extends TestCase {
     }
   }
 
+  @Test
   public void testZeroLength() {
     List l = `conc();
     assertEquals(getListLength(l),l.length());
   }
 
+  @Test
   public void testOneLength() {
     List l = `conc(a());
     assertEquals(getListLength(l),l.length());
   }
 
+  @Test
   public void testTwoLength() {
     List l = `conc(a(),b());
     assertEquals(getListLength(l),l.length());
   }
+  @Test
   public void testnLength() {
     int n = 15;
     List l = `conc();
@@ -52,11 +57,13 @@ public class TestList extends TestCase {
     assertEquals(getListLength(l),l.length());
   }
 
+  @Test
   public void testZeroArray() {
     List l = `conc();
     assertEquals(0,((conc)l).toArray().length);
   }
 
+  @Test
   public void testnArray() {
     int n = 15;
     List l = `conc();
@@ -71,18 +78,21 @@ public class TestList extends TestCase {
     }
   }
 
+  @Test
   public void testFromZeroArray() {
     Element[] array = new Element[]{};
     List l = conc.fromArray(array);
     assertEquals(0,l.length());
   }
 
+  @Test
   public void testFromToZeroArray() {
     Element[] array = new Element[]{};
     List l = conc.fromArray(array);
     assertEquals(0,((conc)l).toArray().length);
   }
 
+  @Test
   public void testFromNArray() {
     int n = 15;
     Element[] array = new Element[15];
@@ -106,31 +116,37 @@ public class TestList extends TestCase {
     assertEquals(l,list);
   }
 
+  @Test
   public void testZeroAdd() {
     List l = `conc();
     assertEquals(`conc(a()),((conc)l).append(`a()));
   }
 
+  @Test
   public void testOneAdd() {
     List l = `conc(a());
     assertEquals(`conc(a(),b()),((conc)l).append(`b()));
   }
 
+  @Test
   public void testZeroReverse() {
     List l = `conc();
     assertEquals(getListReverse(l),l.reverse());
   }
 
+  @Test
   public void testOneReverse() {
     List l = `conc(a());
     assertEquals(getListReverse(l),l.reverse());
   }
 
+  @Test
   public void testTwoReverse() {
     List l = `conc(a(),b());
     assertEquals(getListReverse(l),l.reverse());
   }
 
+  @Test
   public void testnReverse() {
     int n = 15;
     List l = `conc();

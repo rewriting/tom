@@ -32,13 +32,14 @@ package antipatterns;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestDoubleList extends TestCase  {
+public class TestDoubleList {
 
   %include{ util/LinkedList.tom }
   
+  @Test
   public void test1() {
     LinkedList<Integer> l = new LinkedList(Arrays.asList(1,2,3,1,4,3,1,1));    
     //System.out.println("list = " + l);
@@ -49,6 +50,7 @@ public class TestDoubleList extends TestCase  {
     if (!(result.contains(2) && result.contains(4))) { fail(); }
   }
   
+  @Test
   public void test2() {
     LinkedList<Integer> l = new LinkedList(Arrays.asList(1,2,3,1,4,3,1,1));    
     //System.out.println("list = " + l);
@@ -60,7 +62,7 @@ public class TestDoubleList extends TestCase  {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestDoubleList.class));      
+    org.junit.runner.JUnitCore.runClasses(TestDoubleList.class);
   }
   
 }

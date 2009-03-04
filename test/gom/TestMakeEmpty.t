@@ -22,11 +22,11 @@
 
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testmakeempty.l.types.*;
 
-public class TestMakeEmpty extends TestCase {
+public class TestMakeEmpty {
 
   %gom {
     module l
@@ -45,13 +45,15 @@ public class TestMakeEmpty extends TestCase {
     }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestMakeEmpty.class));
+    org.junit.runner.JUnitCore.runClasses(TestMakeEmpty.class);
   }
 
+  @Test
   public void testEmptySameDoCo() {
     assertSame(`a(),`conc());
   }
 
+  @Test
   public void testEmptyNotSameDoCo() {
     assertSame(`c(),`list());
   }

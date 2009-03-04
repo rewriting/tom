@@ -1,12 +1,12 @@
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testrulesortlist.sorted.types.*;
 
-public class TestRuleSortList extends TestCase {
+public class TestRuleSortList {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRuleSortList.class));
+    org.junit.runner.JUnitCore.runClasses(TestRuleSortList.class);
   }
 
   %gom {
@@ -39,22 +39,26 @@ public class TestRuleSortList extends TestCase {
       }
   }
 
+  @Test
   public void testSorta() {
     Sorted l = `MinMax(4,6,2,0,-2,3);
     assertEquals(-2,l.getHeadMinMax());
   }
 
+  @Test
   public void testSortMaxMin() {
     Sorted l = `MaxMin(4,6,2,0,-2,3);
     assertEquals(6,l.getHeadMaxMin());
   }
 
+  @Test
   public void testSortNoDup() {
     Sorted l = `NoDup(4,6,2,0,-2,3);
     Sorted dup = `NoDup(l*,l*);
     assertEquals(l,dup);
   }
 
+  @Test
   public void testSortMix() {
     Sorted l1 = `Mix(Int(3),Str("a"),Int(6),Str("foo"),Str("bar"));
     Sorted l2 = `Mix(Str("foo"),Str("bar"),Int(6),Str("a"),Int(3));

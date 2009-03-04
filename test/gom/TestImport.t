@@ -24,12 +24,12 @@ package gom;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.importing.types.*;
 import gom.imported.types.*;
 
-public class TestImport extends TestCase {
+public class TestImport {
 
   %include { sl.tom }
   %include { importing/Importing.tom }
@@ -38,15 +38,17 @@ public class TestImport extends TestCase {
     is_sort(t) { t instanceof Collection } 
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestImport.class));
+    org.junit.runner.JUnitCore.runClasses(TestImport.class);
   }
 
+  @Test
   public void testMake() {
     Out test = `Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())));
     assertEquals(test.toString(),
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
+  @Test
   public void testStrat() {
     Out test = `Loop(Loop(Pack(Atom()),LeafSlot(Leaf())),Element(Element(Atom())));
     Collection set = new ArrayList(); /* Make sure we count all inserts */

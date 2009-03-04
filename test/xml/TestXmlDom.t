@@ -6,10 +6,11 @@ import javax.xml.parsers.*;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestXmlDom extends TestCase {
+public class TestXmlDom {
   private Document dom;
 	private LinkedList elements;
 	private LinkedList reverseElements;
@@ -20,9 +21,10 @@ public class TestXmlDom extends TestCase {
 
 	public static void main(String[] args) {
     level = Level.INFO;
-		junit.textui.TestRunner.run(new TestSuite(TestXmlDom.class));
+    org.junit.runner.JUnitCore.runClasses(TestXmlDom.class);
 	}
 
+  @Before
 	public void setUp() {
     logger = Logger.getLogger(getClass().getName());
 		try {
@@ -63,6 +65,7 @@ public class TestXmlDom extends TestCase {
     return null;    
   }
 
+  @Test
   public void testSortedInteger() {
 		Node list = getXmldoc();
     %match(TNode list) {
@@ -77,6 +80,7 @@ public class TestXmlDom extends TestCase {
     }
   }
 
+  @Test
 	public void testSwapElements() {
 		Node list = getXmldoc();
     LinkedList res = extractElements(swapElements(list));
@@ -87,6 +91,7 @@ public class TestXmlDom extends TestCase {
 								 reverseElements, res);
   }
 
+  @Test
 	public void testExtractElements() {
 		Node list = getXmldoc();
 		LinkedList res = extractElements(list);
@@ -127,6 +132,7 @@ public class TestXmlDom extends TestCase {
       return x+x;
     }
 
+  @Test
 	public void testAttributeMatch(){
 		Node node = `xml(dom,
 				<?xml version="1.0" encoding="UTF-8" ?>

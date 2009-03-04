@@ -1,17 +1,18 @@
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.importing.types.*;
 import gom.imported.types.*;
 
-public class TestFrom extends TestCase {
+public class TestFrom {
 
   %include { importing/Importing.tom }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestFrom.class));
+    org.junit.runner.JUnitCore.runClasses(TestFrom.class );
   }
 
+  @Test
   public void testFromTerm() {
     aterm.ATerm trm =
       aterm.pure.SingletonFactory.getInstance().parse(
@@ -21,6 +22,7 @@ public class TestFrom extends TestCase {
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
+  @Test
   public void testFromString() {
     String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))";
     Out test = Out.fromString(s);
@@ -28,6 +30,7 @@ public class TestFrom extends TestCase {
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
+  @Test
   public void testFromStream() {
     String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))";
     java.io.InputStream stream = null;

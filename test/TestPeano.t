@@ -1,9 +1,9 @@
 import aterm.*;
 import aterm.pure.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestPeano extends TestCase {
+public class TestPeano {
 
   private ATermFactory factory;
   private AFun fzero, fsuc, fplus;
@@ -41,7 +41,7 @@ public class TestPeano extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
+    org.junit.runner.JUnitCore.runClasses(TestPeano.class);
   }
 
   public void setUp() {
@@ -53,6 +53,7 @@ public class TestPeano extends TestCase {
     tzero = factory.makeAppl(fzero);
   }
 
+  @Test
   public void testPlus1() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
@@ -61,6 +62,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testPlus2() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
@@ -69,6 +71,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testPlus3() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
@@ -77,6 +80,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testPlus4() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
@@ -85,6 +89,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testFib3() {
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
@@ -93,6 +98,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testFib4() {
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
@@ -102,6 +108,7 @@ public class TestPeano extends TestCase {
   }
 
 
+  @Test
   public void testFib6() {
     ATerm N = `suc(suc(suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))))));
     assertTrue("Testing fib5 with N =" + peano2int(N) + ": ",   
@@ -173,6 +180,7 @@ public class TestPeano extends TestCase {
     }
   }
 
+  @Test
   public void testInt2p() {
     assertEquals("int2peano should return sssss(tzero) for 5",
 	int2peano(5),`suc(suc(suc(suc(suc(tzero))))));
@@ -186,6 +194,7 @@ public class TestPeano extends TestCase {
     return N;
   }
 
+  @Test
   public void testPeano2int() {
     assertEquals("peano2int should return 5 for sssss(tzero)",
 	peano2int(`suc(suc(suc(suc(suc(tzero)))))),5);

@@ -31,17 +31,18 @@
 package gom;
 
 import java.io.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import gom.bool.types.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestBool extends TestCase {
+public class TestBool {
 
   %include { bool/Bool.tom }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestBool.class));
+    org.junit.runner.JUnitCore.runClasses(TestBool.class);
   }
 
+  @Test
   public void testNotHook() {
     Bool test = `Not(And(True(),True()));
     assertEquals(test,`Or(False(),False()));

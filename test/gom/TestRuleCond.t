@@ -30,11 +30,11 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import gom.testrulecond.term.types.*;
 
-public class TestRuleCond extends TestCase {
+public class TestRuleCond {
 
   %gom {
     module Term
@@ -53,55 +53,66 @@ public class TestRuleCond extends TestCase {
    }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRuleCond.class));
+    org.junit.runner.JUnitCore.runClasses(TestRuleCond.class);
   }
 
+  @Test
   public void testRuleFalseCond() {
     Term test = `g(b(),b());
     assertEquals(test,`g(b(),b()));
   }
 
+  @Test
   public void testRuleAnd() {
     Term test = `g(a(),b());
     assertEquals(test,`a());
   }
 
+  @Test
   public void testRuleOra() {
     Term test = `f(a());
     assertEquals(test,`a());
   }
 
+  @Test
   public void testRuleOrb() {
     Term test = `f(b());
     assertEquals(test,`a());
   }
 
+  @Test
   public void testRuleOrc() {
     Term test = `f(c());
     assertEquals(test,`f(c()));
   }
 
+  @Test
   public void testRuleAndAnd() {
     Term test = `g(a(),a());
     assertEquals(test,`c());
   }
 
+  @Test
   public void testRuleParena() {
     Term test = `h(a(),a(),a());
     assertSame(test,`a());
   }
+  @Test
   public void testRuleParenb() {
     Term test = `h(a(),c(),c());
     assertSame(test,`a());
   }
+  @Test
   public void testRuleParenc() {
     Term test = `h(b(),b(),a());
     assertSame(test,`a());
   }
+  @Test
   public void testRuleParend() {
     Term test = `h(b(),b(),b());
     assertNotSame(test,`a());
   }
+  @Test
   public void testRuleParene() {
     Term test = `h(b(),a(),c());
     assertNotSame(test,`a());

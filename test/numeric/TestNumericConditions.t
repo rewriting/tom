@@ -29,12 +29,12 @@ package numeric;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import numeric.testnumericconditions.m.types.*;
 
-public class TestNumericConditions extends TestCase {
+public class TestNumericConditions {
   %gom {
     module M
       imports int
@@ -51,6 +51,7 @@ public class TestNumericConditions extends TestCase {
       TermList = termList(Term*)
   }
   
+  @Test
   public void test1() {
     %match(f(a(),6)) {
       f(_x,y) && y > 5 -> {        
@@ -60,6 +61,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test2() {
     %match(f(a(),6)) {
       f(_x,y) && y >= 6 -> {        
@@ -69,6 +71,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test3() {
     %match(f(a(),3)) {
       f(_x,y) && y < 6 -> {        
@@ -78,6 +81,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test4() {
     %match(f(a(),4)) {
       f(_x,y) && y <= 3 -> {        
@@ -87,6 +91,7 @@ public class TestNumericConditions extends TestCase {
     return;
   }
 
+  @Test
   public void test5() {
     %match(f(a(),4)) {
       f(_x,y) && y != 4 -> {        
@@ -96,6 +101,7 @@ public class TestNumericConditions extends TestCase {
     return;
   }
   
+  @Test
   public void test6() {
     %match(f(a(),4)) {
       f(_x,y) && y == 4 -> {        
@@ -105,6 +111,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test7() {
     %match(f(a(),4)) {
       f(_x,y) && y > 2 && y < 5 -> {        
@@ -114,6 +121,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test8() {
     %match(f(a(),6)) {
       f(_x,y) && y > 2 && y < 5 -> {        
@@ -123,6 +131,7 @@ public class TestNumericConditions extends TestCase {
     return;
   }
   
+  @Test
   public void test9() {
     %match(f(a(),6)) {
       f(_x,y) && ( y > 2 || y < 5 ) -> {        
@@ -132,6 +141,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }  
 
+  @Test
   public void test10() {
     %match(f(a(),6)) {
       f(_x,y) && ( y !=6 || y < 5 ) -> {        
@@ -141,6 +151,7 @@ public class TestNumericConditions extends TestCase {
     return;
   }
   
+  @Test
   public void test11() {
     %match(f(a(),6)) {
       f(_x,y) && ( y ==6 || y < 5 ) -> {        
@@ -150,6 +161,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test12() {
     %match(f(a(),6)) {
       f(_x,y) && ( y !=6 || y >= 5 ) -> {        
@@ -159,6 +171,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test13() {
     %match(f(a(),6)) {
       f(_x,y) && y > int getIntegerValue() -> {        
@@ -168,6 +181,7 @@ public class TestNumericConditions extends TestCase {
     fail();
   }
   
+  @Test
   public void test14() {
     %match(f(a(),6)) {
       f(_x,y) && y == int getIntegerValue() -> {        
@@ -177,6 +191,7 @@ public class TestNumericConditions extends TestCase {
     return;
   } 
   
+  @Test
   public void test15() {
     int m = 6;
     %match(f(a(),6)) {
@@ -194,7 +209,7 @@ public class TestNumericConditions extends TestCase {
 
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestNumericConditions.class));
+    org.junit.runner.JUnitCore.runClasses(TestNumericConditions.class);
   }
 
 }

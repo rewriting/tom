@@ -1,13 +1,14 @@
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import gom.testcollection.m.types.*;
 import gom.testcollection.m.types.t.*;
 import gom.testcollection.m.types.l.*;
 import java.util.*;
 
-public class TestCollection extends TestCase {
+public class TestCollection {
 
   %gom {
     module M
@@ -23,9 +24,10 @@ public class TestCollection extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestCollection.class));
+    org.junit.runner.JUnitCore.runClasses(TestCollection.class);
   }
 
+  @Test
   public void test1() {
     f l = (f) `f(a(),b());
     assertTrue(l.contains(`a()));
@@ -59,6 +61,7 @@ public class TestCollection extends TestCase {
     }
   }
 
+  @Test
   public void test2() {
     cons l = (cons)`cons(a(),b());
     assertTrue(l.contains(`a()));
@@ -93,6 +96,7 @@ public class TestCollection extends TestCase {
     }
   }
 
+  @Test
   public void test3() {
     consint l = (consint) `consint(1,2);
     assertTrue(l.contains(1));
@@ -127,6 +131,7 @@ public class TestCollection extends TestCase {
     }
   }
 
+  @Test
   public void test4() {
     f l = (f) `f(a(),b(),c());
     Object[] array = l.toArray();
@@ -142,6 +147,7 @@ public class TestCollection extends TestCase {
 
   }
 
+  @Test
   public void test5() {
     g l = (g) `g(a(),b());
     assertTrue(l.contains(`a()));
@@ -175,6 +181,7 @@ public class TestCollection extends TestCase {
     }
   }
 
+  @Test
   public void test6() {
     g l = (g) `g(a(),b(),c());
     Object[] array = l.toArray();
