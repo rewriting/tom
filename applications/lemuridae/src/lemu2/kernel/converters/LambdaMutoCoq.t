@@ -294,6 +294,9 @@ public class LambdaMutoCoq {
                     cocLam(CoCLam(xx,convert(px,fomap1,funs,preds),convert(u,nmap1,cnmap,fomap1,funs,preds)))))),
                  convert(v,nmap,cnmap,fomap,funs,preds));
       }
+      unit() -> {
+        return `cocConst("I");
+      }
     }
     throw new RuntimeException("non exhaustive patterns");
   }

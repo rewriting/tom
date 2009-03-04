@@ -132,6 +132,7 @@ LTerm = lvar(v:Name)
       | caseof(sub:LTerm,alt1:<Alt>,alt2:<Alt>)
       | left(t:LTerm,other:Prop)
       | right(t:LTerm,other:Prop)
+      | unit()
 
 
 Lam binds Name = Lam(x:Name, outer ty:Prop, inner t:LTerm)

@@ -9,4 +9,4 @@ prop fold { }
 
 
 rootR(
-  <r:Eq(s(s(s(s(s(s(s(s(s(s(z())))))))))),s(s(s(s(s(s(s(s(s(s(z())))))))))))> trueR(r))
+  <r:Eq(s(s(s(z()))),s(s(s(z()))))> trueR(r))

@@ -21,6 +21,7 @@ public class LKtoLambdaMu {
             return `activ(Act(a,pa,convert(M,se1))); 
           }
           ax(x,a) -> { return `passiv(a,lvar(x)); }
+          trueR(a) -> { return `passiv(a,unit()); }
           implyR(ImplyRPrem1(x,px,a,pa,M),b) -> { 
             Sequent se1 = `seq(free,lctx(nprop(x,px),gamma*),rctx(cnprop(a,pa),delta*));
             return `passiv(b,lam(Lam(x,px,activ(Act(a,pa,convert(M,se1))))));

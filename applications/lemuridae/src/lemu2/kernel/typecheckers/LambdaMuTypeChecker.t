@@ -23,7 +23,17 @@ public class LambdaMuTypeChecker {
     return `typeof(pt,seq(fovarList(),lctx(),rctx()));
   }
 
-  public static Prop typeof(LTerm pt, Sequent se) { 
+  public static Prop typeof(LTerm pt, Sequent se) {
+    Prop res = _typeof(pt,se);
+    if (res == null) {
+      System.out.println(pt);
+      System.out.println(Pretty.pretty(se));
+      System.out.println();
+    }
+    return res;
+  }
+
+  public static Prop _typeof(LTerm pt, Sequent se) { 
     %match(se) {
       seq(free,gamma,delta) -> {
         %match(pt) {
@@ -33,18 +43,19 @@ public class LambdaMuTypeChecker {
             return `implies(tx,tu);
           }
           flam(FLam(x,u)) -> { 
-            return `typeof(u,seq(fovarList(x,free*),gamma,delta));
+            return `forall(Fa(x,typeof(u,seq(fovarList(x,free*),gamma,delta))));
           }
           activ(Act(x,tx,u)) -> {
             // only to check well-typedness
             Prop tu = `typeof(u,seq(free,gamma,rctx(cnprop(x,tx),delta*)));
-            return tu == `bottom() ? `tx : null;
+            return `tx;
+            //return tu == `bottom() ? `tx : null;
           }
           lapp(u,v) -> {
             Prop tu = `typeof(u,se);
             Prop tv = `typeof(v,se);
             %match(tu) {
-              implies(A,B) -> { return `A == tv ? `B : null; }
+              implies(A,B) -> { return U.`alpha(A,tv,free) ? `B : null; }
               _            -> { return null; }
             }
           }
@@ -77,7 +88,7 @@ public class LambdaMuTypeChecker {
           caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
             Prop tu = `typeof(u,se);
             Prop tv = `typeof(v,seq(free,lctx(nprop(x,px),gamma*),delta));
-            Prop tw = `typeof(w,seq(free,lctx(nprop(y,py),gamma),delta));
+            Prop tw = `typeof(w,seq(free,lctx(nprop(y,py),gamma*),delta));
             %match(tu) {
               or(A,B) -> { 
                 if (U.`alpha(A,px,free) && U.`alpha(B,py,free) && U.`alpha(tv,tw,free))
@@ -122,6 +133,9 @@ public class LambdaMuTypeChecker {
             Prop tu = `typeof(u,se);
             Prop tv = U.`lookup(delta,mv);
             return U.`alpha(tu,tv,free) ? `bottom() : null;
+          }
+          unit() -> {
+            return `top();
           }
         }
       }

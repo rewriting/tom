@@ -12,14 +12,6 @@ public class Rewriting {
   %include { kernel/proofterms/proofterms.tom } 
   %include { sl.tom } 
 
-  /* returns null if v not in dom(s) */
-  private static Term lookup(FoSubst s, FoVar v) {
-    %match(s) {
-      fosubst(_*,fomap(x,t),_*) && x << FoVar v -> { return `t; }
-    }
-    return null;
-  }
-
   /*-- first-order term matching --*/
 
   /* returns null if no match */
@@ -39,7 +31,7 @@ public class Rewriting {
   private static FoSubst match(Term subject, Term pattern, FoSubst subst) {
     %match(pattern,subject) {
       var(v), t -> {
-        Term u = `lookup(subst,v);
+        Term u = U.`lookup(subst,v);
         if (u!=null) return u == `t ? subst : null;
         else return `fosubst(fomap(v,t),subst*);
       }
@@ -107,7 +99,7 @@ public class Rewriting {
   %strategy SubstFoVars(FoSubst subst) extends Identity() {
     visit Term {
       var(v) -> { 
-        Term t = `lookup(subst,v);
+        Term t = U.`lookup(subst,v);
         if (t!=null) return t;
       }
     }

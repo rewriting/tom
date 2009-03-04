@@ -50,6 +50,14 @@ public class U {
     throw new RuntimeException("rule " + id + " not in scope");
   }
 
+  /* returns null if v not in dom(s) */
+  public static Term lookup(FoSubst s, FoVar v) {
+    %match(s) {
+      fosubst(_*,fomap(x,t),_*) && x << FoVar v -> { return `t; }
+    }
+    return null;
+  }
+
   /*
   public static fovarList freeFoVars(TermList tl, fovarList ctx) {
     %match(tl) {
@@ -131,6 +139,7 @@ public class U {
             CutPrem2(x,substFoVar(px,x1,t1),substFoVar(M2,x1,t1)));
       }
       // left rules
+      falseL(x) -> { return `falseL(x); }
       andL(AndLPrem1(x,px,y,py,M),n) -> {
         return `andL(AndLPrem1( x,substFoVar(px,x1,t1), y,substFoVar(py,x1,t1), substFoVar(M,x1,t1)),n); 
       }
@@ -154,6 +163,7 @@ public class U {
         return `foldL(id,FoldLPrem1(x,substFoVar(px,x1,t1),substFoVar(M,x1,t1)),n);
       }
       // right rules
+      trueR(a) -> { return `trueR(a); }
       orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
         return `orR(OrRPrem1(a,substFoVar(pa,x1,t1),b,substFoVar(pb,x1,t1),substFoVar(M,x1,t1)),cn);
       }
@@ -581,6 +591,7 @@ public class U {
       right(u,p) -> { return `right(substName(u,x,t),p); }
       //letin(Letin(fx,y,
       passiv(mv,u) -> { return `passiv(mv,substName(u,x,t)); }
+      unit() -> { return `unit(); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
@@ -607,6 +618,7 @@ public class U {
       left(u,p) -> { return `left(substFoVar(u,fx,ft),p); }
       right(u,p) -> { return `right(substFoVar(u,fx,ft),p); }
       passiv(mv,u) -> { return `passiv(mv,substFoVar(u,fx,ft)); }
+      unit() -> { return `unit(); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
@@ -637,13 +649,14 @@ public class U {
         if (`c == a) return `passiv(b,reconame(u,a,b)); 
         else         return `passiv(c,reconame(u,a,b)); 
       }
+      unit() -> { return `unit(); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
   private static conameList getFreeCoNames(conameList ctx, LTerm pt) {
     %match(pt) {
-      lvar(v) -> { return (conameList) `conameList(); }
+      (lvar|unit)[] -> { return (conameList) `conameList(); }
       lam(Lam(y,py,u)) -> { return `getFreeCoNames(ctx,u); }
       flam(FLam(fx,u)) -> { return `getFreeCoNames(ctx,u); }
       activ(Act(c,pc,u)) -> { return `getFreeCoNames(conameList(c,ctx*),u); }

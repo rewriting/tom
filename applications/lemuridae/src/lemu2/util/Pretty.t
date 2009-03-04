@@ -42,6 +42,7 @@ public class Pretty {
       Rawright(u,p) -> { return %[right{@`pretty(p)@} @`pretty(u)@]%; }
       Rawpassiv(mv,Rawlvar(x)) -> { return %[[@`mv@]@`x@]%; }
       Rawpassiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
+      Rawunit() -> { return "()"; }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
