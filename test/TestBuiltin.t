@@ -9,7 +9,7 @@ public class TestBuiltin {
   private static ATermFactory factory = SingletonFactory.getInstance();
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestBuiltin.class);
+    org.junit.runner.JUnitCore.main(TestBuiltin.class.getName());
 	}
   
   public void setUp() {

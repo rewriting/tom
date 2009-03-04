@@ -41,7 +41,7 @@ public class TestPeano {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestPeano.class);
+    org.junit.runner.JUnitCore.main(TestPeano.class.getName());
   }
 
   public void setUp() {

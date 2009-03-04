@@ -45,7 +45,7 @@ public class TestMakeEmpty {
     }
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestMakeEmpty.class);
+    org.junit.runner.JUnitCore.main(TestMakeEmpty.class.getName());
   }
 
   @Test

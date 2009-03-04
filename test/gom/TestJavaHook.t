@@ -12,7 +12,7 @@ public class TestJavaHook {
   public static String newline = System.getProperty("line.separator");
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestJavaHook.class);
+    org.junit.runner.JUnitCore.main(TestJavaHook.class.getName());
   }
 
   @Test

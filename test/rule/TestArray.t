@@ -72,7 +72,7 @@ public class TestArray {
 
   public static void main(String[] args) {
     level = Level.INFO;
-    org.junit.runner.JUnitCore.runClasses(TestArray.class);
+    org.junit.runner.JUnitCore.main(TestArray.class.getName());
   }
 
   @Before

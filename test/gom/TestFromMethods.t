@@ -44,7 +44,7 @@ public class TestFromMethods {
   %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestFromMethods.class);
+    org.junit.runner.JUnitCore.main(TestFromMethods.class.getName());
   }
 
   @Parameters

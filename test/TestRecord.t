@@ -4,7 +4,7 @@ import org.junit.Test;
 public class TestRecord {
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestRecord.class);
+    org.junit.runner.JUnitCore.main(TestRecord.class.getName());
 	}
 
     // ------------------------------------------------------------

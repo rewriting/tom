@@ -45,7 +45,7 @@ public class TestEnvironment {
   }
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestEnvironment.class);
+    org.junit.runner.JUnitCore.main(TestEnvironment.class.getName());
 	}
 
   @Test

@@ -63,7 +63,7 @@ public class TestFL {
 
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestFL.class);
+    org.junit.runner.JUnitCore.main(TestFL.class.getName());
   }
 
   @Test

@@ -7,7 +7,7 @@ import tom.library.sl.*;
 
 public class TestOnceTopDownId {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestOnceTopDownId.class);
+    org.junit.runner.JUnitCore.main(TestOnceTopDownId.class.getName());
   }
   
   %include { sl.tom }

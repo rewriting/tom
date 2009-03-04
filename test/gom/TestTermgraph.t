@@ -83,7 +83,7 @@ public class TestTermgraph {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestTermgraph.class);
+    org.junit.runner.JUnitCore.main(TestTermgraph.class.getName());
   }
 
   @Test

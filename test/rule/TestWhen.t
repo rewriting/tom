@@ -49,7 +49,7 @@ public class TestWhen {
   }
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestWhen.class);
+    org.junit.runner.JUnitCore.main(TestWhen.class.getName());
 	}
 
   @Before

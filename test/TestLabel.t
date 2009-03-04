@@ -3,7 +3,7 @@ import org.junit.Test;
 
 public class TestLabel {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestLabel.class);
+    org.junit.runner.JUnitCore.main(TestLabel.class.getName());
   }
   
   %include { string.tom }

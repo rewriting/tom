@@ -40,7 +40,7 @@ public class TestReflective {
   %include { testsl/testsl.tom }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestReflective.class);
+    org.junit.runner.JUnitCore.main(TestReflective.class.getName());
   }
 
   @Test

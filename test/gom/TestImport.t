@@ -38,7 +38,7 @@ public class TestImport {
     is_sort(t) { t instanceof Collection } 
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestImport.class);
+    org.junit.runner.JUnitCore.main(TestImport.class.getName());
   }
 
   @Test

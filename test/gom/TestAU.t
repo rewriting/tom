@@ -56,7 +56,7 @@ public class TestAU {
 //   }
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAU.class);
+    org.junit.runner.JUnitCore.main(TestAU.class.getName());
   }
 
   @Test

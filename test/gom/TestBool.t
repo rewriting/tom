@@ -39,7 +39,7 @@ public class TestBool {
 
   %include { bool/Bool.tom }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestBool.class);
+    org.junit.runner.JUnitCore.main(TestBool.class.getName());
   }
 
   @Test

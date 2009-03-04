@@ -24,7 +24,7 @@ public class TestCollection {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestCollection.class);
+    org.junit.runner.JUnitCore.main(TestCollection.class.getName());
   }
 
   @Test

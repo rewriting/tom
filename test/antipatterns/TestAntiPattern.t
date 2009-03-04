@@ -59,7 +59,7 @@ public class TestAntiPattern {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAntiPattern.class);
+    org.junit.runner.JUnitCore.main(TestAntiPattern.class.getName());
   }
 
   @Before

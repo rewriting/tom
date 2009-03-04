@@ -37,7 +37,7 @@ public class TestStrategy {
   static boolean bool0 = true;
 
   public static void main(String[] args) throws VisitFailure{
-    org.junit.runner.JUnitCore.runClasses(TestStrategy.class);
+    org.junit.runner.JUnitCore.main(TestStrategy.class.getName());
   }
 
   public void setUp() {

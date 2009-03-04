@@ -6,7 +6,7 @@ import tom.library.sl.*;
 
 public class TestAlgebraic {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAlgebraic.class);
+    org.junit.runner.JUnitCore.main(TestAlgebraic.class.getName());
   }
 
   %include { sl.tom }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class TestArrayNonLinear {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestArrayNonLinear.class);
+    org.junit.runner.JUnitCore.main(TestArrayNonLinear.class.getName());
   }
 
 %include { util/ArrayList.tom }

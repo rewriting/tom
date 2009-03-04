@@ -26,7 +26,7 @@ public class TestTomHook {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestTomHook.class);
+    org.junit.runner.JUnitCore.main(TestTomHook.class.getName());
   }
 
   @Test

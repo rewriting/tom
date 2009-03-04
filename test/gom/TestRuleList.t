@@ -38,7 +38,7 @@ public class TestRuleList {
   %include { rulelist/RuleList.tom }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestRuleList.class);
+    org.junit.runner.JUnitCore.main(TestRuleList.class.getName());
   }
 
   @Test

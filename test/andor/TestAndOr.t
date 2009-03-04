@@ -416,7 +416,7 @@ public class TestAndOr {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAndOr.class);
+    org.junit.runner.JUnitCore.main(TestAndOr.class.getName());
   }
 
 }

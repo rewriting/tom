@@ -36,9 +36,9 @@ import org.junit.Test;
 
 public class TestPosition {
 
-	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestPosition.class);
-	}
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(TestPosition.class.getName());
+  }
 
   @Test
   public void testNormalize(){

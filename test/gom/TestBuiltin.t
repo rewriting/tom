@@ -203,7 +203,7 @@ public class TestBuiltin {
   }
 
   public final static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestBuiltin.class);
+    org.junit.runner.JUnitCore.main(TestBuiltin.class.getName());
   }
 
 }

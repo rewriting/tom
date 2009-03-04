@@ -41,7 +41,7 @@ public class TestSLModes {
   %include { testsl/_testsl.tom }
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestSLModes.class);
+    org.junit.runner.JUnitCore.main(TestSLModes.class.getName());
 	}
 
   %strategy R1() extends `Identity() {

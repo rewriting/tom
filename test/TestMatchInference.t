@@ -4,7 +4,7 @@ import testmatchinference.test.types.*;
 
 public class TestMatchInference {
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestMatchInference.class);
+    org.junit.runner.JUnitCore.main(TestMatchInference.class.getName());
 	}
   
 %gom {

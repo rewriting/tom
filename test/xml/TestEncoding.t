@@ -29,7 +29,7 @@ public class TestEncoding {
 
   public static void main(String[] args) {
     level = Level.INFO;
-    org.junit.runner.JUnitCore.runClasses(TestEncoding.class);
+    org.junit.runner.JUnitCore.main(TestEncoding.class.getName());
   }
 
   @Test

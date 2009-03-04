@@ -61,7 +61,7 @@ public class TestReduceAll {
   }
 
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestReduceAll.class);
+    org.junit.runner.JUnitCore.main(TestReduceAll.class.getName());
 	}
 
   @Test

@@ -71,7 +71,7 @@ public class TestVarVarStar {
   }
   
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestVarVarStar.class);
+    org.junit.runner.JUnitCore.main(TestVarVarStar.class.getName());
   }
 
 

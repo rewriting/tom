@@ -21,7 +21,7 @@ public class TestXmlDom {
 
 	public static void main(String[] args) {
     level = Level.INFO;
-    org.junit.runner.JUnitCore.runClasses(TestXmlDom.class);
+    org.junit.runner.JUnitCore.main(TestXmlDom.class.getName());
 	}
 
   @Before

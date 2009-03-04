@@ -80,7 +80,7 @@ public class TestAntiPattern2 {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAntiPattern2.class);
+    org.junit.runner.JUnitCore.main(TestAntiPattern2.class.getName());
   }
 
 }

@@ -41,7 +41,7 @@ public class TestSL {
   private OldBehaviour ob = new OldBehaviour();
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestSL.class);
+    org.junit.runner.JUnitCore.main(TestSL.class.getName());
   }
 
   @Before

@@ -16,7 +16,7 @@ public class TestList {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestList.class);
+    org.junit.runner.JUnitCore.main(TestList.class.getName());
   }
 
   @Test

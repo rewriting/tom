@@ -53,7 +53,7 @@ public class TestRuleCond {
    }
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestRuleCond.class);
+    org.junit.runner.JUnitCore.main(TestRuleCond.class.getName());
   }
 
   @Test

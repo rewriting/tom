@@ -37,7 +37,7 @@ import gom.testpeanorule.peano.types.*;
 public class TestPeanoRule {
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestPeanoRule.class);
+    org.junit.runner.JUnitCore.main(TestPeanoRule.class.getName());
   }
 
   %gom {

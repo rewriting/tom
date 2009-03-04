@@ -11,7 +11,7 @@ public class TestMatch {
   private static ATermFactory factory = SingletonFactory.getInstance();
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestMatch.class);
+    org.junit.runner.JUnitCore.main(TestMatch.class.getName());
   }
 	
   @Before

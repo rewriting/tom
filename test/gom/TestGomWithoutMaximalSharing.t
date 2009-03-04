@@ -42,7 +42,7 @@ public class TestGomWithoutMaximalSharing {
   %include{ sl.tom }
 
   public final static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestGomWithoutMaximalSharing.class);
+    org.junit.runner.JUnitCore.main(TestGomWithoutMaximalSharing.class.getName());
   }
 
   @Test

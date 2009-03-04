@@ -198,7 +198,7 @@ public class TestSublists {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestSublists.class);
+    org.junit.runner.JUnitCore.main(TestSublists.class.getName());
   }
 
 }

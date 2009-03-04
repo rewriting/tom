@@ -2,7 +2,7 @@ import org.junit.Assert;
 
 public class Test {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(Test.class);
+    org.junit.runner.JUnitCore.main(Test.class.getName());
   }
 
 %gom {

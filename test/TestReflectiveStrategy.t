@@ -7,7 +7,7 @@ public class TestReflectiveStrategy {
   %include { sl.tom }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestReflectiveStrategy.class);
+    org.junit.runner.JUnitCore.main(TestReflectiveStrategy.class.getName());
   }
 
   /**

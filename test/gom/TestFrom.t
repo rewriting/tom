@@ -9,7 +9,7 @@ public class TestFrom {
 
   %include { importing/Importing.tom }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestFrom.class );
+    org.junit.runner.JUnitCore.main(TestFrom.class.getName() );
   }
 
   @Test

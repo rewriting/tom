@@ -62,7 +62,7 @@ public class TestDoubleList {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestDoubleList.class);
+    org.junit.runner.JUnitCore.main(TestDoubleList.class.getName());
   }
   
 }

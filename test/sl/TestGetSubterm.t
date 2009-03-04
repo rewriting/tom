@@ -10,7 +10,7 @@ import tom.library.sl.Position;
 
 public class TestGetSubterm {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestGetSubterm.class);
+    org.junit.runner.JUnitCore.main(TestGetSubterm.class.getName());
   }
   
   %include { sl.tom }

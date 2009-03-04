@@ -38,7 +38,7 @@ import gom.dotted.types.*;
 public class TestDotted {
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestDotted.class);
+    org.junit.runner.JUnitCore.main(TestDotted.class.getName());
   }
   %include{ dotted/Dotted.tom }
  

@@ -61,15 +61,15 @@ public class TestAntiPatternAssociative {
       | Equal(x1:String,x2:Term)
       | NEqual(x1:String,x2:Term)
   }
-	
-	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAntiPatternAssociative.class);
-	}
+
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(TestAntiPatternAssociative.class.getName());
+  }
 
   @Before
-	public void setUp() {
-	}
-	
+  public void setUp() {
+  }
+
 	private Result match1(TermList subject) {
 		%match(TermList subject) {
 			concTerm(_*,a(),_*) -> {

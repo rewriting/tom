@@ -137,7 +137,7 @@ public class TestAntiPattern3 {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAntiPattern3.class);
+    org.junit.runner.JUnitCore.main(TestAntiPattern3.class.getName());
   }
 
 }

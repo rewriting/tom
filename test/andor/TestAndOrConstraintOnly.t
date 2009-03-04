@@ -438,7 +438,7 @@ public class TestAndOrConstraintOnly {
     fail();
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestAndOrConstraintOnly.class);
+    org.junit.runner.JUnitCore.main(TestAndOrConstraintOnly.class.getName());
   }
 
 }

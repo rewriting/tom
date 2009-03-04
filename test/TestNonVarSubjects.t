@@ -56,7 +56,7 @@ public class TestNonVarSubjects {
   }  
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestNonVarSubjects.class);
+    org.junit.runner.JUnitCore.main(TestNonVarSubjects.class.getName());
   }
 
 }

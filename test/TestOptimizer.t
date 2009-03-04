@@ -6,7 +6,7 @@ public class TestOptimizer {
 	%include { string.tom }
 	
 	public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestOptimizer.class);
+    org.junit.runner.JUnitCore.main(TestOptimizer.class.getName());
 	}
 
   @Test

@@ -6,7 +6,7 @@ import gom.testrulesortlist.sorted.types.*;
 
 public class TestRuleSortList {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestRuleSortList.class);
+    org.junit.runner.JUnitCore.main(TestRuleSortList.class.getName());
   }
 
   %gom {

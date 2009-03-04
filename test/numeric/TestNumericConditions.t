@@ -209,7 +209,7 @@ public class TestNumericConditions {
 
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestNumericConditions.class);
+    org.junit.runner.JUnitCore.main(TestNumericConditions.class.getName());
   }
 
 }

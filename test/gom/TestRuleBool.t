@@ -38,7 +38,7 @@ public class TestRuleBool {
 
   %include { rulebool/RuleBool.tom }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestRuleBool.class);
+    org.junit.runner.JUnitCore.main(TestRuleBool.class.getName());
   }
 
   @Test

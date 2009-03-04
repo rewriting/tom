@@ -51,7 +51,7 @@ public class TestACU {
     list:ACU() { `aa() }
   }
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestACU.class);
+    org.junit.runner.JUnitCore.main(TestACU.class.getName());
   }
 
   /* First make sure simple test of the AU functionality do pass */

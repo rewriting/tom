@@ -96,6 +96,6 @@ public class TestSortHook {
   }
 
   public final static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestSortHook.class);
+    org.junit.runner.JUnitCore.main(TestSortHook.class.getName());
   }
 }

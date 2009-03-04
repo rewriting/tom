@@ -5,7 +5,7 @@ import testbackquote.thing.types.*;
 
 public class TestBackQuote {
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestBackQuote.class);
+    org.junit.runner.JUnitCore.main(TestBackQuote.class.getName());
   }
 
   %gom {

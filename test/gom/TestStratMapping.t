@@ -16,7 +16,7 @@ public class TestStratMapping {
   }
 
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestStratMapping.class);
+    org.junit.runner.JUnitCore.main(TestStratMapping.class.getName());
   }
 
   %strategy Strat() extends Identity() {

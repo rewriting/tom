@@ -17,6 +17,6 @@ public class TestYingYang {
   }
   
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestYingYang.class);
+    org.junit.runner.JUnitCore.main(TestYingYang.class.getName());
   }
 }

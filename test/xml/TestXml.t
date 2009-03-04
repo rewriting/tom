@@ -6,34 +6,42 @@ import tom.library.adt.tnode.types.*;
 import java.util.*;
 import java.io.StringWriter;
 import java.io.ByteArrayInputStream;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import static org.junit.Assert.*;
 
-public class TestXml extends TestCase {
-  
+public class TestXml {
+
   %include{ adt/tnode/TNode.tom }
-    
-  private XmlTools xtools;
-	private LinkedList elements;
-	private LinkedList reverseElements;
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestXml.class));
-	}
+  private static XmlTools xtools;
+  private LinkedList elements;
+  private LinkedList reverseElements;
+
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(TestXml.class.getName());
+  }
 
   private TNode xml(TNode t) {
     return t;
   }
 
-	protected void setUp() {
+  @BeforeClass
+  public static void setUp() {
     xtools = new XmlTools();
-	}
+  }
 
-	private TNode getXmldoc() {
+  @AfterClass
+  public static void tearDown() {
+    xtools = null;
+  }
+
+  private TNode getXmldoc() {
     TNode t;
-    
-      //t = `XML(<A> <B/> </A>);
-      //t = `XML(<A at1="foo" at2=x at3=dd("text")/>);
+
+    //t = `XML(<A> <B/> </A>);
+    //t = `XML(<A at1="foo" at2=x at3=dd("text")/>);
 
     elements = new LinkedList();
     reverseElements = new LinkedList();
@@ -43,9 +51,9 @@ public class TestXml extends TestCase {
       elements.addLast("" + i);
       reverseElements.addFirst("" + i);
     }
-		return t;
-	}
-  
+    return t;
+  }
+
   TNode addInteger(TNode list,int n) {
     %match(TNode list) {
       <IntegerList _*>(integers*)</IntegerList> -> {
@@ -59,20 +67,21 @@ public class TestXml extends TestCase {
         }
       }
     }
-    return null;    
+    return null;
   }
 
+  @Test
   public void testSortedInteger() {
-		TNode list = getXmldoc();
+    TNode list = getXmldoc();
     %match(TNode list) {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
-				 //if(`s1.compareTo(`s2) > 0) { return false; }
-				 assertFalse("Expects the matched integers to be ordered",
-										 `s1.compareTo(`s2) > 0);
-			 }
-		}
-	}
+         //if(`s1.compareTo(`s2) > 0) { return false; }
+         assertFalse("Expects the matched integers to be ordered",
+                     `s1.compareTo(`s2) > 0);
+      }
+    }
+  }
 
   TNode swapElements(TNode list) {
     %match(TNode list) {
@@ -85,22 +94,24 @@ public class TestXml extends TestCase {
         }
       }
     }
-    return list;    
+    return list;
   }
 
-	public void testSwapElements() {
-		TNode list = getXmldoc();
+  @Test
+  public void testSwapElements() {
+    TNode list = getXmldoc();
     LinkedList res = extractElements(swapElements(list));
     assertEquals("ExtractElement extract elements in order",
-								 reverseElements, res);
+                 reverseElements, res);
   }
 
-	public void testExtractElements() {
-		TNode list = getXmldoc();
-		LinkedList res = extractElements(list);
-		assertEquals("ExtractElement extract elements in order",
-								 elements, res);
-	}
+  @Test
+  public void testExtractElements() {
+    TNode list = getXmldoc();
+    LinkedList res = extractElements(list);
+    assertEquals("ExtractElement extract elements in order",
+                 elements, res);
+  }
 
   public LinkedList extractElements(TNode list) {
     LinkedList res = new LinkedList();
@@ -109,23 +120,24 @@ public class TestXml extends TestCase {
          <(Integer|Int)>(#TEXT(s1))</(Integer|Int)>
       </IntegerList> -> { res.add(`s1); }
     }
-		return res;
+    return res;
   }
-  
+
   public String dd(String x) {
     return x+x;
   }
 
+  @Test
   public void testInOut() {
     TNode node = `xml(
-				<Configuration>
-					<Cellule>
-						<Defaut R1="23" V1="34" B1="45"/>
-						<Selection R="0" V="0" B="255"/>
-						<VolumeSensible R="255" V="0" B="0"/>
-					</Cellule>
-				</Configuration>
-				);
+      <Configuration>
+        <Cellule>
+          <Defaut R1="23" V1="34" B1="45"/>
+          <Selection R="0" V="0" B="255"/>
+          <VolumeSensible R="255" V="0" B="0"/>
+        </Cellule>
+      </Configuration>
+    );
     StringWriter sw = new StringWriter();
     xtools.writeXMLFileFromTNode(sw,node);
     TNode renode = xtools.nodeToTNode(
@@ -135,145 +147,147 @@ public class TestXml extends TestCase {
     assertEquals(node,renode.getDocElem());
   }
 
-	public void testAttributeMatch() {
-		TNode node = `xml(
-				<Configuration>
-					<Cellule>
-						<Defaut R1="23" V1="34" B1="45"/>
-						<Selection R="0" V="0" B="255"/>
-						<VolumeSensible R="255" V="0" B="0"/>
-					</Cellule>
-				</Configuration>
-				);
-		int res = 0;
-		%match(TNode node) {
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut R1=_iR />
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match R"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut V1=_iV />
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match V"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut B1=_iB />
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match B"+a);                  
-				res++;
-			} 
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut B1=_iB R1=_iR></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match BR"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut R1=_iR B1=_iB></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match RB"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut R1=_iR V1=_iV></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match RV"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut V1=_iV R1=_iR></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match VR"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut B1=_iR V1=_iV></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match BV"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut V1=_iV B1=_iR></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match VB"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut B1=_iB R1=_iR V1=_iV></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match BRV"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut B1=_iB V1=_iV R1=_iR></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match BVR"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut V1=_iV R1=_iR B1=_iB></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match VRB"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut V1=_iV B1=_iB R1=_iR></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match VBR"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-					_a @ <Defaut R1=_iR B1=_iB V1=_iV></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match RBV"+a);                  
-				res++;
-			}
-			<Configuration>
-				<Cellule>
-						_a @ <Defaut R1=_iR V1=_iV B1=_iB></Defaut>
-				</Cellule>
-			</Configuration> -> {
-				//System.out.println("Match RVB"+a);                  
-				res++;
-			}
-		}
-		assertEquals(
-			"XML attibute matching should not depend on the order of the attibutes", 
-			res, 15);
-	}
+  @Test
+  public void testAttributeMatch() {
+    TNode node = `xml(
+      <Configuration>
+        <Cellule>
+          <Defaut R1="23" V1="34" B1="45"/>
+          <Selection R="0" V="0" B="255"/>
+          <VolumeSensible R="255" V="0" B="0"/>
+        </Cellule>
+      </Configuration>
+    );
+    int res = 0;
+    %match(TNode node) {
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut R1=_iR />
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match R"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut V1=_iV />
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match V"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut B1=_iB />
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match B"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut B1=_iB R1=_iR></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match BR"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut R1=_iR B1=_iB></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match RB"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut R1=_iR V1=_iV></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match RV"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut V1=_iV R1=_iR></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match VR"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut B1=_iR V1=_iV></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match BV"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut V1=_iV B1=_iR></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match VB"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut B1=_iB R1=_iR V1=_iV></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match BRV"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut B1=_iB V1=_iV R1=_iR></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match BVR"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut V1=_iV R1=_iR B1=_iB></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match VRB"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut V1=_iV B1=_iB R1=_iR></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match VBR"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut R1=_iR B1=_iB V1=_iV></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match RBV"+a);
+        res++;
+      }
+      <Configuration>
+        <Cellule>
+          _a @ <Defaut R1=_iR V1=_iV B1=_iB></Defaut>
+        </Cellule>
+      </Configuration> -> {
+        //System.out.println("Match RVB"+a);
+        res++;
+      }
+    }
+    assertEquals(
+      "XML attibute matching should not depend on the order of the attibutes",
+      res, 15);
+  }
 
-	public void testAnonymousAttributes() {
+  @Test
+  public void testAnonymousAttributes() {
     TNode t = `xml(<A at1="v1" at2="v2"></A>);
     String[] res = new String[4];
     int cpt=0;
@@ -284,7 +298,7 @@ public class TestXml extends TestCase {
       }
     }
 
-		assertEquals("Anonymous attribute name", res[0], "at1");
+    assertEquals("Anonymous attribute name", res[0], "at1");
     assertEquals("Anonymous attribute name", res[1], "v1");
     assertEquals("Anonymous attribute name", res[2], "at2");
     assertEquals("Anonymous attribute name", res[3], "v2");

@@ -51,7 +51,7 @@ public class TestMultiHook {
   }
 
   public final static void main(String[] args) {
-    org.junit.runner.JUnitCore.runClasses(TestMultiHook.class);
+    org.junit.runner.JUnitCore.main(TestMultiHook.class.getName());
   }
 
 }
