@@ -1,9 +1,8 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
-public class Test extends TestCase {
+public class Test {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(Test.class));
+    org.junit.runner.JUnitCore.runClasses(Test.class);
   }
 
 %gom {
@@ -12,11 +11,12 @@ public class Test extends TestCase {
   abstract syntax
 }
 
+  @org.junit.Test
   public void test1() {
     if(true) {
       return ;
     } 
-    fail("should not be there");
+    Assert.fail("should not be there");
   }
 
 }
