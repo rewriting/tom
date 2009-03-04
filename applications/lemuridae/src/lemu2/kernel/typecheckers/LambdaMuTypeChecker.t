@@ -26,7 +26,7 @@ public class LambdaMuTypeChecker {
   public static Prop typeof(LTerm pt, Sequent se) {
     Prop res = _typeof(pt,se);
     if (res == null) {
-      System.out.println(pt);
+      System.out.println(Pretty.pretty(pt));
       System.out.println(Pretty.pretty(se));
       System.out.println();
     }

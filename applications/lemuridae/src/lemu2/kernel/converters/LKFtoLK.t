@@ -27,11 +27,11 @@ public class LKFtoLK {
         %match(pt) {
           foldL(id,FoldLPrem1(n1,pn1,M),n) -> {
             Prop subject = U.`lookup(gamma,n);
-            NamedAx ax = U.`lookup(axioms,id);
+            NamedAx ax = U.`lookup(axioms,id + "_left");
             PropRewriteRule prr = U.`lookup(prs,id);
-            Name axn = strlookup.`f(map,id).some();
+            Name axn = strlookup.`f(map,id + "_left").some();
             %match(prr) {
-              proprrule(_,prule(bound,lhs,rhs)) -> {
+              proprrule(_,prule(bound,lhs,_)) -> {
                 FoSubst subst = Rewriting.`match(subject,lhs);
                 Sequent se1 = `seq(free,lctx(nprop(n1,pn1),gamma*),delta);
                 ProofTerm M1 = `convert(M,prs,axioms,map,se1);
@@ -41,11 +41,11 @@ public class LKFtoLK {
           }
           foldR(id,FoldRPrem1(cn1,pcn1,M),cn) -> {
             Prop subject = U.`lookup(delta,cn);
-            NamedAx ax = U.`lookup(axioms,id);
+            NamedAx ax = U.`lookup(axioms,id + "_right");
             PropRewriteRule prr = U.`lookup(prs,id);
-            Name axn = strlookup.`f(map,id).some();
+            Name axn = strlookup.`f(map,id + "_right").some();
             %match(prr) {
-              proprrule(_,prule(bound,lhs,rhs)) -> {
+              proprrule(_,prule(bound,lhs,_)) -> {
                 FoSubst subst = Rewriting.`match(subject,lhs);
                 Sequent se1 = `seq(free,gamma,rctx(cnprop(cn1,pcn1),delta*));
                 ProofTerm M1 = `convert(M,prs,axioms,map,se1);
@@ -147,16 +147,13 @@ public class LKFtoLK {
         ProofTerm M = `convertLeft(ax11,vs,subst,freshaxn,n,n1,prem);
         return `forallL(ForallLPrem1(freshaxn,ax11,M),ft,axn);
       }
-      and(p_phi@implies(p,phi),phi_p), _ -> {
-        Name freshl = Name.freshName(axn);
-        Name freshr = Name.freshName(axn);
+      implies(p,phi), _ -> {
         CoName ap = CoName.freshCoName("lhs");
         Name xphi = Name.freshName("rhs");
-        ProofTerm M = `implyL(
-            ImplyLPrem1(xphi,phi,U.rename(prem,n1,xphi)),
-            ImplyLPrem2(ap,p,ax(n,ap)),
-            freshl);
-        return `andL(AndLPrem1(freshl,p_phi,freshr,phi_p,M),axn);
+        return `implyL(
+                  ImplyLPrem1(xphi,phi,U.rename(prem,n1,xphi)),
+                  ImplyLPrem2(ap,p,ax(n,ap)),
+                  axn);
       }
     }
     throw new RuntimeException("conversion exception");
@@ -172,16 +169,13 @@ public class LKFtoLK {
         ProofTerm M = `convertRight(ax11,vs,subst,freshaxn,cn,cn1,prem);
         return `forallL(ForallLPrem1(freshaxn,ax11,M),ft,axn);
       }
-      and(p_phi,phi_p@implies(phi,p)), _ -> {
-        Name freshl = Name.freshName(axn);
-        Name freshr = Name.freshName(axn);
+      implies(phi,p), _ -> {
         Name xp = Name.freshName("lhs");
         CoName aphi = CoName.freshCoName("rhs");
-        ProofTerm M = `implyL(
+        return `implyL(
             ImplyLPrem1(xp,p,ax(xp,cn)),
             ImplyLPrem2(aphi,phi,U.reconame(prem,cn1,aphi)),
-            freshr);
-        return `andL(AndLPrem1(freshl,p_phi,freshr,phi_p,M),axn);
+            axn);
       }
     }
     throw new RuntimeException("conversion exception");

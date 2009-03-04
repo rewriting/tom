@@ -16,19 +16,12 @@ public class PRStoTheory {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static NamedAx convert(PropRewriteRule r) {
+  private static Theory convert(PropRewriteRule r) {
     %match(r) {
       proprrule(id,prule(vars,lhs,rhs)) -> {
-        return `namedAx(id,pivect(vars,and(implies(lhs,rhs),implies(rhs,lhs))));
-      }
-    }
-    throw new RuntimeException("non exhaustive patterns");
-  }
+        return `theory(namedAx(id + "_left",pivect(vars,implies(lhs,rhs))),
+                       namedAx(id + "_right",pivect(vars,implies(rhs,lhs))));
 
-  private static Prop convert2(PropRewriteRule r) {
-    %match(r) {
-      proprrule(id,prule(vars,lhs,rhs)) -> {
-        return `pivect(vars,implies(rhs,lhs));
       }
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -37,9 +30,10 @@ public class PRStoTheory {
   public static Theory convert(PropRewriteRules prs) {
     %match(prs) {
       proprrules() -> { return `theory(); }
-      proprrules(r@proprrule(id,_),rs*) -> {
+      proprrules(r,rs*) -> {
+        Theory ax = `convert(r);
         Theory axs = `convert(rs);
-        return `theory(convert(r),axs*);
+        return `theory(ax*,axs*);
       }
     }
     throw new RuntimeException("non exhaustive patterns");

@@ -8,6 +8,47 @@ public class Pretty {
   %include { kernel/proofterms/proofterms.tom } 
   %include { kernel/coc/coc.tom } 
 
+  private static String pr(Name var, Prop prop) {
+    return churchStyle ? %[@var.gethint() + var.getn()@:@pretty(prop)@]% : %[@var@]%;
+  }
+
+  private static String pr(CoName var, Prop prop) {
+    return churchStyle ? %[@var.gethint() + var.getn()@:@pretty(prop)@]% : %[@var@]%;
+  }
+
+  public static String pretty(LTerm t) {
+    %match(t) {
+      lvar(Name(n,i)) -> { return `n + `i; }
+      lam(Lam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
+      flam(FLam(x,u)) -> { return %[\@`x@.@`pretty(u)@]%; }
+      activ(Act(x,ty,u)) -> { return "\u03BC" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
+      lapp(u@(lapp|fapp|lvar)[],v) -> { 
+        return %[@`pretty(u)@ @`pretty(v)@]%; 
+      }
+      lapp(u,v) -> { return %[(@`pretty(u)@) @`pretty(v)@]%; }
+      fapp(u@(lapp|fapp|lvar)[],v) -> { 
+        return %[@`pretty(u)@ @`pretty(v)@]%; 
+      }
+      fapp(u,v) -> { return %[(@`pretty(u)@) @`pretty(v)@]%; }
+      pair(u,v) -> { return %[(@`pretty(u)@,@`pretty(v)@)]%; }
+      proj1(u) -> { return %[fst @`pretty(u)@]%; }
+      proj2(u) -> { return %[snd @`pretty(u)@]%; }
+      caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
+        return %[(case @`pretty(u)@ of (left @`pr(x,px)@) -> @`pretty(v)@ | (right @`pr(y,py)@) -> @`pretty(w)@)]%;
+      }
+      letin(Letin(fx,x,px,u,v)) -> { 
+        return %[(let <@`fx@,@`x@> = @`pretty(u)@ in @`pretty(v)@)]%;
+      }
+      witness(ft,u,p) -> { return %[(<@`pretty(ft)@,@`pretty(u)@>:@`pretty(p)@)]%; }
+      left(u,p) -> { return %[left{@`pretty(p)@} @`pretty(u)@]%; }
+      right(u,p) -> { return %[right{@`pretty(p)@} @`pretty(u)@]%; }
+      passiv(mv,lvar(x)) -> { return %[[@`mv@]@`x@]%; }
+      passiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
+      unit() -> { return "()"; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
   /* raw lambda-mu terms */
 
   private static String pr(String var, RawProp prop) {
