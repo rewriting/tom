@@ -30,91 +30,70 @@
  */
 package gom;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import java.util.Collection;
 import gom.b.u.i.l.t.i.n.builtin.types.*;
 
-public class TestFromMethods extends TestCase {
+@RunWith(Parameterized.class)
+public class TestFromMethods {
 
   %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(suite());
+    org.junit.runner.JUnitCore.runClasses(TestFromMethods.class);
   }
 
-  public static Test suite() {
-    Wrapper[] TESTS = new Wrapper[] {
-      `Char('a'),
-      `Int(21),
-      `Int(java.lang.Integer.MAX_VALUE-2),
-      `Int(java.lang.Integer.MAX_VALUE),
-      `Real(21),
-      `Real((float)20.3),
-      `Double(21),
-      `Double(20.3),
-      `Bool(true()),
-      `Bool(false()),
-      `Long(23),
-      `Long(java.lang.Integer.MAX_VALUE-3),
-      `Long(java.lang.Integer.MAX_VALUE-1),
-      `Long(java.lang.Integer.MAX_VALUE),
-      `Long(java.lang.Long.MAX_VALUE-10),
-      `Long(java.lang.Long.MAX_VALUE-1),
-      `Long(java.lang.Long.MAX_VALUE),
-      `Name("who?"),
-      `Name("\"Hello\""),
-      `Name("\"Hello\tWorld\n print-it\f end\""),
-      `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
-      `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
-      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3))
-    };
-    TestSuite suite = new TestSuite();
-    for (int i = 0; i<TESTS.length;i++) {
-      suite.addTest(new TestFromMethods("testFromString",TESTS[i]));
-      suite.addTest(new TestFromMethods("testFromTerm",TESTS[i]));
-    }
-    return suite;
+  @Parameters
+  public static Collection<Object[]> data() {
+    return java.util.Arrays.asList(new Object[][] {
+      { `Char('a') },
+      { `Int(21) },
+      { `Int(java.lang.Integer.MAX_VALUE-2) },
+      { `Int(java.lang.Integer.MAX_VALUE) },
+      { `Real(21) },
+      { `Real((float)20.3) },
+      { `Double(21) },
+      { `Double(20.3) },
+      { `Bool(true()) },
+      { `Bool(false()) },
+      { `Long(23) },
+      { `Long(java.lang.Integer.MAX_VALUE-3) },
+      { `Long(java.lang.Integer.MAX_VALUE-1) },
+      { `Long(java.lang.Integer.MAX_VALUE) },
+      { `Long(java.lang.Long.MAX_VALUE-10) },
+      { `Long(java.lang.Long.MAX_VALUE-1) },
+      { `Long(java.lang.Long.MAX_VALUE) },
+      { `Name("who?") },
+      { `Name("\"Hello\"") },
+      { `Name("\"Hello\tWorld\n print-it\f end\"") },
+      { `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")) },
+      { `concWrap(Int(1),Int(2),Name("toto"),Name("blop")) },
+      { `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3)) },
+      { `WrapListInt(concInt(1,2,3,4,5,6,7,8,9,0)) },
+      { `WrapListLong(concLong(10000,123455,23445556)) },
+      { `WrapListBool(concBool(true(),false(),true(),false())) },
+      { `WrapListChar(concChar('t','o','m')) },
+    });
   }
 
   private Wrapper testSubject;
-  public TestFromMethods(String method, Wrapper wr) {
-    super(method);
+  public TestFromMethods(Wrapper wr) {
     testSubject = wr; 
   }
 
+  @Test
   public void testFromTerm() {
     Wrapper newObj = Wrapper.fromTerm(testSubject.toATerm());
-    assertEquals(testSubject,newObj);
+    Assert.assertEquals(testSubject,newObj);
   }
 
+  @Test
   public void testFromString() {
     Wrapper newObj = Wrapper.fromString(testSubject.toString());
-    assertEquals(testSubject,newObj);
+    Assert.assertEquals(testSubject,newObj);
   }
-
- public void testListInt() {
-    ListInt l = `concInt(1,2,3,4,5,6,7,8,9,0);
-    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
-    assertEquals(l,Wrapper.fromString(l.toString()));
-  }
-
-  public void testListLong() {
-    ListLong l = `concLong(10000,123455,23445556);
-    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
-    assertEquals(l,Wrapper.fromString(l.toString()));
-  }
-
-  public void testListBool() {
-    ListBool l = `concBool(true(),false(),true(),false());
-    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
-    assertEquals(l,Wrapper.fromString(l.toString()));
-  }
-
-  public void testListChar() {
-    ListChar l = `concChar('t','o','m');
-    assertEquals(l,Wrapper.fromTerm(l.toATerm()));
-    assertEquals(l,Wrapper.fromString(l.toString()));
-  }
-
 }
