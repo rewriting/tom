@@ -33,17 +33,17 @@ package testgen2;
 import testgen2.tinyjava.*;
 import testgen2.tinyjava.types.*;
 import tom.library.sl.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import java.util.*;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
-public class TestLookup extends TestCase {
+public class TestLookup {
 
   %include { util.tom }
   %include { lookup.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestLookup.class));
+    org.junit.runner.JUnitCore.main(TestLookup.class.getName());
   }
 
 
@@ -68,7 +68,8 @@ public class TestLookup extends TestCase {
     }
   }
 
-  public static void test3() {
+  @Test
+  public void test3() {
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
             ClassDecl(Name("A"),Dot(Name("A")),ConcBodyDecl()))));

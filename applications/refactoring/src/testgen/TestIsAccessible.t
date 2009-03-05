@@ -33,20 +33,21 @@ package testgen;
 import testgen.tinyjava.*;
 import testgen.tinyjava.types.*;
 import tom.library.sl.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import java.util.*;
 
-public class TestIsAccessible extends TestCase {
+public class TestIsAccessible {
 
   %include { util.tom }
   %include { lookup.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestIsAccessible.class));
+    org.junit.runner.JUnitCore.main(TestIsAccessible.class.getName());
   }
 
-
+  @Test
   public void test1() {
     Prog p = `Prog(
         PackageNode(Name("a"),ConcClassDecl(
@@ -80,7 +81,7 @@ public class TestIsAccessible extends TestCase {
     } catch ( VisitFailure e) {}
   }
 
-
+  @Test
   public void test2() {
     Prog p = `Prog(
         PackageNode(Name("a"),ConcClassDecl(
@@ -98,6 +99,7 @@ public class TestIsAccessible extends TestCase {
     } catch ( VisitFailure e) {}
   }
 
+  @Test
   public void test3() {
     Prog p = `Prog(
         PackageNode(Name("s"),ConcClassDecl(

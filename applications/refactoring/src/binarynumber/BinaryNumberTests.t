@@ -2,17 +2,18 @@ package binarynumber;
 import binarynumber.binarynumber.*;
 import binarynumber.binarynumber.types.*;
 import tom.library.sl.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class BinaryNumberTests extends TestCase {
+public class BinaryNumberTests {
   double precision = 0.000000000001;
   %include{ binarynumber/BinaryNumber.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(BinaryNumberTests.class));
+    org.junit.runner.JUnitCore.main(BinaryNumberTests.class.getName());
   }
- 
+
+  @Test
   public void testIntegralNumbers() {
     double d;
     // 0
@@ -28,6 +29,7 @@ public class BinaryNumberTests extends TestCase {
     assertEquals(5.0, BinaryNumberValue.value(ast), precision);
   }
   
+  @Test
   public void testRationalNumbers() {
     // 0.1
     BinaryNumber ast = `RationalNumber(SingularBitList(Zero()), SingularBitList(OneB()));

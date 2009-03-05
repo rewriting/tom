@@ -33,20 +33,21 @@ package testgen;
 import testgen.tinyjava.*;
 import testgen.tinyjava.types.*;
 import tom.library.sl.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
-public class TestLookup extends TestCase {
+public class TestLookup {
 
   %include { util.tom }
   %include { lookup.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestLookup.class));
+    org.junit.runner.JUnitCore.main(TestLookup.class.getName());
   }
 
-
+  @Test
   public void test1() {
     Prog p = `Prog(
         PackageNode(Name("a"),ConcClassDecl(
@@ -80,7 +81,7 @@ public class TestLookup extends TestCase {
     } catch ( VisitFailure e) {}
   }
 
-
+  @Test
   public void test2() {
     Prog p = `Prog(
         PackageNode(Name("a"),ConcClassDecl(
@@ -98,6 +99,7 @@ public class TestLookup extends TestCase {
     } catch ( VisitFailure e) {}
   }
 
+  @Test
   public void test3() {
     Prog p = `Prog(
         PackageNode(Name("a"),ConcClassDecl(
@@ -117,6 +119,7 @@ public class TestLookup extends TestCase {
     }
   }
 
+  @Test
   public void test8() {
     Prog p = `Prog(
         PackageNode(Name("s"),ConcClassDecl(
@@ -146,6 +149,7 @@ public class TestLookup extends TestCase {
     }
   }
 
+  @Test
   public void test9() {
     Prog p = `Prog(
         PackageNode(Name("w"),ConcClassDecl(
@@ -164,6 +168,7 @@ public class TestLookup extends TestCase {
     }
   }
 
+  @Test
   public void test10() {
     Prog p = `Prog(
         PackageNode(Name("s"),ConcClassDecl(
@@ -193,6 +198,7 @@ public class TestLookup extends TestCase {
     }
   }
 
+  @Test
   public void test11() {
     Prog p = `Prog(
         PackageNode(Name("w"),ConcClassDecl(
