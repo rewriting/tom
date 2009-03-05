@@ -1,10 +1,10 @@
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 import testlistnonlinear.test.types.*;
 
-public class TestListNonLinear extends TestCase {
+public class TestListNonLinear {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestListNonLinear.class));
+    org.junit.runner.JUnitCore.main(TestListNonLinear.class.getName());
   }
   
 %gom {
@@ -56,11 +56,9 @@ TermRule = termrule(lhs:Term,rh:Term)
 
 TermRuleList = termrulelist(TermRule*)
 
-
-
 }
 
-
+  @Test
   public void test1() {
     IntList l1 = `intlist(1,2,4,5);
     IntList l2 = `intlist(1,2,3,4,5);
@@ -69,9 +67,10 @@ TermRuleList = termrulelist(TermRule*)
         return;
       }
     }
-    fail("ca marche pas");
+    Assert.fail("ca marche pas");
   }
 
+  @Test
   public void test2() {
     IntList l1 = `intlist(1,2,4,5);
     IntList l2 = `intlist(1,2,3,4,5);
@@ -81,9 +80,10 @@ TermRuleList = termrulelist(TermRule*)
         return;
       }
     }
-    fail("ca marche pas");
+    Assert.fail("ca marche pas");
   }
 
+  @Test
   public void test4() {
     IntList l1 = `intlist(1,2,4,5);
     IntList l2 = `intlist(1,2,3,4,5);
@@ -93,11 +93,10 @@ TermRuleList = termrulelist(TermRule*)
         return;
       }
     }
-    fail("ca marche pas");
+    Assert.fail("ca marche pas");
   }
 
-
-
+  @Test
   public void test3() {
 Tree t = `rule("implies L",Conspremisses(rule("axiom",Emptypremisses(),sequent(
 Conscontext(relationAppl(relation("G"),EmptyconcTerm()), /* g1* */
@@ -137,7 +136,6 @@ relationAppl(relation("B"),EmptyconcTerm()))); /* B */
 */
         -> { return; }
     }
-    fail("ca marche pas");
+    Assert.fail("ca marche pas");
   }
 }
-
