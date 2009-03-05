@@ -3,6 +3,8 @@ import aterm.pure.*;
 import java.util.*;
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -10,7 +12,7 @@ import java.util.logging.Level;
 public class TestArray {
 
   private static ATermFactory factory = SingletonFactory.getInstance();
-  
+
   private AFun fzero, fsuc, fplus,ffib;
   public ATermAppl tzero;
   private ArrayList unsortedlist;
@@ -38,7 +40,7 @@ public class TestArray {
     l.add(e);
     return l;
   }
-  
+
   %typeterm E {
     implement           { ATerm }
     is_sort(t) { $t instanceof ATerm }
@@ -49,7 +51,7 @@ public class TestArray {
     is_fsym(t) { ((ATermAppl)$t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
-  
+
   %op E b() {
     is_fsym(t) { ((ATermAppl)$t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
@@ -65,10 +67,13 @@ public class TestArray {
     org.junit.runner.JUnitCore.main(TestArray.class.getName());
   }
 
+  @BeforeClass
+  public static void staticSetUp() {
+    logger = Logger.getLogger(TestArray.class.getName());
+  }
+
   @Before
   public void setUp() {
-    logger = Logger.getLogger(getClass().getName());
-
     ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
     ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
     ATerm tc = factory.makeAppl(factory.makeAFun("c", 0, false));
@@ -92,7 +97,11 @@ public class TestArray {
 
     this.listwithdoubles = `conc(a(),b(),c(),a(),b(),c(),a());
     this.listwithoutdoubles = `conc(a(),b(),c());
+  }
 
+  @AfterClass
+  public static void staticTearDown() {
+    logger = null;
   }
 
   @Test
@@ -152,7 +161,7 @@ public class TestArray {
         }
       }
     }
-    return l; 
+    return l;
   }
 
   public ArrayList double1(ArrayList l) {
@@ -165,7 +174,7 @@ public class TestArray {
         return double1(result);
       }
     }
-    return l; 
+    return l;
   }
 
   public ArrayList sort2(ArrayList l) {
@@ -178,7 +187,7 @@ public class TestArray {
         }
       }
     }
-    return l; 
+    return l;
   }
 
   public ArrayList double2(ArrayList l) {
@@ -187,7 +196,7 @@ public class TestArray {
         return `double2(conc(X1*,X2*,x,X3*));
       }
     }
-    return l; 
+    return l;
   }
 
 
@@ -195,7 +204,7 @@ public class TestArray {
     %match(L l) {
       conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
     }
-    return l; 
+    return l;
   }
 
   public ArrayList double5(ArrayList l) {
@@ -204,7 +213,7 @@ public class TestArray {
       conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
     }
-    return l; 
+    return l;
   }
 
   @Test
