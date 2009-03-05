@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package antipattern.nodisinufication;
+package antipattern.nodisunification;
 
 import aterm.*;
 import aterm.pure.*;
