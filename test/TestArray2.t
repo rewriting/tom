@@ -1,10 +1,12 @@
 import java.util.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-public class TestArray2 extends TestCase {
+public class TestArray2 {
   private static Logger logger;
   private static Level level = Level.FINE;
 
@@ -50,13 +52,20 @@ public class TestArray2 extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestArray2.class));
+    org.junit.runner.JUnitCore.main(TestArray2.class.getName());
   }
 
-  protected void setUp() {
-    logger = Logger.getLogger(getClass().getName());
+  @BeforeClass
+  public static void setUp() {
+    logger = Logger.getLogger(TestArray2.class.getName());
   }
 
+  @AfterClass
+  public static void tearDown() {
+    logger = null;
+  }
+
+  @Test
   public void testVariableStar1() {
     int nbSol = 0;
     List l =  `conc(ListElement(conc(a(),b())),a(),b());
@@ -67,7 +76,7 @@ public class TestArray2 extends TestCase {
             "R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
       }
     }
-    assertTrue("TestVariableStar1",nbSol==6);
+    Assert.assertTrue("TestVariableStar1",nbSol==6);
   }
 
   private static class Element {
@@ -89,5 +98,4 @@ public class TestArray2 extends TestCase {
       }
     }
   }
-
 }
