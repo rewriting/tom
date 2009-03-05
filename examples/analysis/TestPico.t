@@ -31,10 +31,10 @@ package analysis;
 import analysis.testpico.term.types.*;
 import tom.library.sl.VisitFailure;
 import java.util.*;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-public class TestPico extends TestCase {
+public class TestPico {
 
   %include { sl.tom }
 
@@ -102,6 +102,7 @@ public class TestPico extends TestCase {
    throw new RuntimeException("cannot translate into cfg this expression "+ast);
   }
 
+  @Test
   public void testAstToCfg() {
 
     Expr p1 = `Seq(Let("a",Cst(1), Print(Var("a"))));
@@ -118,7 +119,7 @@ public class TestPico extends TestCase {
   }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPico.class));
+    org.junit.runner.JUnitCore.main(TestPico.class.getName());
   }
 
 }
