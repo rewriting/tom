@@ -29,24 +29,25 @@
 
 package addressbook;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
 
-import aterm.pure.*;
 import addressbook.data.*;
 import addressbook.data.types.*;
 
 import java.util.Iterator;
 import java.util.HashSet;
 
-public class TestAddressBook extends TestCase {
+public class TestAddressBook {
   private AddressBook1 test;
   private HashSet book;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAddressBook.class));
+    org.junit.runner.JUnitCore.main(TestAddressBook.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new AddressBook1();
     book = new HashSet();
@@ -55,6 +56,7 @@ public class TestAddressBook extends TestCase {
 
   %include { data/Data.tom }
 
+  @Test
   public void testBirthdate() {
     Iterator it = book.iterator();
     while(it.hasNext()) {
@@ -62,18 +64,18 @@ public class TestAddressBook extends TestCase {
       Date d = p.getbirthdate();
       %match(p, d) {
         person(_, _ ,date(_,month1,day1)), date(_,month2,day2) -> {
-           assertTrue((`month1==`month2) && (`day1==`day2));
+           Assert.assertTrue((`month1==`month2) && (`day1==`day2));
          }
       }
     }
   }
 
+  @Test
   public void testAddressBook2() {
-    PersonList book = AddressBook2.generateBook();
+    PersonList personList = AddressBook2.generateBook();
     Date today = `date(2003,3,27);
-    String name = AddressBook2.happyBirthday(book,today);
-    assertNotNull(name);
-    assertEquals("John",name);
+    String name = AddressBook2.happyBirthday(personList,today);
+    Assert.assertNotNull(name);
+    Assert.assertEquals("John",name);
   }
-
 }
