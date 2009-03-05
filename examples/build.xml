@@ -43,6 +43,7 @@
     <fail unless="example">
       Please define the "example" to build
     </fail>
+    <echo>Building example: ${example}</echo>
     <subant target="build">
       <filelist dir=".">
         <file name="${example}/build.xml"/>
