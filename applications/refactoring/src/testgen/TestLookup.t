@@ -56,13 +56,13 @@ public class TestLookup extends TestCase {
         PackageNode(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
-    Position pos_A = new Position(new int[]{1, 2, 1, 2});
-    Position pos_B = new Position(new int[]{2, 2, 1, 2});
-    Position pos_C = new Position(new int[]{1, 2, 1, 3, 1, 1, 2});
-    Position pos_D = new Position(new int[]{1, 2, 1, 3, 2, 1, 1, 2});
+    Position pos_A = Position.makeFromArray(new int[]{1, 2, 1, 2});
+    Position pos_B = Position.makeFromArray(new int[]{2, 2, 1, 2});
+    Position pos_C = Position.makeFromArray(new int[]{1, 2, 1, 3, 1, 1, 2});
+    Position pos_D = Position.makeFromArray(new int[]{1, 2, 1, 3, 2, 1, 1, 2});
 
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_A.getOmega(`LookupClassDecl(pos)).visit(p);
       assertEquals(pos.value.getSubterm().visit(p),`ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()));
       pos_C.getOmega(`LookupClassDecl(pos)).visit(p);
@@ -74,7 +74,7 @@ public class TestLookup extends TestCase {
     }
 
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_B.getOmega(`LookupClassDecl(pos)).visit(p);
       fail();
     } catch ( VisitFailure e) {}
@@ -90,9 +90,9 @@ public class TestLookup extends TestCase {
         PackageNode(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
-    Position pos_A = new Position(new int[]{1, 2, 1, 2});
+    Position pos_A = Position.makeFromArray(new int[]{1, 2, 1, 2});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_A.getOmega(`LookupClassDecl(pos)).visit(p);
       fail();
     } catch ( VisitFailure e) {}
@@ -107,9 +107,9 @@ public class TestLookup extends TestCase {
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()))),
         PackageNode(Name("b"),ConcClassDecl(
             ClassDecl(Name("C"),Dot(Name("Object")),ConcBodyDecl()))));
-    Position pos_x = new Position(new int[]{1, 2, 1, 3, 2, 1, 1, 3, 1});
+    Position pos_x = Position.makeFromArray(new int[]{1, 2, 1, 3, 2, 1, 1, 3, 1});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       `pos_x.getOmega(`_FieldDecl(LookupClassDecl(pos),Identity(),Identity())).visit(p);
       assertEquals(pos.value.getSubterm().visit(p),`ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()));
     } catch ( VisitFailure e) {
@@ -137,9 +137,9 @@ public class TestLookup extends TestCase {
                 MemberClassDecl(ClassDecl(Name("r"),Dot(Name("v")),ConcBodyDecl(
                       FieldDecl(Undefined(),Name("e"),Undefined())))),
                 Initializer(Block(Block(LocalVariableDecl(Undefined(),Name("v"),Undefined())))))))));
-    Position pos_v = new Position(new int[]{2, 1, 2, 2, 1, 2});
+    Position pos_v = Position.makeFromArray(new int[]{2, 1, 2, 2, 1, 2});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_v.getOmega(`LookupClassDecl(pos)).visit(p);
     } catch ( VisitFailure e) {
       fail();
@@ -155,9 +155,9 @@ public class TestLookup extends TestCase {
             ClassDecl(Name("w"),Dot(Name("Object")),ConcBodyDecl(
                 MemberClassDecl(ClassDecl(Name("k"),Dot(Name("w"),Name("k")),ConcBodyDecl())))))));
 
-    Position pos_iwk = new Position(new int[]{2, 1, 2, 1, 3, 1, 1, 2});
+    Position pos_iwk = Position.makeFromArray(new int[]{2, 1, 2, 1, 3, 1, 1, 2});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_iwk.getOmega(`LookupClassDecl(pos)).visit(p);
     } catch ( VisitFailure e) {
       fail();
@@ -184,9 +184,9 @@ public class TestLookup extends TestCase {
                 MemberClassDecl(ClassDecl(Name("r"),Dot(Name("v")),ConcBodyDecl(
                       FieldDecl(Undefined(),Name("e"),Undefined())))),
                 Initializer(Block(Block(LocalVariableDecl(Undefined(),Name("v"),Undefined())))))))));
-    Position pos_v = new Position(new int[]{2, 1, 2, 2, 1, 2});
+    Position pos_v = Position.makeFromArray(new int[]{2, 1, 2, 2, 1, 2});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_v.getOmega(`LookupClassDecl(pos)).visit(p);
     } catch ( VisitFailure e) {
       fail();
@@ -202,9 +202,9 @@ public class TestLookup extends TestCase {
             ClassDecl(Name("w"),Dot(Name("Object")),ConcBodyDecl(
                 MemberClassDecl(ClassDecl(Name("k"),Dot(Name("w"),Name("k")),ConcBodyDecl())))))));
 
-    Position pos_iwk = new Position(new int[]{2, 1, 2, 1, 3, 1, 1, 2});
+    Position pos_iwk = Position.makeFromArray(new int[]{2, 1, 2, 1, 3, 1, 1, 2});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_iwk.getOmega(`LookupClassDecl(pos)).visit(p);
     } catch ( VisitFailure e) {
       fail();

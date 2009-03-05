@@ -203,7 +203,7 @@ public static Strategy makeLookupAllDecls(final PositionWrapper pos, Strategy s)
 }
 
 
-static PositionWrapper root = new PositionWrapper(new Position());
+static PositionWrapper root = new PositionWrapper(Position.make());
 
 public static Strategy makeLookupAllPackages(final PositionWrapper pos, Strategy s) {
   return new debugger.Decorator(

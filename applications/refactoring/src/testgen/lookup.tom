@@ -177,7 +177,7 @@
 }
 
 
-static final PositionWrapper root = new PositionWrapper(new Position());
+static final PositionWrapper root = new PositionWrapper(Position.make());
 
 %op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `ApplyAtPosition(root,_Prog(Sequence(Debug("lookup Package Node"),s))) }

@@ -278,7 +278,7 @@ public class Generator {
             Name superclassname = type.getComposedName();
             if (undefinedtypes.contains(t) & !set.contains(index) & ! isHiddenBy(superclassname,t.getComposedName())) {
               try {
-                PositionWrapper res = new PositionWrapper(new Position());
+                PositionWrapper res = new PositionWrapper(Position.make());
                 TypeWrapper wrapper_t = new TypeWrapper(t);
                 System.out.println("begin of try to access "+superclassname+" from "+t);
                 //check if the superclassname can be found with lookup and then that the found declaration is a top-level class (not an inner class that hides this top-level class)
@@ -427,7 +427,7 @@ public class Generator {
         NameWrapper currenttype = new NameWrapper();
         currenttype.value = `type;
         accessibleFieldsOrVariables.clear();
-        PositionWrapper currenttypedecl = new PositionWrapper(new Position());
+        PositionWrapper currenttypedecl = new PositionWrapper(Position.make());
         if (! `type.equals(`Dot(Name("Object")))) {
           `_FieldDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
         }
@@ -468,7 +468,7 @@ public class Generator {
         NameWrapper currenttype = new NameWrapper();
         currenttype.value = `type;
         accessibleFieldsOrVariables.clear();
-        PositionWrapper currenttypedecl = new PositionWrapper(new Position());
+        PositionWrapper currenttypedecl = new PositionWrapper(Position.make());
         if (! `type.equals(`Dot(Name("Object")))) {
           `_LocalVariableDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
         }       
@@ -592,7 +592,7 @@ public class Generator {
               Iterator iter = accessibleNames.iterator();
               for (int i=0;i<index;i++) { iter.next(); }
               Name superclassname = (Name) iter.next();
-              PositionWrapper res = new PositionWrapper(new Position());
+              PositionWrapper res = new PositionWrapper(Position.make());
               System.out.println("try to lookup "+getEnvironment().getSubject());
               try {
                 //getEnvironment().setSubject(`c.setsuper(superclassname));
@@ -648,7 +648,7 @@ public class Generator {
         Name searchedname = name.value;
         %match(searchedname) {
           Dot(Name(name)) -> {
-            PositionWrapper pos = new PositionWrapper(new Position());
+            PositionWrapper pos = new PositionWrapper(Position.make());
             return (ClassDecl) `IfThenElse(LookupAllMembers(pos,FindName(pos,name)),Fail(),Identity()).visit(getEnvironment());
           }
         }
@@ -742,7 +742,7 @@ public class Generator {
       FieldDecl[FieldType=fieldtype,name=name] -> {
         if (`fieldtype.equals(typename.value)) {
           //verify that the type declaration is the same
-          PositionWrapper res = new PositionWrapper(new Position());
+          PositionWrapper res = new PositionWrapper(Position.make());
           if(! `fieldtype.equals(`Dot(Name("Object")))) {
             `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
             if(res.value.equals(typedecl.value)) {
@@ -759,7 +759,7 @@ public class Generator {
         if (`vartype.equals(typename.value)) {
           if(! `vartype.equals(`Dot(Name("Object")))) {
             //verify that the type declaration is the same
-            PositionWrapper res = new PositionWrapper(new Position());
+            PositionWrapper res = new PositionWrapper(Position.make());
             `_LocalVariableDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
             if(res.value.equals(typedecl.value)) {
               accessibleFieldsOrVariables.add(`name);
@@ -776,7 +776,7 @@ public class Generator {
   %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
     visit Name {
       n -> {
-        PositionWrapper res = new PositionWrapper(new Position());
+        PositionWrapper res = new PositionWrapper(Position.make());
         System.out.println("try to find the super-class "+`n);
         `IfThenElse(LookupClassDecl(res),
             Sequence(

@@ -56,13 +56,13 @@ public class TestIsAccessible extends TestCase {
         PackageNode(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
-    Position pos_A = new Position(new int[]{1, 2, 1});
-    Position pos_B = new Position(new int[]{2, 2, 1});
-    Position pos_C = new Position(new int[]{1, 2, 1, 3, 1, 1});
-    Position pos_D = new Position(new int[]{1, 2, 1, 3, 2, 1, 1});
+    Position pos_A = Position.makeFromArray(new int[]{1, 2, 1});
+    Position pos_B = Position.makeFromArray(new int[]{2, 2, 1});
+    Position pos_C = Position.makeFromArray(new int[]{1, 2, 1, 3, 1, 1});
+    Position pos_D = Position.makeFromArray(new int[]{1, 2, 1, 3, 2, 1, 1});
 
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_A.getOmega(`IsAccessibleFromClassDecl(Dot(Name("b"),Name("B")),pos)).visit(p);
       assertEquals(pos.value.getSubterm().visit(p),`ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()));
       pos_C.getOmega(`IsAccessibleFromClassDecl(Dot(Name("b"),Name("B")),pos)).visit(p);
@@ -74,7 +74,7 @@ public class TestIsAccessible extends TestCase {
     }
 
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_B.getOmega(`IsAccessibleFromClassDecl(Dot(Name("Object")),pos)).visit(p);
       fail();
     } catch ( VisitFailure e) {}
@@ -90,9 +90,9 @@ public class TestIsAccessible extends TestCase {
         PackageNode(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
-    Position pos_A = new Position(new int[]{1, 2, 1});
+    Position pos_A = Position.makeFromArray(new int[]{1, 2, 1});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_A.getOmega(`IsAccessibleFromClassDecl(Dot(Name("b"),Name("B")),pos)).visit(p);
       fail();
     } catch ( VisitFailure e) {}
@@ -118,9 +118,9 @@ public class TestIsAccessible extends TestCase {
                 MemberClassDecl(ClassDecl(Name("r"),Dot(Name("v")),ConcBodyDecl(
                       FieldDecl(Undefined(),Name("e"),Undefined())))),
                 Initializer(Block(Block(LocalVariableDecl(Undefined(),Name("v"),Undefined())))))))));
-    Position pos_v = new Position(new int[]{2, 1, 2, 2, 1});
+    Position pos_v = Position.makeFromArray(new int[]{2, 1, 2, 2, 1});
     try {
-      PositionWrapper pos = new PositionWrapper(new Position());
+      PositionWrapper pos = new PositionWrapper(Position.make());
       pos_v.getOmega(`IsAccessibleFromClassDecl(Dot(Name("s"),Name("z")),pos)).visit(p);
     } catch ( VisitFailure e) {
       fail();

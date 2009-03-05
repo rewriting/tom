@@ -376,7 +376,7 @@ public class Generator {
             for (int i=0;i<index;i++) { iter.next(); }
             Name superclassname = (Name) iter.next();
             getEnvironment().setSubject(`c.setsuper(superclassname));
-            PositionWrapper res = new PositionWrapper(new Position());
+            PositionWrapper res = new PositionWrapper(Position.make());
             getEnvironment().down(2);
             System.out.println("try to lookup "+getEnvironment().getSubject());
             try {
@@ -488,7 +488,7 @@ public class Generator {
   %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
     visit Name {
       n -> {
-        PositionWrapper res = new PositionWrapper(new Position());
+        PositionWrapper res = new PositionWrapper(Position.make());
         System.out.println("try to find the super-class "+`n);
         `Try(Lookup(res)).visit(getEnvironment());
         System.out.println(`ApplyAtPosition(res,Print()).visit(getEnvironment()));
@@ -521,7 +521,7 @@ public class Generator {
         System.out.println("In the class "+`decl.getname());
         System.out.println("Try to find the super-class "+`name);
         getEnvironment().down(2);
-        PositionWrapper pos = new PositionWrapper(new Position());
+        PositionWrapper pos = new PositionWrapper(Position.make());
         try {
           `Lookup(pos).visit(getEnvironment());
           System.out.println("not found");
