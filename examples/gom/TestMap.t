@@ -28,8 +28,8 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.*;
 
@@ -37,7 +37,7 @@ import gom.elist.types.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
 
-public class TestMap extends TestCase {
+public class TestMap {
 
   private static int cnt;
   %include { elist/Elist.tom }
@@ -46,6 +46,7 @@ public class TestMap extends TestCase {
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
 
+  @Test
   public void testMap() {
     Elist subject = `Cons(a(),Cons(b(),Cons(b(),Cons(c(),Nil()))));
     Collection abag = new HashSet();
@@ -70,6 +71,7 @@ public class TestMap extends TestCase {
     }
   }
 
+  @Test
   public void testBuiltin() {
     Elist subject = 
       `Cons(a(),
@@ -93,6 +95,7 @@ public class TestMap extends TestCase {
     assertEquals(2,cbag.size());
   }
 
+  @Test
   public void testCut() {
     E subject = `f(f(a(),2,b()),4,f(f(c(),2,a()),1,g(b(),5,f(a(),3,f(b(),6,a())))));
     Collection abag = new HashSet();
@@ -114,6 +117,7 @@ public class TestMap extends TestCase {
     assertEquals("count c",0,cbag.size());
   }
 
+  @Test
   public void testMatch() {
     E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
     Strategy match = `_f(_f(_a(),Identity(),_b()),Identity(),_f(_c(),Identity(),_d()));
@@ -127,6 +131,7 @@ public class TestMap extends TestCase {
     assertTrue("The strategie pattern should match",state);
   }
 
+  @Test
   public void testMatchFailure() {
     E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
     Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_c()));
@@ -140,6 +145,7 @@ public class TestMap extends TestCase {
     assertFalse("The strategie pattern not have matched",state);
   }
 
+  @Test
   public void testReplace() {
     Elist subject = 
       `Cons(a(),
@@ -172,6 +178,7 @@ public class TestMap extends TestCase {
     assertEquals(1,cbag.size());
   }
 
+  @Test
   public void testRewrite() {
     Elist subject = 
       `Cons(a(),
@@ -197,6 +204,7 @@ public class TestMap extends TestCase {
         subject);
   }
 
+  @Test
   public void testInnermost() {
     E subject =
       `f(
@@ -224,6 +232,7 @@ public class TestMap extends TestCase {
     assertEquals(`a(),subject);
   }
 
+  @Test
   public void testMake_Strat() {
     Strategy builder = `Make_f(Make_a(),2,Make_a());
     try{
@@ -244,6 +253,7 @@ public class TestMap extends TestCase {
     }
   }
 
+  @Test
   public void testRule() {
     E subject =
       `f(
@@ -273,6 +283,7 @@ public class TestMap extends TestCase {
     assertEquals(`a(),subject);
   }
 
+  @Test
   public void testVariadicMap() {
     VElist subject = `conc(a(),b(),b(),f(a(),0,b()),c());
     Collection abag = new HashSet();
@@ -288,6 +299,6 @@ public class TestMap extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestMap.class));
+    org.junit.runner.JUnitCore.main(TestMap.class.getName());
   }
 }

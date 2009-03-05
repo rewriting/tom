@@ -28,8 +28,8 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
 import tom.library.sl.*;
 
@@ -37,10 +37,10 @@ import java.util.*;
 import gom.rond.types.*;
 import gom.rond.*;
 
-public class TestCarre extends TestCase {
+public class TestCarre {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestCarre.class));
+    org.junit.runner.JUnitCore.main(TestCarre.class.getName());
   }
 
   %include { java/util/types/ArrayList.tom }
@@ -52,7 +52,7 @@ public class TestCarre extends TestCase {
     is_sort(t) { $t instanceof Carre }
     equals(t1,t2) { $t1.equals($t2) }
   }
-  
+
   %op Carre Carre(r1:Rond, r2:Rond) {
     is_fsym(t) { $t instanceof Carre }
     get_slot(r1, t) { $t.r1 }
@@ -60,18 +60,19 @@ public class TestCarre extends TestCase {
     make(t0, t1) { new Carre($t0, $t1)}
   }
 
+  @Test
   public void testPrint() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
     try {
       `BottomUp(Print(list)).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      Assert.fail("catched VisitFailure");
     }
     // This is not really a robust way to test
-    assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
+    Assert.assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
   }
-  
+
   %strategy Print(list:ArrayList) extends `Identity() {
     visit Point {
       x -> {
@@ -81,17 +82,18 @@ public class TestCarre extends TestCase {
     }
   }
 
+  @Test
   public void testShowCarre() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
     try {
       `BottomUp(ShowCarre(list)).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      Assert.fail("catched VisitFailure");
     }
-    assertEquals("[Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14)))]",list.toString());
+    Assert.assertEquals("[Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14)))]",list.toString());
   }
-  
+
   %strategy ShowCarre(list:ArrayList) extends `Identity() {
     visit Carre {
       arg@Carre(l,r) -> {
@@ -101,6 +103,7 @@ public class TestCarre extends TestCase {
     }
   }
 
+  @Test
   public void testCombin() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
@@ -110,9 +113,8 @@ public class TestCarre extends TestCase {
       `BottomUp(comb).visitLight(subject, new LocalIntrospector());
       `TopDown(comb).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      Assert.fail("catched VisitFailure");
     }
-    assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
+    Assert.assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
   }
-
 }

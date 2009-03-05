@@ -28,22 +28,25 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
 
-public class TestPeanoGom extends TestCase {
-	private PeanoGom test;
+public class TestPeanoGom {
+  private PeanoGom test;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPeanoGom.class));
+    org.junit.runner.JUnitCore.main(TestPeanoGom.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new PeanoGom();
   }
-	
-	public void testfib() {
-		assertEquals("fib 5 is 8",
-								 test.getEight(),test.getFib(test.getFive()));
-	}
+
+  @Test
+  public void testfib() {
+    Assert.assertEquals("fib 5 is 8",
+    test.getEight(),test.getFib(test.getFive()));
+  }
 }

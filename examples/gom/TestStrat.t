@@ -28,14 +28,14 @@
  */
 package gom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
 import tom.library.sl.*;
 
 import gom.vlist.types.*;
 
-public class TestStrat extends TestCase {
+public class TestStrat {
   private static int max = 4;
 
   %include { sl.tom }
@@ -50,11 +50,13 @@ public class TestStrat extends TestCase {
     }
   }
 
+  @Test
   public void testToString() {
     VList subject = genere(max);
-    assertEquals("conc(4,3,2)",subject.toString());
+    Assert.assertEquals("conc(4,3,2)",subject.toString());
   }
 
+  @Test
   public void testOncebottomUp() {
     VList subject = genere(max);
     Strategy rule = new RewriteSystem();
@@ -62,11 +64,12 @@ public class TestStrat extends TestCase {
     try {
       result = (VList) `OnceBottomUp(rule).visit(subject);
     } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      Assert.fail("catched VisitFailure");
     }
-    assertEquals(result.toString(),"conc(4,3,3)");
+    Assert.assertEquals(result.toString(),"conc(4,3,3)");
   }
 
+  @Test
   public void testBottomUp() {
     VList subject = genere(max);
     Strategy rule = new RewriteSystem();
@@ -74,13 +77,13 @@ public class TestStrat extends TestCase {
     try {
       result = (VList) `BottomUp(Try(rule)).visit(subject);
     } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      Assert.fail("catched VisitFailure");
     }
-    assertEquals("conc(5,4,3)",result.toString());
+    Assert.assertEquals("conc(5,4,3)",result.toString());
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestStrat.class));
+    org.junit.runner.JUnitCore.main(TestStrat.class.getName());
   }
 
   class RewriteSystem extends tom.library.sl.BasicStrategy {
