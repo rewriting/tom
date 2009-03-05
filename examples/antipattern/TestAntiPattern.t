@@ -29,10 +29,9 @@
 
 package antipattern;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import aterm.pure.*;
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 import java.util.Iterator;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ import antipattern.baralgo.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-public class TestAntiPattern extends TestCase {
+public class TestAntiPattern {
 	
 	private Matching4 testM4;	
 	private Tools tools;
@@ -50,14 +49,16 @@ public class TestAntiPattern extends TestCase {
 	%include{ term/Term.tom }
 	
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestAntiPattern.class));
+		org.junit.runner.JUnitCore.main(TestAntiPattern.class.getName());
 	}
 	
+	@Before
 	public void setUp() {
 		testM4 = new Matching4();
 		tools = new Tools();
 	}
 	
+	@Test
 	public void testMatching4_1() {		
 		
 		System.out.println("Simple match");
@@ -75,6 +76,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
+	@Test
 	public void testMatching4_2() {
 		
 		System.out.println("match(f(a,anti(b))");
@@ -92,6 +94,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
+	@Test
 	public void testMatching4_3() {
 
 		System.out.println("match(anti(f(a,anti(b)))");
@@ -118,6 +121,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
+	@Test
 	public void testMatching4_4() {
 		
 		System.out.println("match(f(X,X), f(a,a))");
@@ -129,6 +133,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
+	@Test
 	public void testMatching4_5() {
 		
 		System.out.println("match(anti(f(X,X))");
@@ -143,6 +148,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
+	@Test
 	public void testMatching4_6() {
 		
 		System.out.println("match(f(X,anti(g(X)))");
@@ -160,6 +166,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
+	@Test
 	public void testMatching4_7() {
 		
 		System.out.println("match(anti(f(X,anti(g(X))))");
@@ -186,6 +193,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
+	@Test
 	public void testMatching4_8() {
 		
 		System.out.println("match(f(X,anti(X))");
@@ -197,6 +205,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `Match(Variable("X"),Appl("a",concTerm())));
 	}
 	
+	@Test
 	public void testMatching4_9() {
 
 		System.out.println("match(f(anti(g(X)),anti(g(X)))");
@@ -208,6 +217,7 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
+	@Test
 	public void testMatching4_10() {
 		
 		System.out.println("match(f(anti(X),anti(X))");
