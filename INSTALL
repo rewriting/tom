@@ -72,11 +72,16 @@ to do:
   do
     TOM_LIB="$TOM_LIB:$i"
   done
+  for i in "${TOM_HOME}"/lib/tools/*.jar
+  do
+    TOM_LIB="$TOM_LIB:$i"
+  done
   export CLASSPATH=${TOM_LIB}:${CLASSPATH}
 
 (csh)
-  set TOM_LIB=`echo ${TOM_HOME}/lib/runtime/*.jar | tr ' ' ':'`
-  setenv CLASSPATH ${TOM_LIB}:${CLASSPATH}
+  set TOMRUNTIMECLASSPATH=`echo ${TOM_HOME}/lib/runtime/*.jar | tr ' ' ':'`
+  set TOMTOOLSCLASSPATH=`echo ${TOM_HOME}/lib/tools/*.jar | tr ' ' ':'`
+  setenv CLASSPATH ${TOMRUNTIMECLASSPATH}:${TOMTOOLSCLASSPATH}:${CLASSPATH}
 
 (windows)
   The TOM_LIB variable is automatically set by the script "tom.bat" to contain
