@@ -1,69 +1,46 @@
 import aterm.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import aterm.pure.*;
 
-public class TestList2 extends GenericTest {
+import org.junit.Test;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import static org.junit.Assert.*;
+import java.util.Collection;
+import java.util.Arrays;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+@RunWith(Suite.class)
+@SuiteClasses({
+    TestList2.Match1.class,
+    TestList2.Match2.class,
+    TestList2.Match3.class,
+    TestList2.Match45.class,
+    TestList2.Match6.class
+    })
+public class TestList2 {
   private static ATerm ok,fail;
   private static final ATermFactory factory = new PureFactory(16);
-  private static final Object[][] TESTS = new Object[][]{
-    {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(a)]"),factory.parse("pattern1")},
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[a,b,f(a)]"),factory.parse("pattern2")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[a,f(a),b,f(b)]"),factory.parse("pattern3")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[a,f(a),f(b)]"),factory.parse("pattern3")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(b)]"),factory.parse("pattern3")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[a,f(a),b,f(b),c]"),factory.parse("pattern4")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[a,f(a),f(b),c]"),factory.parse("pattern4")} ,     
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(b),c]"),factory.parse("pattern4")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(b),f(b)]"),factory.parse("pattern5")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(b),f(b),c]"),factory.parse("pattern5")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(b),a,f(b)]"),factory.parse("pattern5")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(b),a,f(b),c]"),factory.parse("pattern5")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(c),f(b)]"),factory.parse("pattern6")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(c),a,f(c)]"),factory.parse("fail")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(c),a,f(c),f(c)]"),factory.parse("pattern6")} ,
-      {"match1",new Integer(1),"aterm.ATerm",factory.parse("[]"),factory.parse("pattern7")}, 
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("h(a,l([f(a)]))"),factory.parse("pattern1")},
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("h(l([f(a)]),a)"),factory.parse("pattern2")},
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("h(l([a,b,a,b]),a)"),factory.parse("pattern3")},
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("h(l([a,b,a,b]),l([a,a,b,a]))"),factory.parse("fail"  )  },     
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("h(l([a,b,a,b]),l([a,a,b,a,b]))"),factory.parse("pattern4")},
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("l([b,b,l([a]),a,l([a,c]),b,c])"),factory.parse("fail" )   },     
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("l([a,b,l([a]),a,l([a,c]),b,c])"),factory.parse("pattern5")},
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("l([a,b,l([c]),a,b,l([a,c]),b,c])"),factory.parse("fail"  )  },         
-      {"match2",new Integer(1),"aterm.ATerm",factory.parse("l([a,b,l([c]),a,c,l([a,c]),b,c])"),factory.parse("pattern5")},
-      {"match3",new Integer(1),"aterm.ATerm",factory.parse("l([f(a)])"),factory.parse("pattern1")},
-      {"match3",new Integer(1),"aterm.ATerm",factory.parse("l([f(a),f(b),f(a),f(c)])"),factory.parse("pattern2")},
-      {"match3",new Integer(1),"aterm.ATerm",factory.parse("l([g(f(a)),f(b),g(f(a)),f(c)])"),factory.parse("pattern3")},
-      {"match4",new Integer(1),"aterm.ATerm",factory.parse("[a,b]"),new Integer(6)},
-      {"match5",new Integer(1),"aterm.ATerm",factory.parse("[l([a,b]),a,b]"),new Integer(6)},
-      {"match6",new Integer(1),"aterm.ATerm",factory.parse("[]"), factory.parse("fail")},
-      {"match6",new Integer(1),"aterm.ATerm",factory.parse("[f(a)]"),factory.parse("ok")},
-      {"match6",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(b),f(a),f(c)]"),factory.parse("ok")},
-      {"match6",new Integer(1),"aterm.ATerm",factory.parse("[g(f(a)),f(b),g(f(a)),f(c)]"),factory.parse("ok")}
-  };                                                      
-  public TestList2(int testNumber) {
-    super(testNumber,TESTS);
-  }
 
-  public void setUp() {
+  @BeforeClass
+  public static void setUp() {
     ok      = factory.parse("ok");
     fail    = factory.parse("fail");
   }
-  
-  public static Test suite() {
-    TestSuite suite = new TestSuite();
-    for (int i = 0; i<TESTS.length;i++) {
-      suite.addTest(new TestList2(i));
-    }
-    return suite;
+
+  @AfterClass
+  public static void tearDown() {
+    ok = null;
+    fail = null;
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(suite());
+    org.junit.runner.JUnitCore.main(TestList2.class.getName());
   }
   
-
   %typeterm L {
     implement { ATermList }
     is_sort(t) { $t instanceof ATermList }
@@ -118,78 +95,208 @@ public class TestList2 extends GenericTest {
     get_slot(s2,t) { ((ATermAppl)$t).getArgument(1)  }
   }
 
-  public ATerm match1(ATerm t) {
-    ATerm res = fail;
-    ATermList l = (ATermList)t;
-    %match(L l) {
-      (f(a()))                        -> { return factory.parse("pattern1"); }
-      (_X1*,f(a()))                    -> { return factory.parse("pattern2"); }
-      conc(_X1*,f(a()),_X2*,f(b()))     -> { return factory.parse("pattern3"); }
-      conc(_X1*,f(a()),_X2*,f(b()),_X3*) -> { return factory.parse("pattern4"); }
-      conc(f(b()),_X2*,f(b()),_X3*)     -> { return factory.parse("pattern5"); }
-      conc(_X1*,f(c()),f(_x),_X3*)       -> { return factory.parse("pattern6"); }
-      conc()                          -> { return factory.parse("pattern7"); }
+  @RunWith(Parameterized.class)
+  public static class Match1 {
+    String question;
+    String answer;
+
+    public Match1(String question, String answer) {
+      this.question = question;
+      this.answer = answer;
     }
-    return res;
-  }
 
-
-  public ATerm match2(ATerm t) {
-    ATerm res = fail;
-    %match(E t) {
-      h(a(),l(conc(f(a()))))                   -> { return factory.parse("pattern1"); }
-      h(l(conc(f(a()))),a())                   -> { return factory.parse("pattern2"); }
-      h(l(conc(_X1*,_x,y,_X2*)),z)                -> { if(`y==`z) return factory.parse("pattern3"); }
-      h(l(conc(_X1*,_x,X2*)),l(conc(_Y1*,_y,Y2*))) -> { if(`X2==`Y2 && !`X2.isEmpty()) return factory.parse("pattern4"); }
-      l(conc(_X1*,Y1*,_X2*,l(conc(Y2*)),_X3*))    -> { if(`Y1==`Y2) return factory.parse("pattern5"); }
+    @Test
+    public void testMatch1() {
+      assertSame(
+        "TestMatch1 : expected "+answer+" for term "+question +"",
+        match1(factory.parse(question)),
+        factory.parse(answer));
     }
-    return res;
-  }
 
-
-  public ATerm match3(ATerm t) {
-    ATerm res = fail;
-    %match(E t) {
-      l(vl@conc(_x))                        -> { if(`vl==factory.parse("[f(a)]"))
-        return factory.parse("pattern1"); }
-      l(conc(_X1*,vx@f(_x),_X2*,vy@f(_y),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern2"); }
-      l(conc(_X1*,g(vx@f(_x)),_X2*,g(vy@f(_y)),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
+    @Parameters
+    public static Collection<Object[]> data() {
+      return Arrays.asList(new Object[][] {
+          { "[f(a)]",                  "pattern1" },
+          { "[a,b,f(a)]",              "pattern2" },
+          { "[a,f(a),b,f(b)]",         "pattern3" },
+          { "[a,f(a),f(b)]",           "pattern3" },
+          { "[f(a),f(b)]",             "pattern3" },
+          { "[a,f(a),b,f(b),c]",       "pattern4" },
+          { "[a,f(a),f(b),c]",         "pattern4" },     
+          { "[f(a),f(b),c]",           "pattern4" },
+          { "[f(b),f(b)]",             "pattern5" },
+          { "[f(b),f(b),c]",           "pattern5" },
+          { "[f(b),a,f(b)]",           "pattern5" },
+          { "[f(b),a,f(b),c]",         "pattern5" },
+          { "[f(c),f(b)]",             "pattern6" },
+          { "[f(a),f(c),a,f(c)]",      "fail"     },
+          { "[f(a),f(c),a,f(c),f(c)]", "pattern6" },
+          { "[]",                      "pattern7" }
+      });
     }
-    return res;
-  }
 
-
-  public int  match4(ATerm l) {
-    int nbSol = 0;
-    %match(L l) {
-      conc(_X1*,_X2*,_X3*) -> {
-        nbSol++;
+    public ATerm match1(ATerm t) {
+      ATerm res = fail;
+      ATermList l = (ATermList)t;
+      %match(L l) {
+        (f(a()))                           -> { return factory.parse("pattern1"); }
+        (_X1*,f(a()))                      -> { return factory.parse("pattern2"); }
+        conc(_X1*,f(a()),_X2*,f(b()))      -> { return factory.parse("pattern3"); }
+        conc(_X1*,f(a()),_X2*,f(b()),_X3*) -> { return factory.parse("pattern4"); }
+        conc(f(b()),_X2*,f(b()),_X3*)      -> { return factory.parse("pattern5"); }
+        conc(_X1*,f(c()),f(_x),_X3*)       -> { return factory.parse("pattern6"); }
+        conc()                             -> { return factory.parse("pattern7"); }
       }
+      return res;
     }
-    return nbSol; 
   }
 
-  
-  public int match5(ATerm l) {
-    int nbSol = 0;
-    %match(L l) {
-      conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
-        nbSol++;
+  @RunWith(Parameterized.class)
+  public static class Match2 {
+    String question;
+    String answer;
+
+    public Match2(String question, String answer) {
+      this.question = question;
+      this.answer = answer;
+    }
+
+    @Test
+    public void testMatch2() {
+      assertSame(
+        "TestMatch2 : expected "+answer+" for term "+question +"",
+        match2(factory.parse(question)),
+        factory.parse(answer));
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+      return Arrays.asList(new Object[][] {
+          { "h(a,l([f(a)]))",                   "pattern1" },
+          { "h(l([f(a)]),a)",                   "pattern2" },
+          { "h(l([a,b,a,b]),a)",                "pattern3" },
+          { "h(l([a,b,a,b]),l([a,a,b,a]))",         "fail" },     
+          { "h(l([a,b,a,b]),l([a,a,b,a,b]))",   "pattern4" },
+          { "l([b,b,l([a]),a,l([a,c]),b,c])",       "fail" },     
+          { "l([a,b,l([a]),a,l([a,c]),b,c])",   "pattern5" },
+          { "l([a,b,l([c]),a,b,l([a,c]),b,c])",     "fail" },         
+          { "l([a,b,l([c]),a,c,l([a,c]),b,c])", "pattern5" }
+      });
+    }
+
+    public ATerm match2(ATerm t) {
+      ATerm res = fail;
+      %match(E t) {
+        h(a(),l(conc(f(a()))))                       -> { return factory.parse("pattern1"); }
+        h(l(conc(f(a()))),a())                       -> { return factory.parse("pattern2"); }
+        h(l(conc(_X1*,_x,y,_X2*)),z)                 -> { if(`y==`z) return factory.parse("pattern3"); }
+        h(l(conc(_X1*,_x,X2*)),l(conc(_Y1*,_y,Y2*))) -> { if(`X2==`Y2 && !`X2.isEmpty()) return factory.parse("pattern4"); }
+        l(conc(_X1*,Y1*,_X2*,l(conc(Y2*)),_X3*))     -> { if(`Y1==`Y2) return factory.parse("pattern5"); }
       }
+      return res;
     }
-    return nbSol;
   }
 
+  @RunWith(Parameterized.class)
+  public static class Match3 {
+    String question;
+    String answer;
 
-  
-  public ATerm match6(ATerm l) {
-    %match(L l) {
-      conc(_,_*) -> {
-        return factory.parse("ok");
+    public Match3(String question, String answer) {
+      this.question = question;
+      this.answer = answer;
+    }
+
+    @Test
+    public void testMatch3() {
+      assertSame(
+        "TestMatch3 : expected "+answer+" for term "+question +"",
+        match3(factory.parse(question)),
+        factory.parse(answer));
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+      return Arrays.asList(new Object[][] {
+          { "l([f(a)])",                      "pattern1" },
+          { "l([f(a),f(b),f(a),f(c)])",       "pattern2" },
+          { "l([g(f(a)),f(b),g(f(a)),f(c)])", "pattern3" }
+      });
+    }
+
+    public ATerm match3(ATerm t) {
+      ATerm res = fail;
+      %match(E t) {
+        l(vl@conc(_x)) -> { if(`vl==factory.parse("[f(a)]"))
+          return factory.parse("pattern1"); }
+        l(conc(_X1*,vx@f(_x),_X2*,vy@f(_y),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern2"); }
+        l(conc(_X1*,g(vx@f(_x)),_X2*,g(vy@f(_y)),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
       }
+      return res;
     }
-    return factory.parse("fail");
   }
 
+  public static class Match45 {
+    @Test
+    public void match4() {
+      ATerm l = factory.parse("[a,b]");
+      int nbSol = 0;
+      %match(L l) {
+        conc(_X1*,_X2*,_X3*) -> {
+          nbSol++;
+        }
+      }
+      assertEquals(nbSol, 6);
+    }
 
+    @Test
+    public void match5() {
+      ATerm l = factory.parse("[l([a,b]),a,b]");
+      int nbSol = 0;
+      %match(L l) {
+        conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
+          nbSol++;
+        }
+      }
+      assertEquals(nbSol, 6);
+    }
+  }
+
+  @RunWith(Parameterized.class)
+  public static class Match6 {
+    String question;
+    String answer;
+
+    public Match6(String question, String answer) {
+      this.question = question;
+      this.answer = answer;
+    }
+
+    @Test
+    public void testMatch6() {
+      assertSame(
+        "TestMatch6 : expected "+answer+" for term "+question +"",
+        match6(factory.parse(question)),
+        factory.parse(answer));
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+      return Arrays.asList(new Object[][] {
+          { "[]",                          "fail" },
+          { "[f(a)]",                        "ok" },
+          { "[f(a),f(b),f(a),f(c)]",         "ok" },
+          { "[g(f(a)),f(b),g(f(a)),f(c)]",   "ok" }
+      });
+    }
+
+    public ATerm match6(ATerm l) {
+      %match(L l) {
+        conc(_,_*) -> {
+          return factory.parse("ok");
+        }
+      }
+      return factory.parse("fail");
+    }
+  }
 }
