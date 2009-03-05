@@ -29,63 +29,59 @@
 
 package structure;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.*;
 import structure.structures.types.*;
 
-public class TestStructure extends TestCase {
+@RunWith(Parameterized.class)
+public class TestStructure {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(suite());
+    org.junit.runner.JUnitCore.main(TestStructure.class.getName());
   }
 
-  public static Map<String,Boolean> dataSuite() {
-    Map<String,Boolean> map = new HashMap<String,Boolean>();
-    map.put("[a,b,(-a,-b)]",true);
-    map.put("[a,b,(-a,b)]",false);
-    map.put("[a,(-a,[b,-b])]",true);
-    map.put("([a,-a],[b,-b])",true);
-    map.put("[a,-a,b,-b]",true);
-    map.put("[a,-a,(b,-b)]",false);
-    map.put("[-a,-b,-c,(a,b,c)]",true);
-    map.put("[a,b,(-a,-c),(-b,c)]",true);
-    map.put("[-b,(b,[-a,(a,[c,-c])])]",true);
-    map.put("[(a,[c,-c]),(-a,[b,-b])]",true);
-    map.put("[-a,(a,[b,-b],[c,-c])]",true);
-    map.put("([b,-b],[-a,[-c,(a,c)]])",true);
-    map.put("[-a,-b,(a,b,[c,-c])]",true);
-    map.put("[a,(-a,[-b,(b,[c,-c])])]",true);
-    map.put("[-a,([c,-c],[-b,(a,b)])]",true);
-    map.put("[a,b,c,d,(-a,-b,-c,-d)]",true);
-    map.put("[a,b,d,(-b,c),(-a,-d,-c)]",true);
-    map.put("[a,d,(-a,-c),(-b,-d),(b,c)]",true);
-    //map.put("[(-(a,b),[a,b]),a,-a,b,-b]",false); //verbose
-    map.put("[[(a,b),-a,-b],[(c,[(a,b),-a]),-b,-c]]",true);
+  @Parameters
+  public static Collection<Object[]> data() {
+    return Arrays.asList(new Object[][] {
+      { "[a,b,(-a,-b)]", true },
+      { "[a,b,(-a,b)]", false },
+      { "[a,(-a,[b,-b])]", true },
+      { "([a,-a],[b,-b])", true },
+      { "[a,-a,b,-b]", true },
+      { "[a,-a,(b,-b)]", false },
+      { "[-a,-b,-c,(a,b,c)]", true },
+      { "[a,b,(-a,-c),(-b,c)]", true },
+      { "[-b,(b,[-a,(a,[c,-c])])]", true },
+      { "[(a,[c,-c]),(-a,[b,-b])]", true },
+      { "[-a,(a,[b,-b],[c,-c])]", true },
+      { "([b,-b],[-a,[-c,(a,c)]])", true },
+      { "[-a,-b,(a,b,[c,-c])]", true },
+      { "[a,(-a,[-b,(b,[c,-c])])]", true },
+      { "[-a,([c,-c],[-b,(a,b)])]", true },
+      { "[a,b,c,d,(-a,-b,-c,-d)]", true },
+      { "[a,b,d,(-b,c),(-a,-d,-c)]", true },
+      { "[a,d,(-a,-c),(-b,-d),(b,c)]", true },
+      // { "[(-(a,b),[a,b]),a,-a,b,-b]", false }, //verbose
+      { "[[(a,b),-a,-b],[(c,[(a,b),-a]),-b,-c]]", true },
 
-    map.put("[ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]",true);
+      { "[ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]", true },
 
-    // BVU
-    map.put("[<[a,b];c>,<-a;[-b,-c]>]",true);
-    map.put("[<[a,(b,-a)];(c,d)>,-d1,(d1,<-b;-c>),-d]",true);
-    //map.put("[-a,<a;d;-b>,<b;d1;-c>,c,<-d;-d1>]",true);// out of memory
-    //map.put("[<a;[b,c]>,d,(-d,<[a,b];c>)]",false);//OK but verbose
-    map.put("[<a;[b,c]>,d,(-d,<[-a,-b];-c>)]",true);
-    map.put("[-c,[<a;(c,-b)>,<-a;b>]]",true);
-    map.put("[c,(a,-b),<(b,-a);-c>]",false);
-    return map;
-  }
-
-  public static Test suite() {
-    TestSuite suite = new TestSuite();
-    Map<String,Boolean> map = dataSuite();
-    for (String query:map.keySet()) {
-      suite.addTest(new TestStructure("testsolve",query,map.get(query)));
-      suite.addTest(new TestStructure("testparseandpretty",query));
-    }
-    return suite;
+      // BVU
+      { "[<[a,b];c>,<-a;[-b,-c]>]", true },
+      { "[<[a,(b,-a)];(c,d)>,-d1,(d1,<-b;-c>),-d]", true },
+      // { "[-a,<a;d;-b>,<b;d1;-c>,c,<-d;-d1>]", true }, // out of memory
+      // { "[<a;[b,c]>,d,(-d,<[a,b];c>)]", false }, //OK but verbose
+      { "[<a;[b,c]>,d,(-d,<[-a,-b];-c>)]", true },
+      { "[-c,[<a;(c,-b)>,<-a;b>]]", true },
+      { "[c,(a,-b),<(b,-a);-c>]", false }
+      });
   }
 
   private StructureGom test;
@@ -93,31 +89,30 @@ public class TestStructure extends TestCase {
   private String query_string;
   private boolean expected_result;
 
-  public TestStructure(String test, String query) {
-    super(test);
+  public TestStructure(String query, boolean result) {
     this.query_string = query;
-  }
-
-  public TestStructure(String test, String query, boolean result) {
-    this(test,query);
     this.expected_result = result;
   }
 
+  @Before
   public void setUp() {
     test = new StructureGom();
   }
 
+  @After
   public void tearDown() {
     test = null;
     query_string = null;
   }
 
+  @Test
   public void testsolve() {
     Struc query = test.strucFromPretty(query_string);
     boolean res = test.localSolve(query);
     assertEquals(this.expected_result,res);
   }
 
+  @Test
   public void testparseandpretty() {
     Struc query = test.strucFromPretty(query_string);
     String pretty = test.prettyPrint(query);
