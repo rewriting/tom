@@ -32,10 +32,10 @@ package poly;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class PolyApigen1 extends TestCase {
+public class PolyApigen1 {
 
 //modify it to change the complexity of t
 //beware: if you change this constant, junit tests have to be modified as well.
@@ -101,6 +101,7 @@ private final static int COMPLEXITY = 2;
     return res;
   }
 
+  @Test
   public void testDerivation() {
     Expression var = `variable("X");
     Expression t = var;
@@ -121,6 +122,6 @@ private final static int COMPLEXITY = 2;
   }
     
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyApigen1.class));
+    org.junit.runner.JUnitCore.main(PolyApigen1.class.getName());
   }
 }

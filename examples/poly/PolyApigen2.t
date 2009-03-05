@@ -32,10 +32,10 @@ package poly;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class PolyApigen2 extends TestCase {
+public class PolyApigen2 {
 
 //modify it to change the complexity of t 
 //beware: if you change this constant, junit tests have to be modified as well.
@@ -86,6 +86,7 @@ private final static int COMPLEXITY = 2;
     return res;
   }
 
+  @Test
   public void testX() {
     Expression var = `variable("X");
     Expression t = var;
@@ -116,6 +117,6 @@ assertSame("Simplified form is: zero",`zero(),res);
   }
     
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyApigen2.class));
+    org.junit.runner.JUnitCore.main(PolyApigen2.class.getName());
   }
 }

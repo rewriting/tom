@@ -29,17 +29,30 @@
 
 package poly;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class TestPoly extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+  PolyAdvanced1.class,
+  PolyAdvanced2.class,
+  PolyApigen1.class,
+  PolyApigen2.class,
+  PolySimple2.class,
+  PolyTraveler1.class,
+  PolyTraveler2.class
+})
+
+public class TestPoly {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
+		//junit.textui.TestRunner.run(suite());
+    org.junit.runner.JUnitCore.main(TestPoly.class.getName());
 	}
 
-  public static Test suite() {
+  /*public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new TestSuite(PolyAdvanced1.class));
     suite.addTest(new TestSuite(PolyAdvanced2.class));
@@ -49,5 +62,6 @@ public class TestPoly extends TestCase {
     suite.addTest(new TestSuite(PolyTraveler1.class));
     suite.addTest(new TestSuite(PolyTraveler2.class));
     return suite;
-  }
+  }*/
+
 }

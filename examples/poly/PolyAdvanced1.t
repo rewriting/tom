@@ -31,12 +31,12 @@ package poly;
 
 import poly.poly.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import tom.library.sl.Strategy;
 
-public class PolyAdvanced1 extends TestCase {
+public class PolyAdvanced1 {
     
   Term t;
   Term var1;
@@ -92,6 +92,7 @@ public class PolyAdvanced1 extends TestCase {
     return result;
   }
 
+  @Test
   public void testX() {
     res = differentiate(t,var1);
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
@@ -101,6 +102,7 @@ public class PolyAdvanced1 extends TestCase {
     System.out.println("Simplified form is:\n\t" + res);
    } 
 
+  @Test
   public void testY() {
     res = differentiate(t,var2);
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
@@ -111,7 +113,7 @@ public class PolyAdvanced1 extends TestCase {
   }
   
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced1.class));
+    org.junit.runner.JUnitCore.main(PolyAdvanced1.class.getName());
   }
 }
 

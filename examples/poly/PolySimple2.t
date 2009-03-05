@@ -31,10 +31,10 @@ package poly;
 
 import poly.poly.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class PolySimple2 extends TestCase {
+public class PolySimple2 {
 
   %include { poly/Poly.tom }
 
@@ -87,6 +87,7 @@ public class PolySimple2 extends TestCase {
     return t;
   }
 
+  @Test
   public void testX() {
     res = differentiate(t, var1 );
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
@@ -96,6 +97,7 @@ public class PolySimple2 extends TestCase {
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(mult(X,1),plus(X,a))",`plus(mult(X(),one()),plus(X(),a())),res);
   }
 
+  @Test
   public void testY() {
     res = differentiate(t, var2);
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
@@ -106,7 +108,7 @@ public class PolySimple2 extends TestCase {
   }
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced1.class));
+    org.junit.runner.JUnitCore.main(PolyAdvanced1.class.getName());
   }
 }
 

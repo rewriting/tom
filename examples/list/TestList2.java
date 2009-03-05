@@ -29,28 +29,32 @@
 
 package list;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import java.util.*;
 
-public class TestList2 extends TestCase {
+public class TestList2 {
   private List2 test;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestList2.class));
+    org.junit.runner.JUnitCore.main(TestList2.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new List2();
   }
 
+  @Test
 	public void testMakeSubject() {
 		ArrayList subject = test.makeSubject();
 		assertEquals("Bad initialisation of subject",subject.toString(),
 								 "[a, b, c, a, b, c, a]");
 	}
 
+  @Test
 	public void testSwapSort() {
 		ArrayList subject = test.makeSubject();
 		ArrayList res = test.swapSort(subject);
@@ -59,6 +63,7 @@ public class TestList2 extends TestCase {
 								 "[a, a, a, b, b, c, c]");
 	}
 
+  @Test
 	public void testRemoveDouble() {
 		ArrayList subject = test.makeSubject();
 		ArrayList res = test.removeDouble(subject);
@@ -67,6 +72,7 @@ public class TestList2 extends TestCase {
 								 subject);
 	}
 
+  @Test
 	public void testSortAndRemoveDouble() {
 		ArrayList subject = test.makeSubject();
 		ArrayList res1 = test.swapSort(subject);
@@ -77,4 +83,3 @@ public class TestList2 extends TestCase {
 	}
     
 }
-

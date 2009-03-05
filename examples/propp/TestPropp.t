@@ -37,28 +37,34 @@ import propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.io.ByteArrayInputStream;
 
-public class TestPropp extends TestCase {
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
+
+public class TestPropp {
   private SPropp test;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestPropp.class));
+    org.junit.runner.JUnitCore.main(TestPropp.class.getName());
 	}
 
+  @Before
   public void setUp() {
     test = new SPropp();
   }
 
   %include { seq/Seq.tom }
 
+  @Test
 	public void testComparePair1() {
 		assertEquals("pair(3,\"something\") is greater than pair(2,\"anything\")",
 								 1,
 								 test.comparePair(`pair(3,"something"),`pair(2,"anything")));
 	}
 
+  @Test
 	public void testComparePair2() {
 		assertEquals("pair(4,\"something\") is greater than pair(8,\"anything\")",
 								 -1,

@@ -32,17 +32,19 @@ package peano;
 import peano.peano.*;
 import peano.peano.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestPeano extends TestCase {
+public class TestPeano {
   private Nat ten;
   private Nat fibten;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
+    org.junit.runner.JUnitCore.main(TestPeano.class.getName());
 	}
-  
+ 
+  @Before
   public void setUp() {
     Nat N = zero();
     for(int i=0 ; i<10 ; i++) {
@@ -65,11 +67,13 @@ public class TestPeano extends TestCase {
     return peano.peano.types.nat.suc.make(n);
   }
 
+  @Test
   public void testPeano1() {
     assertEquals("fib(10) should be 89",
                  fibten,Peano1.fib(ten));
   }
 
+  @Test
   public void testPeano2() {
     assertEquals("fib(10) should be 89",
                  fibten,Peano2.fib(ten));

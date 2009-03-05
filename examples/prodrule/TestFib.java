@@ -33,10 +33,11 @@ import java.util.*;
 import java.io.*;
 import prodrule.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestFib extends TestCase {
+public class TestFib {
   private Fib1 fib1;
   private Fib2 fib2;
   private Fib3 fib3;
@@ -45,9 +46,10 @@ public class TestFib extends TestCase {
   private int n;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestFib.class));
+    org.junit.runner.JUnitCore.main(TestFib.class.getName());
 	}
 
+  @Before
   public void setUp() {
     fib1 = new Fib1();
     fib2 = new Fib2();
@@ -72,25 +74,27 @@ public class TestFib extends TestCase {
     return val;
   }
 
-
-
-
+  @Test
   public void testCheckFib1() {
 		assertEquals(fib1.run(n),fib(n));
   }
   
+  @Test
   public void testCheckFib2() {
 		assertEquals(fib2.run(n),fib(n));
   }
 
+  @Test
   public void testCheckFib3() {
 		assertEquals(fib3.run(n),fib(n));
   }
 
+  @Test
   public void testCheckFib4() {
 		assertEquals(fib4.run(n),fib(n));
   }
 
+  @Test
   public void testCheckFib5() {
 		assertEquals(fib5.run(n),fib(n));
   }

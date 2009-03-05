@@ -35,26 +35,30 @@ import java.util.*;
 import nspk.term.*;
 import nspk.term.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestNsh extends TestCase {
+public class TestNsh {
   private Nsh test;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestNsh.class));
+    org.junit.runner.JUnitCore.main(TestNsh.class.getName());
 	}
 
+  @Before
   public void setUp() {
     test = new Nsh();
   }
 
+  @Test
   public void testQuery() {
     assertEquals("Tests the query function (and toString()).",
                  "state(concAgent(agent(sender(1),SLEEP(),N(sender(1),sender(1))),agent(sender(0),SLEEP(),N(sender(0),sender(0)))),concAgent(agent(receiver(1),SLEEP(),N(receiver(1),receiver(1))),agent(receiver(0),SLEEP(),N(receiver(0),receiver(0)))),intruder(devil(),concNonce(),concMessage()),concMessage())",
                  test.query(2,2).toString());
   }
 
+  @Test
   public void testCollectOneStep() {
     Collection c1 = new HashSet();
     State start = test.query(2,2);
@@ -64,6 +68,7 @@ public class TestNsh extends TestCase {
                  6,nbNext);
   }
 
+  @Test
   public void testCollect3Steps() {
     Collection c1 = new HashSet();
     c1.add(test.query(2,2));

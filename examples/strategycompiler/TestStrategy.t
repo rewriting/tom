@@ -1,14 +1,15 @@
 package strategycompiler;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import tom.library.sl.*;
 import strategycompiler.teststrategy.term.types.*;
 
 import java.util.*;
 
-public class TestStrategy extends TestCase {
+public class TestStrategy {
 
   %include { long.tom }
   %include { boolean.tom }
@@ -37,12 +38,14 @@ public class TestStrategy extends TestCase {
   static boolean bool0 = true;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestStrategy.class));
+    org.junit.runner.JUnitCore.main(TestStrategy.class.getName());
   }
 
+  //@Before
   public void setUp() {
   }
 
+  @Test
   public void testS(){
     
     Hashtable hashtable = new Hashtable();
@@ -78,6 +81,8 @@ public class TestStrategy extends TestCase {
       System.out.println("VisitFailure");
     }
   }
+  
+  @Test
   public void testPosition() {
     //3 positions for now
     Hashtable positions = new Hashtable(3);

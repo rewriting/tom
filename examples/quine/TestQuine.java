@@ -29,8 +29,8 @@
 
 package quine;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,12 +39,13 @@ import java.io.StringReader;
 import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
 
-public class TestQuine extends TestCase {
+public class TestQuine {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestQuine.class));
+    org.junit.runner.JUnitCore.main(TestQuine.class.getName());
   }
 
+  @Test
   public void testQuine() {
     // get the original
     BufferedReader original = new BufferedReader(

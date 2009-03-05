@@ -29,23 +29,26 @@
 
 package list;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import aterm.ATermList;
 import aterm.pure.SingletonFactory;
 
-public class TestList1 extends TestCase {
+public class TestList1 {
   private List1 test;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestList1.class));
+    org.junit.runner.JUnitCore.main(TestList1.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new List1();
   }
 
+  @Test
 	public void testMakeSubject() {
 		ATermList subject = test.makeSubject();
 		assertEquals("Bad initialisation of subject",subject,
@@ -53,6 +56,7 @@ public class TestList1 extends TestCase {
 									 "[a,b,c,a,b,c,a]"));
 	}
 
+  @Test
 	public void testSwapSort() {
 		ATermList subject = test.makeSubject();
 		ATermList res = test.swapSort(subject);
@@ -61,6 +65,7 @@ public class TestList1 extends TestCase {
 								 SingletonFactory.getInstance().parse("[a,a,a,b,b,c,c]"));
 	}
 
+  @Test
 	public void testRemoveDouble() {
 		ATermList subject = test.makeSubject();
 		ATermList res = test.removeDouble(subject);
@@ -69,6 +74,7 @@ public class TestList1 extends TestCase {
 								 subject);
 	}
 
+  @Test
 	public void testSortAndRemoveDouble() {
 		ATermList subject = test.makeSubject();
 		ATermList res1 = test.swapSort(subject);
@@ -79,4 +85,3 @@ public class TestList1 extends TestCase {
 	}
     
 }
-

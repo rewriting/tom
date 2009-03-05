@@ -32,11 +32,12 @@ package poly;
 import poly.poly.*;
 import poly.poly.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import tom.library.sl.*;
 
-public class PolyAdvanced2 extends TestCase {
+public class PolyAdvanced2 {
  
   Term t;
   Term var1;
@@ -81,7 +82,8 @@ public class PolyAdvanced2 extends TestCase {
       mult(_,zero()) -> { return `zero();}
     }
   }
-  
+ 
+  @Test
   public void testX() {
 
     res = differentiate(t,var1);
@@ -97,6 +99,7 @@ public class PolyAdvanced2 extends TestCase {
     System.out.println("Simplified form is:\n\t" + res);
   }
 
+  @Test
   public void testY() {
 
     res = differentiate(t,var2);
@@ -114,7 +117,6 @@ public class PolyAdvanced2 extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced2.class));
+    org.junit.runner.JUnitCore.main(PolyAdvanced2.class.getName());
   }
 }
-

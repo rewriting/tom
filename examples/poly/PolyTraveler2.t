@@ -32,12 +32,12 @@ package poly;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import tom.library.sl.*;
 
-public class PolyTraveler2 extends TestCase {
+public class PolyTraveler2 {
 
   public PolyTraveler2() {
   }
@@ -58,6 +58,7 @@ public class PolyTraveler2 extends TestCase {
     }
   }
 
+  @Test
   public void testSimplifyPlus() {
     Expression var = `variable("X");
     //Expression res = `mult(plus(var,zero()),one());
@@ -77,6 +78,6 @@ public class PolyTraveler2 extends TestCase {
   }
   
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(PolyTraveler2.class));
+    org.junit.runner.JUnitCore.main(PolyTraveler2.class.getName());
   }
 }

@@ -29,8 +29,8 @@
 
 package parser;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -39,12 +39,12 @@ import parser.rule.RuleAdaptor;
 
 import parser.rule.types.*;
 
-public class TestRuleParser extends TestCase {
+public class TestRuleParser {
 
   %include { rule/Rule.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRuleParser.class));
+    org.junit.runner.JUnitCore.main(TestRuleParser.class.getName());
   }
 
   private Term getTerm(String code) {
@@ -61,42 +61,49 @@ public class TestRuleParser extends TestCase {
     }
   }
 
+  @Test
   public void testSimpleTerm() {
     String termCode = "a()";
     Term term = getTerm(termCode);
     assertEquals(`Appl("a",TermList()), term);
   }
 
+  @Test
   public void testVariable() {
     String termCode = "x";
     Term term = getTerm(termCode);
     assertEquals(`Var("x"), term);
   }
 
+  @Test
   public void testBranchTerm() {
     String termCode = "Node(x,y)";
     Term term = getTerm(termCode);
     assertEquals(`Appl("Node",TermList(Var("x"),Var("y"))), term);
   }
 
+  @Test
   public void testIntTerm() {
     String termCode = "123";
     Term term = getTerm(termCode);
     assertEquals(`BuiltinInt(123), term);
   }
 
+  @Test
   public void testIntApplTerm() {
     String termCode = "Int(123)";
     Term term = getTerm(termCode);
     assertEquals(`Appl("Int",TermList(BuiltinInt(123))), term);
   }
 
+  @Test
   public void testStringTerm() {
     String termCode = "\"foo\"";
     Term term = getTerm(termCode);
     assertEquals(`BuiltinString("\"foo\""), term);
   }
 
+  @Test
   public void testStringApplTerm() {
     String termCode = "foo(\"bar\")";
     Term term = getTerm(termCode);
@@ -117,6 +124,7 @@ public class TestRuleParser extends TestCase {
     }
   }
 
+  @Test
   public void testSimpleRule() {
     String ruleCode = "a() -> b()\n";
     RuleList rl = getRuleList(ruleCode);
@@ -125,6 +133,7 @@ public class TestRuleParser extends TestCase {
         rl);
   }
 
+  @Test
   public void testConditionalRule() {
     String ruleCode = "a(x,y) -> b() if x==y\n";
     RuleList rl = getRuleList(ruleCode);

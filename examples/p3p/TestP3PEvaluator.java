@@ -29,15 +29,16 @@
 
 package p3p;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestP3PEvaluator extends TestCase {
+public class TestP3PEvaluator {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestP3PEvaluator.class));
+    org.junit.runner.JUnitCore.main(TestP3PEvaluator.class.getName());
   }
 
+  @Test
   public void testEvaluator2() {
     P3PEvaluator2 P3PEvaluator2 = new P3PEvaluator2();
     boolean res = P3PEvaluator2.run(

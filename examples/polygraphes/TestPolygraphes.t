@@ -29,8 +29,9 @@
 
 package polygraphes;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+//import org.junit.Before;
 
 import java.io.*;
 import java.util.*;
@@ -40,16 +41,18 @@ import tom.library.sl.*;
 import polygraphes.polygraphes.*;
 import polygraphes.polygraphes.types.*;
 
-public class TestPolygraphes extends TestCase {
+public class TestPolygraphes {
   %include { sl.tom }
   %include { polygraphes/Polygraphes.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPolygraphes.class));
+    org.junit.runner.JUnitCore.main(TestPolygraphes.class.getName());
   }
 
-  public void setUp() { }
+  //@Before
+  //public void setUp() { }
 
+  @Test
   public void testNormalisation() {
     TwoPath suc = `g("suc",1,1);
     TwoPath dup = `g("dup",1,2);

@@ -29,37 +29,44 @@
 
 package strings;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestAnagram extends TestCase {
+public class TestAnagram {
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAnagram.class));
+    org.junit.runner.JUnitCore.main(TestAnagram.class.getName());
   }
 
   private Anagram test;
 
+  @Before
   public void setUp() {
     test = new Anagram();
   }
 
+  @Test
   public void testaaa() {
     assertTrue(test.isAnagram("aaa","aaa"));
   }
 
+  @Test
   public void testnotaaa() {
     assertFalse(test.isAnagram("aaa","aa"));
   }
 
+  @Test
   public void testpalindrom() {
     assertTrue(test.isAnagram("ressasser","ressasser"));
   }
 
+  @Test
   public void testanagram() {
     assertTrue(test.isAnagram("tom marvolo riddle ","i am lord voldemort"));
   }
 
+  @Test
   public void testnotanagram() {
     assertFalse(test.isAnagram("this is not an anagram","that is not an anagram"));
   }

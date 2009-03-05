@@ -36,23 +36,26 @@ import aterm.pure.*;
 import rbtree.tree.*;
 import rbtree.tree.types.*;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class TestTree extends TestCase {
+public class TestTree {
 
   private Tree1 test;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestTree.class));
+    org.junit.runner.JUnitCore.main(TestTree.class.getName());
 	}
 
+  @Before
   public void setUp() {
     test = new Tree1();
   }
 
   %include { tree/tree.tom }
-  
+ 
+  @Test
   public void testFistInsert() {
     Tree t = `emptyTree();
     t = test.insert(t,`e1());
@@ -60,6 +63,7 @@ public class TestTree extends TestCase {
     assertTrue(test.member(t,`e1()));
   }
 
+  @Test
   public void testInsertTwo() {
     Tree t = `emptyTree();
     t = test.insert(t,`e1());
@@ -69,14 +73,17 @@ public class TestTree extends TestCase {
     assertTrue(test.member(t,`e2()));
   }
 
+  @Test
   public void testInsert20() {
     assertEquals(7,depth(buildTree(20)));
   }
 
+  @Test
   public void testInsert100() {
     assertEquals(11,depth(buildTree(100)));
   }
 
+  @Test
   public void testInsert1000() {
     assertEquals(15,depth(buildTree(1000)));
   }
