@@ -32,24 +32,27 @@ package bdd;
 import bdd.bdd.types.Node;
 import bdd.bdd.types.SolutionList;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.Assert;
 
-public class TestQueens extends TestCase {
+public class TestQueens {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestQueens.class));
-	}
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(TestQueens.class.getName());
+  }
 
   private static bdd.Bdd tree;
 
+  @Before
   public void setUp() {
     tree = new Bdd();
   }
 
+  @Test
   public void testQueens8() {
     Node queen = Queens.mkQueens(8);
     SolutionList sol =  tree.allSat(queen);
-    assertEquals("Number of solutions",92, sol.length());
+    Assert.assertEquals("Number of solutions",92, sol.length());
   }
 }

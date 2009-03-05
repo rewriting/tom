@@ -28,39 +28,45 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Assert;
 
-public class TestPathFinder extends TestCase {
-	private PathFinder test;
+public class TestPathFinder {
+  private PathFinder test;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestPathFinder.class));
+    org.junit.runner.JUnitCore.main(TestPathFinder.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new PathFinder();
   }
-	
-	public void testf2() {
+
+  @Test
+  public void testf2() {
     String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
     String res = test.f2(s1);
     String[] resTab = res.split("\n");
-		assertEquals("There are 28 ways to find 6 \"b\" among 8",
-								 28,resTab.length);
-	}
+    Assert.assertEquals("There are 28 ways to find 6 \"b\" among 8",
+                 28,resTab.length);
+  }
 
-	public void testdoubleB() {
+  @Test
+  public void testdoubleB() {
     String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
     int res = test.doubleB(s1);
-		assertEquals("There are 28 ways to find 2 \"b\" among 8",
-								 28,res);
-	}
+    Assert.assertEquals("There are 28 ways to find 2 \"b\" among 8",
+                 28,res);
+  }
 
-//	public void testdoubleBwhen() {
-//    String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-//    int res = test.doubleBwhen(s1);
-//		assertEquals("There are 28 ways to find 2 \"b\" among 8",
-//								 28,res);
-//	}
+  @Ignore
+  public void testdoubleBwhen() {
+    String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
+    int res = test.doubleBwhen(s1);
+    Assert.assertEquals("There are 28 ways to find 2 \"b\" among 8",
+            28,res);
+  }
 }

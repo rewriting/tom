@@ -28,29 +28,31 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.Assert;
 
-public class TestApiInteger extends TestCase {
-	private ApiInteger test;
+public class TestApiInteger {
+  private ApiInteger test;
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestApiInteger.class));
+    org.junit.runner.JUnitCore.main(TestApiInteger.class.getName());
   }
 
+  @Before
   public void setUp() {
     test = new ApiInteger();
   }
-	
-	public void testRun() {
+
+  @Test
+  public void testRun() {
     String res = test.run();
     String[] resTab = res.split("\n");
-		assertEquals("The output should be composed of two lines",
-								 2,resTab.length);
-		assertEquals("The first match should answer \"10\", but got " + resTab[0],
-								 "10",resTab[0]);
-		assertEquals("The second match should answer \"32\", but got " + resTab[1],
-								 "32",resTab[1]);
-	}
-
+    Assert.assertEquals("The output should be composed of two lines",
+                        2,resTab.length);
+    Assert.assertEquals("The first match should answer \"10\", but got " + resTab[0],
+                        "10",resTab[0]);
+    Assert.assertEquals("The second match should answer \"32\", but got " + resTab[1],
+                        "32",resTab[1]);
+  }
 }

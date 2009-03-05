@@ -28,13 +28,13 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TestHashSet extends TestCase {
+public class TestHashSet {
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestHashSet.class));
+    org.junit.runner.JUnitCore.main(TestHashSet.class.getName());
   }
 
   %include { java/util/HashSet.tom }
@@ -47,6 +47,7 @@ public class TestHashSet extends TestCase {
     get_slot(s,o) { ((String) $o) }
   }
 
+  @Test
   public void testMake() {
     java.util.HashSet set = `concHashSet("one", "two", "two", "three");
 
@@ -56,16 +57,16 @@ public class TestHashSet extends TestCase {
     assertEquals(set.contains("three"),true);
   }
 
+  @Test
   public void testIter() {
     java.util.HashSet set = `concHashSet("one", "two", "two", "three");
     java.util.HashSet res = new java.util.HashSet();
-    
+
     %match (HashSet set) {
       (_*, x, _*) -> {
         res.add(`x);
       }
     }
     assertEquals(set,res);
-  } 
+  }
 }
-

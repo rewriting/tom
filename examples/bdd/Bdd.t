@@ -198,7 +198,7 @@ public class Bdd {
         Solution s = anySat(`h);
         return `concAssignment(Assignment(x,1),s*); 
       }
-      Var(x,l,h) -> { 
+      Var(x,l,_) -> { 
         Solution s = anySat(`l);
         return `concAssignment(Assignment(x,0),s*); 
       }

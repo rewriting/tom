@@ -28,17 +28,18 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TestArrayList extends TestCase {
+public class TestArrayList {
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestArrayList.class));
+    org.junit.runner.JUnitCore.main(TestArrayList.class.getName());
   }
 
   %include { java/util/ArrayList.tom }
 
+  @Test
   public void testMake() {
     java.util.ArrayList list = `concArrayList("one","two","three","four");
 
@@ -48,6 +49,7 @@ public class TestArrayList extends TestCase {
     assertEquals(list.get(3),"four");
   }
 
+  @Test
   public void testIter() {
     java.util.Set set = new java.util.HashSet();
     java.util.ArrayList list = `concArrayList("one","two","three","four");

@@ -28,13 +28,13 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-public class TestHashMap extends TestCase {
+public class TestHashMap {
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestHashMap.class));
+    org.junit.runner.JUnitCore.main(TestHashMap.class.getName());
   }
 
   %include { java/util/HashMap.tom }
@@ -47,6 +47,7 @@ public class TestHashMap extends TestCase {
     get_slot(s,o) { ((String) $o) }
   }
 
+  @Test
   public void testMake() {
     java.util.HashMap map = `concHashMap(mapEntry("one","1"),
                                          mapEntry("two","2"),
@@ -57,7 +58,7 @@ public class TestHashMap extends TestCase {
     assertEquals(map.get("three"),"3");
   }
 
-  
+  @Test
   public void testGetValue() {
     java.util.HashMap m = new java.util.HashMap();
     m.put("one","1");
@@ -72,6 +73,7 @@ public class TestHashMap extends TestCase {
     }
   }
 
+  @Test
   public void testAddingRemoving() {
     java.util.HashMap m = `concHashMap(mapEntry("one","1"),
                                        mapEntry("two","2"));
@@ -88,10 +90,9 @@ public class TestHashMap extends TestCase {
         m3 = `concHashMap(X*,Y*);
       }
     }
-    
+
     assertEquals(m3.get("one"),"1");
     assertEquals(m3.get("two"),"2");
     assertEquals(m3.get("hello"), null);
   }
 }
-

@@ -28,17 +28,18 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TestLinkedList extends TestCase {
+public class TestLinkedList {
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestLinkedList.class));
+    org.junit.runner.JUnitCore.main(TestLinkedList.class.getName());
   }
 
   %include { java/util/LinkedList.tom }
 
+  @Test
   public void testMake() {
     java.util.LinkedList list = `concLinkedList("one","two","three","four");
 
@@ -48,6 +49,7 @@ public class TestLinkedList extends TestCase {
     assertEquals(list.get(3),"four");
   }
 
+  @Test
   public void testIter() {
     java.util.Set set = new java.util.HashSet();
     java.util.LinkedList list = `concLinkedList("one","two","three","four");

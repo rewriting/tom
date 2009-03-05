@@ -28,13 +28,13 @@
  */
 package builtin;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TestTreeMap extends TestCase {
+public class TestTreeMap {
 
   public final static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestTreeMap.class));
+    org.junit.runner.JUnitCore.main(TestTreeMap.class.getName());
   }
 
   %include { java/util/TreeMap.tom }
@@ -47,6 +47,7 @@ public class TestTreeMap extends TestCase {
     get_slot(s,o) { ((String) $o) }
   }
 
+  @Test
   public void testMake() {
     java.util.TreeMap map = `concTreeMap(mapEntry("one","1"),
                                          mapEntry("two","2"),
@@ -57,7 +58,7 @@ public class TestTreeMap extends TestCase {
     assertEquals(map.get("three"),"3");
   }
 
-
+  @Test
   public void testGetValue() {
     java.util.TreeMap m = new java.util.TreeMap();
     m.put("one","1");
@@ -72,6 +73,7 @@ public class TestTreeMap extends TestCase {
     }
   }
 
+  @Test
   public void testAddingRemoving() {
     java.util.TreeMap m = `concTreeMap(mapEntry("one","1"),
                                        mapEntry("two","2"));
@@ -94,4 +96,3 @@ public class TestTreeMap extends TestCase {
     assertEquals(m3.get("hello"), null);
   }
 }
-
