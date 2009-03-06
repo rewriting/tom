@@ -223,6 +223,7 @@
   property
   -->
   <target name="-withstable" unless="withsource">
+    <antcall target="init.task.stable"/> 
     <presetdef name="tomcompile">
       <tom config="${stable.configfile}">
         <classpath refid="tom.classpath"/>
@@ -241,6 +242,7 @@
   </target>
 
   <target name="-withsrc" if="withsource">
+    <antcall target="init.task.src"/> 
     <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}">
         <classpath refid="tomsrc.classpath"/>
