@@ -13,7 +13,6 @@ public class Main {
   protected static Options options = new Options();
 
   public static void main(String[] args) {
-
     CmdLineParser optionParser = new CmdLineParser(options);
     optionParser.setUsageWidth(80);
     try {
@@ -40,14 +39,19 @@ public class Main {
       if(options.in != null) {
         fileinput = new FileInputStream(options.in);
       }
-
       // Parse the input expression and build an AST
+      System.out.println("bla0");
       LangageLexer lexer = new LangageLexer(new ANTLRInputStream(fileinput));
+      System.out.println("bla1");
       CommonTokenStream tokens = new CommonTokenStream(lexer);
+      System.out.println("bla2");
       LangageParser ruleParser = new LangageParser(tokens);
+      System.out.println("bla3");
       Tree b = (Tree) ruleParser.instruction().getTree();
       Instruction inst = (Instruction) AstAdaptor.getTerm(b);
       System.out.println("inst = " + inst);
+      System.out.println("PRETTY");
+      Compiler.pretty (inst);
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
@@ -60,4 +64,5 @@ public class Main {
       return;
     }
   }
+
 }
