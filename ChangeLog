@@ -2,10 +2,10 @@
   * bootinstall
 
 2009-01-28 balland
-	*  In Gom, avoid Tom compiling when it is not necessary
+  *  In Gom, avoid Tom compiling when it is not necessary
 
 2009-01-21 jcb
-  * Corrected the double display of Tom/Gom help
+  * corrected the double display of Tom/Gom help
 
 2009-01-19 jcb
   * implement multithreading in Tom

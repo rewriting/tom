@@ -1,3 +1,11 @@
+version 2.7:
+  - Gom has a new options: --fresh, to generate support for fresh-variables
+  - new traversal combinator iin the Strategy Library: Up
+  - Gom <--> ATerm has been improved for better compatibility
+  - new ant options: ccode and camlcode
+  - the Tom compiler is now thread-safe (can compile file in parallel)
+  - new option: --multithread
+
 version 2.6:
   - the left-handside of a rule supports the matching-constraint
     notation (p << t), as well as any combination of conjunction (&&) and
