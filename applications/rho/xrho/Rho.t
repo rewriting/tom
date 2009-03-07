@@ -43,7 +43,7 @@ import java.io.*;
 
 public class Rho {
 	
-	%include { mustrategy.tom }
+	%include { sl.tom }
 	%include { rhoterm/Rhoterm.tom }
 	%include { boolean.tom}
 	
@@ -328,7 +328,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 				 return `andC(matchKO());
 	     }
 
-	     match(Const[],app[]) | match(app[],Const[]) -> {
+	     match(Const[],app[]) || match(app[],Const[]) << l -> {
 				 return `andC(matchKO());
 	     }
 

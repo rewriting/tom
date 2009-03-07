@@ -3,7 +3,8 @@
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
-  <property name="nowarnings"  value="false"/>
+  <property name="nowarnings"      value="false"/>
+  <property name="javacDebug"      value="on"/>
   <import file="${tom.common.path}/tom-common.xml"/>
 
   <!-- set local properties for this build -->
