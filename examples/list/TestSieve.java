@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2009, INRIA
+ * Copyright (c) 2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,56 +29,51 @@
 
 package list;
 
+import org.junit.Test;
+import org.junit.Assert;
+
 import aterm.*;
-import aterm.pure.SingletonFactory;
 
-public class Sieve {
-  private static ATermFactory factory = SingletonFactory.getInstance();
-
-  %include { int.tom }
-
-  %typeterm TomList {
-    implement { ATermList }
-    is_sort(t) { $t instanceof ATermList }
-    equals(l1,l2) { $l1==$l2 }
+public class TestSieve {
+  public static void main(String[] args) {
+    org.junit.runner.JUnitCore.main(TestSieve.class.getName());
   }
 
-  %oplist TomList conc( int* ) {
-    is_fsym(t) { $t instanceof ATermList }
-    make_empty() { factory.makeList() }
-    make_insert(e,l) { $l.insert(factory.makeInt($e)) }
-    get_head(l) { ((ATermInt)$l.getFirst()).getInt() }
-    get_tail(l) { $l.getNext() }
-    is_empty(l) { $l.isEmpty() }
+  @Test
+  public void testGenereLength() {
+    Assert.assertEquals(9,Sieve.genere(10).getLength());
+    Assert.assertEquals(49,Sieve.genere(50).getLength());
+    Assert.assertEquals(99,Sieve.genere(100).getLength());
   }
 
-  %typeterm TomTerm {
-    implement { ATermAppl }
-    is_sort(t) { $t instanceof ATermAppl }
-    equals(t1, t2) { $t1==$t2 }
-  }
-
-  public static ATermList genere(int n) {
-    if(n>2) {
-      ATermList l = genere(n-1);
-      return l.insert(factory.makeInt(n));
-    } else {
-      return `conc(2);
+  @Test
+  public void testGenereValues() {
+    ATermList list = Sieve.genere(50).reverse();
+    int val = 2;
+    while (!list.isEmpty()) {
+      int current = ((ATermInt)list.getFirst()).getInt();
+      Assert.assertEquals(current,val++);
+      list = list.getNext();
     }
   }
 
-  public static ATermList elim(ATermList l) {
-    %match(TomList l) {
-      conc(x*,e1,y*,e2,z*) -> {
-        if(`e2%`e1 == 0) {
-          return `elim(conc(x*,e1,y*,z*));
-        }
-      }
+  @Test
+  public void testElim() {
+    ATermList list = Sieve.elim(Sieve.genere(50).reverse());
+    while (!list.isEmpty()) {
+      int current = ((ATermInt)list.getFirst()).getInt();
+      Assert.assertTrue(current + " should be prime",
+          isPrime(current));
+      list = list.getNext();
     }
-    return l;
   }
 
-  public final static void main(String[] args) {
-    System.out.println(" l = " + elim(genere(100).reverse()));
+  public static boolean isPrime(int n) {
+    for(int i=2; i < Math.sqrt(n); i++) {
+      if (n % i == 0) {
+        return false;
+      } 
+    }
+    return true;
   }
 }
