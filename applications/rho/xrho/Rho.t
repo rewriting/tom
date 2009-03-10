@@ -224,7 +224,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 				(X*,match(Const[],Const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
 				
 				/*Decompose et Decompose_ng min(n,m) > 0 */
-				l:(X*,m@match(app[],app[]),Y*) -> {
+				l: (X*,m@match(app[],app[]),Y*) -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
 						(match[]) -> { break l; }
@@ -233,7 +233,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l:(X*,m@match(app[],Const[]),Y*)  -> {
+				l: (X*,m@match(app[],Const[]),Y*)  -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
 						(match[]) -> { break l; }
@@ -242,7 +242,7 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l:(X*,m@match(Const[],app[]),Y*) -> {
+				l: (X*,m@match(Const[],app[]),Y*) -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
 						(match[]) -> { break l; }
