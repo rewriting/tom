@@ -36,8 +36,7 @@ import aterm.pure.*;
 import xrho.rhoterm.*;
 import xrho.rhoterm.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import java.io.*;
 
@@ -47,39 +46,30 @@ public class Rho {
 	%include { rhoterm/Rhoterm.tom }
 	%include { boolean.tom}
 	
-	%op Strategy Not_abs() {
-		make() {new Not_abs() }
-	}
+	//%op Strategy Not_abs() {
+//		make() {new Not_abs() }
+//	}
 
 	%op Strategy One_abs(strat:Strategy) {
-		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((MuStrategy)v)
+		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((Strategy)v)
 	}
 	%op Strategy All_abs(strat:Strategy) {
-		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((MuStrategy)v)
+		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((Strategy)v)
 	}
 	%op Strategy OnceTopDownWeak(strat:Strategy) {
 		make(v) {`mu(MuVar("x"),Choice(v,One_abs(MuVar("x"))))}
 	}
 
-	/*MuStrategy rules = new ReductionRules();
-	MuStrategy onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
-	MuStrategy print = new Print();
-	//STRATEGIE OUTERMOST
-	MuStrategy oneStepWeakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
-	MuStrategy weakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
-	MuStrategy strategyWithAllPrint = `Repeat(Sequence(oneStepWeakNormalisation,Try(print)));
-	MuStrategy strategyResult = `Repeat(oneStepWeakNormalisation);
-	MuStrategy strategyStrong = `Repeat(onceBottomUp);*/
-	MuStrategy rules=`Choice(RhoDelta(),Explicit());
-	MuStrategy oneStepWeakNormalisation = `OnceTopDownWeak(rules);
-	MuStrategy strategyStepsStrongPlain =`Repeat(Sequence(OnceBottomUp(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
-	MuStrategy strategyStepsStrongExplicit =`Repeat(Sequence(OnceBottomUp(rules),Try(Print())));
-	MuStrategy strategyStepsWeakPlain = `Repeat(Sequence(OnceTopDownWeak(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
-	MuStrategy strategyResultStrongPlain = `Innermost(rules);
-	MuStrategy strategyStepsWeakExplicit = `Repeat(Sequence(oneStepWeakNormalisation,Try(Print())));
-	MuStrategy strategyResultStrongExplicit  = `Innermost(rules);
-	MuStrategy strategyResultWeakPlain = `Repeat(oneStepWeakNormalisation);
-	MuStrategy strategyResultWeakExplicit = `Repeat(oneStepWeakNormalisation);
+	Strategy rules=`Choice(RhoDelta(),Explicit());
+	Strategy oneStepWeakNormalisation = `OnceTopDownWeak(rules);
+	Strategy strategyStepsStrongPlain =`Repeat(Sequence(OnceBottomUp(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
+	Strategy strategyStepsStrongExplicit =`Repeat(Sequence(OnceBottomUp(rules),Try(Print())));
+	Strategy strategyStepsWeakPlain = `Repeat(Sequence(OnceTopDownWeak(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
+	Strategy strategyResultStrongPlain = `Innermost(rules);
+	Strategy strategyStepsWeakExplicit = `Repeat(Sequence(oneStepWeakNormalisation,Try(Print())));
+	Strategy strategyResultStrongExplicit  = `Innermost(rules);
+	Strategy strategyResultWeakPlain = `Repeat(oneStepWeakNormalisation);
+	Strategy strategyResultWeakExplicit = `Repeat(oneStepWeakNormalisation);
 
 
 	public final static void main(String[] args) {
@@ -90,7 +80,7 @@ public class Rho {
 
 	public void run(){
 		RTerm subject = `Const("undefined");
-		MuStrategy currentStrategy = strategyResultWeakPlain;
+		Strategy currentStrategy = strategyResultWeakPlain;
 		String s;
 		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n\n\n For weak normalisation type WEAK; for strong normalisation type STRONG; \n Strong normalisation is valid only for linear (variables at most once) terms respecting Barendregt's convention\n\n For getting the reductions with all explicit steps type \'EXPLICIT\' otherwise type \'PLAIN\'\n\n For getting only the normal form \'NF\' and for getting all the evaluation steps type \'DETAILS\'\n \n By default the strategy is \'NF;PLAIN;WEAK\'\n\n By Germain Faure\n\n It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
     RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
@@ -291,6 +281,14 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
     return "";
 	}
 
+  %strategy Not_abs() extends Identity() {
+    visit RTerm {
+      abs[] -> {
+        throw new VisitFailure();
+      }
+    } 
+  }
+/*
 	public static class Not_abs extends RhotermBasicStrategy {
 		public Not_abs() {
 			super(`Identity());
@@ -306,6 +304,8 @@ System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 		}
 		
 	}
+  */
+
 	public static String stringInfix(ListConstraint constraints){
 		%match(ListConstraint constraints){
 			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
