@@ -32,9 +32,9 @@ package matching;
 
 import matching.lamterm.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.Position;
-import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
+import tom.library.sl.Position;
+import tom.library.sl.VisitFailure;
 
 import java.io.*;
 import java.util.*;
@@ -43,7 +43,7 @@ public class Matching {
 	
 	private int comptVariable = 0;
 
-	%include { mustrategy.tom }
+	%include { sl.tom }
 	%include { lamterm/Lamterm.tom }
   %include { util/types/Collection.tom }
 
@@ -56,8 +56,8 @@ public class Matching {
 	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n constants begin with a,b,c...w\n local variable begin with x,y or z\n matching variables are in capital letters\n  ******************************************************************\n");
     LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
     LamcalParser parser = new LamcalParser(lexer);
-//		MuStrategy reduce = new ReductionRules();
-//		MuStrategy strategyNormalize =`Repeat(reduce);
+//		Strategy reduce = new ReductionRules();
+//		Strategy strategyNormalize =`Repeat(reduce);
 	
 		while(true){
 //			Collection c=new HashSet();
@@ -170,9 +170,9 @@ public class Matching {
 							Iterator itSubCollection=subCollection.iterator();
 							while(itSubCollection.hasNext()){
 								//							System.out.println("ici4");
-								MuStrategy subsitute=(MuStrategy)((Position)itSubCollection.next()).getReplace(x);
+								Strategy subsitute=(Strategy)((Position)itSubCollection.next()).getReplace(x);
 //								System.out.println("ici4");
-								A2=(LamTerm)subsitute.visit(A2);
+                                A2=(LamTerm)subsitute.visit(A2);
 								//							System.out.println("ici5");
 							}
 							c.add(`and(X*,match(A1,abs(x,A2)),match(B1,B2),Y*));		
@@ -406,8 +406,8 @@ public class Matching {
 	//return the collection of all substerm (strict or not) of subject
 	public Collection getAllSubterm(LamTerm subject) throws VisitFailure {
     Collection bagSubterm = new HashSet();
-		MuStrategy collect = `Collect(bagSubterm);
- 		MuStrategy getAll = `mu(MuVar("x"),
+		Strategy collect = `Collect(bagSubterm);
+ 		Strategy getAll = `mu(MuVar("x"),
  																	Sequence(collect,Try(All(MuVar("x")))));		
 		getAll.visit(subject);
 		return bagSubterm;
@@ -415,8 +415,8 @@ public class Matching {
 	//return all the position of subject in which subTerm occurs
 	public Collection getAllPos(LamTerm subject, LamTerm subTerm) throws VisitFailure {
     ArrayList posList = new ArrayList();
- 		MuStrategy getPos=`GetPos(posList,subTerm);
- 		MuStrategy getAllPos=`mu(MuVar("x"),
+ 		Strategy getPos=`GetPos(posList,subTerm);
+ 		Strategy getAllPos=`mu(MuVar("x"),
  																	Sequence(getPos,Try(All(MuVar("x")))));	 	
  		getAllPos.visit(subject);
 		return posList;

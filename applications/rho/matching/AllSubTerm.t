@@ -32,10 +32,9 @@ package matching;
 import matching.term.*;
 import matching.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.Strategy;
+import tom.library.sl.Position;
+import tom.library.sl.Identity;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
@@ -48,7 +47,7 @@ public class AllSubTerm {
 
   %include { term/term.tom }
   %include { util/types/Collection.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   
   public final static void main(String[] args) {
     AllSubTerm test = new AllSubTerm();
@@ -58,17 +57,17 @@ public class AllSubTerm {
   public void run() {
 		Term subject = `f(f(a()));
 		Term subTerm = `f(b());
-		VisitableVisitor collect = `Collect(bag);
-		VisitableVisitor getAll = `mu(MuVar("x"),
+		Strategy collect = `Collect(bag);
+		Strategy getAll = `mu(MuVar("x"),
 																	Sequence(collect,All(MuVar("x"))));
-		VisitableVisitor getPos= `GetPos(subTerm,bagPos);
-		VisitableVisitor getAllPos=`mu(MuVar("x"),
+		Strategy getPos= `GetPos(subTerm,bagPos);
+		Strategy getAllPos=`mu(MuVar("x"),
 																	Sequence(getPos,All(MuVar("x"))));
 		System.out.println("subject = " + subject);
 		try{
-			MuTraveler.init(getAll).visit(subject);
+			getAll.visit(subject);
 			System.out.println("All the subterms are given by " + bag);
-			MuTraveler.init(getAllPos).visit(subject);
+			getAllPos.visit(subject);
 			System.out.println("The positions of the subterm " + subTerm + " are given by " +bagPos);
 			System.out.println("All the subsets of the set of subterms: "+allSubCollection(bag));
 		}
