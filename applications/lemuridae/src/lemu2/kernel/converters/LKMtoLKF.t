@@ -270,6 +270,30 @@ public class LKMtoLKF {
                 }
               } 
             }
+            foldR(id,FoldRPrem1(a,A,M),cn) -> {
+              Prop P = U.`lookup(delta,cn);
+              PropRewriteRule pr = U.`lookup(prs,id);
+              Prop A1 = Rewriting.rewrite(P,pr);
+              if (A1 != null) {
+                Sequent se1 = `seq(free,gamma,rctx(cnprop(a,A1),delta*));
+                ProofTerm prem1 = `convert(M,se1,prs);
+                return `foldR(id,FoldRPrem1(a,A1,prem1),cn);
+              } else {
+                return `unfold(P,pt,cn,free,gamma,delta,prs); 
+              }
+            }
+            foldL(id,FoldLPrem1(x,A,M),n) -> {
+              Prop P = U.`lookup(gamma,n);
+              PropRewriteRule pr = U.`lookup(prs,id);
+              Prop A1 = Rewriting.rewrite(P,pr);
+              if (A1 != null) {
+                Sequent se1 = `seq(free,lctx(nprop(x,A1),gamma*),delta);
+                ProofTerm prem1 = `convert(M,se1,prs);
+                return `foldL(id,FoldLPrem1(x,A1,prem1),n);
+              } else {
+                return `unfold(P,pt,n,free,gamma,delta,prs); 
+              }
+            }
           }
         }
       }

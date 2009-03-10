@@ -51,7 +51,7 @@ public class Main {
       ProofTerm pt = parser.proofterm().convert();
       System.out.println(Pretty.pretty(pt.export()));
       System.out.println();
-			//Latex.display(pt.export());
+			Latex.display(pt.export());
       Pretty.setChurchStyle(false);
       //LTerm lmupt = LKtoLambdaMu.convert(pt);
       //System.out.println("lambda-mu conversion : " + Pretty.pretty(lmupt.export()) + " : " + Pretty.pretty(LambdaMuTypeChecker.typeof(lmupt).export()));
@@ -70,15 +70,16 @@ public class Main {
       System.out.println("typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,prules));
       System.out.println("typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pfrules));
       System.out.println();
-      ProofTerm pt_eta = LKMtoLKF.convert(pt,prules);
+      PropRewriteRules rulesunion = `proprrules(prules*,pfrules*);
+      ProofTerm pt_eta = LKMtoLKF.convert(pt,rulesunion);
       System.out.println("conversion: " + Pretty.pretty(pt_eta.export()));
-			//Latex.display(pt_eta.export());
-      System.out.println("conversion typechecks in LKFM  : " + TypeChecker.typecheck(pt_eta,rrules,`proprrules(),prules));
-      System.out.println("conversion typechecks in LKF  : " + LKFTypeChecker.typecheck(pt_eta,prules));
+			Latex.display(pt_eta.export());
+      //System.out.println("conversion typechecks in LKFM  : " + TypeChecker.typecheck(pt_eta,rrules,`proprrules(),rulesunion));
+      //System.out.println("conversion typechecks in LKF  : " + LKFTypeChecker.typecheck(pt_eta,rulesunion));
 			//System.out.println(Pretty.pretty(LKFtoLK.convert(pt_eta,prules)));
 
 
-      ProofTerm pure = LKFtoLK.convert(pt_eta,prules);
+      ProofTerm pure = LKFtoLK.convert(pt_eta,rulesunion);
       System.out.println("pure LK typechecks          : " + TypeChecker.`typecheck(pure,termrrules(),proprrules(),proprrules()));
 			Latex.display(pure.export());
       LTerm pure_lmu_eta = LambdaMu.mueta(LKtoLambdaMu.convert(pure));

@@ -20,7 +20,7 @@ public class Pretty {
     %match(t) {
       lvar(Name(n,i)) -> { return `n + `i; }
       lam(Lam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
-      flam(FLam(x,u)) -> { return %[\@`x@.@`pretty(u)@]%; }
+      flam(FLam(x,u)) -> { return "\u03BC" + %[@`x@.@`pretty(u)@]%; }
       activ(Act(x,ty,u)) -> { return "\u03BC" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
       lapp(u@(lapp|fapp|lvar)[],v) -> { 
         return %[@`pretty(u)@ @`pretty(v)@]%; 
@@ -59,7 +59,7 @@ public class Pretty {
     %match(t) {
       Rawlvar(v) -> { return `v; }
       Rawlam(RawLam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
-      Rawflam(RawFLam(x,u)) -> { return %[\@`x@.@`pretty(u)@]%; }
+      Rawflam(RawFLam(x,u)) -> { return "\u03BC" + %[@`x@.@`pretty(u)@]%; }
       Rawactiv(RawAct(x,ty,u)) -> { return "\u03BC" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
       Rawlapp(u@(Rawlapp|Rawfapp|Rawlvar)[],v) -> { 
         return %[@`pretty(u)@ @`pretty(v)@]%; 

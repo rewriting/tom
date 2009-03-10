@@ -4,6 +4,7 @@ import lemu2.kernel.proofterms.types.*;
 import lemu2.kernel.proofterms.types.fovarlist.fovarList;
 import lemu2.kernel.proofterms.types.namelist.nameList;
 import lemu2.kernel.proofterms.types.conamelist.conameList;
+import lemu2.util.*;
 import tom.library.freshgom.*;
 import tom.library.sl.*;
 
