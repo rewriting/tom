@@ -164,7 +164,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
              patternInstruction[subjectList,constraintInstructionList,patternType]
             )* 
             t1:RBRACE 
-            { 
+            {
                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
                // update for new target block...
                updatePosition(t1.getLine(),t1.getColumn());
@@ -344,6 +344,10 @@ visitInstruction [TomList subjectList, List list, TomType rhsType] throws TomExc
          optionList = `concOption(optionList*,op);
        }
        optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
+       if (label != null) {
+         optionList = `concOption(Label(Name(label.getText())),optionList*);
+       }
+
    }
 (t:LBRACE 
  {
