@@ -677,7 +677,7 @@ public class U {
       caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
         conameList ucn = `getFreeCoNames(ctx,u); 
         conameList vcn = `getFreeCoNames(ctx,v); 
-        conameList wcn = `getFreeCoNames(ctx,v); 
+        conameList wcn = `getFreeCoNames(ctx,w); 
         return (conameList) `conameList(ucn*,vcn*,wcn*); 
       }
       left(u,p) -> { return `getFreeCoNames(ctx,u); }
@@ -689,7 +689,8 @@ public class U {
         return (conameList) `conameList(ucn*,vcn*);
       }
       passiv(c,u) -> {
-        return ctx.contains(`c) ? `conameList() : `conameList(c); 
+        conameList ucn = `getFreeCoNames(ctx,u); 
+        return ctx.contains(`c) ? ucn : `conameList(c,ucn*); 
       }
     }
     throw new RuntimeException("non exhaustive patterns");

@@ -18,7 +18,7 @@ public class Pretty {
 
   public static String pretty(LTerm t) {
     %match(t) {
-      lvar(Name(n,i)) -> { return `n + `i; }
+      lvar(Name(i,n)) -> { return `n + `i; }
       lam(Lam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
       flam(FLam(x,u)) -> { return "\u03BC" + %[@`x@.@`pretty(u)@]%; }
       activ(Act(x,ty,u)) -> { return "\u03BC" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
@@ -42,8 +42,8 @@ public class Pretty {
       witness(ft,u,p) -> { return %[(<@`pretty(ft)@,@`pretty(u)@>:@`pretty(p)@)]%; }
       left(u,p) -> { return %[left{@`pretty(p)@} @`pretty(u)@]%; }
       right(u,p) -> { return %[right{@`pretty(p)@} @`pretty(u)@]%; }
-      passiv(mv,lvar(x)) -> { return %[[@`mv@]@`x@]%; }
-      passiv(mv,u) -> { return %[[@`mv@](@`pretty(u)@)]%; }
+      passiv(CoName(i,mv),lvar(Name(j,x))) -> { return %[[@`mv+`i@]@`x + `j@]%; }
+      passiv(CoName(i,mv),u) -> { return %[[@`mv+`i@](@`pretty(u)@)]%; }
       unit() -> { return "()"; }
     }
     throw new RuntimeException("non exhaustive patterns");
