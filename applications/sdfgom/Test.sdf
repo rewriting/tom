@@ -7,16 +7,18 @@ exports
 context-free start-symbols 
  Bool Block 
 
-sorts Bool Block BoolList Id
+sorts Bool Block BoolList IdSort IntSort
 
 lexical syntax
  [\ \t\n\r] -> LAYOUT
 
 lexical syntax
-  [0-9]+ -> Id {cons("IdCons")}
+  [0-9]+ -> IntSort {cons("IntCons")}
+  [a-zA-Z][a-zA-Z0-9]* -> IdSort {cons("IdCons")}
 
 context-free syntax
- Id -> Bool {cons("Id")}
+ name:IdSort -> Bool {cons("Id")}
+ value:IntSort -> Bool {cons("Int")}
  "true" -> Bool { cons("True") }
  "false" -> Bool { cons("False") }
  lhs:Bool "&" rhs:Bool -> Bool { cons("And") }
@@ -24,5 +26,10 @@ context-free syntax
  "{" BoolList "}" -> Block {cons("BoolBlock")}
  Bool* -> BoolList {cons("BoolList")}
 
+context-free syntax
+"true" -> IdSort {reject}
+"false" -> IdSort {reject}
+
 context-free restrictions
-  Id -/- [0-9]
+  IdSort -/- [a-zA-Z0-9]
+  IntSort -/- [0-9]

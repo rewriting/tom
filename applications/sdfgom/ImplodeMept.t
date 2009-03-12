@@ -90,7 +90,7 @@ public class ImplodeMept {
     %match(pt) {
       parsetree(top,_) -> { return `PTtoAST(top); }
     }
-    throw new RuntimeException("should not be there");
+    throw new RuntimeException("should not be there: " + pt);
   }
 
   public static ATerm PTtoAST(Tree pt) {
@@ -117,7 +117,17 @@ public class ImplodeMept {
 matchblock: {
           %match(t) {
             // special case for list operators
-            appl(list(_),args2) -> {
+            appl(list(lex(_)),args2) -> {
+              String newArgs2 = PTtoString(`args2);
+              newArgs = newArgs.append(factory.makeAppl(factory.makeAFun(newArgs2,0,true)));
+              break matchblock;
+            }
+            appl(list(!lex(_)),args2) -> {
+              ATermList newArgs2 = (ATermList) PTtoAST(`args2);
+              newArgs = newArgs.concat(newArgs2);
+              break matchblock;
+            }
+            appl(prod[Attributes=no_attrs()],args2) -> {
               ATermList newArgs2 = (ATermList) PTtoAST(`args2);
               newArgs = newArgs.concat(newArgs2);
               break matchblock;
@@ -139,7 +149,18 @@ matchblock: {
         return res;
       }
     }
-    throw new RuntimeException("should not be there");
+    throw new RuntimeException("should not be there: " + pt);
+  }
+
+  public static String PTtoString(Args args) {
+    String res = "";
+    %match(args) {
+      listTree(_*,my_char(value),_*) -> {
+        char c = (char)`value;
+        res += c;
+      }
+    }
+    return res;
   }
 
   public static ATerm PTtoAST(Args args) {
