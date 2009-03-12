@@ -1,0 +1,10 @@
+module Bool
+abstract syntax
+Bool = True()
+     | False()
+     | And(lhs:Bool,rhs:Bool)
+
+Block = BoolBlockList(Bool*)
+      | BoolBlock(a:BoolList)
+
+BoolList = BoolList(Bool*)

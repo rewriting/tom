@@ -82,6 +82,13 @@ public class MEPTConverter implements ATermConverter {
             at = factory.makeAppl(factory.makeAFun("char_class",1,false),char_args);
           }
 
+        } else if(name.equals("term")) { // "term(cons(x)) -> cons(x)"
+          ATermAppl term_arg = (ATermAppl)appl.getArgument(0);
+          //System.out.println("term_arg = " + term_arg);
+          if(term_arg.getName().equals("cons")) {
+            at = term_arg;
+          }
+
         } else if(name.equals("amb")) { // subcase : "amb([Tree])"
           ATermList amb_args = (ATermList)args.getFirst();
           if(!amb_args.isEmpty()) {

@@ -19,9 +19,10 @@ context-free syntax
  Id -> Bool {cons("Id")}
  "true" -> Bool { cons("True") }
  "false" -> Bool { cons("False") }
- Bool "&" Bool -> Bool { cons("And") }
+ lhs:Bool "&" rhs:Bool -> Bool { cons("And") }
+ "[" Bool* "]" -> Block {cons("BoolBlockList")}
  "{" BoolList "}" -> Block {cons("BoolBlock")}
- Bool* -> BoolList {cons("list")}
+ Bool* -> BoolList {cons("BoolList")}
 
 context-free restrictions
   Id -/- [0-9]

@@ -7,7 +7,14 @@ Tree = appl(Prod:Production, Args:Args)
      | cycle(Symbol:Symbol,Cycle_length:int)
      | amb(Args:Args) 
      | my_char(Character:int) 
+     | removedTree()
 Args = listTree(Tree*) 
+
+listTree:make_insert(e,l) {
+  %match(e) {
+    removedTree() -> { return `l; }
+  }
+}
 
 Production = prod(Lhs:Symbols, Rhs:Symbol, Attributes:Attributes) 
 	   | list(Rhs:Symbol) 
@@ -23,6 +30,7 @@ Attr = assoc(Assoc:Associativity)
      | reject() 
      | prefer() 
      | avoid() 
+     | cons(Const:String) 
 
 Associativity = left() 
 	      | right() 
