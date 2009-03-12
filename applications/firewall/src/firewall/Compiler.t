@@ -72,7 +72,7 @@ public class Compiler {
         Return() -> {
         	System.out.println("RETURN");
         }
-        User_Rule(user_rule:String) -> {//RAJOUTER USER_RULE
+        User_Rule() -> {//RAJOUTER USER_RULE
         	System.out.println("USER_RULE");
         }
         Same() -> {
@@ -109,5 +109,48 @@ public class Compiler {
         	System.out.println("TARPIT");
         }
     }
+    
+  }
+  
+  public static void pretty(Protocol prt) {
+  	%match(prt) {
+  		All() -> {
+  			System.out.println("All");
+  		}
+  		Icmp() -> {
+  			System.out.println("Icmp");
+  		}
+  		Udp() -> {
+  			System.out.println("Udp");
+  		}
+  		Tcp() -> {
+  			System.out.println("Tcp");
+  		}
+  	}
+  }
+  
+  
+  public static void pretty(Opts option) {
+  	%match(option) {
+  		None() -> {
+  			System.out.println("--");
+  		}
+  	}
+  }
+  
+  
+  public static void pretty(Communication com) {
+  	%match(com){
+  		Anywhere() -> {
+  			System.out.println("Anywhere");
+  		}
+  		Localhost() -> {
+  			System.out.println("Localhost");
+  		}
+  		Ip_Addr() -> {
+  			System.out.println("Ip_Addr");
+  		}
+  	}
   }
 }
+

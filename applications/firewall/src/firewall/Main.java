@@ -40,15 +40,11 @@ public class Main {
         fileinput = new FileInputStream(options.in);
       }
       // Parse the input expression and build an AST
-      System.out.println("bla0");
       LangageLexer lexer = new LangageLexer(new ANTLRInputStream(fileinput));
-      System.out.println("bla1");
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      System.out.println("bla2");
       LangageParser ruleParser = new LangageParser(tokens);
-      System.out.println("bla3");
-      Tree b = (Tree) ruleParser.instruction().getTree();
-      Instruction inst = (Instruction) AstAdaptor.getTerm(b);
+      Tree b1 = (Tree) ruleParser.instruction().getTree();
+      Instruction inst = (Instruction) AstAdaptor.getTerm(b1);
       System.out.println("inst = " + inst);
       System.out.println("PRETTY");
       Compiler.pretty (inst);

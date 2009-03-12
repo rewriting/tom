@@ -2,7 +2,13 @@ module firewall.Ast
 imports String int
 abstract syntax
 
-Instruction = Accept()
+Instruction = Target()
+	| Protocol()
+	| Opts()
+	| Communication()
+	
+
+Target = Accept()
         |Classify()
         |ClusterIp()
         |ConnMark()
@@ -23,7 +29,7 @@ Instruction = Accept()
         |Redirect()
         |Reject()
         |Return()
-        |User_Rule(user_rule:String)
+        |User_Rule()
         |Same()
         |SecMark()
         |Snat()
@@ -36,17 +42,16 @@ Instruction = Accept()
         |Set()
         |Tarpit()
         
-        Protocol =   All()
+Protocol =   All()
             |Icmp()
             |Udp()
             |Tcp()
 
 Opts =   None()
 
-Source = Src(com:Communication)
-
-Destination =  Dest(com:Communication)
-
 Communication = Anywhere()
             |Localhost()
             |Ip_Addr()
+
+
+

@@ -16,7 +16,9 @@ tokens {
   package firewall;
 }
 
-instruction :
+instruction : (target | opts | communication | protocol);
+
+target :
     ('ACCEPT' -> ^(Accept)
     |'CLASSIFY' -> ^(Classify)
     |'CLUSTERIP' -> ^(ClusterIp)
@@ -38,7 +40,6 @@ instruction :
     |'REDIRECT' -> ^(Redirect)
     |'REJECT' -> ^(Reject)
     |'RETURN' -> ^(Return)
-    |'USER_RULE'	-> ^(User_Rule) //TO MODIFY
     |'SAME' -> ^(Same)
     |'SECMARK' -> ^(SecMark)
     |'SNAT' -> ^(Snat)
@@ -49,8 +50,26 @@ instruction :
     |'ULOG' -> ^(Ulog)
     |'IPV40PTSSTRIP' -> ^(Ipv4OptSstRip)
     |'SET' -> ^(Set)
-    |'TARPIT' -> ^(Tarpit))	
-  ;
+    |'TARPIT' -> ^(Tarpit)	
+    | ID -> ^(User_Rule) //TO MODIFY
+  );
+  
+  
+opts : 
+	'NONE' -> ^(None);
+	
+communication : 
+	('ANYWHERE' -> ^(Anywhere)
+	 |'LOCALHOST' -> ^(Localhost)
+	 |'IP_ADDR' -> ^(Ip_Addr)
+	);
+
+protocol : 
+	('ICMP' -> ^(Icmp)
+	|'ALL' -> ^(All)
+	|'TCP' -> ^(Tcp)
+	|'UDP' -> ^(Udp)
+	);
 
 INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;
