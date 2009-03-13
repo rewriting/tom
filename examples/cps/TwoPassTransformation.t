@@ -93,9 +93,28 @@ public class TwoPassTransformation {
 
   %strategy Admin() extends Identity() {
     visit LTerm {
-      App(Abs(lam(x,t)),u@(True|False|Integer|Plus|Minus|Times|Eq|LNot|And|Or|Unit|Var|Abs|Fix)[]) -> {
-        return `substitute(t,x,u);
+      App(Abs(lam(k,App(Var(k),v@(True|False|Integer|Plus|Minus|Times|GT|LT|Eq|LNot|And|Or|Print|Unit|Var|Abs|Fix)[]))),Abs(lam(x,a))) -> substitute(a,x,v)
+      //eta reduction
+      Abs(lam(x,App(t,Var(x)))) -> {
+       if (`isFree(x,t)) {
+         return `t;
+       }
       }
+    }
+  }
+
+  public static boolean isFree(LVar var, LTerm t) {
+    try {
+      `TopDown(IsFree(var)).visitLight(t);
+    } catch(VisitFailure e) {
+      return false;
+    }
+    return true;
+  }
+
+  %strategy IsFree(var: LVar) extends Identity() {
+    visit LTerm {
+      Var(v) && v==var -> { throw new VisitFailure(); }
     }
   }
 
@@ -194,6 +213,7 @@ public class TwoPassTransformation {
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
         System.out.println("\ncps translated: " + Printer.prettyp5(ocpst.export()));
+        System.out.println("\nevaluation: " + Printer.pretty(`eval(Env(),App(ocpst,id))));
         System.out.println("\nevaluation: " + Printer.pretty(`eval(Env(),App(ocpst,id))));
       }
     } catch(Exception e) {
