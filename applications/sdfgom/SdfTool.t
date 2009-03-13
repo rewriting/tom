@@ -14,7 +14,7 @@ import sdfgom.SDFConverter;
 
 public class SdfTool {
   %include { sl.tom }
-  %include { sdf/sdf.tom }
+  %include { sdf/Sdf.tom }
   %include { java/util/types/HashMap.tom }
 
   public static PureFactory factory = SingletonFactory.getInstance();
