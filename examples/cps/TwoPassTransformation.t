@@ -5,7 +5,9 @@ import cps.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 
-public class FreshLambda {
+/* Encoding of the first-order two-pass CPS transformation */
+
+public class TwoPassTransformation {
 
   %include { sl.tom }
   %include { lambda/lambda.tom }
@@ -186,14 +188,13 @@ public class FreshLambda {
         System.out.print("\ncps translation ... ");
         System.out.flush();
         LTerm cpst = cps(ct);
-        System.out.print("optimization ... ");
-        System.out.flush();
+        System.out.println("optimization ...");
         LTerm ocpst = admin(cpst);
         //System.out.println("\nparsed: " + Printer.prettyp5(ocpst.export()));
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
-        System.out.println(" evaluation\n");
-        System.out.println("\nnormal form: " + Printer.pretty(`eval(Env(),App(ocpst,id))));
+        System.out.println("\ncps translated: " + Printer.prettyp5(ocpst.export()));
+        System.out.println("\nevaluation: " + Printer.pretty(`eval(Env(),App(ocpst,id))));
       }
     } catch(Exception e) {
       e.printStackTrace();
