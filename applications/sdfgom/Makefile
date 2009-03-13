@@ -30,8 +30,8 @@ gom:
 clean: clean.aterm clean.sdfgom clean.mept clean.bool
 
 clean.aterm: 
-	rm TestATerm.class
-	rm TestATerm.java
+	rm -f TestATerm.class
+	rm -f TestATerm.java
 	rm -Rf testaterm
 
 clean.sdfgom:
@@ -44,7 +44,7 @@ clean.bool:
 	rm -Rf bool
 
 clean.implode: 
-	rm sdfgom/Implode*
+	rm -f sdfgom/Implode*
 
 clean.testmept: 
-	rm sdfgom/TestMept*
+	rm -f sdfgom/TestMept*
