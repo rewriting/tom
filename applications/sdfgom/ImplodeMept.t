@@ -95,20 +95,6 @@ public class ImplodeMept {
 
   public static ATerm PTtoAST(Tree pt) {
     %match(pt) {
-      /*
-      appl(prod[Attributes=attrs(listAttr(_*,cons(opname),_*))],args) -> { 
-        ATermList newArgs = (ATermList) PTtoAST(`args);
-        System.out.println("newArgs = " + newArgs);
-        int arity=newArgs.getLength();
-        AFun fun = factory.makeAFun(`opname,arity,false);
-        ATerm res = factory.makeApplList(fun,newArgs);
-        return res;
-      }
-      appl(list(_),args) -> {
-        ATermList newArgs = (ATermList) PTtoAST(`args);
-        return newArgs;
-      }
-      */
       appl(prod[Attributes=attrs(listAttr(_*,cons(opname),_*))],arglist) -> { 
         ATermList newArgs = factory.makeList();
         Args args = `arglist;
@@ -117,16 +103,25 @@ public class ImplodeMept {
 matchblock: {
           %match(t) {
             // special case for list operators
-            appl(list(lex(_)),args2) -> {
-              String newArgs2 = PTtoString(`args2);
-              newArgs = newArgs.append(factory.makeAppl(factory.makeAFun(newArgs2,0,true)));
+            //appl(list(lex(_)),args2) -> {
+            //  String newArgs2 = PTtoString(`args2);
+            //  newArgs = newArgs.append(factory.makeAppl(factory.makeAFun(newArgs2,0,true)));
+            //  break matchblock;
+            //}
+            appl(prod(listSymbol(lex(sort)),cf(sort),no_attrs()),args2) -> {
+              // case for lexicals
+              //System.out.println("args2 = " + `args2);
+              ATerm newArgs2 = PTtoString(`args2);
+              newArgs = newArgs.append(newArgs2);
               break matchblock;
             }
+
             appl(list(!lex(_)),args2) -> {
               ATermList newArgs2 = (ATermList) PTtoAST(`args2);
               newArgs = newArgs.concat(newArgs2);
               break matchblock;
             }
+
             appl(prod[Attributes=no_attrs()],args2) -> {
               ATermList newArgs2 = (ATermList) PTtoAST(`args2);
               newArgs = newArgs.concat(newArgs2);
@@ -148,19 +143,45 @@ matchblock: {
         ATerm res = factory.makeApplList(fun,newArgs);
         return res;
       }
+
+      
+
+
     }
     throw new RuntimeException("should not be there: " + pt);
   }
 
-  public static String PTtoString(Args args) {
-    String res = "";
-    %match(args) {
-      listTree(_*,my_char(value),_*) -> {
-        char c = (char)`value;
-        res += c;
-      }
+  public static ATerm PTtoString(Args args) {
+    StringBuffer consName = new StringBuffer();
+    try {
+      // collect the name of the constructore
+      `OnceTopDown(ContainsConstructor(consName)).visitLight(`args);
+    } catch(VisitFailure e) {
+      // there is no consName but this is not a problem
+    }
+
+    StringBuffer sb = new StringBuffer();
+    try{
+      `TopDown(CollectMyChar(sb)).visitLight(args);
+    } catch(VisitFailure e) {
+      System.out.println("failure on " + args);
+    }
+
+    ATerm res = factory.makeAppl(factory.makeAFun(sb.toString(),0,true));
+    if(consName.toString().length()>0) {
+      res =  factory.makeAppl(factory.makeAFun(consName.toString(),1,false),res);
     }
     return res;
+  }
+
+  %typeterm StringBuffer { implement { StringBuffer } }
+  %strategy CollectMyChar(sb:StringBuffer) extends Identity() {
+    visit Tree {
+      my_char(value) -> {
+        char c = (char)`value;
+        sb.append(c);
+      }
+    }
   }
 
   public static ATerm PTtoAST(Args args) {
@@ -189,7 +210,8 @@ matchblock: {
     visit Tree {
       appl(prod[Attributes=no_attrs()],args) -> {
         try {
-          `OnceTopDown(ContainsConstructor()).visitLight(`args);
+          StringBuffer sb = new StringBuffer(); // not used here
+          `OnceTopDown(ContainsConstructor(sb)).visitLight(`args);
           // do nothing 
         } catch(VisitFailure e) {
           return `removedTree();
@@ -198,9 +220,12 @@ matchblock: {
     }
   }
 
-  %strategy ContainsConstructor() extends Fail() {
+  %strategy ContainsConstructor(consName:StringBuffer) extends Fail() {
     visit Tree {
-      x@appl(prod[Attributes=attrs(listAttr(_*,cons(_),_*))],_) -> x
+      x@appl(prod[Attributes=attrs(listAttr(_*,cons(name),_*))],_) -> {
+        consName.append(`name);
+        return `x;
+      }
     }
   }
 
