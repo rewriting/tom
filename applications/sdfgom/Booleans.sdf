@@ -12,6 +12,3 @@ context-free syntax
  "true"        -> Bool { cons("True") }
  "false"       -> Bool { cons("False") }
  Bool "&" Bool -> Bool { cons("And") }
-
-variables 
- "B"  -> Bool

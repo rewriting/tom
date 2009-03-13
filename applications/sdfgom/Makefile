@@ -1,10 +1,10 @@
-all: aterm mept implode
+all: gom aterm converter mept implode
 
-implode: converter
+implode:
 	tom ImplodeMept.t
 	javac sdfgom/ImplodeMept.java
 
-mept: converter
+mept:
 	tom TestMept.t
 	javac sdfgom/TestMept.java
 

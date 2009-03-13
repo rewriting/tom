@@ -76,8 +76,8 @@ public class ImplodeMept {
 
       ATerm aterm = PTtoAST(t1);
       System.out.println("aterm = " + aterm);
-      Block b = Block.fromTerm(aterm);
-      System.out.println("bool = " + b);
+      //Block b = Block.fromTerm(aterm);
+      //System.out.println("bool = " + b);
 
 
     } catch(VisitFailure e) {
@@ -90,7 +90,7 @@ public class ImplodeMept {
     %match(pt) {
       parsetree(top,_) -> { return `PTtoAST(top); }
     }
-    throw new RuntimeException("should not be there: " + pt);
+    throw new RuntimeException("(PTtoAST) should not be there: " + pt);
   }
 
   public static ATerm PTtoAST(Tree pt) {
@@ -137,7 +137,7 @@ matchblock: {
           args = args.getTaillistTree();
         }
 
-        System.out.println("newArgs = " + newArgs);
+        //System.out.println("newArgs = " + newArgs);
         int arity=newArgs.getLength();
         AFun fun = factory.makeAFun(`opname,arity,false);
         ATerm res = factory.makeApplList(fun,newArgs);
@@ -148,7 +148,7 @@ matchblock: {
 
 
     }
-    throw new RuntimeException("should not be there: " + pt);
+    throw new RuntimeException("(PTtoAST [Tree]) should not be there: " + pt);
   }
 
   public static ATerm PTtoString(Args args) {
