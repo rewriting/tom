@@ -71,7 +71,6 @@ public class SDFConverter implements ATermConverter {
 
         } else if(name.equals("assoc")) { // subcase : "assoc -> my_assoc" && arity =0
           if(appl.getArity() == 0) { // test needed because there are 2 "assoc", the one whose arity equal to 0 is the good one
-            AFun myAFun = 
             at = factory.makeAppl(factory.makeAFun("my_assoc",0,false));
           }
 

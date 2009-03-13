@@ -9,8 +9,6 @@ import aterm.*;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
 
-import bool.*;
-import bool.types.*;
 import mept.*;
 import mept.types.*;
 
@@ -22,7 +20,6 @@ import sdfgom.MEPTConverter;
 public class ImplodeMept {
   %include { sl.tom }
   %include { mept/Mept.tom }
-  %include { bool/Bool.tom }
   private static String readFileAsString(String filePath)
     throws java.io.IOException{
       StringBuffer fileData = new StringBuffer(1000);
@@ -54,17 +51,14 @@ public class ImplodeMept {
     }
 
     // Converters which will be used
-    IdConverter idConv = new IdConverter();
-    MEPTConverter meptConv = new MEPTConverter();
+    MEPTConverter meptConverter = new MEPTConverter();
 
     //Parameters :
-    ATermConverter usedConverter = meptConv; // ATermConverter which will be used 
     ATerm at = SingletonFactory.getInstance().parse(s);
 
     //System.out.println("\nat =\n"+at);
 
-    ParseTree t = ParseTree.fromTerm(at,usedConverter);
-    //System.out.println("\nParseTree.fromTerm(at,usedConverter) = t =\n" + t + "\n");
+    ParseTree t = ParseTree.fromTerm(at,meptConverter);
 
     try {
       ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(t);
@@ -72,13 +66,13 @@ public class ImplodeMept {
       ParseTree t3 = `BottomUp(RemoveNonConstructor()).visitLight(t2);
       //System.out.println("t3 = " + t3);
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
-      System.out.println("t1 = " + t1);
+      //System.out.println("t1 = " + t1);
 
       ATerm aterm = PTtoAST(t1);
       System.out.println("aterm = " + aterm);
-      //Block b = Block.fromTerm(aterm);
-      //System.out.println("bool = " + b);
 
+      SdfTool sdfTool = new SdfTool();
+      System.out.println("result = " + sdfTool.convert(aterm));
 
     } catch(VisitFailure e) {
       System.out.println("failure on " + t);

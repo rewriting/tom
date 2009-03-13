@@ -143,17 +143,9 @@ public class MEPTConverter implements ATermConverter {
         } else if(name.equals("iter-sep-n")) { // subcase : "iter-sep-n -> iter_sep_n" / arity = 3
           at = factory.makeApplList(factory.makeAFun("iter_sep_n",3,false),args);
 
-        } else if(name.equals("iter-plus")) { // subcase : "iter_plus -> iter_plus" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("iter_plus",1,false),args);
-
-        } else if(name.equals("iter-plus-sep")) { // subcase : "iter-plus-sep -> iter_sep" / arity = 2
-          at = factory.makeApplList(factory.makeAFun("iter_sep",2,false),args);
-
 
         } else if(name.equals("iter-star")) { // subcase : "iter-star -> iter_star" / arity = 1
-          ATerm iter_arg = args.getFirst();
-          AFun myAFun = factory.makeAFun("iter_star",1,false);
-          at = factory.makeAppl(myAFun,iter_arg);
+          at = factory.makeApplList(factory.makeAFun("iter_star",1,false),args);
 
         } else if(name.equals("iter-star-sep")) { // subcase : "iter-star-sep -> iter_star_sep" / arity = 2
           at = factory.makeApplList(factory.makeAFun("iter_star_sep",2,false),args);

@@ -347,7 +347,7 @@ exports
 
     Symbols "->" result:Symbol Attributes -> Production  {cons("prod")}
 
-    list:Production* -> Productions
+    list:Production* -> Productions {cons("listProduction")}
 
     "syntax" Productions -> Grammar {cons("syntax")}
 module languages/sdf2/syntax/Aliases

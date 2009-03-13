@@ -1,8 +1,8 @@
 all: gom aterm converter mept implode
 
 implode:
-	tom ImplodeMept.t
-	javac sdfgom/ImplodeMept.java
+	tom ImplodeMept.t SdfTool.t
+	javac sdfgom/ImplodeMept.java sdfgom/SdfTool.java
 
 mept:
 	tom TestMept.t
@@ -15,8 +15,8 @@ aterm:
 	javac TestATerm.java
 
 converter: gom
-	tom MEPTConverter.t
-	javac sdfgom/MEPTConverter.java
+	tom SDFConverter.t MEPTConverter.t
+	javac sdfgom/MEPTConverter.java sdfgom/SDFConverter.java
 
 javac: tom
 	javac sdfgom/*.java

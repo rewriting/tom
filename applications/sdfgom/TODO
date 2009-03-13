@@ -14,3 +14,10 @@ Test.t
 TestMept.t :
 - simple example to show the use of a Converter
 - Replace previous examples (TestMept.t & TestMeptOK*)
+
+TO IMPROVE
+==========
+E* -> L
+do something for these productions, which have no constructor name
+
+

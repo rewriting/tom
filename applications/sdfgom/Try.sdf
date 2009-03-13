@@ -1,1 +1,5 @@
-foo(bar)
+context-free syntax
+"true"        -> Bool
+"false"       -> Bool
+Bool "&" Bool -> Bool {left}
+
