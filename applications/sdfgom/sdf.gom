@@ -1,0 +1,49 @@
+module Sdf
+imports String int ATerm
+abstract syntax
+Grammars = conc_grammars(Grammar*)
+
+Grammar = context_free_syntax(prods:Productions)
+       | lexical_syntax(prods:Productions)
+
+Productions = listProduction(Production*)
+
+Production = prod(Lhs:Symbols, Rhs:Symbol, Attributes:Attributes) 
+
+Symbols = listSymbol(Symbol*)
+Symbol = lit(String:String) 
+       | my_sort(Sort:Sort) // sort is forbidden
+       | label(Fun:Fun,Symbol:Symbol)
+       | iter(Symbol:Symbol)
+       | iter_star(Symbol:Symbol)
+       | iter_sep(Symbol:Symbol,Sep:Symbol)
+       | iter_star_sep(Symbol:Symbol,Sep:Symbol)
+       | char_class(charclass:CharClass)
+
+CharClass = simple_charclass(OptCR:OptCharRanges)
+OptCharRanges = absent()
+              | present(CR:CharRanges)
+CharRanges = range(c1:MyCharacter,c2:MyCharacter)
+           | conc(cr1:CharRanges,cr2:CharRanges)
+
+MyCharacter = my_short(SC:ShortChar)
+ShortChar = regular(String:String)
+
+
+Sort = more_chars(String:String)
+     | one_char(String:String)
+
+Attributes = no_attrs()
+           | attrs(Attribute*)
+Attribute = assoc(Associativity:Associativity)
+          | term(Tree:Tree)
+
+Tree = appl(Fun:Fun,Arg:Tree)
+     | fun(Fun:Fun)
+Fun = unquoted(String:String)
+    | quoted(String:String)
+
+Associativity = left()
+              | right()
+              | non_assoc()
+              | my_assoc()

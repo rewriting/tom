@@ -62,14 +62,11 @@ public class ImplodeMept {
 
     try {
       ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(t);
-      //System.out.println("t2 = " + t2);
       ParseTree t3 = `BottomUp(RemoveNonConstructor()).visitLight(t2);
-      //System.out.println("t3 = " + t3);
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
-      //System.out.println("t1 = " + t1);
 
       ATerm aterm = PTtoAST(t1);
-      System.out.println("aterm = " + aterm);
+      //System.out.println("aterm = " + aterm);
 
       SdfTool sdfTool = new SdfTool();
       System.out.println("result = " + sdfTool.convert(aterm));
