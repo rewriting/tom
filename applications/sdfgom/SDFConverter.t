@@ -36,9 +36,9 @@ import mept.*;
 import mept.types.*;
 import tom.library.utils.ATermConverter;
 
-public class MEPTConverter implements ATermConverter {
+public class SDFConverter implements ATermConverter {
 
-  %include { mept/Mept.tom }
+  %include { sdf/Sdf.tom }
 
   public static PureFactory factory = SingletonFactory.getInstance();
 
@@ -62,6 +62,9 @@ public class MEPTConverter implements ATermConverter {
 
         } else if(name.equals("context-free-syntax")) { // subcase : "context-free-syntax -> context_free_syntax" / arity = 1
           at = factory.makeApplList(factory.makeAFun("context_free_syntax",1,false),args);
+
+        } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0
+          at = factory.makeAppl(factory.makeAFun("no_attrs",0,false));
 
         } else {
           return at;
