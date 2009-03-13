@@ -63,11 +63,11 @@ public class SDFConverter implements ATermConverter {
         } else if(name.equals("context-free-syntax")) { // subcase : "context-free-syntax -> context_free_syntax" / arity = 1
           at = factory.makeApplList(factory.makeAFun("context_free_syntax",1,false),args);
 
-        } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0
+        } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0Ar
           at = factory.makeAppl(factory.makeAFun("no_attrs",0,false));
 
-        } else if(name.equals("default")) { // subcase : "default -> lit_default" / arity = 0
-          at = factory.makeApplList(factory.makeAFun("lit_default",1,false),args);
+        } else if(name.equals("default")) { // subcase : "default(foo) -> foo" / arity = 1
+          at = args.getFirst(); 
 
         } else if(name.equals("assoc")) { // subcase : "assoc -> my_assoc" && arity =0
           if(appl.getArity() == 0) { // test needed because there are 2 "assoc", the one whose arity equal to 0 is the good one
