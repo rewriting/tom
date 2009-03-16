@@ -1,0 +1,7 @@
+- More than 1 non terminal in the left hand side of a rule
+  can not be processed:
+  "begin" decls:DECLS statlist:STATLIST "end" -> PROGRAM {cons("program")}
+- "declare" idtypelist:IDTYPELIST ";" -> DECLS {cons("decls")}
+  produces DECLS = decls(idtypelist:IDTYPELIST,) the comma should not
+  be there.
+- added listRestriction to Sdf2.sdf
