@@ -68,6 +68,8 @@ public class SDFConverter implements ATermConverter {
           at = factory.makeApplList(factory.makeAFun("lexical_syntax",1,false),args);
         } else if(name.equals("context-free-syntax")) { // subcase : "context-free-syntax -> context_free_syntax" / arity = 1
           at = factory.makeApplList(factory.makeAFun("context_free_syntax",1,false),args);
+        } else if(name.equals("lexical-restrictions")) {
+          at = factory.makeApplList(factory.makeAFun("lexical_restrictions",1,false),args);
 
         } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0Ar
           at = factory.makeAppl(factory.makeAFun("no_attrs",0,false));
@@ -80,9 +82,13 @@ public class SDFConverter implements ATermConverter {
           if(term_arg.getName().equals("default")) {
             at = factory.makeApplList(factory.makeAFun(name,1,false),term_arg.getArguments());
           }
-        //} else if(name.equals("default")) { // subcase : "default(foo) -> foo" / arity = 1
-        //  System.out.println("defaut args = " + args);
-        // at = args.getFirst(); 
+        } else if(name.equals("single")) {
+          ATermAppl term_arg = (ATermAppl)appl.getArgument(0);
+          if(term_arg.getName().equals("char-class")) {
+            ATerm new_at = (ATerm)factory.makeApplList(factory.makeAFun("look_char_class",1,false),term_arg.getArguments());
+            //at = factory.makeApplList(factory.makeAFun("single",1,false),new_at);
+            at = appl.setArgument(new_at,0);
+          }
         
     } else if(name.equals("char-class")) { 
           at = factory.makeApplList(factory.makeAFun("char_class",1,false),args);

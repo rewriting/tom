@@ -1,10 +1,17 @@
 module Sdf
 imports String int ATerm
 abstract syntax
-Grammars = conc_grammars(Grammar*)
 
-Grammar = context_free_syntax(prods:Productions)
+Sections = listSection(Section*)
+
+Section = exports(grammar:Grammar)
+        | hiddens(grammar:Grammar)
+
+Grammar = conc_grammars(g1:Grammar,g2:Grammar)
+       | context_free_syntax(prods:Productions)
        | lexical_syntax(prods:Productions)
+       | lexical_restrictions(restricts:Restrictions)
+       | sorts(sorts:Symbols)
 
 Productions = listProduction(Production*)
 
@@ -47,3 +54,12 @@ Associativity = left()
               | right()
               | non_assoc()
               | my_assoc()
+
+
+Restrictions = listRestriction(Restriction*)
+
+Restriction = follow(symbols:Symbols,lookaheads:Lookaheads)
+
+Lookaheads = single(look:Lookahead)
+
+Lookahead = look_char_class(cc:CharClass)

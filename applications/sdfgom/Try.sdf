@@ -1,3 +1,4 @@
+exports
 context-free syntax
 "true"        -> Bool { cons("true") }
 "[" Bool* "]" -> BoolList {cons("list1") }

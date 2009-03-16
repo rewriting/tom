@@ -21,12 +21,12 @@ public class SdfTool {
 
   public static String convert(ATerm at) {
     SDFConverter sdfConverter = new SDFConverter();
-    Grammars g = Grammars.fromTerm(at,sdfConverter);
+    Sections s = Sections.fromTerm(at,sdfConverter);
 
     HashMap<String,ArrayList<String>> table = new HashMap<String,ArrayList<String>>();
     String gomGrammar = "";
     try {
-      `TopDown(ExtractProduction(table)).visitLight(g);
+      `TopDown(ExtractProduction(table)).visitLight(s);
       for(String sort:table.keySet()) {
         gomGrammar += "\n" + sort + " = ";
         for(String prod:table.get(sort)) {
@@ -34,9 +34,9 @@ public class SdfTool {
         }
       }
     } catch(VisitFailure e) {
-      System.out.println("failure on: " + g);
+      System.out.println("failure on: " + s);
     }
-    System.out.println(g);
+    System.out.println(s);
 
     return gomGrammar;
   }

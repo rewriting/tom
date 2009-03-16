@@ -65,7 +65,7 @@ exports
 
 exports
   context-free start-symbols
-    SDF Module Grammar Production Attributes ATerm
+    SDF Module Grammar Production Attributes ATerm Sections
 module languages/aterm/syntax/IntCon
 
 imports basic/Whitespace
@@ -134,7 +134,7 @@ exports
 
     Symbols "-/-" Lookaheads -> Restriction  {cons("follow")}
 
-    list:Restriction* -> Restrictions
+    list:Restriction* -> Restrictions {cons("listRestriction")}
 
     "restrictions" Restrictions -> Grammar  {cons("restrictions")}
 
