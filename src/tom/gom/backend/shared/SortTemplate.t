@@ -173,7 +173,7 @@ writer.write(%[
     }
     switch(nbr) {
       case 0:
-        throw new IllegalArgumentException("This is not a @className()@ " + trm);
+        throw new IllegalArgumentException(trm + " is not a @className()@");
       case 1:
         return res;
       default:
