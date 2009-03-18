@@ -48,10 +48,10 @@ public class SdfConverter implements ATermConverter {
         String name = appl.getName();
         at = appl; // renamed at by default
 
-        if(name.equals("default")) { // default(x) -> x
+        if(name.equals("default") && appl.getArity()==1) { // default(x) -> x
           ATerm arg = appl.getArgument(0);
           at = arg;
-        } else if(name.equals("single")) {
+        } else if(name.equals("single") && appl.getArity()==1) {
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermAppl) {
             if(((ATermAppl)arg).getName().equals("char_class")) {
@@ -109,6 +109,5 @@ public class SdfConverter implements ATermConverter {
     }
     return appl; 
   }
-
 
 }

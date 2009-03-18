@@ -18,61 +18,28 @@ import sdfgom.converter.MeptConverter;
 public class ImplodeMept {
   %include { sl.tom }
   %include { sdfgom/mept/mept.tom }
-  private static String readFileAsString(String filePath)
-    throws java.io.IOException{
-      StringBuffer fileData = new StringBuffer(1000);
-      BufferedReader reader = new BufferedReader(
-          new FileReader(filePath));
-      char[] buf = new char[1024];
-      int numRead=0;
-      while((numRead=reader.read(buf)) != -1) {
-        fileData.append(buf, 0, numRead);
-      }
-      reader.close();
-      return fileData.toString();
-    }
 
   public static PureFactory factory = SingletonFactory.getInstance();
 
-  public static void main(String[] args) {
-    int index;
-    String s = new String();
-    if(args.length > 0) {
-      try{
-        s = readFileAsString(args[0]);
-      } catch (IOException e) {
-        System.err.println("Caught IOException: " 
-            + e.getMessage());
-      }
-    } else {
-      s = "";
-    }
-
+  public ATerm implode(ATerm at) {
     MeptConverter meptConverter = new MeptConverter();
 
-    //Parameters :
-    ATerm at = SingletonFactory.getInstance().parse(s);
-
     //System.out.println("\nat =\n"+at);
-
-    ParseTree t = ParseTree.fromTerm(at,meptConverter);
-    //System.out.println("\nt =\n"+t);
+    ParseTree pt = ParseTree.fromTerm(at,meptConverter);
+    System.out.println("\npt =\n"+pt);
 
     try {
-      ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(t);
+      ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(pt);
       ParseTree t3 = `BottomUp(RemoveNonConstructor()).visitLight(t2);
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
 
       ATerm aterm = PTtoAST(t1);
       System.out.println("aterm = " + aterm);
-
-      SdfTool sdfTool = new SdfTool();
-      System.out.println("result = " + sdfTool.convert(aterm));
-
+      return aterm;
     } catch(VisitFailure e) {
-      System.out.println("failure on " + t);
+      System.out.println("failure on " + at);
     }
-
+    return at;
   }
 
   public static ATerm PTtoAST(ParseTree pt) {
