@@ -76,10 +76,8 @@ public class Gom {
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler;
 
-  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
-
   public static void main(String[] args) {
-    Map<String,String> informationTracker = new HashMap();
+    Map<String,Object> informationTracker = new HashMap();
     int errno = exec(args,informationTracker);
     System.exit(errno);
   }

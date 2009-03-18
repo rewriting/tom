@@ -101,7 +101,19 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     }
 
 writer.write(
-"\n  protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();\n\n  public abstract aterm.ATerm toATerm();\n\n  public abstract String symbolName();\n\n  @Override\n  public String toString() {\n    java.lang.StringBuilder buffer = new java.lang.StringBuilder();\n    toStringBuilder(buffer);\n    return buffer.toString();\n  }\n\n  public abstract void toStringBuilder(java.lang.StringBuilder buffer);\n\n  public abstract int compareTo(Object o);\n\n  public abstract int compareToLPO(Object o);\n\n"
+"\n  protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();\n\n  public abstract aterm.ATerm toATerm();\n\n  public abstract String symbolName();\n\n  @Override\n  public String toString() {\n    java.lang.StringBuilder buffer = new java.lang.StringBuilder();\n    toStringBuilder(buffer);\n    return buffer.toString();\n  }\n\n  public abstract void toStringBuilder(java.lang.StringBuilder buffer);\n\n  public abstract int compareTo(Object o);\n\n  public abstract int compareToLPO(Object o);\n\n  public static String convertATermToString(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {\n    at = atConv.convert(at);\n    if(at instanceof aterm.ATermAppl) {\n      aterm.ATermAppl appl = (aterm.ATermAppl) at;\n      aterm.AFun fun = appl.getAFun();\n      if (fun.isQuoted() && fun.getArity() == 0 ) {\n        return fun.getName();\n      }\n    }\n    throw new RuntimeException(\"Not a String : \" + at);\n  }\n\n"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -125,8 +137,7 @@ writer.write(
 
 if (maximalsharing) {
  writer.write(
-"\n  public int getUniqueIdentifier() {\n    return uniqueID;\n  }\n\n  public void setUniqueIdentifier(int uniqueID) {\n    this.uniqueID = uniqueID;\n  }\n\n}\n"
-
+"\n  public int getUniqueIdentifier() {\n    return uniqueID;\n  }\n\n  public void setUniqueIdentifier(int uniqueID) {\n    this.uniqueID = uniqueID;\n  }\n}\n"
 
 
 

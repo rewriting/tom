@@ -163,10 +163,33 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Problems encountered in code generation for module {0}");
   public static final GomMessage tomFailure =
     new GomMessage("An error occured running Tom when generating {0}");
+  public static final GomMessage gomChoiceWarning =
+    new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
 
   public String toString() {
     return message;
   }
+
+  // SymbolTable
+  public static final GomMessage nonExhaustiveMatch =
+    new GomMessage("Non exhaustive match");
+  public static final GomMessage nonExhaustivePattern =
+    new GomMessage("Non exhaustive pattern");
+  public static final GomMessage shouldNeverHappen =
+    new GomMessage("Should never happen ({0}:{1}})");
+  public static final GomMessage nonVariadicOperator =
+    new GomMessage("Non variadic operator");
+  public static final GomMessage cannotAccessToChildConstructor =
+    new GomMessage("Cannot access to the {0}ith child of the constuctor {1}");
+  public static final GomMessage undeclaredSortException =
+    new GomMessage("The sort {0} is not declared");
+  public static final GomMessage undeclaredConstructorException =
+    new GomMessage("The constructor {0} is not declared");
+  public static final GomMessage sortException =
+    new GomMessage("Sort exception : {0}");
+  public static final GomMessage constructorName =
+    new GomMessage("Constructor exception : {0}");
+
 
   // Message level
   public static final int GOM_INFO = 0;

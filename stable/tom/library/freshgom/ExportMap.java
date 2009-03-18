@@ -47,7 +47,7 @@ public class ExportMap<T extends Atom> extends Hashtable<T,String> {
     ExportMap<T> res = new ExportMap<T>(this);
     for (T a: atoms) {
       String basename = a.gethint();
-      int n = nums.containsKey(basename) ? nums.get(basename) : 0;
+      int n = res.nums.containsKey(basename) ? res.nums.get(basename) : 0;
       if (n == 0) res.put(a,basename);
       else res.put(a,basename + n);
       res.nums.put(basename,n+1);

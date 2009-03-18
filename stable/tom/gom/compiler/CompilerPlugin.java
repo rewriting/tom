@@ -107,8 +107,7 @@ public class CompilerPlugin extends GomGenericPlugin {
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
     }
-    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
-    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

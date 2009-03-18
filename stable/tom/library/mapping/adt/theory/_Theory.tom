@@ -1,50 +1,4 @@
 
-    %op Strategy _EmptyconcElementaryTheory() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory)))}
-      
-        make() { new tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory() }
-    }
-  
-  
-  %op Strategy When_EmptyconcElementaryTheory(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyconcElementaryTheory(),s) }
-  }
-
-  %op Strategy Is_EmptyconcElementaryTheory() {
-    make() { new tom.engine.adt.theory.strategy.theory.Is_EmptyconcElementaryTheory()}
-  }
-  
-%op Strategy Make_EmptyconcElementaryTheory() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory))) }
-
-  make() { new tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory() }
-}
-
-    %op Strategy _ConsconcElementaryTheory(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsconcElementaryTheory(s:Strategy) {
-    make(s) { `Sequence(Is_ConsconcElementaryTheory(),s) }
-  }
-
-  %op Strategy Is_ConsconcElementaryTheory() {
-    make() { new tom.engine.adt.theory.strategy.theory.Is_ConsconcElementaryTheory()}
-  }
-  
-%op Strategy Make_ConsconcElementaryTheory(_HeadconcElementaryTheory:Strategy, _TailconcElementaryTheory:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory))) }
-
-  get_slot(_HeadconcElementaryTheory, t) { $t._HeadconcElementaryTheory }
-  get_slot(_TailconcElementaryTheory, t) { $t._TailconcElementaryTheory }
-  make( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) { new tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory( $new_HeadconcElementaryTheory,  $new_TailconcElementaryTheory) }
-}
-
     %op Strategy _Syntactic() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Syntactic)))}
       
@@ -127,6 +81,52 @@
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU))) }
 
   make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU() }
+}
+
+    %op Strategy _EmptyconcElementaryTheory() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory)))}
+      
+        make() { new tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory() }
+    }
+  
+  
+  %op Strategy When_EmptyconcElementaryTheory(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyconcElementaryTheory(),s) }
+  }
+
+  %op Strategy Is_EmptyconcElementaryTheory() {
+    make() { new tom.engine.adt.theory.strategy.theory.Is_EmptyconcElementaryTheory()}
+  }
+  
+%op Strategy Make_EmptyconcElementaryTheory() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory))) }
+
+  make() { new tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory() }
+}
+
+    %op Strategy _ConsconcElementaryTheory(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsconcElementaryTheory(s:Strategy) {
+    make(s) { `Sequence(Is_ConsconcElementaryTheory(),s) }
+  }
+
+  %op Strategy Is_ConsconcElementaryTheory() {
+    make() { new tom.engine.adt.theory.strategy.theory.Is_ConsconcElementaryTheory()}
+  }
+  
+%op Strategy Make_ConsconcElementaryTheory(_HeadconcElementaryTheory:Strategy, _TailconcElementaryTheory:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory))) }
+
+  get_slot(_HeadconcElementaryTheory, t) { $t._HeadconcElementaryTheory }
+  get_slot(_TailconcElementaryTheory, t) { $t._TailconcElementaryTheory }
+  make( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) { new tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory( $new_HeadconcElementaryTheory,  $new_TailconcElementaryTheory) }
 }
 
             %op Strategy _concElementaryTheory(sub:Strategy) {

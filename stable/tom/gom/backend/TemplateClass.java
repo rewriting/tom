@@ -324,13 +324,15 @@ public abstract class TemplateClass {
 
   }
 
-  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
+  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
     {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch12NameNumber_freshVar_1= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;
 
         if(!getGomEnvironment().isBuiltinClass(tomMatch12NameNumber_freshVar_1)) {
           buffer.append(fullClassName(tomMatch12NameNumber_freshVar_1));
           buffer.append(".fromTerm(");
           buffer.append(appl);
+          buffer.append(",");
+          buffer.append(atConv);
           buffer.append(")");
         } else {
           if (tomMatch12NameNumber_freshVar_1.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "int") )) {
@@ -346,7 +348,7 @@ public abstract class TemplateClass {
           } else  if (tomMatch12NameNumber_freshVar_1.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) {
             buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
           } else if (tomMatch12NameNumber_freshVar_1.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) {
-            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(").getAFun().getName()");
+            buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
           } else if (tomMatch12NameNumber_freshVar_1.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATerm") ) || tomMatch12NameNumber_freshVar_1.equals( tom.gom.adt.objects.types.classname.ClassName.make("aterm", "ATermList") ) ){
             buffer.append(appl);
           } else {

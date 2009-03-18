@@ -2,6 +2,7 @@
 
   <property name="javacSource" value="1.5"/>
   <property name="javacTarget" value="1.5"/>
+  <property name="javacDebug"  value="false"/>
   <property name="nowarnings"  value="false"/>
   <property name="optimize"    value="on"/>
   <property name="optimize2"   value="off"/>
@@ -95,6 +96,7 @@
              source="${javacSource}"
              nowarn="${nowarnings}"
              fork="${tomfork}"
+             debug="${javacDebug}"
              memoryInitialSize="${memoryInitSize}"
              memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>

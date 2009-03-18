@@ -150,8 +150,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }
-    informationTracker.put("lastGeneratedMapping",getGomEnvironment().getLastGeneratedMapping());
-    //informationTracker.put(java.lang.Thread.currentThread().getId(),getGomEnvironment().getLastGeneratedMapping());
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

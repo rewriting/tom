@@ -56,6 +56,9 @@ public abstract class GomGenericPlugin implements Plugin {
   /** the option manager */
   private OptionManager optionManager;
   
+  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
+  public final static String KEY_LAST_READ_LINE = "lastReadLine";
+  
   /** The streamanager */
   //protected GomStreamManager streamManager;
 

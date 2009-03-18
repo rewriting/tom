@@ -1,14 +1,6 @@
 
 %include { string.tom }
 
-%include { int.tom }
-
-%include { double.tom }
-
-%include { long.tom }
-
-%include { float.tom }
-
 %typeterm TNodeList {
   implement { tom.library.adt.tnode.types.TNodeList }
   is_sort(t) { ($t instanceof tom.library.adt.tnode.types.TNodeList) }

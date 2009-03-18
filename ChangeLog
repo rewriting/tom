@@ -1,3 +1,6 @@
+2009-03-18 pem
+  * bootinstall
+
 2009-01-28 balland
   * bootinstall
 
@@ -14,7 +17,7 @@
     therefore performance could not be improved,
     option deactivated by default)
 
-2009-01-19
+2009-01-19 pem
   * re-implement the constraint scheduler using in-place swaping
   * de-activate the SwitchNumericConstraints rule (it does not terminate)
 
