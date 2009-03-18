@@ -1,0 +1,8 @@
+module Foo 
+imports String
+abstract syntax
+
+T = f(t1:String,t2:T)
+  | h(t3:T)
+  | a()
+  | b()
