@@ -32,90 +32,83 @@ import aterm.ATermAppl;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
-import sdfgom.mept.*;
-import sdfgom.mept.types.*;
 import tom.library.utils.ATermConverter;
 
 public class SdfConverter implements ATermConverter {
 
-  %include { sdfgom/sdf/sdf.tom }
-
-  public static PureFactory factory = SingletonFactory.getInstance();
+  private static PureFactory factory = SingletonFactory.getInstance();
 
   /**
    * Method from ATermConverter interface
    */
   public ATerm convert(ATerm at) {
-    // is this switch really useful ? a simple if (at.getType() == ATerm.APPL) {} would be enough
     switch(at.getType()) {
       case ATerm.APPL:
-        ATermAppl appl = (ATermAppl) at;
+        ATermAppl appl = renameAppl((ATermAppl) at);
         String name = appl.getName();
-        ATermList args = appl.getArguments();
-        //int arity = appl.getArity();
+        at = appl; // renamed at by default
 
-        if(name.equals("sort")) { // subcase : "sort -> my_sort" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("my_sort",1,false),args);
-        } else if(name.equals("short")) { 
-          at = factory.makeApplList(factory.makeAFun("my_short",1,false),args);
-
-        } else if(name.equals("more-chars")) { // subcase : "more-chars -> more_chars" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("more_chars",1,false),args);
-        } else if(name.equals("one-char")) { // subcase : "one-char -> one_char" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("one_char",1,false),args);
-
-        } else if(name.equals("lexical-syntax")) {
-          at = factory.makeApplList(factory.makeAFun("lexical_syntax",1,false),args);
-        } else if(name.equals("context-free-syntax")) { // subcase : "context-free-syntax -> context_free_syntax" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("context_free_syntax",1,false),args);
-        } else if(name.equals("lexical-restrictions")) {
-          at = factory.makeApplList(factory.makeAFun("lexical_restrictions",1,false),args);
-
-        } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0Ar
-          at = factory.makeAppl(factory.makeAFun("no_attrs",0,false));
-
-        } else if(name.equals("term") 
-            || name.equals("quoted") 
-            || name.equals("unquoted") 
-            || name.equals("lit")) { // "term(cons(x)) -> cons(x)"
-          ATermAppl term_arg = (ATermAppl)appl.getArgument(0);
-          if(term_arg.getName().equals("default")) {
-            at = factory.makeApplList(factory.makeAFun(name,1,false),term_arg.getArguments());
-          }
+        if(name.equals("default")) { // default(x) -> x
+          ATerm arg = appl.getArgument(0);
+          at = arg;
         } else if(name.equals("single")) {
-          ATermAppl term_arg = (ATermAppl)appl.getArgument(0);
-          if(term_arg.getName().equals("char-class")) {
-            ATerm new_at = (ATerm)factory.makeApplList(factory.makeAFun("look_char_class",1,false),term_arg.getArguments());
-            //at = factory.makeApplList(factory.makeAFun("single",1,false),new_at);
-            at = appl.setArgument(new_at,0);
+          ATerm arg = appl.getArgument(0);
+          if(arg instanceof ATermAppl) {
+            if(((ATermAppl)arg).getName().equals("char_class")) {
+              ATerm new_at = factory.makeAppl(factory.makeAFun("look_char_class",1,false),((ATermAppl)arg).getArgumentArray());
+              at = appl.setArgument(new_at,0);
+            }
           }
-        
-    } else if(name.equals("char-class")) { 
-          at = factory.makeApplList(factory.makeAFun("char_class",1,false),args);
-    } else if(name.equals("simple-charclass")) { 
-          at = factory.makeApplList(factory.makeAFun("simple_charclass",1,false),args);
-    } else if(name.equals("conc-grammars")) { 
-          at = factory.makeApplList(factory.makeAFun("conc_grammars",1,false),args);
-    } else if(name.equals("iter-star")) { 
-          at = factory.makeApplList(factory.makeAFun("iter_star",1,false),args);
+        } 
+        // default case: perform classical renaming
+        return at;
 
-    } else if(name.equals("iter-sep")) { 
-          at = factory.makeApplList(factory.makeAFun("iter_sep",2,false),args);
-    } else if(name.equals("iter-star-sep")) { 
-          at = factory.makeApplList(factory.makeAFun("iter_star_sep",2,false),args);
-
-        } else if(name.equals("assoc")) { // subcase : "assoc -> my_assoc" && arity =0
-          if(appl.getArity() == 0) { // test needed because there are 2 "assoc", the one whose arity equal to 0 is the good one
-            at = factory.makeAppl(factory.makeAFun("my_assoc",0,false));
-          }
-
-        } else {
-          return at;
-        }
+      default:
+        return at;
     }
-    return at;
-
   } //convert
+
+  /** 
+   * wrap the integers contained in an ATermList
+   * @param l the ATermList that needs to be transformed
+   * @param constructorName the constructor to introduce
+   * @return the list where each integer is replaced by constructorName(int)
+   */
+  private ATermList encodeIntList(ATermList l,String constructorName) {
+    if(l.isEmpty()) {
+      return l;
+    } else {
+      ATerm elt = l.getFirst();
+      if(elt.getType() == ATerm.INT) {
+        elt = factory.makeAppl(factory.makeAFun(constructorName,1,false),elt);
+      } 
+      return factory.makeList(elt,encodeIntList(l.getNext(),constructorName));
+    }
+  }
+
+  /**
+    * rename into a valid Java identifier the name of an ATermAppl
+    * @param the ATerm to rename
+    * @return the renamed ATerm
+    * '-' are replaced by '_'
+    * the constant 'assoc' is renamed into 'my_assoc'
+    * the constructor 'sort' is renamed into 'my_sort'
+    */
+  private ATermAppl renameAppl(ATermAppl appl) {
+    AFun fun = appl.getAFun();
+    if(!fun.isQuoted()) {
+      String name = fun.getName().replaceAll("-","_");
+      if(name.equals("sort")) {
+        name = "my_sort";
+      } else if(name.equals("short")) {
+        name = "my_short";
+      } else if(name.equals("assoc") && appl.getArity()==0) {
+        name = "my_assoc";
+      }
+      appl = factory.makeAppl(factory.makeAFun(name,fun.getArity(),false),appl.getArgumentArray());
+    }
+    return appl; 
+  }
 
 
 }

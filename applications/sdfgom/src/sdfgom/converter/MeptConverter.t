@@ -32,15 +32,11 @@ import aterm.ATermAppl;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
-import sdfgom.mept.*;
-import sdfgom.mept.types.*;
 import tom.library.utils.ATermConverter;
 
 public class MeptConverter implements ATermConverter {
 
-  %include { sdfgom/mept/mept.tom }
-
-  public static PureFactory factory = SingletonFactory.getInstance();
+  private static PureFactory factory = SingletonFactory.getInstance();
 
   /**
    * Method from ATermConverter interface
@@ -50,36 +46,37 @@ public class MeptConverter implements ATermConverter {
       case ATerm.APPL:
         ATermAppl appl = renameAppl((ATermAppl) at);
         String name = appl.getName();
+        at = appl;
 
         if(name.equals("char_class")) { // subcase : "char_class([CharRange])"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermList) {
-            appl = appl.setArgument(encodeIntList((ATermList)arg,"character"),0);
+            at = appl.setArgument(encodeIntList((ATermList)arg,"character"),0);
           }
 
         } else if(name.equals("amb")) { // subcase : "amb([Tree])"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermList) {
-            appl = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),0);
+            at = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),0);
           }
 
         } else if(name.equals("appl")) { // subcase : "appl(Production,[Tree])"
           ATerm arg = appl.getArgument(1);
           if(arg instanceof ATermList) {
-            appl = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),1);
+            at = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),1);
           }
 
         } else if(name.equals("term")) { // "term(cons(x)) -> cons(x)"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermAppl) {
             if(((ATermAppl)arg).getName().equals("cons")) {
-              appl = (ATermAppl)arg;
+              at = (ATermAppl)arg;
             }
           }
 
         } 
         // default case: perform classical renaming
-        return appl;
+        return at;
 
       default:
         return at;
