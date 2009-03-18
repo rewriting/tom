@@ -1,4 +1,4 @@
-module Mept
+module sdfgom.mept
 imports String int ATerm
 abstract syntax
 ParseTree = parsetree(Top:Tree, Amb_cnt:int) 

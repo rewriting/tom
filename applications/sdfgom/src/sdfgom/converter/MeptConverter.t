@@ -23,7 +23,7 @@
  *
  **/
 
-package sdfgom;
+package sdfgom.converter;
 
 import java.lang.*;
 import aterm.AFun;
@@ -32,13 +32,13 @@ import aterm.ATermAppl;
 import aterm.ATermList;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
-import mept.*;
-import mept.types.*;
+import sdfgom.mept.*;
+import sdfgom.mept.types.*;
 import tom.library.utils.ATermConverter;
 
-public class MEPTConverter implements ATermConverter {
+public class MeptConverter implements ATermConverter {
 
-  %include { mept/Mept.tom }
+  %include { sdfgom/mept/mept.tom }
 
   public static PureFactory factory = SingletonFactory.getInstance();
 
@@ -162,4 +162,4 @@ public class MEPTConverter implements ATermConverter {
   } //convert
 
 
-} //MEPTConverter
+}

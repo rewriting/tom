@@ -9,17 +9,15 @@ import aterm.*;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
 
-import mept.*;
-import mept.types.*;
+import sdfgom.mept.*;
+import sdfgom.mept.types.*;
 
-import tom.library.utils.ATermConverter;
-import tom.library.utils.IdConverter;
 import tom.library.sl.*;
-import sdfgom.MEPTConverter;
+import sdfgom.converter.MeptConverter;
 
 public class ImplodeMept {
   %include { sl.tom }
-  %include { mept/Mept.tom }
+  %include { sdfgom/mept/mept.tom }
   private static String readFileAsString(String filePath)
     throws java.io.IOException{
       StringBuffer fileData = new StringBuffer(1000);
@@ -50,8 +48,7 @@ public class ImplodeMept {
       s = "";
     }
 
-    // Converters which will be used
-    MEPTConverter meptConverter = new MEPTConverter();
+    MeptConverter meptConverter = new MeptConverter();
 
     //Parameters :
     ATerm at = SingletonFactory.getInstance().parse(s);

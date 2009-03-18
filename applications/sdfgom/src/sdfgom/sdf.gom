@@ -1,4 +1,4 @@
-module Sdf
+module sdfgom.sdf
 imports String int ATerm
 abstract syntax
 
