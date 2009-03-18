@@ -348,7 +348,7 @@ public abstract class TemplateClass {
           } else  if (`domain.equals(`ClassName("","char"))) {
             buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
           } else if (`domain.equals(`ClassName("","String"))) {
-            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(").getAFun().getName()");
+            buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
             buffer.append(appl);
           } else {

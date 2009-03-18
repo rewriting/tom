@@ -82,14 +82,9 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
-import tom.library.utils.ATermConverter;
-import tom.library.utils.IdConverter;
-import java.util.ArrayList;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 //import @getPackage()@.@className().toLowerCase()@.*;
 //import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
+
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
 
 @generateBlock()@
@@ -134,7 +129,7 @@ writer.write(%[
     /* fromTerm method, dispatching to operator classes */
     writer.write(%[
 
-  public static IdConverter idConv = new IdConverter();
+  public static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
 
   public aterm.ATerm toATerm() {
     // returns null to indicates sub-classes that they have to work
@@ -153,9 +148,9 @@ writer.write(%[
     return fromTerm(atermFactory.readFromFile(stream),idConv);
   }
 
-  public static @fullClassName()@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
-    ArrayList<@fullClassName()@> tmp = new ArrayList<@fullClassName()@>();
-    ArrayList<@fullClassName()@> table = new ArrayList<@fullClassName()@>();
+  public static @fullClassName()@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
+    java.util.ArrayList<@fullClassName()@> tmp = new java.util.ArrayList<@fullClassName()@>();
+    java.util.ArrayList<@fullClassName()@> table = new java.util.ArrayList<@fullClassName()@>();
     aterm.ATerm convertedTerm = atConv.convert(trm);
     int nbr = 0;
     @fullClassName()@ res = null;
@@ -177,17 +172,17 @@ writer.write(%[
       case 1:
         return res;
       default:
-        Logger.getLogger("@className()@").log(Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {table.toString(), "@fullClassName()@", res.toString()});
+        java.util.logging.Logger.getLogger("@className()@").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {table.toString(), "@fullClassName()@", res.toString()});
         break;
     }
     return res;
   }
 
-  public static @fullClassName()@ fromString(String s, ATermConverter atConv) {
+  public static @fullClassName()@ fromString(String s, tom.library.utils.ATermConverter atConv) {
     return fromTerm(atermFactory.parse(s),atConv);
   }
 
-  public static @fullClassName()@ fromStream(java.io.InputStream stream, ATermConverter atConv) throws java.io.IOException {
+  public static @fullClassName()@ fromStream(java.io.InputStream stream, tom.library.utils.ATermConverter atConv) throws java.io.IOException {
     return fromTerm(atermFactory.readFromFile(stream),atConv);
   }
 ]%);
@@ -310,7 +305,6 @@ matchblock: {
       consum = consum.getTailConcClassName();
       writer.write(%[
     tmp.add(@fullClassName(operatorName)@.fromTerm(@trm@,@conv@));
-
 ]%);
     }
   }

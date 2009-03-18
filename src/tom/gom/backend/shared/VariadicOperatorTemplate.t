@@ -75,8 +75,6 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;
 @generateImport()@
-import tom.library.utils.ATermConverter;
-import tom.library.utils.IdConverter;
 
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
 @generateBlock()@
@@ -198,7 +196,7 @@ writer.write(%[
     return res;
   }
 
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;

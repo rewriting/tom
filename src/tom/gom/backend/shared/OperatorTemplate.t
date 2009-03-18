@@ -82,8 +82,6 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-import tom.library.utils.ATermConverter;
-import tom.library.utils.IdConverter;
 ]%);
 
 if (maximalsharing) {
@@ -423,11 +421,11 @@ generateGetters(writer);
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, ATermConverter atConv) {
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(symbolName.equals(appl.getName())) {
+      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
         return make(
 @generatefromATermChilds("appl","atConv")@
         );

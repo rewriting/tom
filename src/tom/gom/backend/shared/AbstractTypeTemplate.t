@@ -121,6 +121,18 @@ writer.write(
 
   public abstract int compareToLPO(Object o);
 
+  public static String convertATermToString(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermAppl) {
+      aterm.ATermAppl appl = (aterm.ATermAppl) at;
+      aterm.AFun fun = appl.getAFun();
+      if (fun.isQuoted() && fun.getArity() == 0 ) {
+        return fun.getName();
+      }
+    }
+    throw new RuntimeException("Not a String : " + at);
+  }
+
 ]%);
 
 if (maximalsharing) {
@@ -133,7 +145,6 @@ if (maximalsharing) {
   public void setUniqueIdentifier(int uniqueID) {
     this.uniqueID = uniqueID;
   }
-
 }
 ]%);
 } else {
