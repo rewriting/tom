@@ -24,9 +24,8 @@ public class ImplodeMept {
   public ATerm implode(ATerm at) {
     MeptConverter meptConverter = new MeptConverter();
 
-    //System.out.println("\nat =\n"+at);
     ParseTree pt = ParseTree.fromTerm(at,meptConverter);
-    System.out.println("\npt =\n"+pt);
+    //System.out.println("\npt =\n"+pt);
 
     try {
       ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(pt);
@@ -34,7 +33,7 @@ public class ImplodeMept {
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
 
       ATerm aterm = PTtoAST(t1);
-      System.out.println("aterm = " + aterm);
+      //System.out.println("aterm = " + aterm);
       return aterm;
     } catch(VisitFailure e) {
       System.out.println("failure on " + at);

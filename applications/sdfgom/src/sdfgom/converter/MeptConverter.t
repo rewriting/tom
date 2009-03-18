@@ -88,6 +88,7 @@ public class MeptConverter implements ATermConverter {
         return result;
 
       default:
+        cache.put(at,at);
         return at;
     }
 
