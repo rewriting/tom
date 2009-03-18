@@ -42,124 +42,89 @@ public class MeptConverter implements ATermConverter {
 
   public static PureFactory factory = SingletonFactory.getInstance();
 
-  /** Subroutine called by the convert method 
-   * @param at the ATerm that needs to be transformed
-   * @return an ATerm based on the "my_char(42)" template, using the ATerm parameter as argument
-   */
-  protected ATermAppl getMyCharATerm(ATerm arg) {
-    return factory.makeAppl(factory.makeAFun("my_char",1,false),arg);
-  }
-
-  /** Subroutine called by the convert method 
-   * @param at the ATerm that needs to be transformed
-   * @return an ATerm based on the "character(42)" template, using the ATerm parameter as argument
-   */
-  protected ATermAppl getCharacterATerm(ATerm arg) {
-    return factory.makeAppl(factory.makeAFun("character",1,false),arg);
-  }
-
   /**
    * Method from ATermConverter interface
    */
   public ATerm convert(ATerm at) {
-    // is this switch really useful ? a simple if (at.getType() == ATerm.APPL) {} would be enough
     switch(at.getType()) {
       case ATerm.APPL:
-        ATermAppl appl = (ATermAppl) at;
+        ATermAppl appl = renameAppl((ATermAppl) at);
         String name = appl.getName();
-        ATermList args = appl.getArguments();
-        //int arity = appl.getArity();
 
-        if(name.equals("char-class")) { // subcase : "char_class([CharRange])"
-          ATermList char_args = (ATermList)args.getFirst();
-          if(!char_args.isEmpty()) {
-            for(int i=0 ; i<char_args.getLength() ; i++) {
-              ATerm elt = char_args.elementAt(i);
-              if(elt.getType() == ATerm.INT) {
-                char_args = char_args.replace(getCharacterATerm(elt),i);
-              } 
-            }
-            at = factory.makeAppl(factory.makeAFun("char_class",1,false),char_args);
-          }
-
-        } else if(name.equals("term")) { // "term(cons(x)) -> cons(x)"
-          ATermAppl term_arg = (ATermAppl)appl.getArgument(0);
-          //System.out.println("term_arg = " + term_arg);
-          if(term_arg.getName().equals("cons")) {
-            at = term_arg;
+        if(name.equals("char_class")) { // subcase : "char_class([CharRange])"
+          ATerm arg = appl.getArgument(0);
+          if(arg instanceof ATermList) {
+            appl = appl.setArgument(encodeIntList((ATermList)arg,"character"),0);
           }
 
         } else if(name.equals("amb")) { // subcase : "amb([Tree])"
-          ATermList amb_args = (ATermList)args.getFirst();
-          if(!amb_args.isEmpty()) {
-            for(int i=0 ; i<amb_args.getLength() ; i++) {
-              ATerm elt = amb_args.elementAt(i);
-              if(elt.getType() == ATerm.INT) {
-                amb_args = amb_args.replace(getMyCharATerm(elt),i);
-              }
-            }
-            at = factory.makeAppl(factory.makeAFun("amb",1,false),amb_args);
+          ATerm arg = appl.getArgument(0);
+          if(arg instanceof ATermList) {
+            appl = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),0);
           }
 
         } else if(name.equals("appl")) { // subcase : "appl(Production,[Tree])"
-          ATermList appl_args = (ATermList)args.elementAt(1);
-          if(!appl_args.isEmpty()) {
-            for(int i=0 ; i<appl_args.getLength() ; i++) {
-              ATerm elt = appl_args.elementAt(i);
-              if(elt.getType() == ATerm.INT) {
-                appl_args = appl_args.replace(getMyCharATerm(elt),i);
-              }
+          ATerm arg = appl.getArgument(1);
+          if(arg instanceof ATermList) {
+            appl = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),1);
+          }
+
+        } else if(name.equals("term")) { // "term(cons(x)) -> cons(x)"
+          ATerm arg = appl.getArgument(0);
+          if(arg instanceof ATermAppl) {
+            if(((ATermAppl)arg).getName().equals("cons")) {
+              appl = (ATermAppl)arg;
             }
-            // doesn't work -> bug with args
-            // ATermList newArgs = factory.makeList(args.getFirst(),appl_args);
-            // makeAFun(String name, int arity, boolean isQuoted)
-            // at = factory.makeApplList(factory.makeAFun("appl",1,false),newArgs);
-            // correction :
-            at = factory.makeAppl(factory.makeAFun("appl",2,false),args.getFirst(),appl_args);
           }
 
-        } else if(name.equals("sort")) { // subcase : "sort -> my_sort" / arity = 1
-          ATerm sort_arg = args.getFirst();
-          AFun myAFun = factory.makeAFun("my_sort",1,false);
-          at = factory.makeAppl(myAFun,sort_arg);
+        } 
+        // default case: perform classical renaming
+        return appl;
 
-        } else if(name.equals("no-attrs")) { // subcase : "no-attrs -> no_attrs" / arity = 0
-          AFun myAFun = factory.makeAFun("no_attrs",0,false);
-          at = factory.makeAppl(myAFun);
-
-        } else if(name.equals("assoc")) { // subcase : "assoc -> my_assoc" && arity =0
-          if(appl.getArity() == 0) { // test needed because there are 2 "assoc", the one whose arity equal to 0 is the good one
-            AFun myAFun = factory.makeAFun("my_assoc",0,false);
-            at = factory.makeAppl(myAFun);
-          }
-
-        } else if(name.equals("non-assoc")) { // subcase : "non-assoc -> non_assoc" / arity = 0
-          AFun myAFun = factory.makeAFun("non_assoc",0,false);
-          at = factory.makeAppl(myAFun);
-
-        } else if(name.equals("iter-sep")) { // subcase : "iter-sep -> iter_sep" / arity = 2
-          at = factory.makeApplList(factory.makeAFun("iter_sep",2,false),args);
-
-        } else if(name.equals("iter-sep-n")) { // subcase : "iter-sep-n -> iter_sep_n" / arity = 3
-          at = factory.makeApplList(factory.makeAFun("iter_sep_n",3,false),args);
-
-
-        } else if(name.equals("iter-star")) { // subcase : "iter-star -> iter_star" / arity = 1
-          at = factory.makeApplList(factory.makeAFun("iter_star",1,false),args);
-
-        } else if(name.equals("iter-star-sep")) { // subcase : "iter-star-sep -> iter_star_sep" / arity = 2
-          at = factory.makeApplList(factory.makeAFun("iter_star_sep",2,false),args);
-
-        } else if(name.equals("iter-n")) { // subcase : "iter-n -> iter_n" / arity = 2
-          at = factory.makeApplList(factory.makeAFun("iter_n",2,false),args);
-
-        } else {
-          return at;
-        }
+      default:
+        return at;
     }
-    return at;
 
   } //convert
 
+  /** 
+   * wrap the integers contained in an ATermList
+   * @param l the ATermList that needs to be transformed
+   * @param constructorName the constructor to introduce
+   * @return the list where each integer is replaced by constructorName(int)
+   */
+  private ATermList encodeIntList(ATermList l,String constructorName) {
+    if(l.isEmpty()) {
+      return l;
+    } else {
+      ATerm elt = l.getFirst();
+      if(elt.getType() == ATerm.INT) {
+        elt = factory.makeAppl(factory.makeAFun(constructorName,1,false),elt);
+      } 
+      return factory.makeList(elt,encodeIntList(l.getNext(),constructorName));
+    }
+  }
+
+  /**
+    * rename into a valid Java identifier the name of an ATermAppl
+    * @param the ATerm to rename
+    * @return the renamed ATerm
+    * '-' are replaced by '_'
+    * the constant 'assoc' is renamed into 'my_assoc'
+    * the constructor 'sort' is renamed into 'my_sort'
+    */
+  private ATermAppl renameAppl(ATermAppl appl) {
+    AFun fun = appl.getAFun();
+    if(!fun.isQuoted()) {
+      String name = fun.getName().replaceAll("-","_");
+      if(name.equals("sort")) {
+        name = "my_sort";
+      } else if(name.equals("assoc") && appl.getArity()==0) {
+        name = "my_assoc";
+      }
+      appl = factory.makeAppl(factory.makeAFun(name,fun.getArity(),false),appl.getArgumentArray());
+    }
+    return appl; 
+  }
 
 }

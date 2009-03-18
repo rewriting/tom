@@ -56,6 +56,7 @@ public class ImplodeMept {
     //System.out.println("\nat =\n"+at);
 
     ParseTree t = ParseTree.fromTerm(at,meptConverter);
+    //System.out.println("\nt =\n"+t);
 
     try {
       ParseTree t2 = `BottomUp(RemoveLayout()).visitLight(t);
@@ -63,7 +64,7 @@ public class ImplodeMept {
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
 
       ATerm aterm = PTtoAST(t1);
-      //System.out.println("aterm = " + aterm);
+      System.out.println("aterm = " + aterm);
 
       SdfTool sdfTool = new SdfTool();
       System.out.println("result = " + sdfTool.convert(aterm));
