@@ -1,0 +1,7 @@
+* to compile the system
+  > ant
+
+* to run the system
+  > cd build
+  > java sdfgom/Main -h
+
