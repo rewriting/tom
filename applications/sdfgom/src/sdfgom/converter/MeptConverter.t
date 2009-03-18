@@ -37,48 +37,55 @@ import tom.library.utils.ATermConverter;
 public class MeptConverter implements ATermConverter {
 
   private static PureFactory factory = SingletonFactory.getInstance();
+  private static LRUCache<ATerm,ATerm> cache = new LRUCache<ATerm,ATerm>(1024);
 
   /**
    * Method from ATermConverter interface
    */
   public ATerm convert(ATerm at) {
+    ATerm result = cache.get(at);
+    if(result!=null) {
+      return result;
+    }
+
     switch(at.getType()) {
       case ATerm.APPL:
         //System.out.print("convert: " + at + " --> ");
         ATermAppl appl = renameAppl((ATermAppl) at);
         String name = appl.getName();
-        at = appl;
+        result = appl;
 
         if(name.equals("char_class") && appl.getArity()==1) { // subcase : "char_class([CharRange])"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermList) {
-            at = appl.setArgument(encodeIntList((ATermList)arg,"character"),0);
+            result = appl.setArgument(encodeIntList((ATermList)arg,"character"),0);
           }
 
         } else if(name.equals("amb") && appl.getArity()==1) { // subcase : "amb([Tree])"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermList) {
-            at = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),0);
+            result = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),0);
           }
 
         } else if(name.equals("appl") && appl.getArity()==2) { // subcase : "appl(Production,[Tree])"
           ATerm arg = appl.getArgument(1);
           if(arg instanceof ATermList) {
-            at = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),1);
+            result = appl.setArgument(encodeIntList((ATermList)arg,"my_char"),1);
           }
 
         } else if(name.equals("term") && appl.getArity()==1) { // "term(cons(x)) -> cons(x)"
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermAppl) {
             if(((ATermAppl)arg).getName().equals("cons")) {
-              at = (ATermAppl)arg;
+              result = (ATermAppl)arg;
             }
           }
 
         } 
         // default case: perform classical renaming
-        //System.out.println(at);
-        return at;
+        //System.out.println(result);
+        cache.put(at,result);
+        return result;
 
       default:
         return at;

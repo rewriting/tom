@@ -37,31 +37,37 @@ import tom.library.utils.ATermConverter;
 public class SdfConverter implements ATermConverter {
 
   private static PureFactory factory = SingletonFactory.getInstance();
+  private static LRUCache<ATerm,ATerm> cache = new LRUCache<ATerm,ATerm>(1024);
 
   /**
    * Method from ATermConverter interface
    */
   public ATerm convert(ATerm at) {
+    ATerm result = cache.get(at);
+    if(result!=null) {
+      return result;
+    }
     switch(at.getType()) {
       case ATerm.APPL:
         ATermAppl appl = renameAppl((ATermAppl) at);
         String name = appl.getName();
-        at = appl; // renamed at by default
+        result = appl; // renamed at by default
 
         if(name.equals("default") && appl.getArity()==1) { // default(x) -> x
           ATerm arg = appl.getArgument(0);
-          at = arg;
+          result = arg;
         } else if(name.equals("single") && appl.getArity()==1) {
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermAppl) {
             if(((ATermAppl)arg).getName().equals("char_class")) {
               ATerm new_at = factory.makeAppl(factory.makeAFun("look_char_class",1,false),((ATermAppl)arg).getArgumentArray());
-              at = appl.setArgument(new_at,0);
+              result = appl.setArgument(new_at,0);
             }
           }
         } 
         // default case: perform classical renaming
-        return at;
+        cache.put(at,result);
+        return result;
 
       default:
         return at;
