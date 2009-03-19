@@ -1,8 +1,9 @@
 module Foo 
-imports String
+imports String int
 abstract syntax
 
 T = f(t1:String,t2:T)
   | h(t3:T)
+  | k(t4:int)
   | a()
   | b()

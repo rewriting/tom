@@ -10,13 +10,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TypeString.class }) //will contain one class per builtin type to test
+@SuiteClasses({ 
+    TypeString.class,
+    TypeInt.class
+    }) //will contain one class per builtin type to test
 public class TestFromTerm {
 
  /*
    We need to test (at least) :
    each bug
- x each type (builtin  = int, float, boolean, long, double, char, ATerm, ATermList)
+ x each type (builtin  = string, int, float, boolean, long, double, char, ATerm, ATermList)
  x with a FooConverter, with the IdConverter and without a converter (should be the same thing as with the IdConverter)  
 
  => 3 bugs (at least 3 patterns to test)
