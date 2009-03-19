@@ -1,0 +1,1177 @@
+
+    %op Strategy _Block(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.block._Block)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new firewall.ast.strategy.block._Block($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_Block(s:Strategy) {
+    make(s) { `Sequence(Is_Block(),s) }
+  }
+
+  %op Strategy Is_Block() {
+    make() { new firewall.ast.strategy.block.Is_Block()}
+  }
+  
+%op Strategy Make_Block(_rule:Strategy, _instructionList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.block.Make_Block))) }
+
+  get_slot(_rule, t) { $t._rule }
+  get_slot(_instructionList, t) { $t._instructionList }
+  make( new_rule,  new_instructionList) { new firewall.ast.strategy.block.Make_Block( $new_rule,  $new_instructionList) }
+}
+
+    %op Strategy _Options(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.options._Options)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new firewall.ast.strategy.options._Options($arg0) }
+    }
+  
+  
+  %op Strategy When_Options(s:Strategy) {
+    make(s) { `Sequence(Is_Options(),s) }
+  }
+
+  %op Strategy Is_Options() {
+    make() { new firewall.ast.strategy.options.Is_Options()}
+  }
+  
+%op Strategy Make_Options(_lo:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.options.Make_Options))) }
+
+  get_slot(_lo, t) { $t._lo }
+  make( _lo) { new firewall.ast.strategy.options.Make_Options( $_lo) }
+}
+
+    %op Strategy _Input() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._Input)))}
+      
+        make() { new firewall.ast.strategy.rule._Input() }
+    }
+  
+  
+  %op Strategy When_Input(s:Strategy) {
+    make(s) { `Sequence(Is_Input(),s) }
+  }
+
+  %op Strategy Is_Input() {
+    make() { new firewall.ast.strategy.rule.Is_Input()}
+  }
+  
+%op Strategy Make_Input() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_Input))) }
+
+  make() { new firewall.ast.strategy.rule.Make_Input() }
+}
+
+    %op Strategy _Forward() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._Forward)))}
+      
+        make() { new firewall.ast.strategy.rule._Forward() }
+    }
+  
+  
+  %op Strategy When_Forward(s:Strategy) {
+    make(s) { `Sequence(Is_Forward(),s) }
+  }
+
+  %op Strategy Is_Forward() {
+    make() { new firewall.ast.strategy.rule.Is_Forward()}
+  }
+  
+%op Strategy Make_Forward() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_Forward))) }
+
+  make() { new firewall.ast.strategy.rule.Make_Forward() }
+}
+
+    %op Strategy _Output() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._Output)))}
+      
+        make() { new firewall.ast.strategy.rule._Output() }
+    }
+  
+  
+  %op Strategy When_Output(s:Strategy) {
+    make(s) { `Sequence(Is_Output(),s) }
+  }
+
+  %op Strategy Is_Output() {
+    make() { new firewall.ast.strategy.rule.Is_Output()}
+  }
+  
+%op Strategy Make_Output() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_Output))) }
+
+  make() { new firewall.ast.strategy.rule.Make_Output() }
+}
+
+    %op Strategy _Prerouting() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._Prerouting)))}
+      
+        make() { new firewall.ast.strategy.rule._Prerouting() }
+    }
+  
+  
+  %op Strategy When_Prerouting(s:Strategy) {
+    make(s) { `Sequence(Is_Prerouting(),s) }
+  }
+
+  %op Strategy Is_Prerouting() {
+    make() { new firewall.ast.strategy.rule.Is_Prerouting()}
+  }
+  
+%op Strategy Make_Prerouting() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_Prerouting))) }
+
+  make() { new firewall.ast.strategy.rule.Make_Prerouting() }
+}
+
+    %op Strategy _Postrouting() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._Postrouting)))}
+      
+        make() { new firewall.ast.strategy.rule._Postrouting() }
+    }
+  
+  
+  %op Strategy When_Postrouting(s:Strategy) {
+    make(s) { `Sequence(Is_Postrouting(),s) }
+  }
+
+  %op Strategy Is_Postrouting() {
+    make() { new firewall.ast.strategy.rule.Is_Postrouting()}
+  }
+  
+%op Strategy Make_Postrouting() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_Postrouting))) }
+
+  make() { new firewall.ast.strategy.rule.Make_Postrouting() }
+}
+
+    %op Strategy _UserRuleDef(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule._UserRuleDef)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new firewall.ast.strategy.rule._UserRuleDef($arg0) }
+    }
+  
+  
+  %op Strategy When_UserRuleDef(s:Strategy) {
+    make(s) { `Sequence(Is_UserRuleDef(),s) }
+  }
+
+  %op Strategy Is_UserRuleDef() {
+    make() { new firewall.ast.strategy.rule.Is_UserRuleDef()}
+  }
+  
+%op Strategy Make_UserRuleDef(_user_rule_name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.rule.Make_UserRuleDef))) }
+
+  get_slot(_user_rule_name, t) { $t._user_rule_name }
+  make( _user_rule_name) { new firewall.ast.strategy.rule.Make_UserRuleDef( $_user_rule_name) }
+}
+
+    %op Strategy _EmptyBlocks() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.file._EmptyBlocks)))}
+      
+        make() { new firewall.ast.strategy.file._EmptyBlocks() }
+    }
+  
+  
+  %op Strategy When_EmptyBlocks(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyBlocks(),s) }
+  }
+
+  %op Strategy Is_EmptyBlocks() {
+    make() { new firewall.ast.strategy.file.Is_EmptyBlocks()}
+  }
+  
+%op Strategy Make_EmptyBlocks() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.file.Make_EmptyBlocks))) }
+
+  make() { new firewall.ast.strategy.file.Make_EmptyBlocks() }
+}
+
+    %op Strategy _ConsBlocks(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.file._ConsBlocks)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new firewall.ast.strategy.file._ConsBlocks($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsBlocks(s:Strategy) {
+    make(s) { `Sequence(Is_ConsBlocks(),s) }
+  }
+
+  %op Strategy Is_ConsBlocks() {
+    make() { new firewall.ast.strategy.file.Is_ConsBlocks()}
+  }
+  
+%op Strategy Make_ConsBlocks(_HeadBlocks:Strategy, _TailBlocks:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.file.Make_ConsBlocks))) }
+
+  get_slot(_HeadBlocks, t) { $t._HeadBlocks }
+  get_slot(_TailBlocks, t) { $t._TailBlocks }
+  make( new_HeadBlocks,  new_TailBlocks) { new firewall.ast.strategy.file.Make_ConsBlocks( $new_HeadBlocks,  $new_TailBlocks) }
+}
+
+    %op Strategy _EmptyInstructionList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instructionlist._EmptyInstructionList)))}
+      
+        make() { new firewall.ast.strategy.instructionlist._EmptyInstructionList() }
+    }
+  
+  
+  %op Strategy When_EmptyInstructionList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyInstructionList(),s) }
+  }
+
+  %op Strategy Is_EmptyInstructionList() {
+    make() { new firewall.ast.strategy.instructionlist.Is_EmptyInstructionList()}
+  }
+  
+%op Strategy Make_EmptyInstructionList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instructionlist.Make_EmptyInstructionList))) }
+
+  make() { new firewall.ast.strategy.instructionlist.Make_EmptyInstructionList() }
+}
+
+    %op Strategy _ConsInstructionList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instructionlist._ConsInstructionList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new firewall.ast.strategy.instructionlist._ConsInstructionList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsInstructionList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsInstructionList(),s) }
+  }
+
+  %op Strategy Is_ConsInstructionList() {
+    make() { new firewall.ast.strategy.instructionlist.Is_ConsInstructionList()}
+  }
+  
+%op Strategy Make_ConsInstructionList(_HeadInstructionList:Strategy, _TailInstructionList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instructionlist.Make_ConsInstructionList))) }
+
+  get_slot(_HeadInstructionList, t) { $t._HeadInstructionList }
+  get_slot(_TailInstructionList, t) { $t._TailInstructionList }
+  make( new_HeadInstructionList,  new_TailInstructionList) { new firewall.ast.strategy.instructionlist.Make_ConsInstructionList( $new_HeadInstructionList,  $new_TailInstructionList) }
+}
+
+    %op Strategy _None() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.opts._None)))}
+      
+        make() { new firewall.ast.strategy.opts._None() }
+    }
+  
+  
+  %op Strategy When_None(s:Strategy) {
+    make(s) { `Sequence(Is_None(),s) }
+  }
+
+  %op Strategy Is_None() {
+    make() { new firewall.ast.strategy.opts.Is_None()}
+  }
+  
+%op Strategy Make_None() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.opts.Make_None))) }
+
+  make() { new firewall.ast.strategy.opts.Make_None() }
+}
+
+    %op Strategy _Anywhere() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication._Anywhere)))}
+      
+        make() { new firewall.ast.strategy.communication._Anywhere() }
+    }
+  
+  
+  %op Strategy When_Anywhere(s:Strategy) {
+    make(s) { `Sequence(Is_Anywhere(),s) }
+  }
+
+  %op Strategy Is_Anywhere() {
+    make() { new firewall.ast.strategy.communication.Is_Anywhere()}
+  }
+  
+%op Strategy Make_Anywhere() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication.Make_Anywhere))) }
+
+  make() { new firewall.ast.strategy.communication.Make_Anywhere() }
+}
+
+    %op Strategy _Localhost() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication._Localhost)))}
+      
+        make() { new firewall.ast.strategy.communication._Localhost() }
+    }
+  
+  
+  %op Strategy When_Localhost(s:Strategy) {
+    make(s) { `Sequence(Is_Localhost(),s) }
+  }
+
+  %op Strategy Is_Localhost() {
+    make() { new firewall.ast.strategy.communication.Is_Localhost()}
+  }
+  
+%op Strategy Make_Localhost() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication.Make_Localhost))) }
+
+  make() { new firewall.ast.strategy.communication.Make_Localhost() }
+}
+
+    %op Strategy _Ip_Addr(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication._Ip_Addr)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new firewall.ast.strategy.communication._Ip_Addr($arg0) }
+    }
+  
+  
+  %op Strategy When_Ip_Addr(s:Strategy) {
+    make(s) { `Sequence(Is_Ip_Addr(),s) }
+  }
+
+  %op Strategy Is_Ip_Addr() {
+    make() { new firewall.ast.strategy.communication.Is_Ip_Addr()}
+  }
+  
+%op Strategy Make_Ip_Addr(_ip:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.communication.Make_Ip_Addr))) }
+
+  get_slot(_ip, t) { $t._ip }
+  make( _ip) { new firewall.ast.strategy.communication.Make_Ip_Addr( $_ip) }
+}
+
+    %op Strategy _Accept() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Accept)))}
+      
+        make() { new firewall.ast.strategy.target._Accept() }
+    }
+  
+  
+  %op Strategy When_Accept(s:Strategy) {
+    make(s) { `Sequence(Is_Accept(),s) }
+  }
+
+  %op Strategy Is_Accept() {
+    make() { new firewall.ast.strategy.target.Is_Accept()}
+  }
+  
+%op Strategy Make_Accept() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Accept))) }
+
+  make() { new firewall.ast.strategy.target.Make_Accept() }
+}
+
+    %op Strategy _Classify() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Classify)))}
+      
+        make() { new firewall.ast.strategy.target._Classify() }
+    }
+  
+  
+  %op Strategy When_Classify(s:Strategy) {
+    make(s) { `Sequence(Is_Classify(),s) }
+  }
+
+  %op Strategy Is_Classify() {
+    make() { new firewall.ast.strategy.target.Is_Classify()}
+  }
+  
+%op Strategy Make_Classify() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Classify))) }
+
+  make() { new firewall.ast.strategy.target.Make_Classify() }
+}
+
+    %op Strategy _ClusterIp() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._ClusterIp)))}
+      
+        make() { new firewall.ast.strategy.target._ClusterIp() }
+    }
+  
+  
+  %op Strategy When_ClusterIp(s:Strategy) {
+    make(s) { `Sequence(Is_ClusterIp(),s) }
+  }
+
+  %op Strategy Is_ClusterIp() {
+    make() { new firewall.ast.strategy.target.Is_ClusterIp()}
+  }
+  
+%op Strategy Make_ClusterIp() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_ClusterIp))) }
+
+  make() { new firewall.ast.strategy.target.Make_ClusterIp() }
+}
+
+    %op Strategy _ConnMark() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._ConnMark)))}
+      
+        make() { new firewall.ast.strategy.target._ConnMark() }
+    }
+  
+  
+  %op Strategy When_ConnMark(s:Strategy) {
+    make(s) { `Sequence(Is_ConnMark(),s) }
+  }
+
+  %op Strategy Is_ConnMark() {
+    make() { new firewall.ast.strategy.target.Is_ConnMark()}
+  }
+  
+%op Strategy Make_ConnMark() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_ConnMark))) }
+
+  make() { new firewall.ast.strategy.target.Make_ConnMark() }
+}
+
+    %op Strategy _ConnSecMark() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._ConnSecMark)))}
+      
+        make() { new firewall.ast.strategy.target._ConnSecMark() }
+    }
+  
+  
+  %op Strategy When_ConnSecMark(s:Strategy) {
+    make(s) { `Sequence(Is_ConnSecMark(),s) }
+  }
+
+  %op Strategy Is_ConnSecMark() {
+    make() { new firewall.ast.strategy.target.Is_ConnSecMark()}
+  }
+  
+%op Strategy Make_ConnSecMark() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_ConnSecMark))) }
+
+  make() { new firewall.ast.strategy.target.Make_ConnSecMark() }
+}
+
+    %op Strategy _Dnat() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Dnat)))}
+      
+        make() { new firewall.ast.strategy.target._Dnat() }
+    }
+  
+  
+  %op Strategy When_Dnat(s:Strategy) {
+    make(s) { `Sequence(Is_Dnat(),s) }
+  }
+
+  %op Strategy Is_Dnat() {
+    make() { new firewall.ast.strategy.target.Is_Dnat()}
+  }
+  
+%op Strategy Make_Dnat() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Dnat))) }
+
+  make() { new firewall.ast.strategy.target.Make_Dnat() }
+}
+
+    %op Strategy _Drop() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Drop)))}
+      
+        make() { new firewall.ast.strategy.target._Drop() }
+    }
+  
+  
+  %op Strategy When_Drop(s:Strategy) {
+    make(s) { `Sequence(Is_Drop(),s) }
+  }
+
+  %op Strategy Is_Drop() {
+    make() { new firewall.ast.strategy.target.Is_Drop()}
+  }
+  
+%op Strategy Make_Drop() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Drop))) }
+
+  make() { new firewall.ast.strategy.target.Make_Drop() }
+}
+
+    %op Strategy _Dscp() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Dscp)))}
+      
+        make() { new firewall.ast.strategy.target._Dscp() }
+    }
+  
+  
+  %op Strategy When_Dscp(s:Strategy) {
+    make(s) { `Sequence(Is_Dscp(),s) }
+  }
+
+  %op Strategy Is_Dscp() {
+    make() { new firewall.ast.strategy.target.Is_Dscp()}
+  }
+  
+%op Strategy Make_Dscp() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Dscp))) }
+
+  make() { new firewall.ast.strategy.target.Make_Dscp() }
+}
+
+    %op Strategy _Ecn() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Ecn)))}
+      
+        make() { new firewall.ast.strategy.target._Ecn() }
+    }
+  
+  
+  %op Strategy When_Ecn(s:Strategy) {
+    make(s) { `Sequence(Is_Ecn(),s) }
+  }
+
+  %op Strategy Is_Ecn() {
+    make() { new firewall.ast.strategy.target.Is_Ecn()}
+  }
+  
+%op Strategy Make_Ecn() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Ecn))) }
+
+  make() { new firewall.ast.strategy.target.Make_Ecn() }
+}
+
+    %op Strategy _Log() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Log)))}
+      
+        make() { new firewall.ast.strategy.target._Log() }
+    }
+  
+  
+  %op Strategy When_Log(s:Strategy) {
+    make(s) { `Sequence(Is_Log(),s) }
+  }
+
+  %op Strategy Is_Log() {
+    make() { new firewall.ast.strategy.target.Is_Log()}
+  }
+  
+%op Strategy Make_Log() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Log))) }
+
+  make() { new firewall.ast.strategy.target.Make_Log() }
+}
+
+    %op Strategy _Mark() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Mark)))}
+      
+        make() { new firewall.ast.strategy.target._Mark() }
+    }
+  
+  
+  %op Strategy When_Mark(s:Strategy) {
+    make(s) { `Sequence(Is_Mark(),s) }
+  }
+
+  %op Strategy Is_Mark() {
+    make() { new firewall.ast.strategy.target.Is_Mark()}
+  }
+  
+%op Strategy Make_Mark() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Mark))) }
+
+  make() { new firewall.ast.strategy.target.Make_Mark() }
+}
+
+    %op Strategy _Masquerade() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Masquerade)))}
+      
+        make() { new firewall.ast.strategy.target._Masquerade() }
+    }
+  
+  
+  %op Strategy When_Masquerade(s:Strategy) {
+    make(s) { `Sequence(Is_Masquerade(),s) }
+  }
+
+  %op Strategy Is_Masquerade() {
+    make() { new firewall.ast.strategy.target.Is_Masquerade()}
+  }
+  
+%op Strategy Make_Masquerade() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Masquerade))) }
+
+  make() { new firewall.ast.strategy.target.Make_Masquerade() }
+}
+
+    %op Strategy _Mirror() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Mirror)))}
+      
+        make() { new firewall.ast.strategy.target._Mirror() }
+    }
+  
+  
+  %op Strategy When_Mirror(s:Strategy) {
+    make(s) { `Sequence(Is_Mirror(),s) }
+  }
+
+  %op Strategy Is_Mirror() {
+    make() { new firewall.ast.strategy.target.Is_Mirror()}
+  }
+  
+%op Strategy Make_Mirror() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Mirror))) }
+
+  make() { new firewall.ast.strategy.target.Make_Mirror() }
+}
+
+    %op Strategy _NetMap() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._NetMap)))}
+      
+        make() { new firewall.ast.strategy.target._NetMap() }
+    }
+  
+  
+  %op Strategy When_NetMap(s:Strategy) {
+    make(s) { `Sequence(Is_NetMap(),s) }
+  }
+
+  %op Strategy Is_NetMap() {
+    make() { new firewall.ast.strategy.target.Is_NetMap()}
+  }
+  
+%op Strategy Make_NetMap() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_NetMap))) }
+
+  make() { new firewall.ast.strategy.target.Make_NetMap() }
+}
+
+    %op Strategy _NfLog() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._NfLog)))}
+      
+        make() { new firewall.ast.strategy.target._NfLog() }
+    }
+  
+  
+  %op Strategy When_NfLog(s:Strategy) {
+    make(s) { `Sequence(Is_NfLog(),s) }
+  }
+
+  %op Strategy Is_NfLog() {
+    make() { new firewall.ast.strategy.target.Is_NfLog()}
+  }
+  
+%op Strategy Make_NfLog() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_NfLog))) }
+
+  make() { new firewall.ast.strategy.target.Make_NfLog() }
+}
+
+    %op Strategy _NfQueue() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._NfQueue)))}
+      
+        make() { new firewall.ast.strategy.target._NfQueue() }
+    }
+  
+  
+  %op Strategy When_NfQueue(s:Strategy) {
+    make(s) { `Sequence(Is_NfQueue(),s) }
+  }
+
+  %op Strategy Is_NfQueue() {
+    make() { new firewall.ast.strategy.target.Is_NfQueue()}
+  }
+  
+%op Strategy Make_NfQueue() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_NfQueue))) }
+
+  make() { new firewall.ast.strategy.target.Make_NfQueue() }
+}
+
+    %op Strategy _NoTrack() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._NoTrack)))}
+      
+        make() { new firewall.ast.strategy.target._NoTrack() }
+    }
+  
+  
+  %op Strategy When_NoTrack(s:Strategy) {
+    make(s) { `Sequence(Is_NoTrack(),s) }
+  }
+
+  %op Strategy Is_NoTrack() {
+    make() { new firewall.ast.strategy.target.Is_NoTrack()}
+  }
+  
+%op Strategy Make_NoTrack() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_NoTrack))) }
+
+  make() { new firewall.ast.strategy.target.Make_NoTrack() }
+}
+
+    %op Strategy _Queue() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Queue)))}
+      
+        make() { new firewall.ast.strategy.target._Queue() }
+    }
+  
+  
+  %op Strategy When_Queue(s:Strategy) {
+    make(s) { `Sequence(Is_Queue(),s) }
+  }
+
+  %op Strategy Is_Queue() {
+    make() { new firewall.ast.strategy.target.Is_Queue()}
+  }
+  
+%op Strategy Make_Queue() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Queue))) }
+
+  make() { new firewall.ast.strategy.target.Make_Queue() }
+}
+
+    %op Strategy _Redirect() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Redirect)))}
+      
+        make() { new firewall.ast.strategy.target._Redirect() }
+    }
+  
+  
+  %op Strategy When_Redirect(s:Strategy) {
+    make(s) { `Sequence(Is_Redirect(),s) }
+  }
+
+  %op Strategy Is_Redirect() {
+    make() { new firewall.ast.strategy.target.Is_Redirect()}
+  }
+  
+%op Strategy Make_Redirect() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Redirect))) }
+
+  make() { new firewall.ast.strategy.target.Make_Redirect() }
+}
+
+    %op Strategy _Reject() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Reject)))}
+      
+        make() { new firewall.ast.strategy.target._Reject() }
+    }
+  
+  
+  %op Strategy When_Reject(s:Strategy) {
+    make(s) { `Sequence(Is_Reject(),s) }
+  }
+
+  %op Strategy Is_Reject() {
+    make() { new firewall.ast.strategy.target.Is_Reject()}
+  }
+  
+%op Strategy Make_Reject() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Reject))) }
+
+  make() { new firewall.ast.strategy.target.Make_Reject() }
+}
+
+    %op Strategy _Return() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Return)))}
+      
+        make() { new firewall.ast.strategy.target._Return() }
+    }
+  
+  
+  %op Strategy When_Return(s:Strategy) {
+    make(s) { `Sequence(Is_Return(),s) }
+  }
+
+  %op Strategy Is_Return() {
+    make() { new firewall.ast.strategy.target.Is_Return()}
+  }
+  
+%op Strategy Make_Return() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Return))) }
+
+  make() { new firewall.ast.strategy.target.Make_Return() }
+}
+
+    %op Strategy _UserRuleCall(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._UserRuleCall)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new firewall.ast.strategy.target._UserRuleCall($arg0) }
+    }
+  
+  
+  %op Strategy When_UserRuleCall(s:Strategy) {
+    make(s) { `Sequence(Is_UserRuleCall(),s) }
+  }
+
+  %op Strategy Is_UserRuleCall() {
+    make() { new firewall.ast.strategy.target.Is_UserRuleCall()}
+  }
+  
+%op Strategy Make_UserRuleCall(_user_rule_name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_UserRuleCall))) }
+
+  get_slot(_user_rule_name, t) { $t._user_rule_name }
+  make( _user_rule_name) { new firewall.ast.strategy.target.Make_UserRuleCall( $_user_rule_name) }
+}
+
+    %op Strategy _Same() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Same)))}
+      
+        make() { new firewall.ast.strategy.target._Same() }
+    }
+  
+  
+  %op Strategy When_Same(s:Strategy) {
+    make(s) { `Sequence(Is_Same(),s) }
+  }
+
+  %op Strategy Is_Same() {
+    make() { new firewall.ast.strategy.target.Is_Same()}
+  }
+  
+%op Strategy Make_Same() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Same))) }
+
+  make() { new firewall.ast.strategy.target.Make_Same() }
+}
+
+    %op Strategy _SecMark() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._SecMark)))}
+      
+        make() { new firewall.ast.strategy.target._SecMark() }
+    }
+  
+  
+  %op Strategy When_SecMark(s:Strategy) {
+    make(s) { `Sequence(Is_SecMark(),s) }
+  }
+
+  %op Strategy Is_SecMark() {
+    make() { new firewall.ast.strategy.target.Is_SecMark()}
+  }
+  
+%op Strategy Make_SecMark() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_SecMark))) }
+
+  make() { new firewall.ast.strategy.target.Make_SecMark() }
+}
+
+    %op Strategy _Snat() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Snat)))}
+      
+        make() { new firewall.ast.strategy.target._Snat() }
+    }
+  
+  
+  %op Strategy When_Snat(s:Strategy) {
+    make(s) { `Sequence(Is_Snat(),s) }
+  }
+
+  %op Strategy Is_Snat() {
+    make() { new firewall.ast.strategy.target.Is_Snat()}
+  }
+  
+%op Strategy Make_Snat() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Snat))) }
+
+  make() { new firewall.ast.strategy.target.Make_Snat() }
+}
+
+    %op Strategy _TcpMss() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._TcpMss)))}
+      
+        make() { new firewall.ast.strategy.target._TcpMss() }
+    }
+  
+  
+  %op Strategy When_TcpMss(s:Strategy) {
+    make(s) { `Sequence(Is_TcpMss(),s) }
+  }
+
+  %op Strategy Is_TcpMss() {
+    make() { new firewall.ast.strategy.target.Is_TcpMss()}
+  }
+  
+%op Strategy Make_TcpMss() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_TcpMss))) }
+
+  make() { new firewall.ast.strategy.target.Make_TcpMss() }
+}
+
+    %op Strategy _Tos() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Tos)))}
+      
+        make() { new firewall.ast.strategy.target._Tos() }
+    }
+  
+  
+  %op Strategy When_Tos(s:Strategy) {
+    make(s) { `Sequence(Is_Tos(),s) }
+  }
+
+  %op Strategy Is_Tos() {
+    make() { new firewall.ast.strategy.target.Is_Tos()}
+  }
+  
+%op Strategy Make_Tos() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Tos))) }
+
+  make() { new firewall.ast.strategy.target.Make_Tos() }
+}
+
+    %op Strategy _Trace() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Trace)))}
+      
+        make() { new firewall.ast.strategy.target._Trace() }
+    }
+  
+  
+  %op Strategy When_Trace(s:Strategy) {
+    make(s) { `Sequence(Is_Trace(),s) }
+  }
+
+  %op Strategy Is_Trace() {
+    make() { new firewall.ast.strategy.target.Is_Trace()}
+  }
+  
+%op Strategy Make_Trace() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Trace))) }
+
+  make() { new firewall.ast.strategy.target.Make_Trace() }
+}
+
+    %op Strategy _Ttl() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Ttl)))}
+      
+        make() { new firewall.ast.strategy.target._Ttl() }
+    }
+  
+  
+  %op Strategy When_Ttl(s:Strategy) {
+    make(s) { `Sequence(Is_Ttl(),s) }
+  }
+
+  %op Strategy Is_Ttl() {
+    make() { new firewall.ast.strategy.target.Is_Ttl()}
+  }
+  
+%op Strategy Make_Ttl() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Ttl))) }
+
+  make() { new firewall.ast.strategy.target.Make_Ttl() }
+}
+
+    %op Strategy _Ulog() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Ulog)))}
+      
+        make() { new firewall.ast.strategy.target._Ulog() }
+    }
+  
+  
+  %op Strategy When_Ulog(s:Strategy) {
+    make(s) { `Sequence(Is_Ulog(),s) }
+  }
+
+  %op Strategy Is_Ulog() {
+    make() { new firewall.ast.strategy.target.Is_Ulog()}
+  }
+  
+%op Strategy Make_Ulog() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Ulog))) }
+
+  make() { new firewall.ast.strategy.target.Make_Ulog() }
+}
+
+    %op Strategy _Ipv4OptSstRip() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Ipv4OptSstRip)))}
+      
+        make() { new firewall.ast.strategy.target._Ipv4OptSstRip() }
+    }
+  
+  
+  %op Strategy When_Ipv4OptSstRip(s:Strategy) {
+    make(s) { `Sequence(Is_Ipv4OptSstRip(),s) }
+  }
+
+  %op Strategy Is_Ipv4OptSstRip() {
+    make() { new firewall.ast.strategy.target.Is_Ipv4OptSstRip()}
+  }
+  
+%op Strategy Make_Ipv4OptSstRip() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Ipv4OptSstRip))) }
+
+  make() { new firewall.ast.strategy.target.Make_Ipv4OptSstRip() }
+}
+
+    %op Strategy _Set() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Set)))}
+      
+        make() { new firewall.ast.strategy.target._Set() }
+    }
+  
+  
+  %op Strategy When_Set(s:Strategy) {
+    make(s) { `Sequence(Is_Set(),s) }
+  }
+
+  %op Strategy Is_Set() {
+    make() { new firewall.ast.strategy.target.Is_Set()}
+  }
+  
+%op Strategy Make_Set() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Set))) }
+
+  make() { new firewall.ast.strategy.target.Make_Set() }
+}
+
+    %op Strategy _Tarpit() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target._Tarpit)))}
+      
+        make() { new firewall.ast.strategy.target._Tarpit() }
+    }
+  
+  
+  %op Strategy When_Tarpit(s:Strategy) {
+    make(s) { `Sequence(Is_Tarpit(),s) }
+  }
+
+  %op Strategy Is_Tarpit() {
+    make() { new firewall.ast.strategy.target.Is_Tarpit()}
+  }
+  
+%op Strategy Make_Tarpit() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.target.Make_Tarpit))) }
+
+  make() { new firewall.ast.strategy.target.Make_Tarpit() }
+}
+
+    %op Strategy _All_() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol._All_)))}
+      
+        make() { new firewall.ast.strategy.protocol._All_() }
+    }
+  
+  
+  %op Strategy When_All_(s:Strategy) {
+    make(s) { `Sequence(Is_All_(),s) }
+  }
+
+  %op Strategy Is_All_() {
+    make() { new firewall.ast.strategy.protocol.Is_All_()}
+  }
+  
+%op Strategy Make_All_() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol.Make_All_))) }
+
+  make() { new firewall.ast.strategy.protocol.Make_All_() }
+}
+
+    %op Strategy _Icmp() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol._Icmp)))}
+      
+        make() { new firewall.ast.strategy.protocol._Icmp() }
+    }
+  
+  
+  %op Strategy When_Icmp(s:Strategy) {
+    make(s) { `Sequence(Is_Icmp(),s) }
+  }
+
+  %op Strategy Is_Icmp() {
+    make() { new firewall.ast.strategy.protocol.Is_Icmp()}
+  }
+  
+%op Strategy Make_Icmp() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol.Make_Icmp))) }
+
+  make() { new firewall.ast.strategy.protocol.Make_Icmp() }
+}
+
+    %op Strategy _Udp() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol._Udp)))}
+      
+        make() { new firewall.ast.strategy.protocol._Udp() }
+    }
+  
+  
+  %op Strategy When_Udp(s:Strategy) {
+    make(s) { `Sequence(Is_Udp(),s) }
+  }
+
+  %op Strategy Is_Udp() {
+    make() { new firewall.ast.strategy.protocol.Is_Udp()}
+  }
+  
+%op Strategy Make_Udp() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol.Make_Udp))) }
+
+  make() { new firewall.ast.strategy.protocol.Make_Udp() }
+}
+
+    %op Strategy _Tcp() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol._Tcp)))}
+      
+        make() { new firewall.ast.strategy.protocol._Tcp() }
+    }
+  
+  
+  %op Strategy When_Tcp(s:Strategy) {
+    make(s) { `Sequence(Is_Tcp(),s) }
+  }
+
+  %op Strategy Is_Tcp() {
+    make() { new firewall.ast.strategy.protocol.Is_Tcp()}
+  }
+  
+%op Strategy Make_Tcp() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.protocol.Make_Tcp))) }
+
+  make() { new firewall.ast.strategy.protocol.Make_Tcp() }
+}
+
+    %op Strategy _Ins(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instruction._Ins)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        make(arg0, arg1, arg2, arg3, arg4, arg5) { new firewall.ast.strategy.instruction._Ins($arg0, $arg1, $arg2, $arg3, $arg4, $arg5) }
+    }
+  
+  
+  %op Strategy When_Ins(s:Strategy) {
+    make(s) { `Sequence(Is_Ins(),s) }
+  }
+
+  %op Strategy Is_Ins() {
+    make() { new firewall.ast.strategy.instruction.Is_Ins()}
+  }
+  
+%op Strategy Make_Ins(_target:Strategy, _prot:Strategy, _opt:Strategy, _source:Strategy, _destination:Strategy, _options:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (firewall.ast.strategy.instruction.Make_Ins))) }
+
+  get_slot(_target, t) { $t._target }
+  get_slot(_prot, t) { $t._prot }
+  get_slot(_opt, t) { $t._opt }
+  get_slot(_source, t) { $t._source }
+  get_slot(_destination, t) { $t._destination }
+  get_slot(_options, t) { $t._options }
+  make( new_target,  new_prot,  new_opt,  new_source,  new_destination,  new_options) { new firewall.ast.strategy.instruction.Make_Ins( $new_target,  $new_prot,  $new_opt,  $new_source,  $new_destination,  $new_options) }
+}
+
+            %op Strategy _Blocks(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_Blocks"),Choice(_ConsBlocks(sub,MuVar("x_Blocks")),_EmptyBlocks())) }
+            }
+            
+            %op Strategy _InstructionList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_InstructionList"),Choice(_ConsInstructionList(sub,MuVar("x_InstructionList")),_EmptyInstructionList())) }
+            }
+            

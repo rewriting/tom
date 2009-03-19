@@ -2,11 +2,20 @@ module firewall.Ast
 imports String int
 abstract syntax
 
-Instruction = Target()
-	| Protocol()
-	| Opts()
-	| Communication()
-	
+File = Blocks(Block*)
+
+Block = Block(rule:Rule,instructionList:InstructionList)
+
+Rule = Input()
+     | Forward()
+     | Output()
+     | Prerouting()
+     | Postrouting()
+     | UserRuleDef(user_rule_name:String)
+
+InstructionList = InstructionList(Instruction*)
+
+Instruction = Ins(target:Target,prot:Protocol,opt:Opts,source:Communication,destination:Communication,options:Options)
 
 Target = Accept()
         |Classify()
@@ -29,7 +38,7 @@ Target = Accept()
         |Redirect()
         |Reject()
         |Return()
-        |User_Rule()
+        |UserRuleCall(user_rule_name:String)
         |Same()
         |SecMark()
         |Snat()
@@ -42,7 +51,7 @@ Target = Accept()
         |Set()
         |Tarpit()
         
-Protocol =   All()
+Protocol =   All_()
             |Icmp()
             |Udp()
             |Tcp()
@@ -50,8 +59,8 @@ Protocol =   All()
 Opts =   None()
 
 Communication = Anywhere()
-            |Localhost()
-            |Ip_Addr()
+              |Localhost()
+              |Ip_Addr(ip:String)
 
-
+Options = Options(lo:String)
 

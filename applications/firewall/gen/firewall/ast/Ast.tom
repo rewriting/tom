@@ -1,0 +1,388 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm Block {
+  implement { firewall.ast.types.Block }
+  is_sort(t) { ($t instanceof firewall.ast.types.Block) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Options {
+  implement { firewall.ast.types.Options }
+  is_sort(t) { ($t instanceof firewall.ast.types.Options) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Rule {
+  implement { firewall.ast.types.Rule }
+  is_sort(t) { ($t instanceof firewall.ast.types.Rule) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm File {
+  implement { firewall.ast.types.File }
+  is_sort(t) { ($t instanceof firewall.ast.types.File) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm InstructionList {
+  implement { firewall.ast.types.InstructionList }
+  is_sort(t) { ($t instanceof firewall.ast.types.InstructionList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Opts {
+  implement { firewall.ast.types.Opts }
+  is_sort(t) { ($t instanceof firewall.ast.types.Opts) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Communication {
+  implement { firewall.ast.types.Communication }
+  is_sort(t) { ($t instanceof firewall.ast.types.Communication) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Target {
+  implement { firewall.ast.types.Target }
+  is_sort(t) { ($t instanceof firewall.ast.types.Target) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Protocol {
+  implement { firewall.ast.types.Protocol }
+  is_sort(t) { ($t instanceof firewall.ast.types.Protocol) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Instruction {
+  implement { firewall.ast.types.Instruction }
+  is_sort(t) { ($t instanceof firewall.ast.types.Instruction) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Block Block(rule:Rule, instructionList:InstructionList) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.block.Block) }
+  get_slot(rule, t) { $t.getrule() }
+  get_slot(instructionList, t) { $t.getinstructionList() }
+  make(t0, t1) { firewall.ast.types.block.Block.make($t0, $t1) }
+}
+
+%op Options Options(lo:String) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.options.Options) }
+  get_slot(lo, t) { $t.getlo() }
+  make(t0) { firewall.ast.types.options.Options.make($t0) }
+}
+
+%op Rule Input() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.Input) }
+  make() { firewall.ast.types.rule.Input.make() }
+}
+
+%op Rule Forward() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.Forward) }
+  make() { firewall.ast.types.rule.Forward.make() }
+}
+
+%op Rule Output() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.Output) }
+  make() { firewall.ast.types.rule.Output.make() }
+}
+
+%op Rule Prerouting() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.Prerouting) }
+  make() { firewall.ast.types.rule.Prerouting.make() }
+}
+
+%op Rule Postrouting() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.Postrouting) }
+  make() { firewall.ast.types.rule.Postrouting.make() }
+}
+
+%op Rule UserRuleDef(user_rule_name:String) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.rule.UserRuleDef) }
+  get_slot(user_rule_name, t) { $t.getuser_rule_name() }
+  make(t0) { firewall.ast.types.rule.UserRuleDef.make($t0) }
+}
+
+%op File EmptyBlocks() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.file.EmptyBlocks) }
+  make() { firewall.ast.types.file.EmptyBlocks.make() }
+}
+
+%op File ConsBlocks(HeadBlocks:Block, TailBlocks:File) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.file.ConsBlocks) }
+  get_slot(HeadBlocks, t) { $t.getHeadBlocks() }
+  get_slot(TailBlocks, t) { $t.getTailBlocks() }
+  make(t0, t1) { firewall.ast.types.file.ConsBlocks.make($t0, $t1) }
+}
+
+%op InstructionList EmptyInstructionList() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.instructionlist.EmptyInstructionList) }
+  make() { firewall.ast.types.instructionlist.EmptyInstructionList.make() }
+}
+
+%op InstructionList ConsInstructionList(HeadInstructionList:Instruction, TailInstructionList:InstructionList) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.instructionlist.ConsInstructionList) }
+  get_slot(HeadInstructionList, t) { $t.getHeadInstructionList() }
+  get_slot(TailInstructionList, t) { $t.getTailInstructionList() }
+  make(t0, t1) { firewall.ast.types.instructionlist.ConsInstructionList.make($t0, $t1) }
+}
+
+%op Opts None() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.opts.None) }
+  make() { firewall.ast.types.opts.None.make() }
+}
+
+%op Communication Anywhere() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.communication.Anywhere) }
+  make() { firewall.ast.types.communication.Anywhere.make() }
+}
+
+%op Communication Localhost() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.communication.Localhost) }
+  make() { firewall.ast.types.communication.Localhost.make() }
+}
+
+%op Communication Ip_Addr(ip:String) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.communication.Ip_Addr) }
+  get_slot(ip, t) { $t.getip() }
+  make(t0) { firewall.ast.types.communication.Ip_Addr.make($t0) }
+}
+
+%op Target Accept() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Accept) }
+  make() { firewall.ast.types.target.Accept.make() }
+}
+
+%op Target Classify() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Classify) }
+  make() { firewall.ast.types.target.Classify.make() }
+}
+
+%op Target ClusterIp() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.ClusterIp) }
+  make() { firewall.ast.types.target.ClusterIp.make() }
+}
+
+%op Target ConnMark() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.ConnMark) }
+  make() { firewall.ast.types.target.ConnMark.make() }
+}
+
+%op Target ConnSecMark() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.ConnSecMark) }
+  make() { firewall.ast.types.target.ConnSecMark.make() }
+}
+
+%op Target Dnat() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Dnat) }
+  make() { firewall.ast.types.target.Dnat.make() }
+}
+
+%op Target Drop() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Drop) }
+  make() { firewall.ast.types.target.Drop.make() }
+}
+
+%op Target Dscp() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Dscp) }
+  make() { firewall.ast.types.target.Dscp.make() }
+}
+
+%op Target Ecn() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Ecn) }
+  make() { firewall.ast.types.target.Ecn.make() }
+}
+
+%op Target Log() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Log) }
+  make() { firewall.ast.types.target.Log.make() }
+}
+
+%op Target Mark() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Mark) }
+  make() { firewall.ast.types.target.Mark.make() }
+}
+
+%op Target Masquerade() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Masquerade) }
+  make() { firewall.ast.types.target.Masquerade.make() }
+}
+
+%op Target Mirror() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Mirror) }
+  make() { firewall.ast.types.target.Mirror.make() }
+}
+
+%op Target NetMap() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.NetMap) }
+  make() { firewall.ast.types.target.NetMap.make() }
+}
+
+%op Target NfLog() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.NfLog) }
+  make() { firewall.ast.types.target.NfLog.make() }
+}
+
+%op Target NfQueue() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.NfQueue) }
+  make() { firewall.ast.types.target.NfQueue.make() }
+}
+
+%op Target NoTrack() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.NoTrack) }
+  make() { firewall.ast.types.target.NoTrack.make() }
+}
+
+%op Target Queue() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Queue) }
+  make() { firewall.ast.types.target.Queue.make() }
+}
+
+%op Target Redirect() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Redirect) }
+  make() { firewall.ast.types.target.Redirect.make() }
+}
+
+%op Target Reject() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Reject) }
+  make() { firewall.ast.types.target.Reject.make() }
+}
+
+%op Target Return() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Return) }
+  make() { firewall.ast.types.target.Return.make() }
+}
+
+%op Target UserRuleCall(user_rule_name:String) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.UserRuleCall) }
+  get_slot(user_rule_name, t) { $t.getuser_rule_name() }
+  make(t0) { firewall.ast.types.target.UserRuleCall.make($t0) }
+}
+
+%op Target Same() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Same) }
+  make() { firewall.ast.types.target.Same.make() }
+}
+
+%op Target SecMark() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.SecMark) }
+  make() { firewall.ast.types.target.SecMark.make() }
+}
+
+%op Target Snat() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Snat) }
+  make() { firewall.ast.types.target.Snat.make() }
+}
+
+%op Target TcpMss() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.TcpMss) }
+  make() { firewall.ast.types.target.TcpMss.make() }
+}
+
+%op Target Tos() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Tos) }
+  make() { firewall.ast.types.target.Tos.make() }
+}
+
+%op Target Trace() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Trace) }
+  make() { firewall.ast.types.target.Trace.make() }
+}
+
+%op Target Ttl() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Ttl) }
+  make() { firewall.ast.types.target.Ttl.make() }
+}
+
+%op Target Ulog() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Ulog) }
+  make() { firewall.ast.types.target.Ulog.make() }
+}
+
+%op Target Ipv4OptSstRip() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Ipv4OptSstRip) }
+  make() { firewall.ast.types.target.Ipv4OptSstRip.make() }
+}
+
+%op Target Set() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Set) }
+  make() { firewall.ast.types.target.Set.make() }
+}
+
+%op Target Tarpit() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.target.Tarpit) }
+  make() { firewall.ast.types.target.Tarpit.make() }
+}
+
+%op Protocol All_() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.protocol.All_) }
+  make() { firewall.ast.types.protocol.All_.make() }
+}
+
+%op Protocol Icmp() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.protocol.Icmp) }
+  make() { firewall.ast.types.protocol.Icmp.make() }
+}
+
+%op Protocol Udp() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.protocol.Udp) }
+  make() { firewall.ast.types.protocol.Udp.make() }
+}
+
+%op Protocol Tcp() {
+  is_fsym(t) { ($t instanceof firewall.ast.types.protocol.Tcp) }
+  make() { firewall.ast.types.protocol.Tcp.make() }
+}
+
+%op Instruction Ins(target:Target, prot:Protocol, opt:Opts, source:Communication, destination:Communication, options:Options) {
+  is_fsym(t) { ($t instanceof firewall.ast.types.instruction.Ins) }
+  get_slot(target, t) { $t.gettarget() }
+  get_slot(prot, t) { $t.getprot() }
+  get_slot(opt, t) { $t.getopt() }
+  get_slot(source, t) { $t.getsource() }
+  get_slot(destination, t) { $t.getdestination() }
+  get_slot(options, t) { $t.getoptions() }
+  make(t0, t1, t2, t3, t4, t5) { firewall.ast.types.instruction.Ins.make($t0, $t1, $t2, $t3, $t4, $t5) }
+}
+
+
+%oplist File Blocks(Block*) {
+  is_fsym(t) { (($t instanceof firewall.ast.types.file.ConsBlocks) || ($t instanceof firewall.ast.types.file.EmptyBlocks)) }
+  make_empty() { firewall.ast.types.file.EmptyBlocks.make() }
+  make_insert(e,l) { firewall.ast.types.file.ConsBlocks.make($e,$l) }
+  get_head(l) { $l.getHeadBlocks() }
+  get_tail(l) { $l.getTailBlocks() }
+  is_empty(l) { $l.isEmptyBlocks() }
+}
+
+%oplist InstructionList InstructionList(Instruction*) {
+  is_fsym(t) { (($t instanceof firewall.ast.types.instructionlist.ConsInstructionList) || ($t instanceof firewall.ast.types.instructionlist.EmptyInstructionList)) }
+  make_empty() { firewall.ast.types.instructionlist.EmptyInstructionList.make() }
+  make_insert(e,l) { firewall.ast.types.instructionlist.ConsInstructionList.make($e,$l) }
+  get_head(l) { $l.getHeadInstructionList() }
+  get_tail(l) { $l.getTailInstructionList() }
+  is_empty(l) { $l.isEmptyInstructionList() }
+}
