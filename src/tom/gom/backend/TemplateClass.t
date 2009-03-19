@@ -336,7 +336,8 @@ public abstract class TemplateClass {
           buffer.append(")");
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
+            buffer.append("convertATermToInt(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
           } else  if (`domain.equals(`ClassName("","float"))) {
             buffer.append("(float) ((aterm.ATermReal)").append(appl).append(").getReal()");
           } else  if (`domain.equals(`ClassName("","boolean"))) {

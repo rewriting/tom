@@ -133,6 +133,15 @@ writer.write(
     throw new RuntimeException("Not a String : " + at);
   }
 
+  public static int convertATermToInt(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermInt) {
+      aterm.ATermInt atint = (aterm.ATermInt) at;
+      return atint.getInt();
+    }
+    throw new RuntimeException("Not an Int : " + at);
+  }
+
 ]%);
 
 if (maximalsharing) {
