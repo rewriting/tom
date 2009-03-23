@@ -1,9 +1,16 @@
 module Foo 
-imports String int
+imports String int float double char long boolean ATerm ATermList
 abstract syntax
 
 T = f(t1:String,t2:T)
   | h(t3:T)
-  | k(t4:int)
+  | i(t4:int)
+  | j(t5:float)
+  | l(t7:long)
+  | d(t8:double)
+  | n(t9:char) 
+  | o(t10:boolean)
   | a()
   | b()
+
+

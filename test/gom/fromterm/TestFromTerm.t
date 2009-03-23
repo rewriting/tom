@@ -12,7 +12,12 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Suite.class)
 @SuiteClasses({ 
     TypeString.class,
-    TypeInt.class
+    TypeInt.class,
+    TypeBoolean.class,
+    TypeChar.class,
+    TypeLong.class,
+    TypeDouble.class,
+    TypeFloat.class
     }) //will contain one class per builtin type to test
 public class TestFromTerm {
 
@@ -24,7 +29,7 @@ public class TestFromTerm {
 
  => 3 bugs (at least 3 patterns to test)
   x 8 builtin types
-  x 3 "converters'
+  x 3 "converters"
   = 72 tests (at least)
 
  */
