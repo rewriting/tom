@@ -337,17 +337,21 @@ public abstract class TemplateClass {
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             buffer.append("convertATermToInt(").append(appl).append(", ").append(atConv).append(")");
-            //buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
           } else  if (`domain.equals(`ClassName("","float"))) {
-            buffer.append("(float) ((aterm.ATermReal)").append(appl).append(").getReal()");
+            buffer.append("convertATermToFloat(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("(float) ((aterm.ATermReal)").append(appl).append(").getReal()");
           } else  if (`domain.equals(`ClassName("","boolean"))) {
-            buffer.append("(((aterm.ATermInt)").append(appl).append(").getInt()==0?false:true)");
+            buffer.append("convertATermToBoolean(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("(((aterm.ATermInt)").append(appl).append(").getInt()==0?false:true)");
           } else  if (`domain.equals(`ClassName("","long"))) {
-            buffer.append("((aterm.ATermLong)").append(appl).append(").getLong()");
+            buffer.append("convertATermToLong(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("((aterm.ATermLong)").append(appl).append(").getLong()");
           } else  if (`domain.equals(`ClassName("","double"))) {
-            buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
+            buffer.append("convertATermToDouble(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
           } else  if (`domain.equals(`ClassName("","char"))) {
-            buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
+            buffer.append("convertATermToChar(").append(appl).append(", ").append(atConv).append(")");
+            //buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
           } else if (`domain.equals(`ClassName("","String"))) {
             buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){

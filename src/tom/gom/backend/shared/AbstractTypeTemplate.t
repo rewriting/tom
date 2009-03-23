@@ -126,7 +126,7 @@ writer.write(
     if(at instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) at;
       aterm.AFun fun = appl.getAFun();
-      if (fun.isQuoted() && fun.getArity() == 0 ) {
+      if (fun.isQuoted() && fun.getArity() == 0 ) { // this test ensures that we have a String and not an "exotic" ATerm like this one : "f"(a)
         return fun.getName();
       }
     }
@@ -140,6 +140,75 @@ writer.write(
       return atint.getInt();
     }
     throw new RuntimeException("Not an Int : " + at);
+  }
+
+  public static float convertATermToFloat(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermReal) {
+      aterm.ATermReal atfloat = (aterm.ATermReal) at;
+      return (float) atfloat.getReal();
+    }
+    throw new RuntimeException("Not a Float : " + at);
+  }
+
+  public static double convertATermToDouble(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermReal) {
+      aterm.ATermReal atdouble = (aterm.ATermReal) at;
+      return atdouble.getReal();
+    }
+    throw new RuntimeException("Not a Double : " + at);
+  }
+
+  public static long convertATermToLong(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermLong) {
+      aterm.ATermLong atlong = (aterm.ATermLong) at;
+      return atlong.getLong();
+    }
+    throw new RuntimeException("Not a Long : " + at);
+  }
+
+  public static boolean convertATermToBoolean(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermInt) {
+      aterm.ATermInt atint = (aterm.ATermInt) at;
+      boolean atbool = (atint.getInt()==0?false:true);
+      //System.out.println("atbool = " + atbool + " / atint = " + atint);
+      return atbool;
+    }
+    throw new RuntimeException("Not a Boolean : " + at);
+  }
+
+
+  public static char convertATermToChar(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
+    at = atConv.convert(at);
+    if(at instanceof aterm.ATermInt) {
+      aterm.ATermInt atint = (aterm.ATermInt) at;
+      int atchar = atint.getInt();
+      // it has to be 0,1,2,3,4,5,6,7,8 or 9 to be a char, otherwise it's not a char
+      if (atchar > 9 || atchar < 0) {
+        throw new RuntimeException("Not a Char (more than one character -> probably an int) : " + at);
+      } else {
+        atchar = atchar + (int)'0'; //decalage de 48 pour retomber sur la bonne valeur ASCII
+        return (char) atchar;
+      }
+    } else if (at instanceof aterm.ATermAppl) {
+      aterm.ATermAppl appl = (aterm.ATermAppl) at;
+      aterm.AFun fun = appl.getAFun();
+      if (!fun.isQuoted() && fun.getArity() == 0){//a char has to be unquoted and its arity has to be equal to 0
+        String name = fun.getName();
+        if (name.length() == 1) {
+          int nameToChar = (int)name.toCharArray()[0] + (int)'0'; //decalage de 48 pour retomber sur la bonne valeur ASCII
+          return (char) nameToChar;
+        } else {
+          throw new RuntimeException("Not a Char (more than one character -> probably a String) : " + at);
+        }
+      } else {
+        throw new RuntimeException("Not a Char (quoted term or arity != 0) : " + at);
+      }
+    }
+    throw new RuntimeException("Not a Char : " + at);
   }
 
 ]%);
