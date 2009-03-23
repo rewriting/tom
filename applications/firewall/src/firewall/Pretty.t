@@ -1,3 +1,5 @@
+package firewall;
+
 import firewall.ast.types.*;
 import tom.library.sl.*; 
 import java.util.*;
@@ -24,6 +26,7 @@ public class Pretty {
         return "Chain " + toString(`r)+ "\n" + toString(`il) ;
       }
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Rule r) {
@@ -35,6 +38,7 @@ public class Pretty {
       Postrouting() -> {return "POSTROUTING";}
       UserRuleDef(ur)  -> {return `ur;}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(InstructionList il) {
@@ -54,6 +58,7 @@ public class Pretty {
 	       		    + "\t\t" + toString(`lo) ;
       }
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Target t) {
@@ -92,6 +97,7 @@ public class Pretty {
       Set()	      -> {return "SET";}
       Tarpit()	      -> {return "TARPIT";}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Protocol p) {
@@ -101,12 +107,14 @@ public class Pretty {
       Udp()  -> {return "udp ";}
       Tcp()  -> {return "tcp ";}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Opts o) {
     %match(o) {
       None() -> {return "--";}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Communication c) {
@@ -115,16 +123,19 @@ public class Pretty {
       Localhost() -> {return "localhost";}
       Ip_Addr(ip) -> {return `ip;}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public String toString(Options lo) {
     %match(lo) {
       Options(s) -> {return `s;}
     }
+    throw new RuntimeException("should not be there");
   }
 
   public static void main(String[] args) {
-    System.out.println(toString(
+    Pretty pretty = new Pretty();
+    System.out.println(pretty.toString(
 				Blocks(
 					Block(
 						Input(),
@@ -136,8 +147,7 @@ public class Pretty {
 								    Anywhere(),
 								    Anywhere(),
 								    "optionsssssss"
-								    ),
-								nil
+								    )
 								)
 					     )
 				      )

@@ -47,7 +47,9 @@ public class Main {
       Instruction inst = (Instruction) AstAdaptor.getTerm(b1);
       System.out.println("inst = " + inst);
       System.out.println("PRETTY");
-      Compiler.pretty (inst);
+
+      Pretty pretty = new Pretty();
+      System.out.println(pretty.toString(inst));
 
       PrintStream outputfile = System.out;
       if(options.out != null) {
