@@ -1,0 +1,216 @@
+//Gom File for all polygraphic programs
+//Caution : this is a quite complete grammar for polygraphic programs though most of the things concerning 3-paths are actually never used
+
+module adt.PolygraphicProgramgui
+	imports int String
+	abstract syntax
+
+OnePath = Id() //means null, empty
+		| OneCell (Name:String)
+		| OneC0 (OnePath*)
+
+	//IDs were added for a future purpose though they are not necessary to do the calculations : 
+TwoPath = TwoId (onePath:OnePath) //to be able to cast wires as cells when needed
+		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType,ID:int,x:int,y:int,hauteur:int,largeur:int)
+		| TwoC0 (TwoPath*)
+		| TwoC1 (TwoPath*)
+
+CellType = Constructor()
+		| Function()
+
+		
+//HOOKS on variadic operators		
+
+//ONEC0
+
+//defines variadic operator OneC0 as associative and unitary with neutral element Id() 
+OneC0:AU() { `Id() }
+
+
+//TWOC0
+
+//desactivates the default hook
+TwoC0:Free() {}
+
+//defines how to create an empty TwoC0
+TwoC0:make_empty() { return `TwoId(Id()); }
+
+//defines variadic operator TwoC0 as associative and unitary with neutral element TwoId(Id()) 
+TwoC0:make_insert(x,y) {
+%match(x,y){
+	TwoId(Id()),tail -> {return `tail; }
+	head,TwoId(Id())  -> {return `head; }
+	TwoC0(h,t),tail -> {return `TwoC0(h,TwoC0(t,tail)); }
+	TwoC1(),g -> { return `g; }
+	g,TwoC1() -> { return `g; }
+	}
+}
+/*
+sort TwoC0:block(){
+	public int getx(){
+		%match (this){
+			TwoId(X) -> { return 0; }
+			TwoCell[Target=x] -> { return ; }
+			TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
+			TwoC1(head*,tail) -> { return `tail.target(); }
+		}
+	}
+}
+*/
+//TWOC1
+
+//desactivates the default hook
+TwoC1:Free() {}
+
+//defines how to create an empty TwoC0
+TwoC1:make_empty() { return `TwoId(Id()); }
+
+//defines variadic operator TwoC0 as associative and unitary with neutral element TwoId(Id()) 
+TwoC1:make_insert(x,y) {
+	//first we test if x and y are compatible for the *1 association
+	if(y!=`TwoId(Id())&&x.target()!=y.source())
+	{	//System.out.println(x);System.out.println(x.target());
+		//System.out.println(y);System.out.println(y.source());
+		throw new RuntimeException("composition of incompatible 2-Paths");
+	}
+%match(x,y){
+	TwoId(Id()),tail -> {return `tail; }
+	head,TwoId(Id())  -> {return `head; }
+	TwoC1(h,t),tail -> {return `TwoC1(h,TwoC1(t,tail)); }
+	TwoC0(),g -> { return `g; }
+	g,TwoC0() -> { return `g; }
+	}
+}
+
+//METHODS for polygraphic terms
+
+//set of methods for 1-paths
+sort OnePath:block(){
+	
+	//returns true if the path is valid (=well-constructed) (always true for a 1-path)
+	//actually useless with our custom make methods
+	public boolean defined(){return true;}
+	
+	//methods to print 1-path in a more "readable" way
+	//top level
+	public String prettyPrint(){
+		%match (this){
+			OneC0(left,right*) -> { return "OneC0("+`left.prettyPrint()+","+`OneC0(right*).prettyPrint()+")";}
+		}
+		return this.toString();
+	}
+	//other levels
+	public String prettyPrintBis(){
+		%match (this){
+			o@OneCell(_) -> { return `o.getName(); }
+			OneC0(left,right*) -> { return `left.prettyPrintBis()+","+`OneC0(right*).prettyPrintBis();}
+		}
+		return this.toString();
+	}
+	//called method
+	public void print(){System.out.println(this.prettyPrint());}
+}
+
+//set of methods for 2-paths
+sort TwoPath:block(){
+	
+	public int getLargeur(){
+		%match (this){
+					TwoId(X) -> { return 0; }
+					TwoCell[largeur=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `head.getLargeur()+4+`tail*.getLargeur(); }
+					TwoC1(head,tail*) -> { return `head.getLargeur(); }
+		}
+		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getHauteur(){
+		%match (this){
+					TwoId(X) -> { return 0; }
+					TwoCell[hauteur=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `head.getHauteur(); }
+					TwoC1(head,tail*) -> { return `head.getHauteur()+4+`tail*.getHauteur(); }
+		}
+		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	//returns the source 1-Path of any 2-Path
+	public OnePath source(){
+		%match (this){
+					TwoId(X) -> { return `X; }
+					TwoCell[Source=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `OneC0(head.source(),tail*.source()); }
+					TwoC1(head,tail*) -> { return `head.source(); }
+		}
+		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+	}
+
+	//returns the target 1-Path of any 2-Path
+	public OnePath target(){
+		%match (this){
+					TwoId(X) -> { return `X; }
+					TwoCell[Target=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
+					TwoC1(head*,tail) -> { return `tail.target(); }
+		}
+		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+		}
+	
+	//returns true if the path is valid (=well-constructed)
+	//actually useless with our custom make methods
+	public boolean defined(){
+		%match (this){
+					TwoCell[] -> { return true; }
+					TwoC0(_*) -> { return true; }
+					TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
+		}
+		return false;
+		}
+	
+	//return the size of the source defined as the number of 1-Cells in the input
+	public int sourcesize(){
+		OnePath source=this.source();
+		%match(source){
+			Id() -> { return 0; }
+			OneCell(_) -> { return 1; }
+			o@OneC0(_*) -> { return `o.length(); }
+		}
+		return 0;
+	}
+	
+	//return the size of the target defined as the number of 1-Cells in the output
+	public int targetsize(){
+		OnePath target=this.target();
+		%match(target){
+			Id() -> { return 0; }
+			OneCell(_) -> { return 1; }
+			o@OneC0(_*) -> { return `o.length(); }
+		}
+		return 0;
+	}
+	
+	//methods to print 2-path in a more "readable" way
+	//top level
+	public  String prettyPrint (){
+		%match (this){
+					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
+					TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC1(right*).prettyPrint()+")";}
+		}
+		return this.prettyPrintBis();
+		}
+	//other levels
+	public  String prettyPrintBis(){
+		%match (this){
+						t@TwoCell(_,_,_,_,_,_,_,_,_) -> { return `t.getName(); }
+						TwoId(o@OneCell(_)) -> { return `o.prettyPrintBis(); }
+						TwoC0(left,right*) -> { return `left.prettyPrintBis()+","+`TwoC0(right*).prettyPrintBis();}
+		}
+		return this.toString();
+		}
+	//called method
+	public void print(){System.out.println(this.prettyPrint());}
+}
