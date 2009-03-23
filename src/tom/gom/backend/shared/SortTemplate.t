@@ -149,33 +149,31 @@ writer.write(%[
   }
 
   public static @fullClassName()@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
-    java.util.ArrayList<@fullClassName()@> tmp = new java.util.ArrayList<@fullClassName()@>();
-    java.util.ArrayList<@fullClassName()@> table = new java.util.ArrayList<@fullClassName()@>();
     aterm.ATerm convertedTerm = atConv.convert(trm);
-    int nbr = 0;
-    @fullClassName()@ res = null;
+    @fullClassName()@ tmp;
+    java.util.ArrayList<@fullClassName()@> results = new java.util.ArrayList<@fullClassName()@>();
 ]%);
-    generateFromTerm(writer,"convertedTerm","atConv","tmp");
-    writer.write(%[
-    for(int i=0;i<tmp.size();i++) {
-      if(tmp.get(i) != null) {
-        nbr++;
-        table.add(tmp.get(i));
-        if (res == null) {
-          res = tmp.get(i);
-        }
-      }
+    ClassNameList constructor = `ConcClassName(operatorList*,variadicOperatorList*);
+    while(!constructor.isEmptyConcClassName()) {
+      ClassName operatorName = constructor.getHeadConcClassName();
+      constructor = constructor.getTailConcClassName();
+      writer.write(%[
+    tmp = @fullClassName(operatorName)@.fromTerm(convertedTerm,atConv);
+    if(tmp!=null) {
+      results.add(tmp);
+    }]%);
     }
-    switch(nbr) {
+
+    writer.write(%[
+    switch(results.size()) {
       case 0:
         throw new IllegalArgumentException(trm + " is not a @className()@");
       case 1:
-        return res;
+        return results.get(0);
       default:
-        java.util.logging.Logger.getLogger("@className()@").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {table.toString(), "@fullClassName()@", res.toString()});
-        break;
+        java.util.logging.Logger.getLogger("@className()@").log(java.util.logging.Level.WARNING,"There were many possibilities ({0}) in {1} but the first one was chosen: {2}",new Object[] {results.toString(), "@fullClassName()@", results.get(0).toString()});
+        return results.get(0);
     }
-    return res;
   }
 
   public static @fullClassName()@ fromString(String s, tom.library.utils.ATermConverter atConv) {
@@ -295,17 +293,6 @@ matchblock: {
   */
     if(hooks.containsTomCode()) {
       mapping.generate(writer); 
-    }
-  }
-
-  private void generateFromTerm(java.io.Writer writer, String trm, String conv,String tmp) throws java.io.IOException {
-    ClassNameList consum = `ConcClassName(operatorList*,variadicOperatorList*);
-    while(!consum.isEmptyConcClassName()) {
-      ClassName operatorName = consum.getHeadConcClassName();
-      consum = consum.getTailConcClassName();
-      writer.write(%[
-    tmp.add(@fullClassName(operatorName)@.fromTerm(@trm@,@conv@));
-]%);
     }
   }
 
