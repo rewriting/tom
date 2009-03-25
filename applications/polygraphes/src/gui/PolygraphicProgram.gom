@@ -119,9 +119,24 @@ sort TwoPath:block(){
 					TwoId(X) -> { return 0; }
 					TwoCell[largeur=x] -> { return `x; }
 					TwoC0(head,tail*) -> { return `head.getLargeur()+4+`tail*.getLargeur(); }
-					TwoC1(head,tail*) -> { return `head.getLargeur(); }
+					TwoC1(head,tail*) -> { if(`head.getLargeur()>`tail*.getLargeur()){
+												return `head.getLargeur();
+										   }else{
+											   return `tail*.getLargeur();
+										   }
+					
+					}
 		}
-		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setLargeur(int c){
+		%match (this){
+					TwoId(X) -> { ; }
+					TwoCell[largeur=x] -> { this.setlargeur(c); }
+					TwoC0(head,tail*) -> { `head.setLargeur(c); `tail*.setLargeur(c); }
+					TwoC1(head,tail*) -> { `tail*.setLargeur(c); }
+		}
 		throw new RuntimeException("strange term: "+this);
 	}
 	
@@ -129,10 +144,24 @@ sort TwoPath:block(){
 		%match (this){
 					TwoId(X) -> { return 0; }
 					TwoCell[hauteur=x] -> { return `x; }
-					TwoC0(head,tail*) -> { return `head.getHauteur(); }
+					TwoC0(head,tail*) -> { if(`head.getHauteur()>`tail*.getHauteur()){
+						return `head.getHauteur();
+					   }else{
+						   return `tail*.getHauteur();
+					   }
+					}
 					TwoC1(head,tail*) -> { return `head.getHauteur()+4+`tail*.getHauteur(); }
 		}
-		//return `OneId();//actually useless
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setHauteur(int c){
+		%match (this){
+					TwoId(X) -> { ; }
+					TwoCell[hauteur=x] -> { this.sethauteur(c); }
+					TwoC0(head,tail*) -> { `tail.setHauteur(c); }
+					TwoC1(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
+		}
 		throw new RuntimeException("strange term: "+this);
 	}
 	

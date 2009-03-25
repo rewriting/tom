@@ -42,9 +42,22 @@ public class XMLProgramHandlerGui {
 								if(!constructorNode.getNodeName().equals("#text")){
 									TwoPath tp = XMLhandlerGui.makeTwoPath(constructorNode);
 									constructors.add(tp);
+									System.out.println("******* CIRCUIT *******");
+									System.out.println("");
+									System.out.println(" |      |     | \n" +
+											           "----  ----  ----\n" +
+											           "|C1|  |C2|  |C3|\n" +
+											           "----  ----  ----\n" +
+											           " |      |     | \n"+
+											           " |      |     | \n"+
+											           "---------   ----\n" +
+											           "|   C4  |   |C5|\n" +
+											           "---------   ----\n" +
+											           "    |        |  \n");
+									
 									System.out.println("******* INFORMATION *******");
-									System.out.println("LARGEUR ESTIME DU CIRCUIT : 204");
-									System.out.println("HAUTEUR ESTIME DU CIRCUIT : 90");
+									System.out.println("LARGEUR ESTIME DU CIRCUIT : (100+4+100+4+100)=308");
+									System.out.println("HAUTEUR ESTIME DU CIRCUIT : (90+4+90)=184");
 									System.out.println("********** REEL **********");
 									System.out.println("LARGEUR DU CIRCUIT : "+tp.getLargeur());
 									System.out.println("HAUTEUR DU CIRCUIT : "+tp.getHauteur());
