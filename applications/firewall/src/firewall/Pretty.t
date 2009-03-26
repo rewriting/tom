@@ -22,8 +22,8 @@ public class Pretty {
   public String toString(Block b) {
     StringBuffer sb = new StringBuffer() ;
     %match(b) {
-      Block(r,il) -> {
-        return "Chain " + toString(`r)+ "\n" + toString(`il) ;
+      Block(r,p,il) -> {
+        return "Chain " + toString(`r) + " " + toString(`p) + "\n" + toString(`il) ;
       }
     }
     throw new RuntimeException("should not be there");
@@ -37,6 +37,15 @@ public class Pretty {
       Prerouting()  -> {return "PREROUTING";}
       Postrouting() -> {return "POSTROUTING";}
       UserRuleDef(ur)  -> {return `ur;}
+    }
+    throw new RuntimeException("should not be there");
+  }
+
+  public String toString(Policy p) {
+    %match(p) {
+      PolicyAccept() -> {return "(policy ACCEPT)";}
+      PolicyDrop()   -> {return "(policy DROP)";}
+      Ref(i)	     -> {return "(" + `i + " references)";}
     }
     throw new RuntimeException("should not be there");
   }
@@ -110,7 +119,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Opts o) {
+  public String toString(Opt o) {
     %match(o) {
       None() -> {return "--";}
     }
@@ -126,9 +135,9 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Options lo) {
+  public String toString(Opts lo) {
     %match(lo) {
-      Options(s) -> {return `s;}
+      Opts(s) -> {return `s;}
     }
     throw new RuntimeException("should not be there");
   }
@@ -136,23 +145,29 @@ public class Pretty {
   public static void main(String[] args) {
     Pretty pretty = new Pretty();
     System.out.println(pretty.toString(
-				Blocks(
-					Block(
-						Input(),
-						InstructionList(
-								Ins(
-								    Accept(),
-								    All(),
-								    None(),
-								    Anywhere(),
-								    Anywhere(),
-								    "optionsssssss"
-								    )
-								)
-					     )
-				      )
-			       )
-	               ) ;
+	`Blocks(
+		Block(Input(),PolicyDrop(),InstructionList(
+			Ins(Accept(),All_(),None(),Anywhere(),Anywhere(),Opts("le")),
+			Ins(Accept(),All_(),None(),Localhost(),Localhost(),Opts("citron")),
+			Ins(Accept(),All_(),None(),Ip_Addr("1.2.3.40"),Ip_Addr("5.6.7.80"),Opts("dit :"))
+			)
+		),
+		Block(Forward(),PolicyAccept(),InstructionList(
+			Ins(UserRuleCall("Rule 1"),Icmp(),None(),Localhost(),Anywhere(),Opts("plus")),
+			Ins(Drop(),Tcp(),None(),Anywhere(),Localhost(),Opts("un"))
+			)
+		),
+		Block(Postrouting(),PolicyDrop(),InstructionList(
+			Ins(Mirror(),Udp(),None(),Ip_Addr("9.10.11.12"),Anywhere(),Opts("zeste"))
+			)
+		),
+		Block(UserRuleDef("il etait une fois une regle"),Ref(15),InstructionList(
+			Ins(Log(),All_(),None(),Anywhere(),Anywhere(),Opts("!!!!!!"))
+			)     			
+		)
+	)
+	
+    )) ;
   }
 
 }

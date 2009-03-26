@@ -21,11 +21,11 @@ file :
      ;
 
 block :
-	CHAIN rule LPAR ID RPAR TARGET PROT OPT SOURCE DESTINATION (instruction)* -> ^(Block  rule ^(InstructionList (instruction)*))
+	CHAIN rule LPAR policy RPAR TARGET PROT OPT SOURCE DESTINATION (instruction)* -> ^(Block  rule policy ^(InstructionList (instruction)*))
       ;
 
 rule :
-	'INPUT'       -> ^(Input)
+  'INPUT'       -> ^(Input)
 | 'FORWARD'     -> ^(Forward)
 | 'OUTPUT'      -> ^(Output)
 | 'PREROUTING'  -> ^(Prerouting)
@@ -33,8 +33,14 @@ rule :
 | ID            -> ^(UserRuleDef ID)
 ;
 
+policy :
+  'policy DROP'     -> ^(PolicyDrop)
+| 'policy ACCEPT'   -> ^(PolicyAccept)
+| INT 'references' -> ^(Ref INT)
+;
+
 instruction : 
-  target protocol opt communication communication ID -> ^(Ins target protocol opt communication communication ^(Options ID))
+  target protocol opt communication communication ID -> ^(Ins target protocol opt communication communication ^(Opts ID))
 ;
 
 opt : 
@@ -86,7 +92,7 @@ target :
 
 
 opts : 
-'NONE' -> ^(None);
+ID -> ^(None);
 
 communication : 
 	      	'anywhere' -> ^(Anywhere)

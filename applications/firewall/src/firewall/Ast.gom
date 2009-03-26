@@ -4,7 +4,7 @@ abstract syntax
 
 File = Blocks(Block*)
 
-Block = Block(rule:Rule,instructionList:InstructionList)
+Block = Block(rule:Rule,policy:Policy,instructionList:InstructionList)
 
 Rule = Input()
      | Forward()
@@ -13,9 +13,13 @@ Rule = Input()
      | Postrouting()
      | UserRuleDef(user_rule_name:String)
 
+Policy = PolicyAccept()
+       	| PolicyDrop()
+       	| Ref(nb_ref:int)
+
 InstructionList = InstructionList(Instruction*)
 
-Instruction = Ins(target:Target,prot:Protocol,opt:Opts,source:Communication,destination:Communication,options:Options)
+Instruction = Ins(target:Target,prot:Protocol,opt:Opt,source:Communication,destination:Communication,options:Opts)
 
 Target = Accept()
         |Classify()
@@ -56,11 +60,11 @@ Protocol =   All_()
             |Udp()
             |Tcp()
 
-Opts =   None()
+Opt =   None()
 
 Communication = Anywhere()
               |Localhost()
               |Ip_Addr(ip:String)
 
-Options = Options(lo:String)
+Opts = Opts(lo:String)
 
