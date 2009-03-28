@@ -6,7 +6,7 @@ module adt.PolygraphicProgramgui
 	abstract syntax
 
 OnePath = Id() //means null, empty
-		| OneCell (Name:String)
+		| OneCell (Name:String,x:int,y:int,hauteur:int,largeur:int)
 		| OneC0 (OnePath*)
 
 	//IDs were added for a future purpose though they are not necessary to do the calculations : 
@@ -91,6 +91,66 @@ sort OnePath:block(){
 	//actually useless with our custom make methods
 	public boolean defined(){return true;}
 	
+	public void setX(int c){
+		%match (this){
+			OneCell[x=x] -> { this.setx(c); }
+			OneC0(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setY(int c){
+		%match (this){
+			OneCell[y=x] -> { this.sety(c); }
+			OneC0(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setLargeur(int c){
+		%match (this){
+			OneCell[y=x] -> { this.setlargeur(c); }
+			OneC0(head,tail*) -> { `head.setlargeur(c); `tail*.setlargeur(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getLargeur(){
+		%match (this){
+			OneCell[y=x] -> { return this.getlargeur(); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setHauteur(int c){
+		%match (this){
+			OneCell[y=x] -> { this.setHauteur(c); }
+			OneC0(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getHauteur(){
+		%match (this){
+			OneCell[y=x] -> { return this.getHauteur(); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getX(){
+		%match (this){
+			OneCell[x=x] -> { return `x; }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getY(){
+		%match (this){
+			OneCell[y=x] -> { return `x; }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
 	//methods to print 1-path in a more "readable" way
 	//top level
 	public String prettyPrint(){
@@ -102,7 +162,7 @@ sort OnePath:block(){
 	//other levels
 	public String prettyPrintBis(){
 		%match (this){
-			o@OneCell(_) -> { return `o.getName(); }
+			o@OneCell(_,_,_,_,_) -> { return `o.getName(); }
 			OneC0(left,right*) -> { return `left.prettyPrintBis()+","+`OneC0(right*).prettyPrintBis();}
 		}
 		return this.toString();
@@ -113,54 +173,94 @@ sort OnePath:block(){
 
 //set of methods for 2-paths
 sort TwoPath:block(){
+
+	public void setX(int c){
+		%match (this){
+			TwoId(X) -> { ; }
+			TwoCell[x=x] -> { this.setx(c); }
+			TwoC0(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
+			TwoC1(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public void setY(int c){
+		%match (this){
+			TwoId(X) -> { ; }
+			TwoCell[x=x] -> { this.sety(c); }
+			TwoC0(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
+			TwoC1(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getX(){
+		%match (this){
+			TwoId(X) -> { return 0; }
+			TwoCell[x=x] -> { return `x; }
+			TwoC0(head,tail*) -> { return `head.getX(); }
+			TwoC1(head,tail*) -> { `head.getX();}
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	public int getY(){
+		%match (this){
+			TwoId(X) -> { return 0; }
+			TwoCell[y=x] -> { return `x; }
+			TwoC0(head,tail*) -> { return `head.getY(); }
+			TwoC1(head,tail*) -> { `head.getY();}
+		}
+		throw new RuntimeException("strange term: "+this);
+	}
 	
 	public int getLargeur(){
 		%match (this){
-					TwoId(X) -> { return 0; }
-					TwoCell[largeur=x] -> { return `x; }
-					TwoC0(head,tail*) -> { return `head.getLargeur()+4+`tail*.getLargeur(); }
-					TwoC1(head,tail*) -> { if(`head.getLargeur()>`tail*.getLargeur()){
-												return `head.getLargeur();
-										   }else{
-											   return `tail*.getLargeur();
-										   }
-					
-					}
+			TwoId(X) -> { return 0; }
+			TwoCell[largeur=x] -> { return `x; }
+			TwoC0(head,tail*) -> { return `head.getLargeur()+4+`tail*.getLargeur(); }
+			TwoC1(head,tail*) -> { if(`head.getLargeur()>`tail*.getLargeur()){
+										return `head.getLargeur();
+								   }else{
+									   return `tail*.getLargeur();
+								   }
+			
+			}
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public void setLargeur(int c){
 		%match (this){
-					TwoId(X) -> { ; }
-					TwoCell[largeur=x] -> { this.setlargeur(c); }
-					TwoC0(head,tail*) -> { `head.setLargeur(c); `tail*.setLargeur(c); }
-					TwoC1(head,tail*) -> { `tail*.setLargeur(c); }
+			TwoId(X) -> { ; }
+			TwoCell[largeur=x] -> { this.setlargeur(c); }
+			TwoC0(head,tail*) -> { `head.setLargeur(c); `tail*.setLargeur(c); }
+			TwoC1(head,tail*) -> { `tail*.setLargeur(c); }
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public int getHauteur(){
 		%match (this){
-					TwoId(X) -> { return 0; }
-					TwoCell[hauteur=x] -> { return `x; }
-					TwoC0(head,tail*) -> { if(`head.getHauteur()>`tail*.getHauteur()){
-						return `head.getHauteur();
-					   }else{
-						   return `tail*.getHauteur();
-					   }
-					}
-					TwoC1(head,tail*) -> { return `head.getHauteur()+4+`tail*.getHauteur(); }
+			TwoId(X) -> { return 0; }
+			TwoCell[hauteur=x] -> { return `x; }
+			TwoC0(head,tail*) -> { if(`head.getHauteur()>`tail*.getHauteur()){
+				return `head.getHauteur();
+			   }else{
+				   return `tail*.getHauteur();
+			   }
+			}
+			TwoC1(head,tail*) -> { return `head.getHauteur()+4+`tail*.getHauteur(); }
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public void setHauteur(int c){
 		%match (this){
-					TwoId(X) -> { ; }
-					TwoCell[hauteur=x] -> { this.sethauteur(c); }
-					TwoC0(head,tail*) -> { `tail.setHauteur(c); }
-					TwoC1(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
+			TwoId(X) -> { ; }
+			TwoCell[hauteur=x] -> { this.sethauteur(c); }
+			TwoC0(head,tail*) -> { `tail.setHauteur(c); }
+			TwoC1(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
@@ -168,10 +268,10 @@ sort TwoPath:block(){
 	//returns the source 1-Path of any 2-Path
 	public OnePath source(){
 		%match (this){
-					TwoId(X) -> { return `X; }
-					TwoCell[Source=x] -> { return `x; }
-					TwoC0(head,tail*) -> { return `OneC0(head.source(),tail*.source()); }
-					TwoC1(head,tail*) -> { return `head.source(); }
+			TwoId(X) -> { return `X; }
+			TwoCell[Source=x] -> { return `x; }
+			TwoC0(head,tail*) -> { return `OneC0(head.source(),tail*.source()); }
+			TwoC1(head,tail*) -> { return `head.source(); }
 		}
 		//return `OneId();//actually useless
 		throw new RuntimeException("strange term: "+this);
@@ -180,10 +280,10 @@ sort TwoPath:block(){
 	//returns the target 1-Path of any 2-Path
 	public OnePath target(){
 		%match (this){
-					TwoId(X) -> { return `X; }
-					TwoCell[Target=x] -> { return `x; }
-					TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
-					TwoC1(head*,tail) -> { return `tail.target(); }
+			TwoId(X) -> { return `X; }
+			TwoCell[Target=x] -> { return `x; }
+			TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
+			TwoC1(head*,tail) -> { return `tail.target(); }
 		}
 		//return `OneId();//actually useless
 		throw new RuntimeException("strange term: "+this);
@@ -193,9 +293,9 @@ sort TwoPath:block(){
 	//actually useless with our custom make methods
 	public boolean defined(){
 		%match (this){
-					TwoCell[] -> { return true; }
-					TwoC0(_*) -> { return true; }
-					TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
+			TwoCell[] -> { return true; }
+			TwoC0(_*) -> { return true; }
+			TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
 		}
 		return false;
 		}
@@ -205,7 +305,7 @@ sort TwoPath:block(){
 		OnePath source=this.source();
 		%match(source){
 			Id() -> { return 0; }
-			OneCell(_) -> { return 1; }
+			OneCell(_,_,_,_,_) -> { return 1; }
 			o@OneC0(_*) -> { return `o.length(); }
 		}
 		return 0;
@@ -216,7 +316,7 @@ sort TwoPath:block(){
 		OnePath target=this.target();
 		%match(target){
 			Id() -> { return 0; }
-			OneCell(_) -> { return 1; }
+			OneCell(_,_,_,_,_) -> { return 1; }
 			o@OneC0(_*) -> { return `o.length(); }
 		}
 		return 0;
@@ -226,17 +326,17 @@ sort TwoPath:block(){
 	//top level
 	public  String prettyPrint (){
 		%match (this){
-					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
-					TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC1(right*).prettyPrint()+")";}
+			TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
+			TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC1(right*).prettyPrint()+")";}
 		}
 		return this.prettyPrintBis();
 		}
 	//other levels
 	public  String prettyPrintBis(){
 		%match (this){
-						t@TwoCell(_,_,_,_,_,_,_,_,_) -> { return `t.getName(); }
-						TwoId(o@OneCell(_)) -> { return `o.prettyPrintBis(); }
-						TwoC0(left,right*) -> { return `left.prettyPrintBis()+","+`TwoC0(right*).prettyPrintBis();}
+			t@TwoCell(_,_,_,_,_,_,_,_,_) -> { return `t.getName(); }
+			TwoId(o@OneCell(_,_,_,_,_)) -> { return `o.prettyPrintBis(); }
+			TwoC0(left,right*) -> { return `left.prettyPrintBis()+","+`TwoC0(right*).prettyPrintBis();}
 		}
 		return this.toString();
 		}

@@ -50,7 +50,7 @@ public class XMLhandlerGui {
 	  if(nodeName.equals("OneCell")){
 		  NamedNodeMap attributes=node.getAttributes();
 		  String name=attributes.getNamedItem("Name").getNodeValue();
-		  return `OneCell(name);
+		  return `OneCell(name,0,0,20,1);
 	  }
 	  if(nodeName.equals("OneC0")){
 		  NodeList oneC0s=node.getChildNodes();
@@ -115,7 +115,7 @@ public class XMLhandlerGui {
 			  if(!twoC0Element.getNodeName().contains("#text")){
 				  TwoPath res2=res;
 				  TwoPath res3 = makeTwoPath(twoC0Element);
-				  if(res2 instanceof TwoCell && res3 instanceof TwoCell) res2.sety(res3.getlargeur()+4);
+				  res2.setY(res3.getlargeur()+4);
 				  res=`TwoC0(res2,res3);
 			  }	
 		  }
@@ -194,7 +194,7 @@ public class XMLhandlerGui {
 	public static String onePath2XML(OnePath path){
 		%match (OnePath path){
 			Id() -> {return "<OnePath>\n<Id></Id>\n</OnePath>\n";}
-			OneCell(name) -> { return "<OnePath>\n<OneCell Name=\""+`name+"\"></OneCell>\n</OnePath>\n"; }
+			OneCell(name,x,y,hauteur,largeur) -> { return "<OnePath>\n<OneCell Name=\""+`name+"\"></OneCell>\n</OnePath>\n"; }
 			OneC0(head,tail*)->{ return "<OnePath>\n<OneC0>\n"+oneC02XML(`head)+oneC02XML(`tail)+"</OneC0>\n</OnePath>\n";}
 		}
 		return "";
@@ -203,7 +203,7 @@ public class XMLhandlerGui {
 	public static String oneC02XML(OnePath path){
 		%match (OnePath path){
 			Id() -> {return "<Id></Id>\n";}
-			OneCell(name) -> { return "<OneCell Name=\""+`name+"\"></OneCell>\n"; }
+			OneCell(name,x,y,hauteur,largeur) -> { return "<OneCell Name=\""+`name+"\"></OneCell>\n"; }
 			OneC0(head,tail*)->{ return oneC02XML(`head)+oneC02XML(`tail);}
 		}
 		return "";
