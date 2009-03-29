@@ -55,12 +55,14 @@ public class XMLProgramHandlerGui {
 											           "---------   ----\n" +
 											           "    |        |  \n");
 									
-									System.out.println("******* INFORMATION *******");
+									System.out.println("********** INFORMATION **********");
 									System.out.println("LARGEUR ESTIME DU CIRCUIT : (100+4+100+4+100)=308");
 									System.out.println("HAUTEUR ESTIME DU CIRCUIT : (90+4+90)=184");
 									System.out.println("********** REEL **********");
 									System.out.println("LARGEUR DU CIRCUIT : "+tp.getLargeur());
 									System.out.println("HAUTEUR DU CIRCUIT : "+tp.getHauteur());
+									System.out.println("********** GENERAL STATUS **********");
+									tp.affiche();
 									System.out.println("********** EOF **********");
 								}
 							}
@@ -136,7 +138,7 @@ public class XMLProgramHandlerGui {
 	%strategy ruleAux(int i) extends Identity(){ 
 		visit TwoPath {
 			TwoId(OneC0(head,tail*)) -> { System.out.print(".");return `TwoC0(TwoId(head),TwoId(tail*));}
-			TwoId(OneCell(name)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name),Constructor(),0,0,0,90,100);} 
+			TwoId(OneCell(name,x,y,hauteur,largeur)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name,x,y,hauteur,largeur),Constructor(),0,0,0,90,100);} 
 		} 
 	}
 

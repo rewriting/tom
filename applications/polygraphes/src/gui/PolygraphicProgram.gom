@@ -181,17 +181,15 @@ sort TwoPath:block(){
 			TwoC0(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
 			TwoC1(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
 		}
-		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public void setY(int c){
 		%match (this){
 			TwoId(X) -> { ; }
-			TwoCell[x=x] -> { this.sety(c); }
+			TwoCell[y=x]  -> { System.out.println(this.gety());this.sety(c);System.out.println(this.gety()); }
 			TwoC0(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
 			TwoC1(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
 		}
-		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public int getX(){
@@ -199,7 +197,7 @@ sort TwoPath:block(){
 			TwoId(X) -> { return 0; }
 			TwoCell[x=x] -> { return `x; }
 			TwoC0(head,tail*) -> { return `head.getX(); }
-			TwoC1(head,tail*) -> { `head.getX();}
+			TwoC1(head,tail*) -> { return `head.getX();}
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
@@ -237,7 +235,6 @@ sort TwoPath:block(){
 			TwoC0(head,tail*) -> { `head.setLargeur(c); `tail*.setLargeur(c); }
 			TwoC1(head,tail*) -> { `tail*.setLargeur(c); }
 		}
-		throw new RuntimeException("strange term: "+this);
 	}
 	
 	public int getHauteur(){
@@ -262,7 +259,6 @@ sort TwoPath:block(){
 			TwoC0(head,tail*) -> { `tail.setHauteur(c); }
 			TwoC1(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
 		}
-		throw new RuntimeException("strange term: "+this);
 	}
 	
 	//returns the source 1-Path of any 2-Path
@@ -320,6 +316,15 @@ sort TwoPath:block(){
 			o@OneC0(_*) -> { return `o.length(); }
 		}
 		return 0;
+	}
+	
+	public void affiche(){
+		%match (this){
+			TwoId(X) -> { System.out.println(); }
+			t@TwoCell(_,_,_,_,_,_,_,_,_) -> { System.out.println(`t.getName()+":: x :"+`t.getx()+" y :"+`t.gety()+" largeur"+`t.getlargeur()+" hauteur :"+`t.gethauteur());}
+			TwoC0(head,tail*) -> { `head.affiche(); `tail*.affiche(); }
+			TwoC1(head,tail*) -> { `head.affiche(); `tail*.affiche(); }
+		}
 	}
 	
 	//methods to print 2-path in a more "readable" way

@@ -115,7 +115,12 @@ public class XMLhandlerGui {
 			  if(!twoC0Element.getNodeName().contains("#text")){
 				  TwoPath res2=res;
 				  TwoPath res3 = makeTwoPath(twoC0Element);
-				  res2.setY(res3.getlargeur()+4);
+				  System.out.print("TwoC0 :(");
+				  System.out.print(" res2:");res2.affiche();
+				  System.out.print(" res3:");res3.affiche();
+				  System.out.println(")");
+				  if(res2 instanceof TwoId) ;
+				  else res3.setY(res2.getLargeur()+4);
 				  res=`TwoC0(res2,res3);
 			  }	
 		  }
@@ -131,7 +136,11 @@ public class XMLhandlerGui {
 				  else{
 					  TwoPath res2=res;
 					  TwoPath res3 = makeTwoPath(twoC1Element);
-					  if(res2 instanceof TwoCell && res3 instanceof TwoCell) res2.setx(res3.gethauteur()+4);
+					  System.out.print("TwoC1 :(");
+					  System.out.print(" res2:");res2.affiche();
+					  System.out.print("\n res3:");res3.affiche();
+					  System.out.println(")");
+					  //res3.setX(res2.getHauteur()+4);
 					  res=`TwoC1(res2,res3);
 				  }
 			  }				
