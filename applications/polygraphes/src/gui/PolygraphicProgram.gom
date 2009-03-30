@@ -173,24 +173,6 @@ sort OnePath:block(){
 
 //set of methods for 2-paths
 sort TwoPath:block(){
-
-	public void setX(int c){
-		%match (this){
-			TwoId(X) -> { ; }
-			TwoCell[x=x] -> { this.setx(c); }
-			TwoC0(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
-			TwoC1(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
-		}
-	}
-	
-	public void setY(int c){
-		%match (this){
-			TwoId(X) -> { ; }
-			TwoCell[y=x]  -> { System.out.println(this.gety());this.sety(c);System.out.println(this.gety()); }
-			TwoC0(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
-			TwoC1(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
-		}
-	}
 	
 	public int getX(){
 		%match (this){
@@ -321,7 +303,7 @@ sort TwoPath:block(){
 	public void affiche(){
 		%match (this){
 			TwoId(X) -> { System.out.println(); }
-			t@TwoCell(_,_,_,_,_,_,_,_,_) -> { System.out.println(`t.getName()+":: x :"+`t.getx()+" y :"+`t.gety()+" largeur"+`t.getlargeur()+" hauteur :"+`t.gethauteur());}
+			t@TwoCell(_,_,_,_,_,_,_,_,_) -> { System.out.println(`t.getName()+":: x :"+`t.getx()+" y :"+`t.gety()+" largeur :"+`t.getlargeur()+" hauteur :"+`t.gethauteur());}
 			TwoC0(head,tail*) -> { `head.affiche(); `tail*.affiche(); }
 			TwoC1(head,tail*) -> { `head.affiche(); `tail*.affiche(); }
 		}

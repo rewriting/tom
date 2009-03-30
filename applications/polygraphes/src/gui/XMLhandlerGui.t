@@ -7,6 +7,7 @@ import adt.polygraphicprogramgui.types.twopath.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.*;
 
 //provides all the functions to transform terms in xml and vice-versa
 
@@ -115,12 +116,12 @@ public class XMLhandlerGui {
 			  if(!twoC0Element.getNodeName().contains("#text")){
 				  TwoPath res2=res;
 				  TwoPath res3 = makeTwoPath(twoC0Element);
-				  System.out.print("TwoC0 :(");
+				  System.out.println("TwoC0 :(");
 				  System.out.print(" res2:");res2.affiche();
 				  System.out.print(" res3:");res3.affiche();
 				  System.out.println(")");
 				  if(res2 instanceof TwoId) ;
-				  else res3.setY(res2.getLargeur()+4);
+				  else res2=decalageY(res2,res3.getLargeur()+4);
 				  res=`TwoC0(res2,res3);
 			  }	
 		  }
@@ -136,11 +137,18 @@ public class XMLhandlerGui {
 				  else{
 					  TwoPath res2=res;
 					  TwoPath res3 = makeTwoPath(twoC1Element);
-					  System.out.print("TwoC1 :(");
+					  System.out.println("TwoC1 :(");
 					  System.out.print(" res2:");res2.affiche();
-					  System.out.print("\n res3:");res3.affiche();
+					  System.out.print(" res3:");res3.affiche();
 					  System.out.println(")");
-					  //res3.setX(res2.getHauteur()+4);
+					  if(res2 instanceof TwoId) ;
+					  else{
+						  int taille = res3.targetsize();
+						  
+						  
+						  res2=decalageX(res2,res3.getHauteur()+4);
+					  }
+						
 					  res=`TwoC1(res2,res3);
 				  }
 			  }				
@@ -217,4 +225,87 @@ public class XMLhandlerGui {
 		}
 		return "";
 	}
+	
+	public static TwoPath decalageY(TwoPath path ,int c){
+		%match (TwoPath path){
+			TwoId(onepath) -> {return path;}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x,y+c,hauteur,largeur); }
+			TwoC0(head,tail*) -> {return `TwoC0(decalageY(head,c),decalageY(tail*,c));}
+			TwoC1(head,tail*) -> {return `TwoC1(decalageY(head,c),decalageY(tail*,c));}
+		}
+		return path;
+	}
+	
+	public static TwoPath decalageX(TwoPath path ,int c){
+		%match (TwoPath path){
+			TwoId(onepath) -> {return path;}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x+c,y,hauteur,largeur); }
+			TwoC0(head,tail*) -> {return `TwoC0(decalageX(head,c),decalageX(tail*,c));}
+			TwoC1(head,tail*) -> {return `TwoC1(decalageX(head,c),decalageX(tail*,c));}
+		}
+		return path;
+	}
+	
+	public static TwoPath setLargeur(TwoPath path ,int c){
+		%match (TwoPath path){
+			TwoId(onepath) -> {return path;}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x,y,hauteur,c); }
+			TwoC0(head,tail*) -> {return `TwoC0(decalageX(head,c),decalageX(tail*,c));}
+			TwoC1(head,tail*) -> {return `TwoC1(decalageX(head,c),decalageX(tail*,c));}
+		}
+		return path;
+	}
+	
+	public static TwoPath setHauteur(TwoPath path ,int c){
+		%match (TwoPath path){
+			TwoId(onepath) -> {return path;}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x,y,c,largeur); }
+			TwoC0(head,tail*) -> {return `TwoC0(decalageX(head,c),decalageX(tail*,c));}
+			TwoC1(head,tail*) -> {return `TwoC1(decalageX(head,c),decalageX(tail*,c));}
+		}
+		return path;
+	}
+	
+	public static ArrayList<TwoPath> getListeTwoPath(TwoPath path){
+		ArrayList<TwoPath> liste = new ArrayList<TwoPath>();
+		%match (TwoPath path){
+			TwoId(onepath) -> { liste.add(path);}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { liste.add(path); }
+			TwoC0(head,tail*) -> { liste.addAll(getListeTwoPath(`head)); liste.addAll(getListeTwoPath(`tail*));}
+			TwoC1(head,tail*) -> { liste.addAll(getListeTwoPath(`head)); liste.addAll(getListeTwoPath(`tail*));}
+		}
+		return liste;
+	}
+	
+	/*public static TwoPath gestionTwoC1(TwoPath haut, TwoPath bas){
+		ArrayList<TwoPath> listehaut = new ArrayList<TwoPath>();
+		ArrayList<TwoPath> listebas = new ArrayList<TwoPath>();
+		listehaut=getListeTwoPath(haut);
+		listebas=getListeTwoPath(bas);
+		
+		Iterator it = listehaut.iterator();
+		Iterator it2 = listebas.iterator();
+		while(it.hasNext() && it2.hasNext()){
+			TwoPath tp1 = (TwoPath)it.next();
+			int a = tp1.targetsize();
+			TwoPath tp2 = (TwoPath)it2.next();
+			int b = tp2.sourcesize();
+			if(a==b){
+				// ne rien faire
+				
+			}else if(a<b){
+				int taille=tp1.getLargeur();
+				while(a<b && it.hasNext()){
+					tp1 = (TwoPath)it.next();
+					a += tp1.targetsize();
+					taille += tp1.getLargeur()+4;
+				}
+				
+				
+			}
+			
+		}
+		
+		
+	}*/
 }
