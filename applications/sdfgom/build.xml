@@ -8,6 +8,7 @@
   <property name="sdfgom.src"      location="${sdfgom.dir}/src"/>
   <property name="sdfgom.gen"      location="${sdfgom.dir}/gen"/>
   <property name="sdfgom.build"    location="${sdfgom.dir}/build"/>
+  <property name="sdfgom.examples"    location="${sdfgom.dir}/examples"/>
   
   <import file="${tom.home}/lib/tom-common.xml"/>
   
@@ -20,7 +21,7 @@
     <tom.preset srcdir="${sdfgom.src}"
                 destdir="${sdfgom.gen}"
                 options="-I ${sdfgom.gen}"> 
-      <include name="**/*.t"/>
+                <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
@@ -41,6 +42,31 @@
     </javac.preset>
   </target>
   
+  <target name="examples" depends="javac.examples"/>
+  <target name="tom.examples" depends="gom.examples">
+    <tom.preset srcdir="${sdfgom.examples}"
+                destdir="${sdfgom.gen}"
+                options="-I ${sdfgom.gen}"> 
+                <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="gom.examples" depends="init">
+    <gom.preset srcdir="${sdfgom.examples}"
+                destdir="${sdfgom.gen}">
+                <include name="**/*.gom"/>
+    </gom.preset>
+  </target>
+
+  <target name="javac.examples" depends="tom.examples">
+    <javac.preset destdir="${sdfgom.build}" >
+      <src path="${sdfgom.gen}"/>
+      <src path="${sdfgom.examples}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
   <target name="clean">
     <delete dir="${sdfgom.gen}"/>
     <delete dir="${sdfgom.build}"/>

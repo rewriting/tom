@@ -53,13 +53,16 @@ public class SdfConverter implements ATermConverter {
         String name = appl.getName();
         result = appl; // renamed at by default
 
-        if(name.equals("default") && appl.getArity()==1) { // default(x) -> x
+        if(name.equals("default") && appl.getArity()==1) {
+          // default(x) -> x
           ATerm arg = appl.getArgument(0);
           result = arg;
         } else if(name.equals("single") && appl.getArity()==1) {
+          // single(char_class(x)) -> look_char_class(x)
           ATerm arg = appl.getArgument(0);
           if(arg instanceof ATermAppl) {
-            if(((ATermAppl)arg).getName().equals("char_class")) {
+            // WARNING : surbterms are not yet converted
+            if(((ATermAppl)arg).getName().equals("char-class") && ((ATermAppl)arg).getArity()==1) {
               ATerm new_at = factory.makeAppl(factory.makeAFun("look_char_class",1,false),((ATermAppl)arg).getArgumentArray());
               result = appl.setArgument(new_at,0);
             }
@@ -111,6 +114,12 @@ public class SdfConverter implements ATermConverter {
         name = "my_short";
       } else if(name.equals("assoc") && appl.getArity()==0) {
         name = "my_assoc";
+      } else if(name.equals("module") && appl.getArity()==3) {
+        name = "my_module";
+      } else if(name.equals("module") && appl.getArity()==1) {
+        name = "module_name";
+      } else if(name.equals("imports") && appl.getArity()==1) {
+        name = "my_imports";
       }
       appl = factory.makeAppl(factory.makeAFun(name,fun.getArity(),false),appl.getArgumentArray());
     }

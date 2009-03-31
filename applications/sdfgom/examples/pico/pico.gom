@@ -1,0 +1,38 @@
+module pico.Pico
+imports String //basicWhitespace 
+abstract syntax
+
+TYPE = 
+     | natural()
+     | string()
+     | nil_type()
+IDTYPELIST = 
+	   | idtypelist(ID_TYPE*)
+DECLS = 
+      | decls(idtypelist:IDTYPELIST)
+STATEMENT = 
+	  | assign(id:ID,exp:EXP)
+	  | conditional(exp:EXP,then:STATEMENTLIST,else:STATEMENTLIST)
+	  | loop(exp:EXP,body:STATEMENTLIST)
+STATEMENTLIST = 
+	      | statlist(STATEMENT*)
+StrChar = 
+	| normal(String:String)
+NatCon = 
+       | digits(String:String)
+StrCon = 
+       | my_default(String:String)
+EXP = 
+    | variable(id:ID)
+    | natconstant(nat:NatCon)
+    | strconstant(str:StrCon)
+    | plus(lhs:EXP,rhs:EXP)
+    | times(lhs:EXP,rhs:EXP)
+    | conc(lhs:EXP,rhs:EXP)
+PROGRAM = 
+	| program(decls:DECLS,statlist:STATEMENTLIST)
+ID = 
+   | idCons(String:String)
+ID_TYPE = 
+	| idtype(id:ID,type:TYPE)
+

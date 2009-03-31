@@ -1,4 +1,4 @@
-package sdfgom;
+package pico;
 
 import java.io.*;
 import java.lang.*;
@@ -7,6 +7,8 @@ import aterm.*;
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
 import sdfgom.converter.MeptConverter;
+import sdfgom.ImplodeMept;
+import sdfgom.Options;
 import org.kohsuke.args4j.*;
 
 public class Main {
@@ -19,8 +21,7 @@ public class Main {
     try {
       // parse the arguments.
       optionParser.parseArgument(args);
-      //if( options.arguments.isEmpty() ) {
-      if( /*options.arguments.isEmpty() ||*/ options.help || options.h ) {
+      if( options.help || options.h ) {
         throw new CmdLineException("Help");
       }
     } catch( CmdLineException e ) {
@@ -44,10 +45,12 @@ public class Main {
       ATerm at = factory.readFromTextFile(fileinput);
       MeptConverter meptConverter = new MeptConverter();
       ImplodeMept imploder = new ImplodeMept();
-      SdfTool sdfTool = new SdfTool();
+
+      PicoTool picoTool = new PicoTool();
 
       ATerm ast = imploder.implode(at);
-      String result = sdfTool.convertFromDefinition(ast);
+      System.out.println("ast = " + ast);
+      String result = picoTool.convertFromProgram(ast);
       System.out.println("result = " + result);
 
     } catch (Exception e) {

@@ -19,24 +19,51 @@ public class SdfTool {
 
   public static PureFactory factory = SingletonFactory.getInstance();
 
-  public static String convert(ATerm at) {
+  public static String convertFromDefinition(ATerm at) {
+    StringBuffer sb = new StringBuffer();
     SdfConverter sdfConverter = new SdfConverter();
-    Sections s = Sections.fromTerm(at,sdfConverter);
+    //System.out.println("at = " + at);
+    Definition definition = Definition.fromTerm(at,sdfConverter);
+    %match(definition) {
+      definition(modulelist(_*,module,_*)) -> {
+        String res = convertFromModule(`module);
+        sb.append(res);
+      }
+    }
+    return sb.toString();
+  }
 
+  public static String convertFromModule(Module module) {
+    //System.out.println("module = " + module);
     HashMap<String,ArrayList<String>> table = new HashMap<String,ArrayList<String>>();
     String gomGrammar = "";
     try {
-      `TopDown(ExtractProduction(table)).visitLight(s);
+      // extract the module name
+      %match(module) {
+        my_module(unparameterized(leaf(moduleName)),imports,_) -> {
+          String importNames = "";
+          gomGrammar += "module " + `moduleName + "\n";
+          %match(imports) {
+            my_imports(listImports(_*,module_name(unparameterized(path(importName))),_*)) -> {
+              importNames += `importName + " ";
+            }
+          }
+          gomGrammar += "imports String " + `importNames + "\n";
+          gomGrammar += "abstract syntax\n";
+        }
+      }
+      // build the signature
+      `TopDown(ExtractProduction(table)).visitLight(module);
       for(String sort:table.keySet()) {
-        gomGrammar += "\n" + sort + " = ";
+        gomGrammar += "\n" + renameIntoGomIdentifier(sort) + " = ";
         for(String prod:table.get(sort)) {
           gomGrammar += prod;
         }
       }
     } catch(VisitFailure e) {
-      System.out.println("failure on: " + s);
+      System.out.println("failure on: " + module);
     }
-    System.out.println(s);
+    System.out.println(module);
 
     return gomGrammar;
   }
@@ -44,8 +71,10 @@ public class SdfTool {
   %strategy ExtractProduction(table:HashMap) extends Identity() {
     visit Production {
       prod(lhs,my_sort((more_chars|one_char)(rhsSortName)),attrs(_*,term(appl(unquoted("cons"),fun(quoted(consName)))),_*)) -> {
-        String prod = "\n| " + `consName.substring(1,`consName.length()-1) + "(";
+        String prod = "\n| " + renameIntoGomIdentifier(`consName.substring(1,`consName.length()-1)) + "(";
 matchblock: {
+              //System.out.println("lhs = " + `lhs);
+              boolean firstLabel = true;
         %match(lhs) {
           //listSymbol(_*,my_sort(more_chars(sortName)),tail*) -> INVENT a name
 
@@ -59,16 +88,16 @@ matchblock: {
           }
 
           listSymbol(_*,(iter|iter_sep|iter_star|iter_star_sep)[Symbol=my_sort((more_chars|one_char)(sortName))],_*) -> {
-            prod += `sortName + "*";
+            prod += renameIntoGomIdentifier(`sortName) + "*";
             break matchblock;
           }
 
-          listSymbol(_*,label(unquoted(labelName),my_sort((more_chars|one_char)(sortName))),tail*) -> {
-            prod += `labelName + ":" + `sortName;
-            if(!`tail.isEmptylistSymbol()) {
+          listSymbol(_*,label(unquoted(labelName),my_sort((more_chars|one_char)(sortName))),_*) -> {
+            if(!firstLabel) {
               prod += ",";
             }
-            break matchblock;
+            prod += renameIntoGomIdentifier(`labelName) + ":" + renameIntoGomIdentifier(`sortName);
+            firstLabel = false;
           }
 
         }
@@ -82,5 +111,11 @@ matchblock: {
         table.put(`rhsSortName,listOfEntries);
       }
     }
+  }
+
+  private static String renameIntoGomIdentifier(String idname) {
+      String res = idname.replaceAll("-","_");
+
+      return res;
   }
 } 

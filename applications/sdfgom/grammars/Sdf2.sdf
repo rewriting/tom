@@ -307,10 +307,10 @@ imports languages/sdf2/syntax/Character
 exports
   sorts CharClass CharRange CharRanges OptCharRanges 
   context-free syntax 
-    Character                           -> CharRange
+    Character                           -> CharRange            {cons("singleChar")}
     start:Character "-" end:Character   -> CharRange            {cons("range")}
 
-    CharRange                                   -> CharRanges
+    CharRange                                   -> CharRanges   {cons("singleCharRange")}
     "left":CharRanges "right":CharRanges        -> CharRanges   {cons("conc"),right,memo}
     "(" CharRanges ")"                          -> CharRanges   {bracket}
 
@@ -478,7 +478,7 @@ exports
 
     ImpSection -> Grammar  {cons("imp-section")}
 
-    list:Import* -> Imports
+    list:Import* -> Imports {cons("listImports")}
 
     ModuleName            -> Import  {cons("module")}
     ModuleName Renamings  -> Import  {cons("renamed-module")}

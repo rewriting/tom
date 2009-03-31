@@ -2,6 +2,19 @@ module sdfgom.sdf
 imports String int ATerm
 abstract syntax
 
+Definition = definition(moduleList:ModuleList)
+ModuleList = modulelist(Module*)
+
+Module = my_module(moduleName:ModuleName,my_imports:ImpSection,sections:Sections)
+
+ModuleName = unparameterized(moduleId:ModuleId)
+ModuleId = leaf(String:String)
+         | path(String:String)
+         | root(String:String)
+ImpSection = my_imports(imps:Imports)
+Imports = listImports(ModuleImport*)
+ModuleImport = module_name(moduleName:ModuleName)
+
 Sections = listSection(Section*)
 
 Section = exports(grammar:Grammar)
@@ -9,6 +22,7 @@ Section = exports(grammar:Grammar)
 
 Grammar = conc_grammars(g1:Grammar,g2:Grammar)
        | context_free_syntax(prods:Productions)
+       | context_free_start_symbols(symbols:Symbols)
        | lexical_syntax(prods:Productions)
        | lexical_restrictions(restricts:Restrictions)
        | sorts(sorts:Symbols)
@@ -28,14 +42,22 @@ Symbol = lit(String:String)
        | char_class(charclass:CharClass)
 
 CharClass = simple_charclass(OptCR:OptCharRanges)
+          | comp(cc:CharClass)
+
 OptCharRanges = absent()
-              | present(CR:CharRanges)
-CharRanges = range(c1:MyCharacter,c2:MyCharacter)
-           | conc(cr1:CharRanges,cr2:CharRanges)
+              | present(cr:CharRanges)
+CharRange = range(c1:MyCharacter,c2:MyCharacter)
+           | singleChar(c:MyCharacter)
+CharRanges = conc(cr1:CharRanges,cr2:CharRanges)
+           | singleCharRange(cr:CharRange)
 
 MyCharacter = my_short(SC:ShortChar)
-ShortChar = regular(String:String)
+            | numeric(nc:NumChar)
 
+NumChar = digits(String:String)
+
+ShortChar = regular(String:String)
+          | escaped(String:String)
 
 Sort = more_chars(String:String)
      | one_char(String:String)

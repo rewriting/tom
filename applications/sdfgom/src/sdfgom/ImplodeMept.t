@@ -50,7 +50,7 @@ public class ImplodeMept {
 
   public static ATerm PTtoAST(Tree pt) {
     %match(pt) {
-      appl(prod[Attributes=attrs(listAttr(_*,cons(opname),_*))],arglist) -> { 
+      appl(prod[Attributes=attrs(listAttr(_*,cons(opname),_*))],arglist) -> {
         ATermList newArgs = factory.makeList();
         Args args = `arglist;
         while(!args.isEmptylistTree()) {
@@ -98,9 +98,6 @@ matchblock: {
         ATerm res = factory.makeApplList(fun,newArgs);
         return res;
       }
-
-      
-
 
     }
     throw new RuntimeException("(PTtoAST [Tree]) should not be there: " + pt);

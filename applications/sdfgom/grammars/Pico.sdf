@@ -1,4 +1,10 @@
+definition
+module Main
+
 exports
+
+context-free start-symbols PROGRAM
+
 context-free syntax
 "begin" decls:DECLS statlist:STATEMENTLIST "end" -> PROGRAM {cons("program")}
 {STATEMENT ";"}* -> STATEMENTLIST {cons("statlist")}
@@ -19,6 +25,8 @@ context-free syntax
  lhs:EXP "-" rhs:EXP   -> EXP {left, cons("times")}
  lhs:EXP "||" rhs:EXP  -> EXP {left, cons("conc")}
 
+exports
+
 sorts TYPE
 context-free syntax
   "natural" -> TYPE {cons("natural")}
@@ -35,10 +43,13 @@ lexical restrictions
 sorts NatCon
 
 lexical syntax
-
+ ~[\0-\31\n\t\"\\] -> StrChar {cons("normal")}
+ [\"] chars:StrChar* [\"] -> StrCon {cons("defaultStrCon")}
  [0-9]+ -> NatCon {cons("digits")}
 
 lexical restrictions
 
  NatCon -/- [0-9]
 
+lexical syntax
+  [\ \t\12\r\n] -> LAYOUT
