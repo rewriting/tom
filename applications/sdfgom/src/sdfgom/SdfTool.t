@@ -44,7 +44,9 @@ public class SdfTool {
           String importNames = "";
           gomGrammar += "module " + `moduleName + "\n";
           %match(imports) {
-            my_imports(listImports(_*,module_name(unparameterized(path(importName))),_*)) -> {
+            listImpSection(_*,
+                my_imports(listImports(_*,module_name(unparameterized(path(importName))),_*)),
+                _*) -> {
               importNames += `importName + " ";
             }
           }
@@ -61,7 +63,7 @@ public class SdfTool {
         }
       }
     } catch(VisitFailure e) {
-      System.out.println("failure on: " + module);
+      throw new RuntimeException("failure on: " + module);
     }
     System.out.println(module);
 
@@ -70,10 +72,32 @@ public class SdfTool {
 
   %strategy ExtractProduction(table:HashMap) extends Identity() {
     visit Production {
-      prod(lhs,my_sort((more_chars|one_char)(rhsSortName)),attrs(_*,term(appl(unquoted("cons"),fun(quoted(consName)))),_*)) -> {
+      prod(lhs,my_sort((more_chars|one_char)(rhsSortName)),attrs(_*,term(appl(unquoted("cons"),listATerm(fun(quoted(consName))))),_*)) -> {
         String prod = "\n| " + renameIntoGomIdentifier(`consName.substring(1,`consName.length()-1)) + "(";
+
+        /*
+         * detects productions that cannot be translated into Gom
+         * Foo "," {Goo}* -> Bar for instance 
+         */
+        %match(lhs) {
+          listSymbol(_*,iter_sym,_*) 
+            && 
+            (          (iter|iter_sep|iter_star|iter_star_sep)[]  << iter_sym 
+            || label(_,(iter|iter_sep|iter_star|iter_star_sep)[]) << iter_sym)
+            &&
+            (  listSymbol(_*,label(_,my_sort[]),_*) << lhs
+            || listSymbol(_*,my_sort[],_*) << lhs)
+            -> {
+              throw new RuntimeException("cannot translate constructor: " + `consName);
+            }
+        }
+
+
 matchblock: {
               //System.out.println("lhs = " + `lhs);
+
+
+
               boolean firstLabel = true;
         %match(lhs) {
           //listSymbol(_*,my_sort(more_chars(sortName)),tail*) -> INVENT a name
@@ -92,16 +116,25 @@ matchblock: {
             break matchblock;
           }
 
-          listSymbol(_*,label(unquoted(labelName),my_sort((more_chars|one_char)(sortName))),_*) -> {
+          listSymbol(_*,label((quoted|unquoted)(labelName),my_sort((more_chars|one_char)(sortName))),_*) -> {
             if(!firstLabel) {
               prod += ",";
             }
             prod += renameIntoGomIdentifier(`labelName) + ":" + renameIntoGomIdentifier(`sortName);
             firstLabel = false;
           }
+          listSymbol(_*,my_sort((more_chars|one_char)(sortName)),_*) -> {
+            // we invent a name for the missing label
+            if(!firstLabel) {
+              prod += ",";
+            }
+            prod += renameIntoGomIdentifier(`sortName) + ":" + renameIntoGomIdentifier(`sortName);
+            firstLabel = false;
+
+          }
 
         }
-            }
+            } // end matchblock
         prod += ")";
         ArrayList listOfEntries = (ArrayList)table.get(`rhsSortName);
         if(listOfEntries==null) {

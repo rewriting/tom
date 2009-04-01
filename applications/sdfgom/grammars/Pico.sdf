@@ -1,6 +1,6 @@
 definition
 module Main
-
+imports foo
 exports
 
 context-free start-symbols PROGRAM
@@ -53,3 +53,8 @@ lexical restrictions
 
 lexical syntax
   [\ \t\12\r\n] -> LAYOUT
+
+context-free priorities    
+ lhs:EXP "+" rhs:EXP   -> EXP {left, cons("plus")}  >
+ lhs:EXP "-" rhs:EXP   -> EXP {left, cons("times")} >
+ lhs:EXP "||" rhs:EXP  -> EXP {left, cons("conc")}

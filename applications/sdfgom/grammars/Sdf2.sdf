@@ -164,10 +164,14 @@ exports
 	IntCon 					-> ATerm {cons("int")}
 	RealCon					-> ATerm {cons("real")}
 	fun:AFun 				-> ATerm {cons("fun")}
-	fun:AFun "(" args:{ATerm ","}+ ")" 	-> ATerm {cons("appl")}
+	fun:AFun  "(" args:ATerms ")" 	-> ATerm {cons("appl")}
 	"<" type:ATerm ">" 			-> ATerm {cons("placeholder")}
 	"[" elems:{ATerm ","}* "]" 		-> ATerm {cons("list")}
 	trm:ATerm Annotation 			-> ATerm {cons("annotated")}
+ 
+  sorts ATerms 
+  context-free syntax
+        elems:{ATerm ","}+                      -> ATerms {cons("listATerm")}
 
   context-free syntax
 	"{" annos:{ ATerm ","}+ "}" 		-> Annotation {cons("default")}
@@ -272,8 +276,13 @@ exports
     string:StrCon                -> Symbol {cons("lit")}
     ci-string:SingleQuotedStrCon -> Symbol {cons("ci-lit")}
 
-    fun:FunctionName "(" arguments:{Symbol ","}* ")" "->" result:Symbol Attributes 
+    fun:FunctionName "(" arguments:SymbolStar ")" "->" result:Symbol Attributes 
 	-> Production  {avoid, cons("prefix-fun")}
+
+  sorts SymbolStar
+  context-free syntax
+    {Symbol ","}* -> SymbolStar {cons("symbolStar")}
+
 module languages/sdf2/syntax/Labels
 
 imports languages/sdf2/syntax/Kernel 
@@ -375,9 +384,13 @@ exports
 
   context-free syntax
     Sort                                    -> Symbol  {cons("sort")}
-    Sort "[[" parameters:{Symbol ","}+ "]]" -> Symbol  {cons("parameterized-sort")}
+    Sort "[[" parameters:SymbolPlus "]]" -> Symbol  {cons("parameterized-sort")}
 
     "sorts" Symbols -> Grammar {cons("sorts")}
+
+  sorts SymbolPlus 
+  context-free syntax
+    {Symbol ","}+ -> SymbolPlus {cons("symbolPlus")}
 
   lexical restrictions
     Sort -/- [A-Za-z0-9]
@@ -450,7 +463,7 @@ exports
   context-free start-symbols Module
 
   sorts ModuleId ModuleName Import Imports
-        Section Sections Module Definition ImpSection
+        Section Sections Module Definition ImpSection ImpSections
 
   lexical syntax    
     letters:[A-Za-z0-9\_\-]+ -> ModuleWord  {cons("word")}
@@ -462,11 +475,12 @@ exports
   context-free syntax
     list:Module* -> Definition {cons("modulelist")}
 
-    "module" ModuleName list:ImpSection* Sections -> Module  {cons("module")}
+    "module" ModuleName list:ImpSections Sections -> Module  {cons("module")}
 
     "exports" Grammar            -> Section  {cons("exports")}
     "hiddens" Grammar            -> Section  {cons("hiddens")}
 
+    list:ImpSection*             -> ImpSections {cons("listImpSection")}
     list:Section*                -> Sections {cons("listSection")}
 
     ModuleId                        -> ModuleName  {cons("unparameterized")}
@@ -522,16 +536,20 @@ imports languages/aterm/syntax/IntCon
 exports
   context-free syntax
     "(" ")"                                       -> Symbol {cons("empty")}
-    "(" head:Symbol tail:Symbol+ ")"              -> Symbol {cons("seq")}
+    "(" head:Symbol tail:NESymbols ")"            -> Symbol {cons("seq")}
     Symbol "?"                                    -> Symbol {cons("opt")}
     Symbol "+"                                    -> Symbol {cons("iter")}
     Symbol "*"                                    -> Symbol {cons("iter-star")}
     "{" Symbol sep:Symbol "}" "+"                 -> Symbol {cons("iter-sep")}
     "{" Symbol sep:Symbol "}" "*"                 -> Symbol {cons("iter-star-sep")}
-    "<" head:Symbol "," rest:{Symbol ","}+ ">"    -> Symbol {cons("tuple")}
+%%   "<" head:Symbol "," rest:{Symbol ","}+ ">"    -> Symbol {cons("tuple")}
     "(" arguments:Symbols "=>" results:Symbol ")" -> Symbol {cons("func")}
     "left":Symbol "|" "right":Symbol              -> Symbol {right,cons("alt")}
     "(" "left":Symbol "->" "right":Symbol ")"     -> Symbol {cons("strategy")}
+
+  sorts NESymbols
+  context-free syntax
+    list:Symbol+ -> NESymbols {cons("nelistSymbol")}
 
   context-free priorities
     {Symbol "?"               -> Symbol
@@ -568,6 +586,6 @@ exports
     "left":Group Associativity "right":Group             -> Priority  {cons("assoc")}
 %%    Production "<" arguments:{NatCon ","}+ ">" ">" Group -> Priority  {cons("argument")}
 
-    list:{Priority  ","}* -> Priorities
+    list:{Priority  ","}* -> Priorities {cons("listPriority")}
 
     "priorities" Priorities  -> Grammar  {cons("priorities")}

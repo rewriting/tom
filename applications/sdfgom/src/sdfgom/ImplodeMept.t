@@ -33,7 +33,7 @@ public class ImplodeMept {
       ParseTree t1 = `TopDown(RemoveStartNode()).visitLight(t3);
 
       ATerm aterm = PTtoAST(t1);
-      //System.out.println("aterm = " + aterm);
+      System.out.println("aterm = " + aterm);
       return aterm;
     } catch(VisitFailure e) {
       System.out.println("failure on " + at);
