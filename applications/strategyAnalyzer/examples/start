@@ -61,8 +61,16 @@
 
 
 // (r1))
-//let S=signature {a:0, b:0, f:1, g:2} in
-// let r1 = { a()->b(), f(a())->a(), g(a(),a()) -> b() } in 
-//let r1 = { a()->b(), f(f(X))->X, g(a(),a()) -> b() } in 
-//let r1 = { a()->b(), f(X)->X, g(a(),a()) -> b() } in 
-//r1
+// let S=signature {a:0, b:0,  g:3} in
+// let r1 = { g(a(),a(),a()) -> a } in 
+// let r1 = { g(a(),a()) -> a(), f(x) -> x } in 
+// let r1 = { f(a()) -> x } in 
+// r1
+
+
+// test ALL
+let S=signature {a:0, b:0, f:1, g:2} in
+let r1 = { a() -> f(b()) } in 
+let ta = one(r1) in
+ta
+
