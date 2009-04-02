@@ -12,6 +12,9 @@ public class Pretty {
   public String toString(File f) {
     StringBuffer sb = new StringBuffer() ;
     %match(f) {
+      Blocks(_*,Block(_,_,InstructionList(_*,X,_*)),_*,Block(_,_,InstructionList(_*,X,_*)),_*) -> {
+        System.out.println("BINGO"+"\n\n") ;
+      }
       Blocks(_*,b,_*) -> {
         sb.append(toString(`b)+"\n\n") ;
       }
@@ -154,7 +157,8 @@ public class Pretty {
 		),
 		Block(Forward(),PolicyAccept(),InstructionList(
 			Ins(UserRuleCall("Rule 1"),Icmp(),None(),Localhost(),Anywhere(),Opts("plus")),
-			Ins(Drop(),Tcp(),None(),Anywhere(),Localhost(),Opts("un"))
+			Ins(Drop(),Tcp(),None(),Anywhere(),Localhost(),Opts("un")),
+			Ins(Accept(),All_(),None(),Ip_Addr("1.2.3.40"),Ip_Addr("5.6.7.80"),Opts("dit :"))
 			)
 		),
 		Block(Postrouting(),PolicyDrop(),InstructionList(
