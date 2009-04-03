@@ -20,85 +20,107 @@ public class SdfTool {
   public static PureFactory factory = SingletonFactory.getInstance();
 
   public static String convertFromDefinition(ATerm at) {
-    StringBuffer sb = new StringBuffer();
     SdfConverter sdfConverter = new SdfConverter();
     //System.out.println("at = " + at);
     Definition definition = Definition.fromTerm(at,sdfConverter);
+    HashMap<String,ArrayList<String>> table = new HashMap<String,ArrayList<String>>();
+    Module firstModule = null;
     %match(definition) {
       definition(modulelist(_*,module,_*)) -> {
-        String res = convertFromModule(`module);
-        sb.append(res);
+        if(firstModule==null) {
+          firstModule = `module;
+        }
+        try {
+          `TopDown(ExtractProduction(table)).visitLight(`module);
+        } catch(VisitFailure e) {
+          throw new RuntimeException("failure on: " + `module);
+        }
+      }
+    }
+
+    StringBuffer sb = new StringBuffer();
+    %match(firstModule) {
+      my_module(unparameterized(leaf(moduleName)),imports,_) -> {
+        //my_module(unparameterized(path(...)),imports,_) -> 
+        String importNames = "";
+        sb.append("module " + `moduleName + "\n");
+        %match(imports) {
+          listImpSection(_*,
+              my_imports(listImports(_*,module_name(unparameterized(path(importName))),_*)),
+              _*) -> {
+            importNames += `importName + " ";
+          }
+        }
+        sb.append("imports String " + `importNames + "\n");
+        sb.append("abstract syntax\n");
+      }
+    }
+    for(String sort:table.keySet()) {
+      sb.append("\n" + renameIntoGomIdentifier(sort) + " = ");
+      for(String prod:table.get(sort)) {
+        sb.append(prod);
       }
     }
     return sb.toString();
   }
 
-  public static String convertFromModule(Module module) {
-    //System.out.println("module = " + module);
-    HashMap<String,ArrayList<String>> table = new HashMap<String,ArrayList<String>>();
-    String gomGrammar = "";
-    try {
-      // extract the module name
-      %match(module) {
-        my_module(unparameterized(leaf(moduleName)),imports,_) -> {
-          String importNames = "";
-          gomGrammar += "module " + `moduleName + "\n";
-          %match(imports) {
-            listImpSection(_*,
-                my_imports(listImports(_*,module_name(unparameterized(path(importName))),_*)),
-                _*) -> {
-              importNames += `importName + " ";
-            }
-          }
-          gomGrammar += "imports String " + `importNames + "\n";
-          gomGrammar += "abstract syntax\n";
-        }
-      }
-      // build the signature
-      `TopDown(ExtractProduction(table)).visitLight(module);
-      for(String sort:table.keySet()) {
-        gomGrammar += "\n" + renameIntoGomIdentifier(sort) + " = ";
-        for(String prod:table.get(sort)) {
-          gomGrammar += prod;
-        }
-      }
-    } catch(VisitFailure e) {
-      throw new RuntimeException("failure on: " + module);
-    }
-    System.out.println(module);
-
-    return gomGrammar;
-  }
-
   %strategy ExtractProduction(table:HashMap) extends Identity() {
     visit Production {
-      prod(lhs,my_sort((more_chars|one_char)(rhsSortName)),attrs(_*,term(appl(unquoted("cons"),listATerm(fun(quoted(consName))))),_*)) -> {
-        String prod = "\n| " + renameIntoGomIdentifier(`consName.substring(1,`consName.length()-1)) + "(";
+      //prod(lhs,_,!attrs(_*,term(appl(unquoted("cons"),_)),_*)) -> {
+      //        throw new RuntimeException("constructor name is missing: " + `lhs);
+      //}
+
+      subject@prod(lhs,my_sort((more_chars|one_char)(rhsSortName)),attribute) -> {
+        String prod = "";
+        String constructorName = null;
+        %match(attribute) {
+          attrs(_*,(reject|bracket)(),_*) -> {
+            // ignore reject and bracket
+            return `subject;
+          }
+
+          attrs(_*,term(appl(unquoted("cons"),listATerm(fun(quoted(consName))))),_*) -> {
+            prod += "\n| " + renameIntoGomIdentifier(removeQuote(`consName)) + "(";
+            constructorName = `consName;
+          }
+        }
 
         /*
          * detects productions that cannot be translated into Gom
          * Foo "," {Goo}* -> Bar for instance 
          */
-        %match(lhs) {
-          listSymbol(_*,iter_sym,_*) 
+        %match {
+          listSymbol(_*,iter_sym,_*) << lhs
             && 
             (          (iter|iter_sep|iter_star|iter_star_sep)[]  << iter_sym 
-            || label(_,(iter|iter_sep|iter_star|iter_star_sep)[]) << iter_sym)
+                       || label(_,(iter|iter_sep|iter_star|iter_star_sep)[]) << iter_sym)
             &&
-            (  listSymbol(_*,label(_,my_sort[]),_*) << lhs
-            || listSymbol(_*,my_sort[],_*) << lhs)
+            (listSymbol(_*,label(_,my_sort[]),_*) << lhs || listSymbol(_*,my_sort[],_*) << lhs)
+            -> { 
+              throw new RuntimeException("too many sorts in a list-operator: " + ((constructorName!=null)?constructorName:`attribute.toString()));
+            }
+
+          // no attributes, thus no constructor name
+          no_attrs() << attribute -> {
+            throw new RuntimeException("constructor name is missing: " + `subject); 
+          }
+
+          // error if there is no constructore name for a list operator
+          !attrs(_*,term(appl(unquoted("cons"),listATerm(fun(quoted(_))))),_*) << attribute 
             -> {
-              throw new RuntimeException("cannot translate constructor: " + `consName);
+              throw new RuntimeException("constructor name is missing: " + `subject);
             }
         }
 
+//DEBUG
+        if(constructorName==null) {
+System.out.println("*** " + `subject);
+        }
+// TODO : do not extract under context-free-priorities
 
 matchblock: {
               //System.out.println("lhs = " + `lhs);
-
-
-
-              boolean firstLabel = true;
+        boolean firstLabel = true;
         %match(lhs) {
           //listSymbol(_*,my_sort(more_chars(sortName)),tail*) -> INVENT a name
 
@@ -111,18 +133,29 @@ matchblock: {
             break matchblock;
           }
 
+          listSymbol(_*,label(_,(iter|iter_sep|iter_star|iter_star_sep)[Symbol=my_sort((more_chars|one_char)(sortName))]),_*) -> {
+            prod += renameIntoGomIdentifier(`sortName) + "*";
+            break matchblock;
+          }
+
           listSymbol(_*,(iter|iter_sep|iter_star|iter_star_sep)[Symbol=my_sort((more_chars|one_char)(sortName))],_*) -> {
             prod += renameIntoGomIdentifier(`sortName) + "*";
             break matchblock;
           }
 
-          listSymbol(_*,label((quoted|unquoted)(labelName),my_sort((more_chars|one_char)(sortName))),_*) -> {
+          listSymbol(_*,label(quoteOrUnquotedLabel,my_sort((more_chars|one_char)(sortName))),_*) -> {
             if(!firstLabel) {
               prod += ",";
             }
-            prod += renameIntoGomIdentifier(`labelName) + ":" + renameIntoGomIdentifier(`sortName);
+            %match(quoteOrUnquotedLabel) {
+              quoted(labelName) -> { prod += renameIntoGomIdentifier(removeQuote(`labelName)); }
+              unquoted(labelName) -> { prod += renameIntoGomIdentifier(`labelName); 
+              }
+            }
+            prod += ":" + renameIntoGomIdentifier(`sortName);
             firstLabel = false;
           }
+
           listSymbol(_*,my_sort((more_chars|one_char)(sortName)),_*) -> {
             // we invent a name for the missing label
             if(!firstLabel) {
@@ -134,8 +167,10 @@ matchblock: {
           }
 
         }
-            } // end matchblock
-        prod += ")";
+        } // end matchblock
+        if(prod.length()>0) {
+          prod += ")";
+        }
         ArrayList listOfEntries = (ArrayList)table.get(`rhsSortName);
         if(listOfEntries==null) {
           listOfEntries = new ArrayList();
@@ -144,6 +179,10 @@ matchblock: {
         table.put(`rhsSortName,listOfEntries);
       }
     }
+  }
+
+  private static String removeQuote(String name) {
+      return name.substring(1,name.length()-1);
   }
 
   private static String renameIntoGomIdentifier(String idname) {

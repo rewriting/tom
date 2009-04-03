@@ -358,7 +358,7 @@ exports
 
     list:Production* -> Productions {cons("listProduction")}
 
-    "syntax" Productions -> Grammar {cons("syntax")}
+    "syntax" Productions -> Grammar {cons("syntaxProd")}
 module languages/sdf2/syntax/Aliases
 
 imports languages/sdf2/syntax/Kernel
@@ -368,7 +368,7 @@ exports
   context-free syntax 
     "aliases" Aliases              -> Grammar  {cons("aliases")}
     Symbol arrow:"->" alias:Symbol -> Alias    {cons("alias")}
-    list:Alias*                    -> Aliases
+    list:Alias*                    -> Aliases  {cons("listAlias")}
 
 
 module languages/sdf2/syntax/Sorts
@@ -383,7 +383,7 @@ exports
 	{cons("more-chars")}
 
   context-free syntax
-    Sort                                    -> Symbol  {cons("sort")}
+    Sort                                    -> Symbol  {cons("simple-sort")}
     Sort "[[" parameters:SymbolPlus "]]" -> Symbol  {cons("parameterized-sort")}
 
     "sorts" Symbols -> Grammar {cons("sorts")}
@@ -475,7 +475,7 @@ exports
   context-free syntax
     list:Module* -> Definition {cons("modulelist")}
 
-    "module" ModuleName list:ImpSections Sections -> Module  {cons("module")}
+    "module" ModuleName list:ImpSections Sections -> Module  {cons("named-module")}
 
     "exports" Grammar            -> Section  {cons("exports")}
     "hiddens" Grammar            -> Section  {cons("hiddens")}
@@ -488,14 +488,14 @@ exports
 
     "id" "(" ModuleName ")" -> Attribute  {cons("id")}
 
-    "imports" list:Imports -> ImpSection  {cons("imports")}
+    "imports" list:Imports -> ImpSection  {cons("importsSection")}
 
     ImpSection -> Grammar  {cons("imp-section")}
 
     list:Import* -> Imports {cons("listImports")}
 
-    ModuleName            -> Import  {cons("module")}
-    ModuleName Renamings  -> Import  {cons("renamed-module")}
+    ModuleName            -> Import  {cons("import-module")}
+    ModuleName Renamings  -> Import  {cons("import-renamed-module")}
     "(" Import ")"        -> Import  {bracket}
 
   lexical restrictions
