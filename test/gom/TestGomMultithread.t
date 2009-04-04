@@ -22,14 +22,14 @@
 
 package gom;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.extensions.ActiveTestSuite;
-import junit.extensions.RepeatedTest;
+import org.junit.Test;
+import org.junit.Assert;
 import gom.testgommultithread.term.types.*;
 
-public class TestGomMultithread extends TestCase {
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+
+public class TestGomMultithread {
 
   %gom(--multithread) {
     module term
@@ -41,31 +41,42 @@ public class TestGomMultithread extends TestCase {
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(suite());
+    org.junit.runner.JUnitCore.main(TestGomMultithread.class.getName());
   }
 
-  public TestGomMultithread(String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    TestSuite suite = new ActiveTestSuite();
-    for (int i = 0; i<10; ++i) {
-      suite.addTest(new  RepeatedTest(new TestGomMultithread("testBuild"),10));
+  @Test
+  public void testMulti() {
+    final int DEPTH = 4;
+    final int TASKS = 10;
+    final int COUNT = 100;
+    final AtomicInteger count = new AtomicInteger(0);
+    final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
+    for (int i = 0; i < TASKS; i++) {
+      executor.execute(new Runnable() {
+        public void run() {
+          for (int i = 0; i < COUNT; i++) {
+            T res = task();
+            T res2 = task();
+            if (res == res2) {
+              count.incrementAndGet();
+            }
+          }
+        }
+        private T task() {
+          T res = `a();
+          for(int i = 0; i < DEPTH; ++i) {
+            res = `f(res, b(), c(), res);
+          }
+          return res;
+        }
+      });
     }
-    return suite;
-  }
-
-  private static int DEPTH = 4;
-  public void testBuild() {
-    T res = `a();
-    for(int i = 0; i < DEPTH; ++i) {
-      res = `f(res, b(), c(), res);
+    executor.shutdown();
+    try {
+      executor.awaitTermination(20,TimeUnit.SECONDS);
+    } catch (java.lang.InterruptedException e) {
+      Assert.fail("Timeout");
     }
-    T res2 = `a();
-    for(int i = 0; i < DEPTH; ++i) {
-      res2 = `f(res2, b(), c(), res2);
-    }
-    assertSame("Should be equal", res,res2);
+    Assert.assertEquals("Successful tasks", TASKS*COUNT, count.get());
   }
 }
