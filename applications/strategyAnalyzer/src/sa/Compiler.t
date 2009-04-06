@@ -834,6 +834,9 @@ public class Compiler {
 
   /*
    * generate a term for the form f(Z1,...,Zn)
+   * @param name the symbol name 
+   * @param arity the arity of the symbol
+   * @return the string that represents the term
    */
   private static String genAbstractTerm(String name, int arity) {
     if(arity==0) {
@@ -855,14 +858,16 @@ public class Compiler {
   }
 
   /*
-   * perform one-step expansion
+   * Perform one-step expansion
+   *
+   * @param bag the resulted set of rules
+   * @param rule the rule to expand
+   * @param extractedSignature the signature
    */
   %strategy ExpandAntiPattern(bag:Collection,subject:Rule,extractedSignature:Map) extends Identity() {
     visit Term {
       Anti(t) -> {
-        //System.out.println("decode = " + `t);
         Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
-        //System.out.println("antiterm = " + antiterm);
         %match(antiterm) { 
           Appl(name,args)  -> {
             Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
@@ -871,12 +876,10 @@ public class Compiler {
               if(!`name.equals(otherName)) {
                 int arity = signature.get(otherName);
                 Term newt = tools.encode(genAbstractTerm(otherName,arity));
-                //System.out.println("new lhs: " + newt);
                 if(Main.options.generic) {
                   newt = tools.metaEncodeConsNil(newt);
                 }
                 Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-                //System.out.println("new rule: " + newr);
                 bag.add(newr);
               }
             }
@@ -895,12 +898,10 @@ public class Compiler {
               array[i] = `Anti(tarray[i]);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
               array[i] = tools.encode(z+"_"+i);
-              //System.out.println("newt: " + newt);
               if(Main.options.generic) {
                 newt = tools.metaEncodeConsNil(newt);
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-              //System.out.println("newr: " + newr);
               bag.add(newr);
             }
            
