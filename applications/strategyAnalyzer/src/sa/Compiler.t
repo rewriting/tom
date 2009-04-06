@@ -44,7 +44,7 @@ public class Compiler {
   private static void compileExp(Collection<Rule> bag, Map<String,Integer> extractedSignature, Map<String,Integer> generatedSignature, Expression e) {
     //System.out.println("exp = " + e);
     %match(e) {
-      Let(v,Signature(sl),body) -> {
+      Let(_,Signature(sl),body) -> {
         %match(sl) {
           SymbolList(_*,Symbol(name,arity),_*) -> {
             extractedSignature.put(`name,`arity);
@@ -545,227 +545,6 @@ public class Compiler {
     return res;
   }
 
-  /*
-   * Expand an anti-pattern
-   * HC's version
-   */
-  public static Collection<Rule> expandAntiPatterns(Collection<Rule> bag, Map<String,Integer> extractedSignature) 
-    throws VisitFailure {
-
-    // generate depth 1 replacement terms for each symbol in the signature
-    // use extractedSignature since normally anti-patterns are only on symbols in signature 
-      // expsig: associate f(Z1,...,ZN) to "f"
-    Map<String,Term> expsig = new HashMap<String,Term>();
-    for(String name: extractedSignature.keySet()) {
-      int arity = extractedSignature.get(name);
-      TermList tl = `TermList();
-      for(int i=1 ; i<=arity ; i++) {
-        tl = `TermList(tl*,Var("Z"+i));
-      }
-      Term t = `Appl(name,tl);
-      expsig.put(name,t);
-    }
-    //     System.out.println(expsig+"\n");
-
-    Collection<Rule> ruleSet = new HashSet<Rule>();
-    for(Rule r:bag) {
-      %match(r) {
-        Rule(lhs,rhs) -> {
-          // if generic version than decode LHS
-          boolean generic = Main.options.generic;
-          Term decodedLHS = (generic)?tools.generalDecodeConsNil(`lhs):`lhs;
-
-          // Generate LHSs without anti-pattern
-          Collection<Term> termSet = generateTermsWithoutAntiPatterns(decodedLHS,expsig);
-
-          // remove the starting term if it contained an anti-pattern
-          HashSet<Position> posSet = new HashSet<Position>();
-          // Collect anti-patterns
-          `BottomUp(CollectAntiPatterns(posSet)).visit(decodedLHS);
-          for(Position pos: posSet) {
-            Term at = (Term)pos.getSubterm().visitLight(decodedLHS);
-            %match(at) {
-              Anti(term) -> { 
-                Term newTerm = (Term)pos.getReplace(`term).visitLight(decodedLHS);
-                termSet.remove(newTerm);    
-              }
-            }
-          }
-
-          for(Term t: termSet) {
-            // generate rule for each lhs generated 
-            // if generic version than encode the generated lhs
-            Term newLHS = (generic)?tools.generalMetaEncodeConsNil(t,extractedSignature.keySet()):`t;
-            ruleSet.add(`Rule(newLHS,rhs));
-            //             System.out.println(" PROBLEM = "+ pp.toString(`Rule(newLHS,rhs))); 
-          }
-        }
-      }
-    }
-
-    return ruleSet;
-  }
- 
-  public static Collection<Term> generateTermsWithoutAntiPatterns(Term t, Map<String,Term> expsig) 
-    throws VisitFailure {
-
-    HashSet<Term> termSet = new HashSet<Term>();
-    HashSet<Position> posSet = new HashSet<Position>();
-
-    // Collect anti-patterns
-    `BottomUp(CollectAntiPatterns(posSet)).visit(t);
- 
-    if(posSet.isEmpty()) {
-      termSet.add(t);
-    } else {
-      // Generate rules without anti-pattern
-      for(Position pos: posSet) {
-        Term at = (Term)pos.getSubterm().visitLight(t);
-        String symbolName = "DoesntExist";
-        Term below_at = at;
-        %match(at) {
-          Anti(bat@Appl(name,_)) -> { 
-            symbolName = `name;
-            below_at = `bat;
-          }
-        }
-        if(symbolName.compareTo("doesntexist")==0) {
-          System.out.println(" PROBLEM "); 
-        } // TO CHANGE
-
-        // Generate all terms corresponding to a pattern
-        HashSet<Term> antiTerms = propagateAntiSmart(below_at,expsig);
-        for(Term allt : antiTerms){
-          Term t2p = (Term)pos.getReplace(allt).visitLight(t);
-          termSet.addAll(generateTermsWithoutAntiPatterns(t2p,expsig));
-        }
-      }
-    }
-
-    return termSet;
-  }
-
-
-  public static HashSet<Term> propagateAntiSmart(Term t, Map<String,Term> expsig) 
-    throws VisitFailure {
-
-    HashSet<Term> termSet = new HashSet<Term>();
-
-    %match(t) {
-      Appl(name,args) -> {
-        // First level corresponding anti-terms (a,b,f(x),... for !g(...))
-        Set<String> gensig = new HashSet<String>(expsig.keySet());
-        gensig.remove(`name); // all but current
-        for(String sn : gensig) {
-          termSet.add(expsig.get(sn));
-        }
-        
-        %match(args){ 
-          TermList(a*,tl,b*) -> {
-            // go down into the arguments
-            HashSet<Term> antiArgs = propagateAntiSmart(`tl,expsig);
-            for(Term curr_arg:antiArgs){
-              //           System.out.println("  ADD of " + pp.toString(`Appl(name,curr_arg)) );
-              TermList na = generateVarArgs(`a);
-              TermList nb = generateVarArgs(`b);
-              termSet.add(`Appl(name,TermList(na*,ConsTermList(curr_arg,nb))));
-              //                     termSet.add(`Appl(name,TermList(curr_arg)));
-            }
-          }
-        }
-      }
-    }
-    return termSet; 
-  }
-
-  public static TermList generateVarArgs(TermList a){
-    TermList args = `TermList();
-    %match(a){
-      TermList(head,tail*) -> {
-        Term nh = `Var(getName("Z"));
-        TermList nt = generateVarArgs(`tail);
-        return `ConsTermList(nh,nt);
-        //         return `ConsTermList(Var(getName("Z")),generateVarArgs(tail));
-      }
-    }
-    return args;
-  }
-
-
-  public static HashSet<Term> propagateAnti(Term t, Map<String,Term> expsig) 
-    throws VisitFailure {
-
-    HashSet<Term> termSet = new HashSet<Term>();
-
-    %match(t) {
-      Appl(name,tl) -> {
-        // First level corresponding anti-terms (a,b,f(x),... for !g(...))
-        Set<String> gensig = new HashSet<String>(expsig.keySet());
-        gensig.remove(`name); // all but current
-        //         gensig.remove("Bottom"); //  no Bottom when generating
-        for(String sn : gensig) {
-          termSet.add(expsig.get(sn));
-        }
-        
-        // go down into the arguments
-        HashSet<TermList> antiArgs = propagateAntiList(`tl,expsig);
-        for(TermList curr_arg:antiArgs){
-          //           System.out.println("  ADD of " + pp.toString(`Appl(name,curr_arg)) );
-          termSet.add(`Appl(name,curr_arg));
-        }
-      }
-    }
-    return termSet; 
-  }
-
-
-  public static HashSet<TermList> propagateAntiList(TermList tl, Map<String,Term> expsig) 
-    throws VisitFailure {
-
-    HashSet<TermList> termListSet = new HashSet<TermList>();
-
-    %match(tl) {
-      //       TermList() -> {
-      //         return termListSet;
-      //       }
-
-      // singleton
-      TermList(h) -> {
-        HashSet<Term> termSet = propagateAnti(`h,expsig);
-        for(Term arg:termSet){
-          termListSet.add(`TermList(arg));
-        }
-        termListSet.add(`TermList(h));
-      }
-
-      TermList(h,tail*) -> {
-        HashSet<Term> termSet = propagateAnti(`h,expsig);
-        //         System.out.println("  TERM SET of " + pp.toString(`h) + "  ==  "+ termSet);
-        HashSet<TermList> tailSet = propagateAntiList(`tail,expsig);
-        //         System.out.println("  TAIL SET of " + pp.toString(`tail) + "  ==  "+ tailSet);
-
-        for(TermList rest:tailSet){
-          for(Term arg:termSet){
-            termListSet.add(`TermList(arg,rest*));
-            //             System.out.println("  ADD " + pp.toString(`TermList(arg,rest*))+"\n      SET="+termListSet );
-          }
-          termListSet.add(`TermList(h,rest*));
-          //           System.out.println("  ADD " + pp.toString(`TermList(h,rest*))+"\n      SET="+termListSet );
-        }
-      }
-    }
-
-    return termListSet; 
-  }
-
-
-  %strategy CollectAntiPatterns(pos:HashSet) extends Identity() {
-    visit Term {
-      Anti(t)  -> {
-        pos.add(getEnvironment().getPosition());
-      }
-    }
-  }
  
   
   /**
@@ -776,7 +555,7 @@ public class Compiler {
    * @param extractedSignature the signature
    * @return nothing, but modifies generatedRules
    */
-  public static void expandAntiPattern2(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
+  public static void expandAntiPattern(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       generatedRules.remove(rule); // remove the rule since it will be expanded
@@ -800,7 +579,7 @@ public class Compiler {
         }
         if(toAdd) {
           //System.out.println("YES");
-          expandAntiPattern2(generatedRules,expandr,extractedSignature);
+          expandAntiPattern(generatedRules,expandr,extractedSignature);
         } else {
           // do not add expandr
           //System.out.println("NO");
@@ -827,7 +606,7 @@ public class Compiler {
    */
   %strategy RemoveAtAndRenameVariables() extends Identity() {
     visit Term {
-      At(t1,t2)  -> { return `t2; }
+      At(_,t2)  -> { return `t2; }
       Var(_)  -> { return `Var("_"); }
     }
   }
@@ -902,6 +681,7 @@ public class Compiler {
                 newt = tools.metaEncodeConsNil(newt);
               }
               Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+
               bag.add(newr);
             }
            

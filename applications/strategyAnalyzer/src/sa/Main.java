@@ -76,9 +76,8 @@ public class Main {
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
-          Compiler.expandAntiPattern2(generatedRules,r,extractedSignature);
+          Compiler.expandAntiPattern(generatedRules,r,extractedSignature);
          }
-        //generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
       
       // if we don't expand the anti-patterns then we should keep the at-annotations as well
