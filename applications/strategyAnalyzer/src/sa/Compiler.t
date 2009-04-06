@@ -778,10 +778,8 @@ public class Compiler {
    */
   public static void expandAntiPattern2(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature) {
     try {
-      //System.out.println("expand AP: " + rule);
-      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule);
+      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       generatedRules.remove(rule); // remove the rule since it will be expanded
-      //System.out.println("contains AP: " + rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
       `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
@@ -789,12 +787,16 @@ public class Compiler {
       /*
        * add rules from bag into generatedRules only if
        * they do not overlap with previous rules (from generatedRules)
+       * 
+       * In fact, more complicated: we should do unification and generate new rules 
+       * if they unify
+       * Example: a->c, f(a,x)->c
+       * -- we generate for !a->c the rule f(x,y)->BOTTOM but we should generate f(!a,x)->BOTTOM
        */
       for(Rule expandr:bag) {
-        //System.out.println("add?: " + expandr);
         boolean toAdd = true;
         for(Rule r:generatedRules) {
-          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs()));
+          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
         }
         if(toAdd) {
           //System.out.println("YES");
