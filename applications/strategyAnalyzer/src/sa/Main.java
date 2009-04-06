@@ -36,8 +36,7 @@ public class Main {
       return;
     }
 
-    // this will redirect the output to the specified output
-
+    // print current options
     System.out.println("withAP: " + options.withAP);
     System.out.println("aprove: " + options.aprove);
     System.out.println("classname: " + options.classname);
@@ -61,41 +60,32 @@ public class Main {
       RuleParser ruleParser = new RuleParser(tokens);
       Tree b = (Tree) ruleParser.expressionlist().getTree();
       ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
+      //       System.out.println(expl);
 
+      // Transforms Let(name,exp,body) into body[name/exp]
       ExpressionList expandl = Compiler.expand(expl);
+      //       System.out.println(expandl);
 
       Map<String,Integer> generatedSignature = new HashMap<String,Integer>();
       Map<String,Integer> extractedSignature = new HashMap<String,Integer>();
       Collection<Rule> generatedRules = new HashSet<Rule>();
 
-      //       System.out.println(generatedRules);
-
       // Transforms the strategy into a rewrite system
       Compiler.compile(generatedRules,extractedSignature,generatedSignature,expandl);
 
       if(options.withAP == false) {
-         //Collection<Rule> tmp = new HashSet<Rule>();
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
           Compiler.expandAntiPattern2(generatedRules,r,extractedSignature);
          }
-
         //generatedRules = Compiler.expandAntiPatterns(generatedRules,extractedSignature);
       }
       
-//       System.out.println("RULES without ANTI");
-//       for(Rule r:generatedRules) { 
-//         System.out.println(pretty.toString(r));
-//       }
-      
-      if(options.withAT == false) {
+      // if we don't expand the anti-patterns then we should keep the at-annotations as well
+      // otherwise output is strange
+      if(options.withAT == false && options.withAP == false) {
         generatedRules = Compiler.expandAt(generatedRules);
       }
-
-//       System.out.println("RULES without AT");
-//       for(Rule r:generatedRules) { 
-//         System.out.println(pretty.toString(r));
-//       }
       
       List<Rule> orderedRules = new ArrayList<Rule>(generatedRules);
       Collections.sort(orderedRules, new MyRuleComparator());
