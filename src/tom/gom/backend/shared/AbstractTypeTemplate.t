@@ -78,19 +78,18 @@ package @getPackage()@;
   */
 ]%);
 
-    if (maximalsharing) {
-    writer.write(
+    if(maximalsharing) {
+      writer.write(
 %[
 public abstract class @className()@ implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable @generateInterface()@ {
 ]%);
-} else {
-    writer.write(
+    } else {
+      writer.write(
 %[
 public abstract class @className()@ implements tom.library.sl.Visitable, Cloneable, Comparable @generateInterface()@ {
 ]%);
-}
-
-    if (hooks.containsTomCode()) {
+    }
+    if(hooks.containsTomCode()) {
       mapping.generate(writer); 
     }
     writer.write(
@@ -98,11 +97,9 @@ public abstract class @className()@ implements tom.library.sl.Visitable, Cloneab
 @generateBlock()@
 ]%);
 
-    if (maximalsharing) {
-    writer.write(
+    if(maximalsharing) {
+      writer.write(
 %[
-  private int uniqueID;
-
   protected static final shared.SharedObjectFactory factory = shared.SingletonSharedObjectFactory.getInstance();
 ]%);
     }
@@ -111,10 +108,25 @@ writer.write(
 %[
   protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();
 
+  /**
+    * Returns an ATerm representation of this term.
+    *
+    * @@return an ATerm representation of this term.
+    */
   public abstract aterm.ATerm toATerm();
 
+  /**
+    * Returns a string representation of the top symbol of this term.
+    *
+    * @@return a string representation of the top symbol of this term.
+    */
   public abstract String symbolName();
 
+  /**
+    * Returns a string representation of this term.
+    *
+    * @@return a string representation of this term.
+    */
   @@Override
   public String toString() {
     java.lang.StringBuilder buffer = new java.lang.StringBuilder();
@@ -122,10 +134,29 @@ writer.write(
     return buffer.toString();
   }
 
+  /**
+    * Appends a string representation of this term to the buffer given as argument.
+    *
+    * @@param buffer the buffer to which a string represention of this term is appended.
+    */
   public abstract void toStringBuilder(java.lang.StringBuilder buffer);
 
+  /**
+    * Compares two terms. This functions implements a total order.
+    *
+    * @@param o object to which this term is compared
+    * @@return a negative integer, zero, or a positive integer as this
+    *         term is less than, equal to, or greater than the argument
+    */
   public abstract int compareTo(Object o);
 
+  /**
+    * Compares two terms. This functions implements a total lexicographic path ordering.
+    *
+    * @@param o object to which this term is compared
+    * @@return a negative integer, zero, or a positive integer as this
+    *         term is less than, equal to, or greater than the argument
+    */
   public abstract int compareToLPO(Object o);
 
   protected static String convertATermToString(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
@@ -199,26 +230,41 @@ writer.write(
 
 ]%);
 
-if (maximalsharing) {
- writer.write(
+  if(maximalsharing) {
+   writer.write(
 %[
+  /**
+    * from SharedObjectWithID
+    */
+  private int uniqueID;
+
+  /**
+    * Returns an integer that identifies this term in a unique way.
+    * <tt>t1.getUniqueIdentifier()==t2.getUniqueIdentifier()</tt> iff <tt>t1==t2</tt>.
+    *
+    * @@return an integer that identifies this term in a unique way.
+    */
   public int getUniqueIdentifier() {
     return uniqueID;
   }
 
+  /**
+    * Modifies the integer that identifies this term in a unique way.
+    *
+    * @@param uniqueID integer that identifies this term in a unique way.
+    */
   public void setUniqueIdentifier(int uniqueID) {
     this.uniqueID = uniqueID;
   }
-}
 ]%);
-} else {
-  //implement the Cloneable interface and decalre a public method clone()
- writer.write(
+  } else {
+    //implement the Cloneable interface and decalre a public method clone()
+    writer.write(
 %[
- public abstract Object clone();
-}
+  public abstract Object clone();
 ]%);
+  }
+  writer.write("}\n"); // end of class
 }
- }
 
 }
