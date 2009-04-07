@@ -740,6 +740,7 @@ public class Compiler {
                 Term[] array = new Term[arity];
                 Term[] tarray = new Term[arity];
                 tarray = tl.toArray(tarray);
+
                 String z = getName("Z");
                 for(int i=0 ; i<arity ; i++) {
                   array[i] = tools.encode(z+"_"+i);
@@ -755,6 +756,35 @@ public class Compiler {
               
                   bag.add(newr);
                 }              
+
+                // non-linear patterns: f(x,g(x)) -> f(y,g(z))
+                Term lint = `antiterm;
+                boolean nonlinear = false;
+                HashSet<String> nonlinVars = new HashSet<String>();
+                HashSet<String> allVars = new HashSet<String>();
+                HashSet<String> listVars = new HashSet<String>();
+                for(Term elem:`args.getCollectionTermList()){
+                  `TopDown(CollectVars(listVars)).visitLight(elem);
+                  for(String var:listVars){
+                    for(String occ:allVars){
+                      if(var.compareTo(occ) == 0){
+                        nonlinVars.add(var);
+                        nonlinear = true;
+                      }
+                    }
+                  }
+                  allVars.addAll(listVars);
+                }
+                if(nonlinear){
+                  for(String v:nonlinVars){
+                    lint = `TopDown(ReplaceWithFreshVar(v)).visitLight(lint);
+                  }
+                  Rule newr = (Rule) getEnvironment().getPosition().getReplace(lint).visit(subject);
+              
+                  bag.add(newr);
+                }
+                // non-linear patterns
+
               }
             }
         }
@@ -781,22 +811,48 @@ public class Compiler {
        * -- we generate for !a->c the rule f(x,y)->BOTTOM but we should generate f(!a,x)->BOTTOM
        */
       for(Rule expandr:bag) {
-        boolean toAdd = true;
-        for(Rule r:generatedRules) {
-          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
-        }
-        if(toAdd) {
+//         boolean toAdd = true;
+//         for(Rule r:generatedRules) {
+//           toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
+//         }
+//         if(toAdd) {
           //System.out.println("YES");
           expandAntiPatternWithLevel(generatedRules,expandr,extractedSignature,level-1);
-        } else {
-          // do not add expandr
-          //System.out.println("NO");
-        }
+//         } else {
+//           // do not add expandr
+//           //System.out.println("NO");
+//         }
       }
     } catch(VisitFailure e) {
       // add the rule since it contains no more anti-pattern
       generatedRules.add(rule);
     }
   }
+
+ 
+  // search all At and store their values
+  %strategy CollectVars(bag:Collection) extends Identity() {
+    visit Term {
+      Var(name)-> {
+        bag.add(`name);
+      }
+    }
+  }
+
+  %strategy ReplaceWithFreshVar(name:String) extends Identity() {
+    visit Term {
+      Var(n)  -> {
+        if(`n.compareTo(`name)==0){
+          String z = getName("Z");
+          Term newt = tools.encode(z);
+          if(Main.options.generic) {
+            newt = tools.metaEncodeConsNil(newt);
+          }
+          return newt;
+        }
+      }
+    }
+  }
+
 
 }

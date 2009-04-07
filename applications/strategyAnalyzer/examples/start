@@ -12,16 +12,17 @@
 // let r1 = { a() -> b() } in one(r1)
 
 // repeat(obu(r1))
-  let S=signature {a:0, b:0, f:1} in
-  let r1 = { f(x,x) -> f(b()) } in 
-  let obu = mu y.(one(y)<+r1) in
-  mu x .((obu;x) <+ identity)
+//   let S=signature {a:0, b:0, f:1} in
+//   let r1 = { f(x,x) -> f(b()) } in 
+//   let obu = mu y.(one(y)<+r1) in
+//   mu x .((obu;x) <+ identity)
 
 // repeat(otd(r1))
 //let S=signature {a:0, b:0, f:1, g:2, h1:2, h2:2, h3:2, h4:4, h5:5, h6:6, h7:7, h8:8, h9:9} in
-//let r1 = { f(a()) -> f(b()) } in 
-//let otd = mu y.(r1<+one(y)) in
-//mu x .((otd;x) <+ identity)
+// let S=signature {a:0, b:0, f:1} in
+// let r1 = { b() -> f(b()) } in 
+// let otd = mu y.(r1<+one(y)) in
+// mu x .((otd;x) <+ identity)
 
 
 // let S=signature {a:0, b:0, c:0, f:1, g:2} in
@@ -80,14 +81,37 @@
 // mu y.(r1;r2;y)
 
 
-// let S=signature {a:0, b:0, c:0, f:2, g:1} in
+let S=signature {a:0, b:0, c:0, f:2, g:1} in
 // let r1 = { a() -> c() } in
-// let r2 = { f(x,g(y)) -> x } in
+let r2 = { f(x,g(x)) -> x } in
 // r1 <+ r2
-// r2
+r2
 
 
 // Example for rules that shouldn't be added
 // let S=signature {a:0, b:0,f:1,g:2} in
 // let r1 = { g(f(a()),x) -> f(b()) } in
 // r1
+
+
+// let S=signature {times:2, plus:2} in
+// let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
+// let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)a) } in
+// let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
+// let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
+// // let innermostD = mu x.(all(x);(((r1<+r2);x)<+identity)) in
+// // let innermostF = mu x.(all(x);(((r3<+r4);x)<+identity)) in
+// // innermostD ; innermostF
+// let innermost = mu x.(all(x);(((r1<+r3);x)<+identity)) in
+// innermost
+
+
+
+// let S=signature {a:0, b:0, c:0} in
+// let r1 = { a() -> b() } in
+// let r2 = { b() -> a() } in
+// let r = r1 <+ r2
+// // let innermost = mu x.(all(x);((r;x)<+identity)) in
+// // innermost
+// let obu = mu y.(one(y)<+r) in
+// mu x .((obu;x) <+ identity)
