@@ -705,55 +705,54 @@ public class Compiler {
     visit Term {
       Anti(t) -> {
         Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
-        if(level==0){
-            String z = getName("Z");
-            Term newt = tools.encode(z);
-            if(Main.options.generic) {
-              newt = tools.metaEncodeConsNil(newt);
-            }
-            Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-            bag.add(newr);
-        } else {
           %match(antiterm) { 
             Appl(name,args)  -> {
-              Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
-              // add g(Z1,...) ... h(Z1,...)
-              for(String otherName:signature.keySet()) {
-                if(!`name.equals(otherName)) {
-                  int arity = signature.get(otherName);
-                  Term newt = tools.encode(genAbstractTerm(otherName,arity));
+              if(`name.compareTo("Bottom")!=0 && level==0){ // if maximum level and not a Bottom
+                String z = getName("Z");
+                Term newt = tools.encode(z);
+                if(Main.options.generic) {
+                  newt = tools.metaEncodeConsNil(newt);
+                }
+                Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                bag.add(newr);
+              } else {
+                Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
+                // add g(Z1,...) ... h(Z1,...)
+                for(String otherName:signature.keySet()) {
+                  if(!`name.equals(otherName)) {
+                    int arity = signature.get(otherName);
+                    Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                    if(Main.options.generic) {
+                      newt = tools.metaEncodeConsNil(newt);
+                    }
+                    Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                    bag.add(newr);
+                  }
+                }
+              
+                // add f(!a1,...) ... f(a1,...,!an)
+                sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
+                int arity = tl.length();
+                Term[] array = new Term[arity];
+                Term[] tarray = new Term[arity];
+                tarray = tl.toArray(tarray);
+                String z = getName("Z");
+                for(int i=0 ; i<arity ; i++) {
+                  array[i] = tools.encode(z+"_"+i);
+                }
+                for(int i=0 ; i<arity ; i++) {
+                  array[i] = `Anti(tarray[i]);
+                  Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+                  array[i] = tools.encode(z+"_"+i);
                   if(Main.options.generic) {
                     newt = tools.metaEncodeConsNil(newt);
                   }
                   Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+              
                   bag.add(newr);
-                }
+                }              
               }
-              
-              // add f(!a1,...) ... f(a1,...,!an)
-              sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
-              int arity = tl.length();
-              Term[] array = new Term[arity];
-              Term[] tarray = new Term[arity];
-              tarray = tl.toArray(tarray);
-              String z = getName("Z");
-              for(int i=0 ; i<arity ; i++) {
-                array[i] = tools.encode(z+"_"+i);
-              }
-              for(int i=0 ; i<arity ; i++) {
-                array[i] = `Anti(tarray[i]);
-              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
-              array[i] = tools.encode(z+"_"+i);
-              if(Main.options.generic) {
-                newt = tools.metaEncodeConsNil(newt);
-              }
-              Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
-              
-              bag.add(newr);
-              }
-              
             }
-          }
         }
       }
     }
