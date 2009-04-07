@@ -148,6 +148,12 @@ if(slotList.length()>0) {
 
 if (maximalsharing) {
 writer.write(%[
+  /**
+   * Initializes attributes and hashcode of the class
+   * 
+   * @@param @childListOnePerLine(slotList)@
+   * @@param hashCode hashCode of @className()@
+   */
   private void init(@childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @int hashCode) {
 ]%);
 generateMembersInit(writer);
@@ -155,22 +161,38 @@ writer.write(%[
     this.hashCode = hashCode;
   }
 
+  /**
+   * Initializes attributes and hashcode of the class
+   * 
+   * @@param @childListOnePerLine(slotList)@
+   */
   private void initHashCode(@childListWithType(slotList)@) {
 ]%);
 generateMembersInit(writer);
 writer.write(%[
-  this.hashCode = hashFunction();
+    this.hashCode = hashFunction();
   }
 ]%);
 }
 
 writer.write(%[
   /* name and arity */
+
+  /** 
+   * Returns the name of the symbol
+   * 
+   * @@return the name of the symbol
+   */
   @@Override
   public String symbolName() {
     return "@className()@";
   }
 
+  /** 
+   * Returns the arity of the symbol
+   * 
+   * @@return the arity of the symbol
+   */
   private int getArity() {
     return @slotList.length()@;
   }
@@ -178,6 +200,12 @@ writer.write(%[
 
 
 if (maximalsharing) {
+  writer.write(%[
+  /** 
+   * Copy the object and returns the copy
+   * 
+   * @@return a clone of the SharedObject
+   */]%);
 if(multithread) {
   writer.write(%[
   public shared.SharedObject duplicate() {
@@ -200,11 +228,22 @@ if(multithread) {
     // case: constant
 writer.write(%[
   /* name and arity */
+  
+  /** 
+   * Returns the name of the symbol
+   * 
+   * @@return the name of the symbol
+   */
   @@Override
   public String symbolName() {
     return "@className()@";
   }
 
+  /** 
+   * Returns the arity of the symbol
+   * 
+   * @@return arity of the symbol 
+   */
   private static int getArity() {
     return 0;
   }
@@ -213,6 +252,11 @@ writer.write(%[
 
 if (maximalsharing) {
 writer.write(%[
+  /** 
+   * Copy the object and returns the copy
+   * 
+   * @@return a clone of the SharedObject
+   */
   public shared.SharedObject duplicate() {
     // the proto is a constant object: no need to clone it
     return this;
@@ -228,6 +272,11 @@ writer.write(%[
    */
   if (sortName == extendsType) {
 writer.write(%[
+  /**
+   * Appends a string representation of this term to the buffer given as argument.
+   *
+   * @@param buffer the buffer to which a string represention of this term is appended.
+   */
   @@Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
@@ -240,8 +289,14 @@ writer.write(%[
 writer.write(%[
 
   /**
-    * This method implements a lexicographic order
-    */
+   * Compares two terms. This functions implements a total lexicographic path ordering.
+   * 
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareToLPO(Object o) {
     /*
@@ -265,6 +320,15 @@ writer.write(%[
 
 if (maximalsharing) {
 writer.write(%[
+ /**
+   * Compares two terms. This functions implements a total order.
+   *
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareTo(Object o) {
     /*
@@ -291,11 +355,22 @@ writer.write(%[
   }
 
  //shared.SharedObject
+  /** 
+   * Returns hashCode
+   * 
+   * @@return hashCode
+   */
   @@Override
   public final int hashCode() {
     return hashCode;
   }
 
+  /** 
+   * Checks if a SharedObject is equivalent to the current object
+   * 
+   * @@param obj SharedObject to test
+   * @@return true if obj is a @className()@ and its members are equal, else false
+   */
   public final boolean equivalent(shared.SharedObject obj) {
     if(obj instanceof @className()@) {
 @generateMembersEqualityTest("peer")@
@@ -307,11 +382,25 @@ writer.write(%[
 } else {
   //XXX: compareTo must be correctly implemented
 writer.write(%[
+  /**
+   * Compares two terms. This functions implements a total order.
+   *
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareTo(Object o) {
     throw new UnsupportedOperationException("Unable to compare"); 
   }
 
+  /** 
+   * Clones the object
+   * 
+   * @@return the copy
+   */
   @@Override
   public Object clone() {
 ]%);
@@ -349,6 +438,12 @@ writer.write(");\n}");
 }
 
 writer.write(%[
+  /** 
+   * Checks if an object is strictly equal to the current object
+   * 
+   * @@param o object to compare
+   * @@return true if each member is equal, else false
+   */
   @@Override
   public final boolean deepEquals(Object o) {
     if (o instanceof @className()@) {
@@ -399,6 +494,11 @@ writer.write(%[
 
 writer.write(%[
    //@className(sortName)@ interface
+  /** 
+   * Checks if it is an operator
+   *
+   * @@return true
+   */
   @@Override
   public boolean @isOperatorMethod(className)@() {
     return true;
@@ -409,6 +509,11 @@ generateGetters(writer);
 
     writer.write(%[
   /* AbstractType */
+  /** 
+   * Returns an ATerm representation of this term.
+   * 
+   * @@return an ATerm representation of this term.
+   */
   @@Override
   public aterm.ATerm toATerm() {
     aterm.ATerm res = super.toATerm();
@@ -433,22 +538,43 @@ generateGetters(writer);
     }
     return null;
   }
-
 ]%);
 
     writer.write(%[
   /* Visitable */
+  /** 
+   * Returns the number of childs of the term
+   * 
+   * @@return the number of childs of the term
+   */
   public int getChildCount() {
     return @visitableCount()@;
   }
 
+  /** 
+   * Returns the child at the specified index
+   * 
+   * @@param index index of the child to return; must be
+             nonnegative and less than the childCount
+   * @@return the child at the specified index
+   * @@throws IndexOutOfBoundsException if the index out of range
+   */
   public tom.library.sl.Visitable getChildAt(int index) {
     switch(index) {
 @getCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
-
+  
+  /** 
+   * Set the child at the specified index
+   * 
+   * @@param index index of the child to set; must be 
+             nonnegative and less than the childCount
+   * @@param v child to set at the specified index
+   * @@return the child which was just set
+   * @@throws IndexOutOfBoundsException if the index out of range
+   */
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
     switch(index) {
 @makeCases("v")@
@@ -456,6 +582,13 @@ generateGetters(writer);
     }
   }
 
+  /** 
+   * Set children to the term
+   * 
+   * @@param childs array of children to set
+   * @@return an array of children which just were set
+   * @@throws IndexOutOfBoundsException if length of "childs" is different than @slotList.length()@
+   */
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
     if (childs.length == @slotList.length()@) {
       return @arrayMake("childs")@;
@@ -464,6 +597,11 @@ generateGetters(writer);
     }
   }
 
+  /** 
+   * Returns the whole children of the term
+   * 
+   * @@return the children of the term
+   */
   public tom.library.sl.Visitable[] getChildren() {
     return new tom.library.sl.Visitable[] { @visitableList(slotList)@ };
   }
@@ -533,17 +671,29 @@ writer.write(%[
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
       writer.write(%[
+  /** 
+   * Returns the attribute @slotDomain(head)@
+   * 
+   * @@return the attribute @slotDomain(head)@
+   */
   @@Override
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getName())@;
   }
-  ]%);
+  
+  /**
+   * Sets and returns the attribute @fullClassName(sortName)@
+   * 
+   * @@param set_arg the argument to set
+   * @@return the attribute @slotDomain(head)@ which just has been set
+   */]%);
       if (maximalsharing) {
       writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
-  }]%);
+  }
+  ]%);
       } else {
       writer.write(%[
   @@Override
@@ -588,6 +738,18 @@ writer.write(%[
   private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
+
+  /** 
+   * This method is used to generate a part of comments of init method
+   * 
+   * @param slots fields of the class being generated
+   * @return a String composed of one line per field
+   */
+  private String childListOnePerLine(SlotFieldList slots) {
+    String str = childList(slots);
+    return str.replaceAll(", ", "\n   * @param");
+  }
+
 
   private String childListWithType(SlotFieldList slots) {
     StringBuilder res = new StringBuilder();

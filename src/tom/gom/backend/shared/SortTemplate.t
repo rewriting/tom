@@ -128,23 +128,55 @@ writer.write(%[
     writer.write(%[
   public static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
 
+  /** 
+   * Returns an ATerm representation of this term.
+   * 
+   * @@return null to indicate to sub-classes that they have to work
+   */
   public aterm.ATerm toATerm() {
-    // returns null to indicates sub-classes that they have to work
+    // returns null to indicate sub-classes that they have to work
     return null;
   }
 
+  /** 
+   * Returns a @fullClassName()@ from an ATerm without any conversion
+   * 
+   * @@param trm ATerm to handle to retrieve a Gom term
+   * @@return the term from the ATerm
+   */
   public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
     return fromTerm(trm,idConv);
   }
 
+  /** 
+   * Returns a @fullClassName()@ from a String without any conversion
+   * 
+   * @@param s String containing the ATerm
+   * @@return the term from the String
+   */
   public static @fullClassName()@ fromString(String s) {
     return fromTerm(atermFactory.parse(s),idConv);
   }
 
+  /** 
+   * Returns a @fullClassName()@ from a Stream without any conversion
+   * 
+   * @@param stream stream containing the ATerm
+   * @@return the term from the Stream
+   * @@throws java.io.IOException if a problem occurs with the stream
+   */
   public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
     return fromTerm(atermFactory.readFromFile(stream),idConv);
   }
 
+  /** 
+   * Apply a conversion on the ATerm and returns a @fullClassName()@
+   * 
+   * @@param trm ATerm to convert into a Gom element
+   * @@param atConv ATermConverter used to convert the ATerm
+   * @@return the Gom term 
+   * @@throws IllegalArgumentException
+   */
   public static @fullClassName()@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     aterm.ATerm convertedTerm = atConv.convert(trm);
     @fullClassName()@ tmp;
@@ -173,10 +205,24 @@ writer.write(%[
     }
   }
 
+  /** 
+   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName()@ from it
+   * 
+   * @@param s String containing the ATerm
+   * @@param atConv ATerm Converter used to convert the ATerm
+   * @@return the  Gom term
+   */
   public static @fullClassName()@ fromString(String s, tom.library.utils.ATermConverter atConv) {
     return fromTerm(atermFactory.parse(s),atConv);
   }
 
+  /** 
+   * Apply a conversion on the ATerm contained in the Stream and returns a @fullClassName()@ from it
+   * 
+   * @@param s String containing the ATerm
+   * @@param atConv ATerm Converter used to convert the ATerm
+   * @@return the Gom term
+   */
   public static @fullClassName()@ fromStream(java.io.InputStream stream, tom.library.utils.ATermConverter atConv) throws java.io.IOException {
     return fromTerm(atermFactory.readFromFile(stream),atConv);
   }
@@ -187,17 +233,35 @@ writer.write(%[
     /* used in the mapping */
     if(!maximalsharing) {
       writer.write(%[
+  /** 
+   * Abstract method to compare two terms represented by objects without maximal sharing
+   * 
+   * @@param o Object used to compare
+   * @@return true if the two objects are equal
+   */
   public abstract boolean deepEquals(Object o);
 ]%);
     } 
 
     /* length and reverse prototypes, only usable on lists */
     writer.write(%[
+  /** 
+   * Returns the length of the list
+   * 
+   * @@return the length of the list
+   * @@throws IllegalArgumentException if the term is not a list
+   */
   public int length() {
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
   }
 
+  /** 
+   * Returns an inverted term
+   * 
+   * @@return the inverted list
+   * @@throws IllegalArgumentException if the term is not a list
+   */
   public @fullClassName()@ reverse() {
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
