@@ -559,6 +559,7 @@ public class Compiler {
     try {
       `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
       generatedRules.remove(rule); // remove the rule since it will be expanded
+      //       System.out.println("RULE: "+`rule);
       Collection<Rule> bag = new HashSet<Rule>();
       // perform one-step expansion
       `TopDown(ExpandAntiPattern(bag,rule,extractedSignature)).visit(rule);
@@ -676,6 +677,7 @@ public class Compiler {
             for(int i=0 ; i<arity ; i++) {
               array[i] = `Anti(tarray[i]);
               Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+              //               System.out.println("NEWT:"+`newt);
               array[i] = tools.encode(z+"_"+i);
               if(Main.options.generic) {
                 newt = tools.metaEncodeConsNil(newt);
@@ -688,6 +690,109 @@ public class Compiler {
           }
         }
       }
+    }
+  }
+
+
+  /*
+   * Perform one-step expansion
+   *
+   * @param bag the resulted set of rules
+   * @param rule the rule to expand
+   * @param extractedSignature the signature
+   */
+  %strategy ExpandAntiPatternWithLevel(bag:Collection,subject:Rule,extractedSignature:Map,level:int) extends Identity() {
+    visit Term {
+      Anti(t) -> {
+        Term antiterm = (Main.options.generic)?tools.decodeConsNil(`t):`t;
+        if(level==0){
+            String z = getName("Z");
+            Term newt = tools.encode(z);
+            if(Main.options.generic) {
+              newt = tools.metaEncodeConsNil(newt);
+            }
+            Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+            bag.add(newr);
+        } else {
+          %match(antiterm) { 
+            Appl(name,args)  -> {
+              Map<String,Integer> signature = (Map<String,Integer>)extractedSignature;
+              // add g(Z1,...) ... h(Z1,...)
+              for(String otherName:signature.keySet()) {
+                if(!`name.equals(otherName)) {
+                  int arity = signature.get(otherName);
+                  Term newt = tools.encode(genAbstractTerm(otherName,arity));
+                  if(Main.options.generic) {
+                    newt = tools.metaEncodeConsNil(newt);
+                  }
+                  Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+                  bag.add(newr);
+                }
+              }
+              
+              // add f(!a1,...) ... f(a1,...,!an)
+              sa.rule.types.termlist.TermList tl = (sa.rule.types.termlist.TermList) `args;
+              int arity = tl.length();
+              Term[] array = new Term[arity];
+              Term[] tarray = new Term[arity];
+              tarray = tl.toArray(tarray);
+              String z = getName("Z");
+              for(int i=0 ; i<arity ; i++) {
+                array[i] = tools.encode(z+"_"+i);
+              }
+              for(int i=0 ; i<arity ; i++) {
+                array[i] = `Anti(tarray[i]);
+              Term newt = `Appl(name,sa.rule.types.termlist.TermList.fromArray(array));
+              array[i] = tools.encode(z+"_"+i);
+              if(Main.options.generic) {
+                newt = tools.metaEncodeConsNil(newt);
+              }
+              Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
+              
+              bag.add(newr);
+              }
+              
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public static void expandAntiPatternWithLevel(Collection<Rule> generatedRules, Rule rule, Map<String,Integer> extractedSignature, int level) {
+    try {
+      `OnceBottomUp(ContainsAntiPattern()).visitLight(rule); // check if the rule contains an anti-pattern (exception otherwise)
+      generatedRules.remove(rule); // remove the rule since it will be expanded
+      //       System.out.println("RULE: "+`rule);
+      Collection<Rule> bag = new HashSet<Rule>();
+      // perform one-step expansion
+      `TopDown(ExpandAntiPatternWithLevel(bag,rule,extractedSignature,level)).visit(rule);
+
+      /*
+       * add rules from bag into generatedRules only if
+       * they do not overlap with previous rules (from generatedRules)
+       * 
+       * In fact, more complicated: we should do unification and generate new rules 
+       * if they unify
+       * Example: a->c, f(a,x)->c
+       * -- we generate for !a->c the rule f(x,y)->BOTTOM but we should generate f(!a,x)->BOTTOM
+       */
+      for(Rule expandr:bag) {
+        boolean toAdd = true;
+        for(Rule r:generatedRules) {
+          toAdd &= (!matchModuloAt(r.getlhs(), expandr.getlhs())); 
+        }
+        if(toAdd) {
+          //System.out.println("YES");
+          expandAntiPatternWithLevel(generatedRules,expandr,extractedSignature,level-1);
+        } else {
+          // do not add expandr
+          //System.out.println("NO");
+        }
+      }
+    } catch(VisitFailure e) {
+      // add the rule since it contains no more anti-pattern
+      generatedRules.add(rule);
     }
   }
 

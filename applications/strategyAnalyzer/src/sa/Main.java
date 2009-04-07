@@ -42,6 +42,7 @@ public class Main {
     System.out.println("classname: " + options.classname);
     System.out.println("out: " + options.out);
     System.out.println("in: " + options.in);
+    System.out.println("level: " + options.level);
 
     System.out.println("other arguments are:");
     for( String s : options.arguments ) {
@@ -76,7 +77,8 @@ public class Main {
       if(options.withAP == false) {
          for(Rule r:new HashSet<Rule>(generatedRules)) { 
            // add new rules to generatedRules (for each anti-pattern)
-          Compiler.expandAntiPattern(generatedRules,r,extractedSignature);
+//           Compiler.expandAntiPattern(generatedRules,r,extractedSignature);
+           Compiler.expandAntiPatternWithLevel(generatedRules,r,extractedSignature,options.level);
          }
       }
       

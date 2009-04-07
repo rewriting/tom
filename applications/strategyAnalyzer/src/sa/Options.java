@@ -33,6 +33,9 @@ public class Options {
   @Option(name="-i",usage="input this file",metaVar="INPUT")
     public File in = null;
 
+  @Option(name="-l",usage="anti-pattern level",metaVar="LEVEL")
+    public int level = 100;
+
   // receives other command line parameters than options
   @Argument
     public List<String> arguments = new ArrayList<String>();
