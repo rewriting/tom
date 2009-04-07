@@ -520,7 +520,11 @@ public class Compiler {
     }
   }
 
-  // transforms a set of rule that contains x@t into a set of rules without @ 
+  /**
+    * transforms a set of rule that contains x@t into a set of rules without @ 
+    * @param bag the set of rules to expand
+    * @return a new set that contains the expanded rules
+    */
   public static Collection<Rule> expandAt(Collection<Rule> bag) throws VisitFailure {
     Collection<Rule> res = new HashSet<Rule>();
     for(Rule rule:bag) {

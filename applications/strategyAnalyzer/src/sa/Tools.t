@@ -15,9 +15,9 @@ public class Tools {
   %include { java/util/types/Set.tom }
 
   /**
-   * encode: transform a string "f(a,X)" into its Term representation
+   * encode: transforms a string "f(a,X)" into its Term representation
    * e.g. `Appl("f",TermList(Appl("a",TermList()),Var("X")))
-   * variables are in capitel letters
+   * variables are in capital letters
    * anti-pattern are introduced by anti(t)
    * alias are introduced by at(t1,t2)
    * rules are introduced by rule(lhs,rhs)

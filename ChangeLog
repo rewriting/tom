@@ -1,3 +1,7 @@
+2009-04-07 pem
+ * gom generates a new method "getCollection<OpName>" which can fail if the
+   object is not a list
+
 2009-03-23 jcb
  * ATerms produced by external tools can be used in Gom by creating a
    converter and using it as a second parameter of fromTerm method

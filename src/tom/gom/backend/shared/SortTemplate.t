@@ -82,8 +82,6 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
-//import @getPackage()@.@className().toLowerCase()@.*;
-//import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
 
@@ -128,7 +126,6 @@ writer.write(%[
 
     /* fromTerm method, dispatching to operator classes */
     writer.write(%[
-
   public static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
 
   public aterm.ATerm toATerm() {
@@ -205,68 +202,32 @@ writer.write(%[
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
   }
-
-  /**
-   * Collection
-   */
-  /*
-  public boolean add(Object o) {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public boolean addAll(java.util.Collection c) {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public void clear() {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public boolean containsAll(java.util.Collection c) {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-
-  public boolean contains(Object o) {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-
-  public boolean equals(Object o) { return this == o; }
-
-  public int hashCode() { return hashCode(); }
-
-  public boolean isEmpty() { return false; }
-
-  public java.util.Iterator iterator() {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-
-  public boolean remove(Object o) {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public boolean removeAll(java.util.Collection c) {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public boolean retainAll(java.util.Collection c) {
-    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
-  }
-
-  public int size() { return length(); }
-
-  public Object[] toArray() {
-    throw new IllegalArgumentException(
-      "This "+this.getClass().getName()+" is not a list");
-  }
-
-  public Object[] toArray(Object[] a) {
-    throw new UnsupportedOperationException("Not yet implemented");
-  }
-  */
   ]%);
+
+    /*
+     * generate a getCollection<OpName>() method for all variadic operators
+     */
+    ClassNameList varopList = variadicOperatorList;
+    while (!varopList.isEmptyConcClassName()) {
+      ClassName operatorName = varopList.getHeadConcClassName();
+      varopList = varopList.getTailConcClassName();
+
+      String varopName = operatorName.getName();
+      SlotFieldList tmpsl = slotList;
+      while (!tmpsl.isEmptyConcSlotField()) {
+        SlotField slot = tmpsl.getHeadConcSlotField();
+        tmpsl = tmpsl.getTailConcSlotField();
+        if(slot.getName().equals("Head" + varopName)) {
+          String domainClassName = fullClassName(slot.getDomain());
+          writer.write(%[
+  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection@varopName@() {
+    throw new UnsupportedOperationException("This @className()@ cannot be converted into a Collection");
+  }
+          ]%);
+        }
+      }
+    }
+
   /*
     // methods for each variadic operator
     consum = variadicOperatorList;
