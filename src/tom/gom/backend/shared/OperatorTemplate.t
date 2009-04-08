@@ -526,6 +526,13 @@ generateGetters(writer);
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
+  /** 
+   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
+   * 
+   * @@param trm ATerm to convert into a Gom term
+   * @@param atConv ATerm Converter used to convert the ATerm
+   * @@return the Gom term
+   */
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {

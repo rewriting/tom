@@ -172,7 +172,7 @@ writer.write(%[
   /** 
    * Apply a conversion on the ATerm and returns a @fullClassName()@
    * 
-   * @@param trm ATerm to convert into a Gom element
+   * @@param trm ATerm to convert into a Gom term
    * @@param atConv ATermConverter used to convert the ATerm
    * @@return the Gom term 
    * @@throws IllegalArgumentException
@@ -210,7 +210,7 @@ writer.write(%[
    * 
    * @@param s String containing the ATerm
    * @@param atConv ATerm Converter used to convert the ATerm
-   * @@return the  Gom term
+   * @@return the Gom term
    */
   public static @fullClassName()@ fromString(String s, tom.library.utils.ATermConverter atConv) {
     return fromTerm(atermFactory.parse(s),atConv);

@@ -97,6 +97,11 @@ writer.write(%[
     String domainClassName = fullClassName(
         cons.getSlotFields().getHeadConcSlotField().getDomain());
     writer.write(%[
+  /** 
+   * Returns the number of arguments of the variadic operator
+   * 
+   * @@return the number of arguments of the variadic operator
+   */
   @@Override
   public int length() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
@@ -119,6 +124,11 @@ writer.write(%[
     return res;
   }
 
+  /** 
+   * Inverses the term if it is a list
+   * 
+   * @@return the inverted term if it is a list, otherwise the term itself
+   */
   @@Override
   public @fullClassName(sortName)@ reverse() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
@@ -143,6 +153,12 @@ writer.write(%[
     }
   }
 
+  /** 
+   * Appends an element
+   * 
+   * @@param element element which has to be added
+   * @@return the term with the added element
+   */
   public @fullClassName(sortName)@ append(@domainClassName@ element) {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = this.getTail@className()@();
@@ -166,6 +182,11 @@ writer.write(%[
     }
   }
 
+  /**
+   * Appends a string representation of this term to the buffer given as argument.
+   *
+   * @@param buffer the buffer to which a string represention of this term is appended.
+   */
   @@Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
@@ -187,6 +208,11 @@ writer.write(%[
     buffer.append(")");
   }
 
+  /** 
+   * Returns an ATerm representation of this term.
+   * 
+   * @@return an ATerm representation of this term.
+   */
   public aterm.ATerm toATerm() {
     aterm.ATerm res = atermFactory.makeList();
     if(this instanceof @fullClassName(cons.getClassName())@) {
@@ -196,6 +222,13 @@ writer.write(%[
     return res;
   }
 
+  /** 
+   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
+   * 
+   * @@param trm ATerm to convert into a Gom term
+   * @@param atConv ATerm Converter used to convert the ATerm
+   * @@return the Gom term
+   */
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
     trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
@@ -232,7 +265,10 @@ writer.write(%[
   }
 
   /*
-   * methods from Collection
+   * Checks if the Collection contains all elements of the parameter Collection
+   * 
+   * @@param c the Collection of elements to check
+   * @@return true if the Collection contains all elements of the parameter, otherwise false
    */
   public boolean containsAll(java.util.Collection c) {
     java.util.Iterator it = c.iterator();
@@ -244,6 +280,12 @@ writer.write(%[
     return true;
   }
 
+  /** 
+   * Checks if @fullClassName(sortName)@ contains a specified object
+   * 
+   * @@param o object whose presence is tested
+   * @@return true if @fullClassName(sortName)@ contains the object, otherwise false
+   */
   public boolean contains(Object o) {
     @fullClassName(sortName)@ cur = this;
     if(o==null) { return false; }
@@ -259,7 +301,6 @@ writer.write(%[
           return true;
         }
       }
-
     }
     return false;
   }
@@ -268,6 +309,11 @@ writer.write(%[
 
   //public int hashCode() { return hashCode(); }
 
+  /** 
+   * Checks the emptiness
+   * 
+   * @@return true if empty, otherwise false
+   */
   public boolean isEmpty() { return isEmpty@className()@() ; }
 
   public java.util.Iterator<@primitiveToReferenceType(domainClassName)@> iterator() {
@@ -306,7 +352,6 @@ writer.write(%[
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
 
-
   public boolean addAll(java.util.Collection<? extends @primitiveToReferenceType(domainClassName)@> c) {
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
@@ -327,8 +372,18 @@ writer.write(%[
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
 
+  /** 
+   * Returns the size of the collection
+   * 
+   * @@return the size of the collection
+   */
   public int size() { return length(); }
 
+  /** 
+   * Returns an array containing the elements of the collection 
+   * 
+   * @@return an array of elements
+   */
   public Object[] toArray() {
     int size = this.length();
     Object[] array = new Object[size];
@@ -409,36 +464,80 @@ writer.write(%[
     return modified;
   }
 
+  /** 
+   * Checks if the collection contains an element
+   * 
+   * @@param o element whose presence has to be checked
+   * @@return true if the element is found, otherwise false
+   */
   public boolean contains(Object o) {
     return get@className(sortName)@().contains(o);
   }
 
+  /** 
+   * Checks if the collection contains elements given as parameter
+   * 
+   * @@param c elements whose presence has to be checked
+   * @@return true all the elements are found, otherwise false
+   */
   public boolean containsAll(java.util.Collection<?> c) {
     return get@className(sortName)@().containsAll(c);
   }
 
+  /** 
+   * Checks if an object is equal
+   * 
+   * @@param o object which is compared
+   * @@return true if objects are equal, false otherwise
+   */
   @@Override
   public boolean equals(Object o) { 
     return get@className(sortName)@().equals(o); 
   }
 
+  /** 
+   * Returns the hashCode
+   * 
+   * @@return the hashCode
+   */
   @@Override
   public int hashCode() {
     return get@className(sortName)@().hashCode(); 
   }
 
+  /** 
+   * Returns an iterator over the elements in the collection
+   *
+   * @@return an iterator over the elements in the collection
+   */
   public java.util.Iterator<@primitiveToReferenceType(domainClassName)@> iterator() {
     return get@className(sortName)@().iterator();
   }
 
+  /** 
+   * Return the size of the collection
+   *
+   * @@return the size of the collection
+   */
   public int size() { 
     return get@className(sortName)@().size(); 
   }
 
+  /** 
+   * Returns an array containing all of the elements in this collection.
+   * 
+   * @@return an array of elements
+   */
   public Object[] toArray() {
     return get@className(sortName)@().toArray();
   }
 
+  /** 
+   * Returns an array containing all of the elements in this collection.
+   * 
+   * @@param array array which will contain the result
+   * @@return an array of elements
+   */
   public <T> T[] toArray(T[] array) {
     return get@className(sortName)@().toArray(array);
   }
@@ -462,15 +561,29 @@ writer.write(%[
      * Collection
      */
 
+    /** 
+     * Adds an element to the collection
+     *
+     * @@param o element to add to the collection
+     * @@return true if it is a success
+     */
     public boolean add(@primitiveToReferenceType(domainClassName)@ o) {
       list = (@className()@)@fullClassName(cons.getClassName())@.make(o,list);
       return true;
     }
 
+    /** 
+     * Removes all of the elements from this collection
+     */
     public void clear() {
       list = (@className()@)@fullClassName(empty.getClassName())@.make();
     }
 
+    /** 
+     * Tests the emptiness of the collection
+     * 
+     * @@return true if the collection is empty
+     */
     public boolean isEmpty() { 
       return list.isEmpty@className()@(); 
     }
