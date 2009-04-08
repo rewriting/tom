@@ -84,6 +84,7 @@ package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
+  private @className()@() {}
 
 @generateBlock()@
 ]%);
@@ -101,6 +102,11 @@ writer.write(%[
       consum = consum.getTailConcClassName();
 
       writer.write(%[
+  /**
+   * Returns true if the term is rooted by the symbol @operatorName.getName()@
+   *
+   * @@return true if the term is rooted by the symbol @operatorName.getName()@
+   */
   public boolean @isOperatorMethod(operatorName)@() {
     return false;
   }
@@ -113,10 +119,23 @@ writer.write(%[
       sl = sl.getTailConcSlotField();
 
       writer.write(%[
+  /**
+   * Returns the subterm corresponding to the slot @slot.getName()@
+   *
+   * @@return the subterm corresponding to the slot @slot.getName()@
+   */
   public @slotDomain(slot)@ @getMethod(slot)@() {
     throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
 
+  /**
+   * Returns a new term where the subterm corresponding to the slot @slot.getName()@
+   * is replaced by the term given in argument.
+   * Note that there is no side-effect: a new term is returned and the original term is left unchanged
+   *
+   * @@param _arg the value of the new subterm
+   * @@return a new term where the subterm corresponding to the slot @slot.getName()@ is replaced by _arg
+   */
   public @className()@ @setMethod(slot)@(@slotDomain(slot)@ _arg) {
     throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
@@ -126,7 +145,7 @@ writer.write(%[
 
     /* fromTerm method, dispatching to operator classes */
     writer.write(%[
-  public static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
+  protected static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
 
   /** 
    * Returns an ATerm representation of this term.
@@ -284,6 +303,12 @@ writer.write(%[
         if(slot.getName().equals("Head" + varopName)) {
           String domainClassName = fullClassName(slot.getDomain());
           writer.write(%[
+  /** 
+   * Returns a Collection extracted from the term
+   * 
+   * @@return the collection
+   * @@throws UnsupportedOperationException if the term is not a list
+   */
   public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection@varopName@() {
     throw new UnsupportedOperationException("This @className()@ cannot be converted into a Collection");
   }
