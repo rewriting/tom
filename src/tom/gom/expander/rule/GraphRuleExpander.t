@@ -281,7 +281,7 @@ static class Subst extends @fullClassName(abstractType)@ {
       `OnceTopDown(GetVarPos(list,varname)).visit(term);
       return list.get(0);
     } catch (VisitFailure e) {
-      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+      throw RuntimeException("Unexpected strategy failure!");
       }
   }
 
