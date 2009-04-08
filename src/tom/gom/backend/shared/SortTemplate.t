@@ -84,6 +84,10 @@ package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
+  /**
+   * Sole constructor.  (For invocation by subclass 
+   * constructors, typically implicit.)
+   */
   protected @className()@() {}
 
 @generateBlock()@
@@ -238,7 +242,7 @@ writer.write(%[
   /** 
    * Apply a conversion on the ATerm contained in the Stream and returns a @fullClassName()@ from it
    * 
-   * @@param s String containing the ATerm
+   * @@param stream stream containing the ATerm
    * @@param atConv ATerm Converter used to convert the ATerm
    * @@return the Gom term
    */

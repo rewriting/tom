@@ -87,6 +87,10 @@ package @getPackage()@;
     writer.write(
 %[
 public abstract class @className()@ implements @implementsInterface@ @generateInterface()@ {
+  /**
+   * Sole constructor.  (For invocation by subclass 
+   * constructors, typically implicit.)
+   */
   protected @className()@() {}
 ]%);
 

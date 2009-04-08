@@ -140,7 +140,11 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
-    /* static constructor */
+    /**
+     * Constructor that builds a term rooted by @className()@
+     *
+     * @@return a term rooted by @className()@
+     */
 ]%);
 generateConstructor(writer);
 
@@ -495,9 +499,9 @@ writer.write(%[
 writer.write(%[
    //@className(sortName)@ interface
   /** 
-   * Checks if it is an operator
+   * Returns true if the term is rooted by the symbol @className.getName()@
    *
-   * @@return true
+   * @@return true, because this is rooted by @className.getName()@
    */
   @@Override
   public boolean @isOperatorMethod(className)@() {
@@ -616,7 +620,12 @@ generateGetters(writer);
 
 if (maximalsharing) {
     writer.write(%[
-    /* internal use */
+    /**
+     * Compute a hashcode for this term.  
+     * (for internal use)
+     *
+     * @@return a hash value
+     */
   protected@((slotList.length()==0)?" static":"")@ int hashFunction() {
     int a, b, c;
     /* Set up the internal state */
