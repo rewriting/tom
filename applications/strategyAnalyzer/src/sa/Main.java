@@ -116,7 +116,7 @@ public class Main {
 
   private static  class MyRuleComparator implements Comparator<Rule> {
     public int compare(Rule r1, Rule r2) {
-      return r1.getlhs().toString().compareTo(r2.getlhs().toString());
+      return r2.getlhs().toString().compareTo(r1.getlhs().toString());
     }
   }
 }

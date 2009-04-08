@@ -762,8 +762,8 @@ public class Compiler {
                 boolean nonlinear = false;
                 HashSet<String> nonlinVars = new HashSet<String>();
                 HashSet<String> allVars = new HashSet<String>();
-                HashSet<String> listVars = new HashSet<String>();
                 for(Term elem:`args.getCollectionTermList()){
+                  HashSet<String> listVars = new HashSet<String>();
                   `TopDown(CollectVars(listVars)).visitLight(elem);
                   for(String var:listVars){
                     for(String occ:allVars){
