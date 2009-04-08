@@ -78,17 +78,18 @@ package @getPackage()@;
   */
 ]%);
 
+    String implementsInterface;
     if(maximalsharing) {
-      writer.write(
-%[
-public abstract class @className()@ implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable @generateInterface()@ {
-]%);
+      implementsInterface = "shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable";
     } else {
-      writer.write(
-%[
-public abstract class @className()@ implements tom.library.sl.Visitable, Cloneable, Comparable @generateInterface()@ {
-]%);
+      implementsInterface = "tom.library.sl.Visitable, Cloneable, Comparable";
     }
+    writer.write(
+%[
+public abstract class @className()@ implements @implementsInterface@ @generateInterface()@ {
+  private @className()@() {}
+]%);
+
     if(hooks.containsTomCode()) {
       mapping.generate(writer); 
     }
@@ -159,6 +160,13 @@ writer.write(
     */
   public abstract int compareToLPO(Object o);
 
+  /**
+    * Converts an ATerm into a string
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a string
+    */
   protected static String convertATermToString(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermAppl) {
@@ -171,6 +179,13 @@ writer.write(
     throw new RuntimeException("Not a String : " + at);
   }
 
+  /**
+    * Converts an ATerm into an int
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return an int
+    */
   protected static int convertATermToInt(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermInt) {
@@ -180,6 +195,13 @@ writer.write(
     throw new RuntimeException("Not an Int : " + at);
   }
 
+  /**
+    * Converts an ATerm into a float
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a float
+    */
   protected static float convertATermToFloat(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermReal) {
@@ -189,6 +211,13 @@ writer.write(
     throw new RuntimeException("Not a Float : " + at);
   }
 
+  /**
+    * Converts an ATerm into a double
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a double
+    */
   protected static double convertATermToDouble(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermReal) {
@@ -198,6 +227,13 @@ writer.write(
     throw new RuntimeException("Not a Double : " + at);
   }
 
+  /**
+    * Converts an ATerm into a long
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a long
+    */
   protected static long convertATermToLong(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermLong) {
@@ -207,6 +243,13 @@ writer.write(
     throw new RuntimeException("Not a Long : " + at);
   }
 
+  /**
+    * Converts an ATerm into a boolean
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a boolean
+    */
   protected static boolean convertATermToBoolean(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermInt) {
@@ -217,6 +260,13 @@ writer.write(
     throw new RuntimeException("Not a Boolean : " + at);
   }
 
+  /**
+    * Converts an ATerm into a char
+    *
+    * @@param at ATerm to convert
+    * @@param atConv converter applied to the ATerm before coersion
+    * @@return a char
+    */
   protected static char convertATermToChar(aterm.ATerm at, tom.library.utils.ATermConverter atConv) {
     at = atConv.convert(at);
     if(at instanceof aterm.ATermInt) {
