@@ -281,7 +281,7 @@ static class Subst extends @fullClassName(abstractType)@ {
       `OnceTopDown(GetVarPos(list,varname)).visit(term);
       return list.get(0);
     } catch (VisitFailure e) {
-      throw RuntimeException("Unexpected strategy failure!");
+      throw new RuntimeException("Unexpected strategy failure!");
       }
   }
 
