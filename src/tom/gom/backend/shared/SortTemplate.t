@@ -84,7 +84,7 @@ package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
-  private @className()@() {}
+  protected @className()@() {}
 
 @generateBlock()@
 ]%);

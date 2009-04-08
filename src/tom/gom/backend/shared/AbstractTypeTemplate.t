@@ -87,7 +87,7 @@ package @getPackage()@;
     writer.write(
 %[
 public abstract class @className()@ implements @implementsInterface@ @generateInterface()@ {
-  private @className()@() {}
+  protected @className()@() {}
 ]%);
 
     if(hooks.containsTomCode()) {
