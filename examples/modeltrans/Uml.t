@@ -106,7 +106,7 @@ public class Uml {
             ModelElement("employee", Empty(), AssociationEnd(Mult("0"), Mult("infinity"), ModelElement("Person", Empty(), Class(List()))))
             )));
     try {
-      tom.library.utils.Viewer.toDot(`AssociationClass2TernaryAssociation().visitLight(example).expand());
+      tom.library.utils.Viewer.display(`AssociationClass2TernaryAssociation().visitLight(example).expand());
       //System.out.println(`AssociationClass2TernaryAssociation().visitLight(example).expand());
     } catch(tom.library.sl.VisitFailure e) {
       System.out.println("Unexpected strategy failure!");

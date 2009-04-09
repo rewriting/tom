@@ -33,12 +33,12 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <path id="strategy.path"> <!-- ugly hack to find the jar -->
+    <path id="runtime.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="**/sl*.jar"/>
+        <include name="**/tom-runtime*.jar"/>
       </fileset>
     </path>
-    <property name="sl.jar" refid="strategy.path"/>
+    <property name="tom-runtime.jar" refid="runtime.path"/>
     <jar jarfile="${examples.build}/${example}/example.jar">
       <fileset dir="${examples.build}">
         <include name="${example}/**/*.class"/>
