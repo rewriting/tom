@@ -1,0 +1,51 @@
+Chain INPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED
+ACCEPT     all  --  localhost            anywhere            state NEW
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-transit state NEW
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-reassembly state NEW
+ACCEPT     icmp --  anywhere             anywhere            icmp type 0 code 0 state NEW
+ACCEPT     icmp --  anywhere             anywhere            icmp destination-unreachable state NEW
+ACCEPT     icmp --  anywhere             anywhere            icmp type 8 code 0 state NEW
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:ssh state NEW
+RULE_4     all  --  anywhere             anywhere            state NEW
+
+Chain FORWARD (policy DROP)
+target     prot opt source               destination
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED
+ACCEPT     all  --  localhost            anywhere            state NEW
+RULE_4     all  --  anywhere             anywhere            state NEW
+
+Chain OUTPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED
+ACCEPT     all  --  localhost            anywhere            state NEW
+ACCEPT     all  --  anywhere             anywhere            state NEW
+RULE_4     all  --  anywhere             anywhere            state NEW
+
+Chain Cid49A6CE6915841.0 (0 references)
+target     prot opt source               destination
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-transit
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-reassembly
+ACCEPT     icmp --  anywhere             anywhere            icmp type 0 code 0
+ACCEPT     icmp --  anywhere             anywhere            icmp destination-unreachable
+ACCEPT     icmp --  anywhere             anywhere            icmp type 8 code 0
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:ssh
+
+Chain In_RULE_0 (0 references)
+target     prot opt source               destination
+LOG        all  --  anywhere             anywhere            LOG level info prefix `RULE 0 -- DENY '
+DROP       all  --  anywhere             anywhere
+
+Chain RULE_4 (3 references)
+target     prot opt source               destination
+LOG        all  --  anywhere             anywhere            LOG level info prefix `RULE 4 -- DENY '
+DROP       all  --  anywhere             anywhere
+
+Chain PREROUTING (policy ACCEPT)
+target prot opt source   destination
+DNAT   tcp  --  anywhere xxx.xxx.xxx.xxxtcp dpt:ddi-tcp-1 to:192.168.0.2:80
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination
+MASQUERADE  all  --  192.168.0.0/16       anywhere
