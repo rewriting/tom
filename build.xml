@@ -578,14 +578,8 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/runtime/sl.jar" update="yes">
-      <fileset dir="${stable.build}" includes="tom/library/sl/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.dist.lib}/runtime/tom-library.jar"
-      update="yes">
-      <fileset dir="${stable.build}"
-        includes="tom/library/**/*.class"
-        excludes="tom/library/sl/**/*.class"/>
+    <jar jarfile="${stable.dist.lib}/runtime/tom-runtime.jar" update="yes">
+      <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
       update="yes">
@@ -715,10 +709,7 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/runtime/sl-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/sl/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/runtime/tom-library-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/runtime/tom-runtime.jar">
       <fileset dir="${src.build}"
         includes="tom/library/**/*.class"
         excludes="tom/library/**/adt/**/*.class"/>
@@ -1513,8 +1504,7 @@
       <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/tom-library-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/sl-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
     </findbugs>
   </target>
 
