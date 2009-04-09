@@ -641,6 +641,13 @@
         <exclude name="bin/*"/>
       </tarfileset>
     </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${dist}/tom-runtime-full-${stable.version}.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+
   </target>
 
   <target name="src.dist"
@@ -791,6 +798,13 @@
         <exclude name="bin/*"/>
       </tarfileset>
     </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${dist}/tom-src-runtime-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+
   </target>
 
   <target name="dist.all"

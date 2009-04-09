@@ -1,3 +1,9 @@
+2009-04-09 pem
+ * renamed tom-library.jar into tom-runtime.jar
+ * removed sl.jar (add classes into tom-runtime.jar)
+ * generate a tom-runtime-full.jar library which contains everything from
+   lib/runtime/*.jar and lib/tools/*.jar
+
 2009-04-07 pem
  * gom generates a new method "getCollection<OpName>" which can fail if the
    object is not a list
