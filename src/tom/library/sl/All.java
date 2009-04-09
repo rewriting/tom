@@ -56,6 +56,11 @@ public class All extends AbstractStrategy {
 
   /** 
    *  Visits the subject any without managing any environment
+   *
+   *  @param any the subject to visit
+   *  @param m the introspector
+   *  @return a Visitable
+   *  @throws VisitFailure if visitLight fails
    */ 
   public final <T> T visitLight(T any, Introspector m) throws VisitFailure {
     Object[] childs = null;
@@ -82,6 +87,9 @@ public class All extends AbstractStrategy {
    *  Visits the current subject (found in the environment)
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
+   *
+   *  @param m the introspector
+   *  @return 0 if success
    */
   public int visit(Introspector m) {
     environment.setIntrospector(m);

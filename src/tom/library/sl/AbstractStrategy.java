@@ -39,49 +39,117 @@ package tom.library.sl;
 public abstract class AbstractStrategy implements Strategy {
   protected Strategy[] visitors;
   protected Environment environment;
-
+  
   protected void initSubterm() {
     visitors = new Strategy[] {};
   }
+
+  /** 
+   * Initializes subterm by using and adding one Strategy
+   *
+   * @param v1 first Strategy to add to the array
+   */
   protected void initSubterm(Strategy v1) {
     visitors = new Strategy[] {v1};
   }
+  
+  /** 
+   * Initializes subterm by using and adding two Strategy
+   *
+   * @param v1 first Strategy to add to the array
+   * @param v2 second Strategy to add to the array
+   */
   protected void initSubterm(Strategy v1, Strategy v2) {
     visitors = new Strategy[] {v1,v2};
   }
+ 
+  /** 
+   * Initializes subterm by using abd adding three Strategy
+   *
+   * @param v1 first Strategy to add to the array
+   * @param v2 second Strategy to add to the array
+   * @param v3 third Strategy to add to the array
+   */
   protected void initSubterm(Strategy v1, Strategy v2, Strategy v3) {
     visitors = new Strategy[] {v1,v2,v3};
   }
+ 
+  /** 
+   * Initializes subterm by using an array of Strategy
+   *
+   * @param v 
+   */
   protected void initSubterm(Strategy[] v) {
     visitors = v;
   }
 
+  /** 
+   * Returns visitors
+   *
+   * @return an array of Strategy
+   */
   public Strategy[] getVisitors() {
     return visitors;
   }
 
+  /** 
+   * Returns the Strategy at the specified position in visitors
+   *
+   * @param i index of the Strategy to return
+   * @return the Strategy at the specified position in visitors
+   */
   public Strategy getVisitor(int i) {
     return visitors[i];
   }
 
   //visitable
+  /** 
+   * Returns the length of visitors
+   *
+   * @return the length of visitors
+   */
   public int getChildCount() {
     return visitors.length;
   }
 
+  /** 
+   * Returns the Visitable at the specified position in visitors
+   *
+   * @param i index of the Visitable to return
+   * @return the Visitable at the specified position in visitors
+   */
   public Visitable getChildAt(int i) {
     return visitors[i];
   }
 
+  /** 
+   * Returns the list of (non builtin) Visitable children
+   *
+   * @return an array of Visitable
+   */
   public Visitable[] getChildren() {
     return (Visitable[]) visitors.clone();
   }
 
+  /** 
+   * Replaces a child at the specified position
+   *
+   * @param i index of Visitable to set
+   * @param child Visitable so set at the specified position
+   * @return an array of Visitable
+   */
   public Visitable setChildAt(int i, Visitable child) {
     visitors[i] = (Strategy) child;
     return this;
   }
 
+  /** 
+   * Replaces all children of any visitable at once, and returns this
+   * visitable.
+   *
+   * @param children array of Visitable
+   * @return this Visitable
+   */
   public Visitable setChildren(Visitable[] children) {
     Strategy[] newVisitors = new Strategy[children.length];
     for(int i = 0; i < children.length; i++) {
@@ -91,14 +159,38 @@ public abstract class AbstractStrategy implements Strategy {
     return this;
   }
 
+  /** 
+   * Executes the strategy in the given environment (on its current subject).
+     This method can only be used inside user strategies to execute another strategy but with the current environment of the user strategy.
+   *
+   * @param envt the environment where execute the strategy. 
+   * @return a Visitable
+   * @throws VisitFailure if visit fails
+   */
   public Visitable visit(Environment envt) throws VisitFailure {
     return (Visitable) visit(envt,VisitableIntrospector.getInstance());
   }
 
+  /** 
+   * Visits the subject any by providing the environment 
+   *
+   * @param any the subject to visit. 
+   * @return a Visitable
+   * @throws VisitFailure if visit fails
+   */
   public <T extends Visitable> T visit(T any) throws VisitFailure{
     return visit(any,VisitableIntrospector.getInstance());
   }
 
+  /** 
+   * Executes the strategy in the given environment (on its current subject).
+     This method can only be used inside user strategies to execute another strategy but with the current environment of the user strategy.  
+   *
+   * @param envt the environment where execute the strategy.
+   * @param m the introspector
+   * @return 
+   * @throws VisitFailure if visit fails
+   */
   public Object visit(Environment envt, Introspector m) throws VisitFailure {
     AbstractStrategy.init(this,envt);
     int status = visit(m);
@@ -109,11 +201,25 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
+  /** 
+   * Visits the subject any in a light way (without environment)  
+   *
+   * @param any the subject to visit
+   * @return a Visitable
+   * @throws VisitFailure if visitLight fails
+   */
   public <T extends Visitable> T visitLight(T any) throws VisitFailure {
     return visitLight(any,VisitableIntrospector.getInstance());
   }
 
-
+  /** 
+   * Visits the subject any by providing the introspector 
+   *
+   * @param any the subject to visit. 
+   * @param m the introspector
+   * @return
+   * @throws VisitFailure if visit fails
+   */
   public <T> T visit(T any, Introspector m) throws VisitFailure{
     init();
     setRoot(any);
@@ -125,6 +231,12 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
+  /** 
+   * Gets a reference to the current environment.
+   *
+   * @return the current environment
+   * @throws RuntimeException if the environment is not initialized
+   */
   public Environment getEnvironment() {
     if(environment!=null) {
       return environment;
@@ -133,30 +245,64 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
+  /** 
+   * Sets up a new environment.
+   *
+   * @param the environment to set up.
+   */
   public void setEnvironment(Environment env) {
     this.environment = env;
   }
 
+  /** 
+   * Gets the current root.
+   *
+   * @return the current root
+   */
   public Object getRoot() {
     return environment.getRoot();
   }
 
+  /** 
+   * Sets up the current root.
+   *
+   * @param any the current root
+   */
   public void setRoot(Object any) {
     environment.setRoot(any);
   }
 
+  /** 
+   * Gets the current subject
+   *
+   * @return the current subject
+   */
   public Object getSubject() {
     return environment.getSubject();
   }
 
+  /** 
+   * Sets up the current subject
+   *
+   * @param any the subject to set up
+   */
   public void setSubject(Object any) {
     environment.setSubject(any);
   }
 
+  /** 
+   * Initializes the Strategy
+   */
   public void init() {
     init(this,new Environment());
   }
 
+  /** 
+   * Initializes the Strategy by providing the environment and the strategy
+   *
+   * @param s the strategy
+   * @param env the environment
+   */
   public static void init(Strategy s, Environment env) {
     /* to avoid infinite loop during initialization
      * TODO: use static typing
