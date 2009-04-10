@@ -48,6 +48,8 @@ import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
 
 public class TomCSharpGenerator extends TomCFamilyGenerator {
+  
+  protected String stratmodifier = "";
 
   public TomCSharpGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
@@ -55,13 +57,14 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     /* Even if this field is not used here, we /must/ initialize it correctly,
      * as it is used by ImperativeGenerator */
     if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
-      this.modifier += "protected " ;
+      this.stratmodifier += "protected " ;
     } else {
-      this.modifier += "private " ;
+      this.stratmodifier += "private " ;
     }
 
     if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
       this.modifier += "static " ;
+      this.stratmodifier += "static " ;
     }
   }
 
@@ -127,7 +130,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 	    tomTypes = tomTypes.getTailconcTomType();
 	    index++;
     }
-    output.write(deep, /*modifier +*/ "class " + tomName);
+    output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
 			TomTypeAlone(code) -> {
