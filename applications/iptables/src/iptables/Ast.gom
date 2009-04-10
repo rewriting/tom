@@ -2,14 +2,23 @@ module iptables.Ast
 imports String int
 abstract syntax
 
-  Rules = rules(Rule*)
+	Rules = rules(Rule*)
 
-  Rule = rule(action:Action,
-              source:Address,
-              destination:Address)
+	Rule = rule(
+			action:Action,
+			srcAddr:Address,
+			destAddr:Address,
+			srcPort:Port,
+			destPort:Port)
 
-  Action = Accept()
-         | Drop()
-       
-  Address = Addr(ip:String)
+	Action =
+		Accept()
+		| Drop()
 
+	Address =
+		Addr(ip:int,smask:int)
+		| AddrAny()
+
+	Port =
+		Port(number:int)
+		| PortAny()
