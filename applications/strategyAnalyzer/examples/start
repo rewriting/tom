@@ -81,11 +81,11 @@
 // mu y.(r1;r2;y)
 
 
-let S=signature {a:0, b:0, c:0, f:2, g:1} in
+// let S=signature {a:0, b:0, c:0, f:2, g:1} in
 // let r1 = { a() -> c() } in
-let r2 = { f(x,f(x,y)) -> x } in
+// let r2 = { f(x,f(x,y)) -> x } in
 // r1 <+ r2
-r2
+// r2
 // f(a(),f(a(),b()))
 
 
@@ -95,16 +95,27 @@ r2
 // r1
 
 
-// let S=signature {times:2, plus:2} in
-// let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
-// let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)a) } in
-// let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
-// let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
-// // let innermostD = mu x.(all(x);(((r1<+r2);x)<+identity)) in
-// // let innermostF = mu x.(all(x);(((r3<+r4);x)<+identity)) in
-// // innermostD ; innermostF
-// let innermost = mu x.(all(x);(((r1<+r3);x)<+identity)) in
+let S=signature {times:2, plus:2, zero:0, suc:1} in
+let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
+let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
+let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
+let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
+let r12 =  r1 <+ r2 in
+let r34 =  r3 <+ r4 in
+// let innermostD = mu x.(all(x);((r12;x)<+identity)) in
+// let innermostF = mu x.(all(x);((r34;x)<+identity)) in
+// innermostD ; innermostF
+// let r = r1 <+ r3 in
+// let innermost = mu x.(all(x);((r;x)<+identity)) in
 // innermost
+let obu12 = mu y.(one(y)<+r1) in
+let rep12 = mu x .((obu12;x) <+ identity) in
+let obu34 = mu y.(one(y)<+r3) in
+let rep34 = mu x .((obu34;x) <+ identity) in
+rep12; rep34
+// let obu = mu y.(one(y)<+r) in
+// mu x .((obu;x) <+ identity)
+
 
 
 
@@ -116,3 +127,17 @@ r2
 // // innermost
 // let obu = mu y.(one(y)<+r) in
 // mu x .((obu;x) <+ identity)
+
+// let S=signature {f:1, g:1, a:0} in
+// let r1 = { f(x) -> g(x) } in
+// let r2 = { g(x) -> f(x) } in
+// // let r = r1 <+ r2 in
+// // let innermost = mu x.(all(x);((r;x)<+identity)) in
+// // innermost
+// let obu1 = mu y.(one(y)<+r1) in
+// let rep1 = mu x .((obu1;x) <+ identity) in
+// let obu2 = mu y.(one(y)<+r2) in
+// let rep2 = mu x .((obu2;x) <+ identity) in
+// rep1; rep2
+// // let obu = mu y.(one(y)<+r) in
+// // mu x .((obu;x) <+ identity)

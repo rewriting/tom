@@ -779,7 +779,11 @@ public class Compiler {
                   for(String v:nonlinVars){
                     lint = `TopDown(ReplaceWithFreshVar(v)).visitLight(lint);
                   }
-                  Rule newr = (Rule) getEnvironment().getPosition().getReplace(lint).visit(subject);
+                  Term newt = lint;
+//                   if(Main.options.generic) {
+//                     newt = tools.metaEncodeConsNil(newt);
+//                   }
+                  Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
               
                   bag.add(newr);
                 }
@@ -854,5 +858,6 @@ public class Compiler {
     }
   }
 
+  
 
 }
