@@ -429,7 +429,8 @@ public class Compiler {
         generatedSignature.put(one_2,1);
         String one_3 = one+"_3";
         generatedSignature.put(one_3,2);
-        String clean = getName("clean");
+        //         String clean = getName("clean");
+        String clean = "clean";
         generatedSignature.put(clean,2); 
         // one
         bag.add(tools.encodeRule(%[rule(@one@(Appl(Z0,Z1)), @one_1@(Appl(Z0,@one_2@(Z1))))]%));
