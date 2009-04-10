@@ -122,16 +122,21 @@
 // repeat(oncebu(r3)) could be proven (NG)
 // repeat(oncebu(r1)) ; repeat(oncebu(r3)) could not be shown (NG)
 // repeat(oncebu(r1)) ; identity could be proven (G)
+// innermost1 ; innermost3  could be proven (G)
 
 let S=signature {times:2, plus:2, zero:0, suc:1} in
 let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
 // let r1 = { plus(x,y) -> times(x,y) } in
 let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
-let obu12 = mu y.(one(y)<+r1) in
-let rep12 = mu x .((obu12;x) <+ identity) in
-let obu34 = mu y.(one(y)<+r3) in
-let rep34 = mu x .((obu34;x) <+ identity) in
-rep12 <+ rep34
+// let obu12 = mu y.(one(y)<+r1) in
+// let rep12 = mu x .((obu12;x) <+ identity) in
+let innermost1 = mu x.(all(x);((r1;x)<+identity)) in
+// let obu34 = mu y.(one(y)<+r3) in
+// let rep34 = mu x .((obu34;x) <+ identity) in
+let innermost3 = mu x.(all(x);((r3;x)<+identity)) in
+// rep12 <+ rep34
+// innermost1 <+ innermost3
+innermost1 ; innermost3
 // rep12 ; identity
 
 

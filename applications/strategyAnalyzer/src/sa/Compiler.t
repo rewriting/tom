@@ -397,7 +397,8 @@ public class Compiler {
         generatedSignature.put(all_2,1);
         String all_3 = all+"_3";
         generatedSignature.put(all_3,3);
-        String concat = getName("concat");
+        //         String concat = getName("concat");
+        String concat = "concat";
         generatedSignature.put(concat,2); 
  
         // all
