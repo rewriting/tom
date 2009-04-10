@@ -780,9 +780,9 @@ public class Compiler {
                     lint = `TopDown(ReplaceWithFreshVar(v)).visitLight(lint);
                   }
                   Term newt = lint;
-//                   if(Main.options.generic) {
-//                     newt = tools.metaEncodeConsNil(newt);
-//                   }
+                  if(Main.options.generic) {
+                    newt = tools.metaEncodeConsNil(newt);
+                  }
                   Rule newr = (Rule) getEnvironment().getPosition().getReplace(newt).visit(subject);
               
                   bag.add(newr);

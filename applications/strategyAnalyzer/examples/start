@@ -95,26 +95,45 @@
 // r1
 
 
+// let S=signature {times:2, plus:2, zero:0, suc:1} in
+// let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
+// let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
+// let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
+// let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
+// let r12 =  r1 <+ r2 in
+// let r34 =  r3 <+ r4 in
+// // let innermostD = mu x.(all(x);((r12;x)<+identity)) in
+// // let innermostF = mu x.(all(x);((r34;x)<+identity)) in
+// // innermostD ; innermostF
+// // let r = r1 <+ r3 in
+// // let innermost = mu x.(all(x);((r;x)<+identity)) in
+// // innermost
+// let obu12 = mu y.(one(y)<+r1) in
+// let rep12 = mu x .((obu12;x) <+ identity) in
+// let obu34 = mu y.(one(y)<+r3) in
+// let rep34 = mu x .((obu34;x) <+ identity) in
+// rep12; rep34
+// // let obu = mu y.(one(y)<+r) in
+// // mu x .((obu;x) <+ identity)
+
+
+
+// repeat(oncebu(r1)) could be proven (NG)
+// repeat(oncebu(r3)) could be proven (NG)
+// repeat(oncebu(r1)) ; repeat(oncebu(r3)) could not be shown (NG)
+// repeat(oncebu(r1)) ; identity could be proven (G)
+
 let S=signature {times:2, plus:2, zero:0, suc:1} in
 let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
-let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
+// let r1 = { plus(x,y) -> times(x,y) } in
 let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
-let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
-let r12 =  r1 <+ r2 in
-let r34 =  r3 <+ r4 in
-// let innermostD = mu x.(all(x);((r12;x)<+identity)) in
-// let innermostF = mu x.(all(x);((r34;x)<+identity)) in
-// innermostD ; innermostF
-// let r = r1 <+ r3 in
-// let innermost = mu x.(all(x);((r;x)<+identity)) in
-// innermost
 let obu12 = mu y.(one(y)<+r1) in
 let rep12 = mu x .((obu12;x) <+ identity) in
 let obu34 = mu y.(one(y)<+r3) in
 let rep34 = mu x .((obu34;x) <+ identity) in
-rep12; rep34
-// let obu = mu y.(one(y)<+r) in
-// mu x .((obu;x) <+ identity)
+rep12 <+ rep34
+// rep12 ; identity
+
 
 
 
