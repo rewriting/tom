@@ -1380,12 +1380,14 @@
       <fileset dir="${src.src}">
         <include name="tom/library/sl/**/*.java"/>
         <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/library/sl/**/*.java"/>
         <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>

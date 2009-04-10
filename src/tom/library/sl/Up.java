@@ -30,7 +30,6 @@
  **/
 package tom.library.sl;
 
-
 public class Up extends AbstractStrategy {
   public final static int ARG = 0;
 
@@ -39,16 +38,23 @@ public class Up extends AbstractStrategy {
   }
 
   /** 
-   *  Visits the subject any without managing any environment
+   * Visits the subject any without managing any environment
+   *
+   * @param any the subject to visit
+   * @param m the introspector
+   * @throws VisitFailure in case of failrue
    */ 
   public final <T> T visitLight(T any, Introspector m) throws VisitFailure {
     throw new RuntimeException("The Strategy Up cannot be used with visitLight");
   }
 
   /**
-   *  Visits the current subject (found in the environment)
-   *  and place its result in the environment.
-   *  Sets the environment flag to Environment.FAILURE in case of failure
+   * Visits the current subject (found in the environment)
+   * and place its result in the environment.
+   * Sets the environment flag to Environment.FAILURE in case of failure
+   *
+   * @param m the introspector
+   * @return 0 if success
    */
   public int visit(Introspector m) {
     //succeeds if it is the root

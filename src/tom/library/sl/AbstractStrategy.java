@@ -39,7 +39,10 @@ package tom.library.sl;
 public abstract class AbstractStrategy implements Strategy {
   protected Strategy[] visitors;
   protected Environment environment;
-  
+ 
+  /** 
+   * Initializes subterm
+   */
   protected void initSubterm() {
     visitors = new Strategy[] {};
   }
@@ -77,7 +80,7 @@ public abstract class AbstractStrategy implements Strategy {
   /** 
    * Initializes subterm by using an array of Strategy
    *
-   * @param v 
+   * @param v array used to initialize the subterm
    */
   protected void initSubterm(Strategy[] v) {
     visitors = v;
@@ -86,7 +89,7 @@ public abstract class AbstractStrategy implements Strategy {
   /** 
    * Returns visitors
    *
-   * @return an array of Strategy
+   * @return visitors
    */
   public Strategy[] getVisitors() {
     return visitors;
@@ -164,7 +167,6 @@ public abstract class AbstractStrategy implements Strategy {
      This method can only be used inside user strategies to execute another strategy but with the current environment of the user strategy.
    *
    * @param envt the environment where execute the strategy. 
-   * @return a Visitable
    * @throws VisitFailure if visit fails
    */
   public Visitable visit(Environment envt) throws VisitFailure {
@@ -175,7 +177,6 @@ public abstract class AbstractStrategy implements Strategy {
    * Visits the subject any by providing the environment 
    *
    * @param any the subject to visit. 
-   * @return a Visitable
    * @throws VisitFailure if visit fails
    */
   public <T extends Visitable> T visit(T any) throws VisitFailure{
@@ -188,7 +189,6 @@ public abstract class AbstractStrategy implements Strategy {
    *
    * @param envt the environment where execute the strategy.
    * @param m the introspector
-   * @return 
    * @throws VisitFailure if visit fails
    */
   public Object visit(Environment envt, Introspector m) throws VisitFailure {
@@ -205,7 +205,6 @@ public abstract class AbstractStrategy implements Strategy {
    * Visits the subject any in a light way (without environment)  
    *
    * @param any the subject to visit
-   * @return a Visitable
    * @throws VisitFailure if visitLight fails
    */
   public <T extends Visitable> T visitLight(T any) throws VisitFailure {
@@ -217,7 +216,6 @@ public abstract class AbstractStrategy implements Strategy {
    *
    * @param any the subject to visit. 
    * @param m the introspector
-   * @return
    * @throws VisitFailure if visit fails
    */
   public <T> T visit(T any, Introspector m) throws VisitFailure{
@@ -232,7 +230,7 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Gets a reference to the current environment.
+   * Get a reference to the current environment.
    *
    * @return the current environment
    * @throws RuntimeException if the environment is not initialized
@@ -246,16 +244,16 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Sets up a new environment.
+   * Set up a new environment.
    *
-   * @param the environment to set up.
+   * @param env the environment to set up.
    */
   public void setEnvironment(Environment env) {
     this.environment = env;
   }
 
   /** 
-   * Gets the current root.
+   * Get the current root.
    *
    * @return the current root
    */
@@ -264,7 +262,7 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Sets up the current root.
+   * Set up the current root.
    *
    * @param any the current root
    */
@@ -273,7 +271,7 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Gets the current subject
+   * Get the current subject
    *
    * @return the current subject
    */
@@ -282,7 +280,7 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Sets up the current subject
+   * Set up the current subject
    *
    * @param any the subject to set up
    */
@@ -291,14 +289,14 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /** 
-   * Initializes the Strategy
+   * Initialize the Strategy
    */
   public void init() {
     init(this,new Environment());
   }
 
   /** 
-   * Initializes the Strategy by providing the environment and the strategy
+   * Initialize the Strategy by providing the environment and the strategy
    *
    * @param s the strategy
    * @param env the environment

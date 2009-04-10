@@ -28,10 +28,20 @@ package tom.library.utils;
 import aterm.ATerm;
 import tom.library.utils.ATermConverter;
 
-/* This class does nothing : no treatment arer done in its methods */
+/** 
+ * This class does nothing : no treatment arer done in its methods.
+ * It is used by default import method in Gom, when no conversion is needed.
+ */
 
 public class IdConverter implements ATermConverter {
   
+  /** 
+   * Method triggered when using the default import method in Gom.
+   * It is the Identity, this method does not modify the ATerm 
+   *
+   * @param at the ATerm whicj is currently processed
+   * @return the processed ATerm without any modification
+   */
   public ATerm convert(ATerm at) {
     return at;
   }

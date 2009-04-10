@@ -44,6 +44,13 @@ public class Viewer {
   %include { ../mapping/java/aterm.tom }
 
   /* -------- dot part --------- */
+  /** 
+   * Give a dot representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toDot(tom.library.sl.Visitable v, Writer w) 
     throws java.io.IOException {
       if ( v instanceof tom.library.sl.Strategy ) {
@@ -68,7 +75,13 @@ public class Viewer {
       }
     }
 
-  public static void toDot(tom.library.sl.Visitable v) {
+ /** 
+  * Give a dot representation of a visitable term on the standard output stream
+  * 
+  * @param v the visitable term to visualize
+  * @throws RuntimeException in case of visit failure
+  */
+ public static void toDot(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
       toDot(v,w);
@@ -81,6 +94,12 @@ public class Viewer {
     implement {Writer}
   }
 
+  /** 
+   * Return a term node from a specified position
+   * 
+   * @param p position of the node to return
+   * @return a string representation of the node at the specified position
+   */
   private static String getNodeFromPos(Position p) {
     int[] omega = p.toIntArray();
     StringBuilder r = new StringBuilder("p");
@@ -103,10 +122,22 @@ public class Viewer {
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     } 
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       try {
@@ -139,6 +170,11 @@ public class Viewer {
     }
   }
 
+  /** 
+   * Give a GUI display to visualize a visitable term
+   * 
+   * @param vv the visitable term to visualize
+   */
   public static void display(Visitable vv) {
     final Visitable v = vv;
     JFrame.setDefaultLookAndFeelDecorated(true);
@@ -169,6 +205,12 @@ public class Viewer {
   }
 
   /* -------- pstree-like part --------- */
+  /** 
+   * Give a pstree-like representation of a visitable term on the standard output stream
+   * 
+   * @param v the visitable term to visualize
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
@@ -178,7 +220,13 @@ public class Viewer {
     } catch(java.io.IOException e) {}
   }
 
-
+  /** 
+   * Give a pstree-like representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
       aterm.ATermFactory atermFactory = new PureFactory();
@@ -197,6 +245,14 @@ public class Viewer {
       }
     }
 
+  /** 
+   * Return a tree representation of an ATerm, by providing a writer, a context and depth
+   * 
+   * @param term the ATerm to represent as a tree
+   * @param w the writer
+   * @param context the context
+   * @param deep the depth
+   */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
       %match(term) {
@@ -247,6 +303,12 @@ public class Viewer {
   /* -------- strategy part --------- */
   private static int counter = 0;  
 
+  /** 
+   * Replaces characters '.' '$' and '@' by '_' in a string
+   * 
+   * @param s the string to process
+   * @return a string where '.' '$' and '@' by '_' have been replaced
+   */
   static private String clean(String s) {
     s = s.replace('.','_');
     s = s.replace('$','_');
@@ -278,10 +340,22 @@ public class Viewer {
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     }
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
