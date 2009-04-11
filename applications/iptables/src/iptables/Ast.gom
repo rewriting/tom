@@ -6,6 +6,9 @@ abstract syntax
 
 	Rule = rule(
 			action:Action,
+			iface:Interface,
+			proto:Protocol,
+			target:Target,
 			srcAddr:Address,
 			destAddr:Address,
 			srcPort:Port,
@@ -14,6 +17,22 @@ abstract syntax
 	Action =
 		Accept()
 		| Drop()
+
+	Interface = Iface(name:String)
+
+	Protocol =
+		TCP()
+		| UDP()
+		| IPv4()
+		| IPv6()
+		| ICMP()
+		| ARP()
+		| RIP()
+		| Ethernet()
+
+	Target =
+		In()
+		| Out()
 
 	Address =
 		Addr(ip:int,smask:int)

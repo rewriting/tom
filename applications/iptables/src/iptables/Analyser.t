@@ -14,9 +14,9 @@ public class Analyser {
 		%match(rs) {
 			rules(
 				_*,
-				r1@rule(action1,srcaddr1,dstaddr1,srcport,dstport),
+				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport),
 				_*,
-				r2@rule(action2,srcaddr2,dstaddr2,srcport,dstport),
+				r2@rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport),
 				_*
 			) -> {
 				/* looking for equivalence in the rules */
@@ -73,8 +73,8 @@ public class Analyser {
 	*/
 	public static int compareTo(Rule r1, Rule r2) {
 		%match(r1,r2) {
-			rule(action,srcaddr1,dstaddr1,srcport,dstport),
-			rule(action,srcaddr2,dstaddr2,srcport,dstport) -> {
+			rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport),
+			rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport) -> {
 				int i1 = compareTo(`srcaddr1,`srcaddr2),
 					i2 = compareTo(`dstaddr1,`dstaddr2);
 				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
@@ -122,6 +122,9 @@ public class Analyser {
 	public static void main(String[] args) {
 		Rule r1 = `rule(
 			Accept(),
+			Iface("eth0"),
+			TCP(),
+			In(),
 			AddrAny(),
 			Addr((16+256+4096+65536),0xff000000),
 			PortAny(),
@@ -129,6 +132,9 @@ public class Analyser {
 		);
 		Rule r2 = `rule(
 			Drop(),
+			Iface("eth0"),
+			TCP(),
+			In(),
 			AddrAny(),
 			Addr((16+256+4096+65536),0xff000000),
 			PortAny(),
@@ -136,6 +142,9 @@ public class Analyser {
 		);
 		Rule r3 = `rule(
 			Accept(),
+			Iface("eth0"),
+			TCP(),
+			In(),
 			AddrAny(),
 			Addr((4096+65536),0xffff0000),
 			PortAny(),
