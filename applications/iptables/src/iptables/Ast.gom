@@ -6,7 +6,7 @@ abstract syntax
 
 	Rule = rule(
 			action:Action,
-			iface:Interface,
+			iface:Iface,
 			proto:Protocol,
 			target:Target,
 			srcAddr:Address,
@@ -18,7 +18,7 @@ abstract syntax
 		Accept()
 		| Drop()
 
-	Interface = Iface(name:String)
+	Iface = Iface(name:String)
 
 	Protocol =
 		TCP()

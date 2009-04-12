@@ -5,10 +5,10 @@ import tom.library.sl.*;
 import java.util.*;
 
 public class Analyser {
-	public static final int NOT_COMPARABLE = -2;
-
 	%include {iptables/ast/Ast.tom}
 	%include {sl.tom}
+
+	public static final int NOT_COMPARABLE = -2;
 
 	public static Rules checkIntegrity(Rules rs) {
 		%match(rs) {
@@ -24,7 +24,7 @@ public class Analyser {
 					if (`action1 == `action2)
 						System.out.println("doubloon: " + `r1);
 					else
-						System.out.println("conflicting rules:" + `r1 + " / " + `r2);
+						System.out.println("conflicting rules:" + `r1 + "\t/\t" + `r2);
 					/* >>> TODO: need to remove r1 or r2 from rs */
 				}
 			}
@@ -154,28 +154,27 @@ public class Analyser {
 		Rules rs = 	`rules(r1,r2,r3);
 
 		/* printing tests */
-		System.out.println("#printing test: " +rs);
+		System.out.println("\n#printing test: " +rs);
 
 		/* isEquivAddress tests */
 		Address a1,a2;
 		a1 = `Addr(256,0xffffff00);
 		a2 = `Addr(312,0xffffff00);
-		System.out.println("# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
 
 		/* checkIntegrity tests */
 
-		System.out.println("# checkIntegrity test: doubloon");
+		System.out.println("\n# checkIntegrity test: doubloon");
 		checkIntegrity(`rules(r1,r1));
-		System.out.println("# checkIntegrity test: conflict");
+		System.out.println("\n# checkIntegrity test: conflict");
 		checkIntegrity(`rules(r1,r2));
-		System.out.println("# checkIntegrity test: nothing wrong");
+		System.out.println("\n# checkIntegrity test: nothing wrong");
 		checkIntegrity(`rules(r1,r3));
-		System.out.println("# checkIntegrity test: doubloon & conflict");
+		System.out.println("\n# checkIntegrity test: doubloon & conflict");
 		checkIntegrity(`rules(r1,r2,r3,r1));
 
 		/* checkOptimization tests */
-		System.out.println("# checkOptimization test");
+		System.out.println("\n# checkOptimization test");
 		checkOptimization(rs);
-		
 	}
 }
