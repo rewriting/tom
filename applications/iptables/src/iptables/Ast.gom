@@ -1,5 +1,5 @@
 module iptables.Ast
-imports String int
+imports String int long
 abstract syntax
 
 	Rules = rules(Rule*)
@@ -35,7 +35,8 @@ abstract syntax
 		| Out()
 
 	Address =
-		Addr(ip:int,smask:int)
+		Addr4(ip:int,smask:int)
+		| Addr6(ipms:long,ipls:long,smaskms:long,smaskls:long)
 		| AddrAny()
 
 	Port =

@@ -55,13 +55,16 @@ public class Analyser {
 	public static boolean isEquiv(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return true; }
-			Addr(ip,smask),AddrAny() && ((ip == 0) && (smask == 0xffffffff))
-				-> { return true; }
-			AddrAny(),Addr(ip,smask) && ((ip == 0) && (smask == 0xffffffff))
-				-> { return true; }
-			Addr(ip1,smask1),Addr(ip2,smask2) && (smask1 == smask2) -> {
+			Addr4(ip1,smask1),Addr4(ip2,smask2) && (smask1 == smask2) -> {
 				if ((`ip1 & `smask1) == (`ip2 & `smask2))
 					return true;
+			}
+			Addr6(ipms1,ipls1,smaskms1,smaskls1),Addr6(ipms2,ipls2,smaskms2,smaskls2) 
+			&& (smaskms1 == smaskms2) && (smaskls1 == smaskls2) -> {
+				if (((`ipms1 & `smaskms1) == (`ipms2 & `smaskms2)) 
+				&& ((`ipls1 & `smaskls1) == (`ipls2 & `smaskls2))) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -105,7 +108,7 @@ public class Analyser {
 	public static int compareTo(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return 0; }
-			Addr(ip1,smask1),Addr(ip2,smask2) -> {
+			Addr4(ip1,smask1),Addr4(ip2,smask2) -> {
 				if (Math.abs(`smask1) < Math.abs(`smask2)) {
 					if ((`ip2 & `smask1) == (`ip1 & `smask1))
 						return 1;
@@ -117,6 +120,34 @@ public class Analyser {
 						return 0;
 				}
 			}
+			Addr6(ipms1,ipls1,smaskms1,smaskls1),Addr6(ipms2,ipls2,smaskms2,smaskls2) -> {
+				if (`smaskms1 == `smaskms2) {
+					/* if the most significant mask is filled with 1 bits,
+					compare the less significant masks */
+					if (`smaskms1 == (0x0L - 0x1L)) {
+						if (Math.abs(`smaskls1) < Math.abs(`smaskls2)) {
+							if ((`ipls2 & `smaskls1) == (`ipls1 & `smaskls1))
+								return 1;
+						} else if (Math.abs(`smaskls1) > Math.abs(`smaskls2)) {
+							if ((`ipls1 & `smaskls2) == (`ipls2 & `smaskls2))
+								return -1;
+						} else {
+							if ((`ipls1 & `smaskls1) == (`ipls2 & `smaskls1))
+								return 0;
+						}
+					} else {
+						if ((`ipms1 & `smaskms1) == (`ipms2 & `smaskms1))
+							return 0;
+					}
+				} else if (Math.abs(`smaskms1) < Math.abs(`smaskms2)) {
+					if ((`ipms2 & `smaskms1) == (`ipms1 & `smaskms1))
+						return 1;
+				} else if (Math.abs(`smaskms1) > Math.abs(`smaskms2)) {
+					if ((`ipms1 & `smaskms2) == (`ipms2 & `smaskms2))
+						return -1;
+				}
+			}
+			/* >>>TODO: compare IPv4 and IPv6 (IPv4 can be written in IPv6) */
 		}
 		return NOT_COMPARABLE;
 	}
@@ -128,7 +159,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr((16+256+4096+65536),0xff000000),
+			Addr4((16+256+4096+65536),0xff000000),
 			PortAny(),
 			Port(80)
 		);
@@ -138,7 +169,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr((16+256+4096+65536),0xff000000),
+			Addr4((16+256+4096+65536),0xff000000),
 			PortAny(),
 			Port(80)
 		);
@@ -148,7 +179,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr((4096+65536),0xffff0000),
+			Addr4((4096+65536),0xffff0000),
 			PortAny(),
 			Port(80)
 		);
@@ -160,8 +191,11 @@ public class Analyser {
 
 		/* isEquivAddress tests */
 		Address a1,a2;
-		a1 = `Addr(256,0xffffff00);
-		a2 = `Addr(312,0xffffff00);
+		a1 = `Addr4(256,0xffffff00);
+		a2 = `Addr4(312,0xffffff00);
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		a1 = `Addr6(256,256,(0x0L - 0x1L),(0x0L - 0x100L));
+		a2 = `Addr6(256,312,(0x0L - 0x1L),(0x0L - 0x100L));
 		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
 
 		/* checkIntegrity tests */
