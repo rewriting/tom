@@ -13,19 +13,19 @@ public class Analyser {
 	public static Rules checkIntegrity(Rules rs) {
 		%match(rs) {
 			rules(
-				_*,
+				X*,
 				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport),
-				_*,
+				Y*,
 				r2@rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport),
-				_*
+				Z*
 			) -> {
 				/* looking for equivalence in the rules */
 				if (isEquiv(`srcaddr1,`srcaddr2) && isEquiv(`dstaddr1,`dstaddr2)) {
-					if (`action1 == `action2)
+					if (`action1 == `action2) {
 						System.out.println("doubloon: " + `r1);
-					else
-						System.out.println("conflicting rules:" + `r1 + "\t/\t" + `r2);
-					/* >>> TODO: need to remove r1 or r2 from rs */
+						rs = `rules(X*,r1,Y*,Z*);
+					} else
+						System.err.println("conflicting rules:" + `r1 + "\t/\t" + `r2);
 				}
 			}
 		}
@@ -34,17 +34,19 @@ public class Analyser {
 
 	public static Rules checkOptimization(Rules rs) {
 		%match(rs) {
-			rules(_*,r1,_*,r2,_*) -> {
+			rules(X*,r1,Y*,r2,Z*) -> {
 				/* looking for inclusions optimizations */
 				int i = compareTo(`r1,`r2);
 				if (i == 1) {
-					/* >>> TODO: remove r2 */
 					System.out.println("optimization: " + `r2);
+					rs = `rules(X*,r1,Y*,Z*);
 				} else if (i == -1) {
-					/* >>> TODO: remove r1 */
 					System.out.println("optimization: " + `r1);
-				} else if (i == 0)
+					rs = `rules(X*,Y*,r2,Z*);
+				} else if (i == 0) {
 					System.out.println("optimization-doubloon: " + `r1);
+					rs = `rules(X*,r1,Y*,Z*);
+				}
 			}
 		}
 		return rs;
@@ -151,7 +153,7 @@ public class Analyser {
 			Port(80)
 		);
 
-		Rules rs = 	`rules(r1,r2,r3);
+		Rules rs = 	`rules(r1,r2,r3),rsn;
 
 		/* printing tests */
 		System.out.println("\n#printing test: " +rs);
@@ -163,9 +165,9 @@ public class Analyser {
 		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
 
 		/* checkIntegrity tests */
-
 		System.out.println("\n# checkIntegrity test: doubloon");
-		checkIntegrity(`rules(r1,r1));
+		rsn = checkIntegrity(`rules(r1,r1));
+		System.out.println("RSN: " + rsn);
 		System.out.println("\n# checkIntegrity test: conflict");
 		checkIntegrity(`rules(r1,r2));
 		System.out.println("\n# checkIntegrity test: nothing wrong");
@@ -175,6 +177,8 @@ public class Analyser {
 
 		/* checkOptimization tests */
 		System.out.println("\n# checkOptimization test");
-		checkOptimization(rs);
+		System.out.println("[[Rules: " + rs + "]]\n");
+		rs = checkOptimization(rs);
+		System.out.println("\n[[Rules: " + rs + "]]");
 	}
 }
