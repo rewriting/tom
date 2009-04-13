@@ -1,0 +1,10 @@
+module iptables.AnalyserWrapper
+	imports String
+	abstract syntax
+
+	AddressRaw =
+		AddrAnyRaw()
+		| AddrStringDotDecimal4(ipStr:String)
+		| AddrStringHexadecimal6(ipStr:String)
+		| AddrStringCIDR4(ipStr:String)
+		| AddrStringCIDR6(ipStr:String)
