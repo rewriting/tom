@@ -121,7 +121,7 @@ public class XMLhandlerGui {
 				  System.out.print(" res3:");res3.affiche();
 				  System.out.println(")");
 				  if(res2 instanceof TwoId) ;
-				  else res2=decalageY(res2,res3.getLargeur()+4);
+				  else res2=decalageX(res2,res3.getLargeur()+4);
 				  res=`TwoC0(res2,res3);
 			  }	
 		  }
@@ -226,26 +226,59 @@ public class XMLhandlerGui {
 		return "";
 	}
 	
+	/*
+	 * Methode David : Permet de decaler sur l'axe des Y les coordonner de l'element cible (path) d'un taille c
+	 */
+	public static OnePath decalageY(OnePath path,int c){
+		/*%match (OnePath path){
+			Id() -> {return `Id();}
+			OneCell(name,x,y,hauteur,largeur) -> {return `OneCell(name,x,y+c,hauteur,largeur); }
+		 	OneC0 (head,tail*) -> {return `OneC0(decalageY(head,c),decalageY(tail*,c));}
+		}*/
+		return path;
+	}
+	
+	/*
+	 * Methode David : Permet de decaler sur l'axe des Y les coordonner de l'element cible (path) d'un taille c
+	 */
 	public static TwoPath decalageY(TwoPath path ,int c){
 		%match (TwoPath path){
 			TwoId(onepath) -> {return path;}
-			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x,y+c,hauteur,largeur); }
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,decalageY(source,c),decalageY(target,c),type,id,x,y+c,hauteur,largeur); }
 			TwoC0(head,tail*) -> {return `TwoC0(decalageY(head,c),decalageY(tail*,c));}
 			TwoC1(head,tail*) -> {return `TwoC1(decalageY(head,c),decalageY(tail*,c));}
 		}
 		return path;
 	}
 	
+	/*
+	 * Methode David : Permet de decaler sur l'axe des X les coordonner de l'element cible (path) d'un taille c
+	 */
+	public static OnePath decalageX(OnePath path,int c){
+		/*%match (OnePath path){
+			Id() -> {return `Id();}
+			OneCell(name,x,y,hauteur,largeur) -> {return `OneCell(name,x+c,y,hauteur,largeur); }
+		 	OneC0 (head,tail*) -> {return `OneC0(decalageX(head,c),decalageX(tail*,c));}
+		}*/
+		return path;
+	}
+	
+	/*
+	 * Methode David : Permet de decaler sur l'axe des Y les coordonner de l'element cible (path) d'un taille c
+	 */
 	public static TwoPath decalageX(TwoPath path ,int c){
 		%match (TwoPath path){
 			TwoId(onepath) -> {return path;}
-			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,source,target,type,id,x+c,y,hauteur,largeur); }
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { return `TwoCell(name,decalageX(source,c),decalageX(target,c),type,id,x+c,y,hauteur,largeur); }
 			TwoC0(head,tail*) -> {return `TwoC0(decalageX(head,c),decalageX(tail*,c));}
 			TwoC1(head,tail*) -> {return `TwoC1(decalageX(head,c),decalageX(tail*,c));}
 		}
 		return path;
 	}
 	
+	/*
+	 * Methode David : Permet d'agrandir la largeur de l'element cible (path) d'une taille c
+	 */
 	public static TwoPath setLargeur(TwoPath path ,int c){
 		%match (TwoPath path){
 			TwoId(onepath) -> {return path;}
@@ -256,6 +289,9 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
+	/*
+	 * Methode David : Permet d'agrandir la hauteur de l'element cible (path) d'une taille c
+	 */
 	public static TwoPath setHauteur(TwoPath path ,int c){
 		%match (TwoPath path){
 			TwoId(onepath) -> {return path;}
@@ -266,68 +302,134 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
-	public static ArrayList<TwoPath> getListeTwoPath(TwoPath path){
+	/*
+	 * Methode David : Retourne sous forme d'une liste un TwoPath
+	 * Permet d'avoir de maniere detourner une liste de OnePath
+	 * WARNING : Cette methode ne recupere que le bas d'un TwoC1
+	 * 
+	 * Exemple si l'element cible est :
+	 *         " |      |     | "
+	 *	       "----  ----  ----" 
+	 *	       "|C1|  |C2|  |C3|" 
+	 *	       "----  ----  ----"
+	 *		   " |      |     | "
+	 *		   " |      |     | "
+	 *         "---------   ----"
+	 *		   "|   C4  |   |C5|"
+	 *	       "---------   ----"
+	 *		   "    |         | "
+	 * 
+	 * On ne recuperera que C4 et C5
+	 */
+	public static ArrayList<TwoPath> getListeTwoPathBas(TwoPath path){
 		ArrayList<TwoPath> liste = new ArrayList<TwoPath>();
 		%match (TwoPath path){
 			TwoId(onepath) -> { liste.add(path);}
 			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { liste.add(path); }
-			TwoC0(head,tail*) -> { liste.addAll(getListeTwoPath(`head)); liste.addAll(getListeTwoPath(`tail*));}
-			TwoC1(head*,tail) -> { liste.addAll(getListeTwoPath(`tail));}
+			TwoC0(head,tail*) -> { liste.addAll(getListeTwoPathBas(`head)); liste.addAll(getListeTwoPathBas(`tail*));}
+			TwoC1(head*,tail) -> { liste.addAll(getListeTwoPathBas(`tail));}
 		}
 		return liste;
 	}
 	
+	/*
+	 * Methode David : Retourne sous forme d'une liste un TwoPath
+	 * Permet d'avoir de maniere detourner une liste de OnePath
+	 * WARNING : Cette methode ne recupere que le haut d'un TwoC1
+	 *
+	 * Exemple si l'element cible est :
+	 *         " |      |     | "
+	 *	       "----  ----  ----" 
+	 *	       "|C1|  |C2|  |C3|" 
+	 *	       "----  ----  ----"
+	 *		   " |      |     | "
+	 *		   " |      |     | "
+	 *         "---------   ----"
+	 *		   "|   C4  |   |C5|"
+	 *	       "---------   ----"
+	 *		   "    |         | "
+	 * 
+	 * On ne recuperera que C1, C2 et C3
+	 */
+	public static ArrayList<TwoPath> getListeTwoPathHaut(TwoPath path){
+		ArrayList<TwoPath> liste = new ArrayList<TwoPath>();
+		%match (TwoPath path){
+			TwoId(onepath) -> { liste.add(path);}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { liste.add(path); }
+			TwoC0(head,tail*) -> { liste.addAll(getListeTwoPathHaut(`head)); liste.addAll(getListeTwoPathHaut(`tail*));}
+			TwoC1(head,tail*) -> { liste.addAll(getListeTwoPathHaut(`head));}
+		}
+		return liste;
+	}
+	
+	
+	/*
+	 * Methode David : Methode qui organise les TwoC1
+	 * Ici, on cherche a donner une taille pour les elements du bas en fonction
+	 * des OnePath du niveau
+	 */
 	public static TwoPath gestionTwoC1(TwoPath haut, TwoPath bas){
+		//Init, ie recuperer la liste des elements de chaque TwoPath
 		ArrayList<TwoPath> listehaut = new ArrayList<TwoPath>();
 		ArrayList<TwoPath> listebas = new ArrayList<TwoPath>();
-		listehaut=getListeTwoPath(haut.reverse());
-		listebas=getListeTwoPath(bas.reverse());
-		int taille;
+		listehaut=getListeTwoPathBas(haut.reverse()); //on recupere que les elements bas du haut du C1
+		listebas=getListeTwoPathHaut(bas.reverse()); //on recupere que les elements haut du bas du C1
+		int taille; //variable qui permettra de connaitre la largeur de chaque sous element bas
 		Iterator it = listehaut.iterator();
 		Iterator it2 = listebas.iterator();
 		ArrayList<TwoPath> listeC1bas=new ArrayList<TwoPath>();
 		TwoPath tp1=null;
-		int a=0;
-		int b=0;
+		int a=0; // nb OnePath d'en haut
+		int b=0; // nb OnePath d'en bas
 		while(it.hasNext() && it2.hasNext()){
-			taille=100;
+			
+			
+			// 1er tour : On recupere les valeurs des elements
+			// Autre tour : CF PLUS TARD (non implementer)
 			if(a<=b) tp1 = (TwoPath)it.next();
 			if(a<=b) a = tp1.targetsize();
+			
 			TwoPath tp2 = (TwoPath)it2.next();
 			b = tp2.sourcesize();
+			taille=tp2.getLargeur(); //Largeur par defaut = 100
 			if(a>=b){
+				//Cas : Si on a plus de OneC0 qu'il n'en faut pour l'element d'en bas
 				// ne rien faire
 				
+				//A MODIFIER PLUS TARD
+				
 			}else if(a<b){
-				taille=tp1.getLargeur();
+				// CAS : Si on a pas assez de OneC0, changer de sous element dans la liste d'en haut
 				while(a<b && it.hasNext()){
 					tp1 = (TwoPath)it.next();
-					a += tp1.targetsize();
-					taille += tp1.getLargeur(); //il faudra recalculer la taille pour le cas ou un TP haut soit partager entre 2 TP bas (cf, la repartition des OC)
+					a += tp1.targetsize(); //ajouter la largeur du sous element
+					taille += tp1.getLargeur()+4; //il faudra recalculer la taille pour le cas ou un TP haut soit partager entre 2 TP bas (cf, la repartition des OC)
 				}
-				
-				
 			}
-			taille+=4;
 			listeC1bas.add(`TwoCell(tp2.getName(),tp2.source(),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),taille));
 		}
-		while(it2.hasNext()){
+		while(it2.hasNext()){ // A EFFACER PLUS TARD
 			TwoPath tp2 = (TwoPath)it2.next();
 			listeC1bas.add(`TwoCell(tp2.getName(),tp2.source(),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),100));
 		}
 		
 		TwoPath tmp=genererTw0C0(listeC1bas);
-		tmp = decalageX(tmp,haut.getHauteur()+4);
+		tmp = decalageY(tmp,haut.getHauteur()+4);
+		
 		return `TwoC1(haut,tmp);
 	}
 	
+	/*
+	 * Methode David : Permet de generer depuis une liste un TwoC0 
+	 * Dans le but d'être compatible avec une construction classique de TwoPath
+	 */
 	public static TwoPath genererTw0C0(ArrayList<TwoPath> array){
 		if(array.size()==1) return array.get(0);
 		else {
 			TwoPath first = array.get(0);
 			array.remove(0);
 			TwoPath last = genererTw0C0(array);
-			last=decalageY(last,first.getLargeur()-last.getLargeur()+4);
+			last=decalageX(last,first.getLargeur()-last.getLargeur());
 			return `TwoC0(first,last);
 		}
 	}

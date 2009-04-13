@@ -8,12 +8,16 @@ import adt.polygraphicprogramgui.types.twopath.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.awt.Container;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
 
 //constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 public class XMLProgramHandlerGui {
   %include { ../adt/polygraphicprogramgui/PolygraphicProgramgui.tom }
   %include { sl.tom }
-
+  
   	//quite long but core of this part
 	public static String makeRuleStrategy(String filename){
 		String strategy="";
@@ -64,6 +68,22 @@ public class XMLProgramHandlerGui {
 									System.out.println("********** GENERAL STATUS **********");
 									tp.affiche();
 									System.out.println("********** EOF **********");
+									
+								    JFrame frame = new JFrame();
+									frame.setTitle("Polygraphes GUI Alpha 2");
+									frame.setSize(500,500);
+									frame.addWindowListener(new WindowAdapter() {
+										public void windowClosing(WindowEvent e) {
+											System.exit(0);
+										}
+									});
+									Container contentPane = frame.getContentPane();
+									Graph g = new Graph();
+									ajoutfenetre(g,tp);
+									
+									contentPane.add(g);
+									frame.setVisible(true);
+									
 								}
 							}
 						}
@@ -116,6 +136,15 @@ public class XMLProgramHandlerGui {
 		System.out.println("");
 		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
 		return strategy;
+	}
+	
+	public static void ajoutfenetre(Graph g,TwoPath path){
+		%match (TwoPath path){
+			TwoId(onepath) -> {;}
+			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { g.ajouterElement(path); }
+			TwoC0(head,tail*) -> {ajoutfenetre(g,`head); ajoutfenetre(g,`tail);}
+			TwoC1(head,tail*) -> {ajoutfenetre(g,`head); ajoutfenetre(g,`tail);}
+		}
 	}
 	
 	

@@ -91,41 +91,10 @@ sort OnePath:block(){
 	//actually useless with our custom make methods
 	public boolean defined(){return true;}
 	
-	public void setX(int c){
-		%match (this){
-			OneCell[x=x] -> { this.setx(c); }
-			OneC0(head,tail*) -> { `head.setX(c); `tail*.setX(c); }
-		}
-		throw new RuntimeException("strange term: "+this);
-	}
-	
-	public void setY(int c){
-		%match (this){
-			OneCell[y=x] -> { this.sety(c); }
-			OneC0(head,tail*) -> { `head.setY(c); `tail*.setY(c); }
-		}
-		throw new RuntimeException("strange term: "+this);
-	}
-	
-	public void setLargeur(int c){
-		%match (this){
-			OneCell[y=x] -> { this.setlargeur(c); }
-			OneC0(head,tail*) -> { `head.setlargeur(c); `tail*.setlargeur(c); }
-		}
-		throw new RuntimeException("strange term: "+this);
-	}
 	
 	public int getLargeur(){
 		%match (this){
 			OneCell[y=x] -> { return this.getlargeur(); }
-		}
-		throw new RuntimeException("strange term: "+this);
-	}
-	
-	public void setHauteur(int c){
-		%match (this){
-			OneCell[y=x] -> { this.setHauteur(c); }
-			OneC0(head,tail*) -> { `head.setHauteur(c); `tail*.setHauteur(c); }
 		}
 		throw new RuntimeException("strange term: "+this);
 	}
