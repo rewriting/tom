@@ -63,6 +63,7 @@ public interface Introspector {
   /**
    * Return the number of subterms of the object o
    * @param o the subject
+   * @return the number of children
    */
   public int getChildCount(Object o);
 

@@ -103,7 +103,7 @@ public class XmlTools {
 
   /**
    * print TNode t in XML format, without any extra character (ie:\n)
-   * @param an TNode to print
+   * @param t TNode to print
    */
   public void printXMLFromTNode(TNode t) {
     t2x.setWriter(null);

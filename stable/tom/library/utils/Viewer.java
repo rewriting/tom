@@ -44,6 +44,13 @@ public class Viewer {
 
 
   /* -------- dot part --------- */
+  /** 
+   * Give a dot representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toDot(tom.library.sl.Visitable v, Writer w) 
     throws java.io.IOException {
       if ( v instanceof tom.library.sl.Strategy ) {
@@ -68,7 +75,13 @@ public class Viewer {
       }
     }
 
-  public static void toDot(tom.library.sl.Visitable v) {
+ /** 
+  * Give a dot representation of a visitable term on the standard output stream
+  * 
+  * @param v the visitable term to visualize
+  * @throws RuntimeException in case of visit failure
+  */
+ public static void toDot(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
       toDot(v,w);
@@ -81,6 +94,12 @@ public class Viewer {
 
 
 
+  /** 
+   * Return a term node from a specified position
+   * 
+   * @param p position of the node to return
+   * @return a string representation of the node at the specified position
+   */
   private static String getNodeFromPos(Position p) {
     int[] omega = p.toIntArray();
     StringBuilder r = new StringBuilder("p");
@@ -103,10 +122,22 @@ public class Viewer {
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     } 
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       try {
@@ -139,6 +170,11 @@ public class Viewer {
     }
   }
 
+  /** 
+   * Give a GUI display to visualize a visitable term
+   * 
+   * @param vv the visitable term to visualize
+   */
   public static void display(Visitable vv) {
     final Visitable v = vv;
     JFrame.setDefaultLookAndFeelDecorated(true);
@@ -169,6 +205,12 @@ public class Viewer {
   }
 
   /* -------- pstree-like part --------- */
+  /** 
+   * Give a pstree-like representation of a visitable term on the standard output stream
+   * 
+   * @param v the visitable term to visualize
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
@@ -178,7 +220,13 @@ public class Viewer {
     } catch(java.io.IOException e) {}
   }
 
-
+  /** 
+   * Give a pstree-like representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
       aterm.ATermFactory atermFactory = new PureFactory();
@@ -197,9 +245,17 @@ public class Viewer {
       }
     }
 
+  /** 
+   * Return a tree representation of an ATerm, by providing a writer, a context and depth
+   * 
+   * @param term the ATerm to represent as a tree
+   * @param w the writer
+   * @param context the context
+   * @param deep the depth
+   */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch626NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch626NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tom_name= tomMatch626NameNumber_freshVar_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch29NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch29NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tom_name= tomMatch29NameNumber_freshVar_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
@@ -212,7 +268,7 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + tom_name.length() + 3;
-            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch627NameNumber_freshVar_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch627NameNumber_end_5=tomMatch627NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch627NameNumber_freshVar_2,tomMatch627NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch627NameNumber_end_5.isEmpty() )) {if (  tomMatch627NameNumber_end_5.getNext() .isEmpty() ) {
+            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch30NameNumber_freshVar_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch30NameNumber_end_5=tomMatch30NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch30NameNumber_freshVar_2,tomMatch30NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch30NameNumber_end_5.isEmpty() )) {if (  tomMatch30NameNumber_end_5.getNext() .isEmpty() ) {
 
                 // first child
                 w.write("─" + tom_name+ "─┬");
@@ -222,21 +278,21 @@ public class Viewer {
                 w.write('\n');
 
                 // 2 ... n-1
-                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch628NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch628NameNumber_end_4.isEmpty() )) {
+                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch31NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch31NameNumber_end_4.isEmpty() )) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch628NameNumber_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch31NameNumber_end_4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch628NameNumber_end_4.isEmpty() ) {tomMatch628NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch628NameNumber_end_4= tomMatch628NameNumber_end_4.getNext() ;}}} while(!( tomMatch628NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
+                  }if ( tomMatch31NameNumber_end_4.isEmpty() ) {tomMatch31NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch31NameNumber_end_4= tomMatch31NameNumber_end_4.getNext() ;}}} while(!( tomMatch31NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch627NameNumber_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch627NameNumber_end_5.isEmpty() ) {tomMatch627NameNumber_end_5=tomMatch627NameNumber_freshVar_2;} else {tomMatch627NameNumber_end_5= tomMatch627NameNumber_end_5.getNext() ;}}} while(!( tomMatch627NameNumber_end_5==tomMatch627NameNumber_freshVar_2 ));}}}}}
+                ATermToTree( tomMatch30NameNumber_end_5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch30NameNumber_end_5.isEmpty() ) {tomMatch30NameNumber_end_5=tomMatch30NameNumber_freshVar_2;} else {tomMatch30NameNumber_end_5= tomMatch30NameNumber_end_5.getNext() ;}}} while(!( tomMatch30NameNumber_end_5==tomMatch30NameNumber_freshVar_2 ));}}}}}
 
           }
         }}}}}
@@ -247,6 +303,12 @@ public class Viewer {
   /* -------- strategy part --------- */
   private static int counter = 0;  
 
+  /** 
+   * Replaces characters '.' '$' and '@' by '_' in a string
+   * 
+   * @param s the string to process
+   * @return a string where '.' '$' and '@' by '_' have been replaced
+   */
   static private String clean(String s) {
     s = s.replace('.','_');
     s = s.replace('$','_');
@@ -278,10 +340,22 @@ public class Viewer {
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     }
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
