@@ -7,8 +7,9 @@ import java.io.File;
 public class CompilerGUI {
 
 	public static String programPath;
-	
 	public static String outputFolderPath;
+	private static int OS_WIN = 0;
+	private static int OS_LINUX = 1;
 
 	//entry point, get the whole program and saves it into a .t file
 	public static void main (String args[]) {
@@ -18,43 +19,49 @@ public class CompilerGUI {
 		else{
 			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
 				programPath=args[0];
-				if(args[1].substring(args[1].length()-1, args[1].length()).equals("/")){
+				if(args[1].substring(args[1].length()-1, args[1].length()).equals(File.separator)){
 					outputFolderPath=args[1];
 					String programName=XMLProgramHandlerGui.getProgramName(programPath);
 					try{
 						(new File(outputFolderPath)).mkdir();
-						(new File(outputFolderPath+"gui/")).mkdir();
-						File programFile=new File(outputFolderPath+"gui/"+programName+".t");
+						(new File(outputFolderPath+"gui"+File.separator)).mkdir();
+						File programFile=new File(outputFolderPath+"gui"+File.separator+programName+".t");
 						if(!programFile.exists()){programFile.createNewFile();}
 						XMLhandlerGui.save(makeTomFile(programPath),programFile);
 						//create gom file
 						String srcpath=(new CompilerGUI()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-            //System.out.println("path = " + srcpath);
+						//System.out.println("path = " + srcpath);
 						File gomFile=new File(outputFolderPath+"gui/"+programName+".gom");
-						(new File(outputFolderPath+"gui/")).mkdir();
+						(new File(outputFolderPath+"gui"+File.separator)).mkdir();
 						if(!gomFile.exists()){gomFile.createNewFile();}
-						String gomFileContent=XMLhandlerGui.load(srcpath+"../src/gui/PolygraphicProgram.gom");
+						String gomFileContent=XMLhandlerGui.load(srcpath+".." +File.separator+"src" + File.separator+ "gui" + File.separator + "PolygraphicProgram.gom");
 						gomFileContent=gomFileContent.replace("PolygraphicProgram", programName);
 						XMLhandlerGui.save(gomFileContent,gomFile);
 						//create XMLhandlerGui file
-						File XMLhandlerGuiFile=new File(outputFolderPath+"gui/"+programName+"Tools.t");
-						(new File(outputFolderPath+"gui/")).mkdir();
+						File XMLhandlerGuiFile=new File(outputFolderPath+"gui" + File.separator +programName+"Tools.t");
+						(new File(outputFolderPath+"gui"+File.separator)).mkdir();
 						if(!XMLhandlerGuiFile.exists()){XMLhandlerGuiFile.createNewFile();}
-						String XMLhandlerGuiFileContent=XMLhandlerGui.load(srcpath+"../src/gui/XMLhandlerGui.t");
+						String XMLhandlerGuiFileContent=XMLhandlerGui.load(srcpath+".."+File.separator+"src" + File.separator+ "gui" + File.separator + "XMLhandlerGui.t");
 						XMLhandlerGuiFileContent=XMLhandlerGuiFileContent.replace("XMLhandlerGui",programName+"Tools");
 						XMLhandlerGuiFileContent=XMLhandlerGuiFileContent.replace("package Compiler;","");
 						XMLhandlerGuiFileContent=XMLhandlerGuiFileContent.replace("polygraphicprogramgui.types",programName.toLowerCase()+".types");
+						//Warning for the gom import leave the linux separator
 						XMLhandlerGuiFileContent=XMLhandlerGuiFileContent.replace("polygraphicprogramGUI/PolygraphicProgramgui.tom",programName.toLowerCase()+"/"+programName+".tom");
 						XMLhandlerGui.save(XMLhandlerGuiFileContent,XMLhandlerGuiFile);
 						//create script file
-						File scriptFile=new File(outputFolderPath+"build"+programName+".sh");
+						File scriptFile;
+						if (getOS() == OS_WIN) {
+							scriptFile = new File(outputFolderPath+"build"+programName+".bat");
+						} else {
+							scriptFile = new File(outputFolderPath+"build"+programName+".sh");
+						}
 						if(!scriptFile.exists()){scriptFile.createNewFile();}
 						XMLhandlerGui.save(makeScript(programName),scriptFile);
 					}			
 					catch(Exception e){e.printStackTrace();}	
 					}
 				else{
-				System.out.println("the second argument must be a folder (ends with /)");
+				System.out.println("the second argument must be a folder (ends with " + File.separator + ")");
 				}
 			}
 			else{
@@ -64,10 +71,18 @@ public class CompilerGUI {
 	}
 	
 	public static String makeScript(String programName){
-		return %[#!/bin/tcsh
-gom gui/@programName@.gom
-tom gui/@programName@.t
-javac gui/@programName@.java
+		String entete ="@rem Script for Windows";
+		String appelcall = "";
+		if (getOS() != OS_WIN) {
+			entete = "#!/bin/tcsh";
+	    } else {
+	    	appelcall = "call ";
+	    }
+		String mpath = File.separator + programName;
+		return %[@entete@
+@appelcall@gom gui@mpath@.gom
+@appelcall@tom gui@mpath@.t
+javac gui@mpath@.java
 ]%;
 		}
 
@@ -76,7 +91,9 @@ javac gui/@programName@.java
 		String programName=XMLProgramHandlerGui.getProgramName(filePath);
 		String ruleStrategy=XMLProgramHandlerGui.makeRuleStrategy(filePath);//key point, gets the specific part of the file
 		String lowerProgramName=programName.toLowerCase();
+		//Warning linux separators for tom calls
 		String tomPath="../gui/"+lowerProgramName+"/"+programName+".tom";//make tom path
+		String sep = "File.separator";
 		//here lies the part that each program has in common : 
 		String tomFile=%[package program;
 
@@ -104,7 +121,7 @@ public class @programName@{
 		else{
 			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
 				inputPath=args[0];
-				if(args[1].substring(args[1].length()-1, args[1].length()).equals("/")){
+				if(args[1].substring(args[1].length()-1, args[1].length()).equals(@sep@)){
 					outputFolderPath=args[1];
 					try {
 						(new File(outputFolderPath)).mkdir();
@@ -121,7 +138,7 @@ public class @programName@{
 					}
 				}
 				else{
-				System.out.println("the second argument must be a folder (ends with /)");
+				System.out.println("the second argument must be a folder (ends with " + @sep@);
 				}
 			}
 			else{
@@ -452,4 +469,13 @@ public class @programName@{
 	 return tomFile;
   }
 
+	private static int getOS(){
+		String name = System.getProperty ( "os.name" );
+		System.out.println("DEBUG OS name = " + name);
+		if (name.toUpperCase().startsWith("WINDOWS")){
+			return OS_WIN;
+		} else {
+			return OS_LINUX; //assuming that this project would be only run under windows or linux
+		}
+	}
 }
