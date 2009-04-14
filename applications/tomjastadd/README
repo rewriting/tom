@@ -1,0 +1,8 @@
+Application to generate Tom mappings for JastAdd IR:
+
+To compile:
+"make jar" generates the tomjastadd.jar.
+
+To execute:
+"java -jar tomjastadd.jar <filename>.ast" prints Tom mappings for the
+corresponding JastAdd AST grammar.
