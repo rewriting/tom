@@ -66,6 +66,16 @@ public class Analyser {
 					return true;
 				}
 			}
+			Addr6(ipms,ipls,smaskms,smaskls),Addr4(ip,smask) && (ipms == 0)-> {
+				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
+					return isEquiv(`Addr4((int)ipls,(int)smaskls),a2);
+				}
+			}
+			Addr4(ip,smask),Addr6(ipms,ipls,smaskms,smaskls) && (ipms == 0) -> {
+				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
+					return isEquiv(a1,`Addr4((int)ipls,(int)smaskls));
+				}
+			}
 		}
 		return false;
 	}
@@ -147,7 +157,19 @@ public class Analyser {
 						return -1;
 				}
 			}
-			/* >>>TODO: compare IPv4 and IPv6 (IPv4 can be written in IPv6) */
+			/* IPv4 mapped address has its first 80 bits set to zero, 
+			the next 16 set to one, while its last 32 bits represent an 
+			IPv4 address*/
+			Addr6(ipms,ipls,smaskms,smaskls),Addr4(ip,smask) && (ipms == 0)-> {
+				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
+					return compareTo(`Addr4((int)ipls,(int)smaskls),a2);
+				}
+			}
+			Addr4(ip,smask),Addr6(ipms,ipls,smaskms,smaskls) && (ipms == 0) -> {
+				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
+					return compareTo(a1,`Addr4((int)ipls,(int)smaskls));
+				}
+			}
 		}
 		return NOT_COMPARABLE;
 	}
@@ -159,7 +181,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr4((16+256+4096+65536),0xff000000),
+			Addr4((16+256+4096+65536),(~0 << 24)),
 			PortAny(),
 			Port(80)
 		);
@@ -169,7 +191,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr4((16+256+4096+65536),0xff000000),
+			Addr4((16+256+4096+65536),(~0 << 24)),
 			PortAny(),
 			Port(80)
 		);
@@ -179,7 +201,7 @@ public class Analyser {
 			TCP(),
 			In(),
 			AddrAny(),
-			Addr4((4096+65536),0xffff0000),
+			Addr4((4096+65536),(~0 << 16)),
 			PortAny(),
 			Port(80)
 		);
@@ -191,11 +213,14 @@ public class Analyser {
 
 		/* isEquivAddress tests */
 		Address a1,a2;
-		a1 = `Addr4(256,0xffffff00);
-		a2 = `Addr4(312,0xffffff00);
+		a1 = `Addr4(256,(~0 << 8));
+		a2 = `Addr4(312,(~0 << 8));
 		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
-		a1 = `Addr6(256,256,(0x0L - 0x1L),(0x0L - 0x100L));
-		a2 = `Addr6(256,312,(0x0L - 0x1L),(0x0L - 0x100L));
+		a1 = `Addr6(256,256,~0L,(~0L << 8));
+		a2 = `Addr6(256,312,~0L,(~0L << 8));
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		a1 = `Addr4(256,(~0 << 8));
+		a2 = `Addr6(0,(256 | (0xffffL << 32)),~0L,(~0L << 8));
 		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
 
 		/* checkIntegrity tests */
