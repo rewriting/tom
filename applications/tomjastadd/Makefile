@@ -34,4 +34,4 @@ jar : all
 	jar -umf manifest tomjastadd.jar ast/*.class ast/AST/*.class jastadd/*.class jrag/*.class jrag/AST/*.class
 
 clean :
-	rm -rf jastadd/*.class ast/*.class ast/AST jrag/*.class jrag/AST/*.class jrag/AST/AST* jrag/AST/Jrag.jj jrag/AST/JragParser* jrag/AST/JJT* jrag/AST/Node.* jrag/AST/JavaCharStream* jrag/AST/ParseException* tomjastadd.jar
+	rm -rf jastadd/*.class jastadd/JastAdd.java ast/*.class ast/AST jrag/*.class jrag/AST/*.class jrag/AST/AST* jrag/AST/Jrag.jj jrag/AST/JragParser* jrag/AST/JJT* jrag/AST/Node.* jrag/AST/JavaCharStream* jrag/AST/ParseException* tomjastadd.jar

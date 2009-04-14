@@ -87,15 +87,17 @@ public class JastAdd {
              if(root.getTypeDecl(i) instanceof ASTDecl) {
                ASTDecl decl = (ASTDecl)root.getTypeDecl(i);
                //generate only an operator mapping for non abstract ASTDecl
-               if ( ! decl.hasAbstract() ) {
+               if ( !decl.hasAbstract() && !decl.name().equals("ASTNode") && !decl.name().equals("Opt") && !decl.name().equals("List") ) {
                  generateOperator(decl,builder);
                }
              }
            }
            System.out.println(builder);
-           Writer writer = new BufferedWriter(new FileWriter("mapping.tom"));
-           writer.append(builder.toString());
-           writer.close();
+           /** 
+             Writer writer = new BufferedWriter(new FileWriter(fileName+".tom"));
+             writer.append(builder.toString());
+             writer.close();
+            */
       }
       catch(NullPointerException e) {
         e.printStackTrace();
@@ -110,7 +112,7 @@ public class JastAdd {
         System.exit(1);
       }
     }
-    
+
     private void generateASTType(StringBuilder strBuilder) {
       strBuilder.append(%[
 %typeterm ASTNode {
@@ -118,35 +120,31 @@ public class JastAdd {
   is_sort(t) { $t instanceof ASTNode }
   equals(t1, t2) { $t1.equals($t2) }
 }
-%typeterm List {
-  implement { List }
-  is_sort(t) { $t instanceof List }
-  equals(t1, t2) { $t1.equals($t2) }
-}
 ]%);
     }
 
   private void generateListDestructor(StringBuilder strBuilder) {
-    //use only the destructive part of the mapping
-    /**
     strBuilder.append(%[
-%oplist List conc( ASTNode* ) {
-  is_fsym(t) { t instanceof java.util.List }
-  make_empty()     { new java.util.LinkedList() }
-  make_insert(o,l) { concLinkedListAppend($o,$l) }
-  get_head(l)   { (ASTNode)l.get(0) }
-  get_tail(l)   { l.getSublist(1,l.size()) }
-  is_empty(l)   { l.isEmpty() }
+%oplist ASTNode List(ASTNode*) {
+  is_fsym(l)       { ($l!= null) && ($l instanceof List) }
+  make_empty()     { new List() }
+  make_insert(o,l) { ((List)$l).add($o) }
+  get_head(l)      { $l.getChild(0) }
+  get_tail(l)      { getTail(((List)$l)) }
+  is_empty(l)      { ($l.getNumChild()==0) }
 }
 
-private static java.util.LinkedList concLinkedListAppend(Object o, java.util.LinkedList l) {
-  java.util.LinkedList res = (java.util.LinkedList)l.clone();
-  res.addFirst(o);
+private static List getTail(List l) {
+  List res = new List();
+  for(int i = 1; i < l.getNumChild(); i++) {
+  ASTNode node = l.getChildNoTransform(i);
+  if(node != null) node = node.fullCopy();
+  res.setChild(node, i-1);
+  }
   return res;
 }
 ]%);
-*/
-    }
+  }
 
 
     private void generateOperator(ASTDecl decl, StringBuilder strBuilder) {
@@ -154,12 +152,12 @@ private static java.util.LinkedList concLinkedListAppend(Object o, java.util.Lin
       strBuilder.append(%[
 %op ASTNode @className@(@getTypedParameters(decl.getComponents())@) {
   make(@getParameters(decl.getComponents())@) { new @className@(@getParametersWithDollar(decl.getComponents())@) }
-  is_fsym(t) { $t instanceof @className@ } 
-@getSlotDeclarations(className,decl.getComponents())@     
+  is_fsym(t) { $t instanceof @className@ } ]%);
+      strBuilder.append(getSlotDeclarations(className,decl.getComponents()));     
+      strBuilder.append(%[
 }
-
 ]%);
-  }
+}
 
 private String getParameters(Iterator components) {
   StringBuilder result = new StringBuilder();
@@ -231,7 +229,7 @@ private String getTypedParameters(Iterator components) {
       } else {
         if(c instanceof ListComponents) {
           ListComponents m = (ListComponents) c;
-          result.append(m.name()+"List:List, ");
+          result.append(m.name()+"List:ASTNode, ");
         } else {
           if(c instanceof AggregateComponents) {
             AggregateComponents m = (AggregateComponents) c;
