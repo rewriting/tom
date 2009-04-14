@@ -7,19 +7,6 @@ aspect JavaDemoNames {
   FieldDecl implements Variable;
   LocalVariableDecl implements Variable;
  
-  //  code used by Tom mapping
-  syn List List.getTail();
-
-  eq List.getTail() {
-    List res = new List();
-    for(int i = 1; i < getNumChild(); i++) {
-      ASTNode node = getChildNoTransform(i);
-      if(node != null) node = node.fullCopy();
-      res.setChild(node, i-1);
-    }
-    return res;
-  }
-
   eq Prog.getCompUnit().unknownType() {
     return new ClassDecl("unknown", new TypeName("Object"), new List() ) {
       public ClassDecl memberClass(String name) {
