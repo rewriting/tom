@@ -282,9 +282,16 @@ matchBlock: {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   TomSymbolList list = symbolTable.getSymbolFromType(type);
                   %match(list) {
-                    concTomSymbol(_*, symbol@Symbol[AstName=name], _*) -> {
-                      //TODO: manage empty lists and arrays
-                      Instruction inst = `If(IsFsym(name,var),Return(TargetLanguageToTomTerm(ITL(""+TomBase.getArity(symbol)))),Nop());
+                    concTomSymbol(_*, symbol@Symbol[AstName=opName], _*) -> {
+                      Instruction inst = `Nop();
+                      if ( TomBase.isListOperator(`symbol) ) {
+                        // manage empty lists and arrays
+                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(TargetLanguageToTomTerm(ITL("0"))),Return(TargetLanguageToTomTerm(ITL("2")))),Nop());
+                      } else if ( TomBase.isArrayOperator(`symbol) ) {
+                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToTomTerm(Integer(0))),Return(TargetLanguageToTomTerm(ITL("0"))),Return(TargetLanguageToTomTerm(ITL("2")))),Nop());
+                      } else {
+                        inst = `If(IsFsym(opName,var),Return(TargetLanguageToTomTerm(ITL(""+TomBase.getArity(symbol)))),Nop());
+                      } 
                       instructionsForSort = `concInstruction(instructionsForSort*,inst);
                     }
                   }
