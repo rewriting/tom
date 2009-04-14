@@ -282,9 +282,9 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch1NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstType() ;if ( (tomMatch1NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch1NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch1NameNumber_freshVar_2.getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
+              {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch75NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch75NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstType() ;if ( (tomMatch75NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch75NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch75NameNumber_freshVar_2.getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
 
-                  s.append( tomMatch1NameNumber_freshVar_1.getString() );
+                  s.append( tomMatch75NameNumber_freshVar_1.getString() );
                   break matchBlock;
                 }}}}}}{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
 
