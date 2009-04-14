@@ -43,7 +43,7 @@ public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
-  private boolean strategySupport = true;
+  private boolean strategySupport = false;
   private boolean multithread = false;
   private boolean maximalsharing = true;
   private GomEnvironment gomEnvironment;
