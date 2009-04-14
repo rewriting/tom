@@ -77,6 +77,7 @@ public class XMLProgramHandlerGui {
 											System.exit(0);
 										}
 									});
+									//tp=XMLhandlerGui.RepartitionFilsTwoPath(tp);
 									Container contentPane = frame.getContentPane();
 									Graph g = new Graph();
 									ajoutfenetre(g,tp);

@@ -45,18 +45,7 @@ TwoC0:make_insert(x,y) {
 	g,TwoC1() -> { return `g; }
 	}
 }
-/*
-sort TwoC0:block(){
-	public int getx(){
-		%match (this){
-			TwoId(X) -> { return 0; }
-			TwoCell[Target=x] -> { return ; }
-			TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
-			TwoC1(head*,tail) -> { return `tail.target(); }
-		}
-	}
-}
-*/
+
 //TWOC1
 
 //desactivates the default hook
@@ -68,11 +57,11 @@ TwoC1:make_empty() { return `TwoId(Id()); }
 //defines variadic operator TwoC0 as associative and unitary with neutral element TwoId(Id()) 
 TwoC1:make_insert(x,y) {
 	//first we test if x and y are compatible for the *1 association
-	if(y!=`TwoId(Id())&&x.target()!=y.source())
-	{	//System.out.println(x);System.out.println(x.target());
-		//System.out.println(y);System.out.println(y.source());
+	/*if(y!=`TwoId(Id())&&x.target()!=y.source())
+	{	System.out.println("x : "+x);System.out.println("x.target : "+x.target());
+		System.out.println("y : "+y);System.out.println("y.target : "+y.source());
 		throw new RuntimeException("composition of incompatible 2-Paths");
-	}
+	}*/
 %match(x,y){
 	TwoId(Id()),tail -> {return `tail; }
 	head,TwoId(Id())  -> {return `head; }
@@ -234,7 +223,7 @@ sort TwoPath:block(){
 		}
 		//return `OneId();//actually useless
 		throw new RuntimeException("strange term: "+this);
-		}
+	}
 	
 	//returns true if the path is valid (=well-constructed)
 	//actually useless with our custom make methods

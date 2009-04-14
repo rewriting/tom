@@ -30,16 +30,16 @@ public class Graph extends JPanel {
 	
 	public void ajouterElement(Object o){
 		this.elts.add(o);		
-		/*if(o instanceof TwoCell){
-			Iterator<Fil> itfil = ((TwoCell)o).source().iterator();
+		if(o instanceof TwoCell){
+			Iterator<OneCell> itfil = XMLhandlerGui.getListeOneCellSource(((TwoCell)o)).iterator();
 			while (itfil.hasNext()){
-				this.ajouterElement((Fil)itfil.next());
+				this.ajouterElement((OneCell)itfil.next());
 			}
-			Iterator<Fil> itfil2 = ((DeuxCellules)o).getListFils(false).iterator();
+			Iterator<OneCell> itfil2 = XMLhandlerGui.getListeOneCellTarget(((TwoCell)o)).iterator();
 			while (itfil2.hasNext()){
-				this.ajouterElement((Fil)itfil2.next());
+				this.ajouterElement((OneCell)itfil2.next());
 			}
-		}*/
+		}
 	}
 	
 	/** Add Component Without a Layout Manager (Absolute Positioning) */ 
@@ -58,20 +58,20 @@ public class Graph extends JPanel {
  		Iterator<Object> it = this.elts.iterator();
  		while (it.hasNext()){
  			Object tmp = it.next();
- 			/*if (tmp instanceof Fil){
+ 			if (tmp instanceof OneCell){
  				
- 				Fil tmp2 = (Fil)tmp;
+ 				OneCell tmp2 = (OneCell)tmp;
  				// this.addComponent(this, (Fil)tmp, ((Fil)tmp).getmX(), ((Fil)tmp).getmY(), ((Fil)tmp).getmWidth(), ((Fil)tmp).getmHeight());
- 				  g2.setColor(Color.BLUE);
- 				  g2.drawLine(tmp2.getMX(),tmp2.getMY(),tmp2.getMX(), tmp2.getMY()+tmp2.getMHeight());
+ 				g2.setColor(Color.BLUE);
+ 				g2.drawLine(tmp2.getx(),tmp2.gety(),tmp2.getx(), tmp2.gety()+tmp2.gethauteur());
  				  //System.out.println("Fil : X = " + tmp2.getmX() + " Y = " + tmp2.getmY() + " Width = " + tmp2.getmWidth() + " Height = " + tmp2.getmHeight());
- 			} else*/ if (tmp instanceof TwoCell){
+ 			} else if (tmp instanceof TwoCell){
  				
  				TwoCell tmp2 = (TwoCell)tmp;
  				//this.addComponent(this, (DeuxCellules)tmp, ((DeuxCellules)tmp).getmX(), ((DeuxCellules)tmp).getmY(), ((DeuxCellules)tmp).getmWidth(), ((DeuxCellules)tmp).getmHeight());
  				g2.setColor(Color.RED);
  				//g2.drawRect(((Double)tmp2.getRec().getX()).intValue(), ((Double)tmp2.getRec().getY()).intValue(), ((Double)tmp2.getRec().getWidth()).intValue(), ((Double)tmp2.getRec().getHeight()).intValue());
- 				g2.drawRect(tmp2.getx(),tmp2.gety(),tmp2.getLargeur(),tmp2.getHauteur());
+ 				g2.drawRect(tmp2.getx(),tmp2.gety()+20,tmp2.getLargeur(),tmp2.getHauteur()-40);
  				g2.setColor(Color.black);
 			    // get metrics from the graphics
 			    FontMetrics metrics = g2.getFontMetrics(this.getFont());
