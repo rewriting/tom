@@ -44,7 +44,13 @@ public class TypeInference {
   %typeterm MatchingList { implement { ArrayList<Condition> } }
 
   private static int counter = 0;
-  
+
+/* Type inference doesn't work to "ComposedInstruction2.in" file example,
+ * because it has constraints
+ * {...,tvar4 <: NatP, tvar6 <: NatN, tvar4 = tvar6,...} and the algorithm maps
+ * tvar4 to tvar6 succeded by tvar6 to NatP and it doesn't check that this
+ * generate a constraint "NatP <: NatN" that has no solution */
+
   //---------------------------------
   // To generate a new TypeVar name
   //---------------------------------
@@ -342,9 +348,9 @@ public class TypeInference {
               ArrayList<Mapping> subs = new ArrayList<Mapping>();
               //System.out.println("-------- Initial CList = " + `cl + "\n");
               ConstraintList new_cl = `applyTransitivity(cl);
-              //System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
+              System.out.println("-------- Initial saturated CList = " + `new_cl + "\n");
               `RepeatId(constraintsResolution(subs)).visitLight(`new_cl);
-              //System.out.println("-------- Final CList = " + `new_cl);
+              System.out.println("-------- Final CList = " + `new_cl);
               Substitution res = `MList();
               for (Mapping m: subs) {
                 res = `MList(m,res*);
