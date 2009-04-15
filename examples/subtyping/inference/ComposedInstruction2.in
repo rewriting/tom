@@ -1,0 +1,13 @@
+Context(SigOf("p_one", Sig(Domain(),Type("NatP"))),
+        SigOf("n_one", Sig(Domain(),Type("NatN"))),
+        SigOf("two", Sig(Domain(),Type("Int"))),
+        SigOf("plus", Sig(Domain(Type("Int"),Type("Int")),Type("Int")))),
+
+CList(Subtype(Type("NatP"),Type("Int")),
+      Subtype(Type("NatN"),Type("Int"))),
+
+TIList(Match(Rule(Conjunction(CondList(Matching(Fun("plus",TTeList(Var("x",TypeVar(1)),Var("y",TypeVar(2)))),
+			                        Fun("plus",TTeList(Fun("two",TTeList()),Fun("two",TTeList()))),TypeVar(3)),
+			      	       Disjunction(CondList(Matching(Var("x",TypeVar(4)),Fun("p_one",TTeList()),TypeVar(5)),
+							    Matching(Var("x",TypeVar(6)),Fun("n_one",TTeList()),TypeVar(7)))))),
+		  TTeList())))
