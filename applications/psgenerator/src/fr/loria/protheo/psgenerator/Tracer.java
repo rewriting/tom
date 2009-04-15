@@ -1,5 +1,5 @@
 /*
- * Created on 3 août 2004
+ * Created on 3rd August 2004
  *
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
@@ -60,14 +60,14 @@ import java.io.PrintStream;
  *          <th width="491"><strong>Description</strong></th>
  *        </tr>
  *        <tr align="center"> 
- *          <td>03 aug. 2004</td>
+ *          <td>03rd Aug. 2004</td>
  *          <td>0</td>
  *          <td align="left"> 
  *            File Creation
  *          </td>
  *        </tr>
  *        <tr bgcolor="#EAEAEA"  align="center"> 
- *          <td>03 aug. 2004</td>
+ *          <td>03rd Aug. 2004</td>
  *          <td>1</td>
  *          <td align="left"> 
  *            Initial Working Version

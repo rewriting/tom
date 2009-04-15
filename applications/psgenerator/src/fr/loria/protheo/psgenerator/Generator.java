@@ -1,5 +1,5 @@
 /*
- * Created on 11 août 2004
+ * Created on 11th August 2004
  *
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
@@ -56,21 +56,21 @@ import fr.loria.protheo.psgenerator.parser.ParserManager;
  *          <th width="491"><strong>Description</strong></th>
  *        </tr>
  *        <tr align="center"> 
- *          <td>11 août 2004</td>
+ *          <td>11th August 2004</td>
  *          <td>0</td>
  *          <td align="left"> 
  *            File Creation
  *          </td>
  *        </tr>
  *        <tr bgcolor="#EAEAEA"  align="center"> 
- *          <td>12 août 2004</td>
+ *          <td>12th August 2004</td>
  *          <td>0.1</td>
  *          <td align="left"> 
  *            Initial Working Version
  *          </td>
  *        </tr>
  *        <tr align="center"> 
- *          <td>15 sept 2004</td>
+ *          <td>15th Sept 2004</td>
  *          <td>0.2</td>
  *          <td align="left"> 
  *            return code handlers added<br>

@@ -1,5 +1,5 @@
 /*
- * Created on 10 août 2004
+ * Created on 10th August 2004
  *
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
@@ -48,21 +48,21 @@ import fr.loria.protheo.psgenerator.representation.*;
  *          <th width="491"><strong>Description</strong></th>
  *        </tr>
  *        <tr align="center"> 
- *          <td>10 août 2004</td>
+ *          <td>10th August 2004</td>
  *          <td>0</td>
  *          <td align="left"> 
  *            File Creation
  *          </td>
  *        </tr>
  *        <tr bgcolor="#EAEAEA"  align="center"> 
- *          <td>13 août 2004</td>
+ *          <td>13th August 2004</td>
  *          <td>0.1</td>
  *          <td align="left"> 
  *            Initial Working Version
  *          </td>
  *        </tr>
  *        <tr align="center"> 
- *          <td>15 sept 2004</td>
+ *          <td>15th Sept 2004</td>
  *          <td>0</td>
  *          <td align="left"> 
  *            Added generateHeader() method

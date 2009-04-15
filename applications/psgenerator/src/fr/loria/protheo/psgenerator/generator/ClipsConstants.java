@@ -1,5 +1,5 @@
 /*
- * Created on 10 août 2004
+ * Created on 10th August 2004
  *
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.

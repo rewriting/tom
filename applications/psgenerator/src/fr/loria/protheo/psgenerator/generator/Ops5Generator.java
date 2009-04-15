@@ -1,5 +1,5 @@
 /*
- * Created on 10 août 2004
+ * Created on 10th August 2004
  *
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
@@ -43,7 +43,7 @@ import fr.loria.protheo.psgenerator.representation.Program;
  *          <th width="491"><strong>Description</strong></th>
  *        </tr>
  *        <tr align="center"> 
- *          <td>10 août 2004</td>
+ *          <td>10th August 2004</td>
  *          <td>0</td>
  *          <td align="left"> 
  *            File Creation
