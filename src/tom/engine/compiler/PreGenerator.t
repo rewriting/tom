@@ -229,7 +229,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
 
             /*
              * SwitchVar
-             * TODO : replace with constraints when the or bugs in the optimizer are solved + the or is correctly handled for lists, i.e. with the duplication of the action
+             * 
              * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
              */
             (MatchConstraint|NumericConstraint)[Subject=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {

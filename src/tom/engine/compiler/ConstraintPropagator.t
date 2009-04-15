@@ -99,10 +99,6 @@ public class ConstraintPropagator {
     return result;
   }
   
-  
-  //[radu] TODO: looks a little bit too complicated: I think we can treat the both cases
-  // uniformly
-  
   /**
    * Detaches the annotations
    *  

@@ -112,10 +112,6 @@ public class VariadicPropagator implements IBasePropagator {
       }
       
       /**    
-       * 
-       * [pem] I need some explanations to deeply understand the rules
-       *    //TODO    	
-       *  
        * conc(t1,X*,t2,Y*) = g -> fresh_var = g /\ conc=SymbolOf(fresh_var)  
        * /\ NotEmpty(fresh_Var)  /\ t1=ListHead(fresh_var) /\ fresh_var1 = ListTail(fresh_var) 
        * /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\ X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1

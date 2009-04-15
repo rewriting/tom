@@ -100,7 +100,6 @@ public class ArrayPropagator implements IBasePropagator {
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not an array, nothing to do
-        // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
         if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
         Constraint detachedConstr = ap.getGeneralPurposePropagator().detachSublists(`m);
@@ -108,17 +107,15 @@ public class ArrayPropagator implements IBasePropagator {
         if (detachedConstr != `m) { return detachedConstr; }
       }      
       
-      // [radu] TODO - hasElement shouldn't be generated here (same for Variadic propagator)
-      // (we should generate the has-element test in the generators before generating the code for a GetElement )      
- 
-      // array[t1,X*,t2,Y*] = g -> freshSubj = g /\ array=SymbolOf(freshSubj) /\ fresh_index = 0 
-      // /\ HasElement(fresh_index,freshSubj)  /\ t1=GetElement(fresh_index,freshSubj) /\ fresh_index1 = fresh_index + 1 
-      // /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
-      // /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
-      // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
+      /*
+         array[t1,X*,t2,Y*] = g -> freshSubj = g /\ array=SymbolOf(freshSubj) /\ fresh_index = 0 
+         /\ HasElement(fresh_index,freshSubj)  /\ t1=GetElement(fresh_index,freshSubj) /\ fresh_index1 = fresh_index + 1 
+         /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
+         /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
+         /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
+      */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
-            // if(!TomBase.isArrayOperator(getCompiler().getSymbolTable().
             if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
             // declare fresh variable            
@@ -140,7 +137,6 @@ public class ArrayPropagator implements IBasePropagator {
                   // if we have a variable star
                   (VariableStar | UnamedVariableStar)[] -> {
                     // if it is the last element               
-// [pem] same remark: move the test outside the match
                     if(`X.length() == 0) {
                       // we should only assign it, without generating a loop
                       l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
@@ -159,7 +155,6 @@ public class ArrayPropagator implements IBasePropagator {
                   _ -> {                    
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
-                        /** MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))).*/
                         MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
                         MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
