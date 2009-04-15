@@ -431,7 +431,7 @@ public class TypeInference {
       Pair(type_p,cl_p) << pair_p
       ->
       {
-        ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_s,type_p),constraints_s*);
+        ConstraintList cl_s = `CList(Equation(type,type_s),Subtype(type_p,type_s),constraints_s*);
         return `CCPair(ctx_p,CList(cl_p*,cl_s*,cl*));
       }
     }
