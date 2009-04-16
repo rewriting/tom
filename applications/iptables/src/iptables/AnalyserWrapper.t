@@ -1,13 +1,13 @@
 package iptables;
 
-import iptables.ast.types.*;
+import iptables.analyser.types.*;
 import iptables.analyserwrapper.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
 public class AnalyserWrapper {
 	%include {iptables/analyserwrapper/AnalyserWrapper.tom}
-	%include {iptables/ast/Ast.tom}
+	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
 	public static final String
@@ -61,6 +61,7 @@ public class AnalyserWrapper {
 				return `Addr4(ip,smask);
 			}
 			AddrStringHexadecimal6(ipStr) -> {
+				/* >>> TODO: use address6Wrapper() */
 				String[] strs = `ipStr.split(":");
 				long ipms = 0,ipls = 0,smaskms = ~0, smaskls = ~0;
 				int startoffset = 0, endoffset = 0, midoffset = 4;
@@ -125,6 +126,8 @@ public class AnalyserWrapper {
 		}
 		return null;
 	}
+
+	private static long address6Wrapper(String s) { return 0L; }
 
 	public static AddressRaw addressRawWrapper(String s) {
 		if (s.matches(REGEX_IPv4_ANYWHERE))

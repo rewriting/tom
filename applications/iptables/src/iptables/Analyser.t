@@ -1,11 +1,11 @@
 package iptables;
 
-import iptables.ast.types.*;
+import iptables.analyser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
 public class Analyser {
-	%include {iptables/ast/Ast.tom}
+	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
 	public static final int NOT_COMPARABLE = -2;
