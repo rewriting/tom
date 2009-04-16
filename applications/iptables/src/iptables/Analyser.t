@@ -14,9 +14,11 @@ public class Analyser {
 		%match(rs) {
 			rules(
 				X*,
-				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport),
+				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,
+					dstport,opts),
 				Y*,
-				r2@rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport),
+				r2@rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,
+					dstport,opts),
 				Z*
 			) -> {
 				/* looking for equivalence in the rules */
@@ -88,8 +90,8 @@ public class Analyser {
 	*/
 	public static int compareTo(Rule r1, Rule r2) {
 		%match(r1,r2) {
-			rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport),
-			rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport) -> {
+			rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
+			rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
 				int i1 = compareTo(`srcaddr1,`srcaddr2),
 					i2 = compareTo(`dstaddr1,`dstaddr2);
 				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
@@ -118,6 +120,10 @@ public class Analyser {
 	public static int compareTo(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return 0; }
+			AddrAny(),Addr4(_,_) -> { return 1; }
+			Addr4(_,_),AddrAny() -> { return -1; }
+			AddrAny(),Addr6(_,_,_,_) -> { return 1; }
+			Addr6(_,_,_,_),AddrAny() -> { return -1; }
 			Addr4(ip1,smask1),Addr4(ip2,smask2) -> {
 				if (Math.abs(`smask1) < Math.abs(`smask2)) {
 					if ((`ip2 & `smask1) == (`ip1 & `smask1))
@@ -183,7 +189,8 @@ public class Analyser {
 			AddrAny(),
 			Addr4((16+256+4096+65536),(~0 << 24)),
 			PortAny(),
-			Port(80)
+			Port(80),
+			NoOpt()
 		);
 		Rule r2 = `rule(
 			Drop(),
@@ -193,7 +200,8 @@ public class Analyser {
 			AddrAny(),
 			Addr4((16+256+4096+65536),(~0 << 24)),
 			PortAny(),
-			Port(80)
+			Port(80),
+			NoOpt()
 		);
 		Rule r3 = `rule(
 			Accept(),
@@ -203,7 +211,8 @@ public class Analyser {
 			AddrAny(),
 			Addr4((4096+65536),(~0 << 16)),
 			PortAny(),
-			Port(80)
+			Port(80),
+			NoOpt()
 		);
 
 		Rules rs = 	`rules(r1,r2,r3),rsn;
@@ -215,13 +224,16 @@ public class Analyser {
 		Address a1,a2;
 		a1 = `Addr4(256,(~0 << 8));
 		a2 = `Addr4(312,(~0 << 8));
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
+			+ `a2 + "):" + isEquiv(a1,a2));
 		a1 = `Addr6(256,256,~0L,(~0L << 8));
 		a2 = `Addr6(256,312,~0L,(~0L << 8));
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
+			+ `a2 + "):" + isEquiv(a1,a2));
 		a1 = `Addr4(256,(~0 << 8));
 		a2 = `Addr6(0,(256 | (0xffffL << 32)),~0L,(~0L << 8));
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," + `a2 + "):" + isEquiv(a1,a2));
+		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
+			+ `a2 + "):" + isEquiv(a1,a2));
 
 		/* checkIntegrity tests */
 		System.out.println("\n# checkIntegrity test: doubloon");

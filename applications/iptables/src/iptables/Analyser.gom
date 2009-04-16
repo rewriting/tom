@@ -1,5 +1,5 @@
 module iptables.Analyser
-imports String int long
+imports boolean int long String
 abstract syntax
 
 	Rules = rules(Rule*)
@@ -12,13 +12,16 @@ abstract syntax
 			srcAddr:Address,
 			destAddr:Address,
 			srcPort:Port,
-			destPort:Port)
+			destPort:Port,
+			opts:Options)
 
 	Action =
 		Accept()
-		| Drop()
+		| Drop() /* do not process the packet */
+		| Reject() /* drop then send an error message to the sender */
 		| Log()
 
+	/* The network interface */
 	Iface = Iface(name:String)
 
 	Protocol =
@@ -45,3 +48,34 @@ abstract syntax
 	Port =
 		PortAny()
 		| Port(number:int)
+
+
+	Options = 
+		NoOpt()
+		| Opt(global:GlobalOptions, proto:ProtocolOptions, states:States)
+
+	/* Global options */
+	GlobalOptions = GlobalOpts(GlobalOption*)
+
+	GlobalOption =
+		LogLevel(level:int)
+
+	/* Protocol options */
+	ProtocolOptions = ProtoOpts(ProtocolOption*)
+
+	ProtocolOption =
+		ICMPxType(id:int)
+		| ICMPxTTLZero()
+		| ICMPxDestinationUnreachable()
+		| TCPxSyn(val:boolean)
+		| TCPxAck(val:boolean)
+
+	/* Packet state options */
+	States = states(State*)
+
+	State =
+		StateAny()
+		| New()
+		| Related() /* New connection associated with an existing one */
+		| Established() /* packets was seen in both directions */
+		| Invalid() /* packets associated with no known connection */
