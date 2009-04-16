@@ -12,6 +12,7 @@ import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
 //constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 public class XMLProgramHandlerGui {
@@ -20,10 +21,27 @@ public class XMLProgramHandlerGui {
   
   	//quite long but core of this part
 	public static String makeRuleStrategy(String filename){
+		
+		JFrame frame = new JFrame();
+		frame.setTitle("Polygraphes GUI Alpha 2");
+		frame.setSize(500,500);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+		//tp=XMLhandlerGui.RepartitionFilsTwoPath(tp);
+		Container contentPane = frame.getContentPane();
+		JTabbedPane jtp = new JTabbedPane();
+		contentPane.add(jtp);
+		Graph g = new Graph();
+		
+		
 		String strategy="";
 		int n=0;
 		ArrayList<OneCell> types=new ArrayList<OneCell>();
 		ArrayList<TwoPath> constructors=new ArrayList<TwoPath>();
+		ArrayList<ThreePath> structureRules=new ArrayList<ThreePath>();
 		try{
 			//we load the xml file
 			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
@@ -46,7 +64,7 @@ public class XMLProgramHandlerGui {
 								if(!constructorNode.getNodeName().equals("#text")){
 									TwoPath tp = XMLhandlerGui.makeTwoPath(constructorNode);
 									constructors.add(tp);
-									System.out.println("******* CIRCUIT *******");
+									/*System.out.println("******* CIRCUIT *******");
 									System.out.println("");
 									System.out.println(" |      |     | \n" +
 											           "----  ----  ----\n" +
@@ -68,22 +86,14 @@ public class XMLProgramHandlerGui {
 									System.out.println("********** GENERAL STATUS **********");
 									tp.affiche();
 									System.out.println("********** EOF **********");
-									
-								    JFrame frame = new JFrame();
-									frame.setTitle("Polygraphes GUI Alpha 2");
-									frame.setSize(500,500);
-									frame.addWindowListener(new WindowAdapter() {
-										public void windowClosing(WindowEvent e) {
-											System.exit(0);
-										}
-									});
-									//tp=XMLhandlerGui.RepartitionFilsTwoPath(tp);
-									Container contentPane = frame.getContentPane();
-									Graph g = new Graph();
+									*/
+								    
 									ajoutfenetre(g,tp);
-									
-									contentPane.add(g);
+									jtp.addTab("Constructor N°"+i, g);
+									g= new Graph();
+									//System.out.println("CONTROLE NB ELEMENT :"+g.getComponentCount());
 									frame.setVisible(true);
+									
 									
 								}
 							}
@@ -99,12 +109,56 @@ public class XMLProgramHandlerGui {
 							NodeList ruleNodes=functionNode.getChildNodes();
 							for (int k = 0; k < ruleNodes.getLength(); k++) {
 								Node ruleNode = ruleNodes.item(k);
+								if(!ruleNode.getNodeName().equals("#text")){
+									ThreePath tp = XMLhandlerGui.makeThreeCell(ruleNode);
+									
+									JTabbedPane jtp2 = new JTabbedPane();
+									jtp.addTab("Function N°"+i,jtp2);
+									ajoutfenetre(g,tp.source());
+									jtp2.addTab("Source", g);
+									g= new Graph();
+									ajoutfenetre(g,tp.target());
+									jtp2.addTab("Target", g);
+									g= new Graph();
+									frame.setVisible(true);
+									String rule=makeRule(tp)+"\n";
+									
+									
+			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
+		visit TwoPath {
+			@rule@
+		}
+	}
+  	]%;
+			 n++;
+								}
 							}
 						}
 					}
 				}
 			}
 			
+			// generation of the structure rules
+			for (Iterator<TwoPath> iterator = constructors.iterator(); iterator.hasNext();) {
+				TwoPath constructor =  iterator.next();
+				ArrayList<ThreePath> constructorRules=StructureRuleHandlergui.makeStructureRules(constructor,types);
+				for (Iterator<ThreePath> iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
+					ThreePath rule = iterator2.next();
+					structureRules.add(rule);
+				}
+			}
+			//construction of the strategies corresponding to the strategy rules
+			for (Iterator<ThreePath> iterator = structureRules.iterator(); iterator.hasNext();) {
+				ThreePath rulePath =  iterator.next();
+				String rule=makeRule(rulePath)+"\n";
+			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
+		visit TwoPath {
+			@rule@
+		}
+	}
+  	]%;
+			 n++;
+			}
 			//construction of the function that applies all the strategies on a 2-Path
 			String evalStrategy="ApplyRules0()";
 			//String evalStrategy="RepeatId(TopDown(ApplyRules0())),MakeLog()";
@@ -135,8 +189,11 @@ public class XMLProgramHandlerGui {
 		}
 		catch(Exception e){ e.printStackTrace();}
 		System.out.println("");
+		
+		
 		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
 		return strategy;
+		
 	}
 	
 	public static void ajoutfenetre(Graph g,TwoPath path){
@@ -148,6 +205,49 @@ public class XMLProgramHandlerGui {
 		}
 	}
 	
+	//transforms the rule source in a pattern and its target as the resulting action
+	public static String makeRule(ThreePath rule){
+		TwoPath source=rule.getSource();
+		TwoPath target=rule.getTarget();
+		source=formatRule(source);
+		target=formatRule(target);
+		String sourceString=source.toString();
+		String targetString=target.toString();
+		int i=0;
+		//we replace the ruleAux Cells by "Xi" in the patterns and actions
+		while(sourceString.contains("ruleAux")){//cautious, infinite loop risk there
+			char indexSource=sourceString.charAt(sourceString.indexOf("ruleAux")+7);
+			char indexTarget=targetString.charAt(targetString.indexOf("ruleAux")+7);
+			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexSource+"*");
+			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexTarget+"*");
+			i++;}
+		int j=0;
+		//we replace id=0 in the constructors of the action part by a call to a function that will return a new different id to each new TwoCell
+		while(sourceString.contains("(),0")){
+			sourceString=sourceString.replaceFirst("\\(\\),0", "(),id"+j++);}
+		targetString=targetString.replaceAll("\\(\\),0", "(),setID()");
+		//we add a condition to verify that each connection Xi is not empty
+		String condition="";
+		if(i>0){
+			i--;
+			condition="if(`X"+i+"!=`TwoId(Id())";
+			while(i>0){
+				i--;
+				condition+="&&`X"+i+"!=`TwoId(Id())";
+			}
+			condition+=")";
+		}
+		//we add Y* at the tail of the patterns, otherwise we dont capture every pattern
+		if(source.isConsTwoC1()){
+			sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
+		else{
+			sourceString="TwoC1("+sourceString+",Y*)";}
+		if(target.isConsTwoC1()){
+			targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
+		else{
+			targetString="TwoC1("+targetString+",Y*)";}
+		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
+	}
 	
 	//Adds a "ruleAux" cell on each incoming wire, allows to know the input connection structure for the rule pattern and actions
 	public static TwoPath formatRule(TwoPath path){

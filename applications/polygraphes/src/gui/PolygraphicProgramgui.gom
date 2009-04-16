@@ -15,6 +15,12 @@ TwoPath = TwoId (onePath:OnePath) //to be able to cast wires as cells when neede
 		| TwoC0 (TwoPath*)
 		| TwoC1 (TwoPath*)
 
+ThreePath = ThreeId (twoPath:TwoPath)//useless for the moment
+| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
+| ThreeC0 (ThreePath*)//useless
+| ThreeC1 (ThreePath*)//useless
+| ThreeC2 (ThreePath*)//useless
+		
 CellType = Constructor()
 		| Function()
 
@@ -287,4 +293,76 @@ sort TwoPath:block(){
 		}
 	//called method
 	public void print(){System.out.println(this.prettyPrint());}
+}
+
+//set of methods for 3-paths (never used in this project except for the print method)
+sort ThreePath:block(){
+	
+	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
+	public OnePath oneSource(){
+		%match (this){	
+					ThreeId(X) -> { return `X.source(); }
+					ThreeCell[Source=x] -> { return `x.source(); }
+					ThreeC0(head,tail*) -> { return `OneC0(head.oneSource(),tail*.oneSource()); }
+					ThreeC1(head,tail*) -> { return `head.oneSource(); }
+					ThreeC2(head,tail*) -> { return `head.oneSource(); }
+		}
+		//return `OneId();
+		throw new RuntimeException("strange term: "+this);
+	}
+
+	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
+	public OnePath oneTarget(){
+		%match (this){
+					ThreeId(X) -> { return `X.target(); }
+					ThreeCell[Target=x] -> { return `x.target(); }
+					ThreeC0(head,tail*) -> { return `OneC0(head.oneTarget(),tail*.oneTarget()); }
+					ThreeC1(head*,tail) -> { return `tail.oneTarget(); }
+					ThreeC2(head,tail*) -> { return `head.oneTarget(); }
+		}
+		//return `OneId();
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	//returns the source 2-Path of any 3-Path
+	public TwoPath source(){
+		%match (this){
+					ThreeId(X) -> { return `X; }
+					ThreeCell[Source=x] -> { return `x; }
+					ThreeC0(head,tail*) -> { return `TwoC0(head.source(),tail*.source()); }
+					ThreeC1(head,tail*) -> { return `TwoC1(head.source(),tail*.source()); }
+					ThreeC2(head,tail*) -> { return `head.source(); }
+		}
+		//return `TwoId(OneId());
+		throw new RuntimeException("strange term: "+this);
+	}
+
+	//returns the target 2-Path of any 3-Path
+	public TwoPath target(){
+		%match (this){
+					ThreeId(X) -> { return `X; }
+					ThreeCell[Target=x] -> { return `x; }
+					ThreeC0(head,tail*) -> { return `TwoC0(head.target(),tail*.target()); }
+					ThreeC1(head,tail*) -> { return `TwoC1(head.target(),tail*.target()); }
+					ThreeC2(head*,tail) -> { return `tail.target(); }
+		}
+		//return `TwoId(OneId());
+		throw new RuntimeException("strange term: "+this);
+	}
+	
+	//returns true if the path is valid (=well-constructed)
+	//actually useless with our custom make methods
+	public boolean defined(){
+			%match (this){
+						ThreeCell[] -> { return true; }
+						ThreeC0(_*) -> { return true; }
+						ThreeC1(ThreeCell[Source=source1],ThreeCell[Source=source2],tail*) -> { return `source1.target()==`source2.source()&&`tail.defined();}
+						ThreeC2(ThreeCell[Target=target1],ThreeCell[Source=source2],tail*) -> { return `target1==`source2&&`tail.defined();}
+				}
+			return false;
+		}
+	
+	//print method
+	public void print(){System.out.println("ThreeCell("+this.getName()+","+this.getSource().prettyPrint()+","+this.getTarget().prettyPrint()+")");}
+		
 }

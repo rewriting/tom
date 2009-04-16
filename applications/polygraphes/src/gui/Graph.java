@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 public class Graph extends JPanel {
 	int debug = 0;
 	private ArrayList<Object> elts;
+	private int controle;
 	
 	public Graph(){
 		this.elts = new  ArrayList<Object>();
@@ -34,12 +35,16 @@ public class Graph extends JPanel {
 			Iterator<OneCell> itfil = XMLhandlerGui.getListeOneCellSource(((TwoCell)o)).iterator();
 			while (itfil.hasNext()){
 				this.ajouterElement((OneCell)itfil.next());
+				controle++;
 			}
 			Iterator<OneCell> itfil2 = XMLhandlerGui.getListeOneCellTarget(((TwoCell)o)).iterator();
 			while (itfil2.hasNext()){
 				this.ajouterElement((OneCell)itfil2.next());
+				controle++;
 			}
 		}
+		controle++;
+		System.out.println("CONTROLE :"+controle);
 	}
 	
 	/** Add Component Without a Layout Manager (Absolute Positioning) */ 

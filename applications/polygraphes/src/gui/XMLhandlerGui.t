@@ -168,6 +168,26 @@ public class XMLhandlerGui {
 	  return `TwoId(Id());
   }
 
+//make a 3-path term from its xml description
+  public static ThreePath makeThreeCell(Node node){
+	  NamedNodeMap attributes=node.getAttributes();
+	  String name=attributes.getNamedItem("Name").getNodeValue();
+	  String type=attributes.getNamedItem("Type").getNodeValue();
+	  CellType celltype=null;
+	  if(type.equals("Function")){celltype=`Function();}
+	  if(type.equals("Constructor")){celltype=`Constructor();}//never used
+	  NodeList io=node.getChildNodes();
+	  TwoPath source=`TwoId(Id());
+	  TwoPath target=`TwoId(Id());
+	  for (int j = 0; j < io.getLength(); j++) {
+		  Node ioChild=io.item(j);
+		  String ioName =ioChild.getNodeName();
+		  if(ioName.equals("Source")){source=makeTwoPath(ioChild);}
+		  if(ioName.equals("Target")){target=makeTwoPath(ioChild);}
+	  }
+	  return `ThreeCell(name,source,target,celltype);
+  }
+  
 	//Set of functions converting polygraphic terms in strings based on the xml format we chose
 	//return the xml description of a 2-Path
 	public static String twoPath2XML(TwoPath path){
@@ -227,6 +247,14 @@ public class XMLhandlerGui {
 			OneC0(head,tail*)->{ return oneC02XML(`head)+oneC02XML(`tail);}
 		}
 		return "";
+	}
+	
+	//return the xml description of a 3-Cell
+	public static String threePath2XML(ThreePath path){
+		if(path instanceof ThreePath){
+			return "<ThreeCell Name=\""+path.getName()+"\" Type=\""+path.getType().toString().replace("()","")+"\">\n<Source>\n"+twoPath2XML(path.getSource())+"</Source>\n<Target>\n"+twoPath2XML(path.getTarget())+"</Target>\n</ThreeCell>\n";
+		}
+		else {System.out.println("this is not a ThreeCell !"+path);return null;} 
 	}
 	
 	/*
@@ -376,7 +404,6 @@ public class XMLhandlerGui {
 			TwoC0(head,tail*) -> { liste.addAll(getListeOneCellTarget(`head)); liste.addAll(getListeOneCellTarget(`tail*));}
 			TwoC1(head,tail*) -> { liste.addAll(getListeOneCellTarget(`head));}
 		}
-		System.out.println(liste);
 		return liste;
 	}
 	
@@ -391,7 +418,6 @@ public class XMLhandlerGui {
 			TwoC0(head,tail*) -> { liste.addAll(getListeOneCellTarget(`head)); liste.addAll(getListeOneCellTarget(`tail*));}
 			TwoC1(head*,tail) -> { liste.addAll(getListeOneCellTarget(`tail));}
 		}
-		System.out.println(liste);
 		return liste;
 	}
 	
@@ -405,7 +431,6 @@ public class XMLhandlerGui {
 			OneCell(name,x,y,hauteur,largeur) -> { liste.add((OneCell)path); }
 		 	OneC0 (head,tail*) -> {liste.addAll(getListeOneCell(`head)); liste.addAll(getListeOneCell(`tail*));}
 		}
-		System.out.println(liste);
 		return liste;
 	}
 	
@@ -460,8 +485,13 @@ public class XMLhandlerGui {
 		//Init, ie recuperer la liste des elements de chaque TwoPath
 		ArrayList<TwoPath> listehaut = new ArrayList<TwoPath>();
 		ArrayList<TwoPath> listebas = new ArrayList<TwoPath>();
-		listehaut=getListeTwoPathBas(haut.reverse()); //on recupere que les elements bas du haut du C1
-		listebas=getListeTwoPathHaut(bas.reverse()); //on recupere que les elements haut du bas du C1
+		System.out.println(haut);
+		System.out.println();
+		System.out.println(bas);
+		if(haut instanceof TwoC0) listehaut=getListeTwoPathBas(haut.reverse()); //on recupere que les elements bas du haut du C1
+		else listehaut=getListeTwoPathBas(haut);
+		if(bas instanceof TwoC0) listebas=getListeTwoPathHaut(bas.reverse()); //on recupere que les elements haut du bas du C1
+		else listebas=getListeTwoPathHaut(bas);
 		int taille; //variable qui permettra de connaitre la largeur de chaque sous element bas
 		Iterator it = listehaut.iterator();
 		Iterator it2 = listebas.iterator();
