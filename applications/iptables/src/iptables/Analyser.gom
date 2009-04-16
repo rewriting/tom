@@ -17,11 +17,13 @@ abstract syntax
 	Action =
 		Accept()
 		| Drop()
+		| Log()
 
 	Iface = Iface(name:String)
 
 	Protocol =
-		TCP()
+		ProtoAny()
+		| TCP()
 		| UDP()
 		| IPv4()
 		| IPv6()
@@ -33,12 +35,13 @@ abstract syntax
 	Target =
 		In()
 		| Out()
+		| Forward()
 
 	Address =
-		Addr4(ip:int,smask:int)
+		AddrAny()
+		| Addr4(ip:int,smask:int)
 		| Addr6(ipms:long,ipls:long,smaskms:long,smaskls:long)
-		| AddrAny()
 
 	Port =
-		Port(number:int)
-		| PortAny()
+		PortAny()
+		| Port(number:int)
