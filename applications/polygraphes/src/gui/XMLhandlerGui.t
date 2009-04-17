@@ -119,10 +119,10 @@ public class XMLhandlerGui {
 			  if(!twoC0Element.getNodeName().contains("#text")){
 				  TwoPath res2=res;
 				  TwoPath res3 = makeTwoPath(twoC0Element);
-				  System.out.println("TwoC0 :(");
+				  /*System.out.println("TwoC0 :(");
 				  System.out.print(" res2:");res2.affiche();
 				  System.out.print(" res3:");res3.affiche();
-				  System.out.println(")");
+				  System.out.println(")");*/
 				  if(res2 instanceof TwoId) ;
 				  else res2=decalageX(res2,res3.getLargeur()+4);
 				  res=`TwoC0(res2,res3);
@@ -140,10 +140,10 @@ public class XMLhandlerGui {
 				  else{
 					  TwoPath res2=res;
 					  TwoPath res3 = makeTwoPath(twoC1Element);
-					  System.out.println("TwoC1 :(");
+					  /*System.out.println("TwoC1 :(");
 					  System.out.print(" res2:");res2.affiche();
 					  System.out.print(" res3:");res3.affiche();
-					  System.out.println(")");
+					  System.out.println(")");*/
 					  if(res2 instanceof TwoId){
 						  res=`TwoC1(res3,res2);
 					  }
@@ -562,8 +562,8 @@ public class XMLhandlerGui {
 				System.out.println(tp2);
 				taille=taillemax-4;
 			}
-			listeC1bas.add(`TwoCell(tp2.getName(),genererOneC0(listeocret),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),taille));
-			
+			if(tp2 instanceof TwoCell) listeC1bas.add(`TwoCell(tp2.getName(),genererOneC0(listeocret),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),taille));
+			else listeC1bas.add(`TwoId(genererOneC0(listeocret)));
 		}
 		
 		TwoPath tmp=genererTwoC0(listeC1bas);
@@ -582,7 +582,8 @@ public class XMLhandlerGui {
 			TwoPath first = array.get(0);
 			array.remove(0);
 			TwoPath last = genererTwoC0(array);
-			last=`TwoCell(last.getName(),last.source(),decalageX(last.target(),first.getLargeur()+4),last.getType(),last.getID(),first.getLargeur()+4,last.gety(),last.gethauteur(),last.getlargeur());
+			if(last instanceof TwoCell) last=`TwoCell(last.getName(),last.source(),decalageX(last.target(),first.getLargeur()+4),last.getType(),last.getID(),first.getLargeur()+4,last.gety(),last.gethauteur(),last.getlargeur());
+			else last=`TwoId(decalageX(last.source(),first.getLargeur()+4));
 			return `TwoC0(first,last);
 		}
 	}

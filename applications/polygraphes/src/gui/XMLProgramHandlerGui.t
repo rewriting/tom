@@ -24,7 +24,7 @@ public class XMLProgramHandlerGui {
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Polygraphes GUI Alpha 2");
-		frame.setSize(500,500);
+		frame.setSize(800,500);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -89,7 +89,7 @@ public class XMLProgramHandlerGui {
 									*/
 								    
 									ajoutfenetre(g,tp);
-									jtp.addTab("Constructor N°"+i, g);
+									jtp.addTab("Constructor N°("+i+","+j+")", g);
 									g= new Graph();
 									//System.out.println("CONTROLE NB ELEMENT :"+g.getComponentCount());
 									frame.setVisible(true);
@@ -113,7 +113,7 @@ public class XMLProgramHandlerGui {
 									ThreePath tp = XMLhandlerGui.makeThreeCell(ruleNode);
 									
 									JTabbedPane jtp2 = new JTabbedPane();
-									jtp.addTab("Function N°"+i,jtp2);
+									jtp.addTab("Function N°("+i+","+k+")",jtp2);
 									ajoutfenetre(g,tp.source());
 									jtp2.addTab("Source", g);
 									g= new Graph();
@@ -121,7 +121,7 @@ public class XMLProgramHandlerGui {
 									jtp2.addTab("Target", g);
 									g= new Graph();
 									frame.setVisible(true);
-									String rule=makeRule(tp)+"\n";
+									/*String rule=makeRule(tp)+"\n";
 									
 									
 			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
@@ -129,7 +129,7 @@ public class XMLProgramHandlerGui {
 			@rule@
 		}
 	}
-  	]%;
+  	]%;*/
 			 n++;
 								}
 							}
@@ -198,7 +198,7 @@ public class XMLProgramHandlerGui {
 	
 	public static void ajoutfenetre(Graph g,TwoPath path){
 		%match (TwoPath path){
-			TwoId(onepath) -> {;}
+			TwoId(onepath) -> {g.ajouterElement(path);}
 			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { g.ajouterElement(path); }
 			TwoC0(head,tail*) -> {ajoutfenetre(g,`head); ajoutfenetre(g,`tail);}
 			TwoC1(head,tail*) -> {ajoutfenetre(g,`head); ajoutfenetre(g,`tail);}

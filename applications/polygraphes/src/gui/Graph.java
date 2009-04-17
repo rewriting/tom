@@ -42,9 +42,15 @@ public class Graph extends JPanel {
 				this.ajouterElement((OneCell)itfil2.next());
 				controle++;
 			}
+		}else if(o instanceof TwoId){
+			Iterator<OneCell> itfil = XMLhandlerGui.getListeOneCellSource(((TwoId)o)).iterator();
+			while (itfil.hasNext()){
+				this.ajouterElement((OneCell)itfil.next());
+				controle++;
+			}
 		}
 		controle++;
-		System.out.println("CONTROLE :"+controle);
+		//System.out.println("CONTROLE :"+controle);
 	}
 	
 	/** Add Component Without a Layout Manager (Absolute Positioning) */ 
@@ -127,7 +133,7 @@ public class Graph extends JPanel {
     
  	public void paintComponent(Graphics g) {
 	    super.paintComponent(g);
-	    System.out.println("Appel de Paintcomponent numero  " +debug);
+	    //System.out.println("Appel de Paintcomponent numero  " +debug);
 	    debug++;
 	    buildGraph(g);
 	  }
