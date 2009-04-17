@@ -87,7 +87,7 @@ public class XMLProgramHandlerGui {
 									tp.affiche();
 									System.out.println("********** EOF **********");
 									*/
-								    
+									tp=XMLhandlerGui.decalageX(tp,15);
 									ajoutfenetre(g,tp);
 									jtp.addTab("Constructor N°("+i+","+j+")", g);
 									g= new Graph();
@@ -110,14 +110,15 @@ public class XMLProgramHandlerGui {
 							for (int k = 0; k < ruleNodes.getLength(); k++) {
 								Node ruleNode = ruleNodes.item(k);
 								if(!ruleNode.getNodeName().equals("#text")){
+									System.out.println("NNNNNNNNNNNNEEEEEEEEEEEEEWWWWWWWWWWWWWWWW");
 									ThreePath tp = XMLhandlerGui.makeThreeCell(ruleNode);
-									
 									JTabbedPane jtp2 = new JTabbedPane();
 									jtp.addTab("Function N°("+i+","+k+")",jtp2);
-									ajoutfenetre(g,tp.source());
+									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.source(),15));
 									jtp2.addTab("Source", g);
 									g= new Graph();
-									ajoutfenetre(g,tp.target());
+									//System.out.println(tp.target());
+									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.target(),15));
 									jtp2.addTab("Target", g);
 									g= new Graph();
 									frame.setVisible(true);

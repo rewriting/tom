@@ -75,6 +75,8 @@ public class Graph extends JPanel {
  				// this.addComponent(this, (Fil)tmp, ((Fil)tmp).getmX(), ((Fil)tmp).getmY(), ((Fil)tmp).getmWidth(), ((Fil)tmp).getmHeight());
  				g2.setColor(Color.BLUE);
  				g2.drawLine(tmp2.getx(),tmp2.gety(),tmp2.getx(), tmp2.gety()+tmp2.gethauteur());
+ 				g2.setColor(Color.GREEN);
+ 				g2.drawString(tmp2.getName(),tmp2.getX()-(tmp2.getLargeur()/2),tmp2.getY()+(tmp2.getHauteur()/2));
  				  //System.out.println("Fil : X = " + tmp2.getmX() + " Y = " + tmp2.getmY() + " Width = " + tmp2.getmWidth() + " Height = " + tmp2.getmHeight());
  			} else if (tmp instanceof TwoCell){
  				
