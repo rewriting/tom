@@ -175,19 +175,23 @@ abstract public class TomChecker extends TomGenericPlugin {
    * Message Functions
    */
   protected void messageError(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    TomMessage.error(getLogger(),fileName,errorLine,msg,msgArgs);
+    //getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
   protected void messageWarning(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine));
+    TomMessage.warning(getLogger(),fileName,errorLine,msg,msgArgs);
+    //getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine));
   }
   
   public static void messageError(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    Logger.getLogger(className).log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    TomMessage.error(Logger.getLogger(className),fileName,errorLine,msg,msgArgs);
+    //Logger.getLogger(className).log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
   public static void messageWarning(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
+    TomMessage.warning(Logger.getLogger(className),fileName,errorLine,msg,msgArgs);
+    //Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
   
 }  //Class TomChecker

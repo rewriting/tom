@@ -150,9 +150,7 @@ public class TestHandler extends Handler {
    * most of the messages are encapsulated in a message of type DetailedMessage
    *
    * @param record a given LogRecord
-   * @return true if the message was attempted by the non regression test file
    */
-
   public void nonRegressionTest(PlatformLogRecord record) {
     /* The nonRegressionTest method verify that all structured log messages (of
      * type PlatformLogRecord) were attempted in the same order and with the

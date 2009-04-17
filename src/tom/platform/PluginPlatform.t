@@ -113,12 +113,6 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
   /**
    * The main method which runs the PluginPlatform.
-   *
-   * @return an error code :
-   * <ul>
-   * <li>0 if no error was encountered</li>
-   * <li>1 if something went wrong</li>
-   * </ul>
    */
   public void run() {
     try {
