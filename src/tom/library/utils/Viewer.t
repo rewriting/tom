@@ -37,6 +37,9 @@ import att.grappa.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * Provide tools to view terms, with a graphical browser or with GraphViz.
+ */
 public class Viewer {
 
   %include { ../mapping/java/sl.tom }

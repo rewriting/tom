@@ -28,18 +28,18 @@ package tom.library.utils;
 import aterm.ATerm;
 
 /**
- * This interface contains a method that converts specific ATerm to Tom usable ATerm
- * Its purpose is to open Gom to other external format, from other tools
+ * This interface contains a method converting specific ATerm to Tom usable
+ * ATerm. Its purpose is to open Gom to other external format, from other tools
  */
   
 public interface ATermConverter {
 
   /**
-   * Method triggered when importing ATerm with an external format
+   * Method triggered when importing ATerm with an external format.
    *
    * @param at the ATerm which needs to be converted
    * @return an usable ATerm
    */
   public ATerm convert(ATerm at);
   
-} //ATermConverter
+}
