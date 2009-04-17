@@ -17,7 +17,7 @@ tokens {
 }
 
 LeveCrayon : 'LC' | 'leve crayon';
-BaisseCrayon : 'BC' | 'baisse crayon';
+BaisseCrayon : 'BC' | 'baisse crayon' | 'PC';
 Avance : 'AV' | 'avance';
 PLUS : '+';
 
@@ -25,11 +25,10 @@ instruction :
     LeveCrayon -> ^(LC)
   | BaisseCrayon -> ^(BC)
   | Avance e=expression -> ^(AV $e)
-  | TourneGauche e=expression -> ^(TG $e)
-  | TourneDroite e=expression -> ^(TD $e)
-  | Recule e=expression -> ^(RE $e)
-  | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
-
+//  | TourneGauche e=expression -> ^(TG $e)
+//  | TourneDroite e=expression -> ^(TD $e)
+//  | Recule e=expression -> ^(RE $e)
+//  | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
   ;
 
 expression :

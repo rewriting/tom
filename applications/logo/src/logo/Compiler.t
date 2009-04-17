@@ -33,7 +33,57 @@ public class Compiler {
         int value = eval(`dist);
         System.out.println("avance " + value);
       }
+    }
+  }
 
+  public static int eval(Expression exp) {
+    %match(exp) {
+      Cst(value) -> { 
+        return `value;
+      }
+
+      Plus(e1,e2) -> { 
+        return eval(`e1) + eval(`e2);
+      }
+    }
+    return 0;
+  }
+ 
+
+
+
+
+
+  public static InstructionList optimize(InstructionList il) {
+    try {
+      InstructionList res = `InnermostId(StaticEval()).visitLight(il);
+      System.out.println("res = " + res);
+      return res;
+    } catch (VisitFailure e) {
+      System.out.println("failure");
+    }
+    return null;
+  }
+
+  %strategy StaticEval() extends Identity() {
+    visit Expression {
+      Plus(Cst(v1),Cst(v2)) -> {
+        return `Cst(v1+v2); 
+      }
+
+    }
+
+    //visit InstructionList {
+    //  InstructionList(TG(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x + y)),tail*); }
+    //  InstructionList(TD(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x + y)),tail*); }
+    //  InstructionList(TG(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x - y)),tail*); }
+    //  InstructionList(TD(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x - y)),tail*); }
+    //}
+   
+  }
+
+}
+/*
       TG(angle) -> {
         int value = eval(`angle);
         System.out.println("tourne gauche " + value);
@@ -54,49 +104,4 @@ public class Compiler {
           eval(`il);
         }
       }
-    }
-  }
-
-  public static int eval(Expression exp) {
-    %match(exp) {
-      Cst(value) -> { 
-        return `value;
-      }
-
-      Plus(e1,e2) -> { 
-        return eval(`e1) + eval(`e2);
-      }
-    }
-    return 0;
-  }
-  
-  public static InstructionList optimize(InstructionList il) {
-    try {
-      InstructionList res = `InnermostId(StaticEval()).visitLight(il);
-      System.out.println("res = " + res);
-      return res;
-    } catch (VisitFailure e) {
-      System.out.println("failure");
-    }
-    return null;
-  }
-
-  %strategy StaticEval() extends Identity() {
-    visit Expression {
-      Plus(Cst(v1),Cst(v2)) -> {
-        return `Cst(v1+v2); 
-      }
-
-    }
-
-    
-    visit InstructionList {
-      InstructionList(TG(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x + y)),tail*); }
-      InstructionList(TD(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x + y)),tail*); }
-      InstructionList(TG(Cst(x)),TD(Cst(y)),tail*) -> { return `InstructionList(TG(Cst(x - y)),tail*); }
-      InstructionList(TD(Cst(x)),TG(Cst(y)),tail*) -> { return `InstructionList(TD(Cst(x - y)),tail*); }
-    }
-   
-  }
-
-}
+ */

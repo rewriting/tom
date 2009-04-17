@@ -175,6 +175,7 @@ public class Record {
         return op + "(" + prettyPrint(`e1) + ")";
       }
 
+
       BinaryOperator[first=e1,second=e2] -> {
         return op + "(" + prettyPrint(`e1) + "," + prettyPrint(`e2) + ")";
       }
