@@ -80,7 +80,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   }
 
   public int getClass(TomTerm term) {
-    %match(TomTerm term) {
+    %match(term) {
       TermAppl[NameList=(Name(""))] -> { return UNAMED_APPL;}
       TermAppl[NameList=(Name(_))] -> { return TERM_APPL;}
       TermAppl[NameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
@@ -97,7 +97,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   
   public String getName(TomTerm term) {
     String dijunctionName = "";
-    %match(TomTerm term) {
+    %match(term) {
       TermAppl[NameList=(Name(name))] -> { return `name;}
       TermAppl[NameList=nameList] -> {
         String head;
@@ -149,14 +149,14 @@ abstract public class TomChecker extends TomGenericPlugin {
   }
   
   protected String findOriginTrackingFileName(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
     }
     return "unknown filename";
   }
 
   protected int findOriginTrackingLine(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
     }
     return -1;

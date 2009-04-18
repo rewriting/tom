@@ -1,3 +1,9 @@
+2009-04-18 pem
+ * backquote parser raises an error when a '}' is immediately after an
+   identifier: {`x} for instance ( {`(x)} should be used )
+ * arity is checked in backquote termes
+ * fix PR-4743
+
 2009-04-09 pem
  * renamed tom-library.jar into tom-runtime.jar
  * removed sl.jar (add classes into tom-runtime.jar)

@@ -211,7 +211,11 @@ mainBqTerm [TomList context] returns [TomTerm result]
              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
              result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
            }
-                
+           | {LA(1) == BQ_RBRACE}?
+           {
+           // generate an ERROR when a '}' is encoutered
+           //System.out.println("ERROR");
+           }
            | ws /*ws*/ 
                 (
                  // `x(...)
@@ -559,6 +563,7 @@ tokens {
 
 BQ_LPAREN      :    '('   ;
 BQ_RPAREN      :    ')'   ;
+BQ_RBRACE      :    "}"   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
 BQ_BACKQUOTE   :   "`" ;
