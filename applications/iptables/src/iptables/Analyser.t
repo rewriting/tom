@@ -11,8 +11,24 @@ public class Analyser {
 	public static final int NOT_COMPARABLE = -2;
 
 	public static Rules checkIntegrity(Rules rs) {
-		%match(rs) {
-			rules(
+		try {
+			rs = `OutermostId(checkIntersect()).visit(rs);
+			
+		} catch (VisitFailure vf) { }
+		return rs;
+	}
+ 
+	public static Rules checkOptimization(Rules rs) {
+		try {
+			rs = `OutermostId(checkInclusion()).visit(rs);
+			
+		} catch (VisitFailure vf) { }
+		return rs;
+	}
+
+	%strategy checkIntersect() extends Identity() {
+		visit Rules {
+			rs@rules(
 				X*,
 				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,
 					dstport,opts),
@@ -25,33 +41,38 @@ public class Analyser {
 				if (isEquiv(`srcaddr1,`srcaddr2) && isEquiv(`dstaddr1,`dstaddr2)) {
 					if (`action1 == `action2) {
 						System.out.println("doubloon: " + `r1);
-						rs = `rules(X*,r1,Y*,Z*);
-					} else
-						System.err.println("conflicting rules:" + `r1 + "\t/\t" + `r2);
+						return `rules(X*,r1,Y*,Z*);
+					} else {
+						System.err.println("conflicting rules:" + `r1 + "\t/\t" +
+						 `r2 + " => removing " + `r2);
+						return `rules(X*,r1,Y*,Z*);
+					}
 				}
+				return `rs;
 			}
+			rs@rules(_*) -> { return `rs; }
 		}
-		return rs;
 	}
 
-	public static Rules checkOptimization(Rules rs) {
-		%match(rs) {
-			rules(X*,r1,Y*,r2,Z*) -> {
+	%strategy checkInclusion() extends Identity() { 
+		visit Rules {
+			rs@rules(X*,r1,Y*,r2,Z*) -> {
 				/* looking for inclusions optimizations */
-				int i = compareTo(`r1,`r2);
+				int i = isInclude(`r1,`r2);
+				System.out.println("CUL " + i);
 				if (i == 1) {
 					System.out.println("optimization: " + `r2);
-					rs = `rules(X*,r1,Y*,Z*);
+					return `rules(X*,r1,Y*,Z*);
 				} else if (i == -1) {
 					System.out.println("optimization: " + `r1);
-					rs = `rules(X*,Y*,r2,Z*);
+					return `rules(X*,Y*,r2,Z*);
 				} else if (i == 0) {
 					System.out.println("optimization-doubloon: " + `r1);
-					rs = `rules(X*,r1,Y*,Z*);
+					return `rules(X*,r1,Y*,Z*);
 				}
+				return `rs;
 			}
 		}
-		return rs;
 	}
 
 	public static boolean isEquiv(Address a1, Address a2) {
@@ -88,12 +109,12 @@ public class Analyser {
 			-1 if r1 include in r2
 			NOT_COMPARABLE if the 2 rules are not comparable
 	*/
-	public static int compareTo(Rule r1, Rule r2) {
+	public static int isInclude(Rule r1, Rule r2) {
 		%match(r1,r2) {
 			rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
 			rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
-				int i1 = compareTo(`srcaddr1,`srcaddr2),
-					i2 = compareTo(`dstaddr1,`dstaddr2);
+				int i1 = isInclude(`srcaddr1,`srcaddr2),
+					i2 = isInclude(`dstaddr1,`dstaddr2);
 				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
 					if (i1 == 0) {
 						return i2;
@@ -117,7 +138,7 @@ public class Analyser {
 			-1 if a1 include in a2
 			NOT_COMPARABLE if the 2 addresses are not comparable
 	*/
-	public static int compareTo(Address a1, Address a2) {
+	public static int isInclude(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return 0; }
 			AddrAny(),Addr4(_,_) -> { return 1; }
@@ -168,12 +189,12 @@ public class Analyser {
 			IPv4 address*/
 			Addr6(ipms,ipls,smaskms,smaskls),Addr4(ip,smask) && (ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return compareTo(`Addr4((int)ipls,(int)smaskls),a2);
+					return isInclude(`Addr4((int)ipls,(int)smaskls),a2);
 				}
 			}
 			Addr4(ip,smask),Addr6(ipms,ipls,smaskms,smaskls) && (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return compareTo(a1,`Addr4((int)ipls,(int)smaskls));
+					return isInclude(a1,`Addr4((int)ipls,(int)smaskls));
 				}
 			}
 		}
