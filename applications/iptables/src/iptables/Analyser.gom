@@ -22,7 +22,9 @@ abstract syntax
 		| Log()
 
 	/* The network interface */
-	Iface = Iface(name:String)
+	Iface =
+		IfaceAny()
+		| Iface(name:String)
 
 	Protocol =
 		ProtoAny()
@@ -63,6 +65,7 @@ abstract syntax
 	/* Protocol options */
 	ProtocolOptions = ProtoOpts(ProtocolOption*)
 
+	/* >>> TODO: split by protocol */
 	ProtocolOption =
 		ICMPxType(id:int)
 		| ICMPxTTLZero()
