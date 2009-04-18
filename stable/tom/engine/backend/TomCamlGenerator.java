@@ -437,7 +437,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
       }}}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 
-	super.generateInstruction(deep, subject, moduleName);
+        super.generateInstruction(deep, subject, moduleName);
       }}}
 
   }

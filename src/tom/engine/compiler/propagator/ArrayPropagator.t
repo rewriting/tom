@@ -114,7 +114,7 @@ public class ArrayPropagator implements IBasePropagator {
          /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
          /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       */
-      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
+      m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
             if(!TomBase.isArrayOperator(ap.getCompiler().getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        

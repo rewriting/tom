@@ -420,7 +420,7 @@ public class SymbolTable {
           FreshSortInfo info = null;
           %match(spe) {
             ExpressionType[] -> { info = `ExpressionTypeInfo(empty); }
-            PatternType[] -> { info = `PatternTypeInfo(bound,empty,false); }
+            PatternType[] -> { info = `PatternTypeInfo(bound,empty); }
             AtomType[] -> { info = `AtomTypeInfo(); }
           }
           sorts.put(`n,`SortDescription(cons,moduleName,info));

@@ -25,6 +25,7 @@
 
 package tom.engine;
 
+import tom.platform.BasicFormatter;
 import tom.platform.PlatformMessage;
 import tom.platform.PlatformLogRecord;
 import java.util.logging.Level;
@@ -38,8 +39,11 @@ import java.util.logging.Logger;
 public class TomMessage implements PlatformMessage {
   private final String message;
 
+  private static BasicFormatter formatter;
+
   private TomMessage(String message) {
     this.message = message;
+    this.formatter = new BasicFormatter();
   }
     
   public static final TomMessage loggingInitializationFailure = 
@@ -383,8 +387,10 @@ public class TomMessage implements PlatformMessage {
     return message;
   }
 
+
   public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    logger.log(Level.SEVERE, formatter.format(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine)));
+    //logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
 
   public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArg) {
@@ -392,7 +398,8 @@ public class TomMessage implements PlatformMessage {
   }
 
   public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
+    logger.log(Level.WARNING, formatter.format(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine)));
+    //logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
-  
+
 }

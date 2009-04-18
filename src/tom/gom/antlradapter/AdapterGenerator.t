@@ -98,10 +98,7 @@ public class AdapterGenerator {
        File output = tokenFileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
-       Writer writer =
-         new BufferedWriter(
-             new OutputStreamWriter(
-               new FileOutputStream(output)));
+       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generateTokenFile(moduleList, writer);
        writer.flush();
        writer.close();
@@ -207,7 +204,7 @@ public class @filename()@Adaptor {
           CodeGen.generateCode(code,writer);
         }
 
-      op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod@!Variadic[]] -> {
+      op@OperatorDecl[Name=opName,Prod=prod@!Variadic[]] -> {
         Code code =
           `CodeList(
               Code("      case "+grammarName+"Parser."),

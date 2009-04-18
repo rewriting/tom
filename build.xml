@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.6"/>
+  <property name="stable.version" value="2.7rc1"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -199,7 +199,7 @@
   </target>
 
   <!-- define task for running tom.src -->
-  <target name="init.task.src" depends="src.dist">
+  <target name="init.task.src"> <!-- depends="src.dist"-->
     <path id="tomsrc.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${src.dist.lib}">
@@ -1120,7 +1120,7 @@
   </target>
 
   <target name="bootstrap" description="Bootstrap source"
-    depends="bootcheck" if="bootstrap.ok">
+    depends="src.dist, bootcheck" if="bootstrap.ok">
     <echo message="### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###"/>
   </target>
 
@@ -1129,6 +1129,7 @@
     <concat destfile="${src.src}/bootcheck/version1">
       <fileset dir="${bootstrap.dir}/build">
         <include name="**/*.class"/>
+        <exclude name="tom/engine/Tom.class"/>
         <exclude name="tom/engine/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
@@ -1146,8 +1147,8 @@
     <concat destfile="${src.src}/bootcheck/version2">
       <fileset dir="${src.build}">
         <include name="**/*.class"/>
-        <exclude name="tom/engine/parser/*.class"/>
         <exclude name="tom/engine/Tom.class"/>
+        <exclude name="tom/engine/parser/*.class"/>
         <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
@@ -1192,7 +1193,6 @@
     </antcall>
   </target>
 
-
   <!-- compile tom files in src.src with tom.src -->
   <target name="bootstep" depends="init.task.src" if="destination">
 
@@ -1207,6 +1207,7 @@
     </antcall>
     <copy todir="${destination}/gen">
       <fileset dir="${src.gen}">
+        <include name="**/Tom.java"/>
         <include name="**/adt/**/*"/>
       </fileset>
     </copy>
@@ -1234,24 +1235,18 @@
     </tomjavac>
   </target>
 
-  <target name="bootinstall"
-    description="Install src tree into stable tree"
-    depends="bootstrap"
-    if="bootstrap.ok">
-    <antcall target="manual.bootinstall"/>
-  </target>
-
   <target name="manual.bootinstall"
     description="Install src tree into stable tree">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
-        <include name="**/*.java.in"/>
-        <include name="**/*.java"/>
-        <include name="**/*.properties"/>
-        <include name="lib/*.jar"/>
-        <include name="lib/*.xml"/>
+        <include name="tom/**/*.java.in"/>
+        <include name="tom/**/*.java"/>
+        <include name="tom/**/*.properties"/>
+        <include name="lib/**/*.jar"/>
+        <include name="lib/**/*.xml"/>
         <exclude name="**/Tom.java"/>
         <exclude name="**/adt/**/*.java"/>
+        <exclude name="**/bootcheck/**/*"/>
         <exclude name="**/bootstrap/**/*"/>
         <exclude name="**/gen/**/*"/>
       </fileset>
@@ -1267,11 +1262,6 @@
     <copy todir="${stable.config}" overwrite="true">
       <fileset dir="${src.config}" includes="*.xml"/>
     </copy>
-
-    <mkdir dir="${stable.src}/tom/engine/adt"/>
-    <mkdir dir="${stable.src}/tom/library/adt"/>
-    <mkdir dir="${stable.src}/tom/platform/adt"/>
-    <mkdir dir="${stable.src}/tom/gom/adt"/>
 
     <jar jarfile="${stable.lib}/tom/TomSignature.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>

@@ -346,7 +346,7 @@ import java.util.ArrayList;
 
   //import all the constructors Path<Sort> of the module
   %match(moduleList) {
-ConcModule(_*,Module[MDecl=ModuleDecl(GomModuleName(moduleName),pkg),Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+ConcModule(_*,Module[MDecl=ModuleDecl(GomModuleName(_),pkg),Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
 
   String prefix = ((`pkg=="")?"":`pkg+".")+moduleName.toLowerCase();
   imports += %[
@@ -656,7 +656,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
       // special treatment for the last rise into a TermList to the root
       //PathTerm()<<tail cooresponds to cycle
-      p@PathTerm(sublist@!PathTerm(_*,!-2,_*),tail*) && (PathTerm(1,_*)<<tail || PathTerm(2,_*)<<tail || PathTerm()<<tail) && (!PathTerm()<<sublist) -> {
+      PathTerm(sublist@!PathTerm(_*,!-2,_*),tail*) && (PathTerm(1,_*)<<tail || PathTerm(2,_*)<<tail || PathTerm()<<tail) && (!PathTerm()<<sublist) -> {
         int downcount = `sublist.length();
         PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail*);
         return `PathTerm(-downcount,newtail*);

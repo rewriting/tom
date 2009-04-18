@@ -47,10 +47,20 @@ public class TNodeToXML {
   private OutputStream out = System.out;
   private Writer writer = null;
 
+  /** 
+   * Set up the output stream
+   *
+   * @param out the output stream to set up
+   */
   public void setOutputStream(OutputStream out){
     this.out = out;
   }
 
+  /** 
+   * Set up the writer
+   *
+   * @param writer the writer to set up
+   */
   public void setWriter(Writer writer) {
     this.writer = writer;
   }
@@ -65,6 +75,12 @@ public void convert(String filename) {
   }
 */
 
+  /** 
+   * Return a string representation of a TNode
+   * 
+   * @param n the TNode which is converted into xml
+   * @return a string representation of the xml node
+   */
   public String xml(TNode n) {
 		StringWriter str_res = new StringWriter();
 		setWriter(str_res);
@@ -72,6 +88,12 @@ public void convert(String filename) {
 		return str_res.toString();
   }
 
+  /** 
+   * Convert a TNode to XML
+   *
+   * @param n the TNode to convert
+   * @throws RuntimeException in case of problem in DocumentTypeNode
+   */
   public void tnodeToXML(TNode n) {
     {{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.DocumentNode) ) {
 
@@ -96,7 +118,7 @@ public void convert(String filename) {
           write(" ["+tom_internalSubset+"]");
           write(">\n");
           return;
-      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch630NameNumber_freshVar_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch630NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch630NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch630NameNumber_freshVar_15.isEmptyconcTNode() ) {
+      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch632NameNumber_freshVar_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch632NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch632NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch632NameNumber_freshVar_15.isEmptyconcTNode() ) {
 
         write("<"+ (( tom.library.adt.tnode.types.TNode )n).getName() );
         tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );
@@ -160,7 +182,7 @@ public void convert(String filename) {
   private void write(String s) {
     try {
       if (out != null) {
-    out.write(s.getBytes("UTF-8"));
+        out.write(s.getBytes("UTF-8"));
     }
       if (writer != null) {
     writer.write(s);

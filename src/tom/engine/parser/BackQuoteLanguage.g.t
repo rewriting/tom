@@ -123,18 +123,18 @@ options{
        */
       if(newComposite) {
         %match(TomTerm lastElement, TomTerm term) {
-          Composite(l1), t2@Composite[] -> { 
+          Composite(_), t2@Composite[] -> { 
             list.add(`t2); 
             return; 
           }
-          Composite(l1), t2 -> { 
+          Composite(_), t2 -> { 
             list.add(`Composite(concTomTerm(t2))); 
             return; 
           }
         }
       } else {
         %match(TomTerm lastElement, TomTerm term) {
-          Composite(l1), t2@Composite(l2) -> { 
+          Composite(l1), Composite(l2) -> { 
             list.set(list.size()-1,`Composite(concTomTerm(l1*,l2*))); 
             return;
           }

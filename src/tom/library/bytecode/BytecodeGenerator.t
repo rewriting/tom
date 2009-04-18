@@ -102,7 +102,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         %match(TMethodList methods){
           MethodList(_*,method,_*) ->{
             %match(TMethod method){
-              Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) -> {
+              Method(MethodInfo(_,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) -> {
                 mw = cw.visitMethod(buildAccessValue(`methAccess),
                     `methName,
                     buildDescriptor(`desc),

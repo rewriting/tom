@@ -202,7 +202,7 @@ public class Compiler extends TomGenericPlugin {
   // 6. transforms resulted expression into a CompiledMatch
   %strategy CompileMatch(compiler:Compiler) extends Identity() {
     visit Instruction {
-      sub@Match(constraintInstructionList, matchOptionList)  -> {        
+      Match(constraintInstructionList, matchOptionList)  -> {        
         compiler.getCompilerEnvironment().matchNumber++;
         compiler.getCompilerEnvironment().setRootpath(`concTomNumber(MatchNumber(compiler.getCompilerEnvironment().getMatchNumber())));
         compiler.getCompilerEnvironment().setFreshSubjectCounter(0);

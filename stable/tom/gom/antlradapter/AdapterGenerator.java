@@ -98,10 +98,7 @@ public class AdapterGenerator {
        File output = tokenFileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
-       Writer writer =
-         new BufferedWriter(
-             new OutputStreamWriter(
-               new FileOutputStream(output)));
+       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
        generateTokenFile(moduleList, writer);
        writer.flush();
        writer.close();
@@ -173,7 +170,7 @@ public class AdapterGenerator {
     Iterator it = operatorset.iterator();
     while(it.hasNext()) {
       OperatorDecl opDecl = (OperatorDecl) it.next();
-      {{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch399NameNumber_freshVar_2= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( (tomMatch399NameNumber_freshVar_2 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch399NameNumber_freshVar_2.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom_op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
+      {{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch401NameNumber_freshVar_2= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ;if ( (tomMatch401NameNumber_freshVar_2 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) { tom.gom.adt.gom.types.SortDecl  tom_domainSort= tomMatch401NameNumber_freshVar_2.getSort() ; tom.gom.adt.gom.types.OperatorDecl  tom_op=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);
 
 
           Code cast = genGetTerm(tom_domainSort,"tree.getChild(i)");
@@ -207,7 +204,7 @@ public class AdapterGenerator {
 
 ;
           CodeGen.generateCode(code,writer);
-        }}}}{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch399NameNumber_freshVar_9= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch399NameNumber_freshVar_9;boolean tomMatch399NameNumber_freshVar_13= false ;if ( (tomMatch399NameNumber_freshVar_9 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tomMatch399NameNumber_freshVar_9==tom_prod) ) {tomMatch399NameNumber_freshVar_13= true ;}}if ( tomMatch399NameNumber_freshVar_13== false  ) {
+        }}}}{if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )opDecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.TypedProduction  tomMatch401NameNumber_freshVar_8= (( tom.gom.adt.gom.types.OperatorDecl )opDecl).getProd() ; tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch401NameNumber_freshVar_8;boolean tomMatch401NameNumber_freshVar_12= false ;if ( (tomMatch401NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( (tomMatch401NameNumber_freshVar_8==tom_prod) ) {tomMatch401NameNumber_freshVar_12= true ;}}if ( tomMatch401NameNumber_freshVar_12== false  ) {
 
 
         Code code =

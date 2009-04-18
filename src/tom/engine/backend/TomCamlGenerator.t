@@ -427,17 +427,17 @@ public class TomCamlGenerator extends TomGenericGenerator {
     %match(Instruction subject) {
 
       Nop() -> {
-	`buildNop();
+        `buildNop();
         return;
       }
 
       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
-	`buildNop();
+        `buildNop();
         return;
       }
 
-      t -> {
-	super.generateInstruction(deep, subject, moduleName);
+      _ -> {
+        super.generateInstruction(deep, subject, moduleName);
       }
     }
   }

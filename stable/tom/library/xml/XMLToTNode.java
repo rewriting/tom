@@ -71,22 +71,48 @@ public class XMLToTNode {
     convert(filename);
   }
 
+  /** 
+   * Get the nodeTerm attribute
+   * 
+   * @return nodeTerm
+   */
   public TNode getTNode() {
     return nodeTerm;
   }
 
+  /** 
+   * Set up nodeTerm by providing a filename
+   * 
+   * @param filename the filename
+   */
   public void convert(String filename) {
     nodeTerm = xmlToTNode(convertToNode(filename));
   }
 
+  /** 
+   * Set up nodeTerm by providing an InputStream
+   * 
+   * @param is the InputStream
+   */
   public void convert(InputStream is) {
     nodeTerm = xmlToTNode(convertToNode(is));
   }
 
+  /** 
+   * Set up nodeTerm by providing a Node
+   * 
+   * @param node the Node
+   */
   public void convert(Node node) {
     nodeTerm = xmlToTNode(node);
   }
 
+  /** 
+   * Returns an XML file to a Node representation
+   * 
+   * @param filename the file to convert
+   * @return a Node representation of the XML file
+   */
   public Node convertToNode(String filename) {
     try {
       DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -109,6 +135,12 @@ public class XMLToTNode {
     return null;
   }
 
+  /** 
+   * Returns a Node by providing an input stream
+   *
+   * @param is the input stream
+   * @return a Node
+   */
   public Node convertToNode(InputStream is) {
     try {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -129,6 +161,12 @@ public class XMLToTNode {
     return null;
   }
 
+  /** 
+   * Returns an ATerm representation of a NodeList
+   *
+   * @param list the NodeList
+   * @return an ATerm representation of the NodeList
+   */
   public TNodeList nodeListToAterm(NodeList list) {
     TNodeList res =  tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() ;
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
@@ -140,6 +178,12 @@ public class XMLToTNode {
     return res;
   }
 
+  /** 
+   * Returns an ATerm representation of a NamedNodeMap
+   *
+   * @param list the NamedNodeMap
+   * @return an ATerm representation of the NamedNodeMap
+   */
   public TNodeList namedNodeMapToAterm(NamedNodeMap list) {
     TNodeList res =  tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() ;
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
@@ -151,6 +195,12 @@ public class XMLToTNode {
     return res;
   }
 
+  /** 
+   * Returns a TNode by providing a Node
+   * 
+   * @param node the Node to normalize and convert
+   * @return a TNode obtained from the Node
+   */
   public TNode xmlToTNode(Node node) {
     if ( node == null ) { // Nothing to do
       return null;
@@ -265,10 +315,10 @@ public class XMLToTNode {
     {{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() ) {
 
         return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(elt,tom_append_list_concTNode(list, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
-      }}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch631NameNumber_freshVar_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch631NameNumber_freshVar_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+      }}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch633NameNumber_freshVar_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch633NameNumber_freshVar_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
 
-        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch631NameNumber_freshVar_13.getName() ) >= 0) {
+        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch633NameNumber_freshVar_13.getName() ) >= 0) {
           TNodeList tl = insertSortedAttribute(elt, (( tom.library.adt.tnode.types.TNodeList )list).getTailconcTNode() );
           return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make( (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ,tom_append_list_concTNode(tl, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
         } else {

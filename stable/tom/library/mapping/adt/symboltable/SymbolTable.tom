@@ -21,14 +21,6 @@
 
 }
 
-%typeterm FieldDescriptionList {
-  implement { tom.gom.adt.symboltable.types.FieldDescriptionList }
-  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) }
-
-  equals(t1,t2) { ($t1==$t2) }
-
-}
-
 %typeterm Status {
   implement { tom.gom.adt.symboltable.types.Status }
   is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.Status) }
@@ -37,9 +29,17 @@
 
 }
 
-%typeterm SortDescription {
-  implement { tom.gom.adt.symboltable.types.SortDescription }
-  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.SortDescription) }
+%typeterm StringList {
+  implement { tom.gom.adt.symboltable.types.StringList }
+  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.StringList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm FieldDescriptionList {
+  implement { tom.gom.adt.symboltable.types.FieldDescriptionList }
+  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.FieldDescriptionList) }
 
   equals(t1,t2) { ($t1==$t2) }
 
@@ -61,9 +61,9 @@
 
 }
 
-%typeterm StringList {
-  implement { tom.gom.adt.symboltable.types.StringList }
-  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.StringList) }
+%typeterm SortDescription {
+  implement { tom.gom.adt.symboltable.types.SortDescription }
+  is_sort(t) { ($t instanceof tom.gom.adt.symboltable.types.SortDescription) }
 
   equals(t1,t2) { ($t1==$t2) }
 
@@ -108,18 +108,6 @@
   make() { tom.gom.adt.symboltable.types.freshsortinfo.NoFreshSort.make() }
 }
 
-%op FieldDescriptionList EmptyconcFieldDescription() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription) }
-  make() { tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() }
-}
-
-%op FieldDescriptionList ConsconcFieldDescription(HeadconcFieldDescription:FieldDescription, TailconcFieldDescription:FieldDescriptionList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) }
-  get_slot(HeadconcFieldDescription, t) { $t.getHeadconcFieldDescription() }
-  get_slot(TailconcFieldDescription, t) { $t.getTailconcFieldDescription() }
-  make(t0, t1) { tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make($t0, $t1) }
-}
-
 %op Status SRefreshPoint() {
   is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.status.SRefreshPoint) }
   make() { tom.gom.adt.symboltable.types.status.SRefreshPoint.make() }
@@ -150,12 +138,28 @@
   make() { tom.gom.adt.symboltable.types.status.SNone.make() }
 }
 
-%op SortDescription SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) }
-  get_slot(Constructors, t) { $t.getConstructors() }
-  get_slot(ModuleSymbol, t) { $t.getModuleSymbol() }
-  get_slot(FreshInfo, t) { $t.getFreshInfo() }
-  make(t0, t1, t2) { tom.gom.adt.symboltable.types.sortdescription.SortDescription.make($t0, $t1, $t2) }
+%op StringList EmptyStringList() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.stringlist.EmptyStringList) }
+  make() { tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() }
+}
+
+%op StringList ConsStringList(HeadStringList:String, TailStringList:StringList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.stringlist.ConsStringList) }
+  get_slot(HeadStringList, t) { $t.getHeadStringList() }
+  get_slot(TailStringList, t) { $t.getTailStringList() }
+  make(t0, t1) { tom.gom.adt.symboltable.types.stringlist.ConsStringList.make($t0, $t1) }
+}
+
+%op FieldDescriptionList EmptyconcFieldDescription() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription) }
+  make() { tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() }
+}
+
+%op FieldDescriptionList ConsconcFieldDescription(HeadconcFieldDescription:FieldDescription, TailconcFieldDescription:FieldDescriptionList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) }
+  get_slot(HeadconcFieldDescription, t) { $t.getHeadconcFieldDescription() }
+  get_slot(TailconcFieldDescription, t) { $t.getTailconcFieldDescription() }
+  make(t0, t1) { tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make($t0, $t1) }
 }
 
 %op ConstructorDescription ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList, Generated:GenerationInfo) {
@@ -182,27 +186,14 @@
   make(t0, t1, t2) { tom.gom.adt.symboltable.types.fielddescription.FieldDescription.make($t0, $t1, $t2) }
 }
 
-%op StringList EmptyStringList() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.stringlist.EmptyStringList) }
-  make() { tom.gom.adt.symboltable.types.stringlist.EmptyStringList.make() }
+%op SortDescription SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.sortdescription.SortDescription) }
+  get_slot(Constructors, t) { $t.getConstructors() }
+  get_slot(ModuleSymbol, t) { $t.getModuleSymbol() }
+  get_slot(FreshInfo, t) { $t.getFreshInfo() }
+  make(t0, t1, t2) { tom.gom.adt.symboltable.types.sortdescription.SortDescription.make($t0, $t1, $t2) }
 }
 
-%op StringList ConsStringList(HeadStringList:String, TailStringList:StringList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.symboltable.types.stringlist.ConsStringList) }
-  get_slot(HeadStringList, t) { $t.getHeadStringList() }
-  get_slot(TailStringList, t) { $t.getTailStringList() }
-  make(t0, t1) { tom.gom.adt.symboltable.types.stringlist.ConsStringList.make($t0, $t1) }
-}
-
-
-%oplist FieldDescriptionList concFieldDescription(FieldDescription*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) }
-  make_empty() { tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() }
-  make_insert(e,l) { tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make($e,$l) }
-  get_head(l) { $l.getHeadconcFieldDescription() }
-  get_tail(l) { $l.getTailconcFieldDescription() }
-  is_empty(l) { $l.isEmptyconcFieldDescription() }
-}
 
 %oplist StringList StringList(String*) {
   is_fsym(t) { (($t instanceof tom.gom.adt.symboltable.types.stringlist.ConsStringList) || ($t instanceof tom.gom.adt.symboltable.types.stringlist.EmptyStringList)) }
@@ -211,4 +202,13 @@
   get_head(l) { $l.getHeadStringList() }
   get_tail(l) { $l.getTailStringList() }
   is_empty(l) { $l.isEmptyStringList() }
+}
+
+%oplist FieldDescriptionList concFieldDescription(FieldDescription*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription) || ($t instanceof tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription)) }
+  make_empty() { tom.gom.adt.symboltable.types.fielddescriptionlist.EmptyconcFieldDescription.make() }
+  make_insert(e,l) { tom.gom.adt.symboltable.types.fielddescriptionlist.ConsconcFieldDescription.make($e,$l) }
+  get_head(l) { $l.getHeadconcFieldDescription() }
+  get_tail(l) { $l.getTailconcFieldDescription() }
+  is_empty(l) { $l.isEmptyconcFieldDescription() }
 }
