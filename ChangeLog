@@ -8,6 +8,16 @@
  * arity is checked in backquote termes
  * fix PR-4743
 
+2009-04-17 jcb
+ * Fix bug #7635 : modify and use the existing BasicFormatter
+
+2009-04-15 jcb
+ * added javadoc in src/tom/library/xml/
+ * translated few dates into english :
+   it corrects a problem of accents which did cause
+   encoding warnings during compilation
+ * fixed bug #5131
+
 2009-04-14 balland
   * bootinstall
 
