@@ -29,20 +29,20 @@ private static List getTail(List l) {
 }
 
 %op ASTNode Prog(CompUnitList:ASTNode) {
-  make(CompUnitList) { new Prog((List)CompUnitList) }
+  make(CompUnitList) { new Prog((List) $CompUnitList) }
   is_fsym(t) { $t instanceof Prog } 
   get_slot(CompUnitList, t)  { ((Prog)$t).getCompUnitList() }
 }
 
 %op ASTNode CompUnit(packageName:String, ClassDeclList:ASTNode) {
-  make(packageName, ClassDeclList) { new CompUnit((String) $packageName, (List)ClassDeclList) }
+  make(packageName, ClassDeclList) { new CompUnit((String) $packageName, (List) $ClassDeclList) }
   is_fsym(t) { $t instanceof CompUnit } 
   get_slot(packageName, t)  { ((CompUnit)$t).getpackageName() }
   get_slot(ClassDeclList, t)  { ((CompUnit)$t).getClassDeclList() }
 }
 
 %op ASTNode ClassDecl(name:String, Super:ASTNode, BodyDeclList:ASTNode) {
-  make(name, Super, BodyDeclList) { new ClassDecl((String) $name, (Name) $Super, (List)BodyDeclList) }
+  make(name, Super, BodyDeclList) { new ClassDecl((String) $name, (Name) $Super, (List) $BodyDeclList) }
   is_fsym(t) { $t instanceof ClassDecl } 
   get_slot(name, t)  { ((ClassDecl)$t).getname() }
   get_slot(Super, t)  { ((ClassDecl)$t).getSuper() }
@@ -70,7 +70,7 @@ private static List getTail(List l) {
 }
 
 %op ASTNode Block(StmtList:ASTNode) {
-  make(StmtList) { new Block((List)StmtList) }
+  make(StmtList) { new Block((List) $StmtList) }
   is_fsym(t) { $t instanceof Block } 
   get_slot(StmtList, t)  { ((Block)$t).getStmtList() }
 }
