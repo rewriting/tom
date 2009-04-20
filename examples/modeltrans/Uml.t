@@ -34,8 +34,8 @@ import modeltrans.uml.metamodel.types.*;
 
 public class Uml {
 
-  // signature -> meta-model UML
-  // algebraic terms -> models UML
+  // signature -> UML meta-model
+  // algebraic terms -> UML models
   %gom(--termgraph) {
 
     module MetaModel
@@ -45,8 +45,7 @@ public class Uml {
 
       ModelElementList = List(ModelElement*)
       
-      ModelElement = ModelElement(name:String, constraint:ModelElement, type:ModelElementType)
-                   | Empty()
+      ModelElement = ModelElement(name:String, constraints:ModelElementList, type:ModelElementType)
 
       ModelElementType = Attribute()
                        | AssociationEnd(low:Mult, high:Mult, participant:ModelElement)
@@ -81,13 +80,13 @@ public class Uml {
         String c2 = `n_end2+"->size>=" + `low_end2+" and "+`n_end2+"->size<="+`high_end2;
         String c3 = `n_end1+"->size=1 and "+`n_end2+"->size=1";
 
-        ModelElement newend1 = `ModelElement(n_end1, Empty(), AssociationEnd(Mult("0"),Mult("1"), LabModelElement("l1",c_end1.setconstraint(ModelElement("c1", Empty(), ConstraintElt(RefModelElement("l1"), Constraint(c2)))))));
+        ModelElement newend1 = `ModelElement(n_end1, List(), AssociationEnd(Mult("0"),Mult("1"), LabModelElement("l1",c_end1.setconstraints(List(ModelElement("c1", List(), ConstraintElt(RefModelElement("l1"), Constraint(c2))))))));
 
-        ModelElement newend2 = `ModelElement(n_end2, Empty(), AssociationEnd(Mult("0"),Mult("1"), LabModelElement("l2", c_end2.setconstraint(ModelElement("c2", Empty(), ConstraintElt(RefModelElement("l2"), Constraint(c1)))))));
+        ModelElement newend2 = `ModelElement(n_end2, List(), AssociationEnd(Mult("0"),Mult("1"), LabModelElement("l2", c_end2.setconstraints(List(ModelElement("c2", List(), ConstraintElt(RefModelElement("l2"), Constraint(c1))))))));
 
-        ModelElement end3 = `ModelElement(name.toLowerCase(), Empty(), AssociationEnd(Mult("0"),Mult("1"),LabModelElement("l3",ModelElement(name, ModelElement("c3", Empty(), ConstraintElt(RefModelElement("l3"),Constraint(c3))), Class(List(X1,X2,X3))))));
+        ModelElement end3 = `ModelElement(name.toLowerCase(), List(), AssociationEnd(Mult("0"),Mult("1"),LabModelElement("l3",ModelElement(name, List(ModelElement("c3", List(), ConstraintElt(RefModelElement("l3"),Constraint(c3)))), Class(List(X1,X2,X3))))));
 
-        return `ModelElement("R"+name, Empty(), Association(List(newend1,newend2,end3)));
+        return `ModelElement("R"+name, List(), Association(List(newend1,newend2,end3)));
 
       }
     }
@@ -96,14 +95,14 @@ public class Uml {
 
 
   public static void main(String[] args) {
-    ModelElement example = `ModelElement("Job", Empty(), 
+    ModelElement example = `ModelElement("Job", List(), 
         AssociationClass(
           List(
-            ModelElement("salary", Empty(), Attribute())
+            ModelElement("salary", List(), Attribute())
             ),
           List(
-            ModelElement("employer", Empty(), AssociationEnd(Mult("1"), Mult("3"), ModelElement("Compagny", Empty(), Class(List())))),
-            ModelElement("employee", Empty(), AssociationEnd(Mult("0"), Mult("infinity"), ModelElement("Person", Empty(), Class(List()))))
+            ModelElement("employer", List(), AssociationEnd(Mult("1"), Mult("3"), ModelElement("Compagny", List(), Class(List())))),
+            ModelElement("employee", List(), AssociationEnd(Mult("0"), Mult("infinity"), ModelElement("Person", List(), Class(List()))))
             )));
     try {
       tom.library.utils.Viewer.display(`AssociationClass2TernaryAssociation().visitLight(example).expand());
