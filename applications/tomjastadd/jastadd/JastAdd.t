@@ -195,13 +195,13 @@ private String getParametersWithDollar(Iterator components) {
         result.append("("+c.type()+") $"+c.name()+", ");
       } else {
         if(c instanceof ListComponents) {
-          result.append("(List)"+c.name()+"List, ");
+          result.append("(List) $"+c.name()+"List, ");
         } else {
           if(c instanceof AggregateComponents) {
             result.append("("+c.type()+") $"+c.name()+", ");
           } else {
             if(c instanceof OptionalComponent) {
-              result.append("(Opt)"+c.name()+"Opt, ");
+              result.append("(Opt) $"+c.name()+"Opt, ");
             } 
           }
         }
