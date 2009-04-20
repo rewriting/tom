@@ -244,7 +244,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   private Instruction simplifyIl(Instruction subject) {
     try {
-      subject = (Instruction) `TopDown(ilSimplifier()).visitLight(subject);
+      subject = `TopDown(ilSimplifier()).visitLight(subject);
     } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy simplifyIl failed");
     }

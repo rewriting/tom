@@ -66,7 +66,7 @@ public class ArrayGenerator implements IBaseGenerator{
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDownWhenExpression(Generator()).visitLight(expression);		
+    return `TopDownWhenExpression(Generator()).visitLight(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

@@ -64,7 +64,7 @@ public class FreshExpander {
   public GomModuleList expand(GomModuleList m, String pack) {
     try {
       ArrayList list = new ArrayList();
-      GomModuleList res = (GomModuleList) 
+      GomModuleList res =
         `Sequence(
             TopDown(ExpandAtoms(list)),
             TopDown(UpdateSpecialization(list))).visitLight(m);
@@ -428,8 +428,7 @@ public class FreshExpander {
         `Hook(KindSort(),sort,HookKind("javablock"),
             ConcArg(),code,OptionList());
       try { 
-        return (GomModuleList)
-          `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
+        return `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       }
       catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
@@ -452,8 +451,7 @@ public class FreshExpander {
       Production hook = `Hook(kind,cons,HookKind("javablock"),
           ConcArg(),code,OptionList());
       try { 
-        return (GomModuleList)
-          `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
+        return `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       } catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
       }
@@ -476,8 +474,7 @@ public class FreshExpander {
         `Hook(kind,st.rawCons(cons),HookKind("javablock"),
             ConcArg(),code,OptionList());
       try { 
-        return (GomModuleList)
-          `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml); 
+        return `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
         throw new GomRuntimeException("Should never happen");
@@ -491,8 +488,7 @@ public class FreshExpander {
         `Hook(KindSort(),sort,HookKind("interface"),
             ConcArg(),code,OptionList());
       try { 
-        return (GomModuleList)
-          `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
+        return `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
         throw new GomRuntimeException("Should never happen");
@@ -515,8 +511,7 @@ public class FreshExpander {
       Production hook = `Hook(kind,cons,HookKind("mapping"),
           ConcArg(),code,OptionList());
       try { 
-        return (GomModuleList)
-          `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
+        return `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       } catch (VisitFailure e) { 
         throw new GomRuntimeException("Should never happen");
       }
@@ -1148,7 +1143,7 @@ public class FreshExpander {
   /* -- rawification -- */
 
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
-    try { return (GomModuleList) `TopDown(AddRaw(st,this)).visitLight(res); }
+    try { return `TopDown(AddRaw(st,this)).visitLight(res); }
     catch(VisitFailure e) { 
       throw new GomRuntimeException("Should never happen");
     }
@@ -1199,7 +1194,7 @@ public class FreshExpander {
   }
 
   private Production rawify(Production p, SymbolTable st) {
-    try { return (Production) `TopDown(Rawify(st,this)).visitLight(p); }
+    try { return `TopDown(Rawify(st,this)).visitLight(p); }
     catch(VisitFailure f) { 
       throw new GomRuntimeException("Should never happen");
     }

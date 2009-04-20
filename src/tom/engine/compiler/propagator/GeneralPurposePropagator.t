@@ -73,7 +73,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
   }
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDownWhenConstraint(GeneralPropagations(this)).visitLight(constraint);
+    return `TopDownWhenConstraint(GeneralPropagations(this)).visitLight(constraint);
   }	
 
   %strategy GeneralPropagations(gpp:GeneralPurposePropagator) extends Identity() {

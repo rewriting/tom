@@ -101,16 +101,16 @@ public class Typer extends TomGenericPlugin {
     TomTerm typedTerm = null;
     try {
       kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
-      TomTerm syntaxExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
+      TomTerm syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
 
       updateSymbolTable();
 
       syntaxExpandedTerm = expandType(syntaxExpandedTerm);
       TomTerm variableExpandedTerm = (TomTerm) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedTerm);
       /* transform each BackQuoteTerm into its compiled form */
-      TomTerm backQuoteExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
-      TomTerm stringExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
-      typedTerm = (TomTerm) `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
+      TomTerm backQuoteExpandedTerm = `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
+      TomTerm stringExpandedTerm = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
+      typedTerm = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
       typedTerm = kernelTyper.propagateVariablesTypes(typedTerm);
       setWorkingTerm(typedTerm);      
       // verbose
@@ -135,7 +135,7 @@ public class Typer extends TomGenericPlugin {
    */
   private TomTerm expandType(TomTerm subject) {
     try {
-      return (TomTerm) `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeType: failure on " + subject);
     }
@@ -181,10 +181,10 @@ public class Typer extends TomGenericPlugin {
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
       try {
-        tomSymbol = (TomSymbol) `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
-        tomSymbol = (TomSymbol) `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -390,7 +390,7 @@ public class Typer extends TomGenericPlugin {
       if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
         for(TomTerm arg:(concTomTerm)args) {
           try {
-            TomTerm subterm = (TomTerm) typeStrategy.visitLight(arg);
+            TomTerm subterm = typeStrategy.visitLight(arg);
             TomName slotName = `EmptyName();
             /*
              * we cannot optimize when subterm.isUnamedVariable
@@ -405,7 +405,7 @@ public class Typer extends TomGenericPlugin {
         PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
         for(TomTerm arg:(concTomTerm)args) {
           try{
-            TomTerm subterm = (TomTerm) typeStrategy.visitLight(arg);
+            TomTerm subterm = typeStrategy.visitLight(arg);
             TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
             /*
              * we cannot optimize when subterm.isUnamedVariable
@@ -429,7 +429,7 @@ public class Typer extends TomGenericPlugin {
       visit TomTerm {
         BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
-          TomList args  = (TomList) `TopDownIdStopOnSuccess(typeBackQuoteAppl(typer)).visitLight(`l);
+          TomList args  = `TopDownIdStopOnSuccess(typeBackQuoteAppl(typer)).visitLight(`l);
 
           //System.out.println("BackQuoteTerm: " + `tomName);
           //System.out.println("tomSymbol: " + tomSymbol);
@@ -552,7 +552,7 @@ public class Typer extends TomGenericPlugin {
       Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
       for(TomTerm attr:(concTomTerm)attrList) {
         try {
-          TomTerm newPattern = (TomTerm) typeStrategy.visitLight(attr);
+          TomTerm newPattern = typeStrategy.visitLight(attr);
           newAttrList = `concTomTerm(newPattern,newAttrList*);
           if(implicitAttribute) {
             newAttrList = `concTomTerm(star,newAttrList*);
@@ -568,7 +568,7 @@ public class Typer extends TomGenericPlugin {
        */
       for(TomTerm child:(concTomTerm)childList) {
         try {
-          TomTerm newPattern = (TomTerm) typeStrategy.visitLight(child);
+          TomTerm newPattern = typeStrategy.visitLight(child);
           newChildList = `concTomTerm(newPattern,newChildList*);
           if(implicitChild) {
             if(newPattern.isVariableStar()) {
@@ -621,11 +621,11 @@ matchBlock:
       try {
         SlotList newArgs = `concSlot(
             PairSlotAppl(Name(Constants.SLOT_NAME),
-              (TomTerm) typeStrategy.visitLight(xmlHead)),
+              typeStrategy.visitLight(xmlHead)),
             PairSlotAppl(Name(Constants.SLOT_ATTRLIST),
-              (TomTerm) typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
+              typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
             PairSlotAppl(Name(Constants.SLOT_CHILDLIST),
-              (TomTerm) typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
+              typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
 
         TomTerm result = `RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraints);
 

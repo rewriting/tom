@@ -99,7 +99,7 @@ public class KernelTyper {
    */
   protected TomTerm propagateVariablesTypes(TomTerm subject){
     try{
-      return (TomTerm)`TopDown(ProcessRhsForVarTypePropagation()).visitLight(subject);  
+      return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(subject);  
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("propagateVariablesTypes: failure on " + subject);
     }
@@ -109,7 +109,7 @@ public class KernelTyper {
       ConstraintInstruction(constr,action,option) -> {
         HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
         `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
-        Constraint c = (Constraint)`TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
+        Constraint c = `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
         return `ConstraintInstruction(c,action,option);
       }
     }
@@ -285,7 +285,7 @@ public class KernelTyper {
       concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
-          Constraint newConstraint = (Constraint)`TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
+          Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeList(lhsVariable);
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
           newAction = (Instruction) typeVariable(`EmptyType(),`newAction);

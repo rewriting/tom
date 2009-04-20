@@ -72,7 +72,7 @@ public class SyntacticGenerator implements IBaseGenerator {
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return  (Expression)`TopDownWhenExpression(Generator(this)).visitLight(expression);
+    return  `TopDownWhenExpression(Generator(this)).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

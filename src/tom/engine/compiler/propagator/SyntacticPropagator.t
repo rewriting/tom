@@ -73,7 +73,7 @@ public class SyntacticPropagator implements IBasePropagator {
  
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {   
-    return  (Constraint)`TopDownWhenConstraint(SyntacticPatternMatching(this)).visitLight(constraint);
+    return  `TopDownWhenConstraint(SyntacticPatternMatching(this)).visitLight(constraint);
   }	
 
   %strategy SyntacticPatternMatching(sp:SyntacticPropagator) extends `Identity() {

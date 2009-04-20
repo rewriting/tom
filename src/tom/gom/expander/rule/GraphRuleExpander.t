@@ -395,14 +395,14 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                /* 3. construct t = SubstTerm(subject',r') */
                 @fullClassName(abstractType)@ rhs = labelledRhs.label2path();
                 @fullClassName(abstractType)@ lhs = labelledLhs.label2path();
-                rhs = (@fullClassName(abstractType)@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs);
+                rhs = `TopDown(FromVarToPath(lhs,omega)).visit(rhs);
                 @fullClassName(abstractType)@ t = `Subst(subject,rhs);
                 //replace in subject every pointer to the position newomega by
                 //a pointer to the position 2  and if in position 2 there is also a
                 //pointer inline the paths.
-                t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                t = posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
                 //inline paths in the intermediate r
-                t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
+                t = posRhs.getOmega(`TopDown(InlinePath())).visit(t);
 
                 //compute the list of all shared labels
                 java.util.List<SharedLabel> sharedlabels = getSharedLabels(labelledLhs,labelledRhs);
@@ -421,7 +421,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 t = t.normalize();
 
                 /* 6. get the first child */
-                t = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(t);
+                t = posFinal.getSubterm().visit(t);
 
                 //expand the subject to remove labels from the rhs
                 getEnvironment().setSubject(t.expand());
@@ -558,7 +558,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     java.util.HashMap map = new java.util.HashMap();
     Term tt = null;
     try {
-      tt = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(t);
+      tt = `InnermostIdSeq(NormalizeLabel(map)).visit(t);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
@@ -622,7 +622,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   public static Term label2path(Term t) {
     java.util.HashMap map = new java.util.HashMap();
     try {
-      return (Term) `Sequence(RepeatId(OnceTopDownId(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
+      return `Sequence(RepeatId(OnceTopDownId(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }  
@@ -641,8 +641,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     visit Term {
       //treatment for the first rise
       PathTerm(-1,tail*) -> {
-        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
-        return newtail;
+        return `PathForPattern().visit(`tail);
       }
       
       //detect rises into a TermList comb and remove it
@@ -650,7 +649,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
         //TODO: avoid the compilation warning
         // because it generates a  disjunction which is not fully supported with associative operators
         int upcount = `sublist.length();
-        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
+        Term newtail = `PathForPattern().visit(`tail);
         return `PathTerm(-upcount,newtail*);
       }
 
@@ -658,14 +657,14 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       //PathTerm()<<tail cooresponds to cycle
       PathTerm(sublist@!PathTerm(_*,!-2,_*),tail*) && (PathTerm(1,_*)<<tail || PathTerm(2,_*)<<tail || PathTerm()<<tail) && (!PathTerm()<<sublist) -> {
         int downcount = `sublist.length();
-        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail*);
+        Term newtail = `PathForPattern().visit(`tail*);
         return `PathTerm(-downcount,newtail*);
       }
       
       //detect descents into a TermList comb and remove it
       PathTerm(sublist@!PathTerm(_*,!2,_*),1,tail*) && (!PathTerm()<<sublist)-> {
         int downcount = `sublist.length();
-        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
+        Term newtail = `PathForPattern().visit(`tail);
         return `PathTerm(downcount,newtail*);
       }
     }
@@ -697,7 +696,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             path = `PathTerm(path*,head);
           }
           //transform the path to obtain the corresponding one in the pattern
-          Term newpath = (Term) `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
+          Term newpath = `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
           return newpath;
         }
       }

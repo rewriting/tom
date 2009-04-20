@@ -101,7 +101,7 @@ public class GraphExpander {
     ModuleList expandedList = `ConcModule();
     ArrayList hookList = new ArrayList();
     try {
-      expandedList = (ModuleList) `TopDown(ExpandSort(hookList,this)).visit(list);
+      expandedList = `TopDown(ExpandSort(hookList,this)).visit(list);
     } catch(tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
@@ -287,7 +287,7 @@ public class GraphExpander {
     public @fullAbstractTypeClassName@ unexpand() {
        HashMap map = getMapFromPositionToLabel();
        try {
-         return (@fullAbstractTypeClassName@)`Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
+         return `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
@@ -312,7 +312,7 @@ public class GraphExpander {
         HashMap map = new HashMap();
         Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
         try {
-          return (@fullAbstractTypeClassName@) `label2path.visit(this);
+          return `label2path.visit(this);
         } catch (tom.library.sl.VisitFailure e) {
           throw new RuntimeException("Unexpected strategy failure!");
         }}
@@ -323,7 +323,7 @@ public class GraphExpander {
    public @fullAbstractTypeClassName@ expand() {
        HashMap map = new HashMap();
        try {
-         return ((@fullAbstractTypeClassName@)`InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand())).label2path();
+         return `InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand()).label2path();
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
@@ -332,7 +332,7 @@ public class GraphExpander {
     public @fullAbstractTypeClassName@ normalizeWithLabels() {
       HashMap map = new HashMap();
       try {
-        return ((@fullAbstractTypeClassName@)`InnermostIdSeq(NormalizeLabel(map)).visit(this));
+        return `InnermostIdSeq(NormalizeLabel(map)).visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -342,7 +342,7 @@ public class GraphExpander {
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
       try {
-        return (@fullAbstractTypeClassName@) label2path.visit(this);
+        return label2path.visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -370,7 +370,7 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ normalize() {
       try {
-         return (@fullAbstractTypeClassName@)`InnermostIdSeq(Normalize()).visit(this); 
+         return `InnermostIdSeq(Normalize()).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -378,7 +378,7 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ applyGlobalRedirection(Position p1,Position p2) {
       try {
-         return (@fullAbstractTypeClassName@) globalRedirection(p1,p2).visit(this); 
+         return globalRedirection(p1,p2).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -390,10 +390,10 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ swap(Position p1, Position p2) {
       try {
-        @fullAbstractTypeClassName@ updatedSubject =  (@fullAbstractTypeClassName@ ) `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);
-        @fullAbstractTypeClassName@ subterm_p1 = (@fullAbstractTypeClassName@) p1.getSubterm().visit(updatedSubject);
-        @fullAbstractTypeClassName@ subterm_p2 = (@fullAbstractTypeClassName@) p2.getSubterm().visit(updatedSubject);
-        return (@fullAbstractTypeClassName@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
+        @fullAbstractTypeClassName@ updatedSubject =  `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);
+        @fullAbstractTypeClassName@ subterm_p1 = p1.getSubterm().visit(updatedSubject);
+        @fullAbstractTypeClassName@ subterm_p2 = p2.getSubterm().visit(updatedSubject);
+        return `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
       } catch (VisitFailure e) { 
         throw new RuntimeException("Unexpected strategy failure!");
       }

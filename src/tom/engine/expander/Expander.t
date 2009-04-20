@@ -166,7 +166,7 @@ public class Expander extends TomGenericPlugin {
   %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
     visit TomTerm {
       t@(Variable|VariableStar|RecordAppl)[] -> {
-        return (TomTerm) `Expand_once(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));
+        return `Expand_once(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));
       }
     }
   }
@@ -179,7 +179,7 @@ public class Expander extends TomGenericPlugin {
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
+        SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
         TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
         
         if(TomBase.hasConstant(`optionList)) {

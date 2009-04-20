@@ -61,7 +61,7 @@ public class PostGenerator {
     // Warning: BottomUp cannot be replaced by TopDown
     // otherwise, the code with getPostion is not correct
     //System.out.println("ins1: " + instruction);
-    instruction = (Instruction)`BottomUp(ChangeVarDeclarations()).visit(instruction);
+    instruction = `BottomUp(ChangeVarDeclarations()).visit(instruction);
     //System.out.println("ins2: " + instruction);
     return instruction;
   }

@@ -81,16 +81,16 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
     return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
-    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
+    return (T) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
+    return (T) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
 
-  public Object visitLight(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+  public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
      return any;
     } else {

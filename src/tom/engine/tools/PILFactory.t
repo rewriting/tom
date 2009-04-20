@@ -79,7 +79,7 @@ public PILFactory() {
 
   public TomTerm remove(TomTerm subject) {
     try {
-      return (TomTerm) `TopDown(replaceRemove()).visitLight(subject);
+      return `TopDown(replaceRemove()).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -100,8 +100,8 @@ public PILFactory() {
     }
     visit Expression {
       // clean Expressions
-      Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
-      Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
+      Cast[Source=e] -> { return `TopDown(replaceRemove()).visitLight(`e); }
+      Or[Arg1=e,Arg2=FalseTL()] -> { return `TopDown(replaceRemove()).visitLight(`e); }
     }
   }
 

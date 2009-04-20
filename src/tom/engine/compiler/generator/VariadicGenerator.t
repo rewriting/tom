@@ -72,7 +72,7 @@ public class VariadicGenerator implements IBaseGenerator {
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDownWhenExprConstrOrTerm(Generator(this)).visitLight(expression);
+    return `TopDownWhenExprConstrOrTerm(Generator(this)).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

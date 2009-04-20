@@ -116,7 +116,7 @@ public class ConstraintGenerator {
   private Instruction buildInstructionFromExpression(Expression expression, Instruction action)
       throws VisitFailure {		
     // it is done innermost because the expression is also simplified		
-    expression = (Expression)`TopDown(ReplaceSubterms(this)).visitLight(expression);
+    expression = `TopDown(ReplaceSubterms(this)).visitLight(expression);
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     return automata;

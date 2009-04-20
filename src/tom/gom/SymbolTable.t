@@ -585,8 +585,7 @@ public class SymbolTable {
       ConstructorDescription cd = e.getValue();
       String codom = cd.getSortSymbol();
       try {
-        ConstructorDescription ncd = (ConstructorDescription)
-          `TopDown(SetRefreshPoints(this,codom)).visit(cd);
+        ConstructorDescription ncd = `TopDown(SetRefreshPoints(this,codom)).visit(cd);
         constructors.put(c,ncd);
       } catch(Exception ex) { throw new GomRuntimeException(); }
     }

@@ -84,7 +84,7 @@ public class VariadicPropagator implements IBasePropagator {
   }
  
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    Constraint res =  (Constraint)`TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
+    Constraint res =  `TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
     return res;
   }	
 

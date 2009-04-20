@@ -99,8 +99,7 @@ public class HookCompiler {
           CutModule(mdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`mdecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachModuleHook(clsName,hook,this)).visit(classes);
+              classes = `TopDown(AttachModuleHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachModuleHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
@@ -109,8 +108,7 @@ public class HookCompiler {
           CutSort(sdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`sdecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachSortHook(clsName,hook,this)).visit(classes);
+              classes = `TopDown(AttachSortHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachSortHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
@@ -119,8 +117,7 @@ public class HookCompiler {
           CutOperator(odecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
+              classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
@@ -135,8 +132,7 @@ public class HookCompiler {
             }
             clsName = clsName.setName(prefix + clsName.getName()); 
             try {
-              classes = (GomClassList)
-                `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
+              classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");

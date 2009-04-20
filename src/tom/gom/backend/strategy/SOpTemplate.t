@@ -123,12 +123,12 @@ public class @className()@ implements tom.library.sl.Strategy {
     return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
-    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
+    return (T) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
+    return (T) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public Object visit(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {

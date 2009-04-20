@@ -169,7 +169,7 @@ public class Compiler extends TomGenericPlugin {
       TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm) `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
+      TomTerm renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
@@ -190,7 +190,7 @@ public class Compiler extends TomGenericPlugin {
   private TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     getCompilerEnvironment().setSymbolTable(symbolTable);
     // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
-    return (TomTerm) `TopDown(CompileMatch(this)).visitLight(termToCompile);		
+    return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
   // looks for a 'Match' instruction:
@@ -220,7 +220,7 @@ public class Compiler extends TomGenericPlugin {
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
-              Constraint newConstraint = (Constraint) `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
+              Constraint newConstraint = `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
               Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
               //System.out.println("propag: " + actionNumber + "  " + Integer.valueOf((int)(System.currentTimeMillis()-Compiler.startChrono)) );
               PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
@@ -421,7 +421,7 @@ public class Compiler extends TomGenericPlugin {
         Collection newContext = new HashSet();
         `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
         newContext.addAll(context);
-        return (Instruction)`TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
+        return `TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
       }
     }  
   }  
