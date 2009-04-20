@@ -70,7 +70,7 @@ public interface Strategy extends Visitable {
    * @param envt the environment where execute the strategy.
    * @throws VisitFailure in case of failure.
    */
-  public Visitable visit(Environment envt) throws VisitFailure;
+  public <T extends Visitable> T visit(Environment envt) throws VisitFailure;
 
   /**
    * Visit the subject any by providing the introspector

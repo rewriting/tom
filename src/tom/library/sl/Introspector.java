@@ -51,7 +51,7 @@ public interface Introspector {
    * @param i the index of the subterm
    * @param child the new subterm 
    */
-  public <T> T setChildAt( T o, int i, Object child);
+  public <T> T setChildAt(T o, int i, Object child);
 
   /**
    * Return the i-th subterm of the object o
