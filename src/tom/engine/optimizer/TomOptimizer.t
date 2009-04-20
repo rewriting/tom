@@ -122,15 +122,15 @@ public class TomOptimizer extends TomGenericPlugin {
                 )
               );
 
-          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) `BottomUp(Inline(TrueConstraint())).visit(renamedTerm);
-          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
+          renamedTerm = optStrategy2.visitLight(renamedTerm);
+          renamedTerm = `BottomUp(Inline(TrueConstraint())).visit(renamedTerm);
+          renamedTerm = optStrategy2.visitLight(renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
                 InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
                 BottomUp(Inline(TrueConstraint())));
 
-          renamedTerm = (TomTerm) optStrategy.visit(renamedTerm);
+          renamedTerm = optStrategy.visit(renamedTerm);
         }
         setWorkingTerm(renamedTerm);
 
@@ -197,7 +197,7 @@ public class TomOptimizer extends TomGenericPlugin {
       Let((Variable|VariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
         (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
          Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
-          return (Instruction) `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
+          return `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
       }
 
       Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
@@ -303,7 +303,7 @@ public class TomOptimizer extends TomGenericPlugin {
               info(TomMessage.remove,mult,varName);
             }
           }
-          return (Instruction) `CleanAssign(name).visitLight(`body);
+          return `CleanAssign(name).visitLight(`body);
         } else if(mult == 1) {
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the use
@@ -646,7 +646,7 @@ public class TomOptimizer extends TomGenericPlugin {
    */ 
   private boolean incompatible(Expression c1, Expression c2) {
     try {
-      Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
+      Expression res = `InnermostId(NormExpr(this)).visitLight(`And(c2,c2));
       return res ==`FalseTL();
     } catch(VisitFailure e) {
       return false;
@@ -686,7 +686,7 @@ public class TomOptimizer extends TomGenericPlugin {
             int mult = info.readCount; 
             if(mult==0) {
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
-              Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
+              Instruction newBody2 =  `renameVariable(name2,name1).visitLight(`body2);
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
             }
           }
