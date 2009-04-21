@@ -56,11 +56,7 @@ public class Inlining {
   %include { java/util/HashMap.tom }
   //do not want to import graph.tom but just basic.tom and composed.tom
   //because I redefine the CTL operators at the end of this file
-  %typeterm Strategy {
-    implement { tom.library.sl.Strategy }
-    is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
-    equals(t1,t2) { ($t1.equals($t2)) }
-  }
+  %include { Strategy.tom }
   %include { sl/basic.tom }
   %include { sl/composed.tom }
   %include { inlining/term/_Term.tom }

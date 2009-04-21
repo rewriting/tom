@@ -240,12 +240,11 @@ private String genIdArgs(int count) {
 public String generateMapping() {
 
   return %[
-    %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@)))}
-      @genGetSlot(slotList.length(),"arg")@
-        make(@genConstrArgs(slotList.length(),"arg",false)@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg",true)@) }
-    }
-  
+  %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
+    is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@)))}
+    @genGetSlot(slotList.length(),"arg")@
+    make(@genConstrArgs(slotList.length(),"arg",false)@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg",true)@) }
+  }
   ]%;
 }
 

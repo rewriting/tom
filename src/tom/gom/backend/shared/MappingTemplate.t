@@ -134,8 +134,8 @@ public class MappingTemplate extends MappingTemplateClass {
           .generateTomMapping(writer);
       }
     }
-    /* Include the strategy mapping if needed */
-    if (strategyMapping != null) {
+    /* Include the strategy mapping (_file.tom) if needed */
+    if(strategyMapping != null) {
       strategyMapping.generateTomMapping(writer);
     }
   }

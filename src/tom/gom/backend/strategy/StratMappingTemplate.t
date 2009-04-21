@@ -56,7 +56,12 @@ public class StratMappingTemplate extends MappingTemplateClass {
     generate(writer);
   }
 
+  /**
+    * generate mappings for congruence strategies
+    * in a _file.tom
+    */
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write("  %include { Strategy.tom }");
     %match(GomClassList operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
@@ -72,11 +77,11 @@ public class StratMappingTemplate extends MappingTemplateClass {
           Cons=OperatorClass[ClassName=cons]],
           _*)-> {
         writer.write(%[
-            %op Strategy _@className(`vopName)@(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
-            }
-            ]%);
+  %op Strategy _@className(`vopName)@(sub:Strategy) {
+    is_fsym(t) { false }
+    make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
+  }
+  ]%);
       }
     }
       }

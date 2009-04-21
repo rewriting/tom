@@ -128,8 +128,8 @@ public abstract class BasicStrategy implements Strategy {
 
   public abstract <T> T visitLight(T v, Introspector introspector) throws VisitFailure;
 
-  public Visitable visit(Environment envt) throws VisitFailure {
-    return (Visitable) visit(envt,VisitableIntrospector.getInstance());
+  public <T extends Visitable> T visit(Environment envt) throws VisitFailure {
+    return (T) visit(envt,VisitableIntrospector.getInstance());
   }
 
   public <T extends Visitable> T visit(T any) throws VisitFailure {

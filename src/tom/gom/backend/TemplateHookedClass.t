@@ -164,7 +164,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         StringWriter gen = new StringWriter();
         generate(gen);
         InputStream backupIn = System.in;
-        System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
+        System.setIn(new ByteArrayInputStream(gen.toString().getBytes("UTF-8")));
         int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
 
         //int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]),informationTracker);

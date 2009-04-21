@@ -35,7 +35,7 @@ import tom.library.sl.*;
 
 public class Fakir {
 
-  %gom(--strategies-mapping) {
+  %gom(--withCongruenceStrategies) {
     module Table
     imports int   
     abstract syntax

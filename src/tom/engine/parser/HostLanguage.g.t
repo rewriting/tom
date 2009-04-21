@@ -577,7 +577,11 @@ gomsignature [List list] throws TomException
     parameters.add("-");
     getLogger().log(Level.FINE,"Calling gom with: "+parameters);
     InputStream backupIn = System.in;
-    System.setIn(new DataInputStream(new StringBufferInputStream(gomCode)));
+    try {
+      System.setIn(new ByteArrayInputStream(gomCode.getBytes("UTF-8")));
+    } catch(java.io.UnsupportedEncodingException e) {
+      getLogger().log(Level.SEVERE, "Failed calling gom: " + e.getMessage());
+    }
 
     /* Prepare arguments */
     Object[] preparams = parameters.toArray();

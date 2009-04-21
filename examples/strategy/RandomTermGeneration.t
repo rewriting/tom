@@ -35,7 +35,7 @@ import tom.library.sl.*;
 
 public class RandomTermGeneration {
 
-  %gom(--strategies-mapping) {
+  %gom(--withCongruenceStrategies) {
     module m
     imports int   
     abstract syntax

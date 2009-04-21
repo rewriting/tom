@@ -70,7 +70,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
-    "<boolean name='strategies-mapping' altName='sm' description='Generate tom mapping for strategies' value='false'/>" +
+    "<boolean name='withCongruenceStrategies' altName='wcs' description='Include the definition of congruence strategies in the generate *.tom file' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
     "</options>";
@@ -118,12 +118,12 @@ public class BackendPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-    boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
+    boolean generateStratMapping = getOptionBooleanValue("withCongruenceStrategies");
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     Backend backend =
       new Backend(templateFactory.getFactory(getOptionManager()),
-                  tomHomePath, strategiesMapping, multithread, nosharing,
+                  tomHomePath, generateStratMapping, multithread, nosharing,
                   getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if(classList == null) {

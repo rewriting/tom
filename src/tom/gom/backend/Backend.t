@@ -43,7 +43,7 @@ public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
-  private boolean strategySupport = false;
+  private boolean generateStratMapping = false;
   private boolean multithread = false;
   private boolean maximalsharing = true;
   private GomEnvironment gomEnvironment;
@@ -53,14 +53,14 @@ public class Backend {
 
   Backend(TemplateFactory templatefactory,
           File tomHomePath,
-          boolean strategySupport,
+          boolean generateStratMapping,
           boolean multithread,
           boolean nosharing,
           List importList,
           GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
-    this.strategySupport = strategySupport;
+    this.generateStratMapping = generateStratMapping;
     this.multithread = multithread;
     this.maximalsharing = ! nosharing;
     this.importList = importList;
@@ -87,14 +87,7 @@ public class Backend {
           new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
         generators.put(smappingclass,stratMapping);
 
-        MappingTemplateClass mapping = null;
-        if(strategySupport) {
-          mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
-        } else {
-          mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
-        }
+        MappingTemplateClass mapping = templatefactory.makeTomMappingTemplate(`gomclass,(generateStratMapping)?stratMapping:null,getGomEnvironment());
         mappingSet.add(mapping);
         generators.put(`className,mapping);
       }

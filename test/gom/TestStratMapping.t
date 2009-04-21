@@ -8,7 +8,7 @@ import gom.teststratmapping.m.types.*;
 public class TestStratMapping {
 
   %include { sl.tom }
-  %gom(--strategies-mapping) {
+  %gom(--withCongruenceStrategies) {
     module M
     abstract syntax
     S = f(h:S,t:S)

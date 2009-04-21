@@ -27,14 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * StrategyLanguage Library
- */
-
-%include { Strategy.tom }
-%include { Position.tom }
-
-%include { sl/basic.tom }
-%include { sl/graph.tom }
-%include { sl/composed.tom }
-
+%typeterm Strategy {
+  implement { tom.library.sl.Strategy }
+  is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
+  equals(t1,t2) { ($t1.equals($t2)) }
+}
