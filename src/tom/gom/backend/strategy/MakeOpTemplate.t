@@ -159,7 +159,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public int visit(tom.library.sl.Introspector i) {
-@computeSLNewChilds(slotList,"any","i")@
+@computeSLNewChilds(slotList,"i")@
     getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList,false)@));
     return tom.library.sl.Environment.SUCCESS;
   }
@@ -350,7 +350,11 @@ public class @className()@ implements tom.library.sl.Strategy {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
-    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
+    Object tmp@fieldName(`fieldName)@ = @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
+    if (! (tmp@fieldName(`fieldName)@ instanceof @fullClassName(`domain)@)) {
+      throw new tom.library.sl.VisitFailure();
+    }
+    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) tmp@fieldName(`fieldName)@; 
 ]%;
         }
       }
@@ -361,13 +365,16 @@ public class @className()@ implements tom.library.sl.Strategy {
   /**
    * Generate code to initialize all members of the strategy with the sl scheme
    */
-  private String computeSLNewChilds(SlotFieldList slots, String argName, String introspectorName) {
+  private String computeSLNewChilds(SlotFieldList slots, String introspectorName) {
     String res = "";
     %match(SlotFieldList slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
     (@fieldName(`fieldName)@).visit(@introspectorName@);
+    if (! (getEnvironment().getSubject() instanceof @fullClassName(`domain)@)) {
+      return tom.library.sl.Environment.FAILURE;
+    }
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
 ]%;
         }
