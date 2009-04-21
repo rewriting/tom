@@ -72,7 +72,7 @@ public class TestStratMapping {
       t = s6.visit(t);
       assertEquals(`a(),t);
     } catch (tom.library.sl.VisitFailure ee) {
-      fail("Make_g(Make_c) failed"); 
+      fail("Make_a() failed"); 
     }
   }
 
