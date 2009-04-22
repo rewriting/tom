@@ -41,7 +41,7 @@ import java.util.HashSet;
 
 public class TestAddressBook {
   private AddressBook1 test;
-  private HashSet book;
+  private HashSet<Person> book;
 
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestAddressBook.class.getName());
@@ -50,7 +50,7 @@ public class TestAddressBook {
   @Before
   public void setUp() {
     test = new AddressBook1();
-    book = new HashSet();
+    book = new HashSet<Person>();
     AddressBook1.generatePerson(book);
   }
 

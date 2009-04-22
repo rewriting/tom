@@ -600,8 +600,9 @@ generateGetters(writer);
    * @@return an array of children which just were set
    * @@throws IndexOutOfBoundsException if length of "childs" is different than @slotList.length()@
    */
+  @@SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
-    if (childs.length == @slotList.length()@) {
+    if (childs.length == @slotList.length()@ @arrayCheck("childs")@) {
       return @arrayMake("childs")@;
     } else {
       throw new IndexOutOfBoundsException();
@@ -949,6 +950,22 @@ writer.write(%[
       }
     }
     res.append(")");
+    return res.toString();
+  }
+
+  private String arrayCheck(String arrayName) {
+    StringBuilder res = new StringBuilder();
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
+         res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
+       } else {
+         res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
+       }
+       index++;
+      }
+    }
     return res.toString();
   }
 private String makeCases(String argName) {
