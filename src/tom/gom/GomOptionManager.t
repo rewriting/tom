@@ -314,7 +314,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * Self-explanatory. Displays the current version of the Gom compiler.
    */
   public void displayVersion() {
-    System.out.println("Gom " + Gom.VERSION + "\n\n"
+    System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
                        + "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
   }
 

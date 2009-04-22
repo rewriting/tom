@@ -112,8 +112,8 @@ public class Backend {
     while (it.hasNext()) {
       it.next().addTemplates(generators);
     }
-    Iterator<ClassName> itc = generators.keySet().iterator();
 
+    Iterator<ClassName> itc = generators.keySet().iterator();
     while (itc.hasNext()) {
       generators.get(itc.next()).generateFile();
     }

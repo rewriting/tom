@@ -62,13 +62,14 @@ class SharedTemplateFactory extends TemplateFactory {
     this.manager = manager;
     this.gomEnvironment = gomEnvironment;
   }
+
   public MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
       TemplateClass strategyMapping,
       GomEnvironment gomEnvironment) {
-    return
-      new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
+    return new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
   }
+
   public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment) {
     return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping, maximalsharing, gomEnvironment);
   }

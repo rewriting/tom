@@ -1,3 +1,7 @@
+2009-04-22 pem
+ * Gom and Tom have the same version number
+ * suppress warning in gnerated code (due to an unchecked cast)
+
 2009-04-21 pem
  * bootinstall
  * updated all examples

@@ -1174,7 +1174,7 @@
     <!--<delete dir="${src.src}/bootcheck"/>-->
   </target>
 
-  <target name="performbootstrap" depends="src">
+  <target name="performbootstrap" depends="src.dist">
     <echo> CALLING BOOTSTEP 1 ...</echo>
     <!-- compile src with tomsrc -->
     <mkdir dir="${bootstrap.dir}"/>

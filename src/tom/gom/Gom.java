@@ -51,9 +51,6 @@ import tom.gom.GomMessage;
 
 public class Gom {
 
-  /** The current version of the Gom compiler. */
-  public final static String VERSION = "0.01";
-
   /** Log radical string*/
   public final static String LOGRADICAL = "tom.gom";
 

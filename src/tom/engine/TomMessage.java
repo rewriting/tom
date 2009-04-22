@@ -250,6 +250,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Exception occurs while dealing with Apigen: ''{0}''");
 
   // Error messages linked to operator and type definitions
+  public static final TomMessage multipleSortDefinitionError=
+      new TomMessage("Multiple definition of Sort ''{0}''");
   public static final TomMessage multipleSymbolDefinitionError=
       new TomMessage("Multiple definition of Symbol ''{0}''");
   public static final TomMessage symbolCodomainError     =
