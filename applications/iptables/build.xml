@@ -9,7 +9,7 @@
   <property name="iptables.gen"      location="${iptables.dir}/gen"/>
   <property name="iptables.build"    location="${iptables.dir}/build"/>
   <property name="iptables.package"   value="iptables"/>
-  <property name="iptables.ast"      value="${iptables.package}/Ast"/>
+  <property name="iptables.ast"      value="${iptables.package}/Analyser"/>
   <property name="iptables.grammarname"  value="Langage"/>
   <property name="iptables.grammar"  value="${iptables.package}/${iptables.grammarname}"/>
   
@@ -64,7 +64,7 @@
             />
   </target>
   
-  <target name="javac" depends="tom">
+  <target name="javac" depends="tom, antlr">
     <javac.preset destdir="${iptables.build}" >
       <!--<src path="${iptables.src}"/>-->
       <src path="${iptables.gen}"/>

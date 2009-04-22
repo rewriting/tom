@@ -2,9 +2,9 @@ module iptables.Analyser
 imports boolean int long String
 abstract syntax
 
-	Rules = rules(Rule*)
+	Rules = Rules(Rule*)
 
-	Rule = rule(
+	Rule = Rule(
 			action:Action,
 			iface:Iface,
 			proto:Protocol,
@@ -74,7 +74,7 @@ abstract syntax
 		| TCPxAck(val:boolean)
 
 	/* Packet state options */
-	States = states(State*)
+	States = States(State*)
 
 	State =
 		StateAny()

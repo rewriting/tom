@@ -15,7 +15,7 @@ public class Iptables {
 	public static Rule parse(String input) {
 		%match (input) {
 			concString(action*,' ',proto*,' ',source*,' ',dest*) -> {
-				return `rule(
+				return `Rule(
 						parseAction(action),
 						IfaceAny(),
 						parseProto(proto),

@@ -28,12 +28,12 @@ public class Analyser {
 
 	%strategy checkIntersect() extends Identity() {
 		visit Rules {
-			rs@rules(
+			rs@Rules(
 				X*,
-				r1@rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,
+				r1@Rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,
 					dstport,opts),
 				Y*,
-				r2@rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,
+				r2@Rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,
 					dstport,opts),
 				Z*
 			) -> {
@@ -41,34 +41,34 @@ public class Analyser {
 				if (isEquiv(`srcaddr1,`srcaddr2) && isEquiv(`dstaddr1,`dstaddr2)) {
 					if (`action1 == `action2) {
 						System.out.println("doubloon: " + `r1);
-						return `rules(X*,r1,Y*,Z*);
+						return `Rules(X*,r1,Y*,Z*);
 					} else {
 						System.err.println("conflicting rules:" + `r1 + "\t/\t" +
 						 `r2 + " => removing " + `r2);
-						return `rules(X*,r1,Y*,Z*);
+						return `Rules(X*,r1,Y*,Z*);
 					}
 				}
 				return `rs;
 			}
-			rs@rules(_*) -> { return `rs; }
+			rs@Rules(_*) -> { return `rs; }
 		}
 	}
 
 	%strategy checkInclusion() extends Identity() { 
 		visit Rules {
-			rs@rules(X*,r1,Y*,r2,Z*) -> {
+			rs@Rules(X*,r1,Y*,r2,Z*) -> {
 				/* looking for inclusions optimizations */
 				int i = isInclude(`r1,`r2);
 				System.out.println("CUL " + i);
 				if (i == 1) {
 					System.out.println("optimization: " + `r2);
-					return `rules(X*,r1,Y*,Z*);
+					return `Rules(X*,r1,Y*,Z*);
 				} else if (i == -1) {
 					System.out.println("optimization: " + `r1);
-					return `rules(X*,Y*,r2,Z*);
+					return `Rules(X*,Y*,r2,Z*);
 				} else if (i == 0) {
 					System.out.println("optimization-doubloon: " + `r1);
-					return `rules(X*,r1,Y*,Z*);
+					return `Rules(X*,r1,Y*,Z*);
 				}
 				return `rs;
 			}
@@ -111,8 +111,8 @@ public class Analyser {
 	*/
 	public static int isInclude(Rule r1, Rule r2) {
 		%match(r1,r2) {
-			rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
-			rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
+			Rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
+			Rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
 				int i1 = isInclude(`srcaddr1,`srcaddr2),
 					i2 = isInclude(`dstaddr1,`dstaddr2);
 				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
@@ -202,7 +202,12 @@ public class Analyser {
 	}
 
 	public static void main(String[] args) {
-		Rule r1 = `rule(
+
+
+
+
+
+		Rule r1 = `Rule(
 			Accept(),
 			Iface("eth0"),
 			TCP(),
@@ -213,7 +218,7 @@ public class Analyser {
 			Port(80),
 			NoOpt()
 		);
-		Rule r2 = `rule(
+		Rule r2 = `Rule(
 			Drop(),
 			Iface("eth0"),
 			TCP(),
@@ -224,7 +229,7 @@ public class Analyser {
 			Port(80),
 			NoOpt()
 		);
-		Rule r3 = `rule(
+		Rule r3 = `Rule(
 			Accept(),
 			Iface("eth0"),
 			TCP(),
@@ -236,7 +241,7 @@ public class Analyser {
 			NoOpt()
 		);
 
-		Rules rs = 	`rules(r1,r2,r3),rsn;
+		Rules rs = 	`Rules(r1,r2,r3),rsn;
 
 		/* printing tests */
 		System.out.println("\n#printing test: " +rs);
@@ -258,14 +263,14 @@ public class Analyser {
 
 		/* checkIntegrity tests */
 		System.out.println("\n# checkIntegrity test: doubloon");
-		rsn = checkIntegrity(`rules(r1,r1));
+		rsn = checkIntegrity(`Rules(r1,r1));
 		System.out.println("RSN: " + rsn);
 		System.out.println("\n# checkIntegrity test: conflict");
-		checkIntegrity(`rules(r1,r2));
+		checkIntegrity(`Rules(r1,r2));
 		System.out.println("\n# checkIntegrity test: nothing wrong");
-		checkIntegrity(`rules(r1,r3));
+		checkIntegrity(`Rules(r1,r3));
 		System.out.println("\n# checkIntegrity test: doubloon & conflict");
-		checkIntegrity(`rules(r1,r2,r3,r1));
+		checkIntegrity(`Rules(r1,r2,r3,r1));
 
 		/* checkOptimization tests */
 		System.out.println("\n# checkOptimization test");
