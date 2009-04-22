@@ -42,7 +42,7 @@ public class LambdaCalculus {
   private static int comptVariable = 0;	
   %include { sl.tom }
   %include {lambdaterm/lambdaterm.tom}
-  %include {lambdaterm/_lambdaterm.tom}
+  //%include {lambdaterm/_lambdaterm.tom}
   %include {util/HashMap.tom}
 
 

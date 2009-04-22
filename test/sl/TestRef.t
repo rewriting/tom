@@ -39,7 +39,7 @@ public class TestRef {
 
   %include { sl.tom }
   %include { sl/graph.tom }
-  %include { testsl/_testsl.tom }
+  //%include { testsl/_testsl.tom }
   %include { testsl/testsl.tom }
 
   %op Strategy TopDownSeq(s1:Strategy) {

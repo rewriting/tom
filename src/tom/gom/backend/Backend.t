@@ -43,17 +43,17 @@ public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
-  private boolean generateStratMapping = false;
+  private int generateStratMapping = 0;
   private boolean multithread = false;
   private boolean maximalsharing = true;
   private GomEnvironment gomEnvironment;
 
   %include { ../adt/objects/Objects.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   Backend(TemplateFactory templatefactory,
           File tomHomePath,
-          boolean generateStratMapping,
+          int generateStratMapping,
           boolean multithread,
           boolean nosharing,
           List importList,
@@ -80,14 +80,23 @@ public class Backend {
       ConcGomClass(_*,
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
-        ClassName smappingclass = `ClassName(pkg,"_"+name);
-        GomClass nGomClass =
-          `gomclass.setClassName(smappingclass);
-        TemplateClass stratMapping =
-          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
-        generators.put(smappingclass,stratMapping);
-
-        MappingTemplateClass mapping = templatefactory.makeTomMappingTemplate(`gomclass,(generateStratMapping)?stratMapping:null,getGomEnvironment());
+        MappingTemplateClass mapping = null;
+        if(generateStratMapping>0) { // generate congruence strategies
+          ClassName smappingclass = `ClassName(pkg,"_"+name);
+          GomClass nGomClass = `gomclass.setClassName(smappingclass);
+          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
+          if(generateStratMapping==1) { 
+            // classical mode: generate extra-mapping in file.tom
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
+          } else {
+            // expert mode: generate extra-mapping in _file.tom
+            generators.put(smappingclass,stratMapping);
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
+          }
+        } else {
+          // do not generate congruence strategies
+          mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
+        }
         mappingSet.add(mapping);
         generators.put(`className,mapping);
       }
@@ -158,17 +167,16 @@ public class Backend {
             maximalsharing,
             getGomEnvironment());
         generators.put(`className,operator);
+        if(generateStratMapping>0) {
+          TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
+          sOpStrat.generateFile();
 
-        TemplateClass sOpStrat =
-          new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
-        sOpStrat.generateFile();
+          TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+          isOpStrat.generateFile();
 
-        TemplateClass isOpStrat =
-          new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
-        isOpStrat.generateFile();
-
-        TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
-        makeOpStrat.generateFile();
+          TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+          makeOpStrat.generateFile();
+        }
        return 1;
       }
       VariadicOperatorClass[ClassName=className,

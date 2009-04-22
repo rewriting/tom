@@ -38,7 +38,7 @@ public class TestSLModes {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
-  %include { testsl/_testsl.tom }
+  //%include { testsl/_testsl.tom }
 
 	public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestSLModes.class.getName());

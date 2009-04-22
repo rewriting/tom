@@ -2,6 +2,16 @@
 <project name="Build the tactics example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="example" value="tactics"/>
+
+  <target name="build" depends="init">
+  <gom.preset srcdir="${examples.dir}"
+    package="${example}"
+    withCongruenceStrategies="true"
+    destdir="${examples.gen}">          
+    <include name="${example}/**/Trees.gom"/>
+  </gom.preset>
+  </target>
+
   <property name="distribute" value="yes"/>
 </project>
 

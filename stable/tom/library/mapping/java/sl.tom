@@ -31,17 +31,8 @@
  * StrategyLanguage Library
  */
 
-%typeterm Strategy {
-  implement { tom.library.sl.Strategy }
-  is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
-  equals(t1,t2) { ($t1.equals($t2)) }
-}
-
-%typeterm Position {
-  implement { tom.library.sl.Position }
-  is_sort(t) { ($t instanceof tom.library.sl.Position) }
-  equals(t1,t2) { ($t1.equals($t2)) }
-}
+%include { Strategy.tom }
+%include { Position.tom }
 
 %include { sl/basic.tom }
 %include { sl/graph.tom }

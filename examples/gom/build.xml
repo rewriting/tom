@@ -3,7 +3,18 @@
   <import file="../common.xml"/>
   <property name="example" value="gom"/>
   <target name="build" depends="init">
-    <gomcompile/>
+    <gom.preset srcdir="${examples.dir}"
+      package="${example}"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.gom"/>
+      <exclude name="${example}/**/Elist.gom"/>
+    </gom.preset>
+    <gom.preset srcdir="${examples.dir}"
+      package="${example}"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/Elist.gom"/>
+    </gom.preset>
     <tom.preset srcdir="${examples.dir}"
       options="--genIntrospector"
       destdir="${examples.gen}">          

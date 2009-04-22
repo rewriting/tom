@@ -70,7 +70,8 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
-    "<boolean name='withCongruenceStrategies' altName='wcs' description='Include the definition of congruence strategies in the generate *.tom file' value='false'/>" +
+    "<boolean name='withCongruenceStrategies' altName='wcs' description='Include the definition of congruence strategies in the generate file.tom file' value='false'/>" +
+    "<boolean name='withSeparateCongruenceStrategies' altName='wscs' description='Generate the definition of congruence strategies in _file.tom file' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
     "</options>";
@@ -118,7 +119,13 @@ public class BackendPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-    boolean generateStratMapping = getOptionBooleanValue("withCongruenceStrategies");
+    int generateStratMapping = 0;
+    if(getOptionBooleanValue("withCongruenceStrategies")) {
+      generateStratMapping = 1;
+    }
+    if(getOptionBooleanValue("withSeparateCongruenceStrategies")) {
+      generateStratMapping = 2;
+    }
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     Backend backend =

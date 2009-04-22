@@ -41,7 +41,7 @@ public class TermGraphAction {
 
   %include {sl.tom }
   %include {term/term.tom}
-  %include {term/_term.tom}
+  //%include {term/_term.tom}
 
   %op Strategy GlobalRedirection(oldlabel:String,newlabel:String) {
     make(oldlabel,newlabel) {

@@ -172,7 +172,7 @@ options{
   }
 
   // returns the current goal language code
-  private String getCode(){
+  private String getCode() {
     String result = targetlexer.target.toString();
     targetlexer.clearTarget();
     return result;
@@ -567,10 +567,9 @@ gomsignature [List list] throws TomException
     }
     /* treat user supplied options */
     textCode = t.getText();
-    if (textCode.length() > 6) {
-      String[] userOpts =
-        textCode.substring(5,textCode.length()-1).split("\\s+");
-      for (int i=0; i < userOpts.length; i++) {
+    if(textCode.length() > 6) {
+      String[] userOpts = textCode.substring(5,textCode.length()-1).split("\\s+");
+      for(int i=0; i < userOpts.length; i++) {
         parameters.add(userOpts[i]);
       }
     }

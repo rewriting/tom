@@ -42,7 +42,7 @@ public class TermGraphRewriting {
   %include {sl.tom }
   %include {util/HashMap.tom}
   %include {term/term.tom}
-  %include {term/_term.tom}
+  //%include {term/_term.tom}
 
   static int i =0;
 

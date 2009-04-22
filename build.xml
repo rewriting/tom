@@ -423,8 +423,13 @@
     </uptodate>
     <antcall target="touchgom"/>
 
+    <!--
+      options="-withSeparateCongruenceStrategies"
+      -->
+
     <gomcompile srcdir="${src.src}"
       multithread="false"
+      withSeparateCongruenceStrategies="true"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/TomSignature.gom"/>

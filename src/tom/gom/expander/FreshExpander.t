@@ -40,7 +40,7 @@ public class FreshExpander {
 
   %include { ../adt/gom/Gom.tom}
   %include { util/ArrayList.tom }
-  %include { sl.tom }  
+  %include { ../../library/mapping/java/sl.tom }  
 
   %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
   %typeterm FreshExpander { implement { tom.gom.expander.FreshExpander } }

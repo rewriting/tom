@@ -5,7 +5,13 @@
   <target name="build" depends="init">
     <!-- copy resources in build -->
     <mkdir dir="${examples.gen}/${example}"/>
-    <gomtermgraphcompile/>
+    <gom.preset srcdir="${examples.dir}"
+      package="${example}"
+      termgraph="true"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/Wfg.gom"/>
+    </gom.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"

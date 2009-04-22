@@ -5,7 +5,7 @@ import tom.library.sl.*;
 public class OldBehaviour {
   %include { sl.tom }
   %include { testsl/testsl.tom }
-  %include { testsl/_testsl.tom }
+  //%include { testsl/_testsl.tom }
 
   %strategy R1() extends `Identity() {
     visit Term {

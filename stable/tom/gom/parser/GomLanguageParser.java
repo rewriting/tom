@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-04-18 16:53:43
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-04-21 23:00:16
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -209,10 +209,10 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:52:8: ( MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:53:3: MODULE modulename (imps= imports )? section EOF
             {
-            MODULE1=(Token)match(input,MODULE,FOLLOW_MODULE_in_module349);  
+            MODULE1=(Token)match(input,MODULE,FOLLOW_MODULE_in_module347);  
             stream_MODULE.add(MODULE1);
 
-            pushFollow(FOLLOW_modulename_in_module351);
+            pushFollow(FOLLOW_modulename_in_module349);
             modulename2=modulename();
 
             state._fsp--;
@@ -229,7 +229,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:53:22: imps= imports
                     {
-                    pushFollow(FOLLOW_imports_in_module356);
+                    pushFollow(FOLLOW_imports_in_module354);
                     imps=imports();
 
                     state._fsp--;
@@ -241,13 +241,13 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_section_in_module360);
+            pushFollow(FOLLOW_section_in_module358);
             section3=section();
 
             state._fsp--;
 
             stream_section.add(section3.getTree());
-            EOF4=(Token)match(input,EOF,FOLLOW_EOF_in_module362);  
+            EOF4=(Token)match(input,EOF,FOLLOW_EOF_in_module360);  
             stream_EOF.add(EOF4);
 
 
@@ -381,10 +381,10 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:62:4: mod= ID DOT
             	    {
-            	    mod=(Token)match(input,ID,FOLLOW_ID_in_modulename419);  
+            	    mod=(Token)match(input,ID,FOLLOW_ID_in_modulename417);  
             	    stream_ID.add(mod);
 
-            	    DOT5=(Token)match(input,DOT,FOLLOW_DOT_in_modulename421);  
+            	    DOT5=(Token)match(input,DOT,FOLLOW_DOT_in_modulename419);  
             	    stream_DOT.add(DOT5);
 
             	     packagePrefix.append((mod!=null?mod.getText():null)+"."); 
@@ -397,7 +397,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            moduleName=(Token)match(input,ID,FOLLOW_ID_in_modulename431);  
+            moduleName=(Token)match(input,ID,FOLLOW_ID_in_modulename429);  
             stream_ID.add(moduleName);
 
 
@@ -481,7 +481,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:75:9: ( IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:3: IMPORTS ( importedModuleName )*
             {
-            IMPORTS6=(Token)match(input,IMPORTS,FOLLOW_IMPORTS_in_imports459);  
+            IMPORTS6=(Token)match(input,IMPORTS,FOLLOW_IMPORTS_in_imports457);  
             stream_IMPORTS.add(IMPORTS6);
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:11: ( importedModuleName )*
@@ -499,7 +499,7 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:12: importedModuleName
             	    {
-            	    pushFollow(FOLLOW_importedModuleName_in_imports462);
+            	    pushFollow(FOLLOW_importedModuleName_in_imports460);
             	    importedModuleName7=importedModuleName();
 
             	    state._fsp--;
@@ -597,7 +597,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:78:20: ( ID -> ^( Import ^( GomModuleName ID ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:79:3: ID
             {
-            ID8=(Token)match(input,ID,FOLLOW_ID_in_importedModuleName491);  
+            ID8=(Token)match(input,ID,FOLLOW_ID_in_importedModuleName489);  
             stream_ID.add(ID8);
 
 
@@ -691,7 +691,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:83:4: PUBLIC
                     {
-                    PUBLIC9=(Token)match(input,PUBLIC,FOLLOW_PUBLIC_in_section517);  
+                    PUBLIC9=(Token)match(input,PUBLIC,FOLLOW_PUBLIC_in_section515);  
                     stream_PUBLIC.add(PUBLIC9);
 
 
@@ -700,7 +700,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_adtgrammar_in_section521);
+            pushFollow(FOLLOW_adtgrammar_in_section519);
             adtgrammar10=adtgrammar();
 
             state._fsp--;
@@ -791,7 +791,7 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:87:4: gr+= syntax
             	    {
-            	    pushFollow(FOLLOW_syntax_in_adtgrammar545);
+            	    pushFollow(FOLLOW_syntax_in_adtgrammar543);
             	    gr=syntax();
 
             	    state._fsp--;
@@ -892,10 +892,10 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:90:8: ( ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )* -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:3: ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
             {
-            ABSTRACT11=(Token)match(input,ABSTRACT,FOLLOW_ABSTRACT_in_syntax565);  
+            ABSTRACT11=(Token)match(input,ABSTRACT,FOLLOW_ABSTRACT_in_syntax563);  
             stream_ABSTRACT.add(ABSTRACT11);
 
-            SYNTAX12=(Token)match(input,SYNTAX,FOLLOW_SYNTAX_in_syntax567);  
+            SYNTAX12=(Token)match(input,SYNTAX,FOLLOW_SYNTAX_in_syntax565);  
             stream_SYNTAX.add(SYNTAX12);
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:19: (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
@@ -946,7 +946,7 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:20: gr1+= production
             	    {
-            	    pushFollow(FOLLOW_production_in_syntax572);
+            	    pushFollow(FOLLOW_production_in_syntax570);
             	    gr1=production();
 
             	    state._fsp--;
@@ -961,7 +961,7 @@ public class GomLanguageParser extends Parser {
             	case 2 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:38: gr2+= hookConstruct
             	    {
-            	    pushFollow(FOLLOW_hookConstruct_in_syntax578);
+            	    pushFollow(FOLLOW_hookConstruct_in_syntax576);
             	    gr2=hookConstruct();
 
             	    state._fsp--;
@@ -976,7 +976,7 @@ public class GomLanguageParser extends Parser {
             	case 3 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:59: gr3+= typedecl
             	    {
-            	    pushFollow(FOLLOW_typedecl_in_syntax584);
+            	    pushFollow(FOLLOW_typedecl_in_syntax582);
             	    gr3=typedecl();
 
             	    state._fsp--;
@@ -991,7 +991,7 @@ public class GomLanguageParser extends Parser {
             	case 4 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:75: gr4+= atomdecl
             	    {
-            	    pushFollow(FOLLOW_atomdecl_in_syntax590);
+            	    pushFollow(FOLLOW_atomdecl_in_syntax588);
             	    gr4=atomdecl();
 
             	    state._fsp--;
@@ -1132,19 +1132,19 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:98:3: ( ID fieldlist ARROW type -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:99:3: ID fieldlist ARROW type
             {
-            ID13=(Token)match(input,ID,FOLLOW_ID_in_production652);  
+            ID13=(Token)match(input,ID,FOLLOW_ID_in_production650);  
             stream_ID.add(ID13);
 
-            pushFollow(FOLLOW_fieldlist_in_production654);
+            pushFollow(FOLLOW_fieldlist_in_production652);
             fieldlist14=fieldlist();
 
             state._fsp--;
 
             stream_fieldlist.add(fieldlist14.getTree());
-            ARROW15=(Token)match(input,ARROW,FOLLOW_ARROW_in_production656);  
+            ARROW15=(Token)match(input,ARROW,FOLLOW_ARROW_in_production654);  
             stream_ARROW.add(ARROW15);
 
-            pushFollow(FOLLOW_type_in_production658);
+            pushFollow(FOLLOW_type_in_production656);
             type16=type();
 
             state._fsp--;
@@ -1234,10 +1234,10 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:102:10: ( ATOM atom= ID -> ^( AtomDecl ID[atom] ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:103:3: ATOM atom= ID
             {
-            ATOM17=(Token)match(input,ATOM,FOLLOW_ATOM_in_atomdecl691);  
+            ATOM17=(Token)match(input,ATOM,FOLLOW_ATOM_in_atomdecl689);  
             stream_ATOM.add(ATOM17);
 
-            atom=(Token)match(input,ID,FOLLOW_ID_in_atomdecl695);  
+            atom=(Token)match(input,ID,FOLLOW_ID_in_atomdecl693);  
             stream_ID.add(atom);
 
 
@@ -1355,13 +1355,13 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:107:5: typename= ID EQUALS alts= alternatives[typename]
                     {
-                    typename=(Token)match(input,ID,FOLLOW_ID_in_typedecl721);  
+                    typename=(Token)match(input,ID,FOLLOW_ID_in_typedecl719);  
                     stream_ID.add(typename);
 
-                    EQUALS18=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl724);  
+                    EQUALS18=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl722);  
                     stream_EQUALS.add(EQUALS18);
 
-                    pushFollow(FOLLOW_alternatives_in_typedecl728);
+                    pushFollow(FOLLOW_alternatives_in_typedecl726);
                     alts=alternatives(typename);
 
                     state._fsp--;
@@ -1425,22 +1425,22 @@ public class GomLanguageParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:109:6: ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename]
                     {
-                    ptypename=(Token)match(input,ID,FOLLOW_ID_in_typedecl768);  
+                    ptypename=(Token)match(input,ID,FOLLOW_ID_in_typedecl766);  
                     stream_ID.add(ptypename);
 
-                    BINDS19=(Token)match(input,BINDS,FOLLOW_BINDS_in_typedecl770);  
+                    BINDS19=(Token)match(input,BINDS,FOLLOW_BINDS_in_typedecl768);  
                     stream_BINDS.add(BINDS19);
 
-                    pushFollow(FOLLOW_atoms_in_typedecl774);
+                    pushFollow(FOLLOW_atoms_in_typedecl772);
                     b=atoms();
 
                     state._fsp--;
 
                     stream_atoms.add(b.getTree());
-                    EQUALS20=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl776);  
+                    EQUALS20=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl774);  
                     stream_EQUALS.add(EQUALS20);
 
-                    pushFollow(FOLLOW_pattern_alternatives_in_typedecl780);
+                    pushFollow(FOLLOW_pattern_alternatives_in_typedecl778);
                     palts=pattern_alternatives(ptypename);
 
                     state._fsp--;
@@ -1555,7 +1555,7 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:114:4: atom+= ID
             	    {
-            	    atom=(Token)match(input,ID,FOLLOW_ID_in_atoms827);  
+            	    atom=(Token)match(input,ID,FOLLOW_ID_in_atoms825);  
             	    stream_ID.add(atom);
 
             	    if (list_atom==null) list_atom=new ArrayList();
@@ -1672,7 +1672,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:4: ALT
                     {
-                    ALT21=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives856);  
+                    ALT21=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives854);  
                     stream_ALT.add(ALT21);
 
 
@@ -1681,7 +1681,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_opdecl_in_alternatives860);
+            pushFollow(FOLLOW_opdecl_in_alternatives858);
             opdecl22=opdecl(typename);
 
             state._fsp--;
@@ -1702,10 +1702,10 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:28: ALT opdecl[typename]
             	    {
-            	    ALT23=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives864);  
+            	    ALT23=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives862);  
             	    stream_ALT.add(ALT23);
 
-            	    pushFollow(FOLLOW_opdecl_in_alternatives866);
+            	    pushFollow(FOLLOW_opdecl_in_alternatives864);
             	    opdecl24=opdecl(typename);
 
             	    state._fsp--;
@@ -1731,7 +1731,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:52: SEMI
                     {
-                    SEMI25=(Token)match(input,SEMI,FOLLOW_SEMI_in_alternatives872);  
+                    SEMI25=(Token)match(input,SEMI,FOLLOW_SEMI_in_alternatives870);  
                     stream_SEMI.add(SEMI25);
 
 
@@ -1837,7 +1837,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:123:4: ALT
                     {
-                    ALT26=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives902);  
+                    ALT26=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives900);  
                     stream_ALT.add(ALT26);
 
 
@@ -1846,7 +1846,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives906);
+            pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives904);
             pattern_opdecl27=pattern_opdecl(typename);
 
             state._fsp--;
@@ -1867,10 +1867,10 @@ public class GomLanguageParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:123:36: ALT pattern_opdecl[typename]
             	    {
-            	    ALT28=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives910);  
+            	    ALT28=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives908);  
             	    stream_ALT.add(ALT28);
 
-            	    pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives912);
+            	    pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives910);
             	    pattern_opdecl29=pattern_opdecl(typename);
 
             	    state._fsp--;
@@ -1896,7 +1896,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:123:68: SEMI
                     {
-                    SEMI30=(Token)match(input,SEMI,FOLLOW_SEMI_in_pattern_alternatives918);  
+                    SEMI30=(Token)match(input,SEMI,FOLLOW_SEMI_in_pattern_alternatives916);  
                     stream_SEMI.add(SEMI30);
 
 
@@ -1984,10 +1984,10 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:127:20: ( ID fieldlist -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:128:3: ID fieldlist
             {
-            ID31=(Token)match(input,ID,FOLLOW_ID_in_opdecl947);  
+            ID31=(Token)match(input,ID,FOLLOW_ID_in_opdecl945);  
             stream_ID.add(ID31);
 
-            pushFollow(FOLLOW_fieldlist_in_opdecl949);
+            pushFollow(FOLLOW_fieldlist_in_opdecl947);
             fieldlist32=fieldlist();
 
             state._fsp--;
@@ -2091,10 +2091,10 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:133:28: ( ID pattern_fieldlist -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:134:3: ID pattern_fieldlist
             {
-            ID33=(Token)match(input,ID,FOLLOW_ID_in_pattern_opdecl999);  
+            ID33=(Token)match(input,ID,FOLLOW_ID_in_pattern_opdecl997);  
             stream_ID.add(ID33);
 
-            pushFollow(FOLLOW_pattern_fieldlist_in_pattern_opdecl1001);
+            pushFollow(FOLLOW_pattern_fieldlist_in_pattern_opdecl999);
             pattern_fieldlist34=pattern_fieldlist();
 
             state._fsp--;
@@ -2206,7 +2206,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:139:11: ( LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:140:3: LPAREN ( field ( COMMA field )* )? RPAREN
             {
-            LPAREN35=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_fieldlist1050);  
+            LPAREN35=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_fieldlist1048);  
             stream_LPAREN.add(LPAREN35);
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:140:10: ( field ( COMMA field )* )?
@@ -2220,7 +2220,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:140:11: field ( COMMA field )*
                     {
-                    pushFollow(FOLLOW_field_in_fieldlist1053);
+                    pushFollow(FOLLOW_field_in_fieldlist1051);
                     field36=field();
 
                     state._fsp--;
@@ -2241,10 +2241,10 @@ public class GomLanguageParser extends Parser {
                     	case 1 :
                     	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:140:18: COMMA field
                     	    {
-                    	    COMMA37=(Token)match(input,COMMA,FOLLOW_COMMA_in_fieldlist1056);  
+                    	    COMMA37=(Token)match(input,COMMA,FOLLOW_COMMA_in_fieldlist1054);  
                     	    stream_COMMA.add(COMMA37);
 
-                    	    pushFollow(FOLLOW_field_in_fieldlist1058);
+                    	    pushFollow(FOLLOW_field_in_fieldlist1056);
                     	    field38=field();
 
                     	    state._fsp--;
@@ -2265,7 +2265,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            RPAREN39=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_fieldlist1065);  
+            RPAREN39=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_fieldlist1063);  
             stream_RPAREN.add(RPAREN39);
 
 
@@ -2353,7 +2353,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:142:19: ( LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:143:3: LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN
             {
-            LPAREN40=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_pattern_fieldlist1087);  
+            LPAREN40=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_pattern_fieldlist1085);  
             stream_LPAREN.add(LPAREN40);
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:143:10: ( pattern_field ( COMMA pattern_field )* )?
@@ -2367,7 +2367,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:143:11: pattern_field ( COMMA pattern_field )*
                     {
-                    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1090);
+                    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1088);
                     pattern_field41=pattern_field();
 
                     state._fsp--;
@@ -2388,10 +2388,10 @@ public class GomLanguageParser extends Parser {
                     	case 1 :
                     	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:143:26: COMMA pattern_field
                     	    {
-                    	    COMMA42=(Token)match(input,COMMA,FOLLOW_COMMA_in_pattern_fieldlist1093);  
+                    	    COMMA42=(Token)match(input,COMMA,FOLLOW_COMMA_in_pattern_fieldlist1091);  
                     	    stream_COMMA.add(COMMA42);
 
-                    	    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1095);
+                    	    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1093);
                     	    pattern_field43=pattern_field();
 
                     	    state._fsp--;
@@ -2412,7 +2412,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            RPAREN44=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_pattern_fieldlist1102);  
+            RPAREN44=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_pattern_fieldlist1100);  
             stream_RPAREN.add(RPAREN44);
 
 
@@ -2490,7 +2490,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:145:5: ( ID -> ^( GomType ^( ExpressionType ) ID ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:146:3: ID
             {
-            ID45=(Token)match(input,ID,FOLLOW_ID_in_type1123);  
+            ID45=(Token)match(input,ID,FOLLOW_ID_in_type1121);  
             stream_ID.add(ID45);
 
 
@@ -2570,7 +2570,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:13: ( ID -> ^( GomType ^( PatternType ) ID ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:150:3: ID
             {
-            ID46=(Token)match(input,ID,FOLLOW_ID_in_pattern_type1147);  
+            ID46=(Token)match(input,ID,FOLLOW_ID_in_pattern_type1145);  
             stream_ID.add(ID46);
 
 
@@ -2724,13 +2724,13 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:154:5: type STAR
                     {
-                    pushFollow(FOLLOW_type_in_field1173);
+                    pushFollow(FOLLOW_type_in_field1171);
                     type47=type();
 
                     state._fsp--;
 
                     stream_type.add(type47.getTree());
-                    STAR48=(Token)match(input,STAR,FOLLOW_STAR_in_field1175);  
+                    STAR48=(Token)match(input,STAR,FOLLOW_STAR_in_field1173);  
                     stream_STAR.add(STAR48);
 
 
@@ -2773,19 +2773,19 @@ public class GomLanguageParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:155:5: LDIPLE pattern_type RDIPLE STAR
                     {
-                    LDIPLE49=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1193);  
+                    LDIPLE49=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1191);  
                     stream_LDIPLE.add(LDIPLE49);
 
-                    pushFollow(FOLLOW_pattern_type_in_field1195);
+                    pushFollow(FOLLOW_pattern_type_in_field1193);
                     pattern_type50=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type50.getTree());
-                    RDIPLE51=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1197);  
+                    RDIPLE51=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1195);  
                     stream_RDIPLE.add(RDIPLE51);
 
-                    STAR52=(Token)match(input,STAR,FOLLOW_STAR_in_field1199);  
+                    STAR52=(Token)match(input,STAR,FOLLOW_STAR_in_field1197);  
                     stream_STAR.add(STAR52);
 
 
@@ -2828,13 +2828,13 @@ public class GomLanguageParser extends Parser {
                 case 3 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:156:5: ID COLON type
                     {
-                    ID53=(Token)match(input,ID,FOLLOW_ID_in_field1217);  
+                    ID53=(Token)match(input,ID,FOLLOW_ID_in_field1215);  
                     stream_ID.add(ID53);
 
-                    COLON54=(Token)match(input,COLON,FOLLOW_COLON_in_field1219);  
+                    COLON54=(Token)match(input,COLON,FOLLOW_COLON_in_field1217);  
                     stream_COLON.add(COLON54);
 
-                    pushFollow(FOLLOW_type_in_field1221);
+                    pushFollow(FOLLOW_type_in_field1219);
                     type55=type();
 
                     state._fsp--;
@@ -2881,22 +2881,22 @@ public class GomLanguageParser extends Parser {
                 case 4 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:157:5: ID COLON LDIPLE pattern_type RDIPLE
                     {
-                    ID56=(Token)match(input,ID,FOLLOW_ID_in_field1241);  
+                    ID56=(Token)match(input,ID,FOLLOW_ID_in_field1239);  
                     stream_ID.add(ID56);
 
-                    COLON57=(Token)match(input,COLON,FOLLOW_COLON_in_field1243);  
+                    COLON57=(Token)match(input,COLON,FOLLOW_COLON_in_field1241);  
                     stream_COLON.add(COLON57);
 
-                    LDIPLE58=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1245);  
+                    LDIPLE58=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1243);  
                     stream_LDIPLE.add(LDIPLE58);
 
-                    pushFollow(FOLLOW_pattern_type_in_field1247);
+                    pushFollow(FOLLOW_pattern_type_in_field1245);
                     pattern_type59=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type59.getTree());
-                    RDIPLE60=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1249);  
+                    RDIPLE60=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1247);  
                     stream_RDIPLE.add(RDIPLE60);
 
 
@@ -3061,13 +3061,13 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:5: pattern_type STAR
                     {
-                    pushFollow(FOLLOW_pattern_type_in_pattern_field1277);
+                    pushFollow(FOLLOW_pattern_type_in_pattern_field1275);
                     pattern_type61=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type61.getTree());
-                    STAR62=(Token)match(input,STAR,FOLLOW_STAR_in_pattern_field1279);  
+                    STAR62=(Token)match(input,STAR,FOLLOW_STAR_in_pattern_field1277);  
                     stream_STAR.add(STAR62);
 
 
@@ -3110,16 +3110,16 @@ public class GomLanguageParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:162:5: INNER ID COLON type
                     {
-                    INNER63=(Token)match(input,INNER,FOLLOW_INNER_in_pattern_field1297);  
+                    INNER63=(Token)match(input,INNER,FOLLOW_INNER_in_pattern_field1295);  
                     stream_INNER.add(INNER63);
 
-                    ID64=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1299);  
+                    ID64=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1297);  
                     stream_ID.add(ID64);
 
-                    COLON65=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1301);  
+                    COLON65=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1299);  
                     stream_COLON.add(COLON65);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1303);
+                    pushFollow(FOLLOW_type_in_pattern_field1301);
                     type66=type();
 
                     state._fsp--;
@@ -3166,16 +3166,16 @@ public class GomLanguageParser extends Parser {
                 case 3 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:163:5: OUTER ID COLON type
                     {
-                    OUTER67=(Token)match(input,OUTER,FOLLOW_OUTER_in_pattern_field1323);  
+                    OUTER67=(Token)match(input,OUTER,FOLLOW_OUTER_in_pattern_field1321);  
                     stream_OUTER.add(OUTER67);
 
-                    ID68=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1325);  
+                    ID68=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1323);  
                     stream_ID.add(ID68);
 
-                    COLON69=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1327);  
+                    COLON69=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1325);  
                     stream_COLON.add(COLON69);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1329);
+                    pushFollow(FOLLOW_type_in_pattern_field1327);
                     type70=type();
 
                     state._fsp--;
@@ -3222,16 +3222,16 @@ public class GomLanguageParser extends Parser {
                 case 4 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:164:5: NEUTRAL ID COLON type
                     {
-                    NEUTRAL71=(Token)match(input,NEUTRAL,FOLLOW_NEUTRAL_in_pattern_field1349);  
+                    NEUTRAL71=(Token)match(input,NEUTRAL,FOLLOW_NEUTRAL_in_pattern_field1347);  
                     stream_NEUTRAL.add(NEUTRAL71);
 
-                    ID72=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1351);  
+                    ID72=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1349);  
                     stream_ID.add(ID72);
 
-                    COLON73=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1353);  
+                    COLON73=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1351);  
                     stream_COLON.add(COLON73);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1355);
+                    pushFollow(FOLLOW_type_in_pattern_field1353);
                     type74=type();
 
                     state._fsp--;
@@ -3278,13 +3278,13 @@ public class GomLanguageParser extends Parser {
                 case 5 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:5: ID COLON pattern_type
                     {
-                    ID75=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1375);  
+                    ID75=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1373);  
                     stream_ID.add(ID75);
 
-                    COLON76=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1377);  
+                    COLON76=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1375);  
                     stream_COLON.add(COLON76);
 
-                    pushFollow(FOLLOW_pattern_type_in_pattern_field1379);
+                    pushFollow(FOLLOW_pattern_type_in_pattern_field1377);
                     pattern_type77=pattern_type();
 
                     state._fsp--;
@@ -3391,7 +3391,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:4: LPAREN ( arg ( COMMA arg )* )? RPAREN
                     {
-                    LPAREN78=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_arglist1406);  
+                    LPAREN78=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_arglist1404);  
                     stream_LPAREN.add(LPAREN78);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:11: ( arg ( COMMA arg )* )?
@@ -3405,7 +3405,7 @@ public class GomLanguageParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:12: arg ( COMMA arg )*
                             {
-                            pushFollow(FOLLOW_arg_in_arglist1409);
+                            pushFollow(FOLLOW_arg_in_arglist1407);
                             arg79=arg();
 
                             state._fsp--;
@@ -3426,10 +3426,10 @@ public class GomLanguageParser extends Parser {
                             	case 1 :
                             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:17: COMMA arg
                             	    {
-                            	    COMMA80=(Token)match(input,COMMA,FOLLOW_COMMA_in_arglist1412);  
+                            	    COMMA80=(Token)match(input,COMMA,FOLLOW_COMMA_in_arglist1410);  
                             	    stream_COMMA.add(COMMA80);
 
-                            	    pushFollow(FOLLOW_arg_in_arglist1414);
+                            	    pushFollow(FOLLOW_arg_in_arglist1412);
                             	    arg81=arg();
 
                             	    state._fsp--;
@@ -3450,7 +3450,7 @@ public class GomLanguageParser extends Parser {
 
                     }
 
-                    RPAREN82=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_arglist1421);  
+                    RPAREN82=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_arglist1419);  
                     stream_RPAREN.add(RPAREN82);
 
 
@@ -3534,7 +3534,7 @@ public class GomLanguageParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:5: ( ID -> ^( Arg ID ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:7: ID
             {
-            ID83=(Token)match(input,ID,FOLLOW_ID_in_arg1448);  
+            ID83=(Token)match(input,ID,FOLLOW_ID_in_arg1446);  
             stream_ID.add(ID83);
 
 
@@ -3631,7 +3631,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:4: hscope= hookScope
                     {
-                    pushFollow(FOLLOW_hookScope_in_hookConstruct1469);
+                    pushFollow(FOLLOW_hookScope_in_hookConstruct1467);
                     hscope=hookScope();
 
                     state._fsp--;
@@ -3643,22 +3643,22 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pointCut=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1475);  
+            pointCut=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1473);  
             stream_ID.add(pointCut);
 
-            COLON84=(Token)match(input,COLON,FOLLOW_COLON_in_hookConstruct1477);  
+            COLON84=(Token)match(input,COLON,FOLLOW_COLON_in_hookConstruct1475);  
             stream_COLON.add(COLON84);
 
-            hookType=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1481);  
+            hookType=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1479);  
             stream_ID.add(hookType);
 
-            pushFollow(FOLLOW_arglist_in_hookConstruct1483);
+            pushFollow(FOLLOW_arglist_in_hookConstruct1481);
             arglist85=arglist();
 
             state._fsp--;
 
             stream_arglist.add(arglist85.getTree());
-            LBRACE86=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_hookConstruct1485);  
+            LBRACE86=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_hookConstruct1483);  
             stream_LBRACE.add(LBRACE86);
 
 
@@ -3827,7 +3827,7 @@ public class GomLanguageParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:185:3: SORT
                     {
-                    SORT87=(Token)match(input,SORT,FOLLOW_SORT_in_hookScope1598);  
+                    SORT87=(Token)match(input,SORT,FOLLOW_SORT_in_hookScope1596);  
                     stream_SORT.add(SORT87);
 
 
@@ -3861,7 +3861,7 @@ public class GomLanguageParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:186:5: MODULE
                     {
-                    MODULE88=(Token)match(input,MODULE,FOLLOW_MODULE_in_hookScope1610);  
+                    MODULE88=(Token)match(input,MODULE,FOLLOW_MODULE_in_hookScope1608);  
                     stream_MODULE.add(MODULE88);
 
 
@@ -3895,7 +3895,7 @@ public class GomLanguageParser extends Parser {
                 case 3 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:187:5: OPERATOR
                     {
-                    OPERATOR89=(Token)match(input,OPERATOR,FOLLOW_OPERATOR_in_hookScope1622);  
+                    OPERATOR89=(Token)match(input,OPERATOR,FOLLOW_OPERATOR_in_hookScope1620);  
                     stream_OPERATOR.add(OPERATOR89);
 
 
@@ -3951,112 +3951,112 @@ public class GomLanguageParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_MODULE_in_module349 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_modulename_in_module351 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
-    public static final BitSet FOLLOW_imports_in_module356 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
-    public static final BitSet FOLLOW_section_in_module360 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_module362 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_modulename419 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_DOT_in_modulename421 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_modulename431 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IMPORTS_in_imports459 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
-    public static final BitSet FOLLOW_importedModuleName_in_imports462 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_importedModuleName491 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PUBLIC_in_section517 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
-    public static final BitSet FOLLOW_adtgrammar_in_section521 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_syntax_in_adtgrammar545 = new BitSet(new long[]{0x0000000000000002L,0x000001C000000000L});
-    public static final BitSet FOLLOW_ABSTRACT_in_syntax565 = new BitSet(new long[]{0x0000000000000000L,0x0000020000000000L});
-    public static final BitSet FOLLOW_SYNTAX_in_syntax567 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
-    public static final BitSet FOLLOW_production_in_syntax572 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
-    public static final BitSet FOLLOW_hookConstruct_in_syntax578 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
-    public static final BitSet FOLLOW_typedecl_in_syntax584 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
-    public static final BitSet FOLLOW_atomdecl_in_syntax590 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
-    public static final BitSet FOLLOW_ID_in_production652 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
-    public static final BitSet FOLLOW_fieldlist_in_production654 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
-    public static final BitSet FOLLOW_ARROW_in_production656 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_type_in_production658 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ATOM_in_atomdecl691 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_atomdecl695 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_typedecl721 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
-    public static final BitSet FOLLOW_EQUALS_in_typedecl724 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_alternatives_in_typedecl728 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_typedecl768 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
-    public static final BitSet FOLLOW_BINDS_in_typedecl770 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_atoms_in_typedecl774 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
-    public static final BitSet FOLLOW_EQUALS_in_typedecl776 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_pattern_alternatives_in_typedecl780 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_atoms827 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives856 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_opdecl_in_alternatives860 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives864 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_opdecl_in_alternatives866 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
-    public static final BitSet FOLLOW_SEMI_in_alternatives872 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ALT_in_pattern_alternatives902 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives906 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
-    public static final BitSet FOLLOW_ALT_in_pattern_alternatives910 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
-    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives912 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
-    public static final BitSet FOLLOW_SEMI_in_pattern_alternatives918 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_opdecl947 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
-    public static final BitSet FOLLOW_fieldlist_in_opdecl949 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_opdecl999 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
-    public static final BitSet FOLLOW_pattern_fieldlist_in_pattern_opdecl1001 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_fieldlist1050 = new BitSet(new long[]{0x0000000000000000L,0x0014001000000000L});
-    public static final BitSet FOLLOW_field_in_fieldlist1053 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_fieldlist1056 = new BitSet(new long[]{0x0000000000000000L,0x0010001000000000L});
-    public static final BitSet FOLLOW_field_in_fieldlist1058 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_fieldlist1065 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_pattern_fieldlist1087 = new BitSet(new long[]{0x0000000000000000L,0x0384001000000000L});
-    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1090 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_pattern_fieldlist1093 = new BitSet(new long[]{0x0000000000000000L,0x0380001000000000L});
-    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1095 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_pattern_fieldlist1102 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_type1123 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_type1147 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_field1173 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
-    public static final BitSet FOLLOW_STAR_in_field1175 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LDIPLE_in_field1193 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_field1195 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_RDIPLE_in_field1197 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
-    public static final BitSet FOLLOW_STAR_in_field1199 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_field1217 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_field1219 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_type_in_field1221 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_field1241 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_field1243 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_LDIPLE_in_field1245 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_field1247 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_RDIPLE_in_field1249 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_pattern_type_in_pattern_field1277 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
-    public static final BitSet FOLLOW_STAR_in_pattern_field1279 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INNER_in_pattern_field1297 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1299 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1301 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1303 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OUTER_in_pattern_field1323 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1325 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1327 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1329 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NEUTRAL_in_pattern_field1349 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1351 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1353 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1355 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1375 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1377 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_pattern_field1379 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_arglist1406 = new BitSet(new long[]{0x0000000000000000L,0x0004001000000000L});
-    public static final BitSet FOLLOW_arg_in_arglist1409 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_arglist1412 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_arg_in_arglist1414 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_arglist1421 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_arg1448 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_hookScope_in_hookConstruct1469 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_hookConstruct1475 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_COLON_in_hookConstruct1477 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_ID_in_hookConstruct1481 = new BitSet(new long[]{0x0000000000000000L,0x0401000000000000L});
-    public static final BitSet FOLLOW_arglist_in_hookConstruct1483 = new BitSet(new long[]{0x0000000000000000L,0x0400000000000000L});
-    public static final BitSet FOLLOW_LBRACE_in_hookConstruct1485 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SORT_in_hookScope1598 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_MODULE_in_hookScope1610 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OPERATOR_in_hookScope1622 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MODULE_in_module347 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_modulename_in_module349 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
+    public static final BitSet FOLLOW_imports_in_module354 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
+    public static final BitSet FOLLOW_section_in_module358 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_module360 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_modulename417 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_DOT_in_modulename419 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_modulename429 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IMPORTS_in_imports457 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
+    public static final BitSet FOLLOW_importedModuleName_in_imports460 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_importedModuleName489 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_PUBLIC_in_section515 = new BitSet(new long[]{0x0000000000000000L,0x000001C000000000L});
+    public static final BitSet FOLLOW_adtgrammar_in_section519 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_syntax_in_adtgrammar543 = new BitSet(new long[]{0x0000000000000002L,0x000001C000000000L});
+    public static final BitSet FOLLOW_ABSTRACT_in_syntax563 = new BitSet(new long[]{0x0000000000000000L,0x0000020000000000L});
+    public static final BitSet FOLLOW_SYNTAX_in_syntax565 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
+    public static final BitSet FOLLOW_production_in_syntax570 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
+    public static final BitSet FOLLOW_hookConstruct_in_syntax576 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
+    public static final BitSet FOLLOW_typedecl_in_syntax582 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
+    public static final BitSet FOLLOW_atomdecl_in_syntax588 = new BitSet(new long[]{0x0000000000000002L,0x1800081800000000L});
+    public static final BitSet FOLLOW_ID_in_production650 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
+    public static final BitSet FOLLOW_fieldlist_in_production652 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
+    public static final BitSet FOLLOW_ARROW_in_production654 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_type_in_production656 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ATOM_in_atomdecl689 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_atomdecl693 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_typedecl719 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_EQUALS_in_typedecl722 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_alternatives_in_typedecl726 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_typedecl766 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
+    public static final BitSet FOLLOW_BINDS_in_typedecl768 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_atoms_in_typedecl772 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_EQUALS_in_typedecl774 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_pattern_alternatives_in_typedecl778 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_atoms825 = new BitSet(new long[]{0x0000000000000002L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives854 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_opdecl_in_alternatives858 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives862 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_opdecl_in_alternatives864 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
+    public static final BitSet FOLLOW_SEMI_in_alternatives870 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ALT_in_pattern_alternatives900 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives904 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
+    public static final BitSet FOLLOW_ALT_in_pattern_alternatives908 = new BitSet(new long[]{0x0000000000000000L,0x0000401000000000L});
+    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives910 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
+    public static final BitSet FOLLOW_SEMI_in_pattern_alternatives916 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_opdecl945 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
+    public static final BitSet FOLLOW_fieldlist_in_opdecl947 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_opdecl997 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
+    public static final BitSet FOLLOW_pattern_fieldlist_in_pattern_opdecl999 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_fieldlist1048 = new BitSet(new long[]{0x0000000000000000L,0x0014001000000000L});
+    public static final BitSet FOLLOW_field_in_fieldlist1051 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_fieldlist1054 = new BitSet(new long[]{0x0000000000000000L,0x0010001000000000L});
+    public static final BitSet FOLLOW_field_in_fieldlist1056 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_fieldlist1063 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_pattern_fieldlist1085 = new BitSet(new long[]{0x0000000000000000L,0x0384001000000000L});
+    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1088 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_pattern_fieldlist1091 = new BitSet(new long[]{0x0000000000000000L,0x0380001000000000L});
+    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1093 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_pattern_fieldlist1100 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_type1121 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_type1145 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_field1171 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_STAR_in_field1173 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LDIPLE_in_field1191 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_field1193 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
+    public static final BitSet FOLLOW_RDIPLE_in_field1195 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_STAR_in_field1197 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_field1215 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_field1217 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_type_in_field1219 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_field1239 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_field1241 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_LDIPLE_in_field1243 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_field1245 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
+    public static final BitSet FOLLOW_RDIPLE_in_field1247 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_pattern_type_in_pattern_field1275 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_STAR_in_pattern_field1277 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INNER_in_pattern_field1295 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1297 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1299 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1301 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OUTER_in_pattern_field1321 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1323 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1325 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1327 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NEUTRAL_in_pattern_field1347 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1349 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1351 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1353 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1373 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1375 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_pattern_field1377 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_arglist1404 = new BitSet(new long[]{0x0000000000000000L,0x0004001000000000L});
+    public static final BitSet FOLLOW_arg_in_arglist1407 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_arglist1410 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_arg_in_arglist1412 = new BitSet(new long[]{0x0000000000000000L,0x0006000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_arglist1419 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_arg1446 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_hookScope_in_hookConstruct1467 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_hookConstruct1473 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_COLON_in_hookConstruct1475 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_ID_in_hookConstruct1479 = new BitSet(new long[]{0x0000000000000000L,0x0401000000000000L});
+    public static final BitSet FOLLOW_arglist_in_hookConstruct1481 = new BitSet(new long[]{0x0000000000000000L,0x0400000000000000L});
+    public static final BitSet FOLLOW_LBRACE_in_hookConstruct1483 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SORT_in_hookScope1596 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MODULE_in_hookScope1608 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OPERATOR_in_hookScope1620 = new BitSet(new long[]{0x0000000000000002L});
 
 }

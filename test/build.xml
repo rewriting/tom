@@ -33,6 +33,7 @@
     <gom.preset srcdir="${test.src}"
                 package="sl"
                 termpointer="true"
+                withCongruenceStrategies="true"
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
@@ -40,6 +41,7 @@
     <gom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
          <include name="**/*.gom"/>
+         <exclude name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"

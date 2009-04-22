@@ -293,13 +293,13 @@ public class TomSyntaxChecker extends TomChecker {
 
   private void verifyMultipleDefinition(String name, String symbolType, String OperatorOrType) {
     ArrayList list;
-    if (OperatorOrType.equals(TomSyntaxChecker.OPERATOR)) {
+    if(OperatorOrType.equals(TomSyntaxChecker.OPERATOR)) {
       list = alreadyStudiedSymbols;
     } else {
       list = alreadyStudiedTypes;
     }
     if(list.contains(name)) {
-      messageError(getCurrentTomStructureOrgTrack().getFileName(),
+      messageWarning(getCurrentTomStructureOrgTrack().getFileName(),
           getCurrentTomStructureOrgTrack().getLine(),
           TomMessage.multipleSymbolDefinitionError,
           new Object[]{name});

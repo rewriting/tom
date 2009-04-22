@@ -7,7 +7,7 @@ public class NewBehaviour {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
-  %include { testsl/_testsl.tom }
+  //%include { testsl/_testsl.tom }
 
   %strategy R1() extends `Identity() {
     visit Term {

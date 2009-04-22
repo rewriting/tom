@@ -47,7 +47,7 @@ public class PatternAnalyser{
   %include {util/HashSet.tom}
   %include {util/HashMap.tom}
   %include {wfg/Wfg.tom}
-  %include {wfg/_Wfg.tom}
+  //%include {wfg/_Wfg.tom}
   %include {sl.tom}
   %include {sl/graph.tom}
   %include {adt/tnode/TNode.tom }

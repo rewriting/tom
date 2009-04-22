@@ -55,6 +55,8 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>withCongruenceStrategies</li>
+ * <li>withSeparateCongruenceStrategies</li>
  * <li>fresh</li>
  * <li>multithread</li>
  * <li>nosharing</li>
@@ -80,6 +82,8 @@ public class GomCommonTask extends MatchingTask {
   protected boolean fork = false;
   protected boolean termpointer = false;
   protected boolean termgraph = false;
+  protected boolean withCongruenceStrategies = false;
+  protected boolean withSeparateCongruenceStrategies = false;
   protected boolean fresh = false;
   protected boolean multithread = false;
   protected boolean nosharing = false;
@@ -172,6 +176,37 @@ public class GomCommonTask extends MatchingTask {
     return termgraph;
   }
 
+  /**
+   * If true, generates congruence strategies
+   * @param withCongruenceStrategies if true, generates congruence strategies
+   */
+  public void setWithCongruenceStrategies(boolean flag) {
+    this.withCongruenceStrategies = flag;
+  }
+
+  /**
+   * Gets the withCongruenceStrategies flag.
+   * @return the withCongruenceStrategies flag
+   */
+  public boolean getWithCongruenceStrategies() {
+    return withCongruenceStrategies;
+  }
+
+  /**
+   * If true, generates congruence strategies
+   * @param withSeparateCongruenceStrategies if true, generates congruence strategies
+   */
+  public void setWithSeparateCongruenceStrategies(boolean flag) {
+    this.withSeparateCongruenceStrategies = flag;
+  }
+
+  /**
+   * Gets the withSeparateCongruenceStrategies flag.
+   * @return the withSeparateCongruenceStrategies flag
+   */
+  public boolean getWithSeparateCongruenceStrategies() {
+    return withSeparateCongruenceStrategies;
+  }
 
   /**
    * If true, asks the compiler for Gom signature with binders.
@@ -388,6 +423,12 @@ public class GomCommonTask extends MatchingTask {
       }
       if(getTermpointer()) {
         javaRunner.createArg().setValue("--termpointer");
+      }
+      if(getWithCongruenceStrategies()) {
+        javaRunner.createArg().setValue("--withCongruenceStrategies");
+      }
+      if(getWithSeparateCongruenceStrategies()) {
+        javaRunner.createArg().setValue("--withSeparateCongruenceStrategies");
       }
       processAdditionalOptions(javaRunner);
 

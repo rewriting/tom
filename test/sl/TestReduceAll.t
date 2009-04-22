@@ -37,7 +37,7 @@ import org.junit.Test;
 public class TestReduceAll {
 
   %include { sl.tom }
-  %gom {
+  %gom(--withCongruenceStrategies) {
     module reduce
     abstract syntax
     Term = f(lhs:Term,rhs:Term)
@@ -51,7 +51,7 @@ public class TestReduceAll {
       }
     }
   }
-  %include { testreduceall/reduce/_reduce.tom }
+  //%include { testreduceall/reduce/_reduce.tom }
 
   %strategy AB() extends `Fail() {
     visit Term {

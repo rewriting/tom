@@ -65,7 +65,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
-  %include{ ../../library/mapping/java/sl.tom }
+  %include{ ../../library/mapping/java/sl.tom } 
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   %include{ ../../library/mapping/java/util/HashSet.tom }
 

@@ -38,7 +38,7 @@ public class Rewrite1 {
 
 %include { string.tom }
 %include { sl.tom }
-%gom {  
+%gom(--withCongruenceStrategies) {  
   module term
   abstract syntax
   Term = a() | b() | c() | d()
@@ -46,7 +46,7 @@ public class Rewrite1 {
        | g(arg1:Term, arg2:Term)
        | h(arg1:Term, arg2:Term, arg3:Term)
 }
-%include { rewrite1/term/_term.tom }
+//%include { rewrite1/term/_term.tom }
 
 public final static void main(String[] args) {
   try {

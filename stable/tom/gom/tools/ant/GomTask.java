@@ -57,6 +57,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>withCongruenceStrategies</li>
  * <li>fresh</li>
  * <li></li>
  * </ul>
@@ -116,6 +117,7 @@ public class GomTask extends GomCommonTask {
   public boolean getInlineplus() {
     return inlineplus;
   }
+
   protected void processAdditionalOptions(Java runner) {
     if(optimize == true) {
       javaRunner.createArg().setValue("--optimize");

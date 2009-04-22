@@ -47,8 +47,7 @@ public class SymbolTable {
   %include { adt/gom/Gom.tom}
   %include { adt/symboltable/SymbolTable.tom}
   %include { util/ArrayList.tom }
-  %include { sl.tom }  
-
+  %include { ../library/mapping/java/sl.tom }  
 
   /** map sort-name -> SortDescription */
   private Hashtable<String,SortDescription> sorts = 

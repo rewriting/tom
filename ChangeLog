@@ -1,4 +1,9 @@
 2009-04-21 pem
+ * bootinstall
+ * updated all examples
+ * by default, congruence strategies are no longer generated
+ * introduced a new gom option --withSeparateCongruenceStrategies to generate
+   a separate _file.tom
  * replaced --strategies-mapping by --withCongruenceStrategies
  * add 2 new mappings: Strategy.tom and Position.tom
  * fix PR-#6338

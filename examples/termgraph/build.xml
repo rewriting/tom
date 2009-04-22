@@ -8,7 +8,23 @@
       <fileset dir="${examples.dir}/${example}">
       </fileset>
     </copy>
-    <gomtermgraphcompile/>
+    <gom.preset srcdir="${examples.dir}"
+      package="${example}"
+      termgraph="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.gom"/>
+      <exclude name="${example}/**/term.gom"/>
+      <exclude name="${example}/**/lambdaterm.gom"/>
+    </gom.preset>
+    <gom.preset srcdir="${examples.dir}"
+      package="${example}"
+      termgraph="true"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/term.gom"/>
+      <include name="${example}/**/lambdaterm.gom"/>
+    </gom.preset>
+
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
       options="-I ${examples.gen}/${example}"

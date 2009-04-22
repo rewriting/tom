@@ -56,7 +56,7 @@ public class TomIlTools {
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Set.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
   %include { ../../library/mapping/java/util/types/List.tom}

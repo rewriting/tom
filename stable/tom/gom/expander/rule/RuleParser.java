@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-04-18 16:53:48
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-04-21 23:00:23
 
 package tom.gom.expander.rule;
 
@@ -132,7 +132,7 @@ public class RuleParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:19:4: rule
             	    {
-            	    pushFollow(FOLLOW_rule_in_ruleset128);
+            	    pushFollow(FOLLOW_rule_in_ruleset126);
             	    rule1=rule();
 
             	    state._fsp--;
@@ -147,7 +147,7 @@ public class RuleParser extends Parser {
                 }
             } while (true);
 
-            EOF2=(Token)match(input,EOF,FOLLOW_EOF_in_ruleset132);  
+            EOF2=(Token)match(input,EOF,FOLLOW_EOF_in_ruleset130);  
             stream_EOF.add(EOF2);
 
 
@@ -236,16 +236,16 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:21:5: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:22:3: pattern ARROW term ( IF cond= condition )?
             {
-            pushFollow(FOLLOW_pattern_in_rule152);
+            pushFollow(FOLLOW_pattern_in_rule150);
             pattern3=pattern();
 
             state._fsp--;
 
             stream_pattern.add(pattern3.getTree());
-            ARROW4=(Token)match(input,ARROW,FOLLOW_ARROW_in_rule154);  
+            ARROW4=(Token)match(input,ARROW,FOLLOW_ARROW_in_rule152);  
             stream_ARROW.add(ARROW4);
 
-            pushFollow(FOLLOW_term_in_rule156);
+            pushFollow(FOLLOW_term_in_rule154);
             term5=term();
 
             state._fsp--;
@@ -262,10 +262,10 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:22:23: IF cond= condition
                     {
-                    IF6=(Token)match(input,IF,FOLLOW_IF_in_rule159);  
+                    IF6=(Token)match(input,IF,FOLLOW_IF_in_rule157);  
                     stream_IF.add(IF6);
 
-                    pushFollow(FOLLOW_condition_in_rule163);
+                    pushFollow(FOLLOW_condition_in_rule161);
                     cond=condition();
 
                     state._fsp--;
@@ -381,7 +381,7 @@ public class RuleParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:27:4: graphrule
             	    {
-            	    pushFollow(FOLLOW_graphrule_in_graphruleset208);
+            	    pushFollow(FOLLOW_graphrule_in_graphruleset206);
             	    graphrule7=graphrule();
 
             	    state._fsp--;
@@ -396,7 +396,7 @@ public class RuleParser extends Parser {
                 }
             } while (true);
 
-            EOF8=(Token)match(input,EOF,FOLLOW_EOF_in_graphruleset212);  
+            EOF8=(Token)match(input,EOF,FOLLOW_EOF_in_graphruleset210);  
             stream_EOF.add(EOF8);
 
 
@@ -484,16 +484,16 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:29:10: (lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:30:3: lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )?
             {
-            pushFollow(FOLLOW_labelledpattern_in_graphrule234);
+            pushFollow(FOLLOW_labelledpattern_in_graphrule232);
             lhs=labelledpattern();
 
             state._fsp--;
 
             stream_labelledpattern.add(lhs.getTree());
-            ARROW9=(Token)match(input,ARROW,FOLLOW_ARROW_in_graphrule236);  
+            ARROW9=(Token)match(input,ARROW,FOLLOW_ARROW_in_graphrule234);  
             stream_ARROW.add(ARROW9);
 
-            pushFollow(FOLLOW_labelledpattern_in_graphrule240);
+            pushFollow(FOLLOW_labelledpattern_in_graphrule238);
             rhs=labelledpattern();
 
             state._fsp--;
@@ -510,10 +510,10 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:30:50: IF cond= condition
                     {
-                    IF10=(Token)match(input,IF,FOLLOW_IF_in_graphrule243);  
+                    IF10=(Token)match(input,IF,FOLLOW_IF_in_graphrule241);  
                     stream_IF.add(IF10);
 
-                    pushFollow(FOLLOW_condition_in_graphrule247);
+                    pushFollow(FOLLOW_condition_in_graphrule245);
                     cond=condition();
 
                     state._fsp--;
@@ -618,7 +618,7 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:34:10: (cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond)
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:35:3: cond= andcondition (or= OR andcondition )*
             {
-            pushFollow(FOLLOW_andcondition_in_condition297);
+            pushFollow(FOLLOW_andcondition_in_condition295);
             cond=andcondition();
 
             state._fsp--;
@@ -639,10 +639,10 @@ public class RuleParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:35:22: or= OR andcondition
             	    {
-            	    or=(Token)match(input,OR,FOLLOW_OR_in_condition302);  
+            	    or=(Token)match(input,OR,FOLLOW_OR_in_condition300);  
             	    stream_OR.add(or);
 
-            	    pushFollow(FOLLOW_andcondition_in_condition304);
+            	    pushFollow(FOLLOW_andcondition_in_condition302);
             	    andcondition11=andcondition();
 
             	    state._fsp--;
@@ -742,7 +742,7 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:39:13: (cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond)
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:40:3: cond= simplecondition (and= AND simplecondition )*
             {
-            pushFollow(FOLLOW_simplecondition_in_andcondition337);
+            pushFollow(FOLLOW_simplecondition_in_andcondition335);
             cond=simplecondition();
 
             state._fsp--;
@@ -763,10 +763,10 @@ public class RuleParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:40:25: and= AND simplecondition
             	    {
-            	    and=(Token)match(input,AND,FOLLOW_AND_in_andcondition342);  
+            	    and=(Token)match(input,AND,FOLLOW_AND_in_andcondition340);  
             	    stream_AND.add(and);
 
-            	    pushFollow(FOLLOW_simplecondition_in_andcondition344);
+            	    pushFollow(FOLLOW_simplecondition_in_andcondition342);
             	    simplecondition12=simplecondition();
 
             	    state._fsp--;
@@ -922,7 +922,7 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:45:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
                     {
-                    pushFollow(FOLLOW_term_in_simplecondition377);
+                    pushFollow(FOLLOW_term_in_simplecondition375);
                     p1=term();
 
                     state._fsp--;
@@ -977,10 +977,10 @@ public class RuleParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:45:12: EQUALS p2= term
                             {
-                            EQUALS13=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_simplecondition380);  
+                            EQUALS13=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_simplecondition378);  
                             stream_EQUALS.add(EQUALS13);
 
-                            pushFollow(FOLLOW_term_in_simplecondition384);
+                            pushFollow(FOLLOW_term_in_simplecondition382);
                             p2=term();
 
                             state._fsp--;
@@ -992,10 +992,10 @@ public class RuleParser extends Parser {
                         case 2 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:46:13: NOTEQUALS p3= term
                             {
-                            NOTEQUALS14=(Token)match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_simplecondition398);  
+                            NOTEQUALS14=(Token)match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_simplecondition396);  
                             stream_NOTEQUALS.add(NOTEQUALS14);
 
-                            pushFollow(FOLLOW_term_in_simplecondition402);
+                            pushFollow(FOLLOW_term_in_simplecondition400);
                             p3=term();
 
                             state._fsp--;
@@ -1007,10 +1007,10 @@ public class RuleParser extends Parser {
                         case 3 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:47:13: LEQ p4= term
                             {
-                            LEQ15=(Token)match(input,LEQ,FOLLOW_LEQ_in_simplecondition416);  
+                            LEQ15=(Token)match(input,LEQ,FOLLOW_LEQ_in_simplecondition414);  
                             stream_LEQ.add(LEQ15);
 
-                            pushFollow(FOLLOW_term_in_simplecondition420);
+                            pushFollow(FOLLOW_term_in_simplecondition418);
                             p4=term();
 
                             state._fsp--;
@@ -1022,10 +1022,10 @@ public class RuleParser extends Parser {
                         case 4 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:48:13: LT p5= term
                             {
-                            LT16=(Token)match(input,LT,FOLLOW_LT_in_simplecondition434);  
+                            LT16=(Token)match(input,LT,FOLLOW_LT_in_simplecondition432);  
                             stream_LT.add(LT16);
 
-                            pushFollow(FOLLOW_term_in_simplecondition438);
+                            pushFollow(FOLLOW_term_in_simplecondition436);
                             p5=term();
 
                             state._fsp--;
@@ -1037,10 +1037,10 @@ public class RuleParser extends Parser {
                         case 5 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:49:13: GEQ p6= term
                             {
-                            GEQ17=(Token)match(input,GEQ,FOLLOW_GEQ_in_simplecondition452);  
+                            GEQ17=(Token)match(input,GEQ,FOLLOW_GEQ_in_simplecondition450);  
                             stream_GEQ.add(GEQ17);
 
-                            pushFollow(FOLLOW_term_in_simplecondition456);
+                            pushFollow(FOLLOW_term_in_simplecondition454);
                             p6=term();
 
                             state._fsp--;
@@ -1052,10 +1052,10 @@ public class RuleParser extends Parser {
                         case 6 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:50:13: GT p7= term
                             {
-                            GT18=(Token)match(input,GT,FOLLOW_GT_in_simplecondition470);  
+                            GT18=(Token)match(input,GT,FOLLOW_GT_in_simplecondition468);  
                             stream_GT.add(GT18);
 
-                            pushFollow(FOLLOW_term_in_simplecondition474);
+                            pushFollow(FOLLOW_term_in_simplecondition472);
                             p7=term();
 
                             state._fsp--;
@@ -1067,10 +1067,10 @@ public class RuleParser extends Parser {
                         case 7 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:51:13: MATCH p8= term
                             {
-                            MATCH19=(Token)match(input,MATCH,FOLLOW_MATCH_in_simplecondition488);  
+                            MATCH19=(Token)match(input,MATCH,FOLLOW_MATCH_in_simplecondition486);  
                             stream_MATCH.add(MATCH19);
 
-                            pushFollow(FOLLOW_term_in_simplecondition492);
+                            pushFollow(FOLLOW_term_in_simplecondition490);
                             p8=term();
 
                             state._fsp--;
@@ -1208,16 +1208,16 @@ public class RuleParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:60:5: LPAR cond= condition RPAR
                     {
-                    LPAR20=(Token)match(input,LPAR,FOLLOW_LPAR_in_simplecondition634);  
+                    LPAR20=(Token)match(input,LPAR,FOLLOW_LPAR_in_simplecondition632);  
                     stream_LPAR.add(LPAR20);
 
-                    pushFollow(FOLLOW_condition_in_simplecondition638);
+                    pushFollow(FOLLOW_condition_in_simplecondition636);
                     cond=condition();
 
                     state._fsp--;
 
                     stream_condition.add(cond.getTree());
-                    RPAR21=(Token)match(input,RPAR,FOLLOW_RPAR_in_simplecondition640);  
+                    RPAR21=(Token)match(input,RPAR,FOLLOW_RPAR_in_simplecondition638);  
                     stream_RPAR.add(RPAR21);
 
 
@@ -1381,10 +1381,10 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:3: ID LPAR ( term ( COMA term )* )? RPAR
                     {
-                    ID22=(Token)match(input,ID,FOLLOW_ID_in_pattern656);  
+                    ID22=(Token)match(input,ID,FOLLOW_ID_in_pattern654);  
                     stream_ID.add(ID22);
 
-                    LPAR23=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern658);  
+                    LPAR23=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern656);  
                     stream_LPAR.add(LPAR23);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:11: ( term ( COMA term )* )?
@@ -1398,7 +1398,7 @@ public class RuleParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:12: term ( COMA term )*
                             {
-                            pushFollow(FOLLOW_term_in_pattern661);
+                            pushFollow(FOLLOW_term_in_pattern659);
                             term24=term();
 
                             state._fsp--;
@@ -1419,10 +1419,10 @@ public class RuleParser extends Parser {
                             	case 1 :
                             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:64:18: COMA term
                             	    {
-                            	    COMA25=(Token)match(input,COMA,FOLLOW_COMA_in_pattern664);  
+                            	    COMA25=(Token)match(input,COMA,FOLLOW_COMA_in_pattern662);  
                             	    stream_COMA.add(COMA25);
 
-                            	    pushFollow(FOLLOW_term_in_pattern666);
+                            	    pushFollow(FOLLOW_term_in_pattern664);
                             	    term26=term();
 
                             	    state._fsp--;
@@ -1443,7 +1443,7 @@ public class RuleParser extends Parser {
 
                     }
 
-                    RPAR27=(Token)match(input,RPAR,FOLLOW_RPAR_in_pattern672);  
+                    RPAR27=(Token)match(input,RPAR,FOLLOW_RPAR_in_pattern670);  
                     stream_RPAR.add(RPAR27);
 
 
@@ -1496,25 +1496,25 @@ public class RuleParser extends Parser {
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:5: (varname= ID )
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:6: varname= ID
                     {
-                    varname=(Token)match(input,ID,FOLLOW_ID_in_pattern696);  
+                    varname=(Token)match(input,ID,FOLLOW_ID_in_pattern694);  
                     stream_ID.add(varname);
 
 
                     }
 
-                    AT28=(Token)match(input,AT,FOLLOW_AT_in_pattern699);  
+                    AT28=(Token)match(input,AT,FOLLOW_AT_in_pattern697);  
                     stream_AT.add(AT28);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:21: (funname= ID )
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:22: funname= ID
                     {
-                    funname=(Token)match(input,ID,FOLLOW_ID_in_pattern704);  
+                    funname=(Token)match(input,ID,FOLLOW_ID_in_pattern702);  
                     stream_ID.add(funname);
 
 
                     }
 
-                    LPAR29=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern707);  
+                    LPAR29=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern705);  
                     stream_LPAR.add(LPAR29);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:39: ( term ( COMA term )* )?
@@ -1528,7 +1528,7 @@ public class RuleParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:40: term ( COMA term )*
                             {
-                            pushFollow(FOLLOW_term_in_pattern710);
+                            pushFollow(FOLLOW_term_in_pattern708);
                             term30=term();
 
                             state._fsp--;
@@ -1549,10 +1549,10 @@ public class RuleParser extends Parser {
                             	case 1 :
                             	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:65:46: COMA term
                             	    {
-                            	    COMA31=(Token)match(input,COMA,FOLLOW_COMA_in_pattern713);  
+                            	    COMA31=(Token)match(input,COMA,FOLLOW_COMA_in_pattern711);  
                             	    stream_COMA.add(COMA31);
 
-                            	    pushFollow(FOLLOW_term_in_pattern715);
+                            	    pushFollow(FOLLOW_term_in_pattern713);
                             	    term32=term();
 
                             	    state._fsp--;
@@ -1573,7 +1573,7 @@ public class RuleParser extends Parser {
 
                     }
 
-                    RPAR33=(Token)match(input,RPAR,FOLLOW_RPAR_in_pattern721);  
+                    RPAR33=(Token)match(input,RPAR,FOLLOW_RPAR_in_pattern719);  
                     stream_RPAR.add(RPAR33);
 
 
@@ -1634,7 +1634,7 @@ public class RuleParser extends Parser {
                 case 3 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:66:5: UNDERSCORE
                     {
-                    UNDERSCORE34=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern750);  
+                    UNDERSCORE34=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern748);  
                     stream_UNDERSCORE.add(UNDERSCORE34);
 
 
@@ -1668,10 +1668,10 @@ public class RuleParser extends Parser {
                 case 4 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: UNDERSCORE STAR
                     {
-                    UNDERSCORE35=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern762);  
+                    UNDERSCORE35=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern760);  
                     stream_UNDERSCORE.add(UNDERSCORE35);
 
-                    STAR36=(Token)match(input,STAR,FOLLOW_STAR_in_pattern764);  
+                    STAR36=(Token)match(input,STAR,FOLLOW_STAR_in_pattern762);  
                     stream_STAR.add(STAR36);
 
 
@@ -1705,10 +1705,10 @@ public class RuleParser extends Parser {
                 case 5 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:5: NOT pattern
                     {
-                    NOT37=(Token)match(input,NOT,FOLLOW_NOT_in_pattern776);  
+                    NOT37=(Token)match(input,NOT,FOLLOW_NOT_in_pattern774);  
                     stream_NOT.add(NOT37);
 
-                    pushFollow(FOLLOW_pattern_in_pattern778);
+                    pushFollow(FOLLOW_pattern_in_pattern776);
                     pattern38=pattern();
 
                     state._fsp--;
@@ -1836,7 +1836,7 @@ public class RuleParser extends Parser {
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_pattern_in_term795);
+                    pushFollow(FOLLOW_pattern_in_term793);
                     pattern39=pattern();
 
                     state._fsp--;
@@ -1848,7 +1848,7 @@ public class RuleParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:5: ID (s= STAR )?
                     {
-                    ID40=(Token)match(input,ID,FOLLOW_ID_in_term803);  
+                    ID40=(Token)match(input,ID,FOLLOW_ID_in_term801);  
                     stream_ID.add(ID40);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:8: (s= STAR )?
@@ -1862,7 +1862,7 @@ public class RuleParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:9: s= STAR
                             {
-                            s=(Token)match(input,STAR,FOLLOW_STAR_in_term808);  
+                            s=(Token)match(input,STAR,FOLLOW_STAR_in_term806);  
                             stream_STAR.add(s);
 
 
@@ -1919,7 +1919,7 @@ public class RuleParser extends Parser {
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_builtin_in_term833);
+                    pushFollow(FOLLOW_builtin_in_term831);
                     builtin41=builtin();
 
                     state._fsp--;
@@ -1990,7 +1990,7 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:77:3: INT
                     {
-                    INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin842);  
+                    INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin840);  
                     stream_INT.add(INT42);
 
 
@@ -2026,7 +2026,7 @@ public class RuleParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:5: STRING
                     {
-                    STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin856);  
+                    STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin854);  
                     stream_STRING.add(STRING43);
 
 
@@ -2121,10 +2121,10 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:4: namelabel= ID COLON
                     {
-                    namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern877);  
+                    namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern875);  
                     stream_ID.add(namelabel);
 
-                    COLON44=(Token)match(input,COLON,FOLLOW_COLON_in_labelledpattern879);  
+                    COLON44=(Token)match(input,COLON,FOLLOW_COLON_in_labelledpattern877);  
                     stream_COLON.add(COLON44);
 
 
@@ -2133,7 +2133,7 @@ public class RuleParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_graphpattern_in_labelledpattern885);
+            pushFollow(FOLLOW_graphpattern_in_labelledpattern883);
             p=graphpattern();
 
             state._fsp--;
@@ -2268,7 +2268,7 @@ public class RuleParser extends Parser {
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_constructor_in_graphpattern917);
+                    pushFollow(FOLLOW_constructor_in_graphpattern915);
                     constructor45=constructor();
 
                     state._fsp--;
@@ -2280,7 +2280,7 @@ public class RuleParser extends Parser {
                 case 2 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:5: ID (s= STAR )?
                     {
-                    ID46=(Token)match(input,ID,FOLLOW_ID_in_graphpattern925);  
+                    ID46=(Token)match(input,ID,FOLLOW_ID_in_graphpattern923);  
                     stream_ID.add(ID46);
 
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:8: (s= STAR )?
@@ -2294,7 +2294,7 @@ public class RuleParser extends Parser {
                         case 1 :
                             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: s= STAR
                             {
-                            s=(Token)match(input,STAR,FOLLOW_STAR_in_graphpattern930);  
+                            s=(Token)match(input,STAR,FOLLOW_STAR_in_graphpattern928);  
                             stream_STAR.add(s);
 
 
@@ -2351,7 +2351,7 @@ public class RuleParser extends Parser {
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_builtin_in_graphpattern955);
+                    pushFollow(FOLLOW_builtin_in_graphpattern953);
                     builtin47=builtin();
 
                     state._fsp--;
@@ -2365,7 +2365,7 @@ public class RuleParser extends Parser {
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_ref_in_graphpattern961);
+                    pushFollow(FOLLOW_ref_in_graphpattern959);
                     ref48=ref();
 
                     state._fsp--;
@@ -2419,10 +2419,10 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:3: AMPERCENT ID
             {
-            AMPERCENT49=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref970);  
+            AMPERCENT49=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref968);  
             stream_AMPERCENT.add(AMPERCENT49);
 
-            ID50=(Token)match(input,ID,FOLLOW_ID_in_ref972);  
+            ID50=(Token)match(input,ID,FOLLOW_ID_in_ref970);  
             stream_ID.add(ID50);
 
 
@@ -2508,10 +2508,10 @@ public class RuleParser extends Parser {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
             {
-            ID51=(Token)match(input,ID,FOLLOW_ID_in_constructor989);  
+            ID51=(Token)match(input,ID,FOLLOW_ID_in_constructor987);  
             stream_ID.add(ID51);
 
-            LPAR52=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor991);  
+            LPAR52=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor989);  
             stream_LPAR.add(LPAR52);
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:11: ( labelledpattern ( COMA labelledpattern )* )?
@@ -2525,7 +2525,7 @@ public class RuleParser extends Parser {
                 case 1 :
                     // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:12: labelledpattern ( COMA labelledpattern )*
                     {
-                    pushFollow(FOLLOW_labelledpattern_in_constructor994);
+                    pushFollow(FOLLOW_labelledpattern_in_constructor992);
                     labelledpattern53=labelledpattern();
 
                     state._fsp--;
@@ -2546,10 +2546,10 @@ public class RuleParser extends Parser {
                     	case 1 :
                     	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:29: COMA labelledpattern
                     	    {
-                    	    COMA54=(Token)match(input,COMA,FOLLOW_COMA_in_constructor997);  
+                    	    COMA54=(Token)match(input,COMA,FOLLOW_COMA_in_constructor995);  
                     	    stream_COMA.add(COMA54);
 
-                    	    pushFollow(FOLLOW_labelledpattern_in_constructor999);
+                    	    pushFollow(FOLLOW_labelledpattern_in_constructor997);
                     	    labelledpattern55=labelledpattern();
 
                     	    state._fsp--;
@@ -2570,7 +2570,7 @@ public class RuleParser extends Parser {
 
             }
 
-            RPAR56=(Token)match(input,RPAR,FOLLOW_RPAR_in_constructor1005);  
+            RPAR56=(Token)match(input,RPAR,FOLLOW_RPAR_in_constructor1003);  
             stream_RPAR.add(RPAR56);
 
 
@@ -2640,84 +2640,84 @@ public class RuleParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_rule_in_ruleset128 = new BitSet(new long[]{0x0000A40000000000L});
-    public static final BitSet FOLLOW_EOF_in_ruleset132 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_pattern_in_rule152 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_ARROW_in_rule154 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_rule156 = new BitSet(new long[]{0x0000000040000002L});
-    public static final BitSet FOLLOW_IF_in_rule159 = new BitSet(new long[]{0x0003A50000000000L});
-    public static final BitSet FOLLOW_condition_in_rule163 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_graphrule_in_graphruleset208 = new BitSet(new long[]{0x000BA40000000000L});
-    public static final BitSet FOLLOW_EOF_in_graphruleset212 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_labelledpattern_in_graphrule234 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_ARROW_in_graphrule236 = new BitSet(new long[]{0x000BA40000000000L});
-    public static final BitSet FOLLOW_labelledpattern_in_graphrule240 = new BitSet(new long[]{0x0000000040000002L});
-    public static final BitSet FOLLOW_IF_in_graphrule243 = new BitSet(new long[]{0x0003A50000000000L});
-    public static final BitSet FOLLOW_condition_in_graphrule247 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_andcondition_in_condition297 = new BitSet(new long[]{0x0000000080000002L});
-    public static final BitSet FOLLOW_OR_in_condition302 = new BitSet(new long[]{0x0003A50000000000L});
-    public static final BitSet FOLLOW_andcondition_in_condition304 = new BitSet(new long[]{0x0000000080000002L});
-    public static final BitSet FOLLOW_simplecondition_in_andcondition337 = new BitSet(new long[]{0x0000000100000002L});
-    public static final BitSet FOLLOW_AND_in_andcondition342 = new BitSet(new long[]{0x0003A50000000000L});
-    public static final BitSet FOLLOW_simplecondition_in_andcondition344 = new BitSet(new long[]{0x0000000100000002L});
-    public static final BitSet FOLLOW_term_in_simplecondition377 = new BitSet(new long[]{0x000000FE00000000L});
-    public static final BitSet FOLLOW_EQUALS_in_simplecondition380 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition384 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOTEQUALS_in_simplecondition398 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition402 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LEQ_in_simplecondition416 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition420 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LT_in_simplecondition434 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition438 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_GEQ_in_simplecondition452 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition456 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_GT_in_simplecondition470 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition474 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_MATCH_in_simplecondition488 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_simplecondition492 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAR_in_simplecondition634 = new BitSet(new long[]{0x0003A50000000000L});
-    public static final BitSet FOLLOW_condition_in_simplecondition638 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_RPAR_in_simplecondition640 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern656 = new BitSet(new long[]{0x0000010000000000L});
-    public static final BitSet FOLLOW_LPAR_in_pattern658 = new BitSet(new long[]{0x0003A60000000000L});
-    public static final BitSet FOLLOW_term_in_pattern661 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_COMA_in_pattern664 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_pattern666 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_RPAR_in_pattern672 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern696 = new BitSet(new long[]{0x0000100000000000L});
-    public static final BitSet FOLLOW_AT_in_pattern699 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern704 = new BitSet(new long[]{0x0000010000000000L});
-    public static final BitSet FOLLOW_LPAR_in_pattern707 = new BitSet(new long[]{0x0003A60000000000L});
-    public static final BitSet FOLLOW_term_in_pattern710 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_COMA_in_pattern713 = new BitSet(new long[]{0x0003A40000000000L});
-    public static final BitSet FOLLOW_term_in_pattern715 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_RPAR_in_pattern721 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_UNDERSCORE_in_pattern750 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_UNDERSCORE_in_pattern762 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_STAR_in_pattern764 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOT_in_pattern776 = new BitSet(new long[]{0x0000A40000000000L});
-    public static final BitSet FOLLOW_pattern_in_pattern778 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_pattern_in_term795 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_term803 = new BitSet(new long[]{0x0000400000000002L});
-    public static final BitSet FOLLOW_STAR_in_term808 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_builtin_in_term833 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_builtin842 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_builtin856 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_labelledpattern877 = new BitSet(new long[]{0x0004000000000000L});
-    public static final BitSet FOLLOW_COLON_in_labelledpattern879 = new BitSet(new long[]{0x000BA40000000000L});
-    public static final BitSet FOLLOW_graphpattern_in_labelledpattern885 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_constructor_in_graphpattern917 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_graphpattern925 = new BitSet(new long[]{0x0000400000000002L});
-    public static final BitSet FOLLOW_STAR_in_graphpattern930 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_builtin_in_graphpattern955 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ref_in_graphpattern961 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_AMPERCENT_in_ref970 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_ID_in_ref972 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_constructor989 = new BitSet(new long[]{0x0000010000000000L});
-    public static final BitSet FOLLOW_LPAR_in_constructor991 = new BitSet(new long[]{0x000BA60000000000L});
-    public static final BitSet FOLLOW_labelledpattern_in_constructor994 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_COMA_in_constructor997 = new BitSet(new long[]{0x000BA40000000000L});
-    public static final BitSet FOLLOW_labelledpattern_in_constructor999 = new BitSet(new long[]{0x00000A0000000000L});
-    public static final BitSet FOLLOW_RPAR_in_constructor1005 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule_in_ruleset126 = new BitSet(new long[]{0x0000A40000000000L});
+    public static final BitSet FOLLOW_EOF_in_ruleset130 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_pattern_in_rule150 = new BitSet(new long[]{0x0000000020000000L});
+    public static final BitSet FOLLOW_ARROW_in_rule152 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_rule154 = new BitSet(new long[]{0x0000000040000002L});
+    public static final BitSet FOLLOW_IF_in_rule157 = new BitSet(new long[]{0x0003A50000000000L});
+    public static final BitSet FOLLOW_condition_in_rule161 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_graphrule_in_graphruleset206 = new BitSet(new long[]{0x000BA40000000000L});
+    public static final BitSet FOLLOW_EOF_in_graphruleset210 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_labelledpattern_in_graphrule232 = new BitSet(new long[]{0x0000000020000000L});
+    public static final BitSet FOLLOW_ARROW_in_graphrule234 = new BitSet(new long[]{0x000BA40000000000L});
+    public static final BitSet FOLLOW_labelledpattern_in_graphrule238 = new BitSet(new long[]{0x0000000040000002L});
+    public static final BitSet FOLLOW_IF_in_graphrule241 = new BitSet(new long[]{0x0003A50000000000L});
+    public static final BitSet FOLLOW_condition_in_graphrule245 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_andcondition_in_condition295 = new BitSet(new long[]{0x0000000080000002L});
+    public static final BitSet FOLLOW_OR_in_condition300 = new BitSet(new long[]{0x0003A50000000000L});
+    public static final BitSet FOLLOW_andcondition_in_condition302 = new BitSet(new long[]{0x0000000080000002L});
+    public static final BitSet FOLLOW_simplecondition_in_andcondition335 = new BitSet(new long[]{0x0000000100000002L});
+    public static final BitSet FOLLOW_AND_in_andcondition340 = new BitSet(new long[]{0x0003A50000000000L});
+    public static final BitSet FOLLOW_simplecondition_in_andcondition342 = new BitSet(new long[]{0x0000000100000002L});
+    public static final BitSet FOLLOW_term_in_simplecondition375 = new BitSet(new long[]{0x000000FE00000000L});
+    public static final BitSet FOLLOW_EQUALS_in_simplecondition378 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition382 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NOTEQUALS_in_simplecondition396 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition400 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LEQ_in_simplecondition414 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition418 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LT_in_simplecondition432 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition436 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_GEQ_in_simplecondition450 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition454 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_GT_in_simplecondition468 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition472 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MATCH_in_simplecondition486 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_simplecondition490 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAR_in_simplecondition632 = new BitSet(new long[]{0x0003A50000000000L});
+    public static final BitSet FOLLOW_condition_in_simplecondition636 = new BitSet(new long[]{0x0000020000000000L});
+    public static final BitSet FOLLOW_RPAR_in_simplecondition638 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern654 = new BitSet(new long[]{0x0000010000000000L});
+    public static final BitSet FOLLOW_LPAR_in_pattern656 = new BitSet(new long[]{0x0003A60000000000L});
+    public static final BitSet FOLLOW_term_in_pattern659 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_COMA_in_pattern662 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_pattern664 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_RPAR_in_pattern670 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern694 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_AT_in_pattern697 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern702 = new BitSet(new long[]{0x0000010000000000L});
+    public static final BitSet FOLLOW_LPAR_in_pattern705 = new BitSet(new long[]{0x0003A60000000000L});
+    public static final BitSet FOLLOW_term_in_pattern708 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_COMA_in_pattern711 = new BitSet(new long[]{0x0003A40000000000L});
+    public static final BitSet FOLLOW_term_in_pattern713 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_RPAR_in_pattern719 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_UNDERSCORE_in_pattern748 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_UNDERSCORE_in_pattern760 = new BitSet(new long[]{0x0000400000000000L});
+    public static final BitSet FOLLOW_STAR_in_pattern762 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NOT_in_pattern774 = new BitSet(new long[]{0x0000A40000000000L});
+    public static final BitSet FOLLOW_pattern_in_pattern776 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_pattern_in_term793 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_term801 = new BitSet(new long[]{0x0000400000000002L});
+    public static final BitSet FOLLOW_STAR_in_term806 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_builtin_in_term831 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_builtin840 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_builtin854 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_labelledpattern875 = new BitSet(new long[]{0x0004000000000000L});
+    public static final BitSet FOLLOW_COLON_in_labelledpattern877 = new BitSet(new long[]{0x000BA40000000000L});
+    public static final BitSet FOLLOW_graphpattern_in_labelledpattern883 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_constructor_in_graphpattern915 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_graphpattern923 = new BitSet(new long[]{0x0000400000000002L});
+    public static final BitSet FOLLOW_STAR_in_graphpattern928 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_builtin_in_graphpattern953 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ref_in_graphpattern959 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_AMPERCENT_in_ref968 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_ID_in_ref970 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_constructor987 = new BitSet(new long[]{0x0000010000000000L});
+    public static final BitSet FOLLOW_LPAR_in_constructor989 = new BitSet(new long[]{0x000BA60000000000L});
+    public static final BitSet FOLLOW_labelledpattern_in_constructor992 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_COMA_in_constructor995 = new BitSet(new long[]{0x000BA40000000000L});
+    public static final BitSet FOLLOW_labelledpattern_in_constructor997 = new BitSet(new long[]{0x00000A0000000000L});
+    public static final BitSet FOLLOW_RPAR_in_constructor1003 = new BitSet(new long[]{0x0000000000000002L});
 
 }

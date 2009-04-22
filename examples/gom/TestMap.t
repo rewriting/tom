@@ -42,7 +42,7 @@ public class TestMap {
   private static int cnt;
   %include { elist/Elist.tom }
   %include { sl.tom }
-  %include { elist/_Elist.tom }
+  //%include { elist/_Elist.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
 
