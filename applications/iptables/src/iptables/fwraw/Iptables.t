@@ -8,9 +8,9 @@ import java.util.*;
 
 /* >>> TODO: use superclass */
 public class Iptables {
-	%include {../iptables/analyserwrapper/AnalyserWrapper.tom}
-	%include {../iptables/analyser/Analyser.tom}
-	%include {sl.tom}
+	%include { ../analyserwrapper/AnalyserWrapper.tom }
+	%include { ../analyser/Analyser.tom }
+	%include { sl.tom }
 
 	public static Rule parse(String input) {
 		%match (input) {

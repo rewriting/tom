@@ -54,7 +54,7 @@
   <target name="gom" depends="init">
     <gom.preset srcdir="${iptables.src}"
                 destdir="${iptables.gen}">
-      <include name="${iptables.ast}.gom"/>
+                <include name="**/*.gom"/>
     </gom.preset>
   </target>
   
