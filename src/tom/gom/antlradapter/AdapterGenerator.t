@@ -307,6 +307,9 @@ public class @filename()@Adaptor {
         if("int".equals(`name)) {
           code = `CodeList(code,
               Code("Integer.parseInt(" + tree + ".getText())"));
+        } else if("long".equals(`name)) {
+          code = `CodeList(code,
+              Code("Long.parseLong(" + tree + ".getText())"));
         } else if ("String".equals(`name)) {
           code = `CodeList(code,
               Code(tree + ".getText()"));
