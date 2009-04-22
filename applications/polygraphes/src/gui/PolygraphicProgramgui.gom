@@ -89,7 +89,7 @@ sort OnePath:block(){
 	
 	public int getLargeur(){
 		%match (this){
-			OneCell[largeur=x] -> { return this.getlargeur(); }
+			OneCell[largeur=x] -> { return `x; }
 			OneC0 (head,tail*) -> { return `head.getLargeur()+4+`tail*.getLargeur();} 
 		}
 		return 0;
@@ -97,7 +97,7 @@ sort OnePath:block(){
 	
 	public int getHauteur(){
 		%match (this){
-			OneCell[hauteur=x] -> { return this.gethauteur(); }
+			OneCell[hauteur=x] -> { return `x; }
 			OneC0 (head,tail*) -> { return `head.getHauteur();} 
 		}
 		return 0;

@@ -117,7 +117,9 @@ public class XMLProgramHandlerGui {
 									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.source(),15));
 									jtp2.addTab("Source", g);
 									g= new Graph();
-									//System.out.println(tp.target());
+									System.out.println();
+									System.out.println();
+									System.out.println(tp.target());
 									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.target(),15));
 									jtp2.addTab("Target", g);
 									g= new Graph();
