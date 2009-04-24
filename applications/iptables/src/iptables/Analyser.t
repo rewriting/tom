@@ -30,27 +30,29 @@ public class Analyser {
 		visit Rules {
 			rs@Rules(
 				X*,
-				r1@Rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,
-					dstport,opts),
+				r1@Rule(action1,iface,proto,target,srcaddr1,
+					dstaddr1,srcport,dstport,opts),
 				Y*,
-				r2@Rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,
-					dstport,opts),
+				r2@Rule(action2,iface,proto,target,srcaddr2,
+					dstaddr2,srcport,dstport,opts),
 				Z*
 			) -> {
 				/* looking for equivalence in the rules */
-				if (isEquiv(`srcaddr1,`srcaddr2) && isEquiv(`dstaddr1,`dstaddr2)) {
+				if (isEquiv(`srcaddr1,`srcaddr2) 
+				&& isEquiv(`dstaddr1,`dstaddr2)) {
 					if (`action1 == `action2) {
 						System.out.println("doubloon: " + `r1);
 						return `Rules(X*,r1,Y*,Z*);
 					} else {
-						System.err.println("conflicting rules:" + `r1 + "\t/\t" +
-						 `r2 + " => removing " + `r2);
+						System.err.println(
+						"conflicting rules:" 
+						+ `r1 + "\t/\t" + `r2 + 
+						" => removing " + `r2);
+						
 						return `Rules(X*,r1,Y*,Z*);
 					}
 				}
-				return `rs;
 			}
-			rs@Rules(_*) -> { return `rs; }
 		}
 	}
 
@@ -59,7 +61,6 @@ public class Analyser {
 			rs@Rules(X*,r1,Y*,r2,Z*) -> {
 				/* looking for inclusions optimizations */
 				int i = isInclude(`r1,`r2);
-				System.out.println("CUL " + i);
 				if (i == 1) {
 					System.out.println("optimization: " + `r2);
 					return `Rules(X*,r1,Y*,Z*);
@@ -70,7 +71,6 @@ public class Analyser {
 					System.out.println("optimization-doubloon: " + `r1);
 					return `Rules(X*,r1,Y*,Z*);
 				}
-				return `rs;
 			}
 		}
 	}
@@ -202,11 +202,6 @@ public class Analyser {
 	}
 
 	public static void main(String[] args) {
-
-
-
-
-
 		Rule r1 = `Rule(
 			Accept(),
 			Iface("eth0"),
