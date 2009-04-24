@@ -60,7 +60,7 @@ public class TestTreeMap {
 
   @Test
   public void testGetValue() {
-    java.util.TreeMap m = new java.util.TreeMap();
+    java.util.TreeMap<String,String> m = new java.util.TreeMap<String,String>();
     m.put("one","1");
     m.put("two","2");
     m.put("three","3");

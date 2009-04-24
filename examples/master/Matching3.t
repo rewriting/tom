@@ -91,7 +91,7 @@ public class Matching3 {
           return `False() ;
         }
       }
-      And(Match(var(x),X),And(Match(var(x),Y),P)) -> {
+      And(Match(var(x),X),And(Match(var(x),Y),_)) -> {
         if(`X!=`Y){
           return `False() ;
         }

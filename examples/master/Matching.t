@@ -54,7 +54,7 @@ class Matching {
     // Decompose
     Match(Appl(name,a1),Appl(name,a2)) -> decomposeList(a1,a2)
     // SymbolClash
-    Match(Appl(name1,args1),Appl(name2,args2)) -> False() //if name1 != name2
+    Match(Appl(name1,_),Appl(name2,_)) -> False() //if name1 != name2
     // PropagateClash
     And(False(),_) -> False()
     And(_,False()) -> False()

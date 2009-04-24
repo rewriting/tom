@@ -64,7 +64,7 @@ public class SecureAccess {
     FilePolicyModule policies = new FilePolicyModule();
     policies.addPolicy("bytecode/policy.xml");
     PolicyFinder policyFinder = new PolicyFinder();
-    Set policyModules = new HashSet();
+    Set<FilePolicyModule> policyModules = new HashSet<FilePolicyModule>();
     policyModules.add(policies);
     policyFinder.setModules(policyModules);
 
@@ -73,7 +73,7 @@ public class SecureAccess {
 
     // setup the attribute finder
     AttributeFinder attrFinder = new AttributeFinder();
-    List attrModules = new ArrayList();
+    List<CurrentEnvModule> attrModules = new ArrayList<CurrentEnvModule>();
     attrModules.add(envModule);
     attrFinder.setModules(attrModules);
 

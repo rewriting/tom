@@ -78,7 +78,7 @@ public class BPELAnalyser {
 
   %strategy analyse(controlDep:ArrayList) extends `Identity() {
     visit TNode {
-      <sequence>(_*,elt1,elt2,_*)</sequence> -> {
+      <sequence>(_*,elt1,_,_*)</sequence> -> {
         ArrayList leaveList = new ArrayList();
         `leaves(leaveList).visit(`elt1);
         Iterator leaveIter = leaveList.iterator();

@@ -62,7 +62,7 @@ public class Matching4 {
 
       // Decompose
       And(X*,Match(suc(x),suc(y)),Y*) -> { return `And(X*,Match(x,y),Y*);}
-      And(X*,Match(plus(x1,x2),plus(y1,y2)),Y*) -> {
+      And(_*,Match(plus(x1,x2),plus(y1,y2)),_*) -> {
         return `And(Match(x1,y1),Match(x2,y2));}
 
       // SymbolClash

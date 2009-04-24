@@ -239,7 +239,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 }
 
   protected static java.util.List<SharedLabel> getSharedLabels(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs) {
-    java.util.ArrayList<SharedLabel> sharedlabels = new java.util.ArrayList();
+    java.util.ArrayList<SharedLabel> sharedlabels = new java.util.ArrayList<SharedLabel>();
     java.util.HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
     java.util.HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPositionAndRemoveLabels();
     for (String labelRhs: rhsLabels.keySet()) {

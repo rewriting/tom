@@ -129,7 +129,7 @@ public class MatchGenerator {
 		  System.exit(0);
 	  }
 
-	  ArrayList tomParams = new ArrayList();
+	  ArrayList<String> tomParams = new ArrayList<String>();
 	  
 	  tomParams.add("-X");
 	  tomParams.add(xmlFile.getPath());

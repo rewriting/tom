@@ -72,12 +72,12 @@ public class Nsh {
   }
   
   public boolean breadthSearch(State start, State end) {
-    Collection c1 = new HashSet();
+    Collection<State> c1 = new HashSet<State>();
     c1.add(start);
 
     int i = 0;
     while(!c1.isEmpty()) {
-      Collection c2 = new HashSet();
+      Collection<State> c2 = new HashSet<State>();
       Iterator it = c1.iterator();
       while(it.hasNext()) {
         collectOneStep((State)it.next(),c2);
@@ -96,9 +96,9 @@ public class Nsh {
     return false;
   }
 
-  Collection result = new HashSet();
+  Collection<State> result = new HashSet<State>();
   public boolean depthSearch(State start, State end) {
-    Collection c1 = new HashSet();
+    Collection<State> c1 = new HashSet<State>();
     collectOneStep(start,c1);
 
       c1.removeAll(result);
@@ -125,7 +125,7 @@ public class Nsh {
   }
 
  public boolean depthSearch2(Collection local, State start, State end) {
-    Collection c1 = new HashSet();
+    Collection<State> c1 = new HashSet<State>();
     collectOneStep(start,c1);
 
       c1.removeAll(local);
@@ -144,7 +144,7 @@ public class Nsh {
     }
 
     Iterator it = c1.iterator();
-    Collection c = new HashSet();
+    Collection<State> c = new HashSet<State>();
     while(it.hasNext()) {
       boolean b = depthSearch2(c,(State)it.next(),end);
       if(b) return b;

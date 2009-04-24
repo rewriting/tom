@@ -91,7 +91,7 @@ public class Poly2 {
       plus(conc(A*,m(c1,"X",n),B*,m(c2,"X",n),C*)) -> {
         return `plus(conc(A*,m(c1+c2,"X",n),B*,C*));
       }
-      plus(conc(A*,m1@m(c1,"X",n1),B*,m2@m(c2,"X",n2),C*)) -> {
+      plus(conc(A*,m1@m(_,"X",n1),B*,m2@m(_,"X",n2),C*)) -> {
         if(`n2>`n1) {
           return `plus(conc(A*,m2,B*,m1,C*));
         }

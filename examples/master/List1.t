@@ -43,7 +43,7 @@ public class List1 {
 
   public L swapSort(L l) {
     %match(L l) {
-      f(X*,e1,Z*,e2,Y*) -> {
+      f(_*,e1,_*,e2,_*) -> {
         if(`gt(e1,e2)) {
           //return `swapSort(f(X*,e2,Z*,e1,Y*));
           System.out.println("("+`e1+","+`e2+")");

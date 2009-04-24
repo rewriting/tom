@@ -170,7 +170,7 @@ public class HTMLToLaTeX {
         write("\\end{description}\n");
         throw new VisitFailure();
       }
-      <a href=hrefurl>data*</a> -> {
+      <a href=_>data*</a> -> {
         toLaTeX(`data);
         //write(" (URL :"+hrefurl+") ");
         throw new VisitFailure();

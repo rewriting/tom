@@ -82,8 +82,8 @@ public class PersonSortName {
 
   private int compare(Node t1, Node t2) {
     %match(TNode t1, TNode t2) {
-      <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
-      <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
+      <Person Age=_><FirstName>#TEXT(n1)</FirstName></Person>,
+      <Person Age=_><FirstName>#TEXT(n2)</FirstName></Person>
       -> { return `n1.compareTo(`n2); }
     }
     return 0;

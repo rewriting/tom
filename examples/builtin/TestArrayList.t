@@ -51,7 +51,7 @@ public class TestArrayList {
 
   @Test
   public void testIter() {
-    java.util.Set set = new java.util.HashSet();
+    java.util.Set<String> set = new java.util.HashSet<String>();
     java.util.ArrayList list = `concArrayList("one","two","three","four");
     %match(ArrayList list) {
       (_*,x,_*)   -> { set.add(`x+"_"+`x); }

@@ -139,7 +139,7 @@ class Pico2 {
   
   %strategy FindCst() extends `Fail() {
 		visit Expr {
-			c@Cst(x) -> { return `c; }
+			c@Cst(_) -> { return `c; }
 		}
 	}
 
@@ -157,7 +157,7 @@ class Pico2 {
   
 	%strategy RenamedVar() extends `Fail() {
 		visit Expr {
-			v@Var(('_',name*)) -> { return `v; }
+			v@Var(('_',_*)) -> { return `v; }
 		}
 	}
 
@@ -191,7 +191,7 @@ class Pico2 {
 
 	%strategy PropagateCst(m:HashMap) extends `Fail() {
 		visit Expr {
-			l@Let(n,e,b) -> { 
+			l@Let(n,e,_) -> { 
 				Expr newE = (Expr) this.visitLight(`e);
 				m.put(`n,newE);
 				return `l;

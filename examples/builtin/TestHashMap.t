@@ -60,7 +60,7 @@ public class TestHashMap {
 
   @Test
   public void testGetValue() {
-    java.util.HashMap m = new java.util.HashMap();
+    java.util.HashMap<String,String> m = new java.util.HashMap<String,String>();
     m.put("one","1");
     m.put("two","2");
     m.put("three","3");

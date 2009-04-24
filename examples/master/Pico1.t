@@ -109,14 +109,14 @@ class Pico1 {
 			Not(False()) -> { return `True(); }
 			Not(b) -> { return `evalBool(env,Not(evalBool(env,b))); }
 
-			Or(True(),b2) -> { return `True(); }
-			Or(b1,True()) -> { return `True(); }
+			Or(True(),_) -> { return `True(); }
+			Or(_,True()) -> { return `True(); }
 			Or(False(),b2) -> { return `b2; }
 			Or(b1,False()) -> { return `b1; }
 			And(True(),b2) -> { return `b2; }
 			And(b1,True()) -> { return `b1; }
-			And(False(),b2) -> { return `False(); }
-			And(b1,False()) -> { return `False(); }
+			And(False(),_) -> { return `False(); }
+			And(_,False()) -> { return `False(); }
 			
 			Eq(e1,e2) -> { 
 				Expr x=`evalExpr(env,e1);

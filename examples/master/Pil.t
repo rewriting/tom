@@ -73,7 +73,7 @@ class Pil {
 
   %strategy RemoveLet() extends Identity() {
     visit Expr {
-      Let(Var(n),expr,body) -> { 
+      Let(Var(n),_,body) -> { 
         if(`body == `TopDown(RenameVar(n,"_"+n)).visit(`body)) {
           // if Var(n) is not used
           return `body;

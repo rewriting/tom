@@ -48,7 +48,7 @@ public class Peano2 {
       plus(x, zero())    -> { return `x; }
 
       //       mult(zero(), x)    -> { return `zero(); }
-      mult(x, zero())    -> {return `zero();}
+      mult(_, zero())    -> {return `zero();}
       mult(x, suc(y))    -> {return `plus(x,mult(x,y));}
 
       plus(x,y) -> { return `plus(x,evaluate(y));}
