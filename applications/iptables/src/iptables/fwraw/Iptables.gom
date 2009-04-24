@@ -1,3 +1,18 @@
 module iptables.fwraw.Iptables
 imports String
 abstract syntax
+
+IptablesBlocks = Blocks(Block*)
+
+IptablesBlock = IptablesBlock(target:Target, action:Action,rules:IptablesRules)
+
+IptablesRules = IptablesRules(IptableRule*)
+
+IptableRule = IptableRule(
+		action:Action,
+		proto:Protocol,
+		addrsrc: Address,
+		addrdst: Address,
+		options: IptablesOptions)
+
+IptablesOptions = IptablesOptions()
