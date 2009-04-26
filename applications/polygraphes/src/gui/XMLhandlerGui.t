@@ -52,7 +52,7 @@ public class XMLhandlerGui {
 	  if(nodeName.equals("OneCell")){
 		  NamedNodeMap attributes=node.getAttributes();
 		  String name=attributes.getNamedItem("Name").getNodeValue();
-		  return `OneCell(name,0,0,20,20);
+		  return `OneCell(name,0,0,10,9);
 	  }
 	  if(nodeName.equals("OneC0")){
 		  NodeList oneC0s=node.getChildNodes();
@@ -67,7 +67,7 @@ public class XMLhandlerGui {
 				  
 				  res= gestionOneC0(res3,res2);
 			  }				
-		  }		
+		  }
 		  return res;
 	  }
 	  NodeList childs=node.getChildNodes();
@@ -112,7 +112,7 @@ public class XMLhandlerGui {
 			  if(ioName.equals("Source")){source=makeOnePath(ioChild);}
 			  if(ioName.equals("Target")){target=makeOnePath(ioChild);}
 		  }
-		  TwoPath res = `TwoCell(name,source,target,celltype,0,0,0,90,100);
+		  TwoPath res = `TwoCell(name,source,target,celltype,0,0,0,50,80);
 		  res=RepartitionFilsTwoCell((TwoCell)res);
 		  return res;
 	  }
@@ -124,14 +124,6 @@ public class XMLhandlerGui {
 			  if(!twoC0Element.getNodeName().contains("#text")){
 				  TwoPath res2=res;
 				  TwoPath res3 = makeTwoPath(twoC0Element);
-				  /*System.out.println("TwoC0 :(");
-				  System.out.print(" res2:");res2.affiche();
-				  System.out.print(" res3:");res3.affiche();
-				  System.out.println(")");*/
-				  /*if(res2 instanceof TwoId) ;
-				  else res2=decalageX(res2,res3.getLargeur()+4);
-				  res=`TwoC0(res2,res3);*/
-				  
 				  res= gestionTwoC0(res3,res2);
 				  
 			  }	
@@ -297,262 +289,139 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
-	public static OnePath setLargeur(OnePath path, int c){
-		%match (OnePath path){
-			Id() -> {return `Id();}
-			OneCell(name,x,y,hauteur,largeur) -> {return `OneCell(name,x+c,y,hauteur,c); }
-		 	OneC0 (head,tail*) -> {return `OneC0(setLargeur(head,c),setLargeur(tail*,c));}
+	public static ArrayList<TwoPath> niveauC1(TwoPath tc1){
+		ArrayList<TwoPath> res = new ArrayList<TwoPath>();
+		%match (TwoPath tc1){
+			TwoId(onepath) -> {res.add(tc1);}
+			TwoCell(_,_,_,_,_,_,_,_,_) -> { res.add(tc1); }
+			TwoC0(head,tail*) -> {res.add(tc1);}
+			TwoC1(head,tail*) -> {res.addAll(niveauC1(`head)); res.addAll(niveauC1(`tail*));}
 		}
-		return path;
+		return res;
 	}
 	
-	/*
-	 * Methode David : Permet d'agrandir la largeur de l'element cible (path) d'une taille c
-	 */
-	public static TwoPath setLargeur(TwoPath path ,int c,TwoPath haut){
-		%match (TwoPath path){
-			TwoId(onepath) -> {return gestionnaireTwoPath(path,haut); /*`TwoId(setLargeur(onepath,c));*/}
-			TwoCell(name,source,target,type,id,x,y,hauteur,largeur) -> { 
-				if(path==haut) return `TwoCell(name,source,target,type,id,x,y,hauteur,c);
-				else return gestionnaireTwoPath(path,haut);
-			}
-			TwoC0(head*) -> { return gestionnaireTwoPath(`head*,haut);}
-			TwoC1(head,tail*) -> {return `TwoC1(setLargeur(head,c,haut),tail*);}
+	public static TwoPath completudemode_1(TwoPath tp,TwoPath sol,int n){
+		ArrayList<TwoPath> tmp = getListeTwoPath(sol);
+		%match (TwoPath tp){
+			TwoId(onepath) -> { return tmp.get(n);}
+			TwoCell(_,_,_,_,_,_,_,_,_) -> { return tmp.get(n); }
+			TwoC0(head,tail*) -> {return `TwoC0(completudemode_1(head,sol,n),completudemode_1(tail*,sol,n+consommation(head)));}
+			TwoC1(head*,tail) -> {return `TwoC1(head*,completudemode_1(tail,sol,n));}
 		}
-		return path;
+		return sol;
 	}
 	
-	public static TwoPath gestionnaireTwoPath(TwoPath bas,TwoPath haut){
-		System.out.println("gestionnaireTwoPath");
-		ArrayList<TwoPath> listebas =  new ArrayList<TwoPath>();
-		%match(bas){
-			TwoId(onepath) -> { listebas = getListeTwoPath(bas); }
-			TwoCell(_,_,_,_,_,_,_,_,_) -> { listebas = getListeTwoPath(bas);}
-			TwoC0(head,tail*) -> { listebas.addAll(getListeTwoPath(`head));
-			listebas.addAll(getListeTwoPath(`tail*));
-			}
+	public static int consommation(TwoPath tp){
+		%match (TwoPath tp){
+			TwoId(onepath) -> { return 1;}
+			TwoCell(_,_,_,_,_,_,_,_,_) -> { return 1; }
+			TwoC0(head,tail*) -> {return consommation(`head)+consommation(`tail*);}
+			TwoC1(head*,tail) -> {return consommation(`tail);}
 		}
-		ArrayList<TwoPath> listehaut = new ArrayList<TwoPath>();
-		listehaut=getListeTwoPathBas(haut);		
-		System.out.println("*************\nhaut : "+haut);
-		System.out.println();
-		System.out.println("bas : "+bas+"\n*************");
-		System.out.println("*************\nlistehaut : "+listehaut);
-		System.out.println();
-		System.out.println("listebas : "+listebas+"\n*************");		
-		int taille; //variable qui permettra de connaitre la largeur de chaque sous element bas
-		Iterator it = listehaut.iterator();
-		Iterator it2 = listebas.iterator();
-		ArrayList<TwoPath> listeC1bas=new ArrayList<TwoPath>();
-		TwoPath tp1=null;
-		int a=0; // nb OnePath d'en haut
-		int b=0; // nb OnePath d'en bas
-		int taillemax=-1;
-		while(it2.hasNext()){			
-			int apasser=0;
-			if(!it.hasNext()) apasser = a-b;
-			// 1er tour : On recupere les valeurs des elements
-			// Autre tour : CF PLUS TARD (non implementer)
-			TwoPath tp2 = (TwoPath)it2.next();
-			b = tp2.sourcesize();
-			if(a<=b && it.hasNext()){ 
-				tp1 = (TwoPath)it.next();
-				a = tp1.targetsize();
-			}else a=a-b;
-						
-			System.out.println("TP1 : "+tp1);
-			System.out.println("TP2 : "+tp2);
-			if(!it2.hasNext()) taillemax+=haut.getLargeur();
-			ArrayList<OneCell> listeoc1 = getListeOneCellTarget(tp1); 
-			ArrayList<OneCell> listeoc2 = getListeOneCellSource(tp2); 
-			//System.out.println(listeoc1+" "+listeoc2);
-			ArrayList<OnePath> listeocret = new ArrayList<OnePath>();
-			Iterator itoc1 = listeoc1.iterator();
-			Iterator itoc2 = listeoc2.iterator();
-			taille=tp2.getLargeur();  //val par def = 100;
-			if(a>=b){
-				//Cas : Si on a plus de OneC0 qu'il n'en faut pour l'element d'en bas
-				int tmp=b;
-				while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-					System.out.println("A>=B "+a+" "+b);
-					OneCell c1 = null;
-					while(apasser!=0){
-						itoc1.next();
-						apasser--;
-					}
-					c1 = (OneCell)itoc1.next();
-					OneCell c2 = (OneCell)itoc2.next();
-					System.out.println(c1);
-					System.out.println(c2);
-					listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));			
-					tmp--;
-					System.out.println(listeocret.get(listeocret.size()-1));
-				}
-			}else if(a<b){
-				// CAS : Si on a pas assez de OneC0, changer de sous element dans la liste d'en haut
-				int tmp=a;
-				while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-					OneCell c1 = (OneCell)itoc1.next();
-					OneCell c2 = (OneCell)itoc2.next();
-					System.out.println("A<B "+a+" "+b);
-					System.out.println(c1);
-					System.out.println(c2);
-					listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));			
-					tmp--;
-					System.out.println(listeocret.get(listeocret.size()-1));
-				}
-				while(a<b && it.hasNext()){
-					tp1 = (TwoPath)it.next();
-					System.out.println("TP1 : "+tp1);
-					tmp=b-a;
-					a += tp1.targetsize(); //ajouter la largeur du sous element
-					listeoc1 = getListeOneCellTarget(tp1);
-					itoc1 = listeoc1.iterator();
-					while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-						OneCell c1 = (OneCell)itoc1.next();
-						OneCell c2 = (OneCell)itoc2.next();
-						System.out.println("A<B "+a+" "+b);
-						System.out.println(c1);
-						System.out.println(c2);
-						listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));			
-						tmp--;
-						System.out.println(listeocret.get(listeocret.size()-1));
-						if(!itoc2.hasNext()) taille=c1.getx()+4;
-					}
-				}
-			}
-			if(it2.hasNext()) taillemax-=taille;
-			else{
-				taille=taillemax;
-			}
-			if(tp2 instanceof TwoCell) listeC1bas.add(`TwoCell(tp2.getName(),genererOneC0(listeocret),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),taille));
-			else if (tp2 instanceof TwoId) listeC1bas.add(`TwoId(genererOneC0(listeocret)));
-			else listeC1bas.add(setLargeur(tp2,tp1.getLargeur(),tp1));
-		}
-		System.out.println(listeC1bas);
-		TwoPath tmp=genererTwoC0(listeC1bas);
-		System.out.println("END gestionnaireTwoPath");
-		return tmp;
+		return 0;
 	}
 	
-	public static TwoPath correcteurFils(TwoPath bas,TwoPath haut,int ignore){
-		ArrayList<TwoPath> listebas =  new ArrayList<TwoPath>();
-		System.out.println("CorrecteurFils");
-		System.out.println("CC : "+ignore);
-		%match(bas){
-			TwoId(onepath) -> { listebas = getListeTwoPath(bas); }
-			TwoCell(_,_,_,_,_,_,_,_,_) -> { listebas = getListeTwoPath(bas);}
-			TwoC0(head,tail*) -> { return `TwoC0(correcteurFils(head,haut,ignore),correcteurFils(tail*,haut,ignore+head.sourcesize()));}
-			TwoC1(head,tail*) -> { return `TwoC1(correcteurFils(head,haut,ignore),tail*);}
-		}
-		System.out.println("COUCOU");
-		ArrayList<TwoPath> listehaut = new ArrayList<TwoPath>();
-		if(haut instanceof TwoC0) listehaut=getListeTwoPathBas(haut.reverse()); //on recupere que les elements bas du haut du C1
-		else listehaut=getListeTwoPathBas(haut);		
-		System.out.println("*************\nhaut : "+haut);
+	public static TwoPath gestionC1(TwoPath amodifier,TwoPath modele,int mode){
+		System.out.println("MODE : "+mode);
+		ArrayList<TwoPath> listeTwoPath_amodifier;
+		if(mode==0) listeTwoPath_amodifier = getListeTwoPathHaut(amodifier);
+		else listeTwoPath_amodifier = getListeTwoPathBas(amodifier);
+		
+		ArrayList<TwoPath> listeTwoPath_retour = new ArrayList<TwoPath>();
+		
+		ArrayList<OnePath> listeOnePath_amodifier;
+		if(mode==0) listeOnePath_amodifier = getListeOnePathSource(amodifier);
+		else listeOnePath_amodifier = getListeOnePathTarget(amodifier);
+		
+		ArrayList<OnePath> listeOnePath_modele;
+		if(mode==0) listeOnePath_modele = getListeOnePathTarget(modele);
+		else listeOnePath_modele = getListeOnePathSource(modele);
+		
+		ArrayList<OnePath> listeOnePath_tmp  = new ArrayList<OnePath>();
+		
+		System.out.println("amodifier : "+amodifier);
 		System.out.println();
-		System.out.println("bas : "+bas+"\n*************");
-		System.out.println("*************\nlistehaut : "+listehaut);
+		System.out.println("modele : "+modele);
 		System.out.println();
-		System.out.println("listebas : "+listebas+"\n*************");
-		Iterator it = listehaut.iterator();
-		Iterator it2 = listebas.iterator();
-		ArrayList<TwoPath> listeC1bas=new ArrayList<TwoPath>();
-		TwoPath tp1=null;
-		int apasser=ignore;
-		int a=0; // nb OnePath d'en haut
-		int b=0; // nb OnePath d'en bas
-		while(it2.hasNext()){
-			// 1er tour : On recupere les valeurs des elements
-			// Autre tour : CF PLUS TARD (non implementer)
+		System.out.println("LM : "+ listeTwoPath_amodifier);
+		System.out.println();
+		System.out.println("LOPM : "+listeOnePath_modele);
+		System.out.println("LOPAM : "+listeOnePath_amodifier);
+		
+		Iterator it_listeOnePath_amodifier = listeOnePath_amodifier.iterator();
+		Iterator it_listeOnePath_modele = listeOnePath_modele.iterator();
+		
+		//On cree les nouveaux OneCell a partir de données du modele et de amodifier
+		while(it_listeOnePath_amodifier.hasNext() && it_listeOnePath_modele.hasNext()){
 			
-			if(a<=b && it.hasNext()){ 
-				tp1 = (TwoPath)it.next();
-				a = tp1.targetsize();
-			}else a=a-b;
-			TwoPath tp2 = (TwoPath)it2.next();
-			b = tp2.sourcesize();
-			System.out.println("TP1 : "+tp1);
-			System.out.println("TP2 : "+tp2);
-			ArrayList<OneCell> listeoc1 = getListeOneCellTarget(tp1); 
-			ArrayList<OneCell> listeoc2 = getListeOneCellSource(tp2); 
-			ArrayList<OnePath> listeocret = new ArrayList<OnePath>();
-			Iterator itoc1 = listeoc1.iterator();
-			Iterator itoc2 = listeoc2.iterator();			
-			if(a>b){
-				//Cas : Si on a plus de OneC0 qu'il n'en faut pour l'element d'en bas				
-				int tmp=b;
-				while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-					OneCell c1 = null;
-					while(apasser!=0 && itoc1.hasNext()){
-						itoc1.next();
-						apasser--;
-					}
-					if(itoc1.hasNext()){
-						c1 = (OneCell)itoc1.next();
-						OneCell c2 = (OneCell)itoc2.next();
-						System.out.println("A>B "+a+" "+b);
-						System.out.println(c1);
-						System.out.println(c2);
-						listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));			
-						tmp--;
-						System.out.println(listeocret.get(listeocret.size()-1));
-					}
-				}
-			}else if(a<=b){
-				// CAS : Si on a pas assez de OneC0, changer de sous element dans la liste d'en haut
-				int tmp=a;
-				while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-					OneCell c1 = null;
-					while(apasser!=0 && itoc1.hasNext()){
-						itoc1.next();
-						apasser--;
-					}
-					if(itoc1.hasNext()){
-						c1 = (OneCell)itoc1.next();
-						OneCell c2 = (OneCell)itoc2.next();
-						System.out.println("A<=B "+a+" "+b);
-						System.out.println(c1);
-						System.out.println(c2);
-						listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));
-						tmp--;
-						System.out.println(listeocret.get(listeocret.size()-1));
-					}
-				}
-				while(a<b && it.hasNext()){
-					tp1 = (TwoPath)it.next();
-					System.out.println("TP1 : "+tp1);
-					tmp=b-a;
-					a += tp1.targetsize(); //ajouter la largeur du sous element
-					listeoc1 = getListeOneCellTarget(tp1);
-					itoc1 = listeoc1.iterator();
-					while(itoc1.hasNext() && itoc2.hasNext() && tmp!=0){
-						OneCell c1 = null;
-						while(apasser!=0 && itoc1.hasNext()){
-							itoc1.next();
-							apasser--;
-						}
-						if(itoc1.hasNext()){
-							c1 = (OneCell)itoc1.next();
-							OneCell c2 = (OneCell)itoc2.next();
-							System.out.println("A<=B "+a+" "+b);
-							System.out.println(c1);
-							System.out.println(c2);
-							listeocret.add(`OneCell(c2.getName(),c1.getx(),c2.gety(),c2.gethauteur(),c2.getlargeur()));
-							tmp--;
-							System.out.println(listeocret.get(listeocret.size()-1));
-						}
-					}
+			OnePath c2 = (OnePath)it_listeOnePath_modele.next();
+			if(c2 instanceof OneCell){
+			
+				OnePath c1 = (OnePath)it_listeOnePath_amodifier.next();
+				if(c1 instanceof OneCell && c2 instanceof OneCell) listeOnePath_tmp.add(`OneCell(c1.getName(),c2.getx(),c1.gety(),c1.gethauteur(),c1.getlargeur()));
+				else listeOnePath_tmp.add(`Id());
+			}
+		}
+		
+		Iterator it_listeOnePath_retour = listeOnePath_tmp.iterator();
+		
+		Iterator it_listeTwoPath_amodifier = listeTwoPath_amodifier.iterator();
+		int newx = -1;
+		
+		while(it_listeTwoPath_amodifier.hasNext()){
+			
+			TwoPath tp = (TwoPath)it_listeTwoPath_amodifier.next();
+			int nb=-1;
+			
+			int newlargeur = -1;
+			
+			
+			if(mode==0) nb=tp.sourcesize();
+			else nb=tp.targetsize();
+			
+			
+			ArrayList<OnePath> tmp = new ArrayList<OnePath>();
+			System.out.println(listeOnePath_tmp);
+			for(int i=0;i<nb;i++){
+				OnePath tmpoc = listeOnePath_tmp.get(0);
+				if(tmpoc instanceof OneCell){
+					if (i==0 && mode==0 && newx!=-1) newx=tmpoc.getx();
+					if (i==nb-1 && mode==1) newlargeur=tp.getLargeur();
+					if ((i==nb-1 && mode==0) ||( i==nb-1 && mode==1 && ((tmpoc.getx())>(newx+tp.getLargeur())))) newlargeur=tmpoc.getx()-newx+4;				
+					tmp.add(tmpoc);
+				} else tmp.add(`Id());
+				
+				listeOnePath_tmp.remove(0);
+			}
+			if(!it_listeTwoPath_amodifier.hasNext()) newlargeur=modele.getLargeur()-newx;
+			System.out.println("new : "+newx+" "+newlargeur);
+			
+			if(tp instanceof TwoCell){
+				if(mode==0){
+					if(newx!=-1) listeTwoPath_retour.add(`TwoCell(tp.getName(),genererOneC0(tmp),tp.target(),tp.getType(),tp.getID(),newx,tp.getY(),tp.getHauteur(),newlargeur));
+					else listeTwoPath_retour.add(`TwoCell(tp.getName(),genererOneC0(tmp),tp.target(),tp.getType(),tp.getID(),tp.getX(),tp.getY(),tp.getHauteur(),newlargeur));
+				}else{
+					if(newx!=-1) listeTwoPath_retour.add(`TwoCell(tp.getName(),tp.source(),genererOneC0(tmp),tp.getType(),tp.getID(),newx,tp.getY(),tp.getHauteur(),newlargeur));
+					else listeTwoPath_retour.add(`TwoCell(tp.getName(),tp.source(),genererOneC0(tmp),tp.getType(),tp.getID(),tp.getX(),tp.getY(),tp.getHauteur(),newlargeur));
 				}
 			}
-			if(tp2 instanceof TwoCell) listeC1bas.add(`TwoCell(tp2.getName(),genererOneC0(listeocret),tp2.target(),tp2.getType(),tp2.getID(),tp2.getX(),tp2.getY(),tp2.getHauteur(),tp2.getLargeur()));
-			else if (tp2 instanceof TwoId) listeC1bas.add(`TwoId(genererOneC0(listeocret)));
+			else if (tp instanceof TwoId){
+				listeTwoPath_retour.add(`TwoId(genererOneC0(tmp)));
+			}
+			if(mode==0) newx=listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getX()+newlargeur+4;	
+			else newx=listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getX()+listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getLargeur()+4;
 		}
-		System.out.println(listeC1bas);
-		TwoPath tmp=genererTwoC0(listeC1bas);
-		System.out.println("END correcteurFils");
-		return tmp;
+		TwoPath res = genererTwoC0(listeTwoPath_retour,mode);
+		System.out.println("res : "+res);
+		
+		if(mode==1){
+			res = completudemode_1(amodifier,res,0);
+		}
+		
+		System.out.println("res : "+res);
+		return res;
 	}
+	
 
 	/*
 	 * Methode David : Permet d'agrandir la hauteur de l'element cible (path) d'une taille c
@@ -615,8 +484,8 @@ public class XMLhandlerGui {
 		%match (TwoPath path){
 			TwoId(onepath) -> { liste.add(path);}
 			TwoCell(_,_,_,_,_,_,_,_,_) -> { liste.add(path); }
-			TwoC0(head,tail*) -> { liste.add(path);}
-			TwoC1(head,tail*) -> { liste.add(path);}
+			TwoC0(head,tail*) -> { liste.addAll(getListeTwoPath(`head)); liste.addAll(getListeTwoPath(`tail*));}
+			TwoC1(head,tail*) -> { liste.addAll(getListeTwoPath(`head)); liste.addAll(getListeTwoPath(`tail*));}
 		}
 		return liste;
 	}
@@ -635,13 +504,13 @@ public class XMLhandlerGui {
 	/*
 	 * Methode David : Recuperer sous forme de liste la source
 	 */
-	public static ArrayList<OneCell> getListeOneCellSource(TwoPath path){
-		ArrayList<OneCell> liste = new ArrayList<OneCell>();
+	public static ArrayList<OnePath> getListeOnePathSource(TwoPath path){
+		ArrayList<OnePath> liste = new ArrayList<OnePath>();
 		%match (TwoPath path){
-			TwoId(onepath) -> { liste.addAll(getListeOneCell(`onepath));}
-			TwoCell(_,source,_,_,_,_,_,_,_) -> { liste.addAll(getListeOneCell(`source)); }
-			TwoC0(head,tail*) -> { liste.addAll(getListeOneCellSource(`head)); liste.addAll(getListeOneCellSource(`tail*));}
-			TwoC1(head,tail*) -> { liste.addAll(getListeOneCellSource(`head));}
+			TwoId(onepath) -> { liste.addAll(getListeOnePath(`onepath));}
+			TwoCell(_,source,_,_,_,_,_,_,_) -> { liste.addAll(getListeOnePath(`source)); }
+			TwoC0(head,tail*) -> { liste.addAll(getListeOnePathSource(`head)); liste.addAll(getListeOnePathSource(`tail*));}
+			TwoC1(head,tail*) -> { liste.addAll(getListeOnePathSource(`head));}
 		}
 		return liste;
 	}
@@ -649,13 +518,13 @@ public class XMLhandlerGui {
 	/*
 	 * Methode David : Recuperer sous forme de liste le target
 	 */
-	public static ArrayList<OneCell> getListeOneCellTarget(TwoPath path){
-		ArrayList<OneCell> liste = new ArrayList<OneCell>();
+	public static ArrayList<OnePath> getListeOnePathTarget(TwoPath path){
+		ArrayList<OnePath> liste = new ArrayList<OnePath>();
 		%match (TwoPath path){
-			TwoId(onepath) -> { liste.addAll(getListeOneCell(`onepath));}
-			TwoCell(_,_,target,_,_,_,_,_,_) -> { liste.addAll(getListeOneCell(`target)); }
-			TwoC0(head,tail*) -> { liste.addAll(getListeOneCellTarget(`head)); liste.addAll(getListeOneCellTarget(`tail*));}
-			TwoC1(head*,tail) -> { liste.addAll(getListeOneCellTarget(`tail));}
+			TwoId(onepath) -> { liste.addAll(getListeOnePath(`onepath));}
+			TwoCell(_,_,target,_,_,_,_,_,_) -> { liste.addAll(getListeOnePath(`target)); }
+			TwoC0(head,tail*) -> { liste.addAll(getListeOnePathTarget(`head)); liste.addAll(getListeOnePathTarget(`tail*));}
+			TwoC1(head*,tail) -> { liste.addAll(getListeOnePathTarget(`tail));}
 		}
 		return liste;
 	}
@@ -663,12 +532,12 @@ public class XMLhandlerGui {
 	/*
 	 * Methode David : Recuperer sous forme de liste les OneCell
 	 */
-	public static ArrayList<OneCell> getListeOneCell(OnePath path){
-		ArrayList<OneCell> liste = new ArrayList<OneCell>();
+	public static ArrayList<OnePath> getListeOnePath(OnePath path){
+		ArrayList<OnePath> liste = new ArrayList<OnePath>();
 		%match (OnePath path){
-			Id() -> {;}
+			Id() -> {liste.add(path);}
 			OneCell(_,_,_,_,_) -> { liste.add((OneCell)path); }
-		 	OneC0 (head,tail*) -> {liste.addAll(getListeOneCell(`head)); liste.addAll(getListeOneCell(`tail*));}
+		 	OneC0 (head,tail*) -> {liste.addAll(getListeOnePath(`head)); liste.addAll(getListeOnePath(`tail*));}
 		}
 		return liste;
 	}
@@ -683,9 +552,39 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
+	public static TwoPath RepartitionFilsTwoPathBas(TwoPath path){
+		%match (TwoPath path){
+			TwoId(onepath) -> { return(path);}
+			TwoCell(_,_,_,_,_,_,_,_,_) -> { return RepartitionFilsTwoCellBas((TwoCell)path); }
+			TwoC0(head,tail*) -> { return `TwoC0(RepartitionFilsTwoPathBas(head),RepartitionFilsTwoPathBas(tail*)) ;}
+			TwoC1(head,tail*) -> { return `TwoC1(RepartitionFilsTwoPathBas(head),RepartitionFilsTwoPathBas(tail*)) ;}
+		}
+		return path;
+	}
+	
+	public static TwoCell RepartitionFilsTwoCellBas(TwoCell path){
+		ArrayList<OnePath> listebas = getListeOnePathTarget(path);
+		Iterator it2 = listebas.iterator();
+		ArrayList<OnePath> target=new ArrayList<OnePath>();
+		int tsize = path.targetsize()+1;
+		int i=1;
+		int j=1;
+		while(it2.hasNext()){
+			int espacebas = path.getlargeur()/tsize;
+			OnePath oc = (OnePath)it2.next();
+			int tmp = j*espacebas; //Calcul ici parce que tom utilise * pour autre chose
+			if(oc instanceof OneCell) target.add(`OneCell(oc.getName(),path.getx()+tmp,path.gety()+path.getHauteur()-oc.getHauteur(),oc.gethauteur(),oc.getlargeur()));
+			else target.add(`Id());
+			j++;
+		}
+		TwoPath res = `TwoCell(path.getName(),path.source(),genererOneC0(target),path.getType(),path.getID(),path.getx(),path.gety(),path.gethauteur(),path.getlargeur());
+		return (TwoCell)res;
+	}
+	
+	
 	public static TwoCell RepartitionFilsTwoCell(TwoCell path){
-		ArrayList<OneCell> listehaut = getListeOneCellSource(path);
-		ArrayList<OneCell> listebas = getListeOneCellTarget(path);
+		ArrayList<OnePath> listehaut = getListeOnePathSource(path);
+		ArrayList<OnePath> listebas = getListeOnePathTarget(path);
 		Iterator it = listehaut.iterator();
 		Iterator it2 = listebas.iterator();
 		ArrayList<OnePath> source=new ArrayList<OnePath>();
@@ -696,16 +595,18 @@ public class XMLhandlerGui {
 		int j=1;
 		while(it.hasNext()){
 			int espacehaut = path.getlargeur()/ssize;
-			OneCell oc = (OneCell)it.next();
+			OnePath oc = (OnePath)it.next();
 			int tmp = i*espacehaut; //Calcul ici parce que tom utilise * pour autre chose
-			source.add(`OneCell(oc.getName(),path.getx()+tmp,path.gety(),oc.gethauteur(),oc.getlargeur()));
+			if(oc instanceof OneCell) source.add(`OneCell(oc.getName(),path.getx()+tmp,path.gety(),oc.gethauteur(),oc.getlargeur()));
+			else source.add(`Id());
 			i++;
 		}
 		while(it2.hasNext()){
 			int espacebas = path.getlargeur()/tsize;
-			OneCell oc = (OneCell)it2.next();
+			OnePath oc = (OnePath)it2.next();
 			int tmp = j*espacebas; //Calcul ici parce que tom utilise * pour autre chose
-			target.add(`OneCell(oc.getName(),path.getx()+tmp,path.gety()+path.getHauteur()-20,oc.gethauteur(),oc.getlargeur()));
+			if(oc instanceof OneCell) target.add(`OneCell(oc.getName(),path.getx()+tmp,path.gety()+path.getHauteur()-oc.getHauteur(),oc.gethauteur(),oc.getlargeur()));
+			else target.add(`Id());
 			j++;
 		}
 		TwoPath res = `TwoCell(path.getName(),genererOneC0(source),genererOneC0(target),path.getType(),path.getID(),path.getx(),path.gety(),path.gethauteur(),path.getlargeur());
@@ -723,11 +624,22 @@ public class XMLhandlerGui {
 		System.out.println("Taille haut : "+taillehaut);
 		System.out.println("Taille bas : "+taillebas);
 		if(taillehaut>=taillebas){
-			bas = setLargeur(bas,taillehaut,haut);
+			%match (TwoPath bas){
+				TwoC1(head,tail*) -> {
+					ArrayList<TwoPath> listeniveau = niveauC1(bas);
+					Iterator it = listeniveau.iterator();
+					TwoPath tptmp1 = haut;
+					while(it.hasNext()){
+						TwoPath tptmp2 = (TwoPath)it.next();
+						tptmp1 = `TwoC1(tptmp1,decalageY(gestionC1(tptmp2,tptmp1,0),haut.getHauteur()));
+						tptmp1 = RepartitionFilsTwoPathBas(tptmp1);
+					}
+					return tptmp1;
+				}
+			}
+			bas=gestionC1(bas, haut, 0);
 		}else{
-			haut= setLargeur(haut,taillebas,bas);
-			haut = RepartitionFilsTwoPath(haut);
-			bas = correcteurFils(bas, haut,0); //les fils du haut ayant changer de place, il faut faire suivre ceux des cellules du bas
+			haut=gestionC1(haut,bas,1);
 		}
 		bas=decalageY(bas,haut.getHauteur());
 		return `TwoC1(haut,bas);
@@ -755,7 +667,7 @@ public class XMLhandlerGui {
 			gauche=allongerFils(gauche,droite.getHauteur()-gauche.getHauteur());
 		}
 		droite = decalageX(droite,gauche.getLargeur()+4);
-		System.out.println("gestionOneC02 : "+gauche+" "+droite);
+		System.out.println("gestionOneC0 : "+gauche+" "+droite);
 		return `OneC0(gauche,droite);
 	}
 	
@@ -765,14 +677,14 @@ public class XMLhandlerGui {
 	 * Methode David : Permet de generer depuis une liste un TwoC0 
 	 * Dans le but d'être compatible avec une construction classique de TwoPath
 	 */
-	public static TwoPath genererTwoC0(ArrayList<TwoPath> array){
+	public static TwoPath genererTwoC0(ArrayList<TwoPath> array,int mode){
 		if(array.size()==1) return array.get(0);
 		else {
 			TwoPath first = array.get(0);
 			array.remove(0);
-			TwoPath last = genererTwoC0(array);
-			if(last instanceof TwoCell) last=`TwoCell(last.getName(),last.source(),decalageX(last.target(),first.getLargeur()+4),last.getType(),last.getID(),first.getLargeur()+4,last.gety(),last.gethauteur(),last.getlargeur());
-			else last=`TwoId(decalageX(last.source(),first.getLargeur()+4));
+			TwoPath last = genererTwoC0(array,mode);
+			//if(last instanceof TwoCell) last=`TwoCell(last.getName(),last.source(),last.target(),last.getType(),last.getID(),first.getX()+first.getLargeur()+4,last.gety(),last.gethauteur(),last.getlargeur());					
+			//else if(last instanceof TwoId) last=`TwoId(last.source()); //decalageX(last.source(),last.source().getX()-first.getLargeur()+4)
 			return `TwoC0(first,last);
 		}
 	}
