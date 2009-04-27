@@ -428,27 +428,27 @@ public class U {
         return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
       }
       // right rules
-      orR(OrRPrem1(_,_,_,_,M),cn) -> {
+      orR(OrRPrem1(_,_,_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
-      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),cn) -> {
+      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),_) -> {
         NameList M1names = `getFreeNames(c,M1);
         NameList M2names = `getFreeNames(c,M2);
         return (nameList) `nameList(M1names*,M2names*); 
       }
-      implyR(ImplyRPrem1(x,_,_,_,M),cn) -> {
+      implyR(ImplyRPrem1(x,_,_,_,M),_) -> {
         return `getFreeNames(nameList(x,c*),M);
       }
-      existsR(ExistsRPrem1(_,_,M),_,cn) -> {
+      existsR(ExistsRPrem1(_,_,M),_,_) -> {
         return `getFreeNames(c,M);
       }
-      forallR(ForallRPrem1(_,_,_,M),cn) -> {
+      forallR(ForallRPrem1(_,_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
       rootR(RootRPrem1(_,_,M)) -> {
         return `getFreeNames(c,M);
       }
-      foldR(_,FoldRPrem1(_,_,M),cn) -> {
+      foldR(_,FoldRPrem1(_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
     }
@@ -479,29 +479,29 @@ public class U {
         return (conameList) `conameList(M1conames*,M2conames*); 
       }
       // left rules
-      andL(AndLPrem1(_,_,_,_,M),n) -> {
+      andL(AndLPrem1(_,_,_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
-      orL(OrLPrem1(_,_,M1),OrLPrem2(_,_,M2),n) -> {
+      orL(OrLPrem1(_,_,M1),OrLPrem2(_,_,M2),_) -> {
         CoNameList M1conames = `getFreeCoNames(c,M1);
         CoNameList M2conames = `getFreeCoNames(c,M2);
         return (conameList) `conameList(M1conames*,M2conames*); 
       }
-      implyL(ImplyLPrem1(_,_,M1),ImplyLPrem2(a,_,M2),n) -> {
+      implyL(ImplyLPrem1(_,_,M1),ImplyLPrem2(a,_,M2),_) -> {
         CoNameList M1names = `getFreeCoNames(c,M1);
         CoNameList M2names = `getFreeCoNames(conameList(a,c*),M2);
         return (conameList) `conameList(M1names*,M2names*); 
       }
-      forallL(ForallLPrem1(_,_,M),_,n) -> {
+      forallL(ForallLPrem1(_,_,M),_,_) -> {
         return `getFreeCoNames(c,M);
       }
-      existsL(ExistsLPrem1(_,_,_,M),n) -> {
+      existsL(ExistsLPrem1(_,_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
       rootL(RootLPrem1(_,_,M)) -> {
         return `getFreeCoNames(c,M);
       }
-      foldL(_,FoldLPrem1(_,_,M),n) -> {
+      foldL(_,FoldLPrem1(_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
       // right rules
@@ -552,19 +552,19 @@ public class U {
   public static boolean isImplicitContraction(ProofTerm pt) {
     %match (pt) {
       // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> { return `nameAppears(M,n); }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(a,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
-      forallL(ForallLPrem1(x,_,M),_,n) -> { return `nameAppears(M,n); }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> { return `nameAppears(M,n); }
-      foldL(_,FoldLPrem1(x,_,M),n) -> { return `nameAppears(M,n); }
+      andL(AndLPrem1(_,_,_,_,M),n) -> { return `nameAppears(M,n); }
+      orL(OrLPrem1(_,_,M1),OrLPrem2(_,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
+      implyL(ImplyLPrem1(_,_,M1),ImplyLPrem2(_,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
+      forallL(ForallLPrem1(_,_,M),_,n) -> { return `nameAppears(M,n); }
+      existsL(ExistsLPrem1(_,_,_,M),n) -> { return `nameAppears(M,n); }
+      foldL(_,FoldLPrem1(_,_,M),n) -> { return `nameAppears(M,n); }
       // right rules
-      orR(OrRPrem1(a,_,b,_,M),cn) -> { return `conameAppears(M,cn); }
-      andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> { return `conameAppears(M1,cn) || `conameAppears(M2,cn); }
-      implyR(ImplyRPrem1(x,_,a,_,M),cn) -> { return `conameAppears(M,cn); }
-      existsR(ExistsRPrem1(a,_,M),_,cn) -> { return `conameAppears(M,cn); }
-      forallR(ForallRPrem1(a,_,_,M),cn) -> { return `conameAppears(M,cn); }
-      foldR(_,FoldRPrem1(a,_,M),cn) -> { return `conameAppears(M,cn); }
+      orR(OrRPrem1(_,_,_,_,M),cn) -> { return `conameAppears(M,cn); }
+      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),cn) -> { return `conameAppears(M1,cn) || `conameAppears(M2,cn); }
+      implyR(ImplyRPrem1(_,_,_,_,M),cn) -> { return `conameAppears(M,cn); }
+      existsR(ExistsRPrem1(_,_,M),_,cn) -> { return `conameAppears(M,cn); }
+      forallR(ForallRPrem1(_,_,_,M),cn) -> { return `conameAppears(M,cn); }
+      foldR(_,FoldRPrem1(_,_,M),cn) -> { return `conameAppears(M,cn); }
     }
     return false;
   }
@@ -658,15 +658,15 @@ public class U {
   private static conameList getFreeCoNames(conameList ctx, LTerm pt) {
     %match(pt) {
       (lvar|unit)[] -> { return (conameList) `conameList(); }
-      lam(Lam(y,py,u)) -> { return `getFreeCoNames(ctx,u); }
-      flam(FLam(fx,u)) -> { return `getFreeCoNames(ctx,u); }
-      activ(Act(c,pc,u)) -> { return `getFreeCoNames(conameList(c,ctx*),u); }
+      lam(Lam(_,_,u)) -> { return `getFreeCoNames(ctx,u); }
+      flam(FLam(_,u)) -> { return `getFreeCoNames(ctx,u); }
+      activ(Act(c,_,u)) -> { return `getFreeCoNames(conameList(c,ctx*),u); }
       lapp(u,v) -> {
         conameList ucn = `getFreeCoNames(ctx,u); 
         conameList vcn = `getFreeCoNames(ctx,v); 
         return (conameList) `conameList(ucn*,vcn*); 
       }
-      fapp(u,ft) -> { return `getFreeCoNames(ctx,u); }
+      fapp(u,_) -> { return `getFreeCoNames(ctx,u); }
       pair(u,v) -> { 
         conameList ucn = `getFreeCoNames(ctx,u); 
         conameList vcn = `getFreeCoNames(ctx,v); 
@@ -674,16 +674,16 @@ public class U {
       }
       proj1(u) -> { return `getFreeCoNames(ctx,u); }
       proj2(u) -> { return `getFreeCoNames(ctx,u); }
-      caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
+      caseof(u,Alt(_,_,v),Alt(_,_,w)) -> { 
         conameList ucn = `getFreeCoNames(ctx,u); 
         conameList vcn = `getFreeCoNames(ctx,v); 
         conameList wcn = `getFreeCoNames(ctx,w); 
         return (conameList) `conameList(ucn*,vcn*,wcn*); 
       }
-      left(u,p) -> { return `getFreeCoNames(ctx,u); }
-      right(u,p) -> { return `getFreeCoNames(ctx,u); }
-      witness(ft,u,p) -> { return `getFreeCoNames(ctx,u); }
-      letin(Letin(fx,x,px,u,v)) -> {
+      left(u,_) -> { return `getFreeCoNames(ctx,u); }
+      right(u,_) -> { return `getFreeCoNames(ctx,u); }
+      witness(_,u,_) -> { return `getFreeCoNames(ctx,u); }
+      letin(Letin(_,_,_,u,v)) -> {
         conameList ucn = `getFreeCoNames(ctx,u); 
         conameList vcn = `getFreeCoNames(ctx,v); 
         return (conameList) `conameList(ucn*,vcn*);

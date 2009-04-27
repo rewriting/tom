@@ -12,13 +12,13 @@ public class LambdaMu {
 
   %strategy Red() extends Fail() {
     visit LTerm {
-      lapp(lam(Lam(x,px,M)),N) -> { return U.`substName(M,x,N); }
-      lapp(activ(Act(a,implies(pa,pb),M)),N) -> { return `activ(Act(a,pb,structSubst(M,a,N))); }
+      lapp(lam(Lam(x,_,M)),N) -> { return U.`substName(M,x,N); }
+      lapp(activ(Act(a,implies(_,pb),M)),N) -> { return `activ(Act(a,pb,structSubst(M,a,N))); }
       fapp(flam(FLam(fx,M)),ft) -> { return U.`substFoVar(M,fx,ft); }
-      proj1(pair(t,u)) -> { return `t; }
-      proj2(pair(t,u)) -> { return `u; }
-      caseof(left(M,pb),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(N,x,M); }
-      caseof(right(M,pa),Alt(x,px,N),Alt(y,py,Q)) -> { return U.`substName(Q,y,M); }
+      proj1(pair(t,_)) -> { return `t; }
+      proj2(pair(_,u)) -> { return `u; }
+      caseof(left(M,_),Alt(x,_,N),Alt(_,_,_)) -> { return U.`substName(N,x,M); }
+      caseof(right(M,_),Alt(_,_,_),Alt(y,_,Q)) -> { return U.`substName(Q,y,M); }
       activ(Act(a,pa,passiv(b,activ(Act(c,_,M))))) -> { return `activ(Act(a,pa,U.reconame(M,c,b))); }
     }
   }
@@ -46,7 +46,7 @@ public class LambdaMu {
 
   %strategy MuEta() extends Fail() {
     visit LTerm {
-      activ(Act(a,pa,passiv(a,M))) -> { if (!U.`freeIn(a,M)) return `M; }
+      activ(Act(a,_,passiv(a,M))) -> { if (!U.`freeIn(a,M)) return `M; }
     }
   }
 

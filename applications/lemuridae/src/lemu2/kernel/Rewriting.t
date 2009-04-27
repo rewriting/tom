@@ -187,7 +187,7 @@ public class Rewriting {
    **/
   public static PropRewriteRule rewrites(Prop p, PropRewriteRules rs) {
     %match(rs) {
-      proprrules(_*,r@proprrule(_,prule(_,lhs,rhs)),_*) -> {
+      proprrules(_*,r@proprrule(_,prule(_,lhs,_)),_*) -> {
         FoSubst s = `match(p,lhs);
         if(s!=null) return `r;
       }

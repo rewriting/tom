@@ -46,7 +46,7 @@ public class LKFTypeChecker {
             falseL(n) -> { 
               return U.`alpha(U.lookup(gamma,n),bottom(),free);
             }
-            andL(AndLPrem1(x,px,y,py,M),n) -> {
+            andL(AndLPrem1(_,px,_,py,_),n) -> {
               return U.`alpha(U.lookup(gamma,n),and(px,py),free);
             }
             orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {

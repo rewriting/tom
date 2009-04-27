@@ -253,29 +253,29 @@ public class Urban {
                 `substName(M2,x,a,px,M1)));
       }
       // axiom cuts -- non determinism 
-      cut(CutPrem1(a,pa,M),CutPrem2(x,px,ax(x,b))) -> {
+      cut(CutPrem1(a,_,M),CutPrem2(x,_,ax(x,b))) -> {
         if (U.`freshlyIntroducedCoName(M,a)) 
           c.add(subst(getPosition(),last,
                 U.`reconame(M,a,b)));
       }
-      cut(CutPrem1(a,pa,ax(y,a)),CutPrem2(x,px,M)) -> {
+      cut(CutPrem1(a,_,ax(y,a)),CutPrem2(x,_,M)) -> {
         if (U.`freshlyIntroducedName(M,x)) 
           c.add(subst(getPosition(),last,
                 U.`rename(M,x,y)));
       }
       // top and bottom cuts
-      cut(CutPrem1(a,pa,trueR(a)),CutPrem2(x,px,M)) -> {
+      cut(CutPrem1(a,_,trueR(a)),CutPrem2(x,_,M)) -> {
         if (U.`freshlyIntroducedName(M,x))
           c.add(subst(getPosition(),last,`M));
       }
-      cut(CutPrem1(a,pa,M),CutPrem2(x,px,falseL(x))) -> {
+      cut(CutPrem1(a,_,M),CutPrem2(x,_,falseL(x))) -> {
         if (U.`freshlyIntroducedCoName(M,a))
           c.add(subst(getPosition(),last,`M));
       }
       // => cut -- non determinism
       cut(
-          CutPrem1(b,pb,p1@implyR(ImplyRPrem1(x,px,a,pa,M),b)),
-          CutPrem2(z,pz,p2@implyL(ImplyLPrem1(y,py,P),ImplyLPrem2(c,pc,N),z))) -> {
+          CutPrem1(b,_,p1@implyR(ImplyRPrem1(x,px,a,pa,M),b)),
+          CutPrem2(z,_,p2@implyL(ImplyLPrem1(y,py,P),ImplyLPrem2(c,pc,N),z))) -> {
         if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,z)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,pa,cut(CutPrem1(c,pc,N),CutPrem2(x,px,M))),CutPrem2(y,py,P))));
@@ -285,8 +285,8 @@ public class Urban {
       }
       // /\ cut -- non determinism
       cut(
-          CutPrem1(a,pa,p1@andR(AndRPrem1(b,pb,M1),AndRPrem2(c,pc,M2),a)),
-          CutPrem2(x,px,p2@andL(AndLPrem1(y,py,z,pz,N),x))) -> {
+          CutPrem1(a,_,p1@andR(AndRPrem1(b,pb,M1),AndRPrem2(c,pc,M2),a)),
+          CutPrem2(x,_,p2@andL(AndLPrem1(y,py,z,pz,N),x))) -> {
         if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,M1),CutPrem2(y,py,cut(CutPrem1(c,pc,M2),CutPrem2(z,pz,N))))));
@@ -296,8 +296,8 @@ public class Urban {
       }
       // \/ cut -- non determinism
       cut(
-          CutPrem1(a,pa,p1@orR(OrRPrem1(b,pb,c,pc,M),a)),
-          CutPrem2(x,px,p2@orL(OrLPrem1(y,py,N1),OrLPrem2(z,pz,N2),x))) -> {
+          CutPrem1(a,_,p1@orR(OrRPrem1(b,pb,c,pc,M),a)),
+          CutPrem2(x,_,p2@orL(OrLPrem1(y,py,N1),OrLPrem2(z,pz,N2),x))) -> {
         if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,cut(CutPrem1(c,pc,M),CutPrem2(z,pz,N2))),CutPrem2(y,py,N1))));
@@ -307,16 +307,16 @@ public class Urban {
       }
       // first-order cuts
       cut(
-          CutPrem1(b,pb,p1@existsR(ExistsRPrem1(a,pa,M),t,b)),
-          CutPrem2(y,py,p2@existsL(ExistsLPrem1(x,px,fx,N),y))) -> {
+          CutPrem1(b,_,p1@existsR(ExistsRPrem1(a,pa,M),t,b)),
+          CutPrem2(y,_,p2@existsL(ExistsLPrem1(x,px,fx,N),y))) -> {
         if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y))
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,pa,M),CutPrem2(x,U.substFoVar(px,fx,t),U.substFoVar(N,fx,t)))));
 
       }
       cut(
-          CutPrem1(b,pb,p1@forallR(ForallRPrem1(a,pa,fx,M),b)),
-          CutPrem2(y,py,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
+          CutPrem1(b,_,p1@forallR(ForallRPrem1(a,pa,fx,M),b)),
+          CutPrem2(y,_,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
         if (U.`freshlyIntroducedCoName(p1,b) && U.`freshlyIntroducedName(p2,y)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,U.substFoVar(pa,fx,t),U.substFoVar(M,fx,t)),CutPrem2(x,px,N))));
@@ -324,8 +324,8 @@ public class Urban {
       }
       // fold cuts
       cut(
-          CutPrem1(a,pa,p1@foldR(id,FoldRPrem1(b,pb,M),a)),
-          CutPrem2(x,px,p2@foldL(id,FoldLPrem1(y,py,N),x))) -> {
+          CutPrem1(a,_,p1@foldR(id,FoldRPrem1(b,pb,M),a)),
+          CutPrem2(x,_,p2@foldL(id,FoldLPrem1(y,py,N),x))) -> {
         if (U.`freshlyIntroducedCoName(p1,a) && U.`freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(b,pb,M),CutPrem2(y,py,N))));

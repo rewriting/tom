@@ -21,29 +21,29 @@ public class Latex {
         return (RawconameList) `RawconameList(M1conames*,M2conames*); 
       }
       // left rules
-      RawandL(RawAndLPrem1(_,_,_,_,M),n) -> {
+      RawandL(RawAndLPrem1(_,_,_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
-      RaworL(RawOrLPrem1(_,_,M1),RawOrLPrem2(_,_,M2),n) -> {
+      RaworL(RawOrLPrem1(_,_,M1),RawOrLPrem2(_,_,M2),_) -> {
         RawconameList M1conames = `getFreeCoNames(c,M1);
         RawconameList M2conames = `getFreeCoNames(c,M2);
         return (RawconameList) `RawconameList(M1conames*,M2conames*); 
       }
-      RawimplyL(RawImplyLPrem1(_,_,M1),RawImplyLPrem2(a,_,M2),n) -> {
+      RawimplyL(RawImplyLPrem1(_,_,M1),RawImplyLPrem2(a,_,M2),_) -> {
         RawconameList M1names = `getFreeCoNames(c,M1);
         RawconameList M2names = `getFreeCoNames(RawconameList(a,c*),M2);
         return (RawconameList) `RawconameList(M1names*,M2names*); 
       }
-      RawforallL(RawForallLPrem1(_,_,M),_,n) -> {
+      RawforallL(RawForallLPrem1(_,_,M),_,_) -> {
         return `getFreeCoNames(c,M);
       }
-      RawexistsL(RawExistsLPrem1(_,_,_,M),n) -> {
+      RawexistsL(RawExistsLPrem1(_,_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
       RawrootL(RawRootLPrem1(_,_,M)) -> {
         return `getFreeCoNames(c,M);
       }
-      RawfoldL(_,RawFoldLPrem1(_,_,M),n) -> {
+      RawfoldL(_,RawFoldLPrem1(_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }
       // right rules
@@ -123,30 +123,30 @@ public class Latex {
         return (RawnameList) (c.contains(`n) ? Mnames : `RawnameList(n,Mnames*)); 
       }
       // right rules
-      RaworR(RawOrRPrem1(_,_,_,_,M),cn) -> {
+      RaworR(RawOrRPrem1(_,_,_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
-      RawandR(RawAndRPrem1(_,_,M1),RawAndRPrem2(_,_,M2),cn) -> {
+      RawandR(RawAndRPrem1(_,_,M1),RawAndRPrem2(_,_,M2),_) -> {
         RawnameList M1names = `getFreeNames(c,M1);
         RawnameList M2names = `getFreeNames(c,M2);
         return (RawnameList) `RawnameList(M1names*,M2names*); 
       }
-      RawimplyR(RawImplyRPrem1(x,_,_,_,M),cn) -> {
+      RawimplyR(RawImplyRPrem1(x,_,_,_,M),_) -> {
         return `getFreeNames(RawnameList(x,c*),M);
       }
-      RawexistsR(RawExistsRPrem1(_,_,M),_,cn) -> {
+      RawexistsR(RawExistsRPrem1(_,_,M),_,_) -> {
         return `getFreeNames(c,M);
       }
-      RawforallR(RawForallRPrem1(_,_,_,M),cn) -> {
+      RawforallR(RawForallRPrem1(_,_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
       RawrootR(RawRootRPrem1(_,_,M)) -> {
         return `getFreeNames(c,M);
       }
-      RawfoldR(_,RawFoldRPrem1(_,_,M),cn) -> {
+      RawfoldR(_,RawFoldRPrem1(_,_,M),_) -> {
         return `getFreeNames(c,M);
       }
-      RawtrueR(cn) -> {
+      RawtrueR(_) -> {
         return c; 
       }
     }
@@ -308,13 +308,13 @@ public class Latex {
 						se2 = `clean(M2,se2);
 						return %[\infer[cut]{@`toTex(se)@}{@`toTex(M1,se1)@ & @`toTex(M2,se2)@}]%;
 					}
-					RawimplyR(RawImplyRPrem1(x,px,a,pa,M),cn) -> { 
+					RawimplyR(RawImplyRPrem1(x,px,a,pa,M),_) -> { 
 						RawSequent se1 = 
 							`Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px)),Rawrctx(delta*,Rawcnprop(a,pa)));
 						se1 = `clean(M,se1);
 						return %[\infer[\Rightarrow_R]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RawimplyL(RawImplyLPrem1(x,px,M1),RawImplyLPrem2(a,pa,M2),n) -> {
+					RawimplyL(RawImplyLPrem1(x,px,M1),RawImplyLPrem2(a,pa,M2),_) -> {
 						RawSequent se1 = `Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px)),delta);
 						se1 = `clean(M1,se1);
 						RawSequent se2 = `Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(a,pa)));
@@ -322,7 +322,7 @@ public class Latex {
 						return 
 							%[\infer[\Rightarrow_L]{@`toTex(se)@}{@`toTex(M1,se1)@ & @`toTex(M2,se2)@}]%;
 					}
-					RawandR(RawAndRPrem1(a,pa,M1),RawAndRPrem2(b,pb,M2),cn) -> {
+					RawandR(RawAndRPrem1(a,pa,M1),RawAndRPrem2(b,pb,M2),_) -> {
 						RawSequent se1 = `Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(a,pa)));
 						se1 = `clean(M1,se1);
 						RawSequent se2 = `Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(b,pb)));
@@ -330,18 +330,18 @@ public class Latex {
 						return 
 							%[\infer[\land_R]{@`toTex(se)@}{@`toTex(M1,se1)@ & @`toTex(M2,se2)@}]%;
 					}
-					RawandL(RawAndLPrem1(x,px,y,py,M),n) -> {
+					RawandL(RawAndLPrem1(x,px,y,py,M),_) -> {
 						RawSequent se1 = `Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px),Rawnprop(y,py)),delta);
 						se1 = `clean(M,se1);
 						return %[\infer[\land_L]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RaworR(RawOrRPrem1(a,pa,b,pb,M),n) -> {
+					RaworR(RawOrRPrem1(a,pa,b,pb,M),_) -> {
 						RawSequent se1 = 
 							`Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(a,pa),Rawcnprop(b,pb)));
 						se1 = `clean(M,se1);
 						return %[\infer[\lor_R]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RaworL(RawOrLPrem1(x,px,M1),RawOrLPrem2(y,py,M2),cn) -> {
+					RaworL(RawOrLPrem1(x,px,M1),RawOrLPrem2(y,py,M2),_) -> {
 						RawSequent se1 = `Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px)),delta);
 						se1 = `clean(M1,se1);
 						RawSequent se2 = `Rawseq(free,Rawlctx(gamma*,Rawnprop(y,py)),delta);
@@ -349,35 +349,35 @@ public class Latex {
 						return 
 							%[\infer[\lor_L]{@`toTex(se)@}{@`toTex(M1,se1)@ & @`toTex(M2,se2)@}]%;
 					}
-					RawexistsR(RawExistsRPrem1(a,pa,M),t,cn) -> {
+					RawexistsR(RawExistsRPrem1(a,pa,M),_,_) -> {
 						RawSequent se1 = `Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(a,pa)));
 						se1 = `clean(M,se1);
 						return %[\infer[\exists_R]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RawexistsL(RawExistsLPrem1(x,px,fx,M),n) -> {
+					RawexistsL(RawExistsLPrem1(x,px,fx,M),_) -> {
 						RawSequent se1 = 
 							`Rawseq(RawfovarList(fx,free*),Rawlctx(gamma*,Rawnprop(x,px)),delta);
 						se1 = `clean(M,se1);
 						return %[\infer[\exists_L]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RawforallR(RawForallRPrem1(a,pa,fx,M),cn) -> {
+					RawforallR(RawForallRPrem1(a,pa,fx,M),_) -> {
 						RawSequent se1 = 
 							`Rawseq(RawfovarList(fx,free*),gamma,Rawrctx(delta*,Rawcnprop(a,pa)));
 						se1 = `clean(M,se1);
 						return %[\infer[\forall_R]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RawforallL(RawForallLPrem1(x,px,M),t,n) -> {
+					RawforallL(RawForallLPrem1(x,px,M),_,_) -> {
 						RawSequent se1 = 
 							`Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px)),delta);
 						se1 = `clean(M,se1);
 						return %[\infer[\forall_L]{@`toTex(se)@}{@`toTex(M,se1)@}]%;
 					}
-					RawfoldR(r,RawFoldRPrem1(a,pa,M),cn) -> {
+					RawfoldR(r,RawFoldRPrem1(a,pa,M),_) -> {
 						RawSequent se1 = `Rawseq(free,gamma,Rawrctx(delta*,Rawcnprop(a,pa)));
 						se1 = `clean(M,se1);
 						return %[\infer[fold_R(@`r@)]{@`toTex(se)@}{@`toTex(M,se1)@}]%;						
 					}
-					RawfoldL(r,RawFoldLPrem1(x,px,M),n) -> {
+					RawfoldL(r,RawFoldLPrem1(x,px,M),_) -> {
 						RawSequent se1 = `Rawseq(free,Rawlctx(gamma*,Rawnprop(x,px)),delta);
 						se1 = `clean(M,se1);
 						return %[\infer[fold_L(@`r@)]{@`toTex(se)@}{@`toTex(M,se1)@}]%;						

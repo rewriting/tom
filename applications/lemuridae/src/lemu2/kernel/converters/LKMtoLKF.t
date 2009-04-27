@@ -59,7 +59,7 @@ public class LKMtoLKF {
                       OrLPrem1(y,A2,prem1),
                       OrLPrem2(z,B2,prem2),x)),a);
         }
-        nprop(x,l@implies(A1,B1)), cnprop(a,r@implies(A2,B2)) -> {
+        nprop(x,r@implies(A1,B1)), cnprop(a,l@implies(A2,B2)) -> {
           Name y = Name.freshName(`x);
           Name z = Name.freshName(`x);
           CoName b = CoName.freshCoName(`a);
@@ -133,7 +133,7 @@ public class LKMtoLKF {
             ax(x,a) -> { 
               return `eta(nprop(x,U.lookup(gamma,x)),cnprop(a,U.lookup(delta,a)),prs,free); 
             }
-            cut(CutPrem1(a,A,M1),CutPrem2(x,B,M2)) -> {
+            cut(CutPrem1(a,A,M1),CutPrem2(x,_,M2)) -> {
               Sequent se1 = `seq(free,gamma,rctx(cnprop(a,A),delta*));
               ProofTerm prem1 = `convert(M1,se1,prs);
               Sequent se2 = `seq(free,lctx(nprop(x,A),gamma*),delta);
@@ -154,7 +154,7 @@ public class LKMtoLKF {
                 bottom() -> { return `falseL(n); }
               } 
             }
-            implyR(ImplyRPrem1(x,A,a,B,M),cn) -> {
+            implyR(ImplyRPrem1(x,_,a,_,M),cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
@@ -165,7 +165,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            implyL(ImplyLPrem1(x,B,M1),ImplyLPrem2(a,A,M2),n) -> {
+            implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(a,_,M2),n) -> {
               Prop P = U.`lookup(gamma,n);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
@@ -178,7 +178,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            andR(AndRPrem1(a,A,M1),AndRPrem2(b,B,M2),cn) -> {
+            andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
@@ -191,7 +191,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            andL(AndLPrem1(x,A,y,B,M),n) -> {
+            andL(AndLPrem1(x,_,y,_,M),n) -> {
               Prop P = U.`lookup(gamma,n);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
@@ -202,7 +202,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            orR(OrRPrem1(a,A,b,B,M),cn) -> {
+            orR(OrRPrem1(a,_,b,_,M),cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
@@ -213,7 +213,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            orL(OrLPrem1(x,A,M1),OrLPrem2(y,B,M2),n) -> {
+            orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> {
               Prop P = U.`lookup(gamma,n);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
@@ -226,7 +226,7 @@ public class LKMtoLKF {
                 }
               }
             }
-            forallR(ForallRPrem1(a,A,fx,M),cn) -> {
+            forallR(ForallRPrem1(a,_,fx,M),cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
@@ -237,7 +237,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            forallL(ForallLPrem1(x,A,M),ft,n) -> {
+            forallL(ForallLPrem1(x,_,M),ft,n) -> {
               Prop P = U.`lookup(gamma,n);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
@@ -248,7 +248,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            existsR(ExistsRPrem1(a,A,M),ft,cn) -> {
+            existsR(ExistsRPrem1(a,_,M),ft,cn) -> {
               Prop P = U.`lookup(delta,cn);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,cn,free,gamma,delta,prs); }
@@ -259,7 +259,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            existsL(ExistsLPrem1(x,A,fx,M),n) -> {
+            existsL(ExistsLPrem1(x,_,fx,M),n) -> {
               Prop P = U.`lookup(gamma,n);
               %match(P) {
                 relApp[] -> { return `unfold(P,pt,n,free,gamma,delta,prs); }
@@ -270,7 +270,7 @@ public class LKMtoLKF {
                 }
               } 
             }
-            foldR(id,FoldRPrem1(a,A,M),cn) -> {
+            foldR(id,FoldRPrem1(a,_,M),cn) -> {
               Prop P = U.`lookup(delta,cn);
               PropRewriteRule pr = U.`lookup(prs,id);
               Prop A1 = Rewriting.rewrite(P,pr);
@@ -282,7 +282,7 @@ public class LKMtoLKF {
                 return `unfold(P,pt,cn,free,gamma,delta,prs); 
               }
             }
-            foldL(id,FoldLPrem1(x,A,M),n) -> {
+            foldL(id,FoldLPrem1(x,_,M),n) -> {
               Prop P = U.`lookup(gamma,n);
               PropRewriteRule pr = U.`lookup(prs,id);
               Prop A1 = Rewriting.rewrite(P,pr);

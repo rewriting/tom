@@ -36,7 +36,8 @@ public class Pretty {
       caseof(u,Alt(x,px,v),Alt(y,py,w)) -> { 
         return %[(case @`pretty(u)@ of (left @`pr(x,px)@) -> @`pretty(v)@ | (right @`pr(y,py)@) -> @`pretty(w)@)]%;
       }
-      letin(Letin(fx,x,px,u,v)) -> { 
+      //letin(Letin(fx,x,px,u,v)) -> { 
+      letin(Letin(fx,x,_,u,v)) -> { 
         return %[(let <@`fx@,@`x@> = @`pretty(u)@ in @`pretty(v)@)]%;
       }
       witness(ft,u,p) -> { return %[(<@`pretty(ft)@,@`pretty(u)@>:@`pretty(p)@)]%; }
@@ -75,7 +76,8 @@ public class Pretty {
       Rawcaseof(u,RawAlt(x,px,v),RawAlt(y,py,w)) -> { 
         return %[(case @`pretty(u)@ of (left @`pr(x,px)@) -> @`pretty(v)@ | (right @`pr(y,py)@) -> @`pretty(w)@)]%;
       }
-      Rawletin(RawLetin(fx,x,px,u,v)) -> { 
+      //Rawletin(RawLetin(fx,x,px,u,v)) -> { 
+      Rawletin(RawLetin(fx,x,_,u,v)) -> { 
         return %[(let <@`fx@,@`x@> = @`pretty(u)@ in @`pretty(v)@)]%;
       }
       Rawwitness(ft,u,p) -> { return %[(<@`pretty(ft)@,@`pretty(u)@>:@`pretty(p)@)]%; }
