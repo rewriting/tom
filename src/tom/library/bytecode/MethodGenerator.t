@@ -39,61 +39,40 @@ import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class TMethodGenerator implements MethodVisitor {
-  %include { adt/bytecode/Bytecode.tom }
+public class MethodGenerator implements MethodVisitor {
+
+  %include { ../adt/bytecode/Bytecode.tom }
 
   private BytecodeReader bytecodeReader;
-  private TMethod method;
-  private TInstructionList instructions;
-  private TTryCatchBlockList tryCatchBlocks;
-  private TLocalVariableList localVariables;
+  private Method method;
+  private InstructionList instructions;
+  private TryCatchBlockList tryCatchBlocks;
+  private LocalVariableList localVariables;
 
   private static int labelCounter = 0;
-  private HashMap labelsMap = new HashMap();
+  private Map<Label, LabelNode> labelmap = new HashMap<Label, LabelNode>();
 
-  private TLabel buildTLabel(Label label) {
-    Object o = labelsMap.get(label);
-    TLabel l = null;
-    if(o == null) {
-      l = `Label(labelCounter++);
-      labelsMap.put(label, l);
-    } else
-      l = (TLabel)o;
-
-    return l;
-  }
-
-  private TLabelList buildTLabelList(Label[] labels) {
-    TLabelList labList = `LabelList();
-    if(labels != null) {
-      for(int i = labels.length - 1; i >= 0; i--) {
-        labList = `ConsLabelList(buildTLabel(labels[i]), labList);
-      }
-    }
-
-    return labList;
-  }
-
-  public TMethodGenerator (
+  public MethodGenerator (
       BytecodeReader cg,
-      TAccessList access,
+      AccessList access,
       String name,
-      TMethodDescriptor desc,
-      TSignature signature,
-      TStringList exceptions) {
+      MethodDescriptor desc,
+      Signature signature,
+      StringList exceptions) {
     bytecodeReader = cg;
-    method = `Method(MethodInfo(bytecodeReader.getTClass().getinfo().getname(), access, name, desc, signature, exceptions), EmptyCode());
+    method = `Method(MethodInfo(bytecodeReader.getAst().getinfo().getname(), access, name, desc, signature, exceptions), EmptyCode());
   }
 
-  private void appendInstruction(TInstruction ins) {
+  private void appendInstruction(Instruction ins) {
     instructions = `InstructionList(instructions*, ins);
   }
 
-  private void appendTryCatchBlock(TTryCatchBlock tcb) {
+  private void appendTryCatchBlock(TryCatchBlock tcb) {
     tryCatchBlocks = `TryCatchBlockList(tryCatchBlocks*, tcb);
   }
-  private void appendLocalVariable(TLocalVariable lv) {
+  private void appendLocalVariable(LocalVariable lv) {
     localVariables = `LocalVariableList(localVariables*, lv);
   }
 
@@ -139,19 +118,19 @@ public class TMethodGenerator implements MethodVisitor {
       String owner,
       String name,
       String desc) {
-    TInstruction ins = null;
+    Instruction ins = null;
     switch(opcode) {
       case Opcodes.GETSTATIC:
-        ins = `Getstatic(owner, name, ToolBox.buildTFieldDescriptor(desc));
+        ins = `Getstatic(owner, name, ToolBox.buildFieldDescriptor(desc));
         break;
       case Opcodes.PUTSTATIC:
-        ins = `Putstatic(owner, name, ToolBox.buildTFieldDescriptor(desc));
+        ins = `Putstatic(owner, name, ToolBox.buildFieldDescriptor(desc));
         break;
       case Opcodes.GETFIELD:
-        ins = `Getfield(owner, name, ToolBox.buildTFieldDescriptor(desc));
+        ins = `Getfield(owner, name, ToolBox.buildFieldDescriptor(desc));
         break;
       case Opcodes.PUTFIELD:
-        ins = `Putfield(owner, name, ToolBox.buildTFieldDescriptor(desc));
+        ins = `Putfield(owner, name, ToolBox.buildFieldDescriptor(desc));
         break;
       default:
         throw new RuntimeException("Unsupported OpCode :" + opcode);
@@ -165,7 +144,7 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   public void visitInsn(int opcode) {
-    TInstruction ins = null;
+    Instruction ins = null;
     switch(opcode) {
       case Opcodes.NOP:
         ins = `Nop();
@@ -496,7 +475,7 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   public void visitIntInsn(int opcode, int operand) {
-    TInstruction ins = null;
+    Instruction ins = null;
 
     switch(opcode) {
       case Opcodes.BIPUSH:
@@ -517,9 +496,9 @@ public class TMethodGenerator implements MethodVisitor {
 
 
   public void visitJumpInsn(int opcode, Label label) {
-    TInstruction ins = null;
+    Instruction ins = null;
 
-    TLabel l = buildTLabel(label);
+    LabelNode l = buildLabelNode(label);
 
     switch(opcode) {
       case Opcodes.IFEQ:
@@ -584,11 +563,11 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   public void visitLabel(Label label) {
-    appendInstruction(`Anchor(buildTLabel(label)));
+    appendInstruction(`Anchor(buildLabelNode(label)));
   }
 
   public void visitLdcInsn(Object cst) {
-    appendInstruction(`Ldc(ToolBox.buildTValue(cst)));
+    appendInstruction(`Ldc(ToolBox.buildValue(cst)));
   }
 
   public void visitLineNumber(int line, Label start) {
@@ -602,16 +581,16 @@ public class TMethodGenerator implements MethodVisitor {
       Label start,
       Label end,
       int index) {
-    appendLocalVariable(`LocalVariable(name, desc, Signature(signature), buildTLabel(start), buildTLabel(end), index));
+    appendLocalVariable(`LocalVariable(name, desc, Signature(signature), buildLabelNode(start), buildLabelNode(end), index));
   }
 
   public void visitLookupSwitchInsn(
       Label dflt,
       int[] keys,
       Label[] labels) {
-    TintList kList = `intList();
+    IntList kList = `IntList();
 
-    appendInstruction(`Lookupswitch(buildTLabel(dflt), ToolBox.buildTintList(keys), buildTLabelList(labels)));
+    appendInstruction(`Lookupswitch(buildLabelNode(dflt), ToolBox.buildIntList(keys), buildLabelNodeList(labels)));
   }
 
   public void visitMethodInsn(
@@ -619,20 +598,20 @@ public class TMethodGenerator implements MethodVisitor {
       String owner,
       String name,
       String desc) {
-    TInstruction ins = null;
+    Instruction ins = null;
 
     switch(opcode) {
       case Opcodes.INVOKEVIRTUAL:
-        ins = `Invokevirtual(owner, name, ToolBox.buildTMethodDescriptor(desc));
+        ins = `Invokevirtual(owner, name, ToolBox.buildMethodDescriptor(desc));
         break;
       case Opcodes.INVOKESPECIAL:
-        ins = `Invokespecial(owner, name, ToolBox.buildTMethodDescriptor(desc));
+        ins = `Invokespecial(owner, name, ToolBox.buildMethodDescriptor(desc));
         break;
       case Opcodes.INVOKESTATIC:
-        ins = `Invokestatic(owner, name, ToolBox.buildTMethodDescriptor(desc));
+        ins = `Invokestatic(owner, name, ToolBox.buildMethodDescriptor(desc));
         break;
       case Opcodes.INVOKEINTERFACE:
-        ins = `Invokeinterface(owner, name, ToolBox.buildTMethodDescriptor(desc));
+        ins = `Invokeinterface(owner, name, ToolBox.buildMethodDescriptor(desc));
         break;
       default:
         throw new RuntimeException("Unsupported OpCode :" + opcode);
@@ -658,7 +637,7 @@ public class TMethodGenerator implements MethodVisitor {
       int max,
       Label dflt,
       Label[] labels) {
-    appendInstruction(`Tableswitch(min, max, buildTLabel(dflt), buildTLabelList(labels)));
+    appendInstruction(`Tableswitch(min, max, buildLabelNode(dflt), buildLabelNodeList(labels)));
   }
 
   public void visitTryCatchBlock(
@@ -666,11 +645,11 @@ public class TMethodGenerator implements MethodVisitor {
       Label end,
       Label handler,
       String type) {
-    appendTryCatchBlock(`TryCatchBlock(buildTLabel(start), buildTLabel(end), CatchHandler(buildTLabel(handler), type)));
+    appendTryCatchBlock(`TryCatchBlock(buildLabelNode(start), buildLabelNode(end), CatchHandler(buildLabelNode(handler), type)));
   }
 
   public void visitTypeInsn(int opcode, String desc) {
-    TInstruction ins = null;
+    Instruction ins = null;
 
     switch(opcode) {
       case Opcodes.NEW:
@@ -693,7 +672,7 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   public void visitVarInsn(int opcode, int var) {
-    TInstruction ins = null;
+    Instruction ins = null;
 
     switch(opcode) {
       case Opcodes.ILOAD:
@@ -735,5 +714,26 @@ public class TMethodGenerator implements MethodVisitor {
 
     appendInstruction(ins);
   }
+
+  private LabelNode buildLabelNode(Label label) {
+    LabelNode l = labelmap.get(label);
+    if(l == null) {
+      l = `LabelNode(labelCounter++);
+      labelmap.put(label, l);
+    }
+    return l;
+  }
+
+  private LabelNodeList buildLabelNodeList(Label[] labels) {
+    LabelNodeList labList = `LabelNodeList();
+    if(labels != null) {
+      for(int i = labels.length - 1; i >= 0; i--) {
+        labList = `ConsLabelNodeList(buildLabelNode(labels[i]), labList);
+      }
+    }
+    return labList;
+  }
+
+
 }
 

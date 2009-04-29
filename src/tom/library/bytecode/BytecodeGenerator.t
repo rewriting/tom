@@ -40,34 +40,45 @@ import org.objectweb.asm.Label;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
-import tom.library.adt.bytecode.types.tstringlist.*;
-import tom.library.adt.bytecode.types.tlabellist.*;
-import tom.library.adt.bytecode.types.tintlist.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class BytecodeGenerator extends ToolBox implements Opcodes {
-  %include { adt/bytecode/Bytecode.tom }
+public class BytecodeGenerator extends ClassWriter implements Opcodes {
 
-  public byte[] toBytecode(TClass clazz){
+  /**
+   * <p>
+   * This class allows to directly generate from the Gom Bytecode representation
+   * the Bytecode program (object of type byte[]) 
+   * <p>
+   */       
 
-    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+  %include { ../adt/bytecode/Bytecode.tom }
 
-    %match(TClass clazz){
+  private ClassNode ast;
+
+  public BytecodeGenerator(ClassNode ast) {
+    super(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+    this.ast = ast;
+  }
+
+  public byte[] toByteArray(){
+
+    %match(ast){
 
       Class(ClassInfo(name,signature,access,superName,interfaces,innerClasses,outerClass), fields, methods) -> {
 
         // bytecode for the header
-        cw.visit(V1_1, buildAccessValue(`access), `name, buildSignature(`signature),`superName, ((StringList)`interfaces).toArray(new String[0]));
+        visit(V1_1, ToolBox.buildAccessValue(`access), `name, ToolBox.buildSignature(`signature),`superName, ((tom.library.adt.bytecode.types.stringlist.StringList)`interfaces).toArray(new String[0]));
 
 
         //bytecode for the inner classes
 
-        %match(TInnerClassInfoList innerClasses){
-          InnerClassInfoList(_*,innerClass,_*)->{
-            %match(TInnerClassInfo innerClass){
-              InnerClassInfo(innerName,innerOuterName,innerInnerName,innerAccess)->{
-                cw.visitInnerClass(`innerName,`innerOuterName,`innerInnerName,buildAccessValue(`innerAccess));
+        %match(innerClasses){
+          InnerClassInfoList(_*,innerClass,_*) -> {
+            %match(innerClass){
+              InnerClassInfo(innerName,innerOuterName,innerInnerName,innerAccess) -> {
+                visitInnerClass(`innerName,`innerOuterName,`innerInnerName,ToolBox.buildAccessValue(`innerAccess));
               }
             }
           }
@@ -75,79 +86,80 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
         //bytecode for the outer class
 
-        %match(TOuterClassInfo outerClass){
-          OuterClassInfo(outerOwner,outerName,outerDesc)->{
-            cw.visitOuterClass(`outerOwner,`outerName,buildDescriptor(`outerDesc));
+        %match(outerClass){
+          OuterClassInfo(outerOwner,outerName,outerDesc) -> {
+            visitOuterClass(`outerOwner,`outerName,ToolBox.buildDescriptor(`outerDesc));
           }
         }
 
         //bytecode for the fields 
 
-        %match(TFieldList fields){
+        %match(fields){
 
-          FieldList(_*,field,_*) ->{
+          FieldList(_*,field,_*) -> {
 
-            %match(TField field){
-             Field(fieldAccess,fieldName, fieldDesc, fieldSignature, fieldValue)->{
-               FieldVisitor fw = cw.visitField(buildAccessValue(`fieldAccess),`fieldName,buildDescriptor(`fieldDesc),buildSignature(`fieldSignature),buildConstant(`fieldValue));
-               // we do not visit the annotations and attributes
-               fw.visitEnd(); 
-             }
+            %match(field){
+              Field(fieldAccess,fieldName, fieldDesc, fieldSignature, fieldValue) -> {
+                FieldVisitor fw = visitField(ToolBox.buildAccessValue(`fieldAccess),`fieldName,ToolBox.buildDescriptor(`fieldDesc),ToolBox.buildSignature(`fieldSignature),ToolBox.buildConstant(`fieldValue));
+                // we do not visit the annotations and attributes
+                fw.visitEnd(); 
+              }
             }
           }
         }
+    
         //bytecode for the methods
 
-        MethodVisitor mw;
-        %match(TMethodList methods){
-          MethodList(_*,method,_*) ->{
-            %match(TMethod method){
+        %match(methods){
+          MethodList(_*,method,_*) -> {
+            MethodVisitor methodVisitor;
+            %match(method){
               Method(MethodInfo(_,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) -> {
-                mw = cw.visitMethod(buildAccessValue(`methAccess),
+                methodVisitor = visitMethod(ToolBox.buildAccessValue(`methAccess),
                     `methName,
-                    buildDescriptor(`desc),
-                    buildSignature(`methSignature),
-                    ((StringList)`exceptions).toArray(new String[0]));
+                    ToolBox.buildDescriptor(`desc),
+                    ToolBox.buildSignature(`methSignature),
+                    ((tom.library.adt.bytecode.types.stringlist.StringList)`exceptions).toArray(new String[0]));
 
-                mw.visitCode();
+                methodVisitor.visitCode();
 
-                HashMap labelMap = new HashMap();
+                Map<LabelNode,Label> labelmap = new HashMap<LabelNode,Label>();
                 //bytecode for the method code 
-                %match(TInstructionList code){
-                  InstructionList(_*,Anchor(label),_*)->{
-                    labelMap.put(`label,new Label());
+                %match(code){
+                  InstructionList(_*,Anchor(label),_*) -> {
+                    labelmap.put(`label,new Label());
                   }
-                  InstructionList(_*,inst,_*)->{
-                    %match(TInstruction inst) {
+                  InstructionList(_*,inst,_*) -> {
+                    %match(inst) {
                       Anchor(label) -> {
-                        mw.visitLabel((Label)labelMap.get(`label));
+                        methodVisitor.visitLabel(labelmap.get(`label));
                       }
-                      i@_ -> {addInstruction(mw,`i,labelMap);}
+                      i -> {addInstruction(methodVisitor,`i,labelmap);}
                     }
                   }
                 }
 
-                %match(TTryCatchBlockList tryCatchBlockLists) {
+                %match(tryCatchBlockLists) {
                   TryCatchBlockList(_*, TryCatchBlock(start,end,handler), _*) -> {
-                    %match(THandler handler) {
+                    %match(handler) {
                       CatchHandler(h, type) -> {
-                        mw.visitTryCatchBlock((Label)labelMap.get(`start),(Label)labelMap.get(`end),(Label)labelMap.get(`h),`type);
+                        methodVisitor.visitTryCatchBlock(labelmap.get(`start),labelmap.get(`end),labelmap.get(`h),`type);
                       }
                       FinallyHandler(h) -> {
-                        mw.visitTryCatchBlock((Label)labelMap.get(`start),(Label)labelMap.get(`end),(Label)labelMap.get(`h),null);
+                        methodVisitor.visitTryCatchBlock(labelmap.get(`start),labelmap.get(`end),labelmap.get(`h),null);
                       }
                     }
                   }
                 }
 
-                %match(TLocalVariableList localVariables) {
+                %match(localVariables) {
                   LocalVariableList(_*, LocalVariable(varname, vardesc, varsignature, start, end, index), _*) -> {
-                    mw.visitLocalVariable(`varname, `vardesc, buildSignature(`varsignature), (Label)labelMap.get(`start), (Label)labelMap.get(`end), `index);
+                    methodVisitor.visitLocalVariable(`varname, `vardesc, ToolBox.buildSignature(`varsignature), labelmap.get(`start), labelmap.get(`end), `index);
                   }
                 }
 
-                mw.visitMaxs(0, 0);
-                mw.visitEnd();
+                methodVisitor.visitMaxs(0, 0);
+                methodVisitor.visitEnd();
               }
             }
           }
@@ -155,505 +167,504 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
       }
     }
 
-
     // gets the bytecode
-    return cw.toByteArray();
+    return super.toByteArray();
   }
 
-  public void addInstruction(MethodVisitor mw,TInstruction inst,HashMap labelMap){
-    %match(TInstruction inst){
-      Nop()->{
-        mw.visitInsn(NOP);
+  public void addInstruction(MethodVisitor methodVisitor, Instruction inst, Map<LabelNode,Label> labelmap) {
+    %match(inst) {
+      Nop() -> {
+        methodVisitor.visitInsn(NOP);
       }
-      Aconst_null() ->{
-        mw.visitInsn(ACONST_NULL);
+      Aconst_null() -> {
+        methodVisitor.visitInsn(ACONST_NULL);
       }
-      Iconst_m1()->{
-        mw.visitInsn(ICONST_M1);
+      Iconst_m1() -> {
+        methodVisitor.visitInsn(ICONST_M1);
       }
-      Iconst_0()->{
-        mw.visitInsn(ICONST_0);
+      Iconst_0() -> {
+        methodVisitor.visitInsn(ICONST_0);
       }
-      Iconst_1()->{
-        mw.visitInsn(ICONST_1);
+      Iconst_1() -> {
+        methodVisitor.visitInsn(ICONST_1);
       }
-      Iconst_2()->{
-        mw.visitInsn(ICONST_2);
+      Iconst_2() -> {
+        methodVisitor.visitInsn(ICONST_2);
       }
-      Iconst_3()->{
-        mw.visitInsn(ICONST_3);
+      Iconst_3() -> {
+        methodVisitor.visitInsn(ICONST_3);
       }
-      Iconst_4()->{
-        mw.visitInsn(ICONST_4);
+      Iconst_4() -> {
+        methodVisitor.visitInsn(ICONST_4);
       }
-      Iconst_5()->{
-        mw.visitInsn(ICONST_5);
+      Iconst_5() -> {
+        methodVisitor.visitInsn(ICONST_5);
       }
-      Lconst_0()->{
-        mw.visitInsn(LCONST_0);
+      Lconst_0() -> {
+        methodVisitor.visitInsn(LCONST_0);
       }
-      Lconst_1()->{
-        mw.visitInsn(LCONST_1);
+      Lconst_1() -> {
+        methodVisitor.visitInsn(LCONST_1);
       }
-      Fconst_0()->{
-        mw.visitInsn(FCONST_0);
+      Fconst_0() -> {
+        methodVisitor.visitInsn(FCONST_0);
       }
-      Fconst_1()->{
-        mw.visitInsn(FCONST_1);
+      Fconst_1() -> {
+        methodVisitor.visitInsn(FCONST_1);
       }
-      Fconst_2()->{
-        mw.visitInsn(FCONST_2);
+      Fconst_2() -> {
+        methodVisitor.visitInsn(FCONST_2);
       }
-      Dconst_0()->{
-        mw.visitInsn(DCONST_0);
+      Dconst_0() -> {
+        methodVisitor.visitInsn(DCONST_0);
       }
-      Dconst_1()->{
-        mw.visitInsn(DCONST_1);
+      Dconst_1() -> {
+        methodVisitor.visitInsn(DCONST_1);
       }
-      Iaload()->{
-        mw.visitInsn(IALOAD);
+      Iaload() -> {
+        methodVisitor.visitInsn(IALOAD);
       }
-      Laload()->{
-        mw.visitInsn(LALOAD);
+      Laload() -> {
+        methodVisitor.visitInsn(LALOAD);
       }
-      Faload()->{
-        mw.visitInsn(FALOAD);
+      Faload() -> {
+        methodVisitor.visitInsn(FALOAD);
       }
-      Daload()->{
-        mw.visitInsn(DALOAD);
+      Daload() -> {
+        methodVisitor.visitInsn(DALOAD);
       }
-      Aaload()->{
-        mw.visitInsn(AALOAD);
+      Aaload() -> {
+        methodVisitor.visitInsn(AALOAD);
       }
-      Baload()->{
-        mw.visitInsn(BALOAD);
+      Baload() -> {
+        methodVisitor.visitInsn(BALOAD);
       }
-      Caload()->{
-        mw.visitInsn(CALOAD);
+      Caload() -> {
+        methodVisitor.visitInsn(CALOAD);
       }
-      Saload()->{
-        mw.visitInsn(SALOAD);
+      Saload() -> {
+        methodVisitor.visitInsn(SALOAD);
       }
-      Iastore()->{
-        mw.visitInsn(IASTORE);
+      Iastore() -> {
+        methodVisitor.visitInsn(IASTORE);
       }
-      Lastore()->{
-        mw.visitInsn(LASTORE);
+      Lastore() -> {
+        methodVisitor.visitInsn(LASTORE);
       }
-      Fastore()->{
-        mw.visitInsn(FASTORE);
+      Fastore() -> {
+        methodVisitor.visitInsn(FASTORE);
       }
-      Dastore()->{
-        mw.visitInsn(DASTORE);
+      Dastore() -> {
+        methodVisitor.visitInsn(DASTORE);
       }
-      Aastore()->{
-        mw.visitInsn(AASTORE);
+      Aastore() -> {
+        methodVisitor.visitInsn(AASTORE);
       }
-      Bastore()->{
-        mw.visitInsn(BASTORE);
+      Bastore() -> {
+        methodVisitor.visitInsn(BASTORE);
       }
-      Castore()->{
-        mw.visitInsn(CASTORE);
+      Castore() -> {
+        methodVisitor.visitInsn(CASTORE);
       }
-      Sastore()->{
-        mw.visitInsn(SASTORE);
+      Sastore() -> {
+        methodVisitor.visitInsn(SASTORE);
       }
-      Pop()->{
-        mw.visitInsn(POP);
+      Pop() -> {
+        methodVisitor.visitInsn(POP);
       }
-      Pop2()->{
-        mw.visitInsn(POP2);
+      Pop2() -> {
+        methodVisitor.visitInsn(POP2);
       }
-      Dup()->{
-        mw.visitInsn(DUP);
+      Dup() -> {
+        methodVisitor.visitInsn(DUP);
       }
-      Dup_x1()->{
-        mw.visitInsn(DUP_X1);
+      Dup_x1() -> {
+        methodVisitor.visitInsn(DUP_X1);
       }
-      Dup_x2()->{
-        mw.visitInsn(DUP_X2);
+      Dup_x2() -> {
+        methodVisitor.visitInsn(DUP_X2);
       }
-      Dup2()->{
-        mw.visitInsn(DUP2);
+      Dup2() -> {
+        methodVisitor.visitInsn(DUP2);
       }
-      Dup2_x1()->{
-        mw.visitInsn(DUP2_X1);
+      Dup2_x1() -> {
+        methodVisitor.visitInsn(DUP2_X1);
       }
-      Dup2_x2()->{
-        mw.visitInsn(DUP2_X2);
+      Dup2_x2() -> {
+        methodVisitor.visitInsn(DUP2_X2);
       }
-      Swap()->{
-        mw.visitInsn(SWAP);
+      Swap() -> {
+        methodVisitor.visitInsn(SWAP);
       }
-      Iadd()->{
-        mw.visitInsn(IADD);
+      Iadd() -> {
+        methodVisitor.visitInsn(IADD);
       }
-      Ladd()->{
-        mw.visitInsn(LADD);
+      Ladd() -> {
+        methodVisitor.visitInsn(LADD);
       }
-      Fadd()->{
-        mw.visitInsn(FADD);
+      Fadd() -> {
+        methodVisitor.visitInsn(FADD);
       }
-      Dadd()->{
-        mw.visitInsn(DADD);
+      Dadd() -> {
+        methodVisitor.visitInsn(DADD);
       }
-      Isub()->{
-        mw.visitInsn(ISUB);
+      Isub() -> {
+        methodVisitor.visitInsn(ISUB);
       }
-      Lsub()->{
-        mw.visitInsn(LSUB);
+      Lsub() -> {
+        methodVisitor.visitInsn(LSUB);
       }
-      Fsub()->{
-        mw.visitInsn(FSUB);
+      Fsub() -> {
+        methodVisitor.visitInsn(FSUB);
       }
-      Dsub()->{
-        mw.visitInsn(DSUB);
+      Dsub() -> {
+        methodVisitor.visitInsn(DSUB);
       }
-      Imul()->{
-        mw.visitInsn(IMUL);
+      Imul() -> {
+        methodVisitor.visitInsn(IMUL);
       }
-      Lmul()->{
-        mw.visitInsn(LMUL);
+      Lmul() -> {
+        methodVisitor.visitInsn(LMUL);
       }
-      Fmul()->{
-        mw.visitInsn(FMUL);
+      Fmul() -> {
+        methodVisitor.visitInsn(FMUL);
       }
-      Dmul()->{
-        mw.visitInsn(DMUL);
+      Dmul() -> {
+        methodVisitor.visitInsn(DMUL);
       }
-      Idiv()->{
-        mw.visitInsn(IDIV);
+      Idiv() -> {
+        methodVisitor.visitInsn(IDIV);
       }
-      Ldiv()->{
-        mw.visitInsn(LDIV);
+      Ldiv() -> {
+        methodVisitor.visitInsn(LDIV);
       }
-      Fdiv()->{
-        mw.visitInsn(FDIV);
+      Fdiv() -> {
+        methodVisitor.visitInsn(FDIV);
       }
-      Ddiv()->{
-        mw.visitInsn(DDIV);
+      Ddiv() -> {
+        methodVisitor.visitInsn(DDIV);
       }
-      Irem()->{
-        mw.visitInsn(IREM);
+      Irem() -> {
+        methodVisitor.visitInsn(IREM);
       }
-      Lrem()->{
-        mw.visitInsn(LREM);
+      Lrem() -> {
+        methodVisitor.visitInsn(LREM);
       }
-      Frem()->{
-        mw.visitInsn(FREM);
+      Frem() -> {
+        methodVisitor.visitInsn(FREM);
       }
-      Drem()->{
-        mw.visitInsn(DREM);
+      Drem() -> {
+        methodVisitor.visitInsn(DREM);
       }
-      Ineg()->{
-        mw.visitInsn(INEG);
+      Ineg() -> {
+        methodVisitor.visitInsn(INEG);
       }
-      Lneg()->{
-        mw.visitInsn(LNEG);
+      Lneg() -> {
+        methodVisitor.visitInsn(LNEG);
       }
-      Fneg()->{
-        mw.visitInsn(FNEG);
+      Fneg() -> {
+        methodVisitor.visitInsn(FNEG);
       }
-      Dneg()->{
-        mw.visitInsn(DNEG);
+      Dneg() -> {
+        methodVisitor.visitInsn(DNEG);
       }
-      Ishl()->{
-        mw.visitInsn(ISHL);
+      Ishl() -> {
+        methodVisitor.visitInsn(ISHL);
       }
-      Lshl()->{
-        mw.visitInsn(LSHL);
+      Lshl() -> {
+        methodVisitor.visitInsn(LSHL);
       }
-      Ishr()->{
-        mw.visitInsn(ISHR);
+      Ishr() -> {
+        methodVisitor.visitInsn(ISHR);
       }
-      Lshr()->{
-        mw.visitInsn(LSHR);
+      Lshr() -> {
+        methodVisitor.visitInsn(LSHR);
       }
-      Iushr()->{
-        mw.visitInsn(IUSHR);
+      Iushr() -> {
+        methodVisitor.visitInsn(IUSHR);
       }
-      Lushr()->{
-        mw.visitInsn(LUSHR);
+      Lushr() -> {
+        methodVisitor.visitInsn(LUSHR);
       }
-      Iand()->{
-        mw.visitInsn(IAND);
+      Iand() -> {
+        methodVisitor.visitInsn(IAND);
       }
-      Land()->{
-        mw.visitInsn(LAND);
+      Land() -> {
+        methodVisitor.visitInsn(LAND);
       }
-      Ior()->{
-        mw.visitInsn(IOR);
+      Ior() -> {
+        methodVisitor.visitInsn(IOR);
       }
-      Lor()->{
-        mw.visitInsn(LOR);
+      Lor() -> {
+        methodVisitor.visitInsn(LOR);
       }
-      Ixor()->{
-        mw.visitInsn(IXOR);
+      Ixor() -> {
+        methodVisitor.visitInsn(IXOR);
       }
-      Lxor()->{
-        mw.visitInsn(LXOR);
+      Lxor() -> {
+        methodVisitor.visitInsn(LXOR);
       }
-      I2l()->{
-        mw.visitInsn(I2L);
+      I2l() -> {
+        methodVisitor.visitInsn(I2L);
       }
-      I2f()->{
-        mw.visitInsn(I2F);
+      I2f() -> {
+        methodVisitor.visitInsn(I2F);
       }
-      I2d()->{
-        mw.visitInsn(I2D);
+      I2d() -> {
+        methodVisitor.visitInsn(I2D);
       }
-      L2i()->{
-        mw.visitInsn(L2I);
+      L2i() -> {
+        methodVisitor.visitInsn(L2I);
       }
-      L2f()->{
-        mw.visitInsn(L2F);
+      L2f() -> {
+        methodVisitor.visitInsn(L2F);
       }
-      L2d()->{
-        mw.visitInsn(L2D);
+      L2d() -> {
+        methodVisitor.visitInsn(L2D);
       }
-      F2i()->{
-        mw.visitInsn(F2I);
+      F2i() -> {
+        methodVisitor.visitInsn(F2I);
       }
-      F2l()->{
-        mw.visitInsn(F2L);
+      F2l() -> {
+        methodVisitor.visitInsn(F2L);
       }
-      F2d()->{
-        mw.visitInsn(F2D);
+      F2d() -> {
+        methodVisitor.visitInsn(F2D);
       }
-      D2i()->{
-        mw.visitInsn(D2I);
+      D2i() -> {
+        methodVisitor.visitInsn(D2I);
       }
-      D2l()->{
-        mw.visitInsn(D2L);
+      D2l() -> {
+        methodVisitor.visitInsn(D2L);
       }
-      D2f()->{
-        mw.visitInsn(D2F);
+      D2f() -> {
+        methodVisitor.visitInsn(D2F);
       }
-      I2b()->{
-        mw.visitInsn(I2B);
+      I2b() -> {
+        methodVisitor.visitInsn(I2B);
       }
-      I2c()->{
-        mw.visitInsn(I2C);
+      I2c() -> {
+        methodVisitor.visitInsn(I2C);
       }
-      I2s()->{
-        mw.visitInsn(I2S);
+      I2s() -> {
+        methodVisitor.visitInsn(I2S);
       }
-      Lcmp()->{
-        mw.visitInsn(LCMP);
+      Lcmp() -> {
+        methodVisitor.visitInsn(LCMP);
       }
-      Fcmpl()->{
-        mw.visitInsn(FCMPL);
+      Fcmpl() -> {
+        methodVisitor.visitInsn(FCMPL);
       }
-      Fcmpg()->{
-        mw.visitInsn(FCMPG);
+      Fcmpg() -> {
+        methodVisitor.visitInsn(FCMPG);
       }
-      Dcmpl()->{
-        mw.visitInsn(DCMPL);
+      Dcmpl() -> {
+        methodVisitor.visitInsn(DCMPL);
       }
-      Dcmpg()->{
-        mw.visitInsn(DCMPG);
+      Dcmpg() -> {
+        methodVisitor.visitInsn(DCMPG);
       }
-      Ireturn()->{
-        mw.visitInsn(IRETURN);
+      Ireturn() -> {
+        methodVisitor.visitInsn(IRETURN);
       }
-      Lreturn()->{
-        mw.visitInsn(LRETURN);
+      Lreturn() -> {
+        methodVisitor.visitInsn(LRETURN);
       }
-      Freturn()->{
-        mw.visitInsn(FRETURN);
+      Freturn() -> {
+        methodVisitor.visitInsn(FRETURN);
       }
-      Dreturn()->{
-        mw.visitInsn(DRETURN);
+      Dreturn() -> {
+        methodVisitor.visitInsn(DRETURN);
       }
-      Areturn()->{
-        mw.visitInsn(ARETURN);
+      Areturn() -> {
+        methodVisitor.visitInsn(ARETURN);
       }
-      Return()->{
-        mw.visitInsn(RETURN);
+      Return() -> {
+        methodVisitor.visitInsn(RETURN);
       }
-      Arraylength()->{
-        mw.visitInsn(ARRAYLENGTH);
+      Arraylength() -> {
+        methodVisitor.visitInsn(ARRAYLENGTH);
       }
-      Athrow()->{
-        mw.visitInsn(ATHROW);
+      Athrow() -> {
+        methodVisitor.visitInsn(ATHROW);
       }
-      Monitorenter()->{
-        mw.visitInsn(MONITORENTER);
+      Monitorenter() -> {
+        methodVisitor.visitInsn(MONITORENTER);
       }
-      Monitorexit()->{
-        mw.visitInsn(MONITOREXIT);
+      Monitorexit() -> {
+        methodVisitor.visitInsn(MONITOREXIT);
       }
-      Getstatic(owner, name, desc)->{
-        mw.visitFieldInsn(GETSTATIC,`owner,`name,buildDescriptor(`desc));
+      Getstatic(owner, name, desc) -> {
+        methodVisitor.visitFieldInsn(GETSTATIC,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Putstatic(owner, name, desc)->{
-        mw.visitFieldInsn(PUTSTATIC,`owner,`name,buildDescriptor(`desc));
+      Putstatic(owner, name, desc) -> {
+        methodVisitor.visitFieldInsn(PUTSTATIC,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Getfield(owner, name, desc)->{
-        mw.visitFieldInsn(GETFIELD,`owner,`name,buildDescriptor(`desc));
+      Getfield(owner, name, desc) -> {
+        methodVisitor.visitFieldInsn(GETFIELD,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Putfield(owner, name, desc)->{
-        mw.visitFieldInsn(PUTFIELD,`owner,`name,buildDescriptor(`desc));
+      Putfield(owner, name, desc) -> {
+        methodVisitor.visitFieldInsn(PUTFIELD,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Bipush(operand)->{
-        mw.visitIntInsn(BIPUSH,`operand);
+      Bipush(operand) -> {
+        methodVisitor.visitIntInsn(BIPUSH,`operand);
       }
-      Sipush(operand)->{
-        mw.visitIntInsn(SIPUSH,`operand);
+      Sipush(operand) -> {
+        methodVisitor.visitIntInsn(SIPUSH,`operand);
       }
-      Newarray(operand)->{
-        mw.visitIntInsn(NEWARRAY,`operand);
+      Newarray(operand) -> {
+        methodVisitor.visitIntInsn(NEWARRAY,`operand);
       }
-      Ifeq(l)->{
-        mw.visitJumpInsn(IFEQ,(Label)labelMap.get(`l));
+      Ifeq(l) -> {
+        methodVisitor.visitJumpInsn(IFEQ,labelmap.get(`l));
       }
-      Ifne(l)->{
-        mw.visitJumpInsn(IFNE,(Label)labelMap.get(`l));
+      Ifne(l) -> {
+        methodVisitor.visitJumpInsn(IFNE,labelmap.get(`l));
       }
-      Iflt(l)->{
-        mw.visitJumpInsn(IFLT,(Label)labelMap.get(`l));
+      Iflt(l) -> {
+        methodVisitor.visitJumpInsn(IFLT,labelmap.get(`l));
       }
-      Ifge(l)->{
-        mw.visitJumpInsn(IFGE,(Label)labelMap.get(`l));
+      Ifge(l) -> {
+        methodVisitor.visitJumpInsn(IFGE,labelmap.get(`l));
       }
-      Ifgt(l)->{
-        mw.visitJumpInsn(IFGT,(Label)labelMap.get(`l));
+      Ifgt(l) -> {
+        methodVisitor.visitJumpInsn(IFGT,labelmap.get(`l));
       }
-      Ifle(l)->{
-        mw.visitJumpInsn(IFLE,(Label)labelMap.get(`l));
+      Ifle(l) -> {
+        methodVisitor.visitJumpInsn(IFLE,labelmap.get(`l));
       }
-      If_icmpeq(l)->{
-        mw.visitJumpInsn(IF_ICMPEQ,(Label)labelMap.get(`l));
+      If_icmpeq(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPEQ,labelmap.get(`l));
       }
-      If_icmpne(l)->{
-        mw.visitJumpInsn(IF_ICMPNE,(Label)labelMap.get(`l));
+      If_icmpne(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPNE,labelmap.get(`l));
       }
-      If_icmplt(l)->{
-        mw.visitJumpInsn(IF_ICMPLT,(Label)labelMap.get(`l));
+      If_icmplt(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPLT,labelmap.get(`l));
       }
-      If_icmpge(l)->{
-        mw.visitJumpInsn(IF_ICMPGE,(Label)labelMap.get(`l));
+      If_icmpge(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPGE,labelmap.get(`l));
       }
-      If_icmpgt(l)->{
-        mw.visitJumpInsn(IF_ICMPGT,(Label)labelMap.get(`l));
+      If_icmpgt(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPGT,labelmap.get(`l));
       }
-      If_icmple(l)->{
-        mw.visitJumpInsn(IF_ICMPLE,(Label)labelMap.get(`l));
+      If_icmple(l) -> {
+        methodVisitor.visitJumpInsn(IF_ICMPLE,labelmap.get(`l));
       }
-      If_acmpeq(l)->{
-        mw.visitJumpInsn(IF_ACMPEQ,(Label)labelMap.get(`l));
+      If_acmpeq(l) -> {
+        methodVisitor.visitJumpInsn(IF_ACMPEQ,labelmap.get(`l));
       }
-      If_acmpne(l)->{
-        mw.visitJumpInsn(IF_ACMPNE,(Label)labelMap.get(`l));
+      If_acmpne(l) -> {
+        methodVisitor.visitJumpInsn(IF_ACMPNE,labelmap.get(`l));
       }
-      Goto(l)->{
-        mw.visitJumpInsn(GOTO,(Label)labelMap.get(`l));
+      Goto(l) -> {
+        methodVisitor.visitJumpInsn(GOTO,labelmap.get(`l));
       }
-      Jsr(l)->{
-        mw.visitJumpInsn(JSR,(Label)labelMap.get(`l));
+      Jsr(l) -> {
+        methodVisitor.visitJumpInsn(JSR,labelmap.get(`l));
       }
-      Ifnull(l)->{
-        mw.visitJumpInsn(IFNULL,(Label)labelMap.get(`l));
+      Ifnull(l) -> {
+        methodVisitor.visitJumpInsn(IFNULL,labelmap.get(`l));
       }
-      Ifnonnull(l)->{
-        mw.visitJumpInsn(IFNONNULL,(Label)labelMap.get(`l));
+      Ifnonnull(l) -> {
+        methodVisitor.visitJumpInsn(IFNONNULL,labelmap.get(`l));
       }
-      Invokevirtual(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKEVIRTUAL,`owner,`name,buildDescriptor(`desc));
+      Invokevirtual(owner, name, desc) -> {
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Invokespecial(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKESPECIAL,`owner,`name,buildDescriptor(`desc));
+      Invokespecial(owner, name, desc) -> {
+        methodVisitor.visitMethodInsn(INVOKESPECIAL,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Invokestatic(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKESTATIC,`owner,`name,buildDescriptor(`desc));
+      Invokestatic(owner, name, desc) -> {
+        methodVisitor.visitMethodInsn(INVOKESTATIC,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
-      Invokeinterface(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKEINTERFACE,`owner,`name,buildDescriptor(`desc));
+      Invokeinterface(owner, name, desc) -> {
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE,`owner,`name,ToolBox.buildDescriptor(`desc));
       }
 
-      New(desc)->{
-        mw.visitTypeInsn(NEW,`desc);
+      New(desc) -> {
+        methodVisitor.visitTypeInsn(NEW,`desc);
       }
-      Anewarray(desc)->{
-        mw.visitTypeInsn(ANEWARRAY,`desc);
+      Anewarray(desc) -> {
+        methodVisitor.visitTypeInsn(ANEWARRAY,`desc);
       }
-      Checkcast(desc)->{
-        mw.visitTypeInsn(CHECKCAST,`desc);
+      Checkcast(desc) -> {
+        methodVisitor.visitTypeInsn(CHECKCAST,`desc);
       }
-      Instanceof(desc)->{
-        mw.visitTypeInsn(INSTANCEOF,`desc);
+      Instanceof(desc) -> {
+        methodVisitor.visitTypeInsn(INSTANCEOF,`desc);
       }
-      Iload(var)->{
-        mw.visitVarInsn(ILOAD,`var);
+      Iload(var) -> {
+        methodVisitor.visitVarInsn(ILOAD,`var);
       }
-      Lload(var)->{
-        mw.visitVarInsn(LLOAD,`var);
+      Lload(var) -> {
+        methodVisitor.visitVarInsn(LLOAD,`var);
       }
-      Fload(var)->{
-        mw.visitVarInsn(FLOAD,`var);
+      Fload(var) -> {
+        methodVisitor.visitVarInsn(FLOAD,`var);
       }
-      Dload(var)->{
-        mw.visitVarInsn(DLOAD,`var);
+      Dload(var) -> {
+        methodVisitor.visitVarInsn(DLOAD,`var);
       }
-      Aload(var)->{
-        mw.visitVarInsn(ALOAD,`var);
+      Aload(var) -> {
+        methodVisitor.visitVarInsn(ALOAD,`var);
       }
-      Istore(var)->{
-        mw.visitVarInsn(ISTORE,`var);
+      Istore(var) -> {
+        methodVisitor.visitVarInsn(ISTORE,`var);
       }
-      Lstore(var)->{
-        mw.visitVarInsn(LSTORE,`var);
+      Lstore(var) -> {
+        methodVisitor.visitVarInsn(LSTORE,`var);
       }
-      Fstore(var)->{
-        mw.visitVarInsn(FSTORE,`var);
+      Fstore(var) -> {
+        methodVisitor.visitVarInsn(FSTORE,`var);
       }
-      Dstore(var)->{
-        mw.visitVarInsn(DSTORE,`var);
+      Dstore(var) -> {
+        methodVisitor.visitVarInsn(DSTORE,`var);
       }
-      Astore(var)->{
-        mw.visitVarInsn(ASTORE,`var);
+      Astore(var) -> {
+        methodVisitor.visitVarInsn(ASTORE,`var);
       }
-      Ret(var)->{
-        mw.visitVarInsn(RET,`var);
+      Ret(var) -> {
+        methodVisitor.visitVarInsn(RET,`var);
       }
-      Iinc(increment, var)->{
-        mw.visitIincInsn(`var,`increment);
+      Iinc(increment, var) -> {
+        methodVisitor.visitIincInsn(`var,`increment);
       }
-      Ldc(value)->{
-        mw.visitLdcInsn(buildConstant(`value)); 
+      Ldc(value) -> {
+        methodVisitor.visitLdcInsn(ToolBox.buildConstant(`value)); 
       }
 
-      Multianewarray(desc, dims)->{
-        mw.visitMultiANewArrayInsn(`desc,`dims);
+      Multianewarray(desc, dims) -> {
+        methodVisitor.visitMultiANewArrayInsn(`desc,`dims);
       }
 
       Tableswitch(min, max, dflt, labels) -> {
-        TLabel[] tlabelTab = ((LabelList)`labels).toArray(new TLabel[0]);
-        Label[] labelTab = null;
-        if(tlabelTab != null){
-          labelTab = new Label[tlabelTab.length];
-          for(int i=0;i<labelTab.length;i++){
-            labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
+        LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList)`labels).toArray(new LabelNode[0]);
+        Label[] labels = null;
+        if(labelnodes != null){
+          labels = new Label[labelnodes.length];
+          for(int i=0;i<labels.length;i++){
+            labels[i] = labelmap.get(labelnodes[i]);
           }
         }
-        mw.visitTableSwitchInsn(`min, `max, (Label)labelMap.get(`dflt), labelTab);
+        methodVisitor.visitTableSwitchInsn(`min, `max, labelmap.get(`dflt), labels);
       }
 
       Lookupswitch(dflt, keys, labels) -> {
-        TLabel[] tlabelTab = ((LabelList)`labels).toArray(new TLabel[0]);
-        Label[] labelTab = null;
-        if(tlabelTab != null){
-          labelTab = new Label[tlabelTab.length];
-          for(int i=0;i<labelTab.length;i++){
-            labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
+        LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList)`labels).toArray(new LabelNode[0]);
+        Label[] labels = null;
+        if(labelnodes != null){
+          labels = new Label[labelnodes.length];
+          for(int i=0;i<labels.length;i++){
+            labels[i]=labelmap.get(labelnodes[i]);
           }
         }
-        int[] array = new int[((intList)`keys).length()];
-        java.util.Iterator<Integer> it = ((intList)`keys).iterator();
+        int[] array = new int[((IntList)`keys).length()];
+        java.util.Iterator<Integer> it = ((tom.library.adt.bytecode.types.intlist.IntList)`keys).iterator();
         for(int i=0 ; it.hasNext() ; i++) {
           array[i] = it.next();
         }
-        mw.visitLookupSwitchInsn((Label)labelMap.get(`dflt),array,labelTab);
+        methodVisitor.visitLookupSwitchInsn(labelmap.get(`dflt),array,labels);
       }
     }
   }
