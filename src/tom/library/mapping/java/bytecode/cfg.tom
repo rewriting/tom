@@ -10,7 +10,7 @@
  */
 
 %strategy BuildLabelMap(m:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
     ConsInstructionList(Anchor(l), _) -> {
       m.put(`l, getEnvironment().getPosition());
     }
@@ -29,7 +29,7 @@
  */
 
 %strategy OneCfg(s:Strategy, m:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
     ConsInstructionList(Goto(l),_) -> {
       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
       tom.library.sl.Position current = getEnvironment().getPosition();
@@ -41,7 +41,7 @@
         //do not take in account the changes 
         getEnvironment().followPathLocal(current.sub(p));
       }
-      return (TInstructionList) getEnvironment().getSubject();
+      return (InstructionList) getEnvironment().getSubject();
     }
 
     ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
@@ -53,7 +53,7 @@
       s.visit(getEnvironment());
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
-        return (TInstructionList) getEnvironment().getSubject();
+        return (InstructionList) getEnvironment().getSubject();
       } else {
         //do not take in account the changes 
         getEnvironment().followPathLocal(current.sub(p));
@@ -61,16 +61,16 @@
     }
 
     ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
-      TLabelList labelList = `labels;
-      %match(TLabelList labelList) {
-        LabelList(_*, x, _*) -> {
+      LabelNodeList labelList = `labels;
+      %match(labelList) {
+        LabelNodeList(_*, x, _*) -> {
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(p.sub(current));
           s.visit(getEnvironment());
           if(getEnvironment().getStatus() == Environment.SUCCESS) {
             getEnvironment().followPath(current.sub(p));
-            return (TInstructionList) getEnvironment().getSubject();
+            return (InstructionList) getEnvironment().getSubject();
           } else {
             //do not take in account the changes 
             getEnvironment().followPathLocal(current.sub(p));
@@ -83,7 +83,7 @@
       s.visit(getEnvironment());
       if(getEnvironment().getStatus() == Environment.SUCCESS) {
         getEnvironment().followPath(current.sub(p));
-        return (TInstructionList) getEnvironment().getSubject();
+        return (InstructionList) getEnvironment().getSubject();
       } else {
         //do not take in account the changes 
         getEnvironment().followPathLocal(current.sub(p));
@@ -113,7 +113,7 @@
  */
 
 %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
 
     ConsInstructionList(Goto(l),_) -> {
       tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
@@ -126,7 +126,7 @@
         //do not take in account the changes 
         getEnvironment().followPathLocal(current.sub(p));
       }         
-      return (TInstructionList) getEnvironment().getSubject();
+      return (InstructionList) getEnvironment().getSubject();
     }
 
     ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
@@ -145,9 +145,9 @@
     }
 
     ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
-      TLabelList labelList = `labels;
-      %match(TLabelList labelList) {
-        LabelList(_*, x, _*) -> {
+      LabelNodeList labels = `labels;
+      %match(labels) {
+        LabelNodeList(_*, x, _*) -> {
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(current.sub(p));
@@ -187,7 +187,7 @@
  * @param map the map containing all instructions marks.
  */
 %strategy Mark(map:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
     c@_ -> {
       Object o = map.get(`c);
       int value = 1;
@@ -203,7 +203,7 @@
  * @param map the map containing all instructions marks.
  */
 %strategy UnMark(map:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
     c@_ -> {
       Object o = map.get(`c);
       if(o == null) {
@@ -220,7 +220,7 @@
  * @param map the map containing all instructions marks.
  */
 %strategy IsMarked(map:Map) extends Identity() {
-  visit TInstructionList {
+  visit InstructionList {
     c@_ -> {
       Object o = map.get(`c);
       if(o == null || ((Integer)o).intValue() <= 0)
