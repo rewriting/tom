@@ -102,7 +102,7 @@ public abstract class TomAbstractGenerator {
    * 		The distance from the right side (allows the computation of the column number)
    */
   protected void generate(int deep, TomTerm subject, String moduleName) throws IOException {
-    %match(TomTerm subject) {
+    %match(subject) {
 
       Tom(l) -> {
         generateList(deep,`l, moduleName);
@@ -192,7 +192,7 @@ public abstract class TomAbstractGenerator {
     return null;
   }
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
-    %match(Expression subject) {
+    %match(subject) {
       Code(t) -> {
         output.write(`t);
         return;
@@ -356,7 +356,7 @@ public abstract class TomAbstractGenerator {
   }
 
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
-    %match(Instruction subject) {
+    %match(subject) {
 
       TargetLanguageToInstruction(t) -> {
         `generateTargetLanguage(deep, t, moduleName);
@@ -476,7 +476,7 @@ public abstract class TomAbstractGenerator {
   }
 
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
-    %match(TargetLanguage subject) {
+    %match(subject) {
       TL(t,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(deep, `t, `startLine, `endLine - `startLine);
         return;
@@ -497,7 +497,7 @@ public abstract class TomAbstractGenerator {
   }
 
   public void generateOption(int deep, Option subject, String moduleName) throws IOException {
-    %match(Option subject) {
+    %match(subject) {
       DeclarationToOption(decl) -> {
         `generateDeclaration(deep, decl, moduleName);
         return;
@@ -513,7 +513,7 @@ public abstract class TomAbstractGenerator {
   }
 
   public void generateDeclaration(int deep, Declaration subject, String moduleName) throws IOException {
-    %match(Declaration subject) {
+    %match(subject) {
       EmptyDeclaration() -> {
         return;
       }

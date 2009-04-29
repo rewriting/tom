@@ -118,7 +118,7 @@ public PILFactory() {
   }
 
   public String prettyPrint(tom.library.sl.Visitable subject) {
-    %match(Instruction subject) {
+    %match(subject) {
       CompiledMatch(automata,_) -> { 
         return prettyPrint(`automata); 
       }
@@ -179,7 +179,7 @@ public PILFactory() {
 
     }
 
-    %match(Expression subject) {
+    %match(subject) {
       TomTermToExpression(astTerm) -> {
         return prettyPrint(`astTerm);
       }
@@ -230,7 +230,7 @@ public PILFactory() {
 
     }
 
-    %match(TomTerm subject) {
+    %match(subject) {
       ExpressionToTomTerm(term) -> {
         return prettyPrint(`term);
       }
@@ -248,7 +248,7 @@ public PILFactory() {
       }
     }
 
-    %match(TomName subject) {
+    %match(subject) {
       PositionName(number_list) -> {
         return "t"+ TomBase.tomNumberListToString(`number_list);
       }
@@ -258,11 +258,11 @@ public PILFactory() {
 
     }
 
-    %match(TomType subject) {
+    %match(subject) {
       Type[TomType = ASTTomType(name)] -> { return `name; }
     }
 
-    %match(TomNumber subject) {
+    %match(subject) {
       Position(i) -> {
         return "" + `i;
       }

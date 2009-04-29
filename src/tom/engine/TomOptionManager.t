@@ -176,7 +176,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-    %match(PlatformOption option) {
+    %match(option) {
       PluginOption[Value=BooleanValue(True())]  -> {
         return Boolean.valueOf(true);
       }
@@ -241,7 +241,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       owner.setOptionManager((OptionManager)this);
       while(!list.isEmptyconcPlatformOption()) {
         PlatformOption option = list.getHeadconcPlatformOption();
-        %match(PlatformOption option) {
+        %match(option) {
           PluginOption[Name=name, AltName=altName] -> {
             setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
@@ -328,7 +328,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     Iterator it = treeMap.values().iterator();
     while(it.hasNext()) {
       PlatformOption h = (PlatformOption)it.next();
-      %match(PlatformOption h) {
+      %match(h) {
         PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
@@ -361,7 +361,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
-    %match(PlatformOptionList requiredOptions) {
+    %match(requiredOptions) {
       concPlatformOption() -> {
         return true;
       }
@@ -455,7 +455,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             displayHelp();
             return null;
           } else {
-            %match(PlatformOption option) {
+            %match(option) {
               PluginOption[Value=BooleanValue[]] -> {
                 // this is a boolean flag: we set to TRUE
                 // and no the opposite since -O2 implies -p=true

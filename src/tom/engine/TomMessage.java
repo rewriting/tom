@@ -390,6 +390,10 @@ public class TomMessage implements PlatformMessage {
   }
 
 
+  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArgs) {
+    error(logger, fileName, errorLine, msg, new Object[] { msgArgs } );
+  }
+
   public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
     logger.log(Level.SEVERE, formatter.format(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine)));
     //logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));

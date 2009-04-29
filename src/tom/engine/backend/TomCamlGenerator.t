@@ -273,7 +273,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    %match(TargetLanguage tlCode) {
+    %match(tlCode) {
       TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(0,s, `startLine, `endLine - `startLine);
         return;
@@ -296,7 +296,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-        %match(TomTerm arg) {
+        %match(arg) {
             // in caml, we are not interested in the type of arguments
           Variable[AstName=Name(name)] -> {
             s.append(`name);
@@ -424,7 +424,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
 
 
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
-    %match(Instruction subject) {
+    %match(subject) {
 
       Nop() -> {
         `buildNop();

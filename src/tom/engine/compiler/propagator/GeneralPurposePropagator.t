@@ -152,7 +152,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
         %match(slots) { 
           concSlot(_*,slot,_*) -> {
-matchSlot:  %match(slot,TomName name) {
+matchSlot:  %match(slot, TomName name) {
               ps@PairSlotAppl[Appl=appl],childName &&  
                 (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
                   TomTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                

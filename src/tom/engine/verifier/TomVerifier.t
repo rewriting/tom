@@ -372,7 +372,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
   
   public String constraintToString(TomTerm tomTerm) {
-    %match(TomTerm tomTerm) {
+    %match(tomTerm) {
       TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
         if (`childrens.isEmptyconcTomTerm()) {
           return `name;

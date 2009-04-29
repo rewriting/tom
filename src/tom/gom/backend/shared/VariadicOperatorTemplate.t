@@ -633,7 +633,7 @@ writer.write(%[
   public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
-    %match(HookList hooks) {
+    %match(hooks) {
       ConcHook(_*,MappingHook[Code=code],_*) -> {
         CodeGen.generateCode(`code,writer);
         hasHook = true;

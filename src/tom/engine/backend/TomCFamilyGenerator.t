@@ -227,7 +227,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(s);
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    %match(TargetLanguage tlCode) {
+    %match(tlCode) {
       TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(0,returnValue, `startLine, `endLine - `startLine);
         return;
@@ -470,7 +470,7 @@ s = %[
       while(!argList.isEmptyconcTomTerm()) {
         TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              %match(TomTerm arg) {
+              %match(arg) {
                 Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
                   s.append(TomBase.getTLCode(`tlType) + " " + `name);
                   break matchBlock;

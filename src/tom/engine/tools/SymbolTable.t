@@ -398,9 +398,8 @@ public class SymbolTable {
   }
 
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
-        //System.out.println("update codomain: " + `name);
         //System.out.println("depend from : " + `opName);
         TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
         //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
@@ -408,7 +407,7 @@ public class SymbolTable {
         TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
         //System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
         OptionList newOptions = `options;
-        %match(OptionList options) {
+        %match(options) {
           concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
             Declaration newMake = `m.setAstType(codomain);
             //System.out.println("newMake: " + newMake);

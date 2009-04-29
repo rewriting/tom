@@ -90,7 +90,7 @@ public class ZenonOutput {
     ZExpr negpattern = null;
 
     // theorem to prove
-    %match(Instr accept) {
+    %match(accept) {
         accept(positive,negative) -> {
         Constraint positivePattern = Constraint.fromTerm(`positive);
         ConstraintList negativePatternList = ConstraintList.fromTerm(`negative);
@@ -141,7 +141,7 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromTerm(Term term) {
-    %match(Term term) {
+    %match(term) {
       tau(absTerm) -> {
         return ztermFromAbsTerm(`absTerm);
       }
@@ -163,7 +163,7 @@ public class ZenonOutput {
   }
 
   ZExpr zexprFromExpr(Expr expr) {
-    %match(Expr expr) {
+    %match(expr) {
       iltrue[] -> { return `ztrue();}
       ilfalse() -> { return `zfalse();}
       tisfsym(absterm,s) -> {
@@ -198,7 +198,7 @@ public class ZenonOutput {
   }
 
   ZSymbol zsymbolFromSymbol(Symbol symb) {
-    %match(Symbol symb) {
+    %match(symb) {
       fsymbol(name) -> {
         return `zsymbol(name);
       }
@@ -207,26 +207,26 @@ public class ZenonOutput {
   }
 
   ZExpr zexprFromSeq(Seq seq) {
-    %match(Seq seq) {
+    %match(seq) {
       seq() -> {
         return `ztrue();
       }
       dedterm(termlist) -> {
-        %match(TermList `termlist) {
+        %match(termlist) {
           concTerm(_*,tl,tr) -> {
             return `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
           }
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList `exprlist) {
+        %match(exprlist) {
           concExpr(_*,t,iltrue[]) -> {
             return zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList `exprlist) {
+        %match(exprlist) {
           concExpr(_*,t,ilfalse()) -> {
             return `znot(zexprFromExpr(t));
           }
@@ -237,7 +237,7 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromAbsTerm(AbsTerm absterm) {
-    %match(AbsTerm absterm) {
+    %match(absterm) {
       absvar(var(name)) -> {
         return `zvar(name);
       }

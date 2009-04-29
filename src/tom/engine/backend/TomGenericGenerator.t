@@ -126,7 +126,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
     generate(deep,expIndex,moduleName);
     output.write(" >= ");
-    %match(TomName opNameAST) {
+    %match(opNameAST) {
       EmptyName() -> {
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }
@@ -258,7 +258,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
-    %match(TomName opNameAST) {
+    %match(opNameAST) {
       EmptyName() -> {
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }
@@ -507,7 +507,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           returnType = TomBase.getTLType(getUniversalType());
           argType = TomBase.getTLType(getUniversalType());
         } else {
-          %match(TomName opNameAST) {
+          %match(opNameAST) {
             EmptyName() -> {
               returnType = TomBase.getTLCode(codomain);
               argType = TomBase.getTLCode(domain);
@@ -551,7 +551,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               returnType = TomBase.getTLType(getUniversalType());
               argType = TomBase.getTLType(getUniversalType());
             } else {
-              %match(TomName opNameAST) {
+              %match(opNameAST) {
                 EmptyName() -> {
                   returnType = TomBase.getTLCode(tlType);
                   argType = returnType;
@@ -593,7 +593,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           if(lazyMode) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            %match(TomName opNameAST) {
+            %match(opNameAST) {
               EmptyName() -> {
                 argType = TomBase.getTLCode(tlType);
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
@@ -636,7 +636,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             returnType = TomBase.getTLType(getUniversalType());
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            %match(TomName opNameAST) {
+            %match(opNameAST) {
               EmptyName() -> {
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
               }
@@ -677,7 +677,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           if(lazyMode) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            %match(TomName opNameAST) {
+            %match(opNameAST) {
               EmptyName() -> {
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
               }
@@ -701,7 +701,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
        */
 
       protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
-        %match(TomName opNameAST) {
+        %match(opNameAST) {
           EmptyName() -> {
             throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
           }
@@ -720,7 +720,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
-        %match(TomTerm list) {
+        %match(list) {
           BuildEmptyList(Name(name)) -> {
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(`name);

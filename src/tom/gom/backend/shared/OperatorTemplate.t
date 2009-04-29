@@ -656,7 +656,7 @@ writer.write(%[
 }
 
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
         writer.write("  private ");
         writer.write(fullClassName(`domainClass));
@@ -668,7 +668,7 @@ writer.write(%[
   }
 
   private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         writer.write("    this.");
         writer.write(fieldName(`fieldName));
@@ -773,7 +773,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -791,7 +791,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -809,7 +809,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -826,7 +826,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -846,7 +846,7 @@ writer.write(%[
     }
     res.append(%[
       return ]%);
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName],_*) -> {
         res.append(fieldName(`fieldName));
         res.append("==");
@@ -863,7 +863,7 @@ writer.write(%[
   private String getCases() {
     StringBuilder res = new StringBuilder();
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append("      case ");
@@ -892,7 +892,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Domain=domain,Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -925,7 +925,7 @@ writer.write(%[
   private String arrayMake(String arrayName) {
     StringBuilder res = new StringBuilder("make(");
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
         if(index>0) { res.append(", "); }
        if (!getGomEnvironment().isBuiltinClass(`domain)) {
@@ -956,7 +956,7 @@ writer.write(%[
   private String arrayCheck(String arrayName) {
     StringBuilder res = new StringBuilder();
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
        if (!getGomEnvironment().isBuiltinClass(`domain)) {
          res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
@@ -982,7 +982,7 @@ private String makeCases(String argName) {
 private String generateMakeArgsFor(int argIndex, String argName) {
   StringBuilder res = new StringBuilder();
   int index = 0;
-  %match(SlotFieldList slotList) {
+  %match(slotList) {
     ConcSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
       if(index>0) { res.append(", "); }
       if (getGomEnvironment().isBuiltinClass(`domain)) {
@@ -1006,7 +1006,7 @@ private String generateMakeArgsFor(int argIndex, String argName) {
 private String generateMakeArgsFor(SlotField slot, String argName) {
   StringBuilder res = new StringBuilder();
   int fullindex = 0;
-  %match(SlotFieldList slotList) {
+  %match(slotList) {
     ConcSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
       if(fullindex>0) { res.append(", "); }
       if (`itslot == slot) {
@@ -1044,7 +1044,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     if(!slotList.isEmptyConcSlotField()) {
     res.append(%[@className()@ @other@ = (@className()@) @oldOther@;]%);
     }
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         if (getGomEnvironment().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))
@@ -1093,7 +1093,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
   private void generateHashArgs(java.io.Writer writer) throws java.io.IOException {
     int index = slotList.length() - 1;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];

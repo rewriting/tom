@@ -77,7 +77,7 @@ public final class TomBase {
    * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
-    %match(TomType type) {
+    %match(type) {
       ASTTomType(s) -> {return `s;}
       TomTypeAlone(s) -> {return `s;}
       Type(ASTTomType(s),_) -> {return `s;}
@@ -92,7 +92,7 @@ public final class TomBase {
    * Returns the implementation-type of a <code>TomType</code>
    */
   public static String getTLType(TomType type) {
-    %match(TomType type) {
+    %match(type) {
       TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
       TomTypeAlone[String=str] -> { return `str; }
@@ -104,7 +104,7 @@ public final class TomBase {
    * Returns the implementation-type of a <code>TLType</code>
    */
   public static String getTLCode(TomType type) {
-    %match(TomType type) {
+    %match(type) {
       TLType(TL[Code=tlType])  -> { return `tlType; }
       TLType(ITL[Code=tlType]) -> { return `tlType; }
     }
@@ -182,7 +182,7 @@ public final class TomBase {
           }
           RenamedVar(tomName) -> {
             String identifier = "Empty";
-            %match(TomName tomName) {
+            %match(tomName) {
               Name(name) -> {
                 identifier = `name;
               }
@@ -195,7 +195,7 @@ public final class TomBase {
           }
           NameNumber(tomName) -> {
             String identifier = "Empty";
-            %match(TomName tomName) {
+            %match(tomName) {
               Name(name) -> {
                 identifier = `name;
               }
@@ -221,12 +221,12 @@ public final class TomBase {
     if(symbol==null) {
       return false;
     }
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
-          %match(Option opt) {
+          %match(opt) {
             DeclarationToOption(MakeEmptyList[]) -> { return true; }
             DeclarationToOption(MakeAddList[])   -> { return true; }
           }
@@ -245,12 +245,12 @@ public final class TomBase {
     if(symbol==null) {
       return false;
     }
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
-          %match(Option opt) {
+          %match(opt) {
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
           }
@@ -364,7 +364,7 @@ public final class TomBase {
   }
 
   public static Declaration getIsFsymDecl(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return `decl; }
     }
     return null;
@@ -380,7 +380,7 @@ public final class TomBase {
   }
   
   public static String getModuleName(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
     return null;
@@ -394,21 +394,21 @@ public final class TomBase {
   }
 
   public static boolean hasDefinedSymbol(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,DefinedSymbol(),_*) -> { return true; }
     }
     return false;
   }
 
   public static boolean hasImplicitXMLAttribut(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
     }
     return false;
   }
 
   public static boolean hasImplicitXMLChild(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
     }
     return false;
@@ -426,7 +426,7 @@ public final class TomBase {
     PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
 
     Declaration decl = pairNameDecl.getSlotDecl();
-    %match(Declaration decl) {
+    %match(decl) {
       GetSlotDecl[SlotName=name] -> { return `name; }
     }
 
@@ -459,7 +459,7 @@ public final class TomBase {
   }
 
   public static TomType getSlotType(TomSymbol symbol, TomName slotName) {
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol[TypesToType=TypesToType(typeList,_)] -> {
         int index = getSlotIndex(symbol,slotName);
         return elementAt(`typeList,index);
@@ -473,7 +473,7 @@ public final class TomBase {
       System.out.println("isDefinedSymbol: subject == null");
       return false;
     }
-    %match(TomSymbol subject) {
+    %match(subject) {
       Symbol[Option=optionList] -> {
         return hasDefinedSymbol(`optionList);
       }
@@ -486,7 +486,7 @@ public final class TomBase {
       System.out.println("isDefinedSymbol: symbol == null");
       return false;
     }
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[SlotName=name,SlotDecl=decl],_*)] -> {
         if(`name==slotName && `decl!=`EmptyDeclaration()) {
           return true;
@@ -506,7 +506,7 @@ public final class TomBase {
     }
     while(!optionList.isEmptyconcOption()) {
       Option subject = optionList.getHeadconcOption();
-      %match(Option subject) {
+      %match(subject) {
         orgTrack@OriginTracking[] -> {
           return `orgTrack;
         }
@@ -539,7 +539,7 @@ public final class TomBase {
   }
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
-    %match(TomTerm t) {
+    %match(t) {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
@@ -581,7 +581,7 @@ public final class TomBase {
   }
   
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
-    %match(TomTerm t) {
+    %match(t) {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
@@ -605,7 +605,7 @@ public final class TomBase {
 
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable) {
-    %match(Expression t) {
+    %match(t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
       TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
@@ -623,7 +623,7 @@ public final class TomBase {
   }
 
   public static SlotList tomListToSlotList(TomList tomList, int index) {
-    %match(TomList tomList) {
+    %match(tomList) {
       concTomTerm() -> { return `concSlot(); }
       concTomTerm(head,tail*) -> { 
         TomName slotName = `PositionName(concTomNumber(Position(index)));
@@ -635,7 +635,7 @@ public final class TomBase {
   }
 
   public static SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
-    %match(TomList tomList, SlotList slotList) {
+    %match(tomList, SlotList slotList) {
       concTomTerm(), concSlot() -> { 
         return `concSlot(); 
       }
@@ -648,7 +648,7 @@ public final class TomBase {
   }
 
   public static TomList slotListToTomList(SlotList tomList) {
-    %match(SlotList tomList) {
+    %match(tomList) {
       concSlot() -> { return `concTomTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
         TomList tl = slotListToTomList(`tail);

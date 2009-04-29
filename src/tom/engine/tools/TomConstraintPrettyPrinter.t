@@ -55,7 +55,7 @@ public class TomConstraintPrettyPrinter {
 
   public String prettyPrint(tom.library.sl.Visitable subject) {
     
-    %match(Constraint subject) {
+    %match(subject) {
 
       AssignTo(Variable) -> {
         return "AssignTo("+prettyPrint(`Variable)+")";
@@ -115,7 +115,7 @@ public class TomConstraintPrettyPrinter {
 
     }
 
-    %match (NumericConstraintType subject) { 
+    %match(subject) { 
       NumLessThan() -> {
         return "<";
       }
@@ -136,7 +136,7 @@ public class TomConstraintPrettyPrinter {
       }
     }
 
-    %match(TomTerm subject) {
+    %match(subject) {
       ExpressionToTomTerm(term) -> {
         return prettyPrint(`term);
       }
@@ -187,7 +187,7 @@ public class TomConstraintPrettyPrinter {
 
     }
 
-    %match(Expression subject) {
+    %match(subject) {
       Cast(AstType,Source) -> {
         return "("+prettyPrint(`AstType)+") "+ prettyPrint(`Source); 
       }
@@ -214,7 +214,7 @@ public class TomConstraintPrettyPrinter {
 
     }
 
-    %match(TomName subject) {
+    %match(subject) {
       PositionName(number_list) -> {
         return "t"+ TomBase.tomNumberListToString(`number_list);
       }
@@ -224,7 +224,7 @@ public class TomConstraintPrettyPrinter {
 
     }
 
-    %match(TomNameList subject) {
+    %match(subject) {
       concTomName(Name) -> {
         return prettyPrint(`Name);
       }
@@ -234,11 +234,11 @@ public class TomConstraintPrettyPrinter {
       }
     }
 
-    %match(TomType subject) {
+    %match(subject) {
       Type[TomType = ASTTomType(name)] -> { return `name; }
     }
 
-    %match(TomNumber subject) {
+    %match(subject) {
       Position(i) -> {
         return "" + `i;
       }

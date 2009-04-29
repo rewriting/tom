@@ -48,7 +48,7 @@ public class ZenonBackend {
   }
 
   public String genZSymbol(ZSymbol symbol) {
-    %match(ZSymbol symbol) {
+    %match(symbol) {
       zsymbol(name) -> {
         // manage builtins
         String symbolName = tomiltools.replaceNumbersByString(`name);
@@ -59,7 +59,7 @@ public class ZenonBackend {
   }
 
   public String genZType(ZType type) {
-    %match(ZType type) {
+    %match(type) {
       ztype(name) -> {
         return `name;
       }
@@ -68,7 +68,7 @@ public class ZenonBackend {
   }
 
   public String genZTerm(ZTerm term) {
-    %match(ZTerm term) {
+    %match(term) {
       zvar(name) -> { return `name; }
       zappl(zsymbol(name),tlist) -> { 
         // manage builtins
@@ -95,7 +95,7 @@ public class ZenonBackend {
   }
 
   public String genZExpr(ZExpr expr) {
-    %match(ZExpr expr) {
+    %match(expr) {
       ztrue()  -> { return "True";}
       zfalse() -> { return "False";}
       zisfsym(t,s) -> {
@@ -137,7 +137,7 @@ public class ZenonBackend {
   }
 
   public String genZAxiom(ZAxiom axiom) {
-    %match(ZAxiom axiom) {
+    %match(axiom) {
       zaxiom(name,ax) -> {
         // manage builtins
         String realName = tomiltools.replaceNumbersByString(`name);
@@ -157,7 +157,7 @@ public class ZenonBackend {
   }
 
   public String genZSpec(ZSpec spec) {
-    %match(ZSpec spec) {
+    %match(spec) {
       zthm(thm,by) -> {
         return "\n" 
           + genZExpr(`thm) 

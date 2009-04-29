@@ -76,7 +76,7 @@ public class Backend {
     Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
     Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
-    %match(GomClassList classList) {
+    %match(classList) {
       ConcGomClass(_*,
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
@@ -124,7 +124,7 @@ public class Backend {
    * Create template classes for the different classes to generate
    */
   public int generateClass(GomClass gomclass, Map<ClassName,TemplateClass> generators) {
-    %match(GomClass gomclass) {
+    %match(gomclass) {
       TomMapping[ClassName=className] -> {
         /* It was processed by the caller: check it is already in generators */
         if (!generators.containsKey(`className)) {

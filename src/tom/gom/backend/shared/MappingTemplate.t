@@ -106,7 +106,7 @@ public class MappingTemplate extends MappingTemplateClass {
     }
 
     // generate a %typeterm for each class
-    %match(GomClassList sortClasses) {
+    %match(sortClasses) {
       ConcGomClass(_*,
           SortClass[ClassName=sortName],
           _*) -> {
@@ -116,7 +116,7 @@ public class MappingTemplate extends MappingTemplateClass {
     }
 
     // generate a %op for each operator
-    %match(GomClassList operatorClasses) {
+    %match(operatorClasses) {
       ConcGomClass(_*,
           OperatorClass[ClassName=opName],
           _*) -> {
@@ -126,7 +126,7 @@ public class MappingTemplate extends MappingTemplateClass {
     }
 
     // generate a %oplist for each variadic operator
-    %match(GomClassList operatorClasses) {
+    %match(operatorClasses) {
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=opName],
           _*) -> {

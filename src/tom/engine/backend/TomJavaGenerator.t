@@ -128,7 +128,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      %match(TomType type) {
+      %match(type) {
         Type(ASTTomType("Strategy"), _) -> {
           stratChild.add(Integer.valueOf(index));
         }
@@ -251,7 +251,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
-        %match(TomTerm localVar) {
+        %match(localVar) {
           v@Variable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
             generate(deep,`v,moduleName);
@@ -271,7 +271,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.writeln(deep,")");
 
-    %match(TomType throwsType) {
+    %match(throwsType) {
       TomTypeAlone(throws) -> {
         output.write(deep," throws " + `throws);
       }

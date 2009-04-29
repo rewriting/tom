@@ -65,7 +65,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
+    %match(h) {
       ConcHook(_*,BlockHook[Code=code],_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
@@ -77,7 +77,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
+    %match(h) {
       ConcHook(_*,ImportHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
@@ -89,7 +89,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
+    %match(h) {
       ConcHook(_*,InterfaceHook(code),_*) -> {
         res.append(",");
         res.append(CodeGen.generateCode(`code));

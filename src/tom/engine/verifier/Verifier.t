@@ -89,7 +89,7 @@ public class Verifier {
   }
 
   public Term termFromTomTerm(TomTerm tomterm) {
-    %match(TomTerm tomterm) {
+    %match(tomterm) {
       ExpressionToTomTerm(expr) -> {
         return `termFromExpresssion(expr);
       }
@@ -102,7 +102,7 @@ public class Verifier {
   }
 
   Variable variableFromTomName(TomName name) {
-    %match(TomName name) {
+    %match(name) {
       Name(stringname) -> {
         return `var(stringname);
       }
@@ -121,7 +121,7 @@ public class Verifier {
   }
 
   public Term termFromExpresssion(Expression expression) {
-    %match(Expression expression) {
+    %match(expression) {
       GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=Variable[AstName=name]] -> {
         Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
@@ -139,7 +139,7 @@ public class Verifier {
   }
 
   public Expr exprFromExpression(Expression expression) {
-    %match(Expression expression) {
+    %match(expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
       IsFsym[AstName=Name(symbolName),Variable=Variable[AstName=varName]] -> {
@@ -166,7 +166,7 @@ public class Verifier {
   }
 
   public Instr instrFromInstruction(Instruction automata) {
-    %match(Instruction automata) {
+    %match(automata) {
       TypedAction[PositivePattern=positivePattern,NegativePatternList=negativePatternList] -> {
         return `accept(positivePattern.toATerm(),negativePatternList.toATerm());
       }
@@ -214,7 +214,7 @@ public class Verifier {
 
   private SubstitutionList abstractSubstitutionFromAccept(Instr instr) {
     SubstitutionList substitution = `subs();
-    %match(Instr instr) {
+    %match(instr) {
       accept(positive,_) -> {
         Constraint positivePattern = Constraint.fromTerm(`positive);
         ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
@@ -224,7 +224,7 @@ public class Verifier {
           throw new TomRuntimeException("VisitFailure in Verifier.abstractSubstitutionFromAccept:" + e.getMessage()); 
         }
         for(TomTerm subject: subjectList){
-          %match(TomTerm subject) {
+          %match(subject) {
             Variable[AstName=name] -> {
               substitution = `subs(substitution*,
                   is(
@@ -361,7 +361,7 @@ public class Verifier {
    */
   protected Seq seqFromTerm(Term sp) {
     TermList ded = `concTerm(sp);
-    %match(Term sp) {
+    %match(sp) {
       appSubsT[] -> {
         TermList follow = applyMappingRules(replaceVariablesInTerm(sp));
         ded = `concTerm(ded*,follow*);
@@ -372,7 +372,7 @@ public class Verifier {
 
   protected ExprList exprListFromExpr(Expr sp) {
     ExprList ded = `concExpr(sp);
-    %match(Expr sp) {
+    %match(sp) {
       appSubsE[] -> {
         ExprList follow = applyExprRules(replaceVariablesInExpr(sp));
         ded = `concExpr(ded*,follow*);
@@ -384,7 +384,7 @@ public class Verifier {
   }
 
   protected SubstitutionList reduceSubstitutionWithMappingRules(SubstitutionList subst) {
-    %match(SubstitutionList subst) {
+    %match(subst) {
       subs() -> {
         return subst;
       }
@@ -400,7 +400,7 @@ public class Verifier {
     return subst;
   }
   protected Expr reduceWithMappingRules(Expr ex) {
-    %match(Expr ex) {
+    %match(ex) {
       eq(tau(tl),tau(tr)) -> {
         return `teq(tl,tr);
       }
@@ -435,7 +435,7 @@ public class Verifier {
   }
 
   protected Term reduceTermWithMappingRules(Term trm) {
-    %match(Term trm) {
+    %match(trm) {
       tau[] -> {
         return `trm;
       }
@@ -461,7 +461,7 @@ public class Verifier {
   }
 
   protected TermList applyMappingRules(Term trm) {
-    %match(Term trm) {
+    %match(trm) {
       tau[] -> {
         return `concTerm(trm);
       }
@@ -521,7 +521,7 @@ public class Verifier {
   }
 
   protected ExprList applyExprRules(Expr ex) {
-    %match(Expr ex) {
+    %match(ex) {
       eq(tau(tl),tau(tr)) -> {
         return `concExpr(ex,teq(tl,tr));
       }
@@ -545,7 +545,7 @@ public class Verifier {
           res = `concExpr(res*,isfsym(head,symbol));
           reduced = reduced.getTailconcTerm();
         }
-        %match(ExprList res) {
+        %match(res) {
           concExpr(hl*,tail) -> {
             ExprList taill = `applyExprRules(tail);
             return `concExpr(hl*,taill*);
@@ -571,7 +571,7 @@ public class Verifier {
   }
 
   protected Expr buildConstraint(SubstitutionList substitution, Instr pil,Instr goal) {
-    %match(Instr pil) {
+    %match(pil) {
       sequence(semicolon(h,t*)) -> {
         Expr goalFromHead = buildConstraint(substitution,`h,goal);
         if (!`t.isEmptysemicolon()) {
@@ -620,7 +620,7 @@ public class Verifier {
 
   protected Collection applySemanticsRules(Deriv post) {
     Collection c = new HashSet();
-    %match(Deriv post) {
+    %match(post) {
       ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
         if(`instructionContains(h,ip)) {
           // ends the derivation
@@ -664,7 +664,7 @@ public class Verifier {
         Seq cond = seqFromTerm(`appSubsT(e,u));
         // find "t"
         Term t = null;
-        %match(Seq cond) {
+        %match(cond) {
           dedterm(concTerm(_*,r)) -> { t = `r; }
           _ -> { if (t == null) {
             System.out.println("seqFromTerm has a problem with " + cond);
@@ -798,7 +798,7 @@ public class Verifier {
   }
 
   public Term replaceVariablesInTerm(Term subject) {
-    %match(Term subject) {
+    %match(subject) {
       appSubsT(sublist,term) -> {
         Map map = buildVariableMap(`sublist, new HashMap());
         Term t = `term;
@@ -814,7 +814,7 @@ public class Verifier {
   }
 
   public Expr replaceVariablesInExpr(Expr subject) {
-    %match(Expr subject) {
+    %match(subject) {
       appSubsE(sublist,term) -> {
         Map map = buildVariableMap(`sublist, new HashMap());
         Expr t = `term;
@@ -878,7 +878,7 @@ public class Verifier {
     public Object visitLight(Object o, Introspector i) throws tom.library.sl.VisitFailure {
       if (o instanceof Expr) {
         Expr arg = (Expr) o;
-        %match(Expr arg) {
+        %match(arg) {
           iland(ilfalse(),_) -> {
             return `ilfalse();
           }

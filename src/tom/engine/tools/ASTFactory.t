@@ -339,7 +339,7 @@ public class ASTFactory {
   }
 
   public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
-    %match(TomList list) {
+    %match(list) {
       concTomTerm() -> { return `concTomTerm();}
       concTomTerm(head,tail*) -> {
         TomList tl = metaEncodeTermList(symbolTable,`tail);
@@ -356,7 +356,7 @@ public class ASTFactory {
        * Appl(...,Name("\"string\""),...)
        */
     TomNameList newNameList = `concTomName();
-    %match(TomTerm term) {
+    %match(term) {
       RecordAppl[NameList=(_*,Name(name),_*)] -> {
         newNameList = `concTomName(newNameList*,Name(encodeXMLString(symbolTable,name)));
       }
@@ -373,7 +373,7 @@ public class ASTFactory {
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
       //System.out.println("metaEncode: " + term);
-    %match(TomTerm term) {
+    %match(term) {
       RecordAppl[NameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
@@ -394,7 +394,7 @@ public class ASTFactory {
   public static boolean isExplicitTermList(List childs) {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.get(0);
-      %match(TomTerm term) {
+      %match(term) {
         (RecordAppl|TermAppl)[NameList=(Name(""))] -> {
           return true;
         }
@@ -405,7 +405,7 @@ public class ASTFactory {
 
   public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
-    %match(TomTerm term) {
+    %match(term) {
       RecordAppl[NameList=(Name("")),Slots=args] -> {
         while(!`args.isEmptyconcSlot()) {
           list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcSlot().getAppl()));
@@ -431,7 +431,7 @@ public class ASTFactory {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
-    %match(TomList args) {
+    %match(args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
       }
@@ -529,7 +529,7 @@ public class ASTFactory {
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
 
-    %match(TomList args) {
+    %match(args) {
       concTomTerm() -> {
         return `BuildEmptyArray(name,size);
       }

@@ -591,8 +591,11 @@ gomsignature [List list] throws TomException
    
     int res = 1;
     //res = tom.gom.Gom.exec(params);
-    Map<String,String> informationTracker = new HashMap();
+    Map<String,Object> informationTracker = new HashMap();
     informationTracker.put("lastGeneratedMapping",null);
+    
+    informationTracker.put("gomBegin",new Integer(initialGomLine));
+    
     //Map<Long,String> informationTracker = new HashMap();
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);

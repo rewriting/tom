@@ -250,7 +250,7 @@ public class TomSyntaxChecker extends TomChecker {
       (_*, d, _*) -> { // for each Declaration
         Declaration decl = `d;
         matchblock:{
-          %match(Declaration decl) {
+          %match(decl) {
             // Common Macro functions
             EqualTermDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.EQUALS,verifyList,orgTrack,name1,name2, declType);
@@ -352,7 +352,7 @@ public class TomSyntaxChecker extends TomChecker {
   } // verifySymbol
 
   private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
-    %match(TomType codomain) {
+    %match(codomain) {
       Codomain(Name(opName)) -> {
         if(symbolTable().getSymbolFromName(`opName) == null) {
           messageError(getCurrentTomStructureOrgTrack().getFileName(),getCurrentTomStructureOrgTrack().getLine(),
@@ -434,7 +434,7 @@ public class TomSyntaxChecker extends TomChecker {
       (_*, DeclarationToOption(d), _*) -> { // for each Declaration
         Declaration decl=`d;
         matchblock:{
-          %match(Declaration decl ) {
+          %match(decl ) {
             // for a array symbol
             MakeEmptyArray[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
@@ -1243,7 +1243,7 @@ matchLbl: %match(constr) {
   }
 
   private void validateTermThrough(TomTerm term, boolean permissive) {
-    %match(TomTerm term) {
+    %match(term) {
       TermAppl[Args=concTomTerm(_*,child,_*)] -> {
         TomSymbol sym = getSymbolFromName(getName(`child));
         if(sym != null) {
@@ -1257,7 +1257,7 @@ matchLbl: %match(constr) {
 
   public TermDescription analyseTerm(TomTerm term) {
     matchblock:{
-      %match(TomTerm term) {
+      %match(term) {
         TermAppl[Option=options, NameList=(Name(str))] -> {
           if (`str.equals("")) {
             return new TermDescription(UNAMED_APPL, `str,
@@ -1598,7 +1598,7 @@ matchLbl: %match(constr) {
           whileBlock: {
             while(!listOfPair.isEmptyconcSlot()) {
               Slot pairSlotTerm = listOfPair.getHeadconcSlot();
-              %match(TomName slotName, Slot pairSlotTerm) {
+              %match(slotName, pairSlotTerm) {
                 Name[String=name1], PairSlotAppl(Name[String=name1],slotSubterm) -> {
                    validateTerm(`slotSubterm ,expectedType, false, true, false);
                    break whileBlock;

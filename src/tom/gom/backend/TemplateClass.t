@@ -53,7 +53,7 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Name=name] -> {
         return `name;
       }
@@ -67,7 +67,7 @@ public abstract class TemplateClass {
   }
 
   public static String fullClassName(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
           return `name;
@@ -85,7 +85,7 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Pkg=pkg] -> {
         return `pkg;
       }
@@ -95,7 +95,7 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "has"+`name;
       }
@@ -105,7 +105,7 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "get"+`name;
       }
@@ -115,7 +115,7 @@ public abstract class TemplateClass {
   }
 
   public String setMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "set"+`name;
       }
@@ -125,7 +125,7 @@ public abstract class TemplateClass {
   }
 
   public String index(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "index_"+`name;
       }
@@ -135,7 +135,7 @@ public abstract class TemplateClass {
   }
 
   public String slotDomain(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
         return fullClassName(`domain);
       }
@@ -149,7 +149,7 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Name=name] -> {
         return `name.toLowerCase();
       }
@@ -160,7 +160,7 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(%[@element@.toStringBuilder(@buffer@);
@@ -278,7 +278,7 @@ public abstract class TemplateClass {
   }
 
   public void toATermSlotField(StringBuilder res, SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(getMethod(slot));
@@ -325,7 +325,7 @@ public abstract class TemplateClass {
   }
 
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
         if(!getGomEnvironment().isBuiltinClass(`domain)) {
           buffer.append(fullClassName(`domain));
@@ -418,7 +418,7 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      %match(SlotField slot) {
+      %match(slot) {
         SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
           writer.write(`slotName);
           writer.write(":");

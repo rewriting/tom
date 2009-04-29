@@ -122,7 +122,7 @@ options{
        * otherwise, the term is inserted (eventually unwrapped) into the last Composite of the list
        */
       if(newComposite) {
-        %match(TomTerm lastElement, TomTerm term) {
+        %match(lastElement, term) {
           Composite(_), t2@Composite[] -> { 
             list.add(`t2); 
             return; 
@@ -133,7 +133,7 @@ options{
           }
         }
       } else {
-        %match(TomTerm lastElement, TomTerm term) {
+        %match(lastElement, term) {
           Composite(l1), Composite(l2) -> { 
             list.set(list.size()-1,`Composite(concTomTerm(l1*,l2*))); 
             return;
@@ -148,10 +148,10 @@ options{
 
     // sorts attributes of xml term with lexicographical order
     private TomList sortAttributeList(TomList list){
-      %match(TomList list) {
+      %match(list) {
         concTomTerm() -> { return list; }
         concTomTerm(X1*,e1,X2*,e2,X3*) -> {
-          %match(TomTerm e1, TomTerm e2) {
+          %match(e1, e2) {
             BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
             BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
