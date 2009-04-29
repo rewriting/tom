@@ -25,8 +25,8 @@ import tom.library.adt.bytecode.types.*;
 public class ClassCollector {
   %include { adt/bytecode/Bytecode.tom }
 
-  private TFieldList fieldList;
-  private TMethodList methodList;
+  private FieldList fieldList;
+  private MethodList methodList;
   private Stack strategyStack;
   private ArrayList subtermList;
 
@@ -37,8 +37,8 @@ public class ClassCollector {
     subtermList = new ArrayList();
   }
 
-  public void addField(TField field) {
-    %match(fieldList, TField field) {
+  public void addField(Field field) {
+    %match(fieldList, Field field) {
       FieldList(_*, x, _*), x -> {
         return;
       }
@@ -46,15 +46,15 @@ public class ClassCollector {
     fieldList = `FieldList(field, fieldList*);
   }
 
-  public TFieldList getFieldList() {
+  public FieldList getFieldList() {
     return fieldList;
   }
 
-  public void addMethod(TMethod method) {
+  public void addMethod(Method method) {
     methodList = `MethodList(method, methodList*);
   }
 
-  public TMethodList getMethodList() {
+  public MethodList getMethodList() {
     return methodList;
   }
 
@@ -83,5 +83,6 @@ public class ClassCollector {
       array[i] = (Strategy)subtermList.get(i);
     return array;
   }
+
 }
 

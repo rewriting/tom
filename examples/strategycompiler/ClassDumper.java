@@ -29,33 +29,33 @@ public class ClassDumper {
    * @param className The Java class filename (without trailing `.class').
    * @return The Gom term representing the Java class.
    */
-  public static TClass dumpClass(String className) {
+  public static ClassNode dumpClass(String className) {
     //System.err.println("className:" + className);
     String internalClassName = className.replace('.', '/');
     //System.err.println("internalClassName:" + internalClassName);
     Object o = loadedClass.get(internalClassName);
-    TClass clazz = null;
+    ClassNode ast = null;
     if(o == null) {
       //  System.out.println("Parsing class file `" + internalClassName + "' ...");
         BytecodeReader cr = new BytecodeReader(internalClassName);
-        clazz = cr.getTClass();
-        loadedClass.put(internalClassName, clazz);
+        ast = cr.getAst();
+        loadedClass.put(internalClassName, ast);
     } else
-      clazz = (TClass)o;
+      ast = (ClassNode)o;
 
-    return clazz;
+    return ast;
   }
 
   /**
    * Dump the given Gom term into a class file.
    *
-   * @param clazz The Gom term representing the class to be dumped.
+   * @param ast The Gom term representing the class to be dumped.
    * @param filename The class file name (without trailing `.class').
    */
-  public static void dumpTClassToFile(TClass clazz, String filename) {
+  public static void dumpClassToFile(ClassNode ast, String filename) {
     try {
-      BytecodeGenerator bg = new BytecodeGenerator();
-      byte[] code = bg.toBytecode(clazz);
+      BytecodeGenerator bg = new BytecodeGenerator(ast);
+      byte[] code = bg.toByteArray();
       FileOutputStream fos = new FileOutputStream(filename + ".class");
       fos.write(code);
       fos.close();
@@ -70,12 +70,12 @@ public class ClassDumper {
    * `Class' object. No file is created by this method, all the job is done in
    * memory.
    *
-   * @param clazz The Gom term representing the class to be dumped.
+   * @param ast The Gom term representing the class to be dumped.
    * @return The `Class' object corresponding to the Gom term.
    */
-  public static Class dumpTClass(TClass clazz) throws ClassNotFoundException {
-    BytecodeGenerator bg = new BytecodeGenerator();
-    byte[] code = bg.toBytecode(clazz);
+  public static Class dumpClass(ClassNode ast) throws ClassNotFoundException {
+    BytecodeGenerator bg = new BytecodeGenerator(ast);
+    byte[] code = bg.toByteArray();
 
     // Create a `in memory' class loader.
     class MemClassLoader extends ClassLoader {
@@ -90,7 +90,7 @@ public class ClassDumper {
     }
 
     MemClassLoader loader = new MemClassLoader(code);
-    Class c = loader.loadClass(clazz.getinfo().getname());
+    Class c = loader.loadClass(ast.getinfo().getname());
 
     return c;
   }
@@ -101,5 +101,6 @@ public class ClassDumper {
   public static void clearCache() {
     loadedClass.clear();
   }
+
 }
 

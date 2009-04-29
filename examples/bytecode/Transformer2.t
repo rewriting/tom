@@ -32,9 +32,6 @@ import tom.library.sl.*;
 import java.io.FileOutputStream;
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
-import tom.library.adt.bytecode.types.tstringlist.*;
-import tom.library.adt.bytecode.types.tlabellist.*;
-import tom.library.adt.bytecode.types.tintlist.*;
 import tom.library.bytecode.*;
 import java.util.Vector;
 import java.util.HashMap;
@@ -43,8 +40,6 @@ public class Transformer2 {
 
   %include { bytecode/cfg.tom }
   %include { adt/bytecode/Bytecode.tom }
-
-  public static Vector  v = new Vector();
 
   %typeterm IntWrapper {
     implement           { IntWrapper }
@@ -74,7 +69,7 @@ public class Transformer2 {
   public static String clm;
 
   %strategy NewFileReader(index:IntWrapper) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       InstructionList(New("java/io/FileReader"),Dup(),Aload(file),
           Invokespecial[owner="java/io/FileReader", name="<init>"],
           Astore(reader),_*) -> {
@@ -86,7 +81,7 @@ public class Transformer2 {
   }
 
   %strategy NewFileReaderAndCallToRead() extends Fail() {
-    visit TInstructionList {
+    visit InstructionList {
       InstructionList(before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        Invokevirtual[owner ="java/io/FileReader",name="read"], 
@@ -107,7 +102,7 @@ public class Transformer2 {
 
 
   %strategy CallToSRead(index:IntWrapper) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       InstructionList(Aload(i),
           Invokevirtual[owner="java/io/FileReader",name="read"],
           Pop(), tail*)-> {
@@ -128,7 +123,7 @@ public class Transformer2 {
   }
 
   %strategy UpdateLabelMap(m:Map) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       _ -> {
         Position current = getEnvironment().getPosition();
         getEnvironment().followPath(current.inverse());
@@ -139,7 +134,7 @@ public class Transformer2 {
   }
 
   %strategy Print() extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       InstructionList(i,_*) -> {
         Position current = getEnvironment().getPosition();
         System.out.println("at pos "+current);
@@ -148,32 +143,32 @@ public class Transformer2 {
     }
   }
 
-  private static TClass fileAccesVerify(TClass givenClass) {
-    TMethodList methods = givenClass.getmethods();
-    TMethodList secureMethods = `MethodList();
-    %match(TMethodList methods) {
+  private static ClassNode fileAccesVerify(ClassNode givenClass) {
+    MethodList methods = givenClass.getmethods();
+    MethodList secureMethods = `MethodList();
+    %match(methods) {
       MethodList(_*, x, _*) -> {
         System.out.println("Analysis of the method "+`x.getinfo().getname());
-        TInstructionList ins = `x.getcode().getinstructions();
-        // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
+        InstructionList ins = `x.getcode().getinstructions();
+        // Builds the labelMap to be able to retrieve the `InstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
         try {
           `TopDown(BuildLabelMap(labelMap)).visit(ins);
         } catch(VisitFailure e) {
-          throw new tom.engine.exception.TomRuntimeException();
+          throw new RuntimeException();
         }
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
         Strategy securiseAccess =
           `Choice(NewFileReaderAndCallToRead(),Sequence(NewFileReader(index),AGMap(Sequence(CallToSRead(index),UpdateLabelMap(labelMap)),labelMap)));
         try {
-          TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).visit(ins);
-          TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
-          TMethod secureMethod = `x.setcode(secureCode);
+          InstructionList secureInstList = (InstructionList) `TopDown(Try(securiseAccess)).visit(ins);
+          MethodCode secureCode = `x.getcode().setinstructions(secureInstList);
+          Method secureMethod = `x.setcode(secureCode);
           secureMethods = `MethodList(secureMethods*,secureMethod);	
         } catch(VisitFailure e) {
-          throw new tom.engine.exception.TomRuntimeException();
+          throw new RuntimeException();
         }
       } 
     }
@@ -182,47 +177,47 @@ public class Transformer2 {
 
 
 
-  private static TClass renameClass(TClass clazz, String newName) {
-    TClassInfo classInfo = clazz.getinfo();
+  private static ClassNode renameClass(ClassNode ast, String newName) {
+    ClassInfo classInfo = ast.getinfo();
     String currentName = classInfo.getname();
-    TClass newClass = clazz.setinfo(classInfo.setname(newName));
+    ClassNode newClass = ast.setinfo(classInfo.setname(newName));
     try {
-      return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+      return (ClassNode)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
     } catch(VisitFailure e) {
-      throw new tom.engine.exception.TomRuntimeException();
+      throw new RuntimeException();
     }
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
-    visit TOuterClassInfo {
+    visit OuterClassInfo {
       x@OuterClassInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
       }
     }
 
-    visit TLocalVariable {
+    visit LocalVariable {
       x@LocalVariable[typeDesc=t] -> {
         if(`t.equals(currentName))
           return `x.settypeDesc(newName);
       }
     }
 
-    visit TFieldDescriptor {
+    visit FieldDescriptor {
       x@ObjectType[className=n] -> {
         if(`n.equals(currentName))
           return `x.setclassName(newName);
       }
     }
 
-    visit TMethodInfo {
+    visit MethodInfo {
       x@MethodInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
       }
     }
 
-    visit TInstruction {
+    visit Instruction {
       x@(Getstatic|Putstatic|Getfield|Putfield|
           Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
         [owner=owner] -> {
@@ -239,17 +234,16 @@ public class Transformer2 {
 
 
   public static byte[] transform(String file){
-    v.add(file);
     System.out.println("Parsing class file " + file + " ...");
     BytecodeReader br = new BytecodeReader(file);
     System.out.println("Analyzing ...");
-    TClass c= br.getTClass();
+    ClassNode c= br.getAst();
     System.out.println(c);
     //String secureName = c.getinfo().getname() + "Secure";
-    //TClass cSecured = renameClass(fileAccesVerify(c),secureName);
+    //ClassNode cSecured = renameClass(fileAccesVerify(c),secureName);
     c = fileAccesVerify(c);
-    BytecodeGenerator bg = new BytecodeGenerator();
-    return bg.toBytecode(c);
+    BytecodeGenerator bg = new BytecodeGenerator(c);
+    return bg.toByteArray();
   }
 
 }

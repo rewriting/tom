@@ -15,9 +15,9 @@ public class MethodCollector {
 
   %include { adt/bytecode/Bytecode.tom }
   
-  private TLocalVariableList varList;
-  private TTryCatchBlockList tcbList;
-  private TInstructionList insList;
+  private LocalVariableList varList;
+  private TryCatchBlockList tcbList;
+  private InstructionList insList;
 
   public MethodCollector() {
     varList = `LocalVariableList();
@@ -25,27 +25,27 @@ public class MethodCollector {
     insList = `InstructionList();
   }
 
-  public void addVarList(TLocalVariableList varL) {
+  public void addVarList(LocalVariableList varL) {
     varList = `LocalVariableList(varL*, varList*);
   }
 
-  public TLocalVariableList getVariableList() {
+  public LocalVariableList getVariableList() {
     return varList;
   }
 
-  public void addTryCatchBlockList(TTryCatchBlockList tcbL) {
+  public void addTryCatchBlockList(TryCatchBlockList tcbL) {
     tcbList = `TryCatchBlockList(tcbL*, tcbList*);
   }
 
-  public TTryCatchBlockList getTryCatchBlockList() {
+  public TryCatchBlockList getTryCatchBlockList() {
     return tcbList;
   }
 
-  public void addInstruction(TInstruction ins) {
+  public void addInstruction(Instruction ins) {
     insList = `InstructionList(ins, insList*);
   }
 
-  public TInstructionList getInstructionList() {
+  public InstructionList getInstructionList() {
     // The list is reversed because instruction order is important, and
     // instructions are added in the beginning of the list.
     return insList.reverse();

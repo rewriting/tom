@@ -33,9 +33,6 @@ import tom.library.sl.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
-import tom.library.adt.bytecode.types.tstringlist.*;
-import tom.library.adt.bytecode.types.tlabellist.*;
-import tom.library.adt.bytecode.types.tintlist.*;
 import tom.library.bytecode.*;
 import java.io.FileOutputStream;
 
@@ -47,10 +44,10 @@ public class Analysis {
 
   // Checks if the current instruction is a load type instruction.
   %strategy IsLoad() extends Fail() {
-    visit TInstructionList {
+    visit InstructionList {
       c@ConsInstructionList(ins, _) -> {
-        TInstruction inst = `ins;
-        %match(TInstruction inst) {
+        Instruction inst = `ins;
+        %match(inst) {
           (Iload|Lload|Fload|Dload|Aload)(_) -> {
             return `c;
           }
@@ -63,10 +60,10 @@ public class Analysis {
   // If it is true, then the index of the variable to be store is
   // putted into the `Map' map with the key `var'.
   %strategy IsStore(map:Map, var:String) extends Fail() {
-    visit TInstructionList {
+    visit InstructionList {
       c@ConsInstructionList(ins, _) -> {
-        TInstruction inst = `ins;
-        %match(TInstruction inst) {
+        Instruction inst = `ins;
+        %match(inst) {
           (Istore|Lstore|Fstore|Dstore|Astore)(i) -> {
             map.put(var, new Integer(`i));
             return `c;
@@ -79,11 +76,11 @@ public class Analysis {
   // Checks if the current load/store instruction has the wanted index.
   // The index is retrieved from the map at key `var'.
   %strategy HasIndex(map:Map, var:String) extends Fail() {
-    visit TInstructionList {
+    visit InstructionList {
       c@ConsInstructionList(ins, _) -> {
         int index = ((Integer)map.get(var)).intValue();
-        TInstruction inst = `ins;
-        %match(TInstruction inst, int index) {
+        Instruction inst = `ins;
+        %match(Instruction inst, int index) {
           (Istore|Lstore|Fstore|Dstore|Astore|Iload|Lload|Fload|Dload|Aload)(i), i -> {
             return `c;
           }
@@ -92,18 +89,18 @@ public class Analysis {
     }
   }
 
-  // Prints the gom-subterm of the current `TInstructionList'.
+  // Prints the gom-subterm of the current `InstructionList'.
   %strategy PrintInst() extends Identity() {
-    visit TInstructionList {
-      c@ConsInstructionList(ins, _) -> { System.out.println(`c); }
+    visit InstructionList {
+      InstructionList(i, _*) -> { System.out.println(`i); }
     }
   }
 
   // Removes the head instruction of an instruction list 
   %strategy RemoveHeadInst() extends Fail() {
-    visit TInstructionList {
+    visit InstructionList {
       ConsInstructionList(head,tail) -> {
-        TInstruction head = `head;
+        Instruction head = `head;
 
         System.out.println("removes : " + head);
         return `tail;
@@ -115,16 +112,16 @@ public class Analysis {
   // Analyzes the instruction list of each method of the given class.
   // Useless `store i' instruction will be printed.
   // (i.e. a `store i' which is not followed by a `load i' instruction)
-  private static TClass analyze(TClass clazz) {
-    TClass impClass = clazz.setmethods(`MethodList());
+  private static ClassNode analyze(ClassNode ast) {
+    ClassNode impClass = ast.setmethods(`MethodList());
 
-    TMethodList methods = clazz.getmethods();
-    %match(TMethodList methods) {
+    MethodList methods = ast.getmethods();
+    %match(methods) {
       MethodList(_*, x, _*) -> {
         System.out.println("Analysis of method "+`x.getinfo().getname());
-        TInstructionList ins = `x.getcode().getinstructions();
+        InstructionList ins = `x.getcode().getinstructions();
 
-        // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
+        // Builds the labelMap to be able to retrieve the `InstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
         try {
@@ -150,14 +147,14 @@ public class Analysis {
         // Removes the useless stores of the method stratKiller
         // We have not managed to do it in the general case because of
         // stack size problems
-        TInstructionList impInstList = ins;
+        InstructionList impInstList = ins;
         /*
            if(`x.getinfo().getname().equals("stratKiller")) {
-           impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).visit(ins);
+           impInstList = (InstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).visit(ins);
            }
          */
-        TMethodCode impCode = `x.getcode().setinstructions(impInstList);
-        TMethod impMethod = `x.setcode(impCode);
+        MethodCode impCode = `x.getcode().setinstructions(impInstList);
+        Method impMethod = `x.setcode(impCode);
         impClass = appendMethod(impClass, impMethod);
 
       }
@@ -165,41 +162,41 @@ public class Analysis {
     return impClass;
   }
 
-  private static TClass appendMethod(TClass clazz, TMethod method){
-    TMethodList l = clazz.getmethods();
-    return `Class(clazz.getinfo(), clazz.getfields(), MethodList(l*, method));
+  private static ClassNode appendMethod(ClassNode ast, Method method){
+    MethodList l = ast.getmethods();
+    return `Class(ast.getinfo(), ast.getfields(), MethodList(l*, method));
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
-    visit TOuterClassInfo {
+    visit OuterClassInfo {
       x@OuterClassInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
       }
     }
 
-    visit TLocalVariable {
+    visit LocalVariable {
       x@LocalVariable[typeDesc=t] -> {
         if(`t.equals(currentName))
           return `x.settypeDesc(newName);
       }
     }
 
-    visit TFieldDescriptor {
+    visit FieldDescriptor {
       x@ObjectType[className=n] -> {
         if(`n.equals(currentName))
           return `x.setclassName(newName);
       }
     }
 
-    visit TMethodInfo {
+    visit MethodInfo {
       x@MethodInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
       }
     }
 
-    visit TInstruction {
+    visit Instruction {
       x@(Getstatic|Putstatic|Getfield|Putfield|
           Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
         [owner=owner] -> {
@@ -214,13 +211,13 @@ public class Analysis {
 
   }
 
-  private static TClass renameClass(TClass clazz, String newName) {
-    TClassInfo classInfo = clazz.getinfo();
+  private static ClassNode renameClass(ClassNode ast, String newName) {
+    ClassInfo classInfo = ast.getinfo();
     String currentName = classInfo.getname();
 
-    TClass newClass = clazz.setinfo(classInfo.setname(newName));
+    ClassNode newAst = ast.setinfo(classInfo.setname(newName));
     try {
-      return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+      return `TopDown(RenameDescAndOwner(currentName, newName)).visit(newAst);
     } catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException();
     }
@@ -234,15 +231,15 @@ public class Analysis {
     System.out.println("Parsing class file " + args[0] + " ...");
     BytecodeReader cr = new BytecodeReader(args[0]);
     System.out.println("Analyzing ...");
-    TClass c = cr.getTClass();
-    TClass cImproved = analyze(c);
+    ClassNode c = cr.getAst();
+    ClassNode cImproved = analyze(c);
 
     String impClassName = args[0] + "Imp";
     System.out.println("Generating improved class " + impClassName + " ...");
     cImproved = renameClass(cImproved, impClassName);
 
-    BytecodeGenerator bg = new BytecodeGenerator();
-    byte[] code = bg.toBytecode(cImproved);
+    BytecodeGenerator bg = new BytecodeGenerator(cImproved);
+    byte[] code = bg.toByteArray();
     try{
       FileOutputStream fos = new FileOutputStream(impClassName + ".class");
       fos.write(code);
