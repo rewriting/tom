@@ -10,6 +10,14 @@ public class Analyser {
 
 	public static final int NOT_COMPARABLE = -2;
 
+	public static void printErr(String msg) {
+		System.err.println("error: " + msg);
+	}
+
+	public static void printWarn(String msg) {
+		System.out.println("warning: " + msg);
+	}
+
 	public static Rules checkIntegrity(Rules rs) {
 		try {
 			rs = `OutermostId(checkIntersect()).visit(rs);
@@ -41,11 +49,10 @@ public class Analyser {
 				if (isEquiv(`srcaddr1,`srcaddr2) 
 				&& isEquiv(`dstaddr1,`dstaddr2)) {
 					if (`action1 == `action2) {
-						System.out.println("doubloon: " + `r1);
+						printWarn("doubloon: " + `r1);
 						return `Rules(X*,r1,Y*,Z*);
 					} else {
-						System.err.println(
-						"conflicting rules:" 
+						printErr("conflict:" 
 						+ `r1 + "\t/\t" + `r2 + 
 						" => removing " + `r2);
 						
@@ -59,17 +66,21 @@ public class Analyser {
 	%strategy checkInclusion() extends Identity() { 
 		visit Rules {
 			Rules(X*,r1,Y*,r2,Z*) -> {
-				/* looking for inclusions optimizations */
+				/* looking for generalization */
 				int i = isInclude(`r1,`r2);
 				if (i == 1) {
-					System.out.println("optimization: " + `r2);
+					printWarn("generalization: " + `r2);
 					return `Rules(X*,r1,Y*,Z*);
 				} else if (i == -1) {
-					System.out.println("optimization: " + `r1);
+					printWarn("generalization: " + `r1);
 					return `Rules(X*,Y*,r2,Z*);
 				} else if (i == 0) {
-					System.out.println("optimization-doubloon: " + `r1);
+					printWarn("redundancy: " + `r1);
 					return `Rules(X*,r1,Y*,Z*);
+				} else if (i == -2) {
+					printWarn("corelation: "+`r1+"/" + `r2);
+				} else if (i == 2) {
+					printWarn("corelation: "+`r1+"/" + `r2);
 				}
 			}
 		}
@@ -78,7 +89,8 @@ public class Analyser {
 	public static boolean isEquiv(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return true; }
-			Addr4(ip1,smask1),Addr4(ip2,smask2) && (smask1 == smask2) -> {
+			Addr4(ip1,smask1),Addr4(ip2,smask2)&&(smask1 == smask2) 
+			-> {
 				if ((`ip1 & `smask1) == (`ip2 & `smask2))
 					return true;
 			}
@@ -89,12 +101,12 @@ public class Analyser {
 					return true;
 				}
 			}
-			Addr6(ipms,ipls,_,smaskls),Addr4(_,_) && (ipms == 0)-> {
+			Addr6(ipms,ipls,_,smaskls),Addr4(_,_)&&(ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(`Addr4((int)ipls,(int)smaskls),a2);
 				}
 			}
-			Addr4(_,_),Addr6(ipms,ipls,_,smaskls) && (ipms == 0) -> {
+			Addr4(_,_),Addr6(ipms,ipls,_,smaskls)&&(ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(a1,`Addr4((int)ipls,(int)smaskls));
 				}
@@ -111,21 +123,26 @@ public class Analyser {
 	*/
 	public static int isInclude(Rule r1, Rule r2) {
 		%match(r1,r2) {
-			Rule(action,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
-			Rule(action,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
+			Rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts),
+			Rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts) -> {
 				int i1 = isInclude(`srcaddr1,`srcaddr2),
-					i2 = isInclude(`dstaddr1,`dstaddr2);
+					i2 = isInclude(`dstaddr1,`dstaddr2),ret = Integer.MAX_VALUE;
 				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
 					if (i1 == 0) {
-						return i2;
+						ret = i2;
 					} else if (i2 == 0) {
-						return i1;
+						ret = i1;
 					} else {
 						if ((i1 > 0) && (i2 > 0))
-							return 1;
+							ret = 1;
 						else if ((i1 < 0) && (i2 < 0))
-							return -1;
+							ret = -1;
 					}
+					if (`action1 == `action2)
+						return ret;
+					else
+						return ret * 2;
+					
 				}
 			}
 		}
@@ -236,7 +253,7 @@ public class Analyser {
 			NoOpt()
 		);
 
-		Rules rs = 	`Rules(r1,r2,r3),rsn;
+		Rules rs = `Rules(r1,r2,r3),rsn;
 
 		/* printing tests */
 		System.out.println("\n#printing test: " +rs);
