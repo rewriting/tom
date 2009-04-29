@@ -21,8 +21,15 @@ file :
 	(block)* EOF -> ^(IptablesBlocks (block)*)
      ;
 
-block : 'Chain' target '(policy' action ')' 'target' 'prot' 'opt' 'source' 'destination' (rule)* -> ^(IptablesBlock target action IptablesRules (rule)*);
-rule : action proto opt address address opts -> ^(IptablesRule action proto address address opts);
+block:	'Chain' target '(policy' action ')'
+	'target' 'prot' 'opt' 'source' 'destination'
+	(rule)* -> ^(
+		IptablesBlock target action IptablesRules (rule)*
+	);
+
+rule:	action proto oopt address address opts -> ^(
+		IptablesRule action proto address address opts
+	);
 
 action : 
 	'ACCEPT' -> ^(Accept)
@@ -47,11 +54,19 @@ target :
 	| 'FORWARD' -> ^(Forward)
 	;
 
-address : STRING -> ^(AddrAny);
+address: STRING -> ^(AddrAny);
 
-opt : '--' -> ^(NoOpt);
+oopt: 	'--';
 
-opts : STRING -> ^(NoOpt);
+port:	'dpt:INT' -> ^(DestPort INT)
+	| 'spt:INT' -> ^(SourcePort INT)
+	;
+
+opts:	opt* -> ^(IptablesOptions opt*);
+
+opt:	proto port -> ^(port)
+	| STRING -> ^(UnknownOption STRING)
+	;
 
 INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;

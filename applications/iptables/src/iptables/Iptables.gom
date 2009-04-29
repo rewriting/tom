@@ -1,5 +1,5 @@
 module iptables.Iptables
-imports String Analyser
+imports int String Analyser
 abstract syntax
 
 IptablesBlocks = IptablesBlocks(IptablesBlock*)
@@ -15,4 +15,8 @@ IptablesRule = IptablesRule(
 		addrdst: Address,
 		options: IptablesOptions)
 
-IptablesOptions = IptablesOptions()
+IptablesOptions = IptablesOptions(IptablesOption*)
+IptablesOption =
+		SourcePort(n:int)
+		| DestPort(n:int)
+		| UnknownOption(str:String)
