@@ -6,14 +6,15 @@ options {
 }
 
 tokens {
-  %include { iptables/analyser/AnalyserTokenList.txt }
+	%include { iptables/analyser/AnalyserTokenList.txt }
+	%include { iptables/iptables/IptablesTokenList.txt }
 }
 
 @header {
-  package iptables;
+	package iptables;
 }
 @lexer::header {
-  package iptables;
+	package iptables;
 }
 
 file :
@@ -21,7 +22,7 @@ file :
      ;
 
 block : 'Chain' target '(policy' action ')' 'target' 'prot' 'opt' 'source' 'destination' (rule)* -> ^(IptablesBlock target action IptablesRules (rule)*);
-rule : action proto opt address address opts -> ^(IptableRule action proto address address opts);
+rule : action proto opt address address opts -> ^(IptablesRule action proto address address opts);
 
 action : 
 	'ACCEPT' -> ^(Accept)

@@ -1,14 +1,14 @@
-module iptables.fwraw.Iptables
-imports String
+module iptables.Iptables
+imports String Analyser
 abstract syntax
 
-IptablesBlocks = Blocks(Block*)
+IptablesBlocks = IptablesBlocks(IptablesBlock*)
 
 IptablesBlock = IptablesBlock(target:Target, action:Action,rules:IptablesRules)
 
-IptablesRules = IptablesRules(IptableRule*)
+IptablesRules = IptablesRules(IptablesRule*)
 
-IptableRule = IptableRule(
+IptablesRule = IptablesRule(
 		action:Action,
 		proto:Protocol,
 		addrsrc: Address,

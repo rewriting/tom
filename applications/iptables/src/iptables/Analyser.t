@@ -28,7 +28,7 @@ public class Analyser {
 
 	%strategy checkIntersect() extends Identity() {
 		visit Rules {
-			rs@Rules(
+			Rules(
 				X*,
 				r1@Rule(action1,iface,proto,target,srcaddr1,
 					dstaddr1,srcport,dstport,opts),
@@ -58,7 +58,7 @@ public class Analyser {
 
 	%strategy checkInclusion() extends Identity() { 
 		visit Rules {
-			rs@Rules(X*,r1,Y*,r2,Z*) -> {
+			Rules(X*,r1,Y*,r2,Z*) -> {
 				/* looking for inclusions optimizations */
 				int i = isInclude(`r1,`r2);
 				if (i == 1) {
@@ -89,12 +89,12 @@ public class Analyser {
 					return true;
 				}
 			}
-			Addr6(ipms,ipls,smaskms,smaskls),Addr4(ip,smask) && (ipms == 0)-> {
+			Addr6(ipms,ipls,_,smaskls),Addr4(_,_) && (ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(`Addr4((int)ipls,(int)smaskls),a2);
 				}
 			}
-			Addr4(ip,smask),Addr6(ipms,ipls,smaskms,smaskls) && (ipms == 0) -> {
+			Addr4(_,_),Addr6(ipms,ipls,_,smaskls) && (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(a1,`Addr4((int)ipls,(int)smaskls));
 				}
@@ -187,12 +187,12 @@ public class Analyser {
 			/* IPv4 mapped address has its first 80 bits set to zero, 
 			the next 16 set to one, while its last 32 bits represent an 
 			IPv4 address*/
-			Addr6(ipms,ipls,smaskms,smaskls),Addr4(ip,smask) && (ipms == 0)-> {
+			Addr6(ipms,ipls,_,smaskls),Addr4(_,_) && (ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isInclude(`Addr4((int)ipls,(int)smaskls),a2);
 				}
 			}
-			Addr4(ip,smask),Addr6(ipms,ipls,smaskms,smaskls) && (ipms == 0) -> {
+			Addr4(_,_),Addr6(ipms,ipls,_,smaskls) && (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isInclude(a1,`Addr4((int)ipls,(int)smaskls));
 				}

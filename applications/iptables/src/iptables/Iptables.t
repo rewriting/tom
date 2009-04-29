@@ -1,6 +1,6 @@
-package iptables.fwraw;
+package iptables;
 
-import iptables.*;
+import iptables.iptables.types.*;
 import iptables.analyser.types.*;
 import iptables.analyserwrapper.types.*;
 import tom.library.sl.*; 
@@ -8,8 +8,8 @@ import java.util.*;
 
 /* >>> TODO: use superclass */
 public class Iptables {
-	%include { ../analyserwrapper/AnalyserWrapper.tom }
-	%include { ../analyser/Analyser.tom }
+	%include { analyserwrapper/AnalyserWrapper.tom }
+	%include { iptables/Iptables.tom }
 	%include { sl.tom }
 
 	%strategy wrap() extends Identity() {
@@ -18,7 +18,7 @@ public class Iptables {
 				return `OutermostId(wrap()).visit(b);
 			}
 		}
-		visit IptableBlock {
+		visit IptablesBlock {
 			IptablesBlock(t@Target,a@Action,is@IptablesRules) -> {
 				return `Rules(
 					Rule(a,IfaceAny(),ProtoAny(),t,
@@ -31,17 +31,16 @@ public class Iptables {
 	}
 
 	%strategy wrapRule(t:Target) extends Identity() {
-		visit IptableRules {
-			IptablesRules(r@IptableRule(
+		visit IptablesRules {
+			IptablesRules(r@IptablesRule(
 					a@Action,
 					p@Protocol,
 					as@Address,
 					ad@Address,
 					o@IptablesOptions),
-				_*) -> {
-					return `Rule(a,IfaceAnyp(),p,t,as,ad,
+			_*) -> {
+				return `Rule(a,IfaceAnyp(),p,t,as,ad,
 							PortAny(),PortAny(),NoOpt());
-				}
 			}
 		}
 	}
