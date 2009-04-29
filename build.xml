@@ -48,6 +48,7 @@
   <property name="src.build"      location="${src.src}/build"/>
   <property name="src.dist"       location="${src.src}/dist"/>
   <property name="src.doc"        location="${src.src}/doc"/>
+  <property name="src.doc.adt"    location="${src.src}/doc/adt"/>
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
@@ -1361,6 +1362,7 @@
       <fileset dir="${stable.src}">
         <include name="tom/library/sl/**/*.java"/>
       </fileset>
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
 
@@ -1387,6 +1389,25 @@
         <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
+      <link href="http://tom.loria.fr/adt/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <!-- adt javadoc -->
+  <target name="src.doc.adt"
+    description="Build adt javadoc for src"
+    depends="src">
+    <mkdir dir="${src.doc.adt}"/>
+    <javadoc destdir="${src.doc.adt}"
+      windowtitle="TOM adt documentation"
+      breakiterator="yes">
+      <classpath refid="src.classpath"/>
+      <fileset dir="${src.gen}">
+        <include name="tom/library/adt/**/*.java"/>
+      </fileset>
+      <link href="http://tom.loria.fr/api/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
 
