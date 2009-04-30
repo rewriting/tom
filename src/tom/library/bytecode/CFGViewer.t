@@ -115,7 +115,7 @@ public class CFGViewer {
    */
   private static void printDotInstruction(Instruction ins, String id, Writer out) {
     try {
-      %match(Instruction ins) {
+      %match(ins) {
 
         (Bipush|Sipush|Newarray)(operand) -> {
           out.write(%[
@@ -284,7 +284,7 @@ public class CFGViewer {
    * @param inst the global list of instructions.
    */
   private static void printLocalVariables(LocalVariableList list, Map labelMap, Writer out, InstructionList inst) throws VisitFailure {
-    %match(LocalVariableList list) {
+    %match(list) {
       LocalVariableList(_*, x, _*) -> {
         try {
           LocalVariable var = `x;

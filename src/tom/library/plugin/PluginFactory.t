@@ -252,15 +252,15 @@ public class PluginFactory implements Plugin {
     XmlTools xtools = new XmlTools();
     TNode docNode = ( xtools.convertXMLToTNode(xmlFile) ).getDocElem();
 
-    %match(TNode docNode) {
+    %match(docNode) {
       fact@<factory></factory> -> {
 
-        %match(TNode fact) {
+        %match(fact) {
           ElementNode[ChildList=cl] -> {
             while(!(`cl.isEmptyconcTNode())) {
               TNode pluginNode = `cl.getHeadconcTNode();
 
-              %match(TNode pluginNode) {
+              %match(pluginNode) {
                 <plugin [classpath = cp] /> -> { classPaths.add(`cp);/*System.out.println(cp);*/ }
               }
               `cl = `cl.getTailconcTNode();

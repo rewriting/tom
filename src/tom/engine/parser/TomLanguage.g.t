@@ -1694,7 +1694,7 @@ operator returns [Declaration result] throws TomException
                 msg = TomMessage.errorIncompatibleSlotDecl;
               } else {
                 PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
-                %match(PairNameDecl pair) {
+                %match(pair) {
                   PairNameDecl[SlotDecl=decl] -> {
                     if(`decl != `EmptyDeclaration()) {
                       msg = TomMessage.errorTwoSameSlotDecl;

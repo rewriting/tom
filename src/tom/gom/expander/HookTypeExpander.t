@@ -187,7 +187,7 @@ public class HookTypeExpander {
         Args=hookArgs,
         StringCode=scode] -> {
           HookDeclList newHookList = `ConcHookDecl();
-          %match(HookKind `hkind) {
+          %match(hkind) {
             HookKind("block") -> {
               newHookList = `ConcHookDecl(
                   BlockHookDecl(mdecl,Code(trimBracket(scode)),true()));
@@ -374,7 +374,7 @@ public class HookTypeExpander {
           CutOperator[
             ODecl=OperatorDecl[Sort=sort,Prod=Variadic(sortDecl)]] -> {
               // for a make_insert hook, there are two arguments: head, tail
-              %match(ArgList args) {
+              %match(args) {
                 ConcArg(Arg(head),Arg(tail)) -> {
                   return `ConcSlot(Slot(head,sortDecl),Slot(tail,sort));
                 }
@@ -403,7 +403,7 @@ public class HookTypeExpander {
           CutOperator[
             ODecl=OperatorDecl[Prod=Variadic[]]] -> {
               // for a make_empty hook, there is no argument
-              %match(ArgList args) {
+              %match(args) {
                 ConcArg() -> { return `ConcSlot(); }
                 _ -> {
                   getLogger().log(Level.SEVERE,
@@ -426,7 +426,7 @@ public class HookTypeExpander {
   }
 
   private SlotList recArgSlots(ArgList args, SlotList slots) {
-    %match(ArgList args, SlotList slots) {
+    %match(args, slots) {
       ConcArg(),ConcSlot() -> {
         return `ConcSlot();
       }

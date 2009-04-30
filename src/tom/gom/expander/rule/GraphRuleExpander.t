@@ -70,7 +70,7 @@ public class GraphRuleExpander {
   }
 
   private static String fullClassName(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
           return `name;

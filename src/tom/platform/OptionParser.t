@@ -95,9 +95,9 @@ public class OptionParser {
    */
   public static PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `concPlatformOption();
-    %match(TNode optionsNode) {
+    %match(optionsNode) {
       <options>(_*,option,_*)</options> -> {
-        %match(TNode option) {
+        %match(option) {
           <boolean [name = n, altName = an, description = d, value = v] /> -> { 
             PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
             list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 

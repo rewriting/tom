@@ -312,7 +312,7 @@ public class XMLToTNode {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-    %match(TNode elt, TNodeList list) {
+    %match(elt, list) {
       AttributeNode[Name=_], concTNode() -> {
         return `concTNode(elt,list*);
       }

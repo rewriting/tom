@@ -195,7 +195,7 @@ public class Expander {
 
   public ImportList getImportList(GomModule module) {
     ImportList imports = `ConcImportedModule();
-    %match(GomModule module) {
+    %match(module) {
       GomModule(_,ConcSection(_*,Imports(importList),_*)) -> {
         imports = `ConcImportedModule(importList*,imports*);
       }

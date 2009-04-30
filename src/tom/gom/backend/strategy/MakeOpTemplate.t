@@ -182,7 +182,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name] -> {
           out.append(%[
   get_slot(@fieldName(`name)@, t) { $t.@fieldName(`name)@ }]%);
@@ -198,7 +198,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
 
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name,Domain=domain] -> {
           args.append((i==0?"":", "));
           args.append(fieldName(`name));
@@ -217,7 +217,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   private String genNonBuiltin() {
     StringBuilder out = new StringBuilder();
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           out.append("true, ");
@@ -235,7 +235,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   private int nonBuiltinChildCount() {
     int count = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           count++;
@@ -250,7 +250,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     */
   private String generateMembers() {
     String res="";
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "  private tom.library.sl.Strategy "+fieldName(`fieldName)+";\n";
@@ -264,7 +264,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   private String generateMembersList() {
     String res="";
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
@@ -287,7 +287,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   private String nonBuiltinsGetCases() {
     String res = "";
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
@@ -301,7 +301,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   private String nonBuiltinMakeCases(String argName) {
     String res = "";
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[      case @index@: @fieldName(`fieldName)@ = (tom.library.sl.Strategy) @argName@; return this;
@@ -322,7 +322,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -346,7 +346,7 @@ public class @className()@ implements tom.library.sl.Strategy {
    */
   private String computeNewChilds(SlotFieldList slots, String argName, String introspectorName) {
     String res = "";
-    %match(SlotFieldList slots) {
+    %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
@@ -367,7 +367,7 @@ public class @className()@ implements tom.library.sl.Strategy {
    */
   private String computeSLNewChilds(SlotFieldList slots, String introspectorName) {
     String res = "";
-    %match(SlotFieldList slots) {
+    %match(slots) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += %[
@@ -388,7 +388,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     */
   private String generateMembersInit() {
     String res = "";
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=name],_*) -> {
         res += "    this."+fieldName(`name)+" = "+fieldName(`name)+";\n";
       }
@@ -399,7 +399,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   private String generateMembersSetChildren(String array) {
     String res = "";
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=name,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += "    this."+fieldName(`name)+" = (tom.library.sl.Strategy)"+array+"["+index+"];\n";
@@ -419,7 +419,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name,Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");

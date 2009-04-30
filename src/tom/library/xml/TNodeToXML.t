@@ -95,7 +95,7 @@ public void convert(String filename) {
    * @throws RuntimeException in case of problem in DocumentTypeNode
    */
   public void tnodeToXML(TNode n) {
-    %match(TNode n) {
+    %match(n) {
       DocumentNode(docType,docElem) -> {
         write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         tnodeToXML(`docType);

@@ -62,7 +62,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write("  %include { Strategy.tom }");
-    %match(GomClassList operatorClasses) {
+    %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
             (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());

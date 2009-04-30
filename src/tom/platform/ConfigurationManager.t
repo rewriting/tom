@@ -166,7 +166,7 @@ public class ConfigurationManager {
    */
   private List extractClassPaths(TNode node) {
     List res = new ArrayList();
-    %match(TNode node) {
+    %match(node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
          res.add(`cp);
          getLogger().log(Level.FINER, PluginPlatformMessage.classPathRead.getMessage(), `cp);
@@ -187,7 +187,7 @@ public class ConfigurationManager {
    * </ul>
    */
   private int createOptionManager(TNode node) {
-    %match(TNode node) {
+    %match(node) {
       <platform><optionmanager class=omclass><options>(globalOptions*)</options></optionmanager></platform> -> {
         try {
           Object omInstance = Class.forName(`omclass).newInstance();
