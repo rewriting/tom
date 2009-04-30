@@ -830,7 +830,7 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${src.dist}/lib/tom-src-runtime-full.jar">
+    <zip destfile="${src.dist}/lib/tom-runtime-full-${src.version}.jar">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
       <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
     </zip>
