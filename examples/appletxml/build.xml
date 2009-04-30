@@ -4,16 +4,9 @@
   <property name="example" value="appletxml"/>
   <target name="build" depends="common.build">
     <!-- Create a jar for the applet -->
-    <!-- ugly hacks to find the TNode and tom-runtime jars -->
-    <path id="tnode.path">
-      <fileset dir="${tom.home}/lib">
-        <include name="**/TNode*.jar"/>
-      </fileset>
-    </path>
-    <property name="tnode.jar" refid="tnode.path"/>
     <path id="tom-runtime.path">
       <fileset dir="${tom.home}/lib">
-        <include name="**/tom-runtime*.jar"/>
+        <include name="tom-runtime-full*.jar"/>
       </fileset>
     </path>
     <property name="tom-runtime.jar" refid="tom-runtime.path"/>
@@ -21,11 +14,7 @@
       <fileset dir="${examples.build}">
         <include name="${example}/**/*.class"/>
       </fileset>
-      <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/**/*"/>
-      <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar" includes="jjtraveler/Visit*"/>
-      <zipfileset src="${tom-runtime.jar}" includes="tom/library/xml/*"/>
-      <zipfileset src="${tnode.jar}"/>
+      <zipfileset src="${tom-runtime.jar}"/>
     </jar>
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
