@@ -4,18 +4,14 @@ import xmlrpclib
 import sys
 import os
 
-PORT = 8000
-
-TOM_HOME = os.getenv("TOM_HOME")
-CONFIG = TOM_HOME + "/Tom.xml"
-INC = TOM_HOME + "/share/tom/java"
+PORT = 8888
 
 def absolute(s):
-    if s.endswith(".t"): return os.path.abspath(s)
-    else               : return s
+  if s.endswith(".t"): return os.path.abspath(s)
+  else               : return s
 
 userargs = map(absolute, sys.argv[1:])
-args = ['-X', CONFIG, '-I', INC, '--noOutput', '--wall']
+args = ['--noOutput', '--wall']
 
 s = xmlrpclib.ServerProxy('http://localhost:%d' % PORT)
 t = s.compile(args + userargs)
@@ -31,5 +27,3 @@ def clean(s):
 for l in err.splitlines():
   sys.stderr.write(clean(l))
   sys.stderr.write('\n')
-
-

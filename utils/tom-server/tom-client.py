@@ -18,5 +18,3 @@ t = s.compile(os.getcwd(),userargs)
 
 sys.stdout.write(out)
 sys.stderr.write(err)
-
-
