@@ -2,18 +2,6 @@ module Bytecode
 imports int long float double String
 abstract syntax
 
-IntList = IntList(int*)
-
-StringList = StringList(String*)
-
-Signature = Signature(sig:String)
-           | EmptySignature()
-
-Signature:make(sig) {
-  if(sig == null)
-    return `EmptySignature();
-}
-
 ClassNode = Class(info:ClassInfo, fields:FieldList, methods:MethodList)
 
 ClassInfo = ClassInfo(name:String, signature:Signature, access:AccessList, superName:String, interfaces:StringList, innerClasses:InnerClassInfoList, outerClass:OuterClassInfo)
@@ -311,4 +299,16 @@ sort Method : block() {
     } 
   }
 
+}
+
+IntList = IntList(int*)
+
+StringList = StringList(String*)
+
+Signature = Signature(sig:String)
+           | EmptySignature()
+
+Signature:make(sig) {
+  if(sig == null)
+    return `EmptySignature();
 }
