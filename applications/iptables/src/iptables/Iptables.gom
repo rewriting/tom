@@ -16,7 +16,9 @@ IptablesRule = IptablesRule(
 		options: IptablesOptions)
 
 IptablesOptions = IptablesOptions(IptablesOption*)
+
 IptablesOption =
 		SourcePort(n:int)
 		| DestPort(n:int)
+		| IptablesStates(s:States)
 		| UnknownOption(str:String)

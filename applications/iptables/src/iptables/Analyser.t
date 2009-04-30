@@ -8,7 +8,7 @@ public class Analyser {
 	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
-	public static final int NOT_COMPARABLE = -2;
+	public static final int NOT_COMPARABLE = Integer.MAX_VALUE;
 
 	public static void printErr(String msg) {
 		System.err.println("error: " + msg);
@@ -21,19 +21,12 @@ public class Analyser {
 	public static Rules checkIntegrity(Rules rs) {
 		try {
 			rs = `OutermostId(checkIntersect()).visit(rs);
-			
-		} catch (VisitFailure vf) { }
-		return rs;
-	}
- 
-	public static Rules checkOptimization(Rules rs) {
-		try {
 			rs = `OutermostId(checkInclusion()).visit(rs);
 			
 		} catch (VisitFailure vf) { }
 		return rs;
 	}
-
+ 
 	%strategy checkIntersect() extends Identity() {
 		visit Rules {
 			Rules(
@@ -282,12 +275,8 @@ public class Analyser {
 		System.out.println("\n# checkIntegrity test: nothing wrong");
 		checkIntegrity(`Rules(r1,r3));
 		System.out.println("\n# checkIntegrity test: doubloon & conflict");
-		checkIntegrity(`Rules(r1,r2,r3,r1));
-
-		/* checkOptimization tests */
-		System.out.println("\n# checkOptimization test");
-		System.out.println("[[Rules: " + rs + "]]\n");
-		rs = checkOptimization(rs);
+		rs = checkIntegrity(rs);
 		System.out.println("\n[[Rules: " + rs + "]]");
+		checkIntegrity(`Rules(r1,r2,r3,r1));
 	}
 }
