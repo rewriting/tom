@@ -9,7 +9,7 @@ public class Pretty {
   %include {firewall/ast/Ast.tom}
   %include {sl.tom}
   
-  public String toString(File f) {
+  public static String toString(IpTablesOutput f) {
     StringBuffer sb = new StringBuffer() ;
     %match(f) {
       Blocks(_*,Block(_,_,InstructionList(_*,X,_*)),_*,Block(_,_,InstructionList(_*,X,_*)),_*) -> {
@@ -22,7 +22,7 @@ public class Pretty {
     return sb.toString() ;
   }
 
-  public String toString(Block b) {
+  public static String toString(Block b) {
     StringBuffer sb = new StringBuffer() ;
     %match(b) {
       Block(r,p,il) -> {
@@ -32,7 +32,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Rule r) {
+  public static String toString(Rule r) {
     %match(r) {
       Input()       -> {return "INPUT";}
       Forward()     -> {return "FORWARD";}
@@ -44,7 +44,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Policy p) {
+  public static String toString(Policy p) {
     %match(p) {
       PolicyAccept() -> {return "(policy ACCEPT)";}
       PolicyDrop()   -> {return "(policy DROP)";}
@@ -53,7 +53,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(InstructionList il) {
+  public static String toString(InstructionList il) {
     StringBuffer sb = new StringBuffer() ;
     %match(il) {
       InstructionList(_*,i,_*) -> {
@@ -63,7 +63,7 @@ public class Pretty {
     return sb.toString() ;
   }
 
-  public String toString(Instruction i) {
+  public static String toString(Instruction i) {
     %match(i) {
       Ins(t,p,o,s,d,lo) -> {
         return toString(`t) + "\t" + toString(`p) + " " + toString(`o) + " " + toString(`s) + "\t\t" + toString(`d) 
@@ -73,7 +73,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Target t) {
+  public static String toString(Target t) {
     %match(t) {
       Accept()        -> {return "ACCEPT";}
       Classify()      -> {return "CLASSIFY";}
@@ -112,7 +112,7 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Protocol p) {
+  public static String toString(Protocol p) {
     %match(p) {
       All_()  -> {return "all ";}
       Icmp() -> {return "icmp";}
@@ -122,56 +122,28 @@ public class Pretty {
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Opt o) {
+  public static String toString(Opt o) {
     %match(o) {
       None() -> {return "--";}
     }
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Communication c) {
+  public static String toString(Communication c) {
     %match(c) {
       Anywhere()  -> {return "anywhere";}
       Localhost() -> {return "localhost";}
-      Ip_Addr(ip) -> {return `ip;}
+      Ipv4_Addr(Ipv4(ip1,ip2,ip3,ip4),mask) -> {return `ip1+"."+`ip2+"."+`ip3+"."+`ip4+"/"+`mask;}
+      Ipv6_Addr(ip) -> {return `ip ;}
     }
     throw new RuntimeException("should not be there");
   }
 
-  public String toString(Opts lo) {
+  public static String toString(Opts lo) {
     %match(lo) {
       Opts(s) -> {return `s;}
     }
     throw new RuntimeException("should not be there");
-  }
-
-  public static void main(String[] args) {
-    Pretty pretty = new Pretty();
-    System.out.println(pretty.toString(
-	`Blocks(
-		Block(Input(),PolicyDrop(),InstructionList(
-			Ins(Accept(),All_(),None(),Anywhere(),Anywhere(),Opts("le")),
-			Ins(Accept(),All_(),None(),Localhost(),Localhost(),Opts("citron")),
-			Ins(Accept(),All_(),None(),Ip_Addr("1.2.3.40"),Ip_Addr("5.6.7.80"),Opts("dit :"))
-			)
-		),
-		Block(Forward(),PolicyAccept(),InstructionList(
-			Ins(UserRuleCall("Rule 1"),Icmp(),None(),Localhost(),Anywhere(),Opts("plus")),
-			Ins(Drop(),Tcp(),None(),Anywhere(),Localhost(),Opts("un")),
-			Ins(Accept(),All_(),None(),Ip_Addr("1.2.3.40"),Ip_Addr("5.6.7.80"),Opts("dit :"))
-			)
-		),
-		Block(Postrouting(),PolicyDrop(),InstructionList(
-			Ins(Mirror(),Udp(),None(),Ip_Addr("9.10.11.12"),Anywhere(),Opts("zeste"))
-			)
-		),
-		Block(UserRuleDef("il etait une fois une regle"),Ref(15),InstructionList(
-			Ins(Log(),All_(),None(),Anywhere(),Anywhere(),Opts("!!!!!!"))
-			)     			
-		)
-	)
-	
-    )) ;
   }
 
 }

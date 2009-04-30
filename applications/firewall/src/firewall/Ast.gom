@@ -2,7 +2,7 @@ module firewall.Ast
 imports String int
 abstract syntax
 
-File = Blocks(Block*)
+IpTablesOutput = Blocks(Block*)
 
 Block = Block(rule:Rule,policy:Policy,instructionList:InstructionList)
 
@@ -64,7 +64,10 @@ Opt =   None()
 
 Communication = Anywhere()
               |Localhost()
-              |Ip_Addr(ip:String)
+              |Ipv4_Addr(ipv4:Ipv4,mask:int)
+              |Ipv6_Addr(ipv6:String)
+
+Ipv4 = Ipv4(int*)
 
 Opts = Opts(lo:String)
 
