@@ -550,6 +550,16 @@
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
+    <copy tofile="${stable.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
+    <copy tofile="${stable.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <replace file="${stable.dist.bin}/tom-server">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
     <replace file="${stable.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
@@ -672,6 +682,20 @@
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
+    <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
+    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
+    <copy tofile="${src.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <replace file="${src.dist.bin}/tom-server">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
+    <replace file="${src.dist.bin}/tom">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
     <replace file="${src.dist.bin}/tom">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>

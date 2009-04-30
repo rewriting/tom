@@ -1,0 +1,84 @@
+#! /bin/sh
+
+# This file is generated from utils/script.in by tom's build script
+# Keywords for substitutions:
+# @_TOM_HOME@ allow to specify the variable to be used as TOM_HOME (usefull for
+#   STABLE v.s. SRC)
+# @_MAIN_CLASS@ specify the class containing the main()
+# @_CONFIG_FILE@ specify the config file to use, relative to TOM_HOME
+# @_INCLUDES_DIR@ specify the path for includes (-I option), relative to TOM_HOME
+
+# OS specific support.  $var _must_ be set to either true or false.
+cygwin=false;
+darwin=false;
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+  Darwin*) darwin=true ;;
+esac
+
+if [ -z "$@TOM_HOME@" -o ! -d "$@TOM_HOME@" ] ; then
+  ## resolve links - $0 may be a link to tom's home
+  PRG="$0"
+  progname=`basename "$0"`
+
+  # need this for relative symlinks
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+    PRG="$link"
+    else
+    PRG=`dirname "$PRG"`"/$link"
+    fi
+  done
+
+  @TOM_HOME@=`dirname "$PRG"`/..
+
+  # make it fully qualified
+  @TOM_HOME@=`cd "$@TOM_HOME@" && pwd`
+fi
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+  [ -n "$@TOM_HOME@" ] &&
+    @TOM_HOME@=`cygpath --unix "$@TOM_HOME@"`
+fi
+
+# set TOM_LIB location
+TOM_LIB="${@TOM_HOME@}/lib"
+TOM_JAR=""
+for i in "${TOM_LIB}"/tom/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
+for i in "${TOM_LIB}"/tools/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
+for i in "${TOM_LIB}"/runtime/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
+JYTHONCMD=jython
+
+if [ -z "$LOCALCLASSPATH" ] ; then
+  LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR
+else
+  LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR:$LOCALCLASSPATH
+fi
+
+SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
+SCRIPT_CONFIG_FILE="${@TOM_HOME@}/@CONFIG_FILE@"
+SERVER_SCRIPT=${@TOM_HOME@}/bin/tom-server.py
+
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+  @TOM_HOME@=`cygpath --windows "$@TOM_HOME@"`
+  SCRIPT_INC=`cygpath --windows "$SCRIPT_INC"`
+  LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
+  SCRIPT_CONFIG_FILE=`cygpath --windows "$SCRIPT_CONFIG_FILE"`
+fi
+
+export CLASSPATH=$LOCALCLASSPATH
+exec $JYTHONCMD -Dtom.home="$@TOM_HOME@" $SERVER_SCRIPT -I "$SCRIPT_INC" -X "$SCRIPT_CONFIG_FILE" 

@@ -15,7 +15,7 @@ def absolute(s):
     else               : return s
 
 userargs = map(absolute, sys.argv[1:])
-args = ['-X', CONFIG, '-I', INC, '-I', os.getcwd(), '-d', os.getcwd(), '--noOutput', '--wall']
+args = ['-X', CONFIG, '-I', INC, '--noOutput', '--wall']
 
 s = xmlrpclib.ServerProxy('http://localhost:%d' % PORT)
 t = s.compile(args + userargs)
