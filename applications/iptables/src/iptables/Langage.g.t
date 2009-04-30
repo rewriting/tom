@@ -86,7 +86,13 @@ opt:	proto port		-> ^(port)
 	;
 
 IPV4DOTDEC	: (INT|'*') '.' (INT|'*') '.' (INT|'*') '.' (INT|'*');
-IPV4CIDR	: (INT '.')? (INT '.')? (INT '.')? INT '/' INT;
+//IPV4CIDR	: (INT '.')? (INT '.')? (INT '.')? INT '/' INT;
+IPV4CIDR	: 
+  | INT '/' INT
+  | INT '.' INT '/' INT
+  | INT '.' INT '.' INT '/' INT
+  | INT '.' INT '.' INT '.' INT '/' INT;
+
 IPV6HEX		: (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
 		(HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
 		(HEX8 HEX8);
