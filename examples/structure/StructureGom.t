@@ -46,7 +46,6 @@ public class StructureGom {
 
   %include { structures/Structures.tom }
   %include { sl.tom }
-  %include { util/types/Collection.tom }
   %include { util/types/HashSet.tom }
 
   %typeterm StrucCollection {
@@ -473,23 +472,40 @@ public class StructureGom {
     return (int)w;
   }
 
+  %typeterm MutableInt {
+    implement      { MutableInt }
+    is_sort(t)      { $t instanceof MutableInt }
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
+  private static class MutableInt {
+    private int value = 0;
+    MutableInt(int val) {
+      value = val;
+    }
+    int getValue() {
+      return value;
+    }
+    void increment() {
+      value++;
+    }
+  }
   public static int numberOfPair(StructuresAbstractType subject) {
-    final Collection collection = new ArrayList();
+    final MutableInt count = new MutableInt(0);
     try {
-      `BottomUp(CountPairs(collection)).visitLight(subject);
+      `BottomUp(CountPairs(count)).visitLight(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
-    return collection.size();
+    return count.getValue();
   }
 
-  %strategy CountPairs(bag:Collection) extends `Identity() {
+  %strategy CountPairs(count:MutableInt) extends `Identity() {
     visit Struc {
       par(concPar(_*,x,_*,neg(x),_*)) -> {
-        bag.add(`x);
+        count.increment();
       }
       cop(concCop(_*,x,_*,neg(x),_*)) -> {
-        bag.add(`x);
+        count.increment();
       }
     }
   }
