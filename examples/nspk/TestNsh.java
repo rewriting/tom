@@ -60,7 +60,7 @@ public class TestNsh {
 
   @Test
   public void testCollectOneStep() {
-    Collection c1 = new HashSet();
+    Collection<State> c1 = new HashSet<State>();
     State start = test.query(2,2);
     test.collectOneStep(start,c1);
     int nbNext = c1.size();
@@ -70,13 +70,12 @@ public class TestNsh {
 
   @Test
   public void testCollect3Steps() {
-    Collection c1 = new HashSet();
+    Collection<State> c1 = new HashSet<State>();
     c1.add(test.query(2,2));
     for(int i=0;i<3;i++) {
-      Collection c2 = new HashSet();
-      Iterator it = c1.iterator();
-      while(it.hasNext()) {
-        test.collectOneStep((State)it.next(),c2);
+      Collection<State> c2 = new HashSet<State>();
+      for (State state : c1) {
+        test.collectOneStep(state,c2);
       }
       c1 = c2;
     }

@@ -40,7 +40,11 @@ public class Nsh {
   %include { term/term.tom }
   %include { sl.tom }
   %include { int.tom }
-  %include { util/types/Collection.tom }
+  %typeterm StateCollection {
+    implement     { java.util.Collection<State> }
+    is_sort(t)    { $t instanceof java.util.Collection }
+    equals(l1,l2) { $l1.equals($l2) }
+  }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {
@@ -78,9 +82,8 @@ public class Nsh {
     int i = 0;
     while(!c1.isEmpty()) {
       Collection<State> c2 = new HashSet<State>();
-      Iterator it = c1.iterator();
-      while(it.hasNext()) {
-        collectOneStep((State)it.next(),c2);
+      for (State state : c1) {
+        collectOneStep(state,c2);
       }
 
       System.out.print("iteration " + i + ":");
@@ -116,15 +119,14 @@ public class Nsh {
       return true;
     }
 
-    Iterator it = c1.iterator();
-    while(it.hasNext()) {
-      boolean b = depthSearch((State)it.next(),end);
+    for (State state : c1) {
+      boolean b = depthSearch(state,end);
       if(b) return b;
     }
     return false;
   }
 
- public boolean depthSearch2(Collection local, State start, State end) {
+ public boolean depthSearch2(Collection<State> local, State start, State end) {
     Collection<State> c1 = new HashSet<State>();
     collectOneStep(start,c1);
 
@@ -143,10 +145,9 @@ public class Nsh {
       return true;
     }
 
-    Iterator it = c1.iterator();
     Collection<State> c = new HashSet<State>();
-    while(it.hasNext()) {
-      boolean b = depthSearch2(c,(State)it.next(),end);
+    for (State state : c1) {
+      boolean b = depthSearch2(c,state,end);
       if(b) return b;
     }
     return false;
@@ -252,7 +253,7 @@ public class Nsh {
   public static boolean existAgent(Agent agent, ListAgent list) {
     %match(list) {
       concAgent() -> { return false; }
-      concAgent(X1*,x,X2*) && x<<Agent agent -> { return true; }
+      concAgent(_*,x,_*) && x << Agent agent -> { return true; }
     }
     return false;
     /* return list.indexOf(agent,0) >= 0; */
@@ -261,7 +262,7 @@ public class Nsh {
   public static boolean existMessage(Message message, ListMessage list) {
     %match(list) {
       concMessage() -> { return false; }
-      concMessage(X1*,x,X2*) && x<<Message message -> { return true; }
+      concMessage(_*,x,_*) && x<<Message message -> { return true; }
     }
     return false;
     /* return list.indexOf(message,0) >= 0; */
@@ -271,14 +272,14 @@ public class Nsh {
     return ((nspk.term.types.listmessage.concMessage)list).length();
   }
   
-  public void collectOneStep(State state, Collection col) {
+  public void collectOneStep(State state, Collection<State> col) {
     try {
       `OneStep(col).visitLight(state);
     } catch (VisitFailure f) {
       throw new RuntimeException("VisitFailure for "+state);
     }
   }
-  %strategy OneStep(c:Collection) extends `Identity() {
+  %strategy OneStep(c:StateCollection) extends `Identity() {
     visit State {
       // 3 (A --> B)
       // sender creates message
