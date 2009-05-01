@@ -49,9 +49,9 @@ public class StructureGom {
   %include { util/types/HashSet.tom }
 
   %typeterm StrucCollection {
-    implement      { java.util.Collection<Struc> }
-    is_sort(t)      { $t instanceof java.util.Collection }
-    equals(l1,l2)  { $l1.equals($l2) }
+    implement     { java.util.Collection<Struc> }
+    is_sort(t)    { $t instanceof java.util.Collection }
+    equals(l1,l2) { $l1.equals($l2) }
   }
 
   StructureGom() { }
