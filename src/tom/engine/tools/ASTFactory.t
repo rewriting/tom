@@ -51,27 +51,11 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList makeList(Collection c) {
-    Object array[] = c.toArray();
+  public static TomList makeList(Collection<TomTerm> c) {
+    TomTerm array[] = c.toArray(new TomTerm[0]);
     TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
-      Object elt = array[i];
-      TomTerm term;
-      if(elt instanceof TargetLanguage) {
-        term = `TargetLanguageToTomTerm((TargetLanguage)elt);
-      } else if(elt instanceof TomType) {
-        term = `TomTypeToTomTerm((TomType)elt);
-      } else if(elt instanceof Declaration) {
-        term = `DeclarationToTomTerm((Declaration)elt);
-      } else if(elt instanceof Expression) {
-        term = `ExpressionToTomTerm((Expression)elt);
-      } else if(elt instanceof TomName) {
-        term = `TomNameToTomTerm((TomName)elt);
-      } else if(elt instanceof Instruction) {
-        term = `InstructionToTomTerm((Instruction)elt);
-      } else {
-        term = (TomTerm)elt;
-      }
+      TomTerm term = array[i];
       list = `concTomTerm(term,list*);
     }
     return list;
@@ -403,8 +387,8 @@ public class ASTFactory {
     return false;
   }
 
-  public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
-    LinkedList list = new LinkedList();
+  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+    LinkedList<TomTerm> list = new LinkedList<TomTerm>();
     %match(term) {
       RecordAppl[NameList=(Name("")),Slots=args] -> {
         while(!`args.isEmptyconcSlot()) {

@@ -152,8 +152,8 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
-    List argumentList = new LinkedList();
-    List constraintInstructionList = new LinkedList();
+    List<TomTerm> argumentList = new LinkedList<TomTerm>();
+    List<ConstraintInstruction> constraintInstructionList = new LinkedList<ConstraintInstruction>();
     TomList subjectList = null;
     TomType patternType = SymbolTable.TYPE_UNKNOWN;
 }
@@ -188,12 +188,12 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
         )
   ;
 
-matchArguments [List list] throws TomException
+matchArguments [List<TomTerm> list] throws TomException
     :   
         ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
 
-matchArgument [List list] throws TomException
+matchArgument [List<TomTerm> list] throws TomException
 {
   TomTerm subject1 = null;
   TomTerm subject2 = null;
@@ -233,7 +233,7 @@ matchArgument [List list] throws TomException
 }
 ;
 
-patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
+patternInstruction [TomList subjectList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
 {    
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
@@ -286,7 +286,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
         )
     ;
 
-visitInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
+visitInstruction [TomList subjectList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
 {
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
@@ -416,7 +416,7 @@ arrowAndAction[List list, OptionList optionList, List<Option> optionListLinked, 
   ;
 
 
-constraintInstruction [List list, TomType rhsType] throws TomException
+constraintInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomException
 {    
     List<Option> optionListLinked = new LinkedList<Option>();
     Constraint constraint = `TrueConstraint();
@@ -472,7 +472,7 @@ matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint r
 matchConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
   List matchPatternList = new LinkedList();
-  List matchSubjectList = new LinkedList();
+  List<TomTerm> matchSubjectList = new LinkedList<TomTerm>();
   Option option = null;
   result = null;
   int consType = -1;
@@ -530,7 +530,7 @@ constraintType returns [int result]
     )      
 ;
 
-matchPattern [List list,boolean allowImplicit] returns [Option result] throws TomException
+matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result] throws TomException
 {
     result = null;
     TomTerm term = null;
@@ -699,7 +699,7 @@ strategyVisitList [List list] throws TomException
 
 strategyVisit [List list] throws TomException
 {
-  List constraintInstructionList = new LinkedList();
+  List<ConstraintInstruction> constraintInstructionList = new LinkedList<ConstraintInstruction>();
   TomType vType = null;
   TomList subjectList = `concTomTerm();
 
@@ -772,7 +772,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
 
 // a plainTerm that doesn't allow the notation (...)
 simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List list, List secondOptionList, 
-                 List optionList, List constraintList, boolean anti] 
+                 List optionList, List<Constraint> constraintList, boolean anti] 
                  returns [TomTerm result] throws TomException
 {
     result = null;   
@@ -889,7 +889,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
     List optionList = new LinkedList();
     List secondOptionList = new LinkedList();
     List list = new LinkedList();
-    List constraintList = new LinkedList(); 
+    List<Constraint> constraintList = new LinkedList<Constraint>(); 
     result = null;
     boolean anti = false;
 }
@@ -903,7 +903,8 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
 // a plainTerm that allows the (...) notation
 implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line, 
-                          List list, List secondOptionList, List optionList, List constraintList, boolean anti]
+                          List list, List secondOptionList, List optionList,
+                          List<Constraint> constraintList, boolean anti]
                           returns [TomTerm result] throws TomException
 {
     TomNameList nameList = null;
@@ -918,7 +919,7 @@ implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int li
 
 }
 :
- args[list,secondOptionList]
+args[list,secondOptionList]
 {
   nameList = `concTomName(Name(""));
   optionList.addAll(secondOptionList);
@@ -932,8 +933,7 @@ implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int li
 }
 ;
 
-
-xmlTerm [List optionList, List constraintList] returns [TomTerm result] throws TomException
+xmlTerm [List optionList, List<Constraint> constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
   TomTerm arg1, arg2;
@@ -1059,7 +1059,7 @@ xmlTerm [List optionList, List constraintList] returns [TomTerm result] throws T
     ;
 
 
-xmlAttributeList [List list] returns [boolean result] throws TomException
+xmlAttributeList [List<TomTerm> list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1111,7 +1111,7 @@ xmlAttribute returns [TomTerm result] throws TomException
     OptionList option = null;
     ConstraintList constraint;
     List optionList = new LinkedList();
-    List constraintList = new LinkedList();
+    List<Constraint> constraintList = new LinkedList<Constraint>();
     List anno1ConstraintList = new LinkedList();
     List anno2ConstraintList = new LinkedList();
     List optionListAnno2 = new LinkedList();
@@ -1186,7 +1186,7 @@ xmlAttribute returns [TomTerm result] throws TomException
     ;
 
 // This corresponds to the implicit notation
-xmlTermList [List list] returns [boolean result] throws TomException
+xmlTermList [List<TomTerm> list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1289,7 +1289,7 @@ termStringIdentifier [List options] returns [TomTerm result] throws TomException
     ;
 
 
-unamedVariableOrTermStringIdentifier [List options, List constraintList] returns [TomTerm result] throws TomException
+unamedVariableOrTermStringIdentifier [List options, List<Constraint> constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
   List optionList = (options==null)?new LinkedList():options;
@@ -1324,7 +1324,7 @@ unamedVariableOrTermStringIdentifier [List options, List constraintList] returns
     ;
 
 // return true for implicit mode
-implicitTermList [List list] returns [boolean result] throws TomException
+implicitTermList [List<TomTerm> list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1406,7 +1406,7 @@ args [List list, List optionList] returns [boolean result] throws TomException
         )
     ;
 
-termList [List list] throws TomException
+termList [List<TomTerm> list] throws TomException
 {
     TomTerm term = null;
 }
@@ -1441,7 +1441,7 @@ pairList [List list] throws TomException
 ;
    
 // _* or var*       
-variableStar [List optionList, List constraintList] returns [TomTerm result]
+variableStar [List optionList, List<Constraint> constraintList] returns [TomTerm result]
 { 
     result = null; 
     String name = null;
@@ -1493,7 +1493,7 @@ variableStar [List optionList, List constraintList] returns [TomTerm result]
     ;
 
 // _
-unamedVariable [List optionList, List constraintList] returns [TomTerm result]
+unamedVariable [List optionList, List<Constraint> constraintList] returns [TomTerm result]
 { 
     result = null;
     OptionList options = null;

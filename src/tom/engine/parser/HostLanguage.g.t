@@ -37,8 +37,6 @@ import tom.engine.TomMessage;
 import tom.engine.exception.*;
 import tom.engine.tools.SymbolTable;
 
-/* import tom.gom.tools.GomEnvironment; */
-
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -76,8 +74,8 @@ options{
   // the file to be parsed
   private String currentFile = null;
 
-  private HashSet includedFileSet = null;
-  private HashSet alreadyParsedFileSet = null;
+  private HashSet<String> includedFileSet = null;
+  private HashSet<String> alreadyParsedFileSet = null;
   //private static final Object lock = new Object();// verrou pour l'exec de Gom
 
   // the parser for tom constructs
@@ -99,7 +97,7 @@ options{
   private boolean skipComment = false;
 
   public HostParser(TokenStreamSelector selector, String currentFile,
-                    HashSet includedFiles, HashSet alreadyParsedFiles,
+                    HashSet<String> includedFiles, HashSet<String> alreadyParsedFiles,
                     OptionManager optionManager, TomStreamManager streamManager){
     this(selector);
     this.selector = selector;
@@ -108,7 +106,7 @@ options{
     this.streamManager = streamManager;
     this.targetlexer = (HostLexer) selector.getStream("targetlexer");
     targetlexer.setParser(this);
-    this.includedFileSet = new HashSet(includedFiles);
+    this.includedFileSet = new HashSet<String>(includedFiles);
     this.alreadyParsedFileSet = alreadyParsedFiles;
 
     testIncludedFile(currentFile, includedFileSet);
@@ -201,7 +199,7 @@ options{
     return targetlexer.getColumn();
   }
 
-  private synchronized void includeFile(String fileName, List list)
+  private synchronized void includeFile(String fileName, List<TomTerm> list)
     throws TomException, TomIncludeException {
     TomTerm astTom;
     InputStream input;
@@ -278,7 +276,7 @@ options{
     }
   }
 
-  private boolean testIncludedFile(String fileName, HashSet fileSet) {
+  private boolean testIncludedFile(String fileName, HashSet<String> fileSet) {
     // !(true) if the set did not already contain the specified element.
     return !fileSet.add(fileName);
   }
@@ -291,7 +289,7 @@ options{
    * alternatively, each string correspond either to a metaString, or a string
    * to parse the @@ encoded by ]% is put back as a single '@' in the metaString
    */
-  public String tomSplitter(String subject, List list) {
+  public String tomSplitter(String subject, List<TomTerm> list) {
 
     String metaChar = "]%";
     String escapeChar = "@";
@@ -316,7 +314,7 @@ options{
         String code = metaEncodeCode(split[i].replace(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
-        list.add(`ITL(code));
+        list.add(`TargetLanguageToTomTerm(ITL(code)));
       } else {
         String code = "+"+split[i]+"+";
         metaMode = true;
@@ -336,7 +334,7 @@ options{
     }
     if(subject.endsWith(escapeChar)) {
       // add an empty string when %[...@...@]%
-      list.add(`ITL("\"\""));
+      list.add(`TargetLanguageToTomTerm(ITL("\"\"")));
     }
     return res;
   }
@@ -392,7 +390,7 @@ options{
 input returns [TomTerm result] throws TomException
 {
     result = null;
-    List list = new LinkedList();
+    List<TomTerm> list = new LinkedList<TomTerm>();
 }
   :
   blockList[list] t:EOF
@@ -409,7 +407,7 @@ input returns [TomTerm result] throws TomException
         }
     ;
 
-blockList [List list] throws TomException
+blockList [List<TomTerm> list] throws TomException
     :
         (
             // either a tom construct or everything else
@@ -429,7 +427,7 @@ blockList [List list] throws TomException
     ;
 
 // the %strategy construct
-strategyConstruct [List list] throws TomException
+strategyConstruct [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
 }
@@ -445,18 +443,18 @@ strategyConstruct [List list] throws TomException
                     TextPosition(currentLine,currentColumn),
                     TextPosition(t.getLine(),t.getColumn())
                 );
-                list.add(code);
+                list.add(`TargetLanguageToTomTerm(code));
             }
 
             Option ot = `OriginTracking( Name("Strategy"), t.getLine(), currentFile);
 
             // call the tomparser for the construct
             Declaration strategy = tomparser.strategyConstruct(ot);
-            list.add(strategy);
+            list.add(`DeclarationToTomTerm(strategy));
         }
     ;
 
-matchConstruct [List list] throws TomException
+matchConstruct [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
 }
@@ -470,21 +468,21 @@ matchConstruct [List list] throws TomException
                     TextPosition(currentLine,currentColumn),
                     TextPosition(t.getLine(),t.getColumn())
                 );
-                list.add(code);
+                list.add(`TargetLanguageToTomTerm(code));
             }
 
             Option ot = `OriginTracking(Name("Match"),t.getLine(), currentFile);
 
             Instruction match = tomparser.matchConstruct(ot);
-            list.add(match);
+            list.add(`InstructionToTomTerm(match));
         }
     ;
 
-gomsignature [List list] throws TomException
+gomsignature [List<TomTerm> list] throws TomException
 {
   int initialGomLine;
-  TargetLanguage gomTL = null, code = null;
-  List blockList = new LinkedList();
+  TargetLanguage code = null;
+  List<TomTerm> blockList = new LinkedList<TomTerm>();
   String gomCode = null;
 }
 :
@@ -497,7 +495,7 @@ gomsignature [List list] throws TomException
       code = `TL(textCode,
                  TextPosition(currentLine,currentColumn),
                  TextPosition(t.getLine(),t.getColumn()));
-      list.add(code);
+      list.add(`TargetLanguageToTomTerm(code));
     }
   }
   {
@@ -507,7 +505,7 @@ gomsignature [List list] throws TomException
     gomCode = cleanCode(blockparser.block().trim());
 
     File config_xml = null;
-    ArrayList parameters = new ArrayList();
+    ArrayList<String> parameters = new ArrayList<String>();
     try {
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
@@ -591,7 +589,7 @@ gomsignature [List list] throws TomException
    
     int res = 1;
     //res = tom.gom.Gom.exec(params);
-    Map<String,Object> informationTracker = new HashMap();
+    Map<String,Object> informationTracker = new HashMap<String,Object>();
     informationTracker.put("lastGeneratedMapping",null);
     
     informationTracker.put("gomBegin",new Integer(initialGomLine));
@@ -630,7 +628,7 @@ gomsignature [List list] throws TomException
 
 ;
 
-backquoteTerm [List list]
+backquoteTerm [List<TomTerm> list]
 {
     TargetLanguage code = null;
 }
@@ -644,7 +642,7 @@ backquoteTerm [List list]
                        TextPosition(currentLine,currentColumn),
                        TextPosition(t.getLine(),t.getColumn())
                        );
-            list.add(code);
+            list.add(`TargetLanguageToTomTerm(code));
           }
 
           Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
@@ -656,7 +654,7 @@ backquoteTerm [List list]
         }
     ;
 
-operator [List list] throws TomException
+operator [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
 }
@@ -673,11 +671,11 @@ operator [List list] throws TomException
             }
 
             Declaration operatorDecl = tomparser.operator();
-            list.add(operatorDecl);
+            list.add(`DeclarationToTomTerm(operatorDecl));
         }
     ;
 
-operatorList [List list] throws TomException
+operatorList [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
 }
@@ -694,11 +692,11 @@ operatorList [List list] throws TomException
             }
 
             Declaration operatorListDecl = tomparser.operatorList();
-            list.add(operatorListDecl);
+            list.add(`DeclarationToTomTerm(operatorListDecl));
         }
     ;
 
-operatorArray [List list] throws TomException
+operatorArray [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
 }
@@ -715,14 +713,14 @@ operatorArray [List list] throws TomException
             }
 
             Declaration operatorArrayDecl = tomparser.operatorArray();
-            list.add(operatorArrayDecl);
+            list.add(`DeclarationToTomTerm(operatorArrayDecl));
         }
     ;
 
-includeConstruct [List list] throws TomException
+includeConstruct [List<TomTerm> list] throws TomException
 {
     TargetLanguage tlCode = null;
-    List blockList = new LinkedList();
+    List<TomTerm> blockList = new LinkedList<TomTerm>();
 }
     :
         t:INCLUDE
@@ -744,7 +742,7 @@ includeConstruct [List list] throws TomException
         }
     ;
 
-code [List list] throws TomException
+code [List<TomTerm> list] throws TomException
 {
   TargetLanguage code = null;
 }
@@ -757,7 +755,7 @@ code [List list] throws TomException
         TextPosition(currentLine,currentColumn),
         TextPosition(t.getLine(),t.getColumn())
         );
-    list.add(code);
+    list.add(`TargetLanguageToTomTerm(code));
   }
   textCode = t.getText();
   String metacode = textCode.substring(2,textCode.length()-2);
@@ -766,7 +764,7 @@ code [List list] throws TomException
 }
 ;
 
-typeTerm [List list] throws TomException
+typeTerm [List<TomTerm> list] throws TomException
 {
     TargetLanguage code = null;
     int line, column;
@@ -787,16 +785,16 @@ typeTerm [List list] throws TomException
                     textCode,
                     TextPosition(currentLine,currentColumn),
                     TextPosition(line,column));
-                list.add(code);
+                list.add(`TargetLanguageToTomTerm(code));
             }
             Declaration termdecl = tomparser.typeTerm();
 
-            list.add(termdecl);
+            list.add(`DeclarationToTomTerm(termdecl));
         }
 
     ;
 
-goalLanguage [List list] returns [TargetLanguage result] throws TomException
+goalLanguage [List<TomTerm> list] returns [TargetLanguage result] throws TomException
 {
     result =  null;
 }
@@ -816,7 +814,7 @@ goalLanguage [List list] returns [TargetLanguage result] throws TomException
         }
     ;
 
-targetLanguage [List list] returns [TargetLanguage result] throws TomException
+targetLanguage [List<TomTerm> list] returns [TargetLanguage result] throws TomException
 {
     result = null;
 }
@@ -835,8 +833,6 @@ targetLanguage [List list] returns [TargetLanguage result] throws TomException
             targetlexer.clearTarget();
         }
     ;
-
-
 
 // here begins the lexer
 
