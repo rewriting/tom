@@ -124,7 +124,7 @@ public class ConfigurationManager {
    * </ul>
    */
   private int createPlugins(TNode configurationNode) {
-    List pluginsClassList = extractClassPaths(configurationNode);
+    List<String> pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
       getLogger().log(Level.SEVERE, PluginPlatformMessage.noPluginFound.getMessage(), xmlConfigurationFileName);
@@ -132,9 +132,7 @@ public class ConfigurationManager {
       return 1;
     }
     // creates an instance of each plugin
-    Iterator classPathIt = pluginsClassList.iterator();
-    while(classPathIt.hasNext()) {
-      String pluginClass = (String)classPathIt.next();
+    for (String pluginClass : pluginsClassList) {
       try { 
         Object pluginInstance = Class.forName(pluginClass).newInstance();
         if(pluginInstance instanceof Plugin) {
@@ -164,8 +162,8 @@ public class ConfigurationManager {
    * @param node the node containing the XML document
    * @return the List of plugins class path
    */
-  private List extractClassPaths(TNode node) {
-    List res = new ArrayList();
+  private List<String> extractClassPaths(TNode node) {
+    List<String> res = new ArrayList<String>();
     %match(node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
          res.add(`cp);
