@@ -49,6 +49,12 @@ public class StructureGom {
   %include { util/types/Collection.tom }
   %include { util/types/HashSet.tom }
 
+  %typeterm StrucCollection {
+    implement      { java.util.Collection<Struc> }
+    is_sort(t)      { $t instanceof java.util.Collection }
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
+
   StructureGom() { }
   
   public void run(Struc initStruc) {
@@ -71,12 +77,12 @@ public class StructureGom {
 
   static final int MAXITER = 25;
   public boolean proofSearch(Struc start, Struc end) {
-    HashSet result = new HashSet();
-    Collection c1 = new HashSet();
+    HashSet<Struc> result = new HashSet<Struc>();
+    Collection<Struc> c1 = new HashSet<Struc>();
     c1.add(start);
 
     for(int i=1 ; i<MAXITER ; i++) {
-      Collection c2 = new HashSet();
+      Collection<Struc> c2 = new HashSet<Struc>();
       Iterator it = c1.iterator();
       while(it.hasNext()) {
         Struc item = (Struc) it.next();
@@ -103,14 +109,12 @@ public class StructureGom {
 
   private final static int MAXLOCALITER = 1000000;
   private final static int step = 1000;
-    Comparator comparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-          if(o1==o2) {
+    Comparator<Struc> comparator = new Comparator<Struc>() {
+        public int compare(Struc s1, Struc s2) {
+          if(s1==s2) {
             return 0;
           }
 
-          Struc s1 = (Struc)o1;
-          Struc s2 = (Struc)o2;
           int v1 = weight(s1);
           int v2 = weight(s2);
           if(v1<v2) {
@@ -140,10 +144,10 @@ public class StructureGom {
   }
 
   public boolean localSearch(Struc start, Struc end) {
-    TreeSet c1 = new TreeSet(comparator);
+    TreeSet<Struc> c1 = new TreeSet<Struc>(comparator);
     c1.add(start);
 
-    HashSet result = new HashSet();
+    HashSet<Struc> result = new HashSet<Struc>();
     long i=0;
     int nc2 = 0;
     int nc1 = 0;
@@ -159,7 +163,7 @@ public class StructureGom {
       weight += weight(subject);
       weightMap.remove(subject); // memory optimization
 
-      HashSet c2 = new HashSet();
+      HashSet<Struc> c2 = new HashSet<Struc>();
       collectOneStep(c2,subject);
       nc2 = nc2 + c2.size();
 
@@ -209,12 +213,12 @@ public class StructureGom {
     //return false; 
   }
 
-  public List testOneStep(String input) {
+  public List<String> testOneStep(String input) {
     Struc initStruc = strucFromPretty(input);
-    Collection col = new TreeSet(comparator);
+    Collection<Struc> col = new TreeSet<Struc>(comparator);
     collectOneStep(col,initStruc);
 
-    List result = new ArrayList(col.size());
+    List<String> result = new ArrayList<String>(col.size());
     Iterator it = col.iterator();
     while(it.hasNext()) {
       Struc item = (Struc) it.next();
@@ -261,7 +265,7 @@ public class StructureGom {
    * Apply a function to each subterm of a term
    * and collect all possible results in a collection
    */
-  public void collectOneStep(final Collection collection, Struc subject) {
+  public void collectOneStep(final Collection<Struc> collection, Struc subject) {
     try {
       `BottomUp(OneStep(subject,collection)).visit(subject);
       //System.out.println(collection);
@@ -270,7 +274,7 @@ public class StructureGom {
     }
   }
 
-  %strategy OneStep(subject:Struc,c:Collection) extends `Identity() {
+  %strategy OneStep(subject:Struc,c:StrucCollection) extends `Identity() {
     visit Struc {
       /* [(R,T),U] -> ([R,U],T)
          [(R,T),U] -> ([T,U],R) */
@@ -450,12 +454,13 @@ public class StructureGom {
     return res;
   }
 
-  private static WeakHashMap weightMap = new WeakHashMap();
+  private static WeakHashMap<StructuresAbstractType,Integer> weightMap =
+    new WeakHashMap<StructuresAbstractType,Integer>();
 	private static int weightCall = 0;
   public static int weight(StructuresAbstractType subject) {
 		weightCall++;
     if(weightMap.containsKey(subject)) {
-      return ((Integer)weightMap.get(subject)).intValue();
+      return weightMap.get(subject);
     }
     //double l = (double)length(subject);
     //double n = (double)numberOfPair(subject);
@@ -464,7 +469,7 @@ public class StructureGom {
     double w = (l*l)/(1.0+n);
     // System.out.println(prettyPrint(subject));
     // System.out.println("l = " + l + "\t#pair = " + n + "\tw = " + w);
-    weightMap.put(subject,new Integer((int)w));
+    weightMap.put(subject, (int)w);
     return (int)w;
   }
 
