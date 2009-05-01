@@ -96,7 +96,7 @@ class SPropp {
 		return res;
 	}
 
-  Collection rules_appl = new HashSet();
+  Collection<Trace> rules_appl = new HashSet<Trace>();
 
 	%strategy CalculusRules() extends `Identity() { 
     
@@ -203,16 +203,14 @@ class SPropp {
 			}
 	}
 
-	Map proofterm_pool = new HashMap();
+	Map<Sequent,ListProof> proofterm_pool = new HashMap<Sequent,ListProof>();
 	//{{{ public ListProof buildProofTerm(Sequent goal) {
 	public ListProof buildProofTerm(Sequent goal) {
 		ListProof tmpsol = `concProof();
 		if (proofterm_pool.containsKey(goal)) {
-			return (ListProof)proofterm_pool.get(goal);
+			return proofterm_pool.get(goal);
 		}
-		Iterator iter = rules_appl.iterator();
-		while (iter.hasNext()) {
-			Trace item = (Trace)iter.next();
+    for (Trace item : rules_appl) {
 			//{{{ %match(Trace item)
 			%match(Trace item) {
 
