@@ -69,6 +69,14 @@ public class IptablesOutput {
 		return null;
 	}
 
+	public static String wrapAddress(Address a) {
+		%match(a) {
+			Addr4(_,_,str) -> { return `str; }
+			Addr6(_,_,_,_,str) -> { return `str; }
+		}
+		return null;
+	}
+
 	public static String wrapPort(Port p) {
 		%match(p) {
 			Port(i) -> { return `i + ""; }
@@ -89,14 +97,6 @@ public class IptablesOutput {
 
 	public static void print2Opt(String optname, String arg) {
 		System.out.print(optname + " " + arg + " ");
-	}
-
-	public static String wrapAddress(Address a) {
-		%match(a) {
-			Addr4(_,_,str) -> { return `str; }
-			Addr6(_,_,_,_,str) -> { return `str; }
-		}
-		return null;
 	}
 
 	public static void printNewLine() { System.out.println(""); }
