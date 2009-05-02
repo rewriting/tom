@@ -462,7 +462,7 @@ matchAndConstraint [List<Option> optionListLinked] returns [Constraint result] t
 matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
     {     
       result = null; 
-      List matchPatternList = new LinkedList();
+      List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
     } :  
       (matchPattern[matchPatternList,true]) => result = matchConstraint[optionListLinked]
       | LPAREN result = matchOrConstraint[optionListLinked] RPAREN
@@ -567,9 +567,9 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     TomVisitList astVisitList = `concTomVisit();
     TomName orgText = null;
     TomTypeList types = `concTomType();
-    List options = new LinkedList();
+    List<Option> options = new LinkedList<Option>();
     List slotNameList = new LinkedList();
-    List pairNameDeclList = new LinkedList();
+    List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
     String stringSlotName = null;
     String stringTypeArg = null;
 
@@ -671,7 +671,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          TomType strategyType = `TomTypeAlone("Strategy");
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
-          options.add(makeDecl);
+          options.add(`DeclarationToOption(makeDecl));
 
           // Define the is_fsym method.
           Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
@@ -679,7 +679,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           TomTerm fsymVar = `Variable(concOption(fsymOption),Name(varname),strategyType,concConstraint());
           String code = ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname);
           Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Code(code),fsymOption);
-          options.add(fsymDecl);
+          options.add(`DeclarationToOption(fsymDecl));
 
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), strategyType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
@@ -1259,10 +1259,10 @@ xmlNameList [List optionList, boolean needOrgTrack] returns [TomNameList result]
         }
     ;
 
-termStringIdentifier [List options] returns [TomTerm result] throws TomException
+termStringIdentifier [List<Option> options] returns [TomTerm result] throws TomException
 {
   result = null;
-  List optionList = (options==null)?new LinkedList():options;
+  List<Option> optionList = (options==null)?new LinkedList<Option>():options;
   OptionList option = null;
   TomNameList nameList = null;
 }
@@ -1289,10 +1289,10 @@ termStringIdentifier [List options] returns [TomTerm result] throws TomException
     ;
 
 
-unamedVariableOrTermStringIdentifier [List options, List<Constraint> constraintList] returns [TomTerm result] throws TomException
+unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
-  List optionList = (options==null)?new LinkedList():options;
+  List<Option> optionList = (options==null)?new LinkedList<Option>():options;
   OptionList option = null;
   TomNameList nameList = null;
   ConstraintList constraints = null;
@@ -1441,7 +1441,7 @@ pairList [List list] throws TomException
 ;
    
 // _* or var*       
-variableStar [List optionList, List<Constraint> constraintList] returns [TomTerm result]
+variableStar [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result]
 { 
     result = null; 
     String name = null;
@@ -1493,7 +1493,7 @@ variableStar [List optionList, List<Constraint> constraintList] returns [TomTerm
     ;
 
 // _
-unamedVariable [List optionList, List<Constraint> constraintList] returns [TomTerm result]
+unamedVariable [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result]
 { 
     result = null;
     OptionList options = null;
@@ -1629,9 +1629,9 @@ operator returns [Declaration result] throws TomException
     result=null;
     Option ot = null;
     TomTypeList types = `concTomType();
-    List options = new LinkedList();
+    List<Option> options = new LinkedList<Option>();
     List slotNameList = new LinkedList();
-    List pairNameDeclList = new LinkedList();
+    List<PairNameDecl> pairNameDeclList = new LinkedList<PairNameDecl>();
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
@@ -1676,7 +1676,7 @@ operator returns [Declaration result] throws TomException
         }
         (
             attribute = keywordMake[name.getText(),`TomTypeAlone(type.getText()),types]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
 
         |   attribute = keywordGetSlot[astName,type.getText()]
             {
@@ -1693,7 +1693,7 @@ operator returns [Declaration result] throws TomException
               if(index == -1) {
                 msg = TomMessage.errorIncompatibleSlotDecl;
               } else {
-                PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
+                PairNameDecl pair = pairNameDeclList.get(index);
                 %match(pair) {
                   PairNameDecl[SlotDecl=decl] -> {
                     if(`decl != `EmptyDeclaration()) {
@@ -1712,7 +1712,7 @@ operator returns [Declaration result] throws TomException
               }
             }   
         |   attribute = keywordIsFsym[astName,type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
 	)
@@ -1732,7 +1732,7 @@ operatorList returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
-    List options = new LinkedList();
+    List<Option> options = new LinkedList<Option>();
     Declaration attribute = null;
     String opName = "";
 }
@@ -1750,17 +1750,17 @@ operatorList returns [Declaration result] throws TomException
         LBRACE
         (
             attribute = keywordMakeEmptyList[opName]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordMakeAddList[opName,type.getText(),typeArg.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordIsFsym[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordGetHead[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordGetTail[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordIsEmpty[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
         { 
@@ -1777,7 +1777,7 @@ operatorArray returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
-    List options = new LinkedList();
+    List<Option> options = new LinkedList<Option>();
     Declaration attribute = null;
     String opName = "";
 }
@@ -1795,15 +1795,15 @@ operatorArray returns [Declaration result] throws TomException
         LBRACE
         (
             attribute = keywordMakeEmptyArray[opName,type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordMakeAddArray[opName,type.getText(),typeArg.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordIsFsym[`Name(opName),type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordGetElement[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         |   attribute = keywordGetSize[`Name(opName), type.getText()]
-            { options.add(attribute); }
+            { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
         { 
@@ -1863,7 +1863,7 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
             IMPLEMENT
             {
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();
             }
         )
@@ -1887,7 +1887,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText());
                 result = `EqualTermDecl(
@@ -1913,7 +1913,7 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
                 
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
@@ -1939,7 +1939,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
 
                 result = `GetHeadDecl(opname,
@@ -1966,7 +1966,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
 
                 result = `GetTailDecl(opname,
@@ -1992,7 +1992,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop(); 
 
                 result = `IsEmptyDecl(opname,
@@ -2020,7 +2020,7 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
                 
                 result = `GetElementDecl(opname,
@@ -2046,7 +2046,7 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop();  
 
                 result = `GetSizeDecl(opname,
@@ -2070,7 +2070,7 @@ keywordIsFsym[TomName astName, String typeString] returns [Declaration result] t
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
             selector().pop();
 
             String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
@@ -2094,7 +2094,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
             selector().pop();
 
             result = `GetImplementationDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
@@ -2118,7 +2118,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
                 selector().pop(); 
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `GetSlotDecl(astName,
@@ -2187,10 +2187,10 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
             {
                 updatePosition(t.getLine(),t.getColumn());
                 selector().push("targetlexer");
-                List blockList = new LinkedList();
+                List<TomTerm> blockList = new LinkedList<TomTerm>();
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
-                blockList.add(tlCode);
+                blockList.add(`TargetLanguageToTomTerm(tlCode));
                 if(blockList.size()==1) {
                   String[] vars = new String[varnameList.size()];
                   String code = ASTFactory.abstractCode(tlCode.getCode(),varnameList.toArray(vars));
