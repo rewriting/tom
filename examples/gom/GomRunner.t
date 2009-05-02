@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.StringBufferInputStream;
+import java.io.ByteArrayInputStream;
 
 /**
   * This example shows how gom can be run using a string as input in a program
@@ -51,10 +50,10 @@ class GomRunner {
       ]%;
 
     GomEnvironment gomEnvironment = new GomEnvironment();
-    Map<String,String> informationTracker = new HashMap();
+    Map<String,String> informationTracker = new HashMap<String,String>();
     String[] params = {"-X","/Users/tonio/workspace/jtom/src/dist/Gom.xml","-d", "gom/coin", "-"};
     InputStream tmpIn = System.in;
-    System.setIn(new DataInputStream(new StringBufferInputStream(module)));
+    System.setIn(new ByteArrayInputStream(module.getBytes()));
     int res = Gom.exec(params,informationTracker);
     System.setIn(tmpIn);
     System.out.println("Generation: " + res);

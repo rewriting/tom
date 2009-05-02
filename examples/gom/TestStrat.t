@@ -62,7 +62,7 @@ public class TestStrat {
     Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) `OnceBottomUp(rule).visit(subject);
+      result = `OnceBottomUp(rule).visit(subject);
     } catch (VisitFailure e) {
       Assert.fail("catched VisitFailure");
     }
@@ -75,7 +75,7 @@ public class TestStrat {
     Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) `BottomUp(Try(rule)).visit(subject);
+      result = `BottomUp(Try(rule)).visit(subject);
     } catch (VisitFailure e) {
       Assert.fail("catched VisitFailure");
     }
@@ -91,13 +91,14 @@ public class TestStrat {
       super(`Fail());
     }
 
-    public Object visitLight(Object v, Introspector i) throws VisitFailure{
+    @SuppressWarnings("unchecked")
+    public <T> T visitLight(T v, Introspector i) throws VisitFailure {
       if (v instanceof VList) {
         VList arg = (VList) v;
         %match(VList arg) {
           conc(h,t*) -> {
             int indice = `h+1;
-            return `conc(indice,t*);
+            return (T)`conc(indice,t*);
           }
         }
       }

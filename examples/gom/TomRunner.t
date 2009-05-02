@@ -60,10 +60,10 @@ class TomRunner {
     } catch (IOException e) {
       System.out.println("File not found ?");
     }
-    
+
     int cnt = 0;
     while(cnt++ < maxiter) {
-      int res = Tom.exec(params); 
+      int res = Tom.exec(params);
       System.out.println("Generation: " + res);
       System.out.println("Iteration: "+cnt);
     }

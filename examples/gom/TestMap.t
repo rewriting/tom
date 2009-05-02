@@ -42,7 +42,6 @@ public class TestMap {
   private static int cnt;
   %include { elist/Elist.tom }
   %include { sl.tom }
-  //%include { elist/_Elist.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
 
@@ -65,9 +64,9 @@ public class TestMap {
 
   %strategy Log(abag:Collection,bbag:Collection,cbag:Collection) extends `Identity() {
     visit E {
-      a@a() -> { abag.add(new Integer(++cnt)); }
-      b@b() -> { bbag.add(new Integer(++cnt)); }
-      c@c() -> { cbag.add(new Integer(++cnt)); }
+      a() -> { abag.add(new Integer(++cnt)); }
+      b() -> { bbag.add(new Integer(++cnt)); }
+      c() -> { cbag.add(new Integer(++cnt)); }
     }
   }
 
