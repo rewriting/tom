@@ -104,13 +104,13 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 
 %typeterm TNode { 
 	implement {org.w3c.dom.Node}	
-	is_sort(t) {$ot instanceof rg.w3c.dom.Node}	
+	is_sort(t) {$t instanceof org.w3c.dom.Node}	
 	equals(t1,t2) {$t1.equals($t2)}
 }
 
 %typeterm TDocument { 
 	implement {org.w3c.dom.Document}	
-	is_sort(t) {$ot instanceof rg.w3c.dom.Document}	
+	is_sort(t) {$t instanceof org.w3c.dom.Document}	
 	equals(t1,t2) {$t1.equals($t2)}
 }
 
@@ -146,7 +146,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   get_slot(SystemId,t) { ((org.w3c.dom.Entity)$t).getSystemId()}
 }
 
-%op TNode NotationNode(PublicId:String, systemId:String) {
+%op TNode NotationNode(PublicId:String, SystemId:String) {
   is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.NOTATION_NODE)}
   get_slot(PublicId,t) { ((org.w3c.dom.Notation)$t).getPublicId()}
   get_slot(SystemId,t) { ((org.w3c.dom.Notation)$t).getSystemId()}
@@ -177,7 +177,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 
 %typeterm TNodeList {
 	implement{ java.util.ArrayList<Node> }
-	is_sort(t){ $t instanceof java.util.ArrayList<Node> }
+	is_sort(t){ $t instanceof java.util.ArrayList }
 	equals(l1,l2) { $l1.equals($l2) }
 }
 
@@ -196,7 +196,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 }
 
 
-%op TNode ElementNode(doc:TDocument, name:String, AttrList:TNodeList, ChildList:TNodeList) {
+%op TNode ElementNode(Doc:TDocument, Name:String, AttrList:TNodeList, ChildList:TNodeList) {
   is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE)}
 
   get_slot(Name,t) { ((org.w3c.dom.Element)$t).getNodeName()}

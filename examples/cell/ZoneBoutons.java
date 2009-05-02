@@ -43,6 +43,8 @@ import javax.swing.event.*;
 
 class ZoneBoutons extends JPanel
 {
+    private static final long serialVersionUID = 1L;
+  
     Reglages r;
     //JTextField genDeb, genFin;
     JSpinner genDeb, genFin;

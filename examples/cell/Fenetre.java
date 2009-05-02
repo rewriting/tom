@@ -42,6 +42,8 @@ import javax.swing.*;
 
 class Fenetre extends JFrame
 {
+    private static final long serialVersionUID = 1L;
+  
     Fenetre(Affichage affi)
 	{
 	    super("Animation 2D");

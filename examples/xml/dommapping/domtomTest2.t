@@ -49,7 +49,7 @@ import javax.xml.parsers.*;
  */
 public class domtomTest2 {
 
-  %include{dom.tom}
+  %include{ dom_1_5.tom }
 
 		
   private Document dom;

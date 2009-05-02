@@ -40,6 +40,8 @@ import java.awt.*;
 import javax.swing.*;
 
 class Etat extends JPanel {
+  private static final long serialVersionUID = 1L;
+  
 	Matrice matr;
 	Color fore, back;
 	Color rose, rouge, bistre, bleu, lavande, jaune, jaunepale, bleu1, bleu2, bleu3, bleu4, jaune1, jaune2, jaune3, jaune4, vert1, vert2, vert3, vert4;

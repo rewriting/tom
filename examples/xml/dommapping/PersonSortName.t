@@ -39,14 +39,14 @@ import java.io.File;
 public class PersonSortName {
   private Document dom;
 
-  %include{ dom.tom }
+  %include{ dom_1_5.tom }
 
   public static void main (String args[]) {
     PersonSortName person = new PersonSortName();
     person.run("xml/dommapping/person.xml");
   }
 
-  private void run(String filename){
+  private void run(String filename) {
     try {
       dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
       Element e = dom.getDocumentElement();

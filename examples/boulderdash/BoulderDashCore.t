@@ -36,9 +36,9 @@ import boulderdash.boulder.types.*;
 
 public class BoulderDashCore {
 
-  private HashMap space;
-  private HashSet marked;
-  private HashMap newSpace;
+  private HashMap<Position,Bead> space;
+  private HashSet<Bead> marked;
+  private HashMap<Position,Bead> newSpace;
   private static int SIZE = 20;
 
   %include { boulder/boulder.tom }
@@ -98,8 +98,8 @@ public class BoulderDashCore {
   }
   
   public void run() {
-    space = new HashMap();
-    marked = new HashSet();
+    space = new HashMap<Position,Bead>();
+    marked = new HashSet<Bead>();
     setRock(space);
     boolean fire = true;
     while(fire) {
@@ -108,7 +108,7 @@ public class BoulderDashCore {
     }
   }
   
-  public String toMatrix(HashMap space) {
+  public String toMatrix(HashMap<Position,Bead> space) {
     int xmax=0;
     int ymax=0;
 
@@ -157,8 +157,8 @@ public class BoulderDashCore {
   }
 
   public HashMap start() {
-    space = new HashMap();
-    marked = new HashSet();
+    space = new HashMap<Position,Bead>();
+    marked = new HashSet<Bead>();
     setRock(space);
     return space;
   }
@@ -173,20 +173,20 @@ public class BoulderDashCore {
   
   public boolean oneStep() {
     boolean fire = false;
-    newSpace = new HashMap();
+    newSpace = new HashMap<Position,Bead>();
     Iterator it = space.values().iterator();
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
       boolean f = gravity(newSpace,b);
       fire = fire || f ;
     }
-    space=newSpace;
+    space = newSpace;
     marked.clear();
     return fire;
   }
 
   // return true if fire a rule
-  public boolean gravity(HashMap newSpace, Bead b) {
+  public boolean gravity(HashMap<Position,Bead> newSpace, Bead b) {
     %match(Bead b) {
       beadRock[s=empty()] -> {
         Bead newBead = `bead(getSouthPosition(b.getpos()),b.getvalue());
@@ -222,28 +222,28 @@ public class BoulderDashCore {
     return false;
   }
 
-  private void putBead(HashMap space, int x, int y, int beadType) {
+  private void putBead(HashMap<Position,Bead> space, int x, int y, int beadType) {
     Position p = `pos(x,y);
     Bead b = `bead(p,beadType);
     space.put(p, b);
   }
 
-  private void putBead(HashMap space, Bead b) {
+  private void putBead(HashMap<Position,Bead> space, Bead b) {
     space.put(b.getpos(),b);
   }
 
-  private void removeBead(HashMap space, Bead b) {
+  private void removeBead(HashMap<Position,Bead> space, Bead b) {
     space.remove(b.getpos());
   }
 
 
-  public void setGround(HashMap space, int size) {
+  public void setGround(HashMap<Position,Bead> space, int size) {
     for(int i=0 ; i<size ; i++) {
       putBead(space,i,0,ground);
     }
   }
 
-  public void setRock(HashMap space) {
+  public void setRock(HashMap<Position,Bead> space) {
     for(int i=0 ; i<SIZE ; i++) {
       putBead(space,i,0,ground);
       putBead(space,i,SIZE-1,ground);
