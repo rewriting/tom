@@ -37,7 +37,7 @@ public class List2 {
   private static ATermFactory factory = SingletonFactory.getInstance();
 
   %typeterm TomList {
-    implement { ArrayList }
+    implement { ArrayList<ATermAppl> }
     is_sort(t) { $t instanceof ArrayList }
     equals(l1,l2)      { $l1.equals($l2) }
   }
@@ -45,18 +45,18 @@ public class List2 {
   %oparray TomList conc( TomTerm* ) {
     is_fsym(t)       { $t instanceof ArrayList }
     make_empty(n)   { myEmpty($n) }
-    make_append(e,l) { myAdd($e,(ArrayList)$l) }
+    make_append(e,l) { myAdd($e,$l) }
     get_element(l,n)   { (ATermAppl)$l.get($n) }
     get_size(l)        { $l.size() }
   }
 
-  private static ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList<ATermAppl> myAdd(ATermAppl e,ArrayList<ATermAppl> l) {
     l.add(e);
     return l;
   }
   
-  private static ArrayList myEmpty(int n) {
-    ArrayList res = new ArrayList(n);
+  private static ArrayList<ATermAppl> myEmpty(int n) {
+    ArrayList<ATermAppl> res = new ArrayList<ATermAppl>(n);
     return res;
   }
   
@@ -81,7 +81,7 @@ public class List2 {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   
-  public ArrayList swapSort(ArrayList l) {
+  public ArrayList<ATermAppl> swapSort(ArrayList<ATermAppl> l) {
     %match(TomList l) {
       conc(X1*,x,X2*,y,X3*) -> {
         String xname = `x.getName();
@@ -93,7 +93,7 @@ public class List2 {
 		return l; 
   }
 
-  public ArrayList removeDouble(ArrayList l) {
+  public ArrayList<ATermAppl> removeDouble(ArrayList<ATermAppl> l) {
     %match(TomList l) {
       conc(X1*,x,x,X2*) -> {
         return `removeDouble(conc(X1*,x,X2*));
@@ -103,14 +103,14 @@ public class List2 {
 		return l; 
   }
 
-	public ArrayList makeSubject() {
+	public ArrayList<ATermAppl> makeSubject() {
 		return `conc(a(),b(),c(),a(),b(),c(),a());
 	}
 
   public void run() {
-    ArrayList l    = `conc(a(),b(),c(),a(),b(),c(),a(),c());
-    ArrayList res1 = swapSort(l);
-    ArrayList res2 = removeDouble(res1);
+    ArrayList<ATermAppl> l    = `conc(a(),b(),c(),a(),b(),c(),a(),c());
+    ArrayList<ATermAppl> res1 = swapSort(l);
+    ArrayList<ATermAppl> res2 = removeDouble(res1);
     System.out.println(" l       = " + l);
     System.out.println("sorted l = " + res1);
     System.out.println("single l = " + res2);
