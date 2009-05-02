@@ -47,6 +47,12 @@ public class AnalyserWrapper {
 	public static Address addressWrapper(AddressRaw ar) {
 		%match(ar) {
 			AddrAnyRaw() -> { return `AddrAny(); }
+			AddrStringDotDecimal4(concString('anywhere')) -> { 
+				return `AddrAny();
+			}
+			AddrStringDotDecimal4(concString('localhost')) -> { 
+				return addressWrapper(`AddrStringDotDecimal4("127.0.0.1"));
+			}
 			AddrStringDotDecimal4(ipStr) -> {
 				String[] strs = `ipStr.split("\\.");
 				int ip = 0,smask = ~0;

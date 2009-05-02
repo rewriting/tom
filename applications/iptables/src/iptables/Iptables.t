@@ -12,38 +12,40 @@ public class Iptables {
 	%include { iptables/Iptables.tom }
 	%include { sl.tom }
 
-	%strategy wrapBlocks() extends Identity() {
-		visit IptablesBlocks {
-			IptablesBlocks(b@IptablesBlock,X*) -> {
-				return `IptablesBlocks(
-					OutermostId(wrapBlock()).visit(b),
-					X*);
+	public static Rules wrapBlocks(IptablesBlocks ibs) {
+		%match(ibs) {
+			IptablesBlocks(ib,X*) -> {
+				return `RulesA(
+					wrapBlock(ib),
+					wrapBlocks(X*));
 			}
 		}
+		return null;
 	}
 
-	%strategy wrapBlock() extends Identity() {
-		visit IptablesBlock {
-			IptablesBlock(t@Target,a@Action,is@IptablesRules) -> {
-				return `Rules(
+	public static Rules wrapBlock(IptablesBlock ib) {
+		%match(ib) {
+			IptablesBlock(t,a,is) -> {
+				return `RulesL(
 					Rule(a,IfaceAny(),ProtoAny(),t,
 						AddrAny(),AddrAny(),
 						PortAny(),PortAny(), NoOpt()),
-					OutermostId(wrapRule(t)).visit(is)
+					wrapRule(is,t)
 				);
 			}
 		}
+		return null;
 	}
 
-	%strategy wrapRule(t:Target) extends Identity() {
-	visit IptablesRules {
+	public static Rules wrapRule(IptablesRules irs,Target t) {
+		%match(irs) {
 		IptablesRules(
-			r@IptablesRule(
-				a@Action,
-				p@Protocol,
-				asrc@Address,
-				adest@Address,
-				o@IptablesOptions),
+			IptablesRule(
+				act,
+				p,
+				asrc,
+				/* adst@Address, */
+				o),
 			X*
 		) -> {
 			boolean opt = false;
@@ -72,10 +74,11 @@ public class Iptables {
 			if (opt)
 				options = `Opt(globalOpt,protoOpt,states);
 
-			return `Rules(	Rule(a,IfaceAny(),p,t,asrc,adest,sport,
+			return `RulesL(Rule(act,IfaceAny(),p,t,asrc,AddrAny(),sport,
 						dport,options),
-					X*);
+					wrapRule(X*,t));
 		}
 	}
+		return null;
 	}
 }

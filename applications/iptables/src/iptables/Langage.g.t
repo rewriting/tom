@@ -24,12 +24,14 @@ file :
 
 block:	'Chain' target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
-	(rule)* -> ^(
-		IptablesBlock target action IptablesRules (rule)*
+	rules -> ^(
+		IptablesBlock target action rules
 	);
 
+rules:	(rule)* -> ^(IptablesRules (rule)*);
+
 rule:	action proto oopt address address opts -> ^(
-		IptablesRule action proto address address opts
+		IptablesRule action proto address opts
 	);
 
 action : 
@@ -56,6 +58,7 @@ target :
 	;
 
 address	: 'anywhere' 	-> ^(AddrAny)
+	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost') 
 	| IPV4DOTDEC 	-> ^(AddrStringDotDecimal4 IPV4DOTDEC)
 	| IPV4CIDR 	-> ^(AddrStringCIDR4 IPV4CIDR)
 	| IPV6HEX	-> ^(AddrStringHexadecimal6 IPV6HEX)

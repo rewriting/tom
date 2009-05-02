@@ -3,6 +3,9 @@ imports boolean int long String
 abstract syntax
 
 	Rules = Rules(Rule*)
+		| RulesL(r:Rule,rs:Rules)
+		| RulesR(rs:Rules,r:Rule)
+		| RulesA(rsl:Rules,rsr:Rules)
 
 	Rule = Rule(
 			action:Action,
@@ -82,3 +85,9 @@ abstract syntax
 		| Related() /* New connection associated with an existing one */
 		| Established() /* packets was seen in both directions */
 		| Invalid() /* packets associated with no known connection */
+
+module Analyser:rules() {
+	RulesL(r@Rule(_,_,_,_,_,_,_,_,_),rs@Rules(R*)) -> Rules(r,R*)
+	RulesR(rs@Rules(R*),r@Rule(_,_,_,_,_,_,_,_,_)) -> Rules(r,R*)
+	RulesA(rsl@Rules(L*),rsr@Rules(R*)) -> Rules(L*,R*)
+}

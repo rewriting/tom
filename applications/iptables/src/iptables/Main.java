@@ -3,8 +3,10 @@ package iptables;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
-import iptables.analyser.AnalyserAdaptor;
 import iptables.analyser.types.*;
+import iptables.analyser.AnalyserAdaptor;
+import iptables.iptables.IptablesAdaptor;
+import iptables.iptables.types.*;
 import java.util.*;
 import java.io.*;
 import org.kohsuke.args4j.*;
@@ -50,8 +52,11 @@ public class Main {
        * Action
        */
       Tree b1 = (Tree) ruleParser.file().getTree();
-      Action inst = (Action) AnalyserAdaptor.getTerm(b1);
+      IptablesBlocks inst = (IptablesBlocks) IptablesAdaptor.getTerm(b1);
       System.out.println("inst = " + inst);
+
+	Rules rs = Iptables.wrapBlocks(inst);
+	System.out.println("rules = " + rs);
 
 
       PrintStream outputfile = System.out;
