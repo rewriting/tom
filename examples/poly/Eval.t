@@ -36,7 +36,11 @@ public class Eval {
 
   %include { polynom/polynom.tom }
   %include { util/types/Collection.tom }
-  %include { util/types/Map.tom }
+  %typeterm ParamMap {
+    implement      { java.util.Map<Poly,Poly> }
+    is_sort(t)      { $t instanceof java.util.Map }
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
   %include { sl.tom }
 
   public static void main(String[] arg) {
@@ -47,7 +51,7 @@ public class Eval {
     // tests the flattening of variadic operators
     Poly testaplat = `Plus(Plus(Plus(), Number(2), Number(3)),Plus(Plus(Number(4)),Plus(Parameter("a"))));
     prettyPrint(testaplat);
-    
+
     // tests the distributine normal form computation
     Poly testdistrib = `Mult(
                           Plus(
@@ -67,19 +71,19 @@ public class Eval {
     Iterator it = set.iterator();
     int i = 7;
     while(it.hasNext()) {
-      testdistrib = applySubst(testdistrib,(Poly)it.next(),`Number(i)); 
+      testdistrib = applySubst(testdistrib,(Poly)it.next(),`Number(i));
       i++;
     }
     prettyPrint(testdistrib);
 
     // and evaluate the polynom with parameter a = 10
-    Map param = new HashMap();
+    Map<Poly,Poly> param = new HashMap<Poly,Poly>();
     param.put(`Parameter("a"),`Number(10));
     int val = eval(param,testdistrib);
     System.out.println("Evaluation = "+val);
 
   }
-  
+
   /**
    * This strategy applies a given substitution at the root of the subject
    */
@@ -231,14 +235,14 @@ public class Eval {
   /**
    * Evaluate a given node if possible, and fails otherwise.
    */
-  %strategy Evaluate(env:Map) extends Fail() {
+  %strategy Evaluate(env:ParamMap) extends Fail() {
     visit Poly {
       Variable[] -> {
         throw new RuntimeException("Uninstantiated variable");
       }
       p@Parameter[] -> {
         if(env.containsKey(`p)) {
-          return (Poly) env.get(`p);
+          return env.get(`p);
         } else {
           throw new RuntimeException("Uninstantiated parameter");
         }
@@ -268,14 +272,13 @@ public class Eval {
    * @param p the Poly to evaluate
    * @return the value of the evaluation
    */
-  public static int eval(Map parameters, Poly p) {
+  public static int eval(Map<Poly,Poly> parameters, Poly p) {
     try {
-      p = (Poly)`BottomUp(Evaluate(parameters)).visitLight(p);
+      p = `BottomUp(Evaluate(parameters)).visitLight(p);
     } catch(VisitFailure e) {}
     %match(Poly p) {
       Number(n) -> { return `n; }
     }
     throw new RuntimeException("Evaluation failed for "+p);
   }
-
 }
