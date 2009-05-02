@@ -58,8 +58,7 @@ public class TomStarter extends TomGenericPlugin {
       fileName = (String)arg[0];
     } else {
       getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
-                      new Object[]{"VasStarter", "[String]",
-                                   getArgumentArrayString(arg)});
+                      new Object[]{"TomStarter", "[String]", getArgumentArrayString(arg)});
     }
   }
 

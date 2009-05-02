@@ -214,6 +214,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("The verification cannot be performed when optimizing code with level>=2");
 
   // verbose messages
+  public static final TomMessage tomExec       =
+      new TomMessage("TOM exec:  {0}");
   public static final TomMessage tomParsingPhase       =
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase=

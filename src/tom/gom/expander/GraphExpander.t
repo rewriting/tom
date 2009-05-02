@@ -285,7 +285,7 @@ public class GraphExpander {
     }
 
     public @fullAbstractTypeClassName@ unexpand() {
-       HashMap map = getMapFromPositionToLabel();
+       HashMap<String,Position> map = getMapFromPositionToLabel();
        try {
          return `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
@@ -293,11 +293,11 @@ public class GraphExpander {
        }
     }
 
-    protected HashMap getMapFromPositionToLabel(){
-      HashMap map = new HashMap();
+    protected HashMap<String,Position> getMapFromPositionToLabel() {
+      HashMap<String,Position> map = new HashMap<String,Position>();
       try {
-      `TopDown(CollectPositionsOfLabels(map)).visit(this);
-      return map;
+        `TopDown(CollectPositionsOfLabels(map)).visit(this);
+        return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -308,8 +308,8 @@ public class GraphExpander {
 
     String codeBlockTermWithPointers =%[
 
-      public @fullAbstractTypeClassName@ expand(){
-        HashMap map = new HashMap();
+      public @fullAbstractTypeClassName@ expand() {
+        HashMap<Position,String> map = new HashMap<Position,String>();
         Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
         try {
           return `label2path.visit(this);
@@ -321,7 +321,7 @@ public class GraphExpander {
     String codeBlockTermGraph =%[
 
    public @fullAbstractTypeClassName@ expand() {
-       HashMap map = new HashMap();
+       HashMap<Position,String> map = new HashMap<Position,String>();
        try {
          return `InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand()).label2path();
        } catch (tom.library.sl.VisitFailure e) {
@@ -330,7 +330,7 @@ public class GraphExpander {
      }
 
     public @fullAbstractTypeClassName@ normalizeWithLabels() {
-      HashMap map = new HashMap();
+      HashMap<Position,String> map = new HashMap<Position,String>();
       try {
         return `InnermostIdSeq(NormalizeLabel(map)).visit(this);
       } catch (tom.library.sl.VisitFailure e) {
@@ -339,7 +339,7 @@ public class GraphExpander {
     }
 
     public @fullAbstractTypeClassName@ label2path() {
-      HashMap map = new HashMap();
+      HashMap<Position,String> map = new HashMap<Position,String>();
       Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
       try {
         return label2path.visit(this);
@@ -348,21 +348,21 @@ public class GraphExpander {
       }
     }
     
-    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels(){
+    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels() {
       HashMap<String,Position> map = new HashMap<String,Position>();
       try {
-      `TopDown(CollectAndRemoveLabels(map)).visit(this);
-      return map;
+        `TopDown(CollectAndRemoveLabels(map)).visit(this);
+        return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-    public HashMap<String,Position> getMapFromLabelToPosition(){
+    public HashMap<String,Position> getMapFromLabelToPosition() {
       HashMap<String,Position> map = new HashMap<String,Position>();
       try {
-      `TopDown(CollectLabels(map)).visit(this);
-      return map;
+        `TopDown(CollectLabels(map)).visit(this);
+        return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -370,7 +370,7 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ normalize() {
       try {
-         return `InnermostIdSeq(Normalize()).visit(this); 
+        return `InnermostIdSeq(Normalize()).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -559,7 +559,6 @@ public class GraphExpander {
     %strategy CollectAndRemoveLabels(map:HashMap) extends Identity() {
       ]%);
 
-
     // for the CollectPositionsOfLabels strategy
     StringBuilder CollectPositionsOfLabelsCode = new StringBuilder();
     CollectPositionsOfLabelsCode.append(%[
@@ -585,7 +584,6 @@ public class GraphExpander {
     %strategy CollectRef(map:HashMap) extends Identity() {
     ]%);
 
-
     // for the AddLabel strategy
     StringBuilder AddLabelCode = new StringBuilder();
     AddLabelCode.append(%[
@@ -598,9 +596,7 @@ public class GraphExpander {
     %strategy NormalizeLabel(map:HashMap) extends Identity() {
     ]%);
 
-
-
-    %match(sorts){
+    %match(sorts) {
       ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
   
         strategiesCode.append(%[
