@@ -84,7 +84,7 @@ public class PluginPlatformFactory {
 
   /** protection again instanciation */
   private PluginPlatformFactory() {
-    pluginPlatformTracker = new HashMap();
+    pluginPlatformTracker = new HashMap<Long,PluginPlatform>();
     String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
     if (loggingConfigFile == null) { // default > no custom file is used
       // create a config equivalent to defaultlogging.properties file
@@ -127,7 +127,10 @@ public class PluginPlatformFactory {
   }
 
   //second PluginPlatform create() method : used if it is launched by Gom
-  public PluginPlatform create(String[] commandLine, String logRadical,List<String> inputToCompileList, Map<String,String> informationTracker) {    
+  public PluginPlatform create(String[] commandLine,
+                               String logRadical,
+                               List<String> inputToCompileList,
+                               Map<String,String> informationTracker) {    
     String confFileName = extractConfigFileName(commandLine);
     if(confFileName == null) {
       return null;
@@ -151,10 +154,10 @@ public class PluginPlatformFactory {
   public static String extractConfigFileName(String[] commandLine) {
     String xmlConfigurationFile = null;
     int i=0;
-    List commandList = new ArrayList();
+    List<String> commandList = new ArrayList<String>();
     try {
-      for(;i< commandLine.length;i++) {
-        if(commandLine[i].equals("-X")) {
+      for (; i < commandLine.length; i++) {
+        if (commandLine[i].equals("-X")) {
           xmlConfigurationFile = commandLine[++i];
         } else {
           commandList.add(commandLine[i]);
@@ -172,7 +175,7 @@ public class PluginPlatformFactory {
       //System.out.println("xmlConfigFile = " + file.getPath());
       if(file.exists()) { 
         // side effect on the commandLine since config information is no more needed
-        commandLine = (String[])commandList.toArray(new String[]{});
+        commandLine = commandList.toArray(new String[0]);
         return xmlConfigurationFile;
       }
     } catch(Exception e) {}

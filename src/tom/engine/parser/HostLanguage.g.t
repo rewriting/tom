@@ -588,16 +588,13 @@ gomsignature [List<TomTerm> list] throws TomException
     }
    
     int res = 1;
-    //res = tom.gom.Gom.exec(params);
-    Map<String,Object> informationTracker = new HashMap<String,Object>();
+    Map<String,String> informationTracker = new HashMap<String,String>();
     informationTracker.put("lastGeneratedMapping",null);
     
-    informationTracker.put("gomBegin",new Integer(initialGomLine));
+    informationTracker.put("gomBegin",""+initialGomLine);
     
-    //Map<Long,String> informationTracker = new HashMap();
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
-    //res = tom.gom.Gom.exec(params);
     System.setIn(backupIn);
     if (res != 0 ) {
        getLogger().log(

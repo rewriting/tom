@@ -120,8 +120,8 @@ public class GomEnvironment {
     }
   }
 
-  public Map builtinSortClassMap() {
-    Map sortClass = new HashMap();
+  public Map<SortDecl,ClassName> builtinSortClassMap() {
+    Map<SortDecl,ClassName> sortClass = new HashMap<SortDecl,ClassName>();
     Iterator it = usedBuiltinSorts.keySet().iterator();
     while(it.hasNext()) {
       String name = (String) it.next();
