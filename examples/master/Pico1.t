@@ -58,7 +58,7 @@ class Pico1 {
 		     | Print(e:Expr) 
   }
 
-	public void eval(Map env, Inst inst) {
+	public void eval(Map<String,Expr> env, Inst inst) {
 		//System.out.println("eval: " + inst);
 		%match(Inst inst) {
 			Skip() -> {
@@ -161,7 +161,7 @@ class Pico1 {
   //-------------------------------------------------------
 
   public void run() {
-		Map env = new HashMap();
+		Map<String,Expr> env = new HashMap<String,Expr>();
 
     System.out.println("running...");
     Inst p1 = `Seq(Assign("a",Cst(1)) , Print(Var("a")));
