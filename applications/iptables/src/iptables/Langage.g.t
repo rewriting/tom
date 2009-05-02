@@ -22,16 +22,14 @@ file :
 	(block)* EOF -> ^(IptablesBlocks (block)*)
      ;
 
-block:	'Chain' target '(policy' action ')'
+block:	'Chain' str=target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
-	rules -> ^(
-		IptablesBlock target action rules
+	(rule)* -> ^(
+		IptablesBlock target action ^(IptablesRules (rule)*) $str
 	);
 
-rules:	(rule)* -> ^(IptablesRules (rule)*);
-
-rule:	action proto oopt address address opts -> ^(
-		IptablesRule action proto address opts
+rule:	str=action proto oopt address address opts -> ^(
+		IptablesRule action proto address opts $str
 	);
 
 action : 
@@ -57,7 +55,7 @@ target :
 	| 'FORWARD'	-> ^(Forward)
 	;
 
-address	: 'anywhere' 	-> ^(AddrAny)
+address	: 'anywhere' 	-> ^(AddrAnyRaw)
 	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost') 
 	| IPV4DOTDEC 	-> ^(AddrStringDotDecimal4 IPV4DOTDEC)
 	| IPV4CIDR 	-> ^(AddrStringCIDR4 IPV4CIDR)
@@ -67,8 +65,8 @@ address	: 'anywhere' 	-> ^(AddrAny)
 
 oopt: 	'--';
 
-port:	'dpt:INT'	-> ^(DestPort INT)
-	| 'spt:INT'	-> ^(SourcePort INT)
+port:	'dpt:' INT	-> ^(DestPort INT)
+	| 'spt:' INT	-> ^(SourcePort INT)
 	;
 
 state : 'NEW'		-> ^(New)

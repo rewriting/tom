@@ -64,7 +64,7 @@ public class AnalyserWrapper {
 						ip |= (Integer.parseInt(strs[i]) << (8*(strs.length - i - 1)));
 					}
 				}
-				return `Addr4(ip,smask);
+				return `Addr4(ip,smask,ipStr);
 			}
 			AddrStringHexadecimal6(ipStr) -> {
 				/* >>> TODO: use address6Wrapper() */
@@ -112,7 +112,7 @@ public class AnalyserWrapper {
 											: strs.length-endoffset-1-i) 
 										: (3 - (i - midoffset)))));
 				}
-				return `Addr6(ipms,ipls,smaskms,smaskls);
+				return `Addr6(ipms,ipls,smaskms,smaskls,ipStr);
 			}
 			AddrStringCIDR4(ipStr) -> {
 				String[] strs = `ipStr.split("/");
@@ -121,7 +121,7 @@ public class AnalyserWrapper {
 				strs = strs[0].split("\\.");
 				for (int i = 0; i < (tmp/8) ;i++)
 					ip |= (Integer.parseInt(strs[i]) << (8*(4 - i - 1)));
-				return `Addr4(ip,smask);
+				return `Addr4(ip,smask,ipStr);
 			}
 			AddrStringCIDR6(ipStr) -> {
 				String[] strs = `ipStr.split("/");

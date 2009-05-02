@@ -16,7 +16,8 @@ abstract syntax
 			destAddr:Address,
 			srcPort:Port,
 			destPort:Port,
-			opts:Options)
+			opts:Options,
+			input:String)
 
 	Action =
 		Accept()
@@ -47,8 +48,8 @@ abstract syntax
 
 	Address =
 		AddrAny()
-		| Addr4(ip:int,smask:int)
-		| Addr6(ipms:long,ipls:long,smaskms:long,smaskls:long)
+		| Addr4(ip:int,smask:int, str:String)
+		| Addr6(ipms:long,ipls:long,smaskms:long,smaskls:long, str:String)
 
 	Port =
 		PortAny()
@@ -87,7 +88,7 @@ abstract syntax
 		| Invalid() /* packets associated with no known connection */
 
 module Analyser:rules() {
-	RulesL(r@Rule(_,_,_,_,_,_,_,_,_),rs@Rules(R*)) -> Rules(r,R*)
-	RulesR(rs@Rules(R*),r@Rule(_,_,_,_,_,_,_,_,_)) -> Rules(r,R*)
+	RulesL(r@Rule(_,_,_,_,_,_,_,_,_,_),rs@Rules(R*)) -> Rules(r,R*)
+	RulesR(rs@Rules(R*),r@Rule(_,_,_,_,_,_,_,_,_,_)) -> Rules(r,R*)
 	RulesA(rsl@Rules(L*),rsr@Rules(R*)) -> Rules(L*,R*)
 }

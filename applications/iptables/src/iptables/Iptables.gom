@@ -1,18 +1,24 @@
 module iptables.Iptables
-imports int String Analyser
+imports int String Analyser AnalyserWrapper
 abstract syntax
 
 IptablesBlocks = IptablesBlocks(IptablesBlock*)
 
-IptablesBlock = IptablesBlock(target:Target, action:Action, rules:IptablesRules)
+IptablesBlock = IptablesBlock(
+			target:Target,
+			action:Action, 
+			rules:IptablesRules,
+		 	input:String)
 
 IptablesRules = IptablesRules(IptablesRule*)
 
 IptablesRule = IptablesRule(
-		action:Action,
-		proto:Protocol,
-		addrsrc: Address,
-		options: IptablesOptions)
+			action:Action,
+			proto:Protocol,
+			addrsrc: AddressRaw,
+			/* addrdst: AddressRaw, */
+			options: IptablesOptions,
+			input:String)
 
 IptablesOptions = IptablesOptions(IptablesOption*)
 

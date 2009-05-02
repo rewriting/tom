@@ -8,7 +8,6 @@ import java.util.*;
 
 /* >>> TODO: use superclass */
 public class Iptables {
-	%include { analyserwrapper/AnalyserWrapper.tom }
 	%include { iptables/Iptables.tom }
 	%include { sl.tom }
 
@@ -20,21 +19,21 @@ public class Iptables {
 					wrapBlocks(X*));
 			}
 		}
-		return null;
+		return `Rules();
 	}
 
 	public static Rules wrapBlock(IptablesBlock ib) {
 		%match(ib) {
-			IptablesBlock(t,a,is) -> {
+			IptablesBlock(t,a,is,in) -> {
 				return `RulesL(
 					Rule(a,IfaceAny(),ProtoAny(),t,
 						AddrAny(),AddrAny(),
-						PortAny(),PortAny(), NoOpt()),
+						PortAny(),PortAny(),NoOpt(),in),
 					wrapRule(is,t)
 				);
 			}
 		}
-		return null;
+		return `Rules();
 	}
 
 	public static Rules wrapRule(IptablesRules irs,Target t) {
@@ -45,7 +44,8 @@ public class Iptables {
 				p,
 				asrc,
 				/* adst@Address, */
-				o),
+				o,
+				in),
 			X*
 		) -> {
 			boolean opt = false;
@@ -74,11 +74,12 @@ public class Iptables {
 			if (opt)
 				options = `Opt(globalOpt,protoOpt,states);
 
-			return `RulesL(Rule(act,IfaceAny(),p,t,asrc,AddrAny(),sport,
-						dport,options),
-					wrapRule(X*,t));
+			return `RulesL(Rule(act,IfaceAny(),p,t,
+					AnalyserWrapper.addressWrapper(asrc),
+					AddrAny(),sport,dport,options,in),
+				wrapRule(X*,t));
 		}
 	}
-		return null;
+		return `Rules();
 	}
 }
