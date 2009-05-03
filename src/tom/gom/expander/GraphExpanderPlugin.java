@@ -86,7 +86,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial ModuleList
    */
-  public void run(Map informationTracker) {
+  public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
       getLogger().log(Level.INFO, "Extend the signature");

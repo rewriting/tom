@@ -110,7 +110,7 @@ public class MappingTemplate extends MappingTemplateClass {
       ConcGomClass(_*,
           SortClass[ClassName=sortName],
           _*) -> {
-        ((TemplateClass) templates.get(`sortName))
+        (templates.get(`sortName))
           .generateTomMapping(writer);
       }
     }
@@ -120,7 +120,7 @@ public class MappingTemplate extends MappingTemplateClass {
       ConcGomClass(_*,
           OperatorClass[ClassName=opName],
           _*) -> {
-        ((TemplateClass) templates.get(`opName))
+        (templates.get(`opName))
           .generateTomMapping(writer);
       }
     }
@@ -130,7 +130,7 @@ public class MappingTemplate extends MappingTemplateClass {
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=opName],
           _*) -> {
-        ((TemplateClass) templates.get(`opName))
+        (templates.get(`opName))
           .generateTomMapping(writer);
       }
     }

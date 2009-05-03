@@ -88,7 +88,7 @@ public class AdapterPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run(Map informationTracker) {
+  public void run(Map<String,String> informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     getLogger().log(Level.INFO, "Start adapter generation");
     // make sure the environment has the correct streamManager

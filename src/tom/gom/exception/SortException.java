@@ -25,15 +25,16 @@ package tom.gom.exception;
 
 
 public class SortException extends GomRuntimeException {
-    protected String sortName;
+  private static final long serialVersionUID = 1L;
 
-    public SortException(String sortName) {
-      super();
-      this.sortName = sortName;
-    }
-    public String getSortName() { return sortName; } 
-    public String toString() {
-      return "sort exception: " + sortName;
-    }
+  protected String sortName;
+
+  public SortException(String sortName) {
+    super();
+    this.sortName = sortName;
   }
-
+  public String getSortName() { return sortName; } 
+  public String toString() {
+    return "sort exception: " + sortName;
+  }
+}

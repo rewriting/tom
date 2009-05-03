@@ -29,18 +29,19 @@ import java.text.MessageFormat;
 import tom.platform.PlatformMessage;
 
 public class GomException extends Exception {
+  private static final long serialVersionUID = 1L;
 
-  protected PlatformMessage msg=null;
+  protected PlatformMessage msg = null;
   protected Object[] detail;
 
   public GomException(PlatformMessage message) {
     this.msg = message;
-    this.detail=new Object[]{};
+    this.detail = new Object[]{};
   }
 
   public GomException(PlatformMessage message, Object[] detail) {
     this.msg = message;
-    this.detail=detail;
+    this.detail = detail;
   }
 
   public PlatformMessage getPlatformMessage() {
@@ -54,4 +55,4 @@ public class GomException extends Exception {
   public String toString() {
     return MessageFormat.format(msg.getMessage(),getParameters());
   }
- }
+}

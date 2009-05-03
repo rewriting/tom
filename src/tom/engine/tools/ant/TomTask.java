@@ -658,17 +658,16 @@ public class TomTask extends MatchingTask {
    */
   private String[] split(String str) {
     try {
-      String res[] = new String[0];
       int begin = 0;
       int end = 0;
-      Vector list = new Vector();
+      List<String> list = new ArrayList<String>();
       while(end < str.length()) {
         while(end < str.length() && str.charAt(end) != ' ')
           end++;
         list.add(str.substring(begin, end));
         begin = ++end;
       }
-      return (String[])list.toArray(res);
+      return list.toArray(new String[0]);
     } catch(Exception x) {
       return new String[0];
     }

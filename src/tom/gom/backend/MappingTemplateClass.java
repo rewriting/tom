@@ -32,15 +32,15 @@ public abstract class MappingTemplateClass extends TemplateClass {
   
   public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     super(gomClass,gomEnvironment);
-    this.templates = new HashMap();
+    this.templates = new HashMap<ClassName,TemplateClass>();
   }
-  protected Map templates;
+  protected Map<ClassName,TemplateClass> templates;
 
   public GomEnvironment getGomEnvironment() {
     return this.gomEnvironment;
   }
 
-  public void addTemplates(Map map) {
+  public void addTemplates(Map<ClassName,TemplateClass> map) {
     this.templates.putAll(map);
   }
 }

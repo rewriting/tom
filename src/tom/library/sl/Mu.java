@@ -70,7 +70,7 @@ public class Mu extends AbstractStrategy {
   }
 
   public static void expand(Strategy s) {
-    expand(s,null,0,new HashSet(),new LinkedList());
+    expand(s,null,0,new HashSet<Strategy>(),new LinkedList<Mu>());
   }
 
   /**
@@ -79,7 +79,7 @@ public class Mu extends AbstractStrategy {
    * @param childNumber the n-th subterm of parent
    * @param set of already visited parent
    */
-  private static void expand(Strategy any, Strategy parent, int childNumber, HashSet set, LinkedList stack) {
+  private static void expand(Strategy any, Strategy parent, int childNumber, HashSet<Strategy> set, LinkedList<Mu> stack) {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -88,10 +88,11 @@ public class Mu extends AbstractStrategy {
     }
 
     if(any instanceof Mu) {
+      Mu anyMu = (Mu) any;
       MuVar var = (MuVar) any.getChildAt(VAR);
       Strategy v = (Strategy) any.getChildAt(V);
-      stack.addFirst(any);
-      expand(v,(Mu)any,0,set,stack);
+      stack.addFirst(anyMu);
+      expand(v,anyMu,0,set,stack);
       expand(var,null,0,set,stack);
       stack.removeFirst();
       return;
@@ -100,9 +101,7 @@ public class Mu extends AbstractStrategy {
         String n = ((MuVar)any).getName();
         MuVar muvar = (MuVar) any;
         if(!muvar.isExpanded()) {
-          Iterator it = stack.iterator();
-          while(it.hasNext()) {
-            Mu m = (Mu)it.next();
+          for (Mu m : stack) {
             if(((MuVar)m.visitors[Mu.VAR]).getName().equals(n)) {
               //System.out.println("MuVar: setInstance " + n );
               muvar.setInstance(m);

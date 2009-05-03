@@ -25,6 +25,8 @@ package tom.gom.exception;
 
 
 public class UndeclaredSortException extends SortException {
+  private static final long serialVersionUID = 1L;
+
   public UndeclaredSortException(String n) { super(n); }
   public String toString() {
     return "undeclared sort: " + sortName;
