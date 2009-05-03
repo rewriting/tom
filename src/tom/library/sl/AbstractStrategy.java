@@ -169,8 +169,8 @@ public abstract class AbstractStrategy implements Strategy {
    * @param envt the environment where execute the strategy. 
    * @throws VisitFailure if visit fails
    */
-  public Visitable visit(Environment envt) throws VisitFailure {
-    return (Visitable) visit(envt,VisitableIntrospector.getInstance());
+  public <T extends Visitable> T visit(Environment envt) throws VisitFailure {
+    return (T) visit(envt,VisitableIntrospector.getInstance());
   }
 
   /** 
@@ -179,7 +179,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @param any the subject to visit. 
    * @throws VisitFailure if visit fails
    */
-  public <T extends Visitable> T visit(T any) throws VisitFailure{
+  public <T extends Visitable> T visit(T any) throws VisitFailure {
     return visit(any,VisitableIntrospector.getInstance());
   }
 

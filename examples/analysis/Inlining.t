@@ -148,7 +148,7 @@ public class Inlining {
 
   %strategy Count(info:Info) extends Identity() {
     visit Instruction {
-      Assign(Var(name),e) -> {
+      Assign(Var(name),_) -> {
         if(info.assignmentVars.contains(`name) || 
             info.varName == `name) {
           throw new VisitFailure();
@@ -170,7 +170,7 @@ public class Inlining {
   // Inlining with CTL formulae
   %strategy Modified(vars:Collection) extends Fail() {
     visit Instruction {
-      i@Assign(Var(name),e) -> {
+      i@Assign(Var(name),_) -> {
         if(vars.contains(`name)) {
           return `i;
         }

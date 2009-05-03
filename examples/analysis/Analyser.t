@@ -51,12 +51,12 @@ public class Analyser{
     Definition des predicats 	 	 
    */
 
-  %typeterm VariableRef{
+  %typeterm VariableRef {
     implement {VariableRef}
     is_sort(t) { t instanceof VariableRef } 
   }
 
-  %strategy IsNotUsed(ref:VariableRef) extends `Identity(){
+  %strategy IsNotUsed(ref:VariableRef) extends `Identity() {
     visit Term {
       t@Var(var) -> {
         if(`var.equals(ref.getvariable())) return (Term) `Fail().visit(`t);

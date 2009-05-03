@@ -42,7 +42,7 @@ public class UpFail extends AbstractStrategy {
   /** 
    *  Visits the subject any without managing any environment
    */ 
-  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
+  public final <T> T visitLight(T any, Introspector m) throws VisitFailure {
     throw new RuntimeException("The Strategy UpFail cannot be used with visitLight");
   }
 

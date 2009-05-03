@@ -119,24 +119,26 @@ public class @className()@ implements tom.library.sl.Strategy {
     return this;
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  @@SuppressWarnings("unchecked")
+  public <T extends tom.library.sl.Visitable> T visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (T) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
-    return (T) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure {
+    return visit(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
-    return (T) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+    return visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public Object visit(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+  @@SuppressWarnings("unchecked")
+  public <T> T visit(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     environment.setRoot(any);
     int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
-      return environment.getRoot();
+      return (T) environment.getRoot();
     } else {
       throw new tom.library.sl.VisitFailure();
     }
@@ -156,9 +158,9 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public Object visitLight(Object any, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
+  public <T> T visitLight(T any, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
-      Object result = any;
+      T result = any;
       Object[] childs = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
           Object oldChild = introspector.getChildAt(any,nbi);

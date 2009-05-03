@@ -77,18 +77,18 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
     initSubterm();
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  @@SuppressWarnings("unchecked")
+  public <T extends tom.library.sl.Visitable> T visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (T) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
-    return (T) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+    return visit(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
-    return (T) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+    return visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
-
 
   public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
@@ -109,7 +109,6 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
 }
 ]%);
 }
-
 
 public String generateMapping() {
 

@@ -115,7 +115,7 @@ public class AttrGrammar {
         }
         `i.type=`e1.type;
       }
-      let@Let(name,type,expr,body) -> {
+      let@Let(_,type,expr,body) -> {
         if(! `expr.type.deepEquals(`type)) {
           System.out.println("The expression "+`expr+" has type "+`expr.type);
           System.out.println("The expression "+`expr+" must have the type "+`type);
