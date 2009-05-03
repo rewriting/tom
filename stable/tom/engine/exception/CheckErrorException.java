@@ -28,6 +28,7 @@ package tom.engine.exception;
 import tom.platform.PlatformMessage;
 
 public class CheckErrorException extends TomException {
+  private static final long serialVersionUID = 1L;
 
   public CheckErrorException(PlatformMessage msg) {
     super(msg);

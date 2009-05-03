@@ -26,6 +26,7 @@
 package tom.library.sl;
 
 public class VisitFailure extends Exception {
+  private static final long serialVersionUID = 1L;
 
   public VisitFailure() {
   }

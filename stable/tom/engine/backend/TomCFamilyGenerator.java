@@ -334,29 +334,20 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
-    //if(domain==codomain) {
-    //  return %[((@is_conc@)?@get@:@subject@)]%;
-    //}
     return get;
   }
 
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
-    String empty = getMakeEmptyList(name,moduleName);
-    //if(domain==codomain) {
-    //  return %[((@is_conc@)?@get@:@empty@)]%;
-    //}
     return get;
   }
 
   private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
     if(domain==codomain) {
+      String is_conc = getIsConcList(name,subject,moduleName);
       return "(("+is_conc+")?"+get+":"+subject+")";
     }
     return get;
@@ -365,9 +356,9 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String genDeclGetTailInSlice(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
-    String empty = getMakeEmptyList(name,moduleName);
     if(domain==codomain) {
+      String is_conc = getIsConcList(name,subject,moduleName);
+      String empty = getMakeEmptyList(name,moduleName);
       return "(("+is_conc+")?"+get+":"+empty+")";
     }
     return get;

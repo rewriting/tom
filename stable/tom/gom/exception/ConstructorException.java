@@ -24,6 +24,8 @@
 package tom.gom.exception;
 
 public class ConstructorException extends GomRuntimeException {
+  private static final long serialVersionUID = 1L;
+
   protected String constructorName;
   public ConstructorException(String constructorName) {
     super();

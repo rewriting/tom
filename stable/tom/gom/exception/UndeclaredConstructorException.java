@@ -25,7 +25,7 @@ package tom.gom.exception;
 
 
 public class UndeclaredConstructorException extends ConstructorException {
+  private static final long serialVersionUID = 1L;
+
   public UndeclaredConstructorException(String n) { super(n); }
-
 }
-

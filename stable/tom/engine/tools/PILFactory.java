@@ -68,7 +68,7 @@ public PILFactory() {
     this.level = level;
   }
 
-  public tom.library.sl.Visitable remove(tom.library.sl.Visitable subject) {
+  public <T extends tom.library.sl.Visitable> T remove(T subject) {
     try {
       return tom_make_TopDown(tom_make_replaceRemove()).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
@@ -150,11 +150,11 @@ public PILFactory() {
 
 
         return "if " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getCondition() ) + " then \n\t" + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getSuccesInst() ).replace("\n","\n\t") + "\n\telse " + prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getFailureInst() ).replace("\n","\n\t")+"\n";
-      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch227NameNumber_freshVar_38= (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ;if ( ((tomMatch227NameNumber_freshVar_38 instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || (tomMatch227NameNumber_freshVar_38 instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch227NameNumber_end_43=tomMatch227NameNumber_freshVar_38;do {{if (!( tomMatch227NameNumber_end_43.isEmptyconcInstruction() )) {if ( ( tomMatch227NameNumber_end_43.getHeadconcInstruction()  instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {
+      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch25NameNumber_freshVar_38= (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() ;if ( ((tomMatch25NameNumber_freshVar_38 instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction) || (tomMatch25NameNumber_freshVar_38 instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction)) ) { tom.engine.adt.tominstruction.types.InstructionList  tomMatch25NameNumber_end_43=tomMatch25NameNumber_freshVar_38;do {{if (!( tomMatch25NameNumber_end_43.isEmptyconcInstruction() )) {if ( ( tomMatch25NameNumber_end_43.getHeadconcInstruction()  instanceof tom.engine.adt.tominstruction.types.instruction.Nop) ) {
 
 
-        return prettyPrint( tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(tom_append_list_concInstruction(tom_get_slice_concInstruction(tomMatch227NameNumber_freshVar_38,tomMatch227NameNumber_end_43, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ),tom_append_list_concInstruction( tomMatch227NameNumber_end_43.getTailconcInstruction() , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ))) );
-      }}if ( tomMatch227NameNumber_end_43.isEmptyconcInstruction() ) {tomMatch227NameNumber_end_43=tomMatch227NameNumber_freshVar_38;} else {tomMatch227NameNumber_end_43= tomMatch227NameNumber_end_43.getTailconcInstruction() ;}}} while(!( (tomMatch227NameNumber_end_43==tomMatch227NameNumber_freshVar_38) ));}}}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) {
+        return prettyPrint( tom.engine.adt.tominstruction.types.instruction.AbstractBlock.make(tom_append_list_concInstruction(tom_get_slice_concInstruction(tomMatch25NameNumber_freshVar_38,tomMatch25NameNumber_end_43, tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ),tom_append_list_concInstruction( tomMatch25NameNumber_end_43.getTailconcInstruction() , tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() ))) );
+      }}if ( tomMatch25NameNumber_end_43.isEmptyconcInstruction() ) {tomMatch25NameNumber_end_43=tomMatch25NameNumber_freshVar_38;} else {tomMatch25NameNumber_end_43= tomMatch25NameNumber_end_43.getTailconcInstruction() ;}}} while(!( (tomMatch25NameNumber_end_43==tomMatch25NameNumber_freshVar_38) ));}}}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.AbstractBlock) ) {
 
 
         return prettyPrint( (( tom.engine.adt.tominstruction.types.Instruction )subject).getInstList() );
@@ -254,12 +254,12 @@ public PILFactory() {
       }}}{if ( (subject instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )subject) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
         return  (( tom.engine.adt.tomname.types.TomName )subject).getString() ;
-      }}}}{{if ( (subject instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )subject) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch231NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )subject).getTomType() ;if ( (tomMatch231NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
+      }}}}{{if ( (subject instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )subject) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch29NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )subject).getTomType() ;if ( (tomMatch29NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
 
 
 
 
- return  tomMatch231NameNumber_freshVar_1.getString() ; }}}}}{{if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.Position) ) {
+ return  tomMatch29NameNumber_freshVar_1.getString() ; }}}}}{{if ( (subject instanceof tom.engine.adt.tomname.types.TomNumber) ) {if ( ((( tom.engine.adt.tomname.types.TomNumber )subject) instanceof tom.engine.adt.tomname.types.tomnumber.Position) ) {
 
 
 

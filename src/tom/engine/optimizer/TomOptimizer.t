@@ -121,10 +121,10 @@ public class TomOptimizer extends TomGenericPlugin {
                   SequenceId(InterBlock(this),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
                 )
               );
-
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           renamedTerm = `BottomUp(Inline(TrueConstraint())).visit(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
+//System.out.println("opt renamedTerm = " + renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
                 InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
@@ -671,7 +671,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy BlockFusion() extends `Identity() {
     visit Instruction {
-      AbstractBlock(concInstruction(X1*,
+      block@AbstractBlock(concInstruction(X1*,
             Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
             Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
             X2*)) -> {
@@ -679,7 +679,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(`compare(term1,term2)) {
           if(`compare(var1,var2)) {
             logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion1");
-            return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
+            return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*)));
           } else {
             InfoVariable info = new InfoVariable();
             `computeOccurencesLet(name1,info).visit(`body2);
@@ -687,7 +687,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(mult==0) {
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
               Instruction newBody2 =  `renameVariable(name2,name1).visitLight(`body2);
-              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
+              return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*)));
             }
           }
         }
@@ -697,21 +697,33 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy IfFusion() extends `Identity() {
     visit Instruction {
-      AbstractBlock(concInstruction(X1*,
+      block@(UnamedBlock|AbstractBlock)(concInstruction(X1*,
             If(cond1,success1,failure1),
             If(cond2,success2,failure2),
             X2*)) -> {
-        /* Fusion de 2 blocs If gardes par la meme condition */
-        if(`compare(cond1,cond2)) {
-          if(`failure1.isNop() && `failure2.isNop()) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion1");
-            Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
-            //System.out.println(res);
+        Expression c1 = factory.remove(`cond1);
+        Expression c2 = factory.remove(`cond2);
+        //System.out.println("c1 = " + c1);
+        //System.out.println("c2 = " + c2);
+        %match(Expression c1,Expression c2) {
+          c,c -> {
+            /* Merge 2 blocks whose conditions are equals */
+            if(`failure1.isNop() && `failure2.isNop()) {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion1");
+              Instruction res = `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*)));
+              //System.out.println(res);
 
-            return res;
-          } else {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion2");
-            return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
+              return res;
+            } else {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion2");
+              return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*)));
+            }
+          }
+
+          Negation(c),c -> {
+            /* Merge 2 blocks whose conditions are the negation of the other */
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion-not");
+            return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,failure2)),AbstractBlock(concInstruction(failure1,success2))),X2*)));
           }
         }
       }

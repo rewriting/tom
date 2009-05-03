@@ -30,6 +30,8 @@ package tom.platform;
 import java.util.logging.*;
 
 public class PlatformLogRecord extends LogRecord {
+  private static final long serialVersionUID = 1L;
+
   private int line;
   private String filePath;
   private PlatformMessage message;

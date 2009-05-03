@@ -25,6 +25,7 @@
 package tom.gom.tools.error;
 
 public class GomRuntimeException extends RuntimeException {
+  private static final long serialVersionUID = 1L;
 
   public GomRuntimeException() {
     super();

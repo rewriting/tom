@@ -32,7 +32,9 @@ import java.util.Collection;
 
 public class AlphaMap<T extends Atom> {
 
-  public static class AlphaException extends Exception { } 
+  public static class AlphaException extends Exception {
+    private static final long serialVersionUID = 1L;
+  } 
 
   private Hashtable<T,T> table1 = new Hashtable<T,T>();
   private Hashtable<T,T> table2 = new Hashtable<T,T>();

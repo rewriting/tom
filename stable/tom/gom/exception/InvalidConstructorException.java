@@ -24,7 +24,8 @@
 package tom.gom.exception;
 
 public class InvalidConstructorException extends ConstructorException {
+  private static final long serialVersionUID = 1L;
+
   public InvalidConstructorException(String n) { super(n); }
 
 }
-

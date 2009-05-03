@@ -29,6 +29,8 @@ import tom.platform.PlatformMessage;
 
 public class TomIncludeException extends TomException {
   
+  private static final long serialVersionUID = 1L;
+
   public TomIncludeException(PlatformMessage msg) {
     super(msg);
   }

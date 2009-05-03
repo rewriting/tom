@@ -68,7 +68,7 @@ public PILFactory() {
     this.level = level;
   }
 
-  public tom.library.sl.Visitable remove(tom.library.sl.Visitable subject) {
+  public <T extends tom.library.sl.Visitable> T remove(T subject) {
     try {
       return `TopDown(replaceRemove()).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {

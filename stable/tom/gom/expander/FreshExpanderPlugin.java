@@ -89,7 +89,7 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run(Map informationTracker) {
+  public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("fresh")) {
       boolean intermediate = 
         ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
