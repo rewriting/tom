@@ -592,6 +592,7 @@ gomsignature [List<TomTerm> list] throws TomException
     informationTracker.put("lastGeneratedMapping",null);
     
     informationTracker.put("gomBegin",""+initialGomLine);
+    informationTracker.put("inputFileName",getStreamManager().getInputFileName());
     
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
