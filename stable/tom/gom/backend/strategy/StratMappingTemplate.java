@@ -63,9 +63,9 @@ public class StratMappingTemplate extends MappingTemplateClass {
     * in a _file.tom
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(generateStratMapping == 1) {
+    //if(generateStratMapping == 1) {
       writer.write("  %include { Strategy.tom }");
-    }
+    //}
     {{if ( (operatorClasses instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )operatorClasses) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch2NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);do {{if (!( tomMatch2NameNumber_end_4.isEmptyConcGomClass() )) {if ( ( tomMatch2NameNumber_end_4.getHeadConcGomClass()  instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) { tom.gom.adt.objects.types.GomClass  tom_op= tomMatch2NameNumber_end_4.getHeadConcGomClass() ;
 
         writer.write(

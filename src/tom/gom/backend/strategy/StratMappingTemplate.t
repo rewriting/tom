@@ -63,9 +63,9 @@ public class StratMappingTemplate extends MappingTemplateClass {
     * in a _file.tom
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    if(generateStratMapping == 1) {
+    //if(generateStratMapping == 1) {
       writer.write("  %include { Strategy.tom }");
-    }
+    //}
     %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
