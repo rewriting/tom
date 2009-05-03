@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles      e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -39,25 +39,24 @@ public class GomEnvironment {
   private String lastGeneratedMapping;
   private SymbolTable symbolTable;
   // this map is filled by the GomTypeExpander
-  private Map importedModules;
-  private Map builtinSorts;
-  private Map usedBuiltinSorts;
- 
+  private Map<ModuleDecl,ModuleDeclList> importedModules;
+  private Map<String,ClassName> builtinSorts;
+  private Map<String,ClassName> usedBuiltinSorts;
+
   /**
    * A private constructor method to defeat instantiation
    */
-  public GomEnvironment() { 
+  public GomEnvironment() {
     streamManager = new GomStreamManager();
-    importedModules = new HashMap();
-    builtinSorts = new HashMap();
+    importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
+    builtinSorts = new HashMap<String,ClassName>();
     initBuiltins();
-    usedBuiltinSorts = new HashMap();
-    // symbolTable = new SymbolTable();
+    usedBuiltinSorts = new HashMap<String,ClassName>();
     symbolTable = new SymbolTable(this);
   }
 
   public SymbolTable getSymbolTable() {
-    return symbolTable; 
+    return symbolTable;
   }
 
   public void initSymbolTable(GomModuleList l) {
@@ -66,7 +65,7 @@ public class GomEnvironment {
   }
 
   public ModuleDeclList getModuleDependency(ModuleDecl module) {
-    ModuleDeclList modulesDecl = (ModuleDeclList)importedModules.get(module);
+    ModuleDeclList modulesDecl = importedModules.get(module);
     return modulesDecl;
   }
   public void addModuleDependency(ModuleDecl module, ModuleDeclList imported) {
@@ -120,12 +119,10 @@ public class GomEnvironment {
     }
   }
 
-  public Map builtinSortClassMap() {
-    Map sortClass = new HashMap();
-    Iterator it = usedBuiltinSorts.keySet().iterator();
-    while(it.hasNext()) {
-      String name = (String) it.next();
-      sortClass.put( tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl.make(name) ,(ClassName)usedBuiltinSorts.get(name));
+  public Map<SortDecl,ClassName> builtinSortClassMap() {
+    Map<SortDecl,ClassName> sortClass = new HashMap<SortDecl,ClassName>();
+    for (String name : usedBuiltinSorts.keySet()) {
+      sortClass.put( tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl.make(name) ,usedBuiltinSorts.get(name));
     }
     return sortClass;
   }

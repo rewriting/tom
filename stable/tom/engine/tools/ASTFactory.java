@@ -51,27 +51,11 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList makeList(Collection c) {
-    Object array[] = c.toArray();
+  public static TomList makeList(Collection<TomTerm> c) {
+    TomTerm array[] = c.toArray(new TomTerm[0]);
     TomList list =  tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ;
     for(int i=array.length-1; i>=0 ; i--) {
-      Object elt = array[i];
-      TomTerm term;
-      if(elt instanceof TargetLanguage) {
-        term =  tom.engine.adt.tomterm.types.tomterm.TargetLanguageToTomTerm.make((TargetLanguage)elt) ;
-      } else if(elt instanceof TomType) {
-        term =  tom.engine.adt.tomterm.types.tomterm.TomTypeToTomTerm.make((TomType)elt) ;
-      } else if(elt instanceof Declaration) {
-        term =  tom.engine.adt.tomterm.types.tomterm.DeclarationToTomTerm.make((Declaration)elt) ;
-      } else if(elt instanceof Expression) {
-        term =  tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make((Expression)elt) ;
-      } else if(elt instanceof TomName) {
-        term =  tom.engine.adt.tomterm.types.tomterm.TomNameToTomTerm.make((TomName)elt) ;
-      } else if(elt instanceof Instruction) {
-        term =  tom.engine.adt.tomterm.types.tomterm.InstructionToTomTerm.make((Instruction)elt) ;
-      } else {
-        term = (TomTerm)elt;
-      }
+      TomTerm term = array[i];
       list =  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(term,tom_append_list_concTomTerm(list, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() )) ;
     }
     return list;
@@ -403,8 +387,8 @@ public class ASTFactory {
     return false;
   }
 
-  public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
-    LinkedList list = new LinkedList();
+  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+    LinkedList<TomTerm> list = new LinkedList<TomTerm>();
     {{if ( (term instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )term) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomname.types.TomNameList  tomMatch220NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )term).getNameList() ;if ( ((tomMatch220NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch220NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch220NameNumber_freshVar_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tomMatch220NameNumber_freshVar_7= tomMatch220NameNumber_freshVar_1.getHeadconcTomName() ;if ( (tomMatch220NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( "".equals( tomMatch220NameNumber_freshVar_7.getString() ) ) {if (  tomMatch220NameNumber_freshVar_1.getTailconcTomName() .isEmptyconcTomName() ) { tom.engine.adt.tomslot.types.SlotList  tom_args= (( tom.engine.adt.tomterm.types.TomTerm )term).getSlots() ;
 
         while(!tom_args.isEmptyconcSlot()) {

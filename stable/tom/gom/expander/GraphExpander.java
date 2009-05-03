@@ -120,15 +120,15 @@ public class GraphExpander {
     return  tom.gom.adt.gom.types.pair.ModHookPair.make(expandedList, hooks) ;
   }
 
-  public static class ExpandModule extends tom.library.sl.BasicStrategy {private  boolean  forTermgraph;private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandModule( boolean  forTermgraph,  java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.forTermgraph=forTermgraph;this.hookList=hookList;this.ge=ge;}public  boolean  getforTermgraph() {return forTermgraph;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Module  visit_Module( tom.gom.adt.gom.types.Module  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Module) ) {if ( ((( tom.gom.adt.gom.types.Module )tom__arg) instanceof tom.gom.adt.gom.types.module.Module) ) { tom.gom.adt.gom.types.ModuleDecl  tomMatch511NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Module )tom__arg).getMDecl() ;if ( (tomMatch511NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
+  public static class ExpandModule extends tom.library.sl.BasicStrategy {private  boolean  forTermgraph;private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandModule( boolean  forTermgraph,  java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.forTermgraph=forTermgraph;this.hookList=hookList;this.ge=ge;}public  boolean  getforTermgraph() {return forTermgraph;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Module  visit_Module( tom.gom.adt.gom.types.Module  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Module) ) {if ( ((( tom.gom.adt.gom.types.Module )tom__arg) instanceof tom.gom.adt.gom.types.module.Module) ) { tom.gom.adt.gom.types.ModuleDecl  tomMatch512NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Module )tom__arg).getMDecl() ;if ( (tomMatch512NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) ) {
 
 
 
 
 
 
-        hookList.add(ge.expHooksModule( tomMatch511NameNumber_freshVar_1.getModuleName() .getName(), (( tom.gom.adt.gom.types.Module )tom__arg).getSorts() ,tomMatch511NameNumber_freshVar_1,ge.getForTermgraph()));
-      }}}}}return _visit_Module(tom__arg,introspector); }public  tom.gom.adt.gom.types.Module  _visit_Module( tom.gom.adt.gom.types.Module  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Module )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Module) ) {return ((T)visit_Module((( tom.gom.adt.gom.types.Module )v),introspector));}if (!( environment== null  )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_ExpandModule( boolean  t0,  java.util.ArrayList  t1,  GraphExpander  t2) { return new ExpandModule(t0,t1,t2);}public static class ExpandSort extends tom.library.sl.BasicStrategy {private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandSort( java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.hookList=hookList;this.ge=ge;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Sort  visit_Sort( tom.gom.adt.gom.types.Sort  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Sort) ) {if ( ((( tom.gom.adt.gom.types.Sort )tom__arg) instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch512NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Sort )tom__arg).getDecl() ;if ( (tomMatch512NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch512NameNumber_freshVar_1.getName() ; tom.gom.adt.gom.types.SortDecl  tom_sortdecl=tomMatch512NameNumber_freshVar_1;
+        hookList.add(ge.expHooksModule( tomMatch512NameNumber_freshVar_1.getModuleName() .getName(), (( tom.gom.adt.gom.types.Module )tom__arg).getSorts() ,tomMatch512NameNumber_freshVar_1,ge.getForTermgraph()));
+      }}}}}return _visit_Module(tom__arg,introspector); }public  tom.gom.adt.gom.types.Module  _visit_Module( tom.gom.adt.gom.types.Module  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.gom.adt.gom.types.Module )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Module) ) {return ((T)visit_Module((( tom.gom.adt.gom.types.Module )v),introspector));}if (!( environment== null  )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_ExpandModule( boolean  t0,  java.util.ArrayList  t1,  GraphExpander  t2) { return new ExpandModule(t0,t1,t2);}public static class ExpandSort extends tom.library.sl.BasicStrategy {private  java.util.ArrayList  hookList;private  GraphExpander  ge;public ExpandSort( java.util.ArrayList  hookList,  GraphExpander  ge) {super(( new tom.library.sl.Identity() ));this.hookList=hookList;this.ge=ge;}public  java.util.ArrayList  gethookList() {return hookList;}public  GraphExpander  getge() {return ge;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Sort  visit_Sort( tom.gom.adt.gom.types.Sort  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Sort) ) {if ( ((( tom.gom.adt.gom.types.Sort )tom__arg) instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch513NameNumber_freshVar_1= (( tom.gom.adt.gom.types.Sort )tom__arg).getDecl() ;if ( (tomMatch513NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch513NameNumber_freshVar_1.getName() ; tom.gom.adt.gom.types.SortDecl  tom_sortdecl=tomMatch513NameNumber_freshVar_1;
 
 
 
@@ -257,112 +257,15 @@ public class GraphExpander {
 
     String codeStrategies = getStrategies(sorts);
 
-    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch513NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch513NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch513NameNumber_freshVar_8= tomMatch513NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch513NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch513NameNumber_freshVar_7= tomMatch513NameNumber_freshVar_8.getDecl() ;if ( (tomMatch513NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch514NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch514NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch514NameNumber_freshVar_8= tomMatch514NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch514NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch514NameNumber_freshVar_7= tomMatch514NameNumber_freshVar_8.getDecl() ;if ( (tomMatch514NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
-        codeImport += "\n          import "+st.getFullConstructorClassName("Path"+ tomMatch513NameNumber_freshVar_7.getName() )+";\n        "
-
-;
-      }}}if ( tomMatch513NameNumber_end_4.isEmptyConcSort() ) {tomMatch513NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch513NameNumber_end_4= tomMatch513NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch513NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
-
-
-    String codeBlockCommon ="\n    %include{java/util/HashMap.tom}\n    %include{java/util/ArrayList.tom}\n    %include{sl.tom}\n\n    static int freshlabel =0; //to unexpand termgraphs\n    \n    %typeterm tom_Info {\n      implement { Info }\n      is_sort(t) { ($t instanceof Info) }\n    }\n\n\n    public static class Info {\n      public String label;\n      public Path path;\n      public "+fullAbstractTypeClassName+" term;\n    }\n\n    public "+fullAbstractTypeClassName+" unexpand() {\n       HashMap map = getMapFromPositionToLabel();\n       try {\n         return `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);\n       } catch (tom.library.sl.VisitFailure e) {\n         throw new RuntimeException(\"Unexpected strategy failure!\");\n       }\n    }\n\n    protected HashMap getMapFromPositionToLabel(){\n      HashMap map = new HashMap();\n      try {\n      `TopDown(CollectPositionsOfLabels(map)).visit(this);\n      return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    "
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        codeImport += "\n          import "+st.getFullConstructorClassName("Path"+ tomMatch514NameNumber_freshVar_7.getName() )+";\n        "
 
 ;
+      }}}if ( tomMatch514NameNumber_end_4.isEmptyConcSort() ) {tomMatch514NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch514NameNumber_end_4= tomMatch514NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch514NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
-    String codeBlockTermWithPointers ="\n\n      public "+fullAbstractTypeClassName+" expand(){\n        HashMap map = new HashMap();\n        Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));\n        try {\n          return `label2path.visit(this);\n        } catch (tom.library.sl.VisitFailure e) {\n          throw new RuntimeException(\"Unexpected strategy failure!\");\n        }}\n        "
-
-
-
-
-
-
-
-
-
-;
-
-    String codeBlockTermGraph ="\n\n   public "+fullAbstractTypeClassName+" expand() {\n       HashMap map = new HashMap();\n       try {\n         return `InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand()).label2path();\n       } catch (tom.library.sl.VisitFailure e) {\n         throw new RuntimeException(\"Unexpected strategy failure!\");\n       }\n     }\n\n    public "+fullAbstractTypeClassName+" normalizeWithLabels() {\n      HashMap map = new HashMap();\n      try {\n        return `InnermostIdSeq(NormalizeLabel(map)).visit(this);\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" label2path() {\n      HashMap map = new HashMap();\n      Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));\n      try {\n        return label2path.visit(this);\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n    \n    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels(){\n      HashMap<String,Position> map = new HashMap<String,Position>();\n      try {\n      `TopDown(CollectAndRemoveLabels(map)).visit(this);\n      return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public HashMap<String,Position> getMapFromLabelToPosition(){\n      HashMap<String,Position> map = new HashMap<String,Position>();\n      try {\n      `TopDown(CollectLabels(map)).visit(this);\n      return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" normalize() {\n      try {\n         return `InnermostIdSeq(Normalize()).visit(this); \n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" applyGlobalRedirection(Position p1,Position p2) {\n      try {\n         return globalRedirection(p1,p2).visit(this); \n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n  \n    public static Strategy globalRedirection(Position p1,Position p2) {\n        return `TopDown(GlobalRedirection(p1,p2)); \n    }\n\n    public "+fullAbstractTypeClassName+" swap(Position p1, Position p2) {\n      try {\n        "+fullAbstractTypeClassName+" updatedSubject =  `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);\n        "+fullAbstractTypeClassName+" subterm_p1 = p1.getSubterm().visit(updatedSubject);\n        "+fullAbstractTypeClassName+" subterm_p2 = p2.getSubterm().visit(updatedSubject);\n        return `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);\n      } catch (VisitFailure e) { \n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n   %strategy Normalize() extends Identity() {\n"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    String codeBlockCommon ="\n    %include{java/util/HashMap.tom}\n    %include{java/util/ArrayList.tom}\n    %include{sl.tom}\n\n    static int freshlabel =0; //to unexpand termgraphs\n    \n    %typeterm tom_Info {\n      implement { Info }\n      is_sort(t) { ($t instanceof Info) }\n    }\n\n\n    public static class Info {\n      public String label;\n      public Path path;\n      public "+fullAbstractTypeClassName+" term;\n    }\n\n    public "+fullAbstractTypeClassName+" unexpand() {\n       HashMap<String,Position> map = getMapFromPositionToLabel();\n       try {\n         return `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);\n       } catch (tom.library.sl.VisitFailure e) {\n         throw new RuntimeException(\"Unexpected strategy failure!\");\n       }\n    }\n\n    protected HashMap<String,Position> getMapFromPositionToLabel() {\n      HashMap<String,Position> map = new HashMap<String,Position>();\n      try {\n        `TopDown(CollectPositionsOfLabels(map)).visit(this);\n        return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    "
 
 
 
@@ -402,7 +305,104 @@ public class GraphExpander {
 
 ;
 
-  {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch514NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch514NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch514NameNumber_freshVar_8= tomMatch514NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch514NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch514NameNumber_freshVar_7= tomMatch514NameNumber_freshVar_8.getDecl() ;if ( (tomMatch514NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch514NameNumber_freshVar_7.getName() ;
+
+    String codeBlockTermWithPointers ="\n\n      public "+fullAbstractTypeClassName+" expand() {\n        HashMap<Position,String> map = new HashMap<Position,String>();\n        Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));\n        try {\n          return `label2path.visit(this);\n        } catch (tom.library.sl.VisitFailure e) {\n          throw new RuntimeException(\"Unexpected strategy failure!\");\n        }}\n        "
+
+
+
+
+
+
+
+
+
+;
+
+    String codeBlockTermGraph ="\n\n   public "+fullAbstractTypeClassName+" expand() {\n       HashMap<Position,String> map = new HashMap<Position,String>();\n       try {\n         return `InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand()).label2path();\n       } catch (tom.library.sl.VisitFailure e) {\n         throw new RuntimeException(\"Unexpected strategy failure!\");\n       }\n     }\n\n    public "+fullAbstractTypeClassName+" normalizeWithLabels() {\n      HashMap<Position,String> map = new HashMap<Position,String>();\n      try {\n        return `InnermostIdSeq(NormalizeLabel(map)).visit(this);\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" label2path() {\n      HashMap<Position,String> map = new HashMap<Position,String>();\n      Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));\n      try {\n        return label2path.visit(this);\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n    \n    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels() {\n      HashMap<String,Position> map = new HashMap<String,Position>();\n      try {\n        `TopDown(CollectAndRemoveLabels(map)).visit(this);\n        return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public HashMap<String,Position> getMapFromLabelToPosition() {\n      HashMap<String,Position> map = new HashMap<String,Position>();\n      try {\n        `TopDown(CollectLabels(map)).visit(this);\n        return map;\n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" normalize() {\n      try {\n        return `InnermostIdSeq(Normalize()).visit(this); \n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n    public "+fullAbstractTypeClassName+" applyGlobalRedirection(Position p1,Position p2) {\n      try {\n         return globalRedirection(p1,p2).visit(this); \n      } catch (tom.library.sl.VisitFailure e) {\n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n  \n    public static Strategy globalRedirection(Position p1,Position p2) {\n        return `TopDown(GlobalRedirection(p1,p2)); \n    }\n\n    public "+fullAbstractTypeClassName+" swap(Position p1, Position p2) {\n      try {\n        "+fullAbstractTypeClassName+" updatedSubject =  `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);\n        "+fullAbstractTypeClassName+" subterm_p1 = p1.getSubterm().visit(updatedSubject);\n        "+fullAbstractTypeClassName+" subterm_p2 = p2.getSubterm().visit(updatedSubject);\n        return `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);\n      } catch (VisitFailure e) { \n        throw new RuntimeException(\"Unexpected strategy failure!\");\n      }\n    }\n\n   %strategy Normalize() extends Identity() {\n"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+
+  {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch515NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch515NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch515NameNumber_freshVar_8= tomMatch515NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch515NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch515NameNumber_freshVar_7= tomMatch515NameNumber_freshVar_8.getDecl() ;if ( (tomMatch515NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch515NameNumber_freshVar_7.getName() ;
 
  codeBlockTermGraph += "\n        visit "+tom_sortname+" {\n          p@Path"+tom_sortname+"(_*) -> {\n            Position current = getEnvironment().getPosition(); \n            Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n            if(current.compare(dest)== -1) {\n                getEnvironment().followPath((Path)`p);\n                Position realDest = getEnvironment().getPosition(); \n            if(!realDest.equals(dest)) {\n                //the subterm pointed was a pos (in case of previous switch) \n                //and we must only update the relative position\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return Path"+tom_sortname+".make(realDest.sub(current));\n            }  else {\n                //switch the rel position and the pointed subterm\n\n                // 1. construct the new relative position\n                "+tom_sortname+" relref = Path"+tom_sortname+".make(current.sub(dest));\n\n                // 2. update the part to change \n                `TopDown(UpdatePos(dest,current)).visit(getEnvironment());\n\n                // 3. save the subterm updated \n                "+tom_sortname+" subterm = ("+tom_sortname+") getEnvironment().getSubject(); \n\n                // 4. replace at dest the subterm by the new relative pos\n                getEnvironment().setSubject(relref);\n                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));\n                return subterm; \n            }\n          }\n        }\n      }\n"
 
@@ -438,7 +438,7 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch514NameNumber_end_4.isEmptyConcSort() ) {tomMatch514NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch514NameNumber_end_4= tomMatch514NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch514NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch515NameNumber_end_4.isEmptyConcSort() ) {tomMatch515NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch515NameNumber_end_4= tomMatch515NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch515NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
   codeBlockTermGraph += "\n    }\n\n   %strategy UpdatePos(source:Position,target:Position) extends Identity() {\n  "
@@ -448,7 +448,7 @@ public class GraphExpander {
 ;
 
 
-   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch515NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch515NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch515NameNumber_freshVar_8= tomMatch515NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch515NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch515NameNumber_freshVar_7= tomMatch515NameNumber_freshVar_8.getDecl() ;if ( (tomMatch515NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch515NameNumber_freshVar_7.getName() ;
+   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch516NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch516NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch516NameNumber_freshVar_8= tomMatch516NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch516NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch516NameNumber_freshVar_7= tomMatch516NameNumber_freshVar_8.getDecl() ;if ( (tomMatch516NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch516NameNumber_freshVar_7.getName() ;
 
         codeBlockTermGraph += "\n      visit "+tom_sortname+" {\n            p@Path"+tom_sortname+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              //relative pos from the source to the external\n              if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){\n                current = current.changePrefix(source,target);\n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the source\n              if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){\n                dest = dest.changePrefix(source,target); \n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the external\n              if(current.hasPrefix(target) && !dest.hasPrefix(source) && !dest.hasPrefix(target)){\n                current = current.changePrefix(target,source);\n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n\n              //relative pos from the external to the target\n              if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){\n                dest = dest.changePrefix(target,source); \n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n\n              //relative pos from the source to the target\n              if(current.hasPrefix(source) && dest.hasPrefix(target)){\n                current = current.changePrefix(source,target);\n                dest = dest.changePrefix(target,source);\n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n\n              //relative pos from the target to the source\n              if(current.hasPrefix(target) && dest.hasPrefix(source)){\n                current = current.changePrefix(target,source);\n                dest = dest.changePrefix(source,target);\n                return Path"+tom_sortname+".make(dest.sub(current));\n              }\n   \n            }\n          }\n    "
 
@@ -496,7 +496,7 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch515NameNumber_end_4.isEmptyConcSort() ) {tomMatch515NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch515NameNumber_end_4= tomMatch515NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch515NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch516NameNumber_end_4.isEmptyConcSort() ) {tomMatch516NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch516NameNumber_end_4= tomMatch516NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch516NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
    codeBlockTermGraph += "\n   }\n\n   %strategy GlobalRedirection(source:Position,target:Position) extends Identity() {\n  "
@@ -505,7 +505,7 @@ public class GraphExpander {
 
 ;
 
-   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch516NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch516NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch516NameNumber_freshVar_8= tomMatch516NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch516NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch516NameNumber_freshVar_7= tomMatch516NameNumber_freshVar_8.getDecl() ;if ( (tomMatch516NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch516NameNumber_freshVar_7.getName() ;
+   {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch517NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch517NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch517NameNumber_freshVar_8= tomMatch517NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch517NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch517NameNumber_freshVar_7= tomMatch517NameNumber_freshVar_8.getDecl() ;if ( (tomMatch517NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortname= tomMatch517NameNumber_freshVar_7.getName() ;
 
         codeBlockTermGraph += "\n      visit "+tom_sortname+" {\n            p@Path"+tom_sortname+"(_*) -> {\n              Position current = getEnvironment().getPosition(); \n              Position dest = (Position) current.add((Path)`p).getCanonicalPath();\n              if(dest.equals(source)) {\n                return Path"+tom_sortname+".make(target.sub(current));\n              }\n            }\n          }\n    "
 
@@ -518,7 +518,7 @@ public class GraphExpander {
 
 
 ;
-      }}}if ( tomMatch516NameNumber_end_4.isEmptyConcSort() ) {tomMatch516NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch516NameNumber_end_4= tomMatch516NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch516NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch517NameNumber_end_4.isEmptyConcSort() ) {tomMatch517NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch517NameNumber_end_4= tomMatch517NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch517NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
    codeBlockTermGraph += "\n   }\n   "
@@ -559,7 +559,6 @@ public class GraphExpander {
 
 );
 
-
     // for the CollectPositionsOfLabels strategy
     StringBuilder CollectPositionsOfLabelsCode = new StringBuilder();
     CollectPositionsOfLabelsCode.append("\n     /**\n     * Collect labels of sort and their corresponding positions in a\n     * map and at the same time replace the labelled term by the term itself.\n     * The keys are the positions.\n     * @param map the map to collect tuples <position,label>\n     */\n\n    %strategy CollectPositionsOfLabels(map:HashMap) extends Identity() {\n    "
@@ -585,7 +584,6 @@ public class GraphExpander {
 
 );
 
-
     // for the AddLabel strategy
     StringBuilder AddLabelCode = new StringBuilder();
     AddLabelCode.append("\n    %strategy AddLabel(map:HashMap) extends Identity() {\n    "
@@ -598,9 +596,7 @@ public class GraphExpander {
 
 );
 
-
-
-    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch517NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch517NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch517NameNumber_freshVar_8= tomMatch517NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch517NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch517NameNumber_freshVar_7= tomMatch517NameNumber_freshVar_8.getDecl() ;if ( (tomMatch517NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortName= tomMatch517NameNumber_freshVar_7.getName() ; tom.gom.adt.gom.types.SortDecl  tom_sDecl=tomMatch517NameNumber_freshVar_7;
+    {{if ( (sorts instanceof tom.gom.adt.gom.types.SortList) ) {if ( (((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ((( tom.gom.adt.gom.types.SortList )sorts) instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) ) { tom.gom.adt.gom.types.SortList  tomMatch518NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);do {{if (!( tomMatch518NameNumber_end_4.isEmptyConcSort() )) { tom.gom.adt.gom.types.Sort  tomMatch518NameNumber_freshVar_8= tomMatch518NameNumber_end_4.getHeadConcSort() ;if ( (tomMatch518NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sort.Sort) ) { tom.gom.adt.gom.types.SortDecl  tomMatch518NameNumber_freshVar_7= tomMatch518NameNumber_freshVar_8.getDecl() ;if ( (tomMatch518NameNumber_freshVar_7 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { String  tom_sortName= tomMatch518NameNumber_freshVar_7.getName() ; tom.gom.adt.gom.types.SortDecl  tom_sDecl=tomMatch518NameNumber_freshVar_7;
 
   
         strategiesCode.append("\n\n    %typeterm tom_Info"+tom_sortName+" {\n        implement { Info"+tom_sortName+" }\n        is_sort(t) { ($t instanceof Info"+tom_sortName+") }\n    }\n\n    static class Info"+tom_sortName+"{\n      public Position omegaRef;\n      public "+CodeGen.generateCode( tom.gom.adt.code.types.code.FullSortClass.make(tom_sDecl) )+" sharedTerm;\n    }\n\n    "
@@ -740,7 +736,7 @@ public class GraphExpander {
 
 
 );
-      }}}if ( tomMatch517NameNumber_end_4.isEmptyConcSort() ) {tomMatch517NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch517NameNumber_end_4= tomMatch517NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch517NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
+      }}}if ( tomMatch518NameNumber_end_4.isEmptyConcSort() ) {tomMatch518NameNumber_end_4=(( tom.gom.adt.gom.types.SortList )sorts);} else {tomMatch518NameNumber_end_4= tomMatch518NameNumber_end_4.getTailConcSort() ;}}} while(!( (tomMatch518NameNumber_end_4==(( tom.gom.adt.gom.types.SortList )sorts)) ));}}}}
 
 
 

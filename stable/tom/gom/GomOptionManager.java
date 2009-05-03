@@ -37,9 +37,6 @@ import tom.platform.ConfigurationManager;
 import tom.platform.OptionManager;
 import tom.platform.OptionOwner;
 import tom.platform.adt.platformoption.types.*;
-import aterm.ATerm;
-import aterm.ATermAppl;
-import aterm.ATermList;
 
 public class GomOptionManager implements OptionManager, OptionOwner {
 
@@ -49,13 +46,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   private PlatformOptionList globalOptions;
 
   /**  map the name of an option to the plugin which defines this option */
-  private Map mapNameToOptionOwner;
+  private Map<String,OptionOwner> mapNameToOptionOwner;
 
   /** map the name of an option to the option itself */
-  private Map mapNameToOption;
+  private Map<String,PlatformOption> mapNameToOption;
 
   /** map a shortname of an option to its full name */
-  private Map mapShortNameToName;
+  private Map<String,String> mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
   private List<String> inputFileList;
@@ -65,9 +62,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @return a configurationManager that needs to be initialized
    */
   public GomOptionManager() {
-    mapNameToOptionOwner = new HashMap();
-    mapNameToOption = new HashMap();
-    mapShortNameToName = new HashMap();
+    mapNameToOptionOwner = new HashMap<String,OptionOwner>();
+    mapNameToOption = new HashMap<String,PlatformOption>();
+    mapShortNameToName = new HashMap<String,String>();
     inputFileList = new ArrayList<String>();
     globalOptions =  tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ;
   }
@@ -84,8 +81,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public int initialize(
       ConfigurationManager confManager,
       String[] commandLine) {
-    List pluginList = confManager.getPluginsList();
-    List optionOwnerList = new ArrayList(pluginList);
+    List<tom.platform.Plugin> pluginList = confManager.getPluginsList();
+    List<OptionOwner> optionOwnerList = new ArrayList<OptionOwner>(pluginList);
     optionOwnerList.add(this);
     collectOptions(optionOwnerList, pluginList);
     this.inputFileList = processArguments(commandLine);
@@ -202,12 +199,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   /**
    * collects the options/services provided by each plugin
    */
-  private void collectOptions(List optionOwnerList, List plugins) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner owner = (OptionOwner)owners.next();
+  private void collectOptions(List<OptionOwner> optionOwnerList, List plugins) {
+    for (OptionOwner owner : optionOwnerList) {
       PlatformOptionList list = owner.getDeclaredOptionList();
-      owner.setOptionManager((OptionManager)this);
+      owner.setOptionManager(this);
       while(!list.isEmptyconcPlatformOption()) {
         PlatformOption option = list.getHeadconcPlatformOption();
         {{if ( (option instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )option) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { String  tom_name= (( tom.platform.adt.platformoption.types.PlatformOption )option).getName() ; String  tom_altName= (( tom.platform.adt.platformoption.types.PlatformOption )option).getAltName() ;
@@ -241,13 +236,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   private String getCanonicalName(String name) {
     if(mapShortNameToName.containsKey(name)) {
-      return (String)mapShortNameToName.get(name);
+      return mapShortNameToName.get(name);
     }
     return name;
   }
 
   private PlatformOption getOptionFromName(String name) {
-    PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
+    PlatformOption option = mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
@@ -255,11 +250,11 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
-    return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
+    return mapNameToOption.put(getCanonicalName(name),option);
   }
 
   private OptionOwner getOptionOwnerFromName(String name) {
-    OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
+    OptionOwner plugin = mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
       getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
@@ -288,10 +283,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     String beginning = "usage: gom [options] file [... file_n]"
       + "\noptions:\n";
     StringBuilder buffer = new StringBuilder(beginning);
-    TreeMap treeMap = new TreeMap(mapNameToOption);
-    Iterator it = treeMap.values().iterator();
-    while(it.hasNext()) {
-      PlatformOption h = (PlatformOption)it.next();
+    TreeMap<String,PlatformOption> treeMap =
+      new TreeMap<String,PlatformOption>(mapNameToOption);
+    for (Map.Entry<String,PlatformOption> entry : treeMap.entrySet()) {
+      PlatformOption h = entry.getValue();
       {{if ( (h instanceof tom.platform.adt.platformoption.types.PlatformOption) ) {if ( ((( tom.platform.adt.platformoption.types.PlatformOption )h) instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption) ) { String  tom_altName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAltName() ; String  tom_attrName= (( tom.platform.adt.platformoption.types.PlatformOption )h).getAttrName() ;
 
           buffer.append("\t--" +  (( tom.platform.adt.platformoption.types.PlatformOption )h).getName() );
@@ -314,7 +309,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * Self-explanatory. Displays the current version of the Gom compiler.
    */
   public void displayVersion() {
-    System.out.println("Gom " + Gom.VERSION + "\n\n"
+    System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
                        + "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
   }
 

@@ -225,6 +225,7 @@ public class Compiler extends TomGenericPlugin {
               //System.out.println("propag: " + actionNumber + "  " + Integer.valueOf((int)(System.currentTimeMillis()-Compiler.startChrono)) );
               PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
+              //System.out.println("preGeneratedExpr = " + preGeneratedExpr);
               //System.out.println("preGeneration: " + actionNumber + "  " + Integer.valueOf((int)(System.currentTimeMillis()-Compiler.startChrono)) );
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr,  tomMatch135NameNumber_freshVar_10.getAction() );
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);

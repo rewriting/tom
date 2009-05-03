@@ -312,6 +312,9 @@ public class AdapterGenerator {
         if("int".equals(tom_name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Integer.parseInt(" + tree+ ".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;
+        } else if("long".equals(tom_name)) {
+          code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Long.parseLong(" + tree+ ".getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
+;
         } else if ("String".equals(tom_name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tree+ ".getText()") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
 ;

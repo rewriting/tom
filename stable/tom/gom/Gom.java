@@ -51,16 +51,13 @@ import tom.gom.GomMessage;
 
 public class Gom {
 
-  /** The current version of the Gom compiler. */
-  public final static String VERSION = "0.01";
-
   /** Log radical string*/
   public final static String LOGRADICAL = "tom.gom";
 
   /** "java.util.logging.config.file" */
   private final static String LOGGINGPROPERTYFILE =
     "java.util.logging.config.file";
-  
+
   /*private final static Object lockTomExec = new Object();// verrou pour l'exec de Tom
 
   public synchronized static Object getLock() {
@@ -77,13 +74,13 @@ public class Gom {
   private static Handler consoleHandler;
 
   public static void main(String[] args) {
-    Map<String,Object> informationTracker = new HashMap();
+    Map<String,String> informationTracker = new HashMap<String,String>();
     int errno = exec(args,informationTracker);
     System.exit(errno);
   }
 
   // different from the Tom.exec() -> need an informationTracker
-  public static int exec(String[] commandLine, Map informationTracker) {
+  public static int exec(String[] commandLine, Map<String,String> informationTracker) {
     try {
       initializeLogging();
     } catch(Exception e) {

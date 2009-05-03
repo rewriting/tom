@@ -118,7 +118,7 @@ public void convert(String filename) {
           write(" ["+tom_internalSubset+"]");
           write(">\n");
           return;
-      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch632NameNumber_freshVar_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch632NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch632NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch632NameNumber_freshVar_15.isEmptyconcTNode() ) {
+      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch633NameNumber_freshVar_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch633NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch633NameNumber_freshVar_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch633NameNumber_freshVar_15.isEmptyconcTNode() ) {
 
         write("<"+ (( tom.library.adt.tnode.types.TNode )n).getName() );
         tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );

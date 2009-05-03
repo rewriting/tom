@@ -129,8 +129,7 @@ public abstract class GomGenericPlugin implements Plugin {
    * The run() method is not implemented in GomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  //public abstract void run();
-  public abstract void run(Map informationTracker);
+  public abstract void run(Map<String,String> informationTracker);
 
   /**
    * From Plugin interface

@@ -89,6 +89,8 @@ public class Tom {
       System.err.println(MessageFormat.format(TomMessage.loggingInitializationFailure.getMessage(),new Object[]{e.getMessage()}));
       return 1;
     }
+
+
     // Retrieve the configuration file name
     String configFileName =
       PluginPlatformFactory.getInstance().extractConfigFileName(args);
@@ -100,6 +102,11 @@ public class Tom {
     if(initConfigurationManager.initialize(args) == 1) {
       return 1;
     }
+
+    if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("verbose")).booleanValue()) {
+      logger.log(Level.INFO, TomMessage.tomExec.getMessage(), new Object[] {Arrays.toString(args)});
+    }
+
     // Retrieve the whole fileList that has to be compiled
     List<String> wholeInputToCompileList =
       initConfigurationManager.getOptionManager().getInputToCompileList();

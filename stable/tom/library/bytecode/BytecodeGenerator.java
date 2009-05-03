@@ -40,620 +40,631 @@ import org.objectweb.asm.Label;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
-import tom.library.adt.bytecode.types.tstringlist.*;
-import tom.library.adt.bytecode.types.tlabellist.*;
-import tom.library.adt.bytecode.types.tintlist.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class BytecodeGenerator extends ToolBox implements Opcodes {
-           private static   tom.library.adt.bytecode.types.TMethodList  tom_append_list_MethodList( tom.library.adt.bytecode.types.TMethodList l1,  tom.library.adt.bytecode.types.TMethodList  l2) {     if( l1.isEmptyMethodList() ) {       return l2;     } else if( l2.isEmptyMethodList() ) {       return l1;     } else if(  l1.getTailMethodList() .isEmptyMethodList() ) {       return  tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make( l1.getHeadMethodList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make( l1.getHeadMethodList() ,tom_append_list_MethodList( l1.getTailMethodList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TMethodList  tom_get_slice_MethodList( tom.library.adt.bytecode.types.TMethodList  begin,  tom.library.adt.bytecode.types.TMethodList  end, tom.library.adt.bytecode.types.TMethodList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyMethodList()  ||  (end== tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make( begin.getHeadMethodList() ,( tom.library.adt.bytecode.types.TMethodList )tom_get_slice_MethodList( begin.getTailMethodList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TInnerClassInfoList  tom_append_list_InnerClassInfoList( tom.library.adt.bytecode.types.TInnerClassInfoList l1,  tom.library.adt.bytecode.types.TInnerClassInfoList  l2) {     if( l1.isEmptyInnerClassInfoList() ) {       return l2;     } else if( l2.isEmptyInnerClassInfoList() ) {       return l1;     } else if(  l1.getTailInnerClassInfoList() .isEmptyInnerClassInfoList() ) {       return  tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make( l1.getHeadInnerClassInfoList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make( l1.getHeadInnerClassInfoList() ,tom_append_list_InnerClassInfoList( l1.getTailInnerClassInfoList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TInnerClassInfoList  tom_get_slice_InnerClassInfoList( tom.library.adt.bytecode.types.TInnerClassInfoList  begin,  tom.library.adt.bytecode.types.TInnerClassInfoList  end, tom.library.adt.bytecode.types.TInnerClassInfoList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyInnerClassInfoList()  ||  (end== tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make( begin.getHeadInnerClassInfoList() ,( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_get_slice_InnerClassInfoList( begin.getTailInnerClassInfoList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TTryCatchBlockList  tom_append_list_TryCatchBlockList( tom.library.adt.bytecode.types.TTryCatchBlockList l1,  tom.library.adt.bytecode.types.TTryCatchBlockList  l2) {     if( l1.isEmptyTryCatchBlockList() ) {       return l2;     } else if( l2.isEmptyTryCatchBlockList() ) {       return l1;     } else if(  l1.getTailTryCatchBlockList() .isEmptyTryCatchBlockList() ) {       return  tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,tom_append_list_TryCatchBlockList( l1.getTailTryCatchBlockList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TTryCatchBlockList  tom_get_slice_TryCatchBlockList( tom.library.adt.bytecode.types.TTryCatchBlockList  begin,  tom.library.adt.bytecode.types.TTryCatchBlockList  end, tom.library.adt.bytecode.types.TTryCatchBlockList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyTryCatchBlockList()  ||  (end== tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make( begin.getHeadTryCatchBlockList() ,( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_get_slice_TryCatchBlockList( begin.getTailTryCatchBlockList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TFieldList  tom_append_list_FieldList( tom.library.adt.bytecode.types.TFieldList l1,  tom.library.adt.bytecode.types.TFieldList  l2) {     if( l1.isEmptyFieldList() ) {       return l2;     } else if( l2.isEmptyFieldList() ) {       return l1;     } else if(  l1.getTailFieldList() .isEmptyFieldList() ) {       return  tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make( l1.getHeadFieldList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make( l1.getHeadFieldList() ,tom_append_list_FieldList( l1.getTailFieldList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TFieldList  tom_get_slice_FieldList( tom.library.adt.bytecode.types.TFieldList  begin,  tom.library.adt.bytecode.types.TFieldList  end, tom.library.adt.bytecode.types.TFieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyFieldList()  ||  (end== tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make( begin.getHeadFieldList() ,( tom.library.adt.bytecode.types.TFieldList )tom_get_slice_FieldList( begin.getTailFieldList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TInstructionList  tom_append_list_InstructionList( tom.library.adt.bytecode.types.TInstructionList l1,  tom.library.adt.bytecode.types.TInstructionList  l2) {     if( l1.isEmptyInstructionList() ) {       return l2;     } else if( l2.isEmptyInstructionList() ) {       return l1;     } else if(  l1.getTailInstructionList() .isEmptyInstructionList() ) {       return  tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,tom_append_list_InstructionList( l1.getTailInstructionList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TInstructionList  tom_get_slice_InstructionList( tom.library.adt.bytecode.types.TInstructionList  begin,  tom.library.adt.bytecode.types.TInstructionList  end, tom.library.adt.bytecode.types.TInstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyInstructionList()  ||  (end== tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make( begin.getHeadInstructionList() ,( tom.library.adt.bytecode.types.TInstructionList )tom_get_slice_InstructionList( begin.getTailInstructionList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TLocalVariableList  tom_append_list_LocalVariableList( tom.library.adt.bytecode.types.TLocalVariableList l1,  tom.library.adt.bytecode.types.TLocalVariableList  l2) {     if( l1.isEmptyLocalVariableList() ) {       return l2;     } else if( l2.isEmptyLocalVariableList() ) {       return l1;     } else if(  l1.getTailLocalVariableList() .isEmptyLocalVariableList() ) {       return  tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,tom_append_list_LocalVariableList( l1.getTailLocalVariableList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TLocalVariableList  tom_get_slice_LocalVariableList( tom.library.adt.bytecode.types.TLocalVariableList  begin,  tom.library.adt.bytecode.types.TLocalVariableList  end, tom.library.adt.bytecode.types.TLocalVariableList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyLocalVariableList()  ||  (end== tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make( begin.getHeadLocalVariableList() ,( tom.library.adt.bytecode.types.TLocalVariableList )tom_get_slice_LocalVariableList( begin.getTailLocalVariableList() ,end,tail)) ;   }    
+public class BytecodeGenerator extends ClassWriter implements Opcodes {
 
-  public byte[] toBytecode(TClass clazz){
+  /**
+   * <p>
+   * This class allows to directly generate from the Gom Bytecode representation
+   * the Bytecode program (object of type byte[]) 
+   * <p>
+   */       
 
-    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+           private static   tom.library.adt.bytecode.types.InnerClassInfoList  tom_append_list_InnerClassInfoList( tom.library.adt.bytecode.types.InnerClassInfoList l1,  tom.library.adt.bytecode.types.InnerClassInfoList  l2) {     if( l1.isEmptyInnerClassInfoList() ) {       return l2;     } else if( l2.isEmptyInnerClassInfoList() ) {       return l1;     } else if(  l1.getTailInnerClassInfoList() .isEmptyInnerClassInfoList() ) {       return  tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList.make( l1.getHeadInnerClassInfoList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList.make( l1.getHeadInnerClassInfoList() ,tom_append_list_InnerClassInfoList( l1.getTailInnerClassInfoList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.InnerClassInfoList  tom_get_slice_InnerClassInfoList( tom.library.adt.bytecode.types.InnerClassInfoList  begin,  tom.library.adt.bytecode.types.InnerClassInfoList  end, tom.library.adt.bytecode.types.InnerClassInfoList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyInnerClassInfoList()  ||  (end== tom.library.adt.bytecode.types.innerclassinfolist.EmptyInnerClassInfoList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList.make( begin.getHeadInnerClassInfoList() ,( tom.library.adt.bytecode.types.InnerClassInfoList )tom_get_slice_InnerClassInfoList( begin.getTailInnerClassInfoList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.FieldList  tom_append_list_FieldList( tom.library.adt.bytecode.types.FieldList l1,  tom.library.adt.bytecode.types.FieldList  l2) {     if( l1.isEmptyFieldList() ) {       return l2;     } else if( l2.isEmptyFieldList() ) {       return l1;     } else if(  l1.getTailFieldList() .isEmptyFieldList() ) {       return  tom.library.adt.bytecode.types.fieldlist.ConsFieldList.make( l1.getHeadFieldList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.fieldlist.ConsFieldList.make( l1.getHeadFieldList() ,tom_append_list_FieldList( l1.getTailFieldList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.FieldList  tom_get_slice_FieldList( tom.library.adt.bytecode.types.FieldList  begin,  tom.library.adt.bytecode.types.FieldList  end, tom.library.adt.bytecode.types.FieldList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyFieldList()  ||  (end== tom.library.adt.bytecode.types.fieldlist.EmptyFieldList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.fieldlist.ConsFieldList.make( begin.getHeadFieldList() ,( tom.library.adt.bytecode.types.FieldList )tom_get_slice_FieldList( begin.getTailFieldList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_append_list_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList l1,  tom.library.adt.bytecode.types.TryCatchBlockList  l2) {     if( l1.isEmptyTryCatchBlockList() ) {       return l2;     } else if( l2.isEmptyTryCatchBlockList() ) {       return l1;     } else if(  l1.getTailTryCatchBlockList() .isEmptyTryCatchBlockList() ) {       return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( l1.getHeadTryCatchBlockList() ,tom_append_list_TryCatchBlockList( l1.getTailTryCatchBlockList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TryCatchBlockList  tom_get_slice_TryCatchBlockList( tom.library.adt.bytecode.types.TryCatchBlockList  begin,  tom.library.adt.bytecode.types.TryCatchBlockList  end, tom.library.adt.bytecode.types.TryCatchBlockList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyTryCatchBlockList()  ||  (end== tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList.make( begin.getHeadTryCatchBlockList() ,( tom.library.adt.bytecode.types.TryCatchBlockList )tom_get_slice_TryCatchBlockList( begin.getTailTryCatchBlockList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.InstructionList  tom_append_list_InstructionList( tom.library.adt.bytecode.types.InstructionList l1,  tom.library.adt.bytecode.types.InstructionList  l2) {     if( l1.isEmptyInstructionList() ) {       return l2;     } else if( l2.isEmptyInstructionList() ) {       return l1;     } else if(  l1.getTailInstructionList() .isEmptyInstructionList() ) {       return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( l1.getHeadInstructionList() ,tom_append_list_InstructionList( l1.getTailInstructionList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.InstructionList  tom_get_slice_InstructionList( tom.library.adt.bytecode.types.InstructionList  begin,  tom.library.adt.bytecode.types.InstructionList  end, tom.library.adt.bytecode.types.InstructionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyInstructionList()  ||  (end== tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.instructionlist.ConsInstructionList.make( begin.getHeadInstructionList() ,( tom.library.adt.bytecode.types.InstructionList )tom_get_slice_InstructionList( begin.getTailInstructionList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.MethodList  tom_append_list_MethodList( tom.library.adt.bytecode.types.MethodList l1,  tom.library.adt.bytecode.types.MethodList  l2) {     if( l1.isEmptyMethodList() ) {       return l2;     } else if( l2.isEmptyMethodList() ) {       return l1;     } else if(  l1.getTailMethodList() .isEmptyMethodList() ) {       return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( l1.getHeadMethodList() ,tom_append_list_MethodList( l1.getTailMethodList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.MethodList  tom_get_slice_MethodList( tom.library.adt.bytecode.types.MethodList  begin,  tom.library.adt.bytecode.types.MethodList  end, tom.library.adt.bytecode.types.MethodList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyMethodList()  ||  (end== tom.library.adt.bytecode.types.methodlist.EmptyMethodList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.methodlist.ConsMethodList.make( begin.getHeadMethodList() ,( tom.library.adt.bytecode.types.MethodList )tom_get_slice_MethodList( begin.getTailMethodList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.LocalVariableList  tom_append_list_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList l1,  tom.library.adt.bytecode.types.LocalVariableList  l2) {     if( l1.isEmptyLocalVariableList() ) {       return l2;     } else if( l2.isEmptyLocalVariableList() ) {       return l1;     } else if(  l1.getTailLocalVariableList() .isEmptyLocalVariableList() ) {       return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( l1.getHeadLocalVariableList() ,tom_append_list_LocalVariableList( l1.getTailLocalVariableList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.LocalVariableList  tom_get_slice_LocalVariableList( tom.library.adt.bytecode.types.LocalVariableList  begin,  tom.library.adt.bytecode.types.LocalVariableList  end, tom.library.adt.bytecode.types.LocalVariableList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyLocalVariableList()  ||  (end== tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList.make( begin.getHeadLocalVariableList() ,( tom.library.adt.bytecode.types.LocalVariableList )tom_get_slice_LocalVariableList( begin.getTailLocalVariableList() ,end,tail)) ;   }    
 
-    {{if ( (clazz instanceof tom.library.adt.bytecode.types.TClass) ) {if ( ((( tom.library.adt.bytecode.types.TClass )clazz) instanceof tom.library.adt.bytecode.types.tclass.Class) ) { tom.library.adt.bytecode.types.TClassInfo  tomMatch588NameNumber_freshVar_1= (( tom.library.adt.bytecode.types.TClass )clazz).getinfo() ;if ( (tomMatch588NameNumber_freshVar_1 instanceof tom.library.adt.bytecode.types.tclassinfo.ClassInfo) ) { tom.library.adt.bytecode.types.TInnerClassInfoList  tom_innerClasses= tomMatch588NameNumber_freshVar_1.getinnerClasses() ; tom.library.adt.bytecode.types.TOuterClassInfo  tom_outerClass= tomMatch588NameNumber_freshVar_1.getouterClass() ; tom.library.adt.bytecode.types.TFieldList  tom_fields= (( tom.library.adt.bytecode.types.TClass )clazz).getfields() ; tom.library.adt.bytecode.types.TMethodList  tom_methods= (( tom.library.adt.bytecode.types.TClass )clazz).getmethods() ;
+  private ClassNode ast;
+
+  public BytecodeGenerator(ClassNode ast) {
+    super(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+    this.ast = ast;
+  }
+
+  public byte[] toByteArray(){
+
+    {{if ( (ast instanceof tom.library.adt.bytecode.types.ClassNode) ) {if ( ((( tom.library.adt.bytecode.types.ClassNode )ast) instanceof tom.library.adt.bytecode.types.classnode.Class) ) { tom.library.adt.bytecode.types.ClassInfo  tomMatch589NameNumber_freshVar_1= (( tom.library.adt.bytecode.types.ClassNode )ast).getinfo() ;if ( (tomMatch589NameNumber_freshVar_1 instanceof tom.library.adt.bytecode.types.classinfo.ClassInfo) ) { tom.library.adt.bytecode.types.InnerClassInfoList  tom_innerClasses= tomMatch589NameNumber_freshVar_1.getinnerClasses() ; tom.library.adt.bytecode.types.OuterClassInfo  tom_outerClass= tomMatch589NameNumber_freshVar_1.getouterClass() ; tom.library.adt.bytecode.types.FieldList  tom_fields= (( tom.library.adt.bytecode.types.ClassNode )ast).getfields() ; tom.library.adt.bytecode.types.MethodList  tom_methods= (( tom.library.adt.bytecode.types.ClassNode )ast).getmethods() ;
 
 
 
         // bytecode for the header
-        cw.visit(V1_1, buildAccessValue( tomMatch588NameNumber_freshVar_1.getaccess() ),  tomMatch588NameNumber_freshVar_1.getname() , buildSignature( tomMatch588NameNumber_freshVar_1.getsignature() ), tomMatch588NameNumber_freshVar_1.getsuperName() , ((StringList) tomMatch588NameNumber_freshVar_1.getinterfaces() ).toArray(new String[0]));
+        visit(V1_1, ToolBox.buildAccessValue( tomMatch589NameNumber_freshVar_1.getaccess() ),  tomMatch589NameNumber_freshVar_1.getname() , ToolBox.buildSignature( tomMatch589NameNumber_freshVar_1.getsignature() ), tomMatch589NameNumber_freshVar_1.getsuperName() , ((tom.library.adt.bytecode.types.stringlist.StringList) tomMatch589NameNumber_freshVar_1.getinterfaces() ).toArray(new String[0]));
 
 
         //bytecode for the inner classes
 
-        {{if ( (tom_innerClasses instanceof tom.library.adt.bytecode.types.TInnerClassInfoList) ) {if ( (((( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList) || ((( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList)) ) { tom.library.adt.bytecode.types.TInnerClassInfoList  tomMatch589NameNumber_end_4=(( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_innerClasses);do {{if (!( tomMatch589NameNumber_end_4.isEmptyInnerClassInfoList() )) { tom.library.adt.bytecode.types.TInnerClassInfo  tom_innerClass= tomMatch589NameNumber_end_4.getHeadInnerClassInfoList() ;{{if ( (tom_innerClass instanceof tom.library.adt.bytecode.types.TInnerClassInfo) ) {if ( ((( tom.library.adt.bytecode.types.TInnerClassInfo )tom_innerClass) instanceof tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo) ) {
+        {{if ( (tom_innerClasses instanceof tom.library.adt.bytecode.types.InnerClassInfoList) ) {if ( (((( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.innerclassinfolist.ConsInnerClassInfoList) || ((( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses) instanceof tom.library.adt.bytecode.types.innerclassinfolist.EmptyInnerClassInfoList)) ) { tom.library.adt.bytecode.types.InnerClassInfoList  tomMatch590NameNumber_end_4=(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses);do {{if (!( tomMatch590NameNumber_end_4.isEmptyInnerClassInfoList() )) { tom.library.adt.bytecode.types.InnerClassInfo  tom_innerClass= tomMatch590NameNumber_end_4.getHeadInnerClassInfoList() ;{{if ( (tom_innerClass instanceof tom.library.adt.bytecode.types.InnerClassInfo) ) {if ( ((( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass) instanceof tom.library.adt.bytecode.types.innerclassinfo.InnerClassInfo) ) {
 
 
 
-                cw.visitInnerClass( (( tom.library.adt.bytecode.types.TInnerClassInfo )tom_innerClass).getname() , (( tom.library.adt.bytecode.types.TInnerClassInfo )tom_innerClass).getouterName() , (( tom.library.adt.bytecode.types.TInnerClassInfo )tom_innerClass).getinnerName() ,buildAccessValue( (( tom.library.adt.bytecode.types.TInnerClassInfo )tom_innerClass).getaccess() ));
+                visitInnerClass( (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getname() , (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getouterName() , (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getinnerName() ,ToolBox.buildAccessValue( (( tom.library.adt.bytecode.types.InnerClassInfo )tom_innerClass).getaccess() ));
               }}}}
 
-          }if ( tomMatch589NameNumber_end_4.isEmptyInnerClassInfoList() ) {tomMatch589NameNumber_end_4=(( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_innerClasses);} else {tomMatch589NameNumber_end_4= tomMatch589NameNumber_end_4.getTailInnerClassInfoList() ;}}} while(!( (tomMatch589NameNumber_end_4==(( tom.library.adt.bytecode.types.TInnerClassInfoList )tom_innerClasses)) ));}}}}
+          }if ( tomMatch590NameNumber_end_4.isEmptyInnerClassInfoList() ) {tomMatch590NameNumber_end_4=(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses);} else {tomMatch590NameNumber_end_4= tomMatch590NameNumber_end_4.getTailInnerClassInfoList() ;}}} while(!( (tomMatch590NameNumber_end_4==(( tom.library.adt.bytecode.types.InnerClassInfoList )tom_innerClasses)) ));}}}}
 
 
         //bytecode for the outer class
 
-        {{if ( (tom_outerClass instanceof tom.library.adt.bytecode.types.TOuterClassInfo) ) {if ( ((( tom.library.adt.bytecode.types.TOuterClassInfo )tom_outerClass) instanceof tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo) ) {
+        {{if ( (tom_outerClass instanceof tom.library.adt.bytecode.types.OuterClassInfo) ) {if ( ((( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass) instanceof tom.library.adt.bytecode.types.outerclassinfo.OuterClassInfo) ) {
 
-            cw.visitOuterClass( (( tom.library.adt.bytecode.types.TOuterClassInfo )tom_outerClass).getowner() , (( tom.library.adt.bytecode.types.TOuterClassInfo )tom_outerClass).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TOuterClassInfo )tom_outerClass).getdesc() ));
+            visitOuterClass( (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getowner() , (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.OuterClassInfo )tom_outerClass).getdesc() ));
           }}}}
 
 
         //bytecode for the fields 
 
-        {{if ( (tom_fields instanceof tom.library.adt.bytecode.types.TFieldList) ) {if ( (((( tom.library.adt.bytecode.types.TFieldList )tom_fields) instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList) || ((( tom.library.adt.bytecode.types.TFieldList )tom_fields) instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList)) ) { tom.library.adt.bytecode.types.TFieldList  tomMatch592NameNumber_end_4=(( tom.library.adt.bytecode.types.TFieldList )tom_fields);do {{if (!( tomMatch592NameNumber_end_4.isEmptyFieldList() )) { tom.library.adt.bytecode.types.TField  tom_field= tomMatch592NameNumber_end_4.getHeadFieldList() ;{{if ( (tom_field instanceof tom.library.adt.bytecode.types.TField) ) {if ( ((( tom.library.adt.bytecode.types.TField )tom_field) instanceof tom.library.adt.bytecode.types.tfield.Field) ) {
+        {{if ( (tom_fields instanceof tom.library.adt.bytecode.types.FieldList) ) {if ( (((( tom.library.adt.bytecode.types.FieldList )tom_fields) instanceof tom.library.adt.bytecode.types.fieldlist.ConsFieldList) || ((( tom.library.adt.bytecode.types.FieldList )tom_fields) instanceof tom.library.adt.bytecode.types.fieldlist.EmptyFieldList)) ) { tom.library.adt.bytecode.types.FieldList  tomMatch593NameNumber_end_4=(( tom.library.adt.bytecode.types.FieldList )tom_fields);do {{if (!( tomMatch593NameNumber_end_4.isEmptyFieldList() )) { tom.library.adt.bytecode.types.Field  tom_field= tomMatch593NameNumber_end_4.getHeadFieldList() ;{{if ( (tom_field instanceof tom.library.adt.bytecode.types.Field) ) {if ( ((( tom.library.adt.bytecode.types.Field )tom_field) instanceof tom.library.adt.bytecode.types.field.Field) ) {
 
 
 
 
 
-               FieldVisitor fw = cw.visitField(buildAccessValue( (( tom.library.adt.bytecode.types.TField )tom_field).getaccess() ), (( tom.library.adt.bytecode.types.TField )tom_field).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TField )tom_field).getdesc() ),buildSignature( (( tom.library.adt.bytecode.types.TField )tom_field).getsignature() ),buildConstant( (( tom.library.adt.bytecode.types.TField )tom_field).getvalue() ));
-               // we do not visit the annotations and attributes
-               fw.visitEnd(); 
-             }}}}
+                FieldVisitor fw = visitField(ToolBox.buildAccessValue( (( tom.library.adt.bytecode.types.Field )tom_field).getaccess() ), (( tom.library.adt.bytecode.types.Field )tom_field).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Field )tom_field).getdesc() ),ToolBox.buildSignature( (( tom.library.adt.bytecode.types.Field )tom_field).getsignature() ),ToolBox.buildConstant( (( tom.library.adt.bytecode.types.Field )tom_field).getvalue() ));
+                // we do not visit the annotations and attributes
+                fw.visitEnd(); 
+              }}}}
 
-          }if ( tomMatch592NameNumber_end_4.isEmptyFieldList() ) {tomMatch592NameNumber_end_4=(( tom.library.adt.bytecode.types.TFieldList )tom_fields);} else {tomMatch592NameNumber_end_4= tomMatch592NameNumber_end_4.getTailFieldList() ;}}} while(!( (tomMatch592NameNumber_end_4==(( tom.library.adt.bytecode.types.TFieldList )tom_fields)) ));}}}}
+          }if ( tomMatch593NameNumber_end_4.isEmptyFieldList() ) {tomMatch593NameNumber_end_4=(( tom.library.adt.bytecode.types.FieldList )tom_fields);} else {tomMatch593NameNumber_end_4= tomMatch593NameNumber_end_4.getTailFieldList() ;}}} while(!( (tomMatch593NameNumber_end_4==(( tom.library.adt.bytecode.types.FieldList )tom_fields)) ));}}}}
 
+    
         //bytecode for the methods
 
-        MethodVisitor mw;
-        {{if ( (tom_methods instanceof tom.library.adt.bytecode.types.TMethodList) ) {if ( (((( tom.library.adt.bytecode.types.TMethodList )tom_methods) instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.TMethodList )tom_methods) instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList)) ) { tom.library.adt.bytecode.types.TMethodList  tomMatch594NameNumber_end_4=(( tom.library.adt.bytecode.types.TMethodList )tom_methods);do {{if (!( tomMatch594NameNumber_end_4.isEmptyMethodList() )) { tom.library.adt.bytecode.types.TMethod  tom_method= tomMatch594NameNumber_end_4.getHeadMethodList() ;{{if ( (tom_method instanceof tom.library.adt.bytecode.types.TMethod) ) {if ( ((( tom.library.adt.bytecode.types.TMethod )tom_method) instanceof tom.library.adt.bytecode.types.tmethod.Method) ) { tom.library.adt.bytecode.types.TMethodInfo  tomMatch595NameNumber_freshVar_1= (( tom.library.adt.bytecode.types.TMethod )tom_method).getinfo() ; tom.library.adt.bytecode.types.TMethodCode  tomMatch595NameNumber_freshVar_2= (( tom.library.adt.bytecode.types.TMethod )tom_method).getcode() ;if ( (tomMatch595NameNumber_freshVar_1 instanceof tom.library.adt.bytecode.types.tmethodinfo.MethodInfo) ) {if ( (tomMatch595NameNumber_freshVar_2 instanceof tom.library.adt.bytecode.types.tmethodcode.MethodCode) ) { tom.library.adt.bytecode.types.TInstructionList  tom_code= tomMatch595NameNumber_freshVar_2.getinstructions() ; tom.library.adt.bytecode.types.TLocalVariableList  tom_localVariables= tomMatch595NameNumber_freshVar_2.getlocalVariables() ; tom.library.adt.bytecode.types.TTryCatchBlockList  tom_tryCatchBlockLists= tomMatch595NameNumber_freshVar_2.gettryCatchBlocks() ;
+        {{if ( (tom_methods instanceof tom.library.adt.bytecode.types.MethodList) ) {if ( (((( tom.library.adt.bytecode.types.MethodList )tom_methods) instanceof tom.library.adt.bytecode.types.methodlist.ConsMethodList) || ((( tom.library.adt.bytecode.types.MethodList )tom_methods) instanceof tom.library.adt.bytecode.types.methodlist.EmptyMethodList)) ) { tom.library.adt.bytecode.types.MethodList  tomMatch595NameNumber_end_4=(( tom.library.adt.bytecode.types.MethodList )tom_methods);do {{if (!( tomMatch595NameNumber_end_4.isEmptyMethodList() )) { tom.library.adt.bytecode.types.Method  tom_method= tomMatch595NameNumber_end_4.getHeadMethodList() ;
 
+            MethodVisitor methodVisitor;
+            {{if ( (tom_method instanceof tom.library.adt.bytecode.types.Method) ) {if ( ((( tom.library.adt.bytecode.types.Method )tom_method) instanceof tom.library.adt.bytecode.types.method.Method) ) { tom.library.adt.bytecode.types.MethodInfo  tomMatch596NameNumber_freshVar_1= (( tom.library.adt.bytecode.types.Method )tom_method).getinfo() ; tom.library.adt.bytecode.types.MethodCode  tomMatch596NameNumber_freshVar_2= (( tom.library.adt.bytecode.types.Method )tom_method).getcode() ;if ( (tomMatch596NameNumber_freshVar_1 instanceof tom.library.adt.bytecode.types.methodinfo.MethodInfo) ) {if ( (tomMatch596NameNumber_freshVar_2 instanceof tom.library.adt.bytecode.types.methodcode.MethodCode) ) { tom.library.adt.bytecode.types.InstructionList  tom_code= tomMatch596NameNumber_freshVar_2.getinstructions() ; tom.library.adt.bytecode.types.LocalVariableList  tom_localVariables= tomMatch596NameNumber_freshVar_2.getlocalVariables() ; tom.library.adt.bytecode.types.TryCatchBlockList  tom_tryCatchBlockLists= tomMatch596NameNumber_freshVar_2.gettryCatchBlocks() ;
 
+                methodVisitor = visitMethod(ToolBox.buildAccessValue( tomMatch596NameNumber_freshVar_1.getaccess() ),
+                     tomMatch596NameNumber_freshVar_1.getname() ,
+                    ToolBox.buildDescriptor( tomMatch596NameNumber_freshVar_1.getdesc() ),
+                    ToolBox.buildSignature( tomMatch596NameNumber_freshVar_1.getsignature() ),
+                    ((tom.library.adt.bytecode.types.stringlist.StringList) tomMatch596NameNumber_freshVar_1.getexceptions() ).toArray(new String[0]));
 
-                mw = cw.visitMethod(buildAccessValue( tomMatch595NameNumber_freshVar_1.getaccess() ),
-                     tomMatch595NameNumber_freshVar_1.getname() ,
-                    buildDescriptor( tomMatch595NameNumber_freshVar_1.getdesc() ),
-                    buildSignature( tomMatch595NameNumber_freshVar_1.getsignature() ),
-                    ((StringList) tomMatch595NameNumber_freshVar_1.getexceptions() ).toArray(new String[0]));
+                methodVisitor.visitCode();
 
-                mw.visitCode();
-
-                HashMap labelMap = new HashMap();
+                Map<LabelNode,Label> labelmap = new HashMap<LabelNode,Label>();
                 //bytecode for the method code 
-                {{if ( (tom_code instanceof tom.library.adt.bytecode.types.TInstructionList) ) {if ( (((( tom.library.adt.bytecode.types.TInstructionList )tom_code) instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.TInstructionList )tom_code) instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList)) ) { tom.library.adt.bytecode.types.TInstructionList  tomMatch596NameNumber_end_4=(( tom.library.adt.bytecode.types.TInstructionList )tom_code);do {{if (!( tomMatch596NameNumber_end_4.isEmptyInstructionList() )) { tom.library.adt.bytecode.types.TInstruction  tomMatch596NameNumber_freshVar_8= tomMatch596NameNumber_end_4.getHeadInstructionList() ;if ( (tomMatch596NameNumber_freshVar_8 instanceof tom.library.adt.bytecode.types.tinstruction.Anchor) ) {
+                {{if ( (tom_code instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( (((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) { tom.library.adt.bytecode.types.InstructionList  tomMatch597NameNumber_end_4=(( tom.library.adt.bytecode.types.InstructionList )tom_code);do {{if (!( tomMatch597NameNumber_end_4.isEmptyInstructionList() )) { tom.library.adt.bytecode.types.Instruction  tomMatch597NameNumber_freshVar_8= tomMatch597NameNumber_end_4.getHeadInstructionList() ;if ( (tomMatch597NameNumber_freshVar_8 instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
 
-                    labelMap.put( tomMatch596NameNumber_freshVar_8.getlabel() ,new Label());
-                  }}if ( tomMatch596NameNumber_end_4.isEmptyInstructionList() ) {tomMatch596NameNumber_end_4=(( tom.library.adt.bytecode.types.TInstructionList )tom_code);} else {tomMatch596NameNumber_end_4= tomMatch596NameNumber_end_4.getTailInstructionList() ;}}} while(!( (tomMatch596NameNumber_end_4==(( tom.library.adt.bytecode.types.TInstructionList )tom_code)) ));}}}{if ( (tom_code instanceof tom.library.adt.bytecode.types.TInstructionList) ) {if ( (((( tom.library.adt.bytecode.types.TInstructionList )tom_code) instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.TInstructionList )tom_code) instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList)) ) { tom.library.adt.bytecode.types.TInstructionList  tomMatch596NameNumber_end_13=(( tom.library.adt.bytecode.types.TInstructionList )tom_code);do {{if (!( tomMatch596NameNumber_end_13.isEmptyInstructionList() )) { tom.library.adt.bytecode.types.TInstruction  tom_inst= tomMatch596NameNumber_end_13.getHeadInstructionList() ;{{if ( (tom_inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )tom_inst) instanceof tom.library.adt.bytecode.types.tinstruction.Anchor) ) {
-
-
-
-                        mw.visitLabel((Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )tom_inst).getlabel() ));
-                      }}}{if ( (tom_inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {
-addInstruction(mw,(( tom.library.adt.bytecode.types.TInstruction )tom_inst),labelMap);}}}
-
-                  }if ( tomMatch596NameNumber_end_13.isEmptyInstructionList() ) {tomMatch596NameNumber_end_13=(( tom.library.adt.bytecode.types.TInstructionList )tom_code);} else {tomMatch596NameNumber_end_13= tomMatch596NameNumber_end_13.getTailInstructionList() ;}}} while(!( (tomMatch596NameNumber_end_13==(( tom.library.adt.bytecode.types.TInstructionList )tom_code)) ));}}}}{{if ( (tom_tryCatchBlockLists instanceof tom.library.adt.bytecode.types.TTryCatchBlockList) ) {if ( (((( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList)) ) { tom.library.adt.bytecode.types.TTryCatchBlockList  tomMatch598NameNumber_end_4=(( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_tryCatchBlockLists);do {{if (!( tomMatch598NameNumber_end_4.isEmptyTryCatchBlockList() )) { tom.library.adt.bytecode.types.TTryCatchBlock  tomMatch598NameNumber_freshVar_10= tomMatch598NameNumber_end_4.getHeadTryCatchBlockList() ;if ( (tomMatch598NameNumber_freshVar_10 instanceof tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock) ) { tom.library.adt.bytecode.types.TLabel  tom_start= tomMatch598NameNumber_freshVar_10.getstart() ; tom.library.adt.bytecode.types.TLabel  tom_end= tomMatch598NameNumber_freshVar_10.getend() ; tom.library.adt.bytecode.types.THandler  tom_handler= tomMatch598NameNumber_freshVar_10.gethandler() ;{{if ( (tom_handler instanceof tom.library.adt.bytecode.types.THandler) ) {if ( ((( tom.library.adt.bytecode.types.THandler )tom_handler) instanceof tom.library.adt.bytecode.types.thandler.CatchHandler) ) {
+                    labelmap.put( tomMatch597NameNumber_freshVar_8.getlabel() ,new Label());
+                  }}if ( tomMatch597NameNumber_end_4.isEmptyInstructionList() ) {tomMatch597NameNumber_end_4=(( tom.library.adt.bytecode.types.InstructionList )tom_code);} else {tomMatch597NameNumber_end_4= tomMatch597NameNumber_end_4.getTailInstructionList() ;}}} while(!( (tomMatch597NameNumber_end_4==(( tom.library.adt.bytecode.types.InstructionList )tom_code)) ));}}}{if ( (tom_code instanceof tom.library.adt.bytecode.types.InstructionList) ) {if ( (((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.ConsInstructionList) || ((( tom.library.adt.bytecode.types.InstructionList )tom_code) instanceof tom.library.adt.bytecode.types.instructionlist.EmptyInstructionList)) ) { tom.library.adt.bytecode.types.InstructionList  tomMatch597NameNumber_end_13=(( tom.library.adt.bytecode.types.InstructionList )tom_code);do {{if (!( tomMatch597NameNumber_end_13.isEmptyInstructionList() )) { tom.library.adt.bytecode.types.Instruction  tom_inst= tomMatch597NameNumber_end_13.getHeadInstructionList() ;{{if ( (tom_inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )tom_inst) instanceof tom.library.adt.bytecode.types.instruction.Anchor) ) {
 
 
+
+                        methodVisitor.visitLabel(labelmap.get( (( tom.library.adt.bytecode.types.Instruction )tom_inst).getlabel() ));
+                      }}}{if ( (tom_inst instanceof tom.library.adt.bytecode.types.Instruction) ) {
+addInstruction(methodVisitor,(( tom.library.adt.bytecode.types.Instruction )tom_inst),labelmap);}}}
+
+                  }if ( tomMatch597NameNumber_end_13.isEmptyInstructionList() ) {tomMatch597NameNumber_end_13=(( tom.library.adt.bytecode.types.InstructionList )tom_code);} else {tomMatch597NameNumber_end_13= tomMatch597NameNumber_end_13.getTailInstructionList() ;}}} while(!( (tomMatch597NameNumber_end_13==(( tom.library.adt.bytecode.types.InstructionList )tom_code)) ));}}}}{{if ( (tom_tryCatchBlockLists instanceof tom.library.adt.bytecode.types.TryCatchBlockList) ) {if ( (((( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.trycatchblocklist.ConsTryCatchBlockList) || ((( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists) instanceof tom.library.adt.bytecode.types.trycatchblocklist.EmptyTryCatchBlockList)) ) { tom.library.adt.bytecode.types.TryCatchBlockList  tomMatch599NameNumber_end_4=(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists);do {{if (!( tomMatch599NameNumber_end_4.isEmptyTryCatchBlockList() )) { tom.library.adt.bytecode.types.TryCatchBlock  tomMatch599NameNumber_freshVar_10= tomMatch599NameNumber_end_4.getHeadTryCatchBlockList() ;if ( (tomMatch599NameNumber_freshVar_10 instanceof tom.library.adt.bytecode.types.trycatchblock.TryCatchBlock) ) { tom.library.adt.bytecode.types.LabelNode  tom_start= tomMatch599NameNumber_freshVar_10.getstart() ; tom.library.adt.bytecode.types.LabelNode  tom_end= tomMatch599NameNumber_freshVar_10.getend() ; tom.library.adt.bytecode.types.Handler  tom_handler= tomMatch599NameNumber_freshVar_10.gethandler() ;{{if ( (tom_handler instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )tom_handler) instanceof tom.library.adt.bytecode.types.handler.CatchHandler) ) {
 
 
 
 
-                        mw.visitTryCatchBlock((Label)labelMap.get(tom_start),(Label)labelMap.get(tom_end),(Label)labelMap.get( (( tom.library.adt.bytecode.types.THandler )tom_handler).gethandler() ), (( tom.library.adt.bytecode.types.THandler )tom_handler).gettype() );
-                      }}}{if ( (tom_handler instanceof tom.library.adt.bytecode.types.THandler) ) {if ( ((( tom.library.adt.bytecode.types.THandler )tom_handler) instanceof tom.library.adt.bytecode.types.thandler.FinallyHandler) ) {
 
-                        mw.visitTryCatchBlock((Label)labelMap.get(tom_start),(Label)labelMap.get(tom_end),(Label)labelMap.get( (( tom.library.adt.bytecode.types.THandler )tom_handler).gethandler() ),null);
+
+                        methodVisitor.visitTryCatchBlock(labelmap.get(tom_start),labelmap.get(tom_end),labelmap.get( (( tom.library.adt.bytecode.types.Handler )tom_handler).gethandler() ), (( tom.library.adt.bytecode.types.Handler )tom_handler).gettype() );
+                      }}}{if ( (tom_handler instanceof tom.library.adt.bytecode.types.Handler) ) {if ( ((( tom.library.adt.bytecode.types.Handler )tom_handler) instanceof tom.library.adt.bytecode.types.handler.FinallyHandler) ) {
+
+                        methodVisitor.visitTryCatchBlock(labelmap.get(tom_start),labelmap.get(tom_end),labelmap.get( (( tom.library.adt.bytecode.types.Handler )tom_handler).gethandler() ),null);
                       }}}}
 
-                  }}if ( tomMatch598NameNumber_end_4.isEmptyTryCatchBlockList() ) {tomMatch598NameNumber_end_4=(( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_tryCatchBlockLists);} else {tomMatch598NameNumber_end_4= tomMatch598NameNumber_end_4.getTailTryCatchBlockList() ;}}} while(!( (tomMatch598NameNumber_end_4==(( tom.library.adt.bytecode.types.TTryCatchBlockList )tom_tryCatchBlockLists)) ));}}}}{{if ( (tom_localVariables instanceof tom.library.adt.bytecode.types.TLocalVariableList) ) {if ( (((( tom.library.adt.bytecode.types.TLocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.TLocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList)) ) { tom.library.adt.bytecode.types.TLocalVariableList  tomMatch600NameNumber_end_4=(( tom.library.adt.bytecode.types.TLocalVariableList )tom_localVariables);do {{if (!( tomMatch600NameNumber_end_4.isEmptyLocalVariableList() )) { tom.library.adt.bytecode.types.TLocalVariable  tomMatch600NameNumber_freshVar_13= tomMatch600NameNumber_end_4.getHeadLocalVariableList() ;if ( (tomMatch600NameNumber_freshVar_13 instanceof tom.library.adt.bytecode.types.tlocalvariable.LocalVariable) ) {
+                  }}if ( tomMatch599NameNumber_end_4.isEmptyTryCatchBlockList() ) {tomMatch599NameNumber_end_4=(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists);} else {tomMatch599NameNumber_end_4= tomMatch599NameNumber_end_4.getTailTryCatchBlockList() ;}}} while(!( (tomMatch599NameNumber_end_4==(( tom.library.adt.bytecode.types.TryCatchBlockList )tom_tryCatchBlockLists)) ));}}}}{{if ( (tom_localVariables instanceof tom.library.adt.bytecode.types.LocalVariableList) ) {if ( (((( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.localvariablelist.ConsLocalVariableList) || ((( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables) instanceof tom.library.adt.bytecode.types.localvariablelist.EmptyLocalVariableList)) ) { tom.library.adt.bytecode.types.LocalVariableList  tomMatch601NameNumber_end_4=(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables);do {{if (!( tomMatch601NameNumber_end_4.isEmptyLocalVariableList() )) { tom.library.adt.bytecode.types.LocalVariable  tomMatch601NameNumber_freshVar_13= tomMatch601NameNumber_end_4.getHeadLocalVariableList() ;if ( (tomMatch601NameNumber_freshVar_13 instanceof tom.library.adt.bytecode.types.localvariable.LocalVariable) ) {
 
 
 
 
-                    mw.visitLocalVariable( tomMatch600NameNumber_freshVar_13.getname() ,  tomMatch600NameNumber_freshVar_13.gettypeDesc() , buildSignature( tomMatch600NameNumber_freshVar_13.getsignature() ), (Label)labelMap.get( tomMatch600NameNumber_freshVar_13.getstart() ), (Label)labelMap.get( tomMatch600NameNumber_freshVar_13.getend() ),  tomMatch600NameNumber_freshVar_13.getindex() );
-                  }}if ( tomMatch600NameNumber_end_4.isEmptyLocalVariableList() ) {tomMatch600NameNumber_end_4=(( tom.library.adt.bytecode.types.TLocalVariableList )tom_localVariables);} else {tomMatch600NameNumber_end_4= tomMatch600NameNumber_end_4.getTailLocalVariableList() ;}}} while(!( (tomMatch600NameNumber_end_4==(( tom.library.adt.bytecode.types.TLocalVariableList )tom_localVariables)) ));}}}}
+                    methodVisitor.visitLocalVariable( tomMatch601NameNumber_freshVar_13.getname() ,  tomMatch601NameNumber_freshVar_13.gettypeDesc() , ToolBox.buildSignature( tomMatch601NameNumber_freshVar_13.getsignature() ), labelmap.get( tomMatch601NameNumber_freshVar_13.getstart() ), labelmap.get( tomMatch601NameNumber_freshVar_13.getend() ),  tomMatch601NameNumber_freshVar_13.getindex() );
+                  }}if ( tomMatch601NameNumber_end_4.isEmptyLocalVariableList() ) {tomMatch601NameNumber_end_4=(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables);} else {tomMatch601NameNumber_end_4= tomMatch601NameNumber_end_4.getTailLocalVariableList() ;}}} while(!( (tomMatch601NameNumber_end_4==(( tom.library.adt.bytecode.types.LocalVariableList )tom_localVariables)) ));}}}}
 
 
-                mw.visitMaxs(0, 0);
-                mw.visitEnd();
+                methodVisitor.visitMaxs(0, 0);
+                methodVisitor.visitEnd();
               }}}}}}
 
-          }if ( tomMatch594NameNumber_end_4.isEmptyMethodList() ) {tomMatch594NameNumber_end_4=(( tom.library.adt.bytecode.types.TMethodList )tom_methods);} else {tomMatch594NameNumber_end_4= tomMatch594NameNumber_end_4.getTailMethodList() ;}}} while(!( (tomMatch594NameNumber_end_4==(( tom.library.adt.bytecode.types.TMethodList )tom_methods)) ));}}}}
+          }if ( tomMatch595NameNumber_end_4.isEmptyMethodList() ) {tomMatch595NameNumber_end_4=(( tom.library.adt.bytecode.types.MethodList )tom_methods);} else {tomMatch595NameNumber_end_4= tomMatch595NameNumber_end_4.getTailMethodList() ;}}} while(!( (tomMatch595NameNumber_end_4==(( tom.library.adt.bytecode.types.MethodList )tom_methods)) ));}}}}
 
       }}}}}
 
 
-
     // gets the bytecode
-    return cw.toByteArray();
+    return super.toByteArray();
   }
 
-  public void addInstruction(MethodVisitor mw,TInstruction inst,HashMap labelMap){
-    {{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Nop) ) {
+  public void addInstruction(MethodVisitor methodVisitor, Instruction inst, Map<LabelNode,Label> labelmap) {
+    {{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Nop) ) {
 
-        mw.visitInsn(NOP);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Aconst_null) ) {
+        methodVisitor.visitInsn(NOP);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aconst_null) ) {
 
-        mw.visitInsn(ACONST_NULL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_m1) ) {
+        methodVisitor.visitInsn(ACONST_NULL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_m1) ) {
 
-        mw.visitInsn(ICONST_M1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_0) ) {
+        methodVisitor.visitInsn(ICONST_M1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_0) ) {
 
-        mw.visitInsn(ICONST_0);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_1) ) {
+        methodVisitor.visitInsn(ICONST_0);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_1) ) {
 
-        mw.visitInsn(ICONST_1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_2) ) {
+        methodVisitor.visitInsn(ICONST_1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_2) ) {
 
-        mw.visitInsn(ICONST_2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_3) ) {
+        methodVisitor.visitInsn(ICONST_2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_3) ) {
 
-        mw.visitInsn(ICONST_3);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_4) ) {
+        methodVisitor.visitInsn(ICONST_3);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_4) ) {
 
-        mw.visitInsn(ICONST_4);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iconst_5) ) {
+        methodVisitor.visitInsn(ICONST_4);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iconst_5) ) {
 
-        mw.visitInsn(ICONST_5);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lconst_0) ) {
+        methodVisitor.visitInsn(ICONST_5);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lconst_0) ) {
 
-        mw.visitInsn(LCONST_0);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lconst_1) ) {
+        methodVisitor.visitInsn(LCONST_0);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lconst_1) ) {
 
-        mw.visitInsn(LCONST_1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fconst_0) ) {
+        methodVisitor.visitInsn(LCONST_1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_0) ) {
 
-        mw.visitInsn(FCONST_0);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fconst_1) ) {
+        methodVisitor.visitInsn(FCONST_0);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_1) ) {
 
-        mw.visitInsn(FCONST_1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fconst_2) ) {
+        methodVisitor.visitInsn(FCONST_1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fconst_2) ) {
 
-        mw.visitInsn(FCONST_2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dconst_0) ) {
+        methodVisitor.visitInsn(FCONST_2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dconst_0) ) {
 
-        mw.visitInsn(DCONST_0);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dconst_1) ) {
+        methodVisitor.visitInsn(DCONST_0);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dconst_1) ) {
 
-        mw.visitInsn(DCONST_1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iaload) ) {
+        methodVisitor.visitInsn(DCONST_1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iaload) ) {
 
-        mw.visitInsn(IALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Laload) ) {
+        methodVisitor.visitInsn(IALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Laload) ) {
 
-        mw.visitInsn(LALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Faload) ) {
+        methodVisitor.visitInsn(LALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Faload) ) {
 
-        mw.visitInsn(FALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Daload) ) {
+        methodVisitor.visitInsn(FALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Daload) ) {
 
-        mw.visitInsn(DALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Aaload) ) {
+        methodVisitor.visitInsn(DALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aaload) ) {
 
-        mw.visitInsn(AALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Baload) ) {
+        methodVisitor.visitInsn(AALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Baload) ) {
 
-        mw.visitInsn(BALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Caload) ) {
+        methodVisitor.visitInsn(BALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Caload) ) {
 
-        mw.visitInsn(CALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Saload) ) {
+        methodVisitor.visitInsn(CALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Saload) ) {
 
-        mw.visitInsn(SALOAD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iastore) ) {
+        methodVisitor.visitInsn(SALOAD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iastore) ) {
 
-        mw.visitInsn(IASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lastore) ) {
+        methodVisitor.visitInsn(IASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lastore) ) {
 
-        mw.visitInsn(LASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fastore) ) {
+        methodVisitor.visitInsn(LASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fastore) ) {
 
-        mw.visitInsn(FASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dastore) ) {
+        methodVisitor.visitInsn(FASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dastore) ) {
 
-        mw.visitInsn(DASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Aastore) ) {
+        methodVisitor.visitInsn(DASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aastore) ) {
 
-        mw.visitInsn(AASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Bastore) ) {
+        methodVisitor.visitInsn(AASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Bastore) ) {
 
-        mw.visitInsn(BASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Castore) ) {
+        methodVisitor.visitInsn(BASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Castore) ) {
 
-        mw.visitInsn(CASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Sastore) ) {
+        methodVisitor.visitInsn(CASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Sastore) ) {
 
-        mw.visitInsn(SASTORE);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Pop) ) {
+        methodVisitor.visitInsn(SASTORE);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Pop) ) {
 
-        mw.visitInsn(POP);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Pop2) ) {
+        methodVisitor.visitInsn(POP);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Pop2) ) {
 
-        mw.visitInsn(POP2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup) ) {
+        methodVisitor.visitInsn(POP2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup) ) {
 
-        mw.visitInsn(DUP);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup_x1) ) {
+        methodVisitor.visitInsn(DUP);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup_x1) ) {
 
-        mw.visitInsn(DUP_X1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup_x2) ) {
+        methodVisitor.visitInsn(DUP_X1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup_x2) ) {
 
-        mw.visitInsn(DUP_X2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup2) ) {
+        methodVisitor.visitInsn(DUP_X2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2) ) {
 
-        mw.visitInsn(DUP2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup2_x1) ) {
+        methodVisitor.visitInsn(DUP2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x1) ) {
 
-        mw.visitInsn(DUP2_X1);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dup2_x2) ) {
+        methodVisitor.visitInsn(DUP2_X1);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dup2_x2) ) {
 
-        mw.visitInsn(DUP2_X2);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Swap) ) {
+        methodVisitor.visitInsn(DUP2_X2);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Swap) ) {
 
-        mw.visitInsn(SWAP);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iadd) ) {
+        methodVisitor.visitInsn(SWAP);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iadd) ) {
 
-        mw.visitInsn(IADD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ladd) ) {
+        methodVisitor.visitInsn(IADD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ladd) ) {
 
-        mw.visitInsn(LADD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fadd) ) {
+        methodVisitor.visitInsn(LADD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fadd) ) {
 
-        mw.visitInsn(FADD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dadd) ) {
+        methodVisitor.visitInsn(FADD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dadd) ) {
 
-        mw.visitInsn(DADD);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Isub) ) {
+        methodVisitor.visitInsn(DADD);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Isub) ) {
 
-        mw.visitInsn(ISUB);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lsub) ) {
+        methodVisitor.visitInsn(ISUB);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lsub) ) {
 
-        mw.visitInsn(LSUB);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fsub) ) {
+        methodVisitor.visitInsn(LSUB);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fsub) ) {
 
-        mw.visitInsn(FSUB);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dsub) ) {
+        methodVisitor.visitInsn(FSUB);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dsub) ) {
 
-        mw.visitInsn(DSUB);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Imul) ) {
+        methodVisitor.visitInsn(DSUB);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Imul) ) {
 
-        mw.visitInsn(IMUL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lmul) ) {
+        methodVisitor.visitInsn(IMUL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lmul) ) {
 
-        mw.visitInsn(LMUL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fmul) ) {
+        methodVisitor.visitInsn(LMUL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fmul) ) {
 
-        mw.visitInsn(FMUL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dmul) ) {
+        methodVisitor.visitInsn(FMUL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dmul) ) {
 
-        mw.visitInsn(DMUL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Idiv) ) {
+        methodVisitor.visitInsn(DMUL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Idiv) ) {
 
-        mw.visitInsn(IDIV);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ldiv) ) {
+        methodVisitor.visitInsn(IDIV);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ldiv) ) {
 
-        mw.visitInsn(LDIV);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fdiv) ) {
+        methodVisitor.visitInsn(LDIV);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fdiv) ) {
 
-        mw.visitInsn(FDIV);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ddiv) ) {
+        methodVisitor.visitInsn(FDIV);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ddiv) ) {
 
-        mw.visitInsn(DDIV);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Irem) ) {
+        methodVisitor.visitInsn(DDIV);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Irem) ) {
 
-        mw.visitInsn(IREM);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lrem) ) {
+        methodVisitor.visitInsn(IREM);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lrem) ) {
 
-        mw.visitInsn(LREM);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Frem) ) {
+        methodVisitor.visitInsn(LREM);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Frem) ) {
 
-        mw.visitInsn(FREM);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Drem) ) {
+        methodVisitor.visitInsn(FREM);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Drem) ) {
 
-        mw.visitInsn(DREM);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ineg) ) {
+        methodVisitor.visitInsn(DREM);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ineg) ) {
 
-        mw.visitInsn(INEG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lneg) ) {
+        methodVisitor.visitInsn(INEG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lneg) ) {
 
-        mw.visitInsn(LNEG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fneg) ) {
+        methodVisitor.visitInsn(LNEG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fneg) ) {
 
-        mw.visitInsn(FNEG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dneg) ) {
+        methodVisitor.visitInsn(FNEG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dneg) ) {
 
-        mw.visitInsn(DNEG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ishl) ) {
+        methodVisitor.visitInsn(DNEG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ishl) ) {
 
-        mw.visitInsn(ISHL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lshl) ) {
+        methodVisitor.visitInsn(ISHL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lshl) ) {
 
-        mw.visitInsn(LSHL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ishr) ) {
+        methodVisitor.visitInsn(LSHL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ishr) ) {
 
-        mw.visitInsn(ISHR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lshr) ) {
+        methodVisitor.visitInsn(ISHR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lshr) ) {
 
-        mw.visitInsn(LSHR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iushr) ) {
+        methodVisitor.visitInsn(LSHR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iushr) ) {
 
-        mw.visitInsn(IUSHR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lushr) ) {
+        methodVisitor.visitInsn(IUSHR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lushr) ) {
 
-        mw.visitInsn(LUSHR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iand) ) {
+        methodVisitor.visitInsn(LUSHR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iand) ) {
 
-        mw.visitInsn(IAND);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Land) ) {
+        methodVisitor.visitInsn(IAND);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Land) ) {
 
-        mw.visitInsn(LAND);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ior) ) {
+        methodVisitor.visitInsn(LAND);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ior) ) {
 
-        mw.visitInsn(IOR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lor) ) {
+        methodVisitor.visitInsn(IOR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lor) ) {
 
-        mw.visitInsn(LOR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ixor) ) {
+        methodVisitor.visitInsn(LOR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ixor) ) {
 
-        mw.visitInsn(IXOR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lxor) ) {
+        methodVisitor.visitInsn(IXOR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lxor) ) {
 
-        mw.visitInsn(LXOR);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2l) ) {
+        methodVisitor.visitInsn(LXOR);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2l) ) {
 
-        mw.visitInsn(I2L);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2f) ) {
+        methodVisitor.visitInsn(I2L);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2f) ) {
 
-        mw.visitInsn(I2F);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2d) ) {
+        methodVisitor.visitInsn(I2F);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2d) ) {
 
-        mw.visitInsn(I2D);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.L2i) ) {
+        methodVisitor.visitInsn(I2D);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2i) ) {
 
-        mw.visitInsn(L2I);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.L2f) ) {
+        methodVisitor.visitInsn(L2I);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2f) ) {
 
-        mw.visitInsn(L2F);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.L2d) ) {
+        methodVisitor.visitInsn(L2F);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.L2d) ) {
 
-        mw.visitInsn(L2D);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.F2i) ) {
+        methodVisitor.visitInsn(L2D);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2i) ) {
 
-        mw.visitInsn(F2I);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.F2l) ) {
+        methodVisitor.visitInsn(F2I);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2l) ) {
 
-        mw.visitInsn(F2L);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.F2d) ) {
+        methodVisitor.visitInsn(F2L);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.F2d) ) {
 
-        mw.visitInsn(F2D);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.D2i) ) {
+        methodVisitor.visitInsn(F2D);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2i) ) {
 
-        mw.visitInsn(D2I);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.D2l) ) {
+        methodVisitor.visitInsn(D2I);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2l) ) {
 
-        mw.visitInsn(D2L);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.D2f) ) {
+        methodVisitor.visitInsn(D2L);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.D2f) ) {
 
-        mw.visitInsn(D2F);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2b) ) {
+        methodVisitor.visitInsn(D2F);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2b) ) {
 
-        mw.visitInsn(I2B);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2c) ) {
+        methodVisitor.visitInsn(I2B);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2c) ) {
 
-        mw.visitInsn(I2C);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.I2s) ) {
+        methodVisitor.visitInsn(I2C);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.I2s) ) {
 
-        mw.visitInsn(I2S);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lcmp) ) {
+        methodVisitor.visitInsn(I2S);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lcmp) ) {
 
-        mw.visitInsn(LCMP);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fcmpl) ) {
+        methodVisitor.visitInsn(LCMP);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fcmpl) ) {
 
-        mw.visitInsn(FCMPL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fcmpg) ) {
+        methodVisitor.visitInsn(FCMPL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fcmpg) ) {
 
-        mw.visitInsn(FCMPG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dcmpl) ) {
+        methodVisitor.visitInsn(FCMPG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dcmpl) ) {
 
-        mw.visitInsn(DCMPL);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dcmpg) ) {
+        methodVisitor.visitInsn(DCMPL);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dcmpg) ) {
 
-        mw.visitInsn(DCMPG);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ireturn) ) {
+        methodVisitor.visitInsn(DCMPG);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ireturn) ) {
 
-        mw.visitInsn(IRETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lreturn) ) {
+        methodVisitor.visitInsn(IRETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lreturn) ) {
 
-        mw.visitInsn(LRETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Freturn) ) {
+        methodVisitor.visitInsn(LRETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Freturn) ) {
 
-        mw.visitInsn(FRETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dreturn) ) {
+        methodVisitor.visitInsn(FRETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dreturn) ) {
 
-        mw.visitInsn(DRETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Areturn) ) {
+        methodVisitor.visitInsn(DRETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Areturn) ) {
 
-        mw.visitInsn(ARETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Return) ) {
+        methodVisitor.visitInsn(ARETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Return) ) {
 
-        mw.visitInsn(RETURN);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Arraylength) ) {
+        methodVisitor.visitInsn(RETURN);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Arraylength) ) {
 
-        mw.visitInsn(ARRAYLENGTH);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Athrow) ) {
+        methodVisitor.visitInsn(ARRAYLENGTH);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Athrow) ) {
 
-        mw.visitInsn(ATHROW);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Monitorenter) ) {
+        methodVisitor.visitInsn(ATHROW);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Monitorenter) ) {
 
-        mw.visitInsn(MONITORENTER);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Monitorexit) ) {
+        methodVisitor.visitInsn(MONITORENTER);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Monitorexit) ) {
 
-        mw.visitInsn(MONITOREXIT);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Getstatic) ) {
+        methodVisitor.visitInsn(MONITOREXIT);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Getstatic) ) {
 
-        mw.visitFieldInsn(GETSTATIC, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getfieldDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Putstatic) ) {
+        methodVisitor.visitFieldInsn(GETSTATIC, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Putstatic) ) {
 
-        mw.visitFieldInsn(PUTSTATIC, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getfieldDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Getfield) ) {
+        methodVisitor.visitFieldInsn(PUTSTATIC, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Getfield) ) {
 
-        mw.visitFieldInsn(GETFIELD, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getfieldDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Putfield) ) {
+        methodVisitor.visitFieldInsn(GETFIELD, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Putfield) ) {
 
-        mw.visitFieldInsn(PUTFIELD, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getfieldDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Bipush) ) {
+        methodVisitor.visitFieldInsn(PUTFIELD, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getfieldDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Bipush) ) {
 
-        mw.visitIntInsn(BIPUSH, (( tom.library.adt.bytecode.types.TInstruction )inst).getoperand() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Sipush) ) {
+        methodVisitor.visitIntInsn(BIPUSH, (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Sipush) ) {
 
-        mw.visitIntInsn(SIPUSH, (( tom.library.adt.bytecode.types.TInstruction )inst).getoperand() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Newarray) ) {
+        methodVisitor.visitIntInsn(SIPUSH, (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Newarray) ) {
 
-        mw.visitIntInsn(NEWARRAY, (( tom.library.adt.bytecode.types.TInstruction )inst).getoperand() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifeq) ) {
+        methodVisitor.visitIntInsn(NEWARRAY, (( tom.library.adt.bytecode.types.Instruction )inst).getoperand() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifeq) ) {
 
-        mw.visitJumpInsn(IFEQ,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifne) ) {
+        methodVisitor.visitJumpInsn(IFEQ,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifne) ) {
 
-        mw.visitJumpInsn(IFNE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iflt) ) {
+        methodVisitor.visitJumpInsn(IFNE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iflt) ) {
 
-        mw.visitJumpInsn(IFLT,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifge) ) {
+        methodVisitor.visitJumpInsn(IFLT,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifge) ) {
 
-        mw.visitJumpInsn(IFGE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifgt) ) {
+        methodVisitor.visitJumpInsn(IFGE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifgt) ) {
 
-        mw.visitJumpInsn(IFGT,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifle) ) {
+        methodVisitor.visitJumpInsn(IFGT,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifle) ) {
 
-        mw.visitJumpInsn(IFLE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmpeq) ) {
+        methodVisitor.visitJumpInsn(IFLE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpeq) ) {
 
-        mw.visitJumpInsn(IF_ICMPEQ,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmpne) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPEQ,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpne) ) {
 
-        mw.visitJumpInsn(IF_ICMPNE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmplt) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPNE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmplt) ) {
 
-        mw.visitJumpInsn(IF_ICMPLT,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmpge) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPLT,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpge) ) {
 
-        mw.visitJumpInsn(IF_ICMPGE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmpgt) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPGE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmpgt) ) {
 
-        mw.visitJumpInsn(IF_ICMPGT,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_icmple) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPGT,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_icmple) ) {
 
-        mw.visitJumpInsn(IF_ICMPLE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_acmpeq) ) {
+        methodVisitor.visitJumpInsn(IF_ICMPLE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_acmpeq) ) {
 
-        mw.visitJumpInsn(IF_ACMPEQ,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.If_acmpne) ) {
+        methodVisitor.visitJumpInsn(IF_ACMPEQ,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.If_acmpne) ) {
 
-        mw.visitJumpInsn(IF_ACMPNE,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Goto) ) {
+        methodVisitor.visitJumpInsn(IF_ACMPNE,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Goto) ) {
 
-        mw.visitJumpInsn(GOTO,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Jsr) ) {
+        methodVisitor.visitJumpInsn(GOTO,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Jsr) ) {
 
-        mw.visitJumpInsn(JSR,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifnull) ) {
+        methodVisitor.visitJumpInsn(JSR,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifnull) ) {
 
-        mw.visitJumpInsn(IFNULL,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ifnonnull) ) {
+        methodVisitor.visitJumpInsn(IFNULL,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ifnonnull) ) {
 
-        mw.visitJumpInsn(IFNONNULL,(Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getlabel() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Invokevirtual) ) {
+        methodVisitor.visitJumpInsn(IFNONNULL,labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getlabel() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokevirtual) ) {
 
-        mw.visitMethodInsn(INVOKEVIRTUAL, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getmethodDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Invokespecial) ) {
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokespecial) ) {
 
-        mw.visitMethodInsn(INVOKESPECIAL, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getmethodDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Invokestatic) ) {
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokestatic) ) {
 
-        mw.visitMethodInsn(INVOKESTATIC, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getmethodDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Invokeinterface) ) {
+        methodVisitor.visitMethodInsn(INVOKESTATIC, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Invokeinterface) ) {
 
-        mw.visitMethodInsn(INVOKEINTERFACE, (( tom.library.adt.bytecode.types.TInstruction )inst).getowner() , (( tom.library.adt.bytecode.types.TInstruction )inst).getname() ,buildDescriptor( (( tom.library.adt.bytecode.types.TInstruction )inst).getmethodDesc() ));
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.New) ) {
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, (( tom.library.adt.bytecode.types.Instruction )inst).getowner() , (( tom.library.adt.bytecode.types.Instruction )inst).getname() ,ToolBox.buildDescriptor( (( tom.library.adt.bytecode.types.Instruction )inst).getmethodDesc() ));
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.New) ) {
 
 
-        mw.visitTypeInsn(NEW, (( tom.library.adt.bytecode.types.TInstruction )inst).gettypeDesc() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Anewarray) ) {
+        methodVisitor.visitTypeInsn(NEW, (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Anewarray) ) {
 
-        mw.visitTypeInsn(ANEWARRAY, (( tom.library.adt.bytecode.types.TInstruction )inst).gettypeDesc() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Checkcast) ) {
+        methodVisitor.visitTypeInsn(ANEWARRAY, (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Checkcast) ) {
 
-        mw.visitTypeInsn(CHECKCAST, (( tom.library.adt.bytecode.types.TInstruction )inst).gettypeDesc() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Instanceof) ) {
+        methodVisitor.visitTypeInsn(CHECKCAST, (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Instanceof) ) {
 
-        mw.visitTypeInsn(INSTANCEOF, (( tom.library.adt.bytecode.types.TInstruction )inst).gettypeDesc() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iload) ) {
+        methodVisitor.visitTypeInsn(INSTANCEOF, (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iload) ) {
 
-        mw.visitVarInsn(ILOAD, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lload) ) {
+        methodVisitor.visitVarInsn(ILOAD, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lload) ) {
 
-        mw.visitVarInsn(LLOAD, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fload) ) {
+        methodVisitor.visitVarInsn(LLOAD, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fload) ) {
 
-        mw.visitVarInsn(FLOAD, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dload) ) {
+        methodVisitor.visitVarInsn(FLOAD, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dload) ) {
 
-        mw.visitVarInsn(DLOAD, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Aload) ) {
+        methodVisitor.visitVarInsn(DLOAD, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Aload) ) {
 
-        mw.visitVarInsn(ALOAD, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Istore) ) {
+        methodVisitor.visitVarInsn(ALOAD, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Istore) ) {
 
-        mw.visitVarInsn(ISTORE, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lstore) ) {
+        methodVisitor.visitVarInsn(ISTORE, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lstore) ) {
 
-        mw.visitVarInsn(LSTORE, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Fstore) ) {
+        methodVisitor.visitVarInsn(LSTORE, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Fstore) ) {
 
-        mw.visitVarInsn(FSTORE, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Dstore) ) {
+        methodVisitor.visitVarInsn(FSTORE, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Dstore) ) {
 
-        mw.visitVarInsn(DSTORE, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Astore) ) {
+        methodVisitor.visitVarInsn(DSTORE, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Astore) ) {
 
-        mw.visitVarInsn(ASTORE, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ret) ) {
+        methodVisitor.visitVarInsn(ASTORE, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ret) ) {
 
-        mw.visitVarInsn(RET, (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Iinc) ) {
+        methodVisitor.visitVarInsn(RET, (( tom.library.adt.bytecode.types.Instruction )inst).getvar() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Iinc) ) {
 
-        mw.visitIincInsn( (( tom.library.adt.bytecode.types.TInstruction )inst).getvar() , (( tom.library.adt.bytecode.types.TInstruction )inst).getincr() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Ldc) ) {
+        methodVisitor.visitIincInsn( (( tom.library.adt.bytecode.types.Instruction )inst).getvar() , (( tom.library.adt.bytecode.types.Instruction )inst).getincr() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Ldc) ) {
 
-        mw.visitLdcInsn(buildConstant( (( tom.library.adt.bytecode.types.TInstruction )inst).getcst() )); 
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Multianewarray) ) {
+        methodVisitor.visitLdcInsn(ToolBox.buildConstant( (( tom.library.adt.bytecode.types.Instruction )inst).getcst() )); 
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Multianewarray) ) {
 
 
-        mw.visitMultiANewArrayInsn( (( tom.library.adt.bytecode.types.TInstruction )inst).gettypeDesc() , (( tom.library.adt.bytecode.types.TInstruction )inst).getdims() );
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Tableswitch) ) {
+        methodVisitor.visitMultiANewArrayInsn( (( tom.library.adt.bytecode.types.Instruction )inst).gettypeDesc() , (( tom.library.adt.bytecode.types.Instruction )inst).getdims() );
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Tableswitch) ) {
 
 
-        TLabel[] tlabelTab = ((LabelList) (( tom.library.adt.bytecode.types.TInstruction )inst).getlabels() ).toArray(new TLabel[0]);
-        Label[] labelTab = null;
-        if(tlabelTab != null){
-          labelTab = new Label[tlabelTab.length];
-          for(int i=0;i<labelTab.length;i++){
-            labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
+        LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList) (( tom.library.adt.bytecode.types.Instruction )inst).getlabels() ).toArray(new LabelNode[0]);
+        Label[] labels = null;
+        if(labelnodes != null){
+          labels = new Label[labelnodes.length];
+          for(int i=0;i<labels.length;i++){
+            labels[i] = labelmap.get(labelnodes[i]);
           }
         }
-        mw.visitTableSwitchInsn( (( tom.library.adt.bytecode.types.TInstruction )inst).getmin() ,  (( tom.library.adt.bytecode.types.TInstruction )inst).getmax() , (Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getdflt() ), labelTab);
-      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.TInstruction) ) {if ( ((( tom.library.adt.bytecode.types.TInstruction )inst) instanceof tom.library.adt.bytecode.types.tinstruction.Lookupswitch) ) { tom.library.adt.bytecode.types.TintList  tom_keys= (( tom.library.adt.bytecode.types.TInstruction )inst).getkeys() ;
+        methodVisitor.visitTableSwitchInsn( (( tom.library.adt.bytecode.types.Instruction )inst).getmin() ,  (( tom.library.adt.bytecode.types.Instruction )inst).getmax() , labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getdflt() ), labels);
+      }}}{if ( (inst instanceof tom.library.adt.bytecode.types.Instruction) ) {if ( ((( tom.library.adt.bytecode.types.Instruction )inst) instanceof tom.library.adt.bytecode.types.instruction.Lookupswitch) ) { tom.library.adt.bytecode.types.IntList  tom_keys= (( tom.library.adt.bytecode.types.Instruction )inst).getkeys() ;
 
 
-        TLabel[] tlabelTab = ((LabelList) (( tom.library.adt.bytecode.types.TInstruction )inst).getlabels() ).toArray(new TLabel[0]);
-        Label[] labelTab = null;
-        if(tlabelTab != null){
-          labelTab = new Label[tlabelTab.length];
-          for(int i=0;i<labelTab.length;i++){
-            labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
+        LabelNode[] labelnodes= ((tom.library.adt.bytecode.types.labelnodelist.LabelNodeList) (( tom.library.adt.bytecode.types.Instruction )inst).getlabels() ).toArray(new LabelNode[0]);
+        Label[] labels = null;
+        if(labelnodes != null){
+          labels = new Label[labelnodes.length];
+          for(int i=0;i<labels.length;i++){
+            labels[i]=labelmap.get(labelnodes[i]);
           }
         }
-        int[] array = new int[((intList)tom_keys).length()];
-        java.util.Iterator<Integer> it = ((intList)tom_keys).iterator();
+        int[] array = new int[((IntList)tom_keys).length()];
+        java.util.Iterator<Integer> it = ((tom.library.adt.bytecode.types.intlist.IntList)tom_keys).iterator();
         for(int i=0 ; it.hasNext() ; i++) {
           array[i] = it.next();
         }
-        mw.visitLookupSwitchInsn((Label)labelMap.get( (( tom.library.adt.bytecode.types.TInstruction )inst).getdflt() ),array,labelTab);
+        methodVisitor.visitLookupSwitchInsn(labelmap.get( (( tom.library.adt.bytecode.types.Instruction )inst).getdflt() ),array,labels);
       }}}}
 
   }

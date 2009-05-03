@@ -39,10 +39,10 @@ public class CodeGen {
   private CodeGen() {
     /* Prevent instantiation */
   }
-  
+
   /**
    * Generate code in a String.
-   * 
+   *
    * @params code the Code to generate
    * @return the generated code
    */
@@ -53,14 +53,14 @@ public class CodeGen {
     } catch (java.io.IOException e) {
       Logger.getLogger("CodeGen").log(
           Level.SEVERE,"Failed to generate code for " + code);
-      
+
     }
     return writer.toString();
   }
 
   /**
    * Generate code in a writer.
-   * 
+   *
    * @params code the Code to generate
    * @params writer where to generate
    */
@@ -89,7 +89,7 @@ public class CodeGen {
             ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch409NameNumber_freshVar_2.getModuleDecl() )+".types."+sortNamePackage, tName) 
 
 ;
-            writer.write(tom.gom.backend.TemplateClass.fullClassName(className));        
+            writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
             return;
           }}}}}}
 
@@ -130,21 +130,21 @@ public class CodeGen {
         ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch408NameNumber_freshVar_16.getModuleDecl() )+".types."+sortNamePackage,  tomMatch408NameNumber_freshVar_13.getName() ) 
 
 ;
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(className));        
+        writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
         return;
       }}}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch408NameNumber_freshVar_22= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch408NameNumber_freshVar_22 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
         ClassName sortClassName =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch408NameNumber_freshVar_22.getModuleDecl() )+".types",  tomMatch408NameNumber_freshVar_22.getName() ) 
 ;
-        writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));        
+        writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));
         return;
       }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch408NameNumber_freshVar_28= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch408NameNumber_freshVar_28 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
-        writer.write( tomMatch408NameNumber_freshVar_28.getName() );        
+        writer.write( tomMatch408NameNumber_freshVar_28.getName() );
         return;
       }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch408NameNumber_freshVar_37= false ; tom.gom.adt.gom.types.SortDecl  tomMatch408NameNumber_freshVar_33= null ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) {{tomMatch408NameNumber_freshVar_37= true ;tomMatch408NameNumber_freshVar_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) {{tomMatch408NameNumber_freshVar_37= true ;tomMatch408NameNumber_freshVar_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}}}if ( tomMatch408NameNumber_freshVar_37== true  ) {if ( (tomMatch408NameNumber_freshVar_33 instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {
 
-        writer.write( tomMatch408NameNumber_freshVar_33.getName() );        
+        writer.write( tomMatch408NameNumber_freshVar_33.getName() );
         return;
       }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Compare) ) {
 

@@ -30,16 +30,17 @@
 package tom.library.bytecode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 public class ToolBox {
-          private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.Sequence) )) {       if(( ((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )) == null )) {         return ( (l2==null)?((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1):new tom.library.sl.Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1),l2) );       } else {         return ( (tom_append_list_Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),l2)==null)?((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1):new tom.library.sl.Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1),tom_append_list_Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.Sequence(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin):new tom.library.sl.Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)) );   }     private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ) );}         private static   tom.library.adt.bytecode.types.TStringList  tom_append_list_StringList( tom.library.adt.bytecode.types.TStringList l1,  tom.library.adt.bytecode.types.TStringList  l2) {     if( l1.isEmptyStringList() ) {       return l2;     } else if( l2.isEmptyStringList() ) {       return l1;     } else if(  l1.getTailStringList() .isEmptyStringList() ) {       return  tom.library.adt.bytecode.types.tstringlist.ConsStringList.make( l1.getHeadStringList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tstringlist.ConsStringList.make( l1.getHeadStringList() ,tom_append_list_StringList( l1.getTailStringList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TStringList  tom_get_slice_StringList( tom.library.adt.bytecode.types.TStringList  begin,  tom.library.adt.bytecode.types.TStringList  end, tom.library.adt.bytecode.types.TStringList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyStringList()  ||  (end== tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tstringlist.ConsStringList.make( begin.getHeadStringList() ,( tom.library.adt.bytecode.types.TStringList )tom_get_slice_StringList( begin.getTailStringList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TAccessList  tom_append_list_AccessList( tom.library.adt.bytecode.types.TAccessList l1,  tom.library.adt.bytecode.types.TAccessList  l2) {     if( l1.isEmptyAccessList() ) {       return l2;     } else if( l2.isEmptyAccessList() ) {       return l1;     } else if(  l1.getTailAccessList() .isEmptyAccessList() ) {       return  tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make( l1.getHeadAccessList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make( l1.getHeadAccessList() ,tom_append_list_AccessList( l1.getTailAccessList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TAccessList  tom_get_slice_AccessList( tom.library.adt.bytecode.types.TAccessList  begin,  tom.library.adt.bytecode.types.TAccessList  end, tom.library.adt.bytecode.types.TAccessList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyAccessList()  ||  (end== tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make( begin.getHeadAccessList() ,( tom.library.adt.bytecode.types.TAccessList )tom_get_slice_AccessList( begin.getTailAccessList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TintList  tom_append_list_intList( tom.library.adt.bytecode.types.TintList l1,  tom.library.adt.bytecode.types.TintList  l2) {     if( l1.isEmptyintList() ) {       return l2;     } else if( l2.isEmptyintList() ) {       return l1;     } else if(  l1.getTailintList() .isEmptyintList() ) {       return  tom.library.adt.bytecode.types.tintlist.ConsintList.make( l1.getHeadintList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tintlist.ConsintList.make( l1.getHeadintList() ,tom_append_list_intList( l1.getTailintList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TintList  tom_get_slice_intList( tom.library.adt.bytecode.types.TintList  begin,  tom.library.adt.bytecode.types.TintList  end, tom.library.adt.bytecode.types.TintList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyintList()  ||  (end== tom.library.adt.bytecode.types.tintlist.EmptyintList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tintlist.ConsintList.make( begin.getHeadintList() ,( tom.library.adt.bytecode.types.TintList )tom_get_slice_intList( begin.getTailintList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.TFieldDescriptorList  tom_append_list_FieldDescriptorList( tom.library.adt.bytecode.types.TFieldDescriptorList l1,  tom.library.adt.bytecode.types.TFieldDescriptorList  l2) {     if( l1.isEmptyFieldDescriptorList() ) {       return l2;     } else if( l2.isEmptyFieldDescriptorList() ) {       return l1;     } else if(  l1.getTailFieldDescriptorList() .isEmptyFieldDescriptorList() ) {       return  tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make( l1.getHeadFieldDescriptorList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make( l1.getHeadFieldDescriptorList() ,tom_append_list_FieldDescriptorList( l1.getTailFieldDescriptorList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.TFieldDescriptorList  tom_get_slice_FieldDescriptorList( tom.library.adt.bytecode.types.TFieldDescriptorList  begin,  tom.library.adt.bytecode.types.TFieldDescriptorList  end, tom.library.adt.bytecode.types.TFieldDescriptorList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyFieldDescriptorList()  ||  (end== tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make( begin.getHeadFieldDescriptorList() ,( tom.library.adt.bytecode.types.TFieldDescriptorList )tom_get_slice_FieldDescriptorList( begin.getTailFieldDescriptorList() ,end,tail)) ;   }    
+
+          private static   tom.library.sl.Strategy  tom_append_list_Sequence( tom.library.sl.Strategy  l1,  tom.library.sl.Strategy  l2) {     if(( l1 == null )) {       return l2;     } else if(( l2 == null )) {       return l1;     } else if(( (l1 instanceof tom.library.sl.Sequence) )) {       if(( ((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )) == null )) {         return ( (l2==null)?((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1):new tom.library.sl.Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1),l2) );       } else {         return ( (tom_append_list_Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),l2)==null)?((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1):new tom.library.sl.Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.FIRST) ):l1),tom_append_list_Sequence(((( (l1 instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)l1.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),l2)) );       }     } else {       return ( (l2==null)?l1:new tom.library.sl.Sequence(l1,l2) );     }   }   private static   tom.library.sl.Strategy  tom_get_slice_Sequence( tom.library.sl.Strategy  begin,  tom.library.sl.Strategy  end, tom.library.sl.Strategy  tail) {     if( (begin.equals(end)) ) {       return tail;     } else if( (end.equals(tail))  && (( end == null ) ||  (end.equals(( null ))) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return ( (( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)==null)?((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin):new tom.library.sl.Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.FIRST) ):begin),( tom.library.sl.Strategy )tom_get_slice_Sequence(((( (begin instanceof tom.library.sl.Sequence) ))?( (tom.library.sl.Strategy)begin.getChildAt(tom.library.sl.Sequence.THEN) ):( null )),end,tail)) );   }     private static  tom.library.sl.Strategy  tom_make_TopDown( tom.library.sl.Strategy  v) { return ( ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("_x") ),( (( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )==null)?v:new tom.library.sl.Sequence(v,( (( null )==null)?( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ):new tom.library.sl.Sequence(( new tom.library.sl.All(( new tom.library.sl.MuVar("_x") )) ),( null )) )) )) ) );}         private static   tom.library.adt.bytecode.types.StringList  tom_append_list_StringList( tom.library.adt.bytecode.types.StringList l1,  tom.library.adt.bytecode.types.StringList  l2) {     if( l1.isEmptyStringList() ) {       return l2;     } else if( l2.isEmptyStringList() ) {       return l1;     } else if(  l1.getTailStringList() .isEmptyStringList() ) {       return  tom.library.adt.bytecode.types.stringlist.ConsStringList.make( l1.getHeadStringList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.stringlist.ConsStringList.make( l1.getHeadStringList() ,tom_append_list_StringList( l1.getTailStringList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.StringList  tom_get_slice_StringList( tom.library.adt.bytecode.types.StringList  begin,  tom.library.adt.bytecode.types.StringList  end, tom.library.adt.bytecode.types.StringList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyStringList()  ||  (end== tom.library.adt.bytecode.types.stringlist.EmptyStringList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.stringlist.ConsStringList.make( begin.getHeadStringList() ,( tom.library.adt.bytecode.types.StringList )tom_get_slice_StringList( begin.getTailStringList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.IntList  tom_append_list_IntList( tom.library.adt.bytecode.types.IntList l1,  tom.library.adt.bytecode.types.IntList  l2) {     if( l1.isEmptyIntList() ) {       return l2;     } else if( l2.isEmptyIntList() ) {       return l1;     } else if(  l1.getTailIntList() .isEmptyIntList() ) {       return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( l1.getHeadIntList() ,tom_append_list_IntList( l1.getTailIntList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.IntList  tom_get_slice_IntList( tom.library.adt.bytecode.types.IntList  begin,  tom.library.adt.bytecode.types.IntList  end, tom.library.adt.bytecode.types.IntList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyIntList()  ||  (end== tom.library.adt.bytecode.types.intlist.EmptyIntList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.intlist.ConsIntList.make( begin.getHeadIntList() ,( tom.library.adt.bytecode.types.IntList )tom_get_slice_IntList( begin.getTailIntList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.FieldDescriptorList  tom_append_list_FieldDescriptorList( tom.library.adt.bytecode.types.FieldDescriptorList l1,  tom.library.adt.bytecode.types.FieldDescriptorList  l2) {     if( l1.isEmptyFieldDescriptorList() ) {       return l2;     } else if( l2.isEmptyFieldDescriptorList() ) {       return l1;     } else if(  l1.getTailFieldDescriptorList() .isEmptyFieldDescriptorList() ) {       return  tom.library.adt.bytecode.types.fielddescriptorlist.ConsFieldDescriptorList.make( l1.getHeadFieldDescriptorList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.fielddescriptorlist.ConsFieldDescriptorList.make( l1.getHeadFieldDescriptorList() ,tom_append_list_FieldDescriptorList( l1.getTailFieldDescriptorList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.FieldDescriptorList  tom_get_slice_FieldDescriptorList( tom.library.adt.bytecode.types.FieldDescriptorList  begin,  tom.library.adt.bytecode.types.FieldDescriptorList  end, tom.library.adt.bytecode.types.FieldDescriptorList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyFieldDescriptorList()  ||  (end== tom.library.adt.bytecode.types.fielddescriptorlist.EmptyFieldDescriptorList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.fielddescriptorlist.ConsFieldDescriptorList.make( begin.getHeadFieldDescriptorList() ,( tom.library.adt.bytecode.types.FieldDescriptorList )tom_get_slice_FieldDescriptorList( begin.getTailFieldDescriptorList() ,end,tail)) ;   }      private static   tom.library.adt.bytecode.types.AccessList  tom_append_list_AccessList( tom.library.adt.bytecode.types.AccessList l1,  tom.library.adt.bytecode.types.AccessList  l2) {     if( l1.isEmptyAccessList() ) {       return l2;     } else if( l2.isEmptyAccessList() ) {       return l1;     } else if(  l1.getTailAccessList() .isEmptyAccessList() ) {       return  tom.library.adt.bytecode.types.accesslist.ConsAccessList.make( l1.getHeadAccessList() ,l2) ;     } else {       return  tom.library.adt.bytecode.types.accesslist.ConsAccessList.make( l1.getHeadAccessList() ,tom_append_list_AccessList( l1.getTailAccessList() ,l2)) ;     }   }   private static   tom.library.adt.bytecode.types.AccessList  tom_get_slice_AccessList( tom.library.adt.bytecode.types.AccessList  begin,  tom.library.adt.bytecode.types.AccessList  end, tom.library.adt.bytecode.types.AccessList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyAccessList()  ||  (end== tom.library.adt.bytecode.types.accesslist.EmptyAccessList.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.library.adt.bytecode.types.accesslist.ConsAccessList.make( begin.getHeadAccessList() ,( tom.library.adt.bytecode.types.AccessList )tom_get_slice_AccessList( begin.getTailAccessList() ,end,tail)) ;   }    
 
 
   private final static int[] accessFlags = {
@@ -63,163 +64,152 @@ public class ToolBox {
     Opcodes.ACC_VARARGS,
     Opcodes.ACC_VOLATILE
   };
-  private final static TAccess[] accessObj = {
-     tom.library.adt.bytecode.types.taccess.ABSTRACT.make() ,
-     tom.library.adt.bytecode.types.taccess.ANNOTATION.make() ,
-     tom.library.adt.bytecode.types.taccess.BRIDGE.make() ,
-     tom.library.adt.bytecode.types.taccess.DEPRECATED.make() ,
-     tom.library.adt.bytecode.types.taccess.ENUM.make() ,
-     tom.library.adt.bytecode.types.taccess.FINAL.make() ,
-     tom.library.adt.bytecode.types.taccess.INTERFACE.make() ,
-     tom.library.adt.bytecode.types.taccess.NATIVE.make() ,
-     tom.library.adt.bytecode.types.taccess.PRIVATE.make() ,
-     tom.library.adt.bytecode.types.taccess.PROTECTED.make() ,
-     tom.library.adt.bytecode.types.taccess.PUBLIC.make() ,
-     tom.library.adt.bytecode.types.taccess.STATIC.make() ,
-     tom.library.adt.bytecode.types.taccess.STRICT.make() ,
-     tom.library.adt.bytecode.types.taccess.SUPER.make() ,
-     tom.library.adt.bytecode.types.taccess.SYNCHRONIZED.make() ,
-     tom.library.adt.bytecode.types.taccess.SYNTHETIC.make() ,
-     tom.library.adt.bytecode.types.taccess.TRANSIENT.make() ,
-     tom.library.adt.bytecode.types.taccess.VARARGS.make() ,
-     tom.library.adt.bytecode.types.taccess.VOLATILE.make() 
+
+  private final static Access[] accessObj = {
+     tom.library.adt.bytecode.types.access.ABSTRACT.make() ,
+     tom.library.adt.bytecode.types.access.ANNOTATION.make() ,
+     tom.library.adt.bytecode.types.access.BRIDGE.make() ,
+     tom.library.adt.bytecode.types.access.DEPRECATED.make() ,
+     tom.library.adt.bytecode.types.access.ENUM.make() ,
+     tom.library.adt.bytecode.types.access.FINAL.make() ,
+     tom.library.adt.bytecode.types.access.INTERFACE.make() ,
+     tom.library.adt.bytecode.types.access.NATIVE.make() ,
+     tom.library.adt.bytecode.types.access.PRIVATE.make() ,
+     tom.library.adt.bytecode.types.access.PROTECTED.make() ,
+     tom.library.adt.bytecode.types.access.PUBLIC.make() ,
+     tom.library.adt.bytecode.types.access.STATIC.make() ,
+     tom.library.adt.bytecode.types.access.STRICT.make() ,
+     tom.library.adt.bytecode.types.access.SUPER.make() ,
+     tom.library.adt.bytecode.types.access.SYNCHRONIZED.make() ,
+     tom.library.adt.bytecode.types.access.SYNTHETIC.make() ,
+     tom.library.adt.bytecode.types.access.TRANSIENT.make() ,
+     tom.library.adt.bytecode.types.access.VARARGS.make() ,
+     tom.library.adt.bytecode.types.access.VOLATILE.make() 
   };
 
-  public static TAccessList buildTAccess(int access) {
-    TAccessList list =  tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() ;
-    
+  public static AccessList buildAccess(int access) {
+    AccessList list =  tom.library.adt.bytecode.types.accesslist.EmptyAccessList.make() ;
+
     for(int i = 0; i < accessFlags.length; i++) {
       if((access & accessFlags[i]) != 0)
-        list =  tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make(accessObj[i], list) ;
+        list =  tom.library.adt.bytecode.types.accesslist.ConsAccessList.make(accessObj[i], list) ;
     }
 
     return list;
   }
 
 
-  public static int buildAccessValue(TAccessList list){
+  public static int buildAccessValue(AccessList list){
     int value =0;
     HashMap map = new HashMap();
     for(int i =0;i<accessObj.length;i++){
       map.put(accessObj[i],new Integer(accessFlags[i]));
     }
 
-    {{if ( (list instanceof tom.library.adt.bytecode.types.TAccessList) ) {if ( (((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.TAccessList )list) instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.TAccessList  tomMatch619NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);do {{if (!( tomMatch619NameNumber_end_4.isEmptyAccessList() )) {
+    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch620NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch620NameNumber_end_4.isEmptyAccessList() )) {
 
-        value = value | ((Integer)map.get( tomMatch619NameNumber_end_4.getHeadAccessList() )).intValue();
-      }if ( tomMatch619NameNumber_end_4.isEmptyAccessList() ) {tomMatch619NameNumber_end_4=(( tom.library.adt.bytecode.types.TAccessList )list);} else {tomMatch619NameNumber_end_4= tomMatch619NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch619NameNumber_end_4==(( tom.library.adt.bytecode.types.TAccessList )list)) ));}}}}
+        value = value | ((Integer)map.get( tomMatch620NameNumber_end_4.getHeadAccessList() )).intValue();
+      }if ( tomMatch620NameNumber_end_4.isEmptyAccessList() ) {tomMatch620NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch620NameNumber_end_4= tomMatch620NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch620NameNumber_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
 
     return value;   
   }
 
-  public static String buildSignature(TSignature signature){
+  public static String buildSignature(Signature signature){
     String sig = null;
-    {{if ( (signature instanceof tom.library.adt.bytecode.types.TSignature) ) {if ( ((( tom.library.adt.bytecode.types.TSignature )signature) instanceof tom.library.adt.bytecode.types.tsignature.Signature) ) {
-sig= (( tom.library.adt.bytecode.types.TSignature )signature).getsig() ;}}}}
+    {{if ( (signature instanceof tom.library.adt.bytecode.types.Signature) ) {if ( ((( tom.library.adt.bytecode.types.Signature )signature) instanceof tom.library.adt.bytecode.types.signature.Signature) ) {
+sig= (( tom.library.adt.bytecode.types.Signature )signature).getsig() ;}}}}
 
     return sig;
   }
 
-  public static TValue buildTValue(Object v) {
+  public static Value buildValue(Object v) {
     if(v instanceof String)
-      return  tom.library.adt.bytecode.types.tvalue.StringValue.make((String)v) ;
+      return  tom.library.adt.bytecode.types.value.StringValue.make((String)v) ;
     else if(v instanceof Integer)
-      return  tom.library.adt.bytecode.types.tvalue.IntValue.make(((Integer)v).intValue()) ;
+      return  tom.library.adt.bytecode.types.value.IntValue.make(((Integer)v).intValue()) ;
     else if(v instanceof Long)
-      return  tom.library.adt.bytecode.types.tvalue.LongValue.make(((Long)v).longValue()) ;
+      return  tom.library.adt.bytecode.types.value.LongValue.make(((Long)v).longValue()) ;
     else if(v instanceof Float)
-      return  tom.library.adt.bytecode.types.tvalue.FloatValue.make(((Float)v).floatValue()) ;
+      return  tom.library.adt.bytecode.types.value.FloatValue.make(((Float)v).floatValue()) ;
     else if(v instanceof Double)
-      return  tom.library.adt.bytecode.types.tvalue.DoubleValue.make(((Double)v).doubleValue()) ;
+      return  tom.library.adt.bytecode.types.value.DoubleValue.make(((Double)v).doubleValue()) ;
 
     return null;
   }
 
-  public static Object buildConstant(TValue value) {
-      {{if ( (value instanceof tom.library.adt.bytecode.types.TValue) ) {if ( ((( tom.library.adt.bytecode.types.TValue )value) instanceof tom.library.adt.bytecode.types.tvalue.StringValue) ) {
- return  (( tom.library.adt.bytecode.types.TValue )value).gets() ;}}}{if ( (value instanceof tom.library.adt.bytecode.types.TValue) ) {if ( ((( tom.library.adt.bytecode.types.TValue )value) instanceof tom.library.adt.bytecode.types.tvalue.IntValue) ) {
-return new Integer( (( tom.library.adt.bytecode.types.TValue )value).geti() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.TValue) ) {if ( ((( tom.library.adt.bytecode.types.TValue )value) instanceof tom.library.adt.bytecode.types.tvalue.LongValue) ) {
-return new Long( (( tom.library.adt.bytecode.types.TValue )value).getl() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.TValue) ) {if ( ((( tom.library.adt.bytecode.types.TValue )value) instanceof tom.library.adt.bytecode.types.tvalue.FloatValue) ) {
-return new Float( (( tom.library.adt.bytecode.types.TValue )value).getf() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.TValue) ) {if ( ((( tom.library.adt.bytecode.types.TValue )value) instanceof tom.library.adt.bytecode.types.tvalue.DoubleValue) ) {
-return new Double( (( tom.library.adt.bytecode.types.TValue )value).getd() );}}}}
+  public static Object buildConstant(Value value) {
+    {{if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.StringValue) ) {
+ return  (( tom.library.adt.bytecode.types.Value )value).gets() ;}}}{if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.IntValue) ) {
+return new Integer( (( tom.library.adt.bytecode.types.Value )value).geti() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.LongValue) ) {
+return new Long( (( tom.library.adt.bytecode.types.Value )value).getl() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.FloatValue) ) {
+return new Float( (( tom.library.adt.bytecode.types.Value )value).getf() );}}}{if ( (value instanceof tom.library.adt.bytecode.types.Value) ) {if ( ((( tom.library.adt.bytecode.types.Value )value) instanceof tom.library.adt.bytecode.types.value.DoubleValue) ) {
+return new Double( (( tom.library.adt.bytecode.types.Value )value).getd() );}}}}
 
-      return null;
+    return null;
   }
 
-  public static TStringList buildTStringList(String[] array) {
-    TStringList list =  tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() ;
+  public static StringList buildStringList(String[] array) {
+    StringList list =  tom.library.adt.bytecode.types.stringlist.EmptyStringList.make() ;
     if(array != null) {
       for(int i = array.length - 1; i >= 0; i--)
-        list =  tom.library.adt.bytecode.types.tstringlist.ConsStringList.make(array[i], list) ;
+        list =  tom.library.adt.bytecode.types.stringlist.ConsStringList.make(array[i], list) ;
     }
 
     return list;
   }
 
-  public static TintList buildTintList(int[] array) {
-    TintList list =  tom.library.adt.bytecode.types.tintlist.EmptyintList.make() ;
+  public static IntList buildIntList(int[] array) {
+    IntList list =  tom.library.adt.bytecode.types.intlist.EmptyIntList.make() ;
     if(array != null) {
       for(int i = array.length - 1; i >= 0; i--) {
-        list =  tom.library.adt.bytecode.types.tintlist.ConsintList.make(array[i], list) ;
+        list =  tom.library.adt.bytecode.types.intlist.ConsIntList.make(array[i], list) ;
       }
     }
 
     return list;
   }
 
-  public static TType buildTType(String type) {
+  public static TypeNode buildType(String type) {
     int t = Type.getType(type).getSort();
-    TType ret = null;
     switch(t) {
       case Type.ARRAY:
-        ret =  tom.library.adt.bytecode.types.ttype.ARRAY.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.ARRAY.make() ;
       case Type.BOOLEAN:
-        ret =  tom.library.adt.bytecode.types.ttype.BOOLEAN.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.BOOLEAN.make() ;
       case Type.BYTE:
-        ret =  tom.library.adt.bytecode.types.ttype.BYTE.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.BYTE.make() ;
       case Type.CHAR:
-        ret =  tom.library.adt.bytecode.types.ttype.CHAR.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.CHAR.make() ;
       case Type.DOUBLE:
-        ret =  tom.library.adt.bytecode.types.ttype.DOUBLE.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.DOUBLE.make() ;
       case Type.FLOAT:
-        ret =  tom.library.adt.bytecode.types.ttype.FLOAT.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.FLOAT.make() ;
       case Type.INT:
-        ret =  tom.library.adt.bytecode.types.ttype.INT.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.INT.make() ;
       case Type.LONG:
-        ret =  tom.library.adt.bytecode.types.ttype.LONG.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.LONG.make() ;
       case Type.OBJECT:
-        ret =  tom.library.adt.bytecode.types.ttype.OBJECT.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.OBJECT.make() ;
       case Type.SHORT:
-        ret =  tom.library.adt.bytecode.types.ttype.SHORT.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.SHORT.make() ;
       case Type.VOID:
-        ret =  tom.library.adt.bytecode.types.ttype.VOID.make() ;
-        break;
+        return  tom.library.adt.bytecode.types.typenode.VOID.make() ;
+      default:
+        throw new RuntimeException("Unsupported Type :"+t);
     }
-
-    return ret;
   }
 
   private static class Counter { public int count = 0; }
-  public static TFieldDescriptor buildTFieldDescriptor(String desc) {
+  public static FieldDescriptor buildFieldDescriptor(String desc) {
     Counter count = new Counter();
-    TFieldDescriptor fDesc = buildTFieldDescriptorFrom(desc, count);
+    FieldDescriptor fDesc = buildFieldDescriptorFrom(desc, count);
     if(count.count != desc.length())
       System.err.println("Malformed descriptor : " + desc);
     return fDesc;
   }
 
-  private static TFieldDescriptor buildTFieldDescriptorFrom(String desc, Counter count) {
-    TFieldDescriptor fDesc = null;
+  private static FieldDescriptor buildFieldDescriptorFrom(String desc, Counter count) {
+    FieldDescriptor fDesc = null;
     switch(desc.charAt(count.count)) {
       case 'L':
         count.count++;
@@ -228,43 +218,43 @@ return new Double( (( tom.library.adt.bytecode.types.TValue )value).getd() );}}}
           System.err.println("Malformed descriptor : " + desc);
         String className = desc.substring(count.count, j);
         count.count += className.length() + 1;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.ObjectType.make(className) ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.ObjectType.make(className) ;
         break;
       case '[':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.ArrayType.make(buildTFieldDescriptorFrom(desc,count)) ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.ArrayType.make(buildFieldDescriptorFrom(desc,count)) ;
         break;
       case 'B':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.B.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.B.make() ;
         break;
       case 'C':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.C.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.C.make() ;
         break;
       case 'D':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.D.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.D.make() ;
         break;
       case 'F':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.F.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.F.make() ;
         break;
       case 'I':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.I.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.I.make() ;
         break;
       case 'J':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.J.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.J.make() ;
         break;
       case 'S':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.S.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.S.make() ;
         break;
       case 'Z':
         count.count++;
-        fDesc =  tom.library.adt.bytecode.types.tfielddescriptor.Z.make() ;
+        fDesc =  tom.library.adt.bytecode.types.fielddescriptor.Z.make() ;
         break;
     }
     if(fDesc == null)
@@ -272,69 +262,72 @@ return new Double( (( tom.library.adt.bytecode.types.TValue )value).getd() );}}}
     return fDesc;
   }
 
-  public static TReturnDescriptor buildTReturnDescriptor(String desc) {
+  public static ReturnDescriptor buildReturnDescriptor(String desc) {
     if(desc.charAt(0) == 'V' && desc.length() == 1)
-      return  tom.library.adt.bytecode.types.treturndescriptor.Void.make() ;
-    return  tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor.make(buildTFieldDescriptor(desc)) ;
+      return  tom.library.adt.bytecode.types.returndescriptor.Void.make() ;
+    return  tom.library.adt.bytecode.types.returndescriptor.ReturnDescriptor.make(buildFieldDescriptor(desc)) ;
   }
 
-  public static TMethodDescriptor buildTMethodDescriptor(String desc) {
+  public static MethodDescriptor buildMethodDescriptor(String desc) {
     int endParam = desc.indexOf(')', 1);
     if(desc.charAt(0) != '(' || endParam == -1)
       System.err.println("Malformed descriptor : " + desc);
 
-    TFieldDescriptorList fList =  tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() ;
+    FieldDescriptorList fList =  tom.library.adt.bytecode.types.fielddescriptorlist.EmptyFieldDescriptorList.make() ;
     Counter count = new Counter();
     count.count++;
     while(count.count < endParam)
-      fList = tom_append_list_FieldDescriptorList(fList, tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make(buildTFieldDescriptorFrom(desc,count), tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() ) );
+      fList = tom_append_list_FieldDescriptorList(fList, tom.library.adt.bytecode.types.fielddescriptorlist.ConsFieldDescriptorList.make(buildFieldDescriptorFrom(desc,count), tom.library.adt.bytecode.types.fielddescriptorlist.EmptyFieldDescriptorList.make() ) );
     if(count.count != endParam)
       System.err.println("Malformed descriptor : " + desc);
-    TReturnDescriptor ret = buildTReturnDescriptor(desc.substring(count.count + 1));
-    return  tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor.make(fList, ret) ;
+    ReturnDescriptor ret = buildReturnDescriptor(desc.substring(count.count + 1));
+    return  tom.library.adt.bytecode.types.methoddescriptor.MethodDescriptor.make(fList, ret) ;
   }
 
-  public static class BuildDescriptor extends tom.library.sl.BasicStrategy {private  StringBuilder  sb;public BuildDescriptor( StringBuilder  sb) {super(( new tom.library.sl.Identity() ));this.sb=sb;}public  StringBuilder  getsb() {return sb;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.adt.bytecode.types.TFieldDescriptor  visit_TFieldDescriptor( tom.library.adt.bytecode.types.TFieldDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.ObjectType) ) {
+  public static class BuildDescriptor extends tom.library.sl.BasicStrategy {private  StringBuilder  sb;public BuildDescriptor( StringBuilder  sb) {super(( new tom.library.sl.Identity() ));this.sb=sb;}public  StringBuilder  getsb() {return sb;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.adt.bytecode.types.FieldDescriptor  visit_FieldDescriptor( tom.library.adt.bytecode.types.FieldDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.ObjectType) ) {
 
 
 
 
 
- sb.append("L" +  (( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg).getclassName() + ";"); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.ArrayType) ) {
- sb.append('['); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.B) ) {
- sb.append('B'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.C) ) {
- sb.append('C'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.D) ) {
- sb.append('D'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.F) ) {
- sb.append('F'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.I) ) {
- sb.append('I'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.J) ) {
- sb.append('J'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.S) ) {
- sb.append('S'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.tfielddescriptor.Z) ) {
- sb.append('Z'); }}}}return _visit_TFieldDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.TMethodDescriptor  visit_TMethodDescriptor( tom.library.adt.bytecode.types.TMethodDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TMethodDescriptor) ) {
+
+ sb.append("L" +  (( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg).getclassName() + ";"); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.ArrayType) ) {
+ sb.append('['); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.B) ) {
+ sb.append('B'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.C) ) {
+ sb.append('C'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.D) ) {
+ sb.append('D'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.F) ) {
+ sb.append('F'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.I) ) {
+ sb.append('I'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.J) ) {
+ sb.append('J'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.S) ) {
+ sb.append('S'); }}}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.FieldDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.fielddescriptor.Z) ) {
+ sb.append('Z'); }}}}return _visit_FieldDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.MethodDescriptor  visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {
 
 
 
- sb.append('('); }}}return _visit_TMethodDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.TReturnDescriptor  visit_TReturnDescriptor( tom.library.adt.bytecode.types.TReturnDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TReturnDescriptor) ) {
+ sb.append('('); }}}return _visit_MethodDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.ReturnDescriptor  visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {
 
 
 
- sb.append(')'); }}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.TReturnDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.TReturnDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.treturndescriptor.Void) ) {
- sb.append('V'); }}}}return _visit_TReturnDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.TMethodDescriptor  _visit_TMethodDescriptor( tom.library.adt.bytecode.types.TMethodDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.TMethodDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public  tom.library.adt.bytecode.types.TFieldDescriptor  _visit_TFieldDescriptor( tom.library.adt.bytecode.types.TFieldDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.TFieldDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public  tom.library.adt.bytecode.types.TReturnDescriptor  _visit_TReturnDescriptor( tom.library.adt.bytecode.types.TReturnDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.TReturnDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.TMethodDescriptor) ) {return ((T)visit_TMethodDescriptor((( tom.library.adt.bytecode.types.TMethodDescriptor )v),introspector));}if ( (v instanceof tom.library.adt.bytecode.types.TFieldDescriptor) ) {return ((T)visit_TFieldDescriptor((( tom.library.adt.bytecode.types.TFieldDescriptor )v),introspector));}if ( (v instanceof tom.library.adt.bytecode.types.TReturnDescriptor) ) {return ((T)visit_TReturnDescriptor((( tom.library.adt.bytecode.types.TReturnDescriptor )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_BuildDescriptor( StringBuilder  t0) { return new BuildDescriptor(t0);}
+ sb.append(')'); }}{if ( (tom__arg instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {if ( ((( tom.library.adt.bytecode.types.ReturnDescriptor )tom__arg) instanceof tom.library.adt.bytecode.types.returndescriptor.Void) ) {
+ sb.append('V'); }}}}return _visit_ReturnDescriptor(tom__arg,introspector); }public  tom.library.adt.bytecode.types.MethodDescriptor  _visit_MethodDescriptor( tom.library.adt.bytecode.types.MethodDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.MethodDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public  tom.library.adt.bytecode.types.ReturnDescriptor  _visit_ReturnDescriptor( tom.library.adt.bytecode.types.ReturnDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.ReturnDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public  tom.library.adt.bytecode.types.FieldDescriptor  _visit_FieldDescriptor( tom.library.adt.bytecode.types.FieldDescriptor  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.library.adt.bytecode.types.FieldDescriptor )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.adt.bytecode.types.MethodDescriptor) ) {return ((T)visit_MethodDescriptor((( tom.library.adt.bytecode.types.MethodDescriptor )v),introspector));}if ( (v instanceof tom.library.adt.bytecode.types.ReturnDescriptor) ) {return ((T)visit_ReturnDescriptor((( tom.library.adt.bytecode.types.ReturnDescriptor )v),introspector));}if ( (v instanceof tom.library.adt.bytecode.types.FieldDescriptor) ) {return ((T)visit_FieldDescriptor((( tom.library.adt.bytecode.types.FieldDescriptor )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_BuildDescriptor( StringBuilder  t0) { return new BuildDescriptor(t0);}
 
 
 
-  public static String buildDescriptor(TFieldDescriptor desc) {
+  public static String buildDescriptor(FieldDescriptor desc) {
     StringBuilder sb = new StringBuilder();
     try {
       tom_make_TopDown(tom_make_BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
-  public static String buildDescriptor(TMethodDescriptor desc) {
+
+  public static String buildDescriptor(MethodDescriptor desc) {
     StringBuilder sb = new StringBuilder();
     try {
       tom_make_TopDown(tom_make_BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
-}
+
+ }
 

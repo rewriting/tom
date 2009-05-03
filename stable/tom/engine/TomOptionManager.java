@@ -420,6 +420,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("version") || argument.equals("V")) {
             TomOptionManager.displayVersion();
+            return null;
           }
           if(argument.equals("X")) {
             // just skip it, along with its argument

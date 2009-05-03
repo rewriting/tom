@@ -135,6 +135,7 @@
              memoryMaximumSize= "@{memoryMaximumSize}"
              nowarn= "@{nowarn}">
         <srcelements/>
+        <compilerarg value="-Xlint"/>
       </javac>
     </sequential>
   </macrodef>
@@ -1265,7 +1266,7 @@
     </tomjavac>
   </target>
 
-  <target name="manual.bootinstall"
+  <target name="bootinstall"
     description="Install src tree into stable tree">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">

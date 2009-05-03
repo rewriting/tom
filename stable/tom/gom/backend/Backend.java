@@ -85,7 +85,7 @@ public class Backend {
           ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch406NameNumber_freshVar_7.getPkg() , "_"+ tomMatch406NameNumber_freshVar_7.getName() ) ;
           GomClass nGomClass = tom_gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
-          if(generateStratMapping==1) { 
+          if(generateStratMapping==1) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(tom_gomclass,stratMapping,getGomEnvironment());
           } else {
@@ -112,8 +112,8 @@ public class Backend {
     while (it.hasNext()) {
       it.next().addTemplates(generators);
     }
-    Iterator<ClassName> itc = generators.keySet().iterator();
 
+    Iterator<ClassName> itc = generators.keySet().iterator();
     while (itc.hasNext()) {
       generators.get(itc.next()).generateFile();
     }

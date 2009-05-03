@@ -246,6 +246,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
   }
 
   private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+    output.writeln(deep, "@SuppressWarnings(\"unchecked\")");
     output.write(deep, methodModifier + TomBase.getTLType(codomain) + " " + tomName + "(");
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();

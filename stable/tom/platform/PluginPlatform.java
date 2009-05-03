@@ -91,7 +91,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
     this.pluginsList = pluginsList;
     this.inputToCompileList = inputToCompileList;
     //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
-    this.informationTracker = new HashMap();
+    this.informationTracker = new HashMap<String,String>();
     runResult = 0; //init
   }
 

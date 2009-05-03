@@ -103,7 +103,7 @@ public class BackendPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run(Map informationTracker) {
+  public void run(Map<String,String> informationTracker) {
     getLogger().log(Level.INFO, "Start compilation");
     // make sure the environment has the correct streamManager
     getGomEnvironment().setStreamManager(getStreamManager());
@@ -111,7 +111,7 @@ public class BackendPlugin extends GomGenericPlugin {
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
     try {
-      if(tomHome == null) {
+      if (tomHome == null) {
         String xmlConfigFilename = getOptionStringValue("X");
         tomHome = new File(xmlConfigFilename).getParent();
       }
@@ -120,10 +120,10 @@ public class BackendPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
     int generateStratMapping = 0;
-    if(getOptionBooleanValue("withCongruenceStrategies")) {
+    if (getOptionBooleanValue("withCongruenceStrategies")) {
       generateStratMapping = 1;
     }
-    if(getOptionBooleanValue("withSeparateCongruenceStrategies")) {
+    if (getOptionBooleanValue("withSeparateCongruenceStrategies")) {
       generateStratMapping = 2;
     }
     boolean multithread = getOptionBooleanValue("multithread");

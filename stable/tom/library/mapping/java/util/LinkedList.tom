@@ -41,13 +41,14 @@
   is_empty(l)      { ($l.size()==0) }
 }
 
-private static java.util.LinkedList concLinkedListAppend(Object o, java.util.LinkedList l) {
-  java.util.LinkedList res = (java.util.LinkedList)l.clone();
+private static <T> java.util.LinkedList<T> concLinkedListAppend(T o, java.util.LinkedList<T> l) {
+  java.util.LinkedList<T> res = (java.util.LinkedList<T>)l.clone();
   res.addFirst(o);
   return res;
 }
-private static java.util.LinkedList concLinkedListgetTail(java.util.LinkedList l) {
-  java.util.LinkedList res = (java.util.LinkedList)l.clone();
+
+private static <T> java.util.LinkedList<T> concLinkedListgetTail(java.util.LinkedList<T> l) {
+  java.util.LinkedList<T> res = (java.util.LinkedList<T>)l.clone();
   res.removeFirst();
   return res;
 }
