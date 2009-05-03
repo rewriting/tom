@@ -109,7 +109,7 @@ public class ConfigurationManager {
   }
 
   /** Accessor method */
-  public OptionManager  getOptionManager() {
+  public OptionManager getOptionManager() {
     return optionManager;
   }
   

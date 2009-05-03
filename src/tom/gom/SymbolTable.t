@@ -959,7 +959,9 @@ public class SymbolTable {
     Set<String> sorts = getSorts();
     Set<String> connected = sortDependences.connected(atoms);
     sorts.removeAll(connected);
-    for(String s: sorts) { setFreshSortInfo(s,`NoFreshSort()); }
+    for(String s: sorts) {
+      setFreshSortInfo(s,`NoFreshSort());
+    }
   }
 
   /* TODO: use GomMessage and the logger instead of RutimeException */
