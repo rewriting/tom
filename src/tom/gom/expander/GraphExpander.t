@@ -251,8 +251,6 @@ public class GraphExpander {
     import @fullModuleName@.types.*;
     import @fullModuleName@.*;
     import tom.library.sl.*;
-    import java.util.ArrayList;
-    import java.util.HashMap;
     ]%;
 
     String codeStrategies = getStrategies(sorts);
@@ -285,7 +283,7 @@ public class GraphExpander {
     }
 
     public @fullAbstractTypeClassName@ unexpand() {
-       HashMap<String,Position> map = getMapFromPositionToLabel();
+       java.util.HashMap<String,Position> map = getMapFromPositionToLabel();
        try {
          return `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map))).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
@@ -293,8 +291,8 @@ public class GraphExpander {
        }
     }
 
-    protected HashMap<String,Position> getMapFromPositionToLabel() {
-      HashMap<String,Position> map = new HashMap<String,Position>();
+    protected java.util.HashMap<String,Position> getMapFromPositionToLabel() {
+      java.util.HashMap<String,Position> map = new java.util.HashMap<String,Position>();
       try {
         `TopDown(CollectPositionsOfLabels(map)).visit(this);
         return map;
@@ -309,7 +307,7 @@ public class GraphExpander {
     String codeBlockTermWithPointers =%[
 
       public @fullAbstractTypeClassName@ expand() {
-        HashMap<Position,String> map = new HashMap<Position,String>();
+        java.util.HashMap<Position,String> map = new java.util.HashMap<Position,String>();
         Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
         try {
           return `label2path.visit(this);
@@ -321,7 +319,7 @@ public class GraphExpander {
     String codeBlockTermGraph =%[
 
    public @fullAbstractTypeClassName@ expand() {
-       HashMap<Position,String> map = new HashMap<Position,String>();
+       java.util.HashMap<Position,String> map = new java.util.HashMap<Position,String>();
        try {
          return `InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand()).label2path();
        } catch (tom.library.sl.VisitFailure e) {
@@ -330,7 +328,7 @@ public class GraphExpander {
      }
 
     public @fullAbstractTypeClassName@ normalizeWithLabels() {
-      HashMap<Position,String> map = new HashMap<Position,String>();
+      java.util.HashMap<Position,String> map = new java.util.HashMap<Position,String>();
       try {
         return `InnermostIdSeq(NormalizeLabel(map)).visit(this);
       } catch (tom.library.sl.VisitFailure e) {
@@ -339,7 +337,7 @@ public class GraphExpander {
     }
 
     public @fullAbstractTypeClassName@ label2path() {
-      HashMap<Position,String> map = new HashMap<Position,String>();
+      java.util.HashMap<Position,String> map = new java.util.HashMap<Position,String>();
       Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
       try {
         return label2path.visit(this);
@@ -348,8 +346,8 @@ public class GraphExpander {
       }
     }
     
-    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels() {
-      HashMap<String,Position> map = new HashMap<String,Position>();
+    public java.util.HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels() {
+      java.util.HashMap<String,Position> map = new java.util.HashMap<String,Position>();
       try {
         `TopDown(CollectAndRemoveLabels(map)).visit(this);
         return map;
@@ -358,8 +356,8 @@ public class GraphExpander {
       }
     }
 
-    public HashMap<String,Position> getMapFromLabelToPosition() {
-      HashMap<String,Position> map = new HashMap<String,Position>();
+    public java.util.HashMap<String,Position> getMapFromLabelToPosition() {
+      java.util.HashMap<String,Position> map = new java.util.HashMap<String,Position>();
       try {
         `TopDown(CollectLabels(map)).visit(this);
         return map;
