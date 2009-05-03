@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
  **/
 
@@ -55,10 +55,10 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /** the option manager */
   private OptionManager optionManager;
-  
+
   public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
   public final static String KEY_LAST_READ_LINE = "lastReadLine";
-  
+
   /** The streamanager */
   //protected GomStreamManager streamManager;
 
@@ -89,7 +89,7 @@ public abstract class GomGenericPlugin implements Plugin {
     return statusHandler;
   }
 
-  /*  
+  /*
     protected GomEnvironment environment() {
     return GomEnvironment.getInstance();
   } */
@@ -119,7 +119,7 @@ public abstract class GomGenericPlugin implements Plugin {
   }
 
   /**
-   * From Plugin interface 
+   * From Plugin interface
    * @param term the input Object
    */
   public abstract void setArgs(Object[] arg);
@@ -203,7 +203,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of a boolean option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return a boolean that is the option's value
    */
@@ -213,7 +213,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of an integer option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return an int that is the option's value
    */
@@ -223,7 +223,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of a string option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return a String that is the option's value
    */

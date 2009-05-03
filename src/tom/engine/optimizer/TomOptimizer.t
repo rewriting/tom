@@ -67,7 +67,11 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom } 
   %include{ ../../library/mapping/java/util/ArrayList.tom }
-  %include{ ../../library/mapping/java/util/HashSet.tom }
+  %typeterm TomNameHashSet {
+    implement      { java.util.HashSet<TomName> }
+    is_sort(t)      { $t instanceof java.util.HashSet }
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
 
   %typeterm TomOptimizer { implement { TomOptimizer } }
 
@@ -363,7 +367,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   private static class InfoVariable {
 
-    private HashSet<TomName> assignmentVariables = new HashSet();
+    private HashSet<TomName> assignmentVariables = new HashSet<TomName>();
     public int readCount=0;
     public boolean modifiedAssignmentVariables=false; // true when exp depends on a variable which is modified by Assign
     public Position usePosition; // position where is used the variable
@@ -398,7 +402,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   }
 
-  %strategy CollectVariable(set:HashSet) extends Identity() {
+  %strategy CollectVariable(set:TomNameHashSet) extends Identity() {
     visit TomTerm {
       (Variable|VariableStar)[AstName=name] -> {
         set.add(`name);
