@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -65,7 +65,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
-  %include{ ../../library/mapping/java/sl.tom } 
+  %include{ ../../library/mapping/java/sl.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   %typeterm TomNameHashSet {
     implement      { java.util.HashSet<TomName> }
@@ -79,8 +79,8 @@ public class TomOptimizer extends TomGenericPlugin {
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   /** the declared options string*/
-  private static final String DECLARED_OPTIONS = 
-    "<options>" + 
+  private static final String DECLARED_OPTIONS =
+    "<options>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code: perform inlining' value='true'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code: discrimination tree' value='false'/>" +
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
@@ -149,7 +149,7 @@ public class TomOptimizer extends TomGenericPlugin {
          return;
       }
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX, 
+        Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX,
             (TomTerm)getWorkingTerm() );
       }
     } else {
@@ -185,19 +185,19 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       /*
-       * 
+       *
        * Let x<-variable in body ==> inline
        * If exp does no depend from values which are modified between Let x<-exp and the use of x in the body
        * Let x<-exp in body where x is used 0 times ==> eliminate
        * Let x<-exp in body where x is used 1 times ==> inline
        */
       Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-        return `body; 
-      } 
+        return `body;
+      }
 
-      /* only for generated variables */  
-      /* Let x <- y in body where y is a variable ==> inline */  
-      /* Let x <- (T) y in body where y is a variable ==> inline */  
+      /* only for generated variables */
+      /* Let x <- y in body where y is a variable ==> inline */
+      /* Let x <- (T) y in body where y is a variable ==> inline */
       Let((Variable|VariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
         (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
          Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
@@ -271,11 +271,11 @@ public class TomOptimizer extends TomGenericPlugin {
       LetRef(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
-         * is not correctly handled 
+         * is not correctly handled
          * we must check that X notin exp
          */
         String varName = "";
-        %match(name) { 
+        %match(name) {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
@@ -406,7 +406,7 @@ public class TomOptimizer extends TomGenericPlugin {
     visit TomTerm {
       (Variable|VariableStar)[AstName=name] -> {
         set.add(`name);
-        //stop to visit this branch (like "return false" with traversal) 
+        //stop to visit this branch (like "return false" with traversal)
         throw new VisitFailure();
       }
     }
@@ -414,20 +414,20 @@ public class TomOptimizer extends TomGenericPlugin {
 
   /* strategies for Let inlining (using cps) */
   // comp = AssignCase(TypedActionCase(comp,BaseCase(all(comp),fail())),fail())
-  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) { 
+  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) {
     make(variableName, info) {
         `Try(
           mu(MuVar("comp"),
-            computeOccurenceLet_AssignCase( 
+            computeOccurenceLet_AssignCase(
               computeOccurenceLet_TypedActionCase( MuVar("comp"),
                 computeOccurenceLet_BaseCase( All(MuVar("comp")), variableName, info),
-                variableName, 
+                variableName,
                 info
                 ),
               info
               )
             )
-          ) 
+          )
     }
   }
 
@@ -444,7 +444,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
       }
     }
-  } 
+  }
 
   %strategy computeOccurenceLet_TypedActionCase(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariable) extends cutCase {
     visit Instruction {
@@ -476,25 +476,25 @@ public class TomOptimizer extends TomGenericPlugin {
    * if it appears more than once, the computation is stopped because there is no possible inlining
    */
   %strategy computeOccurenceLet_BaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariable) extends defaultCase {
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> { 
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
-          info.usePosition = getPosition(); 
+          info.usePosition = getPosition();
           info.readCount++;
           if(info.readCount==2) { throw new VisitFailure(); }
-        } 
-      } 
-    } 
+        }
+      }
+    }
   }
 
   /* strategies for LetRef inlining (using cps) */
   // comp = special( comp, Basecase(comp,fail()) )
-  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariable) { 
+  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariable) {
     make(variableName, info) { (
         `Try(
           mu(MuVar("comp"),
             computeOccurencesLetRef_CutCase( MuVar("comp"),
-              computeOccurencesLetRef_BaseCase( All(MuVar("comp")), 
+              computeOccurencesLetRef_BaseCase( All(MuVar("comp")),
                 variableName,
                 info
                 ),
@@ -547,20 +547,20 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy computeOccurencesLetRef_BaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> { 
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
           info.readCount++;
-          info.usePosition = getPosition(); 
-          if(info.readCount==2) { 
-            throw new VisitFailure(); 
+          info.usePosition = getPosition();
+          if(info.readCount==2) {
+            throw new VisitFailure();
           }
-        }  
-      } 
-    } 
+        }
+      }
+    }
   }
 
-  /* 
+  /*
    * rename variable1 into variable2
    */
   %op Strategy renameVariable(variable1: TomName, variable2: TomName) {
@@ -607,47 +607,47 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
 
       AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "flatten");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "flatten");
         return `AbstractBlock(concInstruction(C1*,L1*,C2*));
       }
 
       AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "nop-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "nop-elim");
         return `AbstractBlock(concInstruction(C1*,C2*));
-      }  
+      }
 
       AbstractBlock(concInstruction()) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim1");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim1");
         return `Nop();
-      } 
+      }
 
       AbstractBlock(concInstruction(i)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim2");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim2");
         return `i;
       }
 
       If[SuccesInst=Nop(),FailureInst=Nop()] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "ifnopnop-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "ifnopnop-elim");
         return `Nop();
       }
 
       If[Condition=TrueTL(),SuccesInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iftrue-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iftrue-elim");
         return `i;
       }
 
       If[Condition=FalseTL(),FailureInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iffalse-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iffalse-elim");
         return `i;
       }
 
-    }      
+    }
 
   }
 
   /*
    * two expressions are incompatible when they cannot be true a the same time
-   */ 
+   */
   private boolean incompatible(Expression c1, Expression c2) {
     try {
       Expression res = `InnermostId(NormExpr(this)).visitLight(`And(c2,c2));
@@ -665,13 +665,13 @@ public class TomOptimizer extends TomGenericPlugin {
         if(s1.compareTo(s2) < 0) {
           /* swap two incompatible conditions */
           if(optimizer.incompatible(`cond1,`cond2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-swapping");     
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-swapping");
             return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
           }
         }
       }
     }
-  }      
+  }
 
   %strategy BlockFusion() extends `Identity() {
     visit Instruction {
@@ -687,7 +687,7 @@ public class TomOptimizer extends TomGenericPlugin {
           } else {
             InfoVariable info = new InfoVariable();
             `computeOccurencesLet(name1,info).visit(`body2);
-            int mult = info.readCount; 
+            int mult = info.readCount;
             if(mult==0) {
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
               Instruction newBody2 =  `renameVariable(name2,name1).visitLight(`body2);
@@ -697,7 +697,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
       }
     }
-  }      
+  }
 
   %strategy IfFusion() extends `Identity() {
     visit Instruction {
@@ -744,9 +744,9 @@ public class TomOptimizer extends TomGenericPlugin {
         if(optimizer.incompatible(`cond1,`cond2)) {
           logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "inter-block");
           return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-        }  
+        }
       }
-    }      
+    }
   }
 
   %strategy NormExpr(optimizer:TomOptimizer) extends Identity() {
@@ -790,7 +790,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
         return `ref;
       }
-    } 
+    }
   }
 
 } // class TomOptimizer

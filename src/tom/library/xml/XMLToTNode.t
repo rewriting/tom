@@ -51,10 +51,11 @@ public class XMLToTNode {
 
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
-  private Hashtable ht_Nodes = new Hashtable();
+  private Hashtable<TNode,Collection<Element> > ht_Nodes =
+    new Hashtable<TNode,Collection<Element> >();
 
-  protected Collection getNodes(TNode key) {
-    return (Collection)ht_Nodes.get(key);
+  protected Collection<Element> getNodes(TNode key) {
+    return ht_Nodes.get(key);
   }
 
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
@@ -293,9 +294,9 @@ public class XMLToTNode {
       //System.out.println("sorted attrList = " + attrList);
     TNodeList childList = nodeListToAterm(elem.getChildNodes());
     TNode result = `ElementNode(elem.getNodeName(),attrList,childList);
-    Collection curCol = (Collection)ht_Nodes.get(elem);
+    Collection<Element> curCol = ht_Nodes.get(elem);
     if (curCol==null) {
-      curCol = new ArrayList();
+      curCol = new ArrayList<Element>();
     }
     curCol.add(elem);
     ht_Nodes.put(result,curCol);
