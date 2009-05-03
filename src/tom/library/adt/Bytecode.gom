@@ -21,8 +21,9 @@ Handler = CatchHandler(handler:LabelNode, type:String)
          | FinallyHandler(handler:LabelNode)
 
 CatchHandler:make(handler, type) {
-  if(type == null)
+  if(type == null) {
     return `FinallyHandler(handler);
+  }
 }
 
 TryCatchBlock = TryCatchBlock(start:LabelNode, end:LabelNode, handler:Handler)
@@ -34,8 +35,9 @@ Field = Field(access:AccessList, name:String, desc:FieldDescriptor, signature:Si
 FieldList = FieldList(Field*)
 
 Field:make(access, name, desc, signature, value) {
-  if(value == null)
+  if(value == null) {
     return `Field(access, name, desc, signature, EmptyValue());
+  }
 }
 
 Method = Method(info:MethodInfo, code:MethodCode)
@@ -48,8 +50,9 @@ MethodCode = MethodCode(instructions:InstructionList, localVariables:LocalVariab
             | EmptyCode()
 
 MethodCode:make(instructions, localVariables, tryCatchBlocks) {
-  if(instructions == null && localVariables == null && tryCatchBlocks == null)
+  if(instructions == null && localVariables == null && tryCatchBlocks == null) {
     return `EmptyCode();
+  }
 }
 
 FieldDescriptor = ObjectType(className:String)
@@ -309,6 +312,7 @@ Signature = Signature(sig:String)
            | EmptySignature()
 
 Signature:make(sig) {
-  if(sig == null)
+  if(sig == null) {
     return `EmptySignature();
+  }
 }

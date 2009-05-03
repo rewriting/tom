@@ -335,13 +335,34 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
+    //if(domain==codomain) {
+    //  return %[((@is_conc@)?@get@:@subject@)]%;
+    //}
+    return get;
+  }
+
+  private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get= getGetTail(name,tomType,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
+    String empty = getMakeEmptyList(name,moduleName);
+    //if(domain==codomain) {
+    //  return %[((@is_conc@)?@get@:@empty@)]%;
+    //}
+    return get;
+  }
+
+  private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get = getGetHead(name,tomType,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
     if(domain==codomain) {
       return %[((@is_conc@)?@get@:@subject@)]%;
     }
     return get;
   }
 
-  private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
+  private String genDeclGetTailInSlice(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
@@ -351,7 +372,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
     return get;
   }
-
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
@@ -427,8 +447,8 @@ s = %[
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
-                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
+    return @getMakeAddList(name,genDeclGetHeadInSlice(name,eltType,listType,"begin",moduleName),
+                  get_slice+"("+genDeclGetTailInSlice(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
   }
   ]%;
 
