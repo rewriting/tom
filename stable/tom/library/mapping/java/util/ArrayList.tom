@@ -44,6 +44,7 @@
   get_size(l)      { $l.size() }
 }
 
+@SuppressWarnings("unchecked")
 private static java.util.ArrayList concArrayListAppend(Object o, java.util.ArrayList l) {
   java.util.ArrayList res = (java.util.ArrayList)l.clone();
   res.add(o);

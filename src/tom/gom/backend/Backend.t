@@ -84,7 +84,7 @@ public class Backend {
         if(generateStratMapping>0) { // generate congruence strategies
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
-          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
+          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           if(generateStratMapping==1) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());

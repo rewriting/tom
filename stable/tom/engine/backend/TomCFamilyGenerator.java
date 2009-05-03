@@ -227,9 +227,9 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(s);
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch51NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch51NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch51NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch51NameNumber_freshVar_2.getLine() ;if ( (tomMatch51NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch1NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch1NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch1NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch1NameNumber_freshVar_2.getLine() ;if ( (tomMatch1NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,returnValue, tom_startLine,  tomMatch51NameNumber_freshVar_3.getLine() - tom_startLine);
+        output.write(0,returnValue, tom_startLine,  tomMatch1NameNumber_freshVar_3.getLine() - tom_startLine);
         return;
       }}}}}{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
 
@@ -335,13 +335,34 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
+    //if(domain==codomain) {
+    //  return %[((@is_conc@)?@get@:@subject@)]%;
+    //}
+    return get;
+  }
+
+  private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get= getGetTail(name,tomType,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
+    String empty = getMakeEmptyList(name,moduleName);
+    //if(domain==codomain) {
+    //  return %[((@is_conc@)?@get@:@empty@)]%;
+    //}
+    return get;
+  }
+
+  private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get = getGetHead(name,tomType,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
     if(domain==codomain) {
       return "(("+is_conc+")?"+get+":"+subject+")";
     }
     return get;
   }
 
-  private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
+  private String genDeclGetTailInSlice(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
@@ -351,7 +372,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
     return get;
   }
-
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
@@ -419,7 +439,7 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
     }
 
     int deep=0;
-    s+= "\n  "+modifier+" "+utype+" tom_get_slice_"+name+"("+utype+" begin, "+utype+" end,"+utype+" tail) {\n    if("+getEqualTerm(tomType,"begin","end",moduleName)+") {\n      return tail;\n    } else if("+getEqualTerm(tomType,"end","tail",moduleName)+" && ("+getIsEmptyList(name,tomType,"end",moduleName)+" || "+getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)+")) {\n      /* code to avoid a call to make, and thus to avoid looping during list-matching */\n      return begin;\n    }\n    return "+getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),                   get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)+";\n  }\n  "
+    s+= "\n  "+modifier+" "+utype+" tom_get_slice_"+name+"("+utype+" begin, "+utype+" end,"+utype+" tail) {\n    if("+getEqualTerm(tomType,"begin","end",moduleName)+") {\n      return tail;\n    } else if("+getEqualTerm(tomType,"end","tail",moduleName)+" && ("+getIsEmptyList(name,tomType,"end",moduleName)+" || "+getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)+")) {\n      /* code to avoid a call to make, and thus to avoid looping during list-matching */\n      return begin;\n    }\n    return "+getMakeAddList(name,genDeclGetHeadInSlice(name,eltType,listType,"begin",moduleName),                   get_slice+"("+genDeclGetTailInSlice(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)+";\n  }\n  "
 
 
 
@@ -445,17 +465,17 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
 
     boolean inlined = inlineplus;
     boolean isCode = false;
-    {{if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch52NameNumber_freshVar_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( (tomMatch52NameNumber_freshVar_1 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom_code= tomMatch52NameNumber_freshVar_1.getCode() ;
+    {{if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch2NameNumber_freshVar_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( (tomMatch2NameNumber_freshVar_1 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom_code= tomMatch2NameNumber_freshVar_1.getCode() ;
 
         isCode = true;
         // perform the instantiation
         String ncode = tom_code;
         int index = 0;
-        {{if ( (argList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )argList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )argList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch53NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )argList);do {{if (!( tomMatch53NameNumber_end_4.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch53NameNumber_freshVar_8= tomMatch53NameNumber_end_4.getHeadconcTomTerm() ;if ( (tomMatch53NameNumber_freshVar_8 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch53NameNumber_freshVar_7= tomMatch53NameNumber_freshVar_8.getAstName() ;if ( (tomMatch53NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (argList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )argList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )argList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch3NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )argList);do {{if (!( tomMatch3NameNumber_end_4.isEmptyconcTomTerm() )) { tom.engine.adt.tomterm.types.TomTerm  tomMatch3NameNumber_freshVar_8= tomMatch3NameNumber_end_4.getHeadconcTomTerm() ;if ( (tomMatch3NameNumber_freshVar_8 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch3NameNumber_freshVar_7= tomMatch3NameNumber_freshVar_8.getAstName() ;if ( (tomMatch3NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
-            ncode = ncode.replace("{"+index+"}", tomMatch53NameNumber_freshVar_7.getString() );
+            ncode = ncode.replace("{"+index+"}", tomMatch3NameNumber_freshVar_7.getString() );
             index++;
-          }}}if ( tomMatch53NameNumber_end_4.isEmptyconcTomTerm() ) {tomMatch53NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )argList);} else {tomMatch53NameNumber_end_4= tomMatch53NameNumber_end_4.getTailconcTomTerm() ;}}} while(!( (tomMatch53NameNumber_end_4==(( tom.engine.adt.tomterm.types.TomList )argList)) ));}}}}
+          }}}if ( tomMatch3NameNumber_end_4.isEmptyconcTomTerm() ) {tomMatch3NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )argList);} else {tomMatch3NameNumber_end_4= tomMatch3NameNumber_end_4.getTailconcTomTerm() ;}}} while(!( (tomMatch3NameNumber_end_4==(( tom.engine.adt.tomterm.types.TomList )argList)) ));}}}}
 
 
         if(!ncode.equals(tom_code)) {
@@ -470,9 +490,9 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
       while(!argList.isEmptyconcTomTerm()) {
         TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch54NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch54NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstType() ;if ( (tomMatch54NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch54NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch54NameNumber_freshVar_6= tomMatch54NameNumber_freshVar_2.getTlType() ;if ( (tomMatch54NameNumber_freshVar_6 instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
+              {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch4NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch4NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstType() ;if ( (tomMatch4NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch4NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch4NameNumber_freshVar_6= tomMatch4NameNumber_freshVar_2.getTlType() ;if ( (tomMatch4NameNumber_freshVar_6 instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
 
-                  s.append(TomBase.getTLCode(tomMatch54NameNumber_freshVar_6) + " " +  tomMatch54NameNumber_freshVar_1.getString() );
+                  s.append(TomBase.getTLCode(tomMatch4NameNumber_freshVar_6) + " " +  tomMatch4NameNumber_freshVar_1.getString() );
                   break matchBlock;
                 }}}}}}{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
 

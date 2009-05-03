@@ -33,11 +33,13 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
+  int generateStratMapping = 0;
 
   %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateTomMapping) {
     super(gomClass,gomEnvironment);
+    this.generateStratMapping = generateStratMapping;
     %match(gomClass) {
       TomMapping[OperatorClasses=ops] -> {
         this.operatorClasses = `ops;
@@ -61,7 +63,9 @@ public class StratMappingTemplate extends MappingTemplateClass {
     * in a _file.tom
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    writer.write("  %include { Strategy.tom }");
+    if(generateStratMapping == 1) {
+      writer.write("  %include { Strategy.tom }");
+    }
     %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
