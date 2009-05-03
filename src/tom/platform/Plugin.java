@@ -45,7 +45,7 @@ public interface Plugin extends OptionOwner {
   /**
    * Runs the plugin.
    */
-  public void run(Map informationTracker);
+  public void run(Map<String,String> informationTracker);
 
   /**
    * Retrieves the output of the plugin.

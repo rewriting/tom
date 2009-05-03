@@ -31,7 +31,7 @@ public class TestAlgebraic {
     T1 res = `f(a());
     Strategy s = `RepeatId(BottomUp(R()));
     try {
-      res = (T1)s.visit(res);
+      res = s.visit(res);
       Assert.assertEquals(res,`f(c()));
       return;
     } catch(VisitFailure e) {

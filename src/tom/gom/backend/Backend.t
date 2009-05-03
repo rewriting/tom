@@ -85,7 +85,7 @@ public class Backend {
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment());
-          if(generateStratMapping==1) { 
+          if(generateStratMapping==1) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
           } else {

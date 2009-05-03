@@ -26,7 +26,9 @@ package tom.gom.tools.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+
+import java.util.List;
+import java.util.ArrayList;
 
 import tom.engine.tools.ant.TomRegexpPatternMapper;
 import org.apache.tools.ant.BuildException;
@@ -241,7 +243,7 @@ public class GomCommonTask extends MatchingTask {
   }
 
   /**
-   * If true, Gom generate data-structure compatible with no sharing 
+   * If true, Gom generate data-structure compatible with no sharing
    * @param flag if true, activate the option
    */
   public void setNosharing(boolean flag) {
@@ -286,17 +288,16 @@ public class GomCommonTask extends MatchingTask {
    */
   String[] split(String str) {
     try {
-      String res[] = new String[0];
       int begin = 0;
       int end = 0;
-      Vector list = new Vector();
+      List<String> list = new ArrayList<String>();
       while(end < str.length()) {
         while(end < str.length() && str.charAt(end) != ' ')
           end++;
         list.add(str.substring(begin, end));
         begin = ++end;
       }
-      return (String[])list.toArray(res);
+      return list.toArray(new String[0]);
     } catch(Exception x) {
       return new String[0];
     }
