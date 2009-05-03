@@ -75,8 +75,6 @@ public class SymbolTable {
     }
     computeSortDependences();
     isolateFreshSorts();
-    //System.out.println("sorts concerned by freshgom: " + getFreshSorts());
-    //fillRefreshPoints();
     fillAccessibleAtoms();
     generateConsAndNils();
   }
@@ -575,18 +573,6 @@ public class SymbolTable {
           return `vd.setIsRefreshPoint(true);
         }
       }
-    }
-  }
-
-  private void fillRefreshPoints() {
-    for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()) {
-      String c = e.getKey();
-      ConstructorDescription cd = e.getValue();
-      String codom = cd.getSortSymbol();
-      try {
-        ConstructorDescription ncd = `TopDown(SetRefreshPoints(this,codom)).visit(cd);
-        constructors.put(c,ncd);
-      } catch(Exception ex) { throw new GomRuntimeException(); }
     }
   }
 
