@@ -29,6 +29,8 @@ import tom.platform.PlatformMessage;
 
 public class CheckWarningException extends TomException {
 
+  private static final long serialVersionUID = 1L;
+
   public CheckWarningException(PlatformMessage msg) {
     super(msg);
   }

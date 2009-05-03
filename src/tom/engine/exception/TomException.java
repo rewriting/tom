@@ -30,6 +30,8 @@ import tom.platform.PlatformMessage;
 
 public class TomException extends Exception {
 
+  private static final long serialVersionUID = 1L;
+
   protected PlatformMessage msg=null;
   protected Object[] detail;
 

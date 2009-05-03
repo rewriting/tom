@@ -89,16 +89,16 @@ public class TomParserPlugin extends TomGenericPlugin {
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
-    HashSet includedFiles = new HashSet();
-    HashSet alreadyParsedFiles = new HashSet();
+    HashSet<String> includedFiles = new HashSet<String>();
+    HashSet<String> alreadyParsedFiles = new HashSet<String>();
     return newParser(reader,fileName,
                      includedFiles,alreadyParsedFiles,
                      optionManager, tomStreamManager);
   }
   
   protected static HostParser newParser(Reader reader,String fileName,
-                                        HashSet includedFiles,
-                                        HashSet alreadyParsedFiles,
+                                        HashSet<String> includedFiles,
+                                        HashSet<String> alreadyParsedFiles,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
@@ -117,7 +117,9 @@ public class TomParserPlugin extends TomGenericPlugin {
     selector.select("targetlexer");
     // create the parser for target mode
     // also create tom parser and backquote parser
-    return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles, optionManager, tomStreamManager);
+    return new HostParser(selector, fileName,
+        includedFiles, alreadyParsedFiles,
+        optionManager, tomStreamManager);
   }
 
   /**

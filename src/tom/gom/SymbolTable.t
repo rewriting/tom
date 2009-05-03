@@ -31,8 +31,8 @@ import tom.gom.adt.symboltable.*;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
@@ -46,16 +46,15 @@ public class SymbolTable {
 
   %include { adt/gom/Gom.tom}
   %include { adt/symboltable/SymbolTable.tom}
-  %include { util/ArrayList.tom }
   %include { ../library/mapping/java/sl.tom }
 
   /** map sort-name -> SortDescription */
-  private Hashtable<String,SortDescription> sorts =
-    new Hashtable<String,SortDescription>();
+  private Map<String,SortDescription> sorts =
+    new HashMap<String,SortDescription>();
 
   /** map constructor-name -> ConstructorDescription */
-  private Hashtable<String,ConstructorDescription> constructors =
-    new Hashtable<String,ConstructorDescription>();
+  private Map<String,ConstructorDescription> constructors =
+    new HashMap<String,ConstructorDescription>();
 
   private Graph<String> sortDependences = new Graph<String>();
 

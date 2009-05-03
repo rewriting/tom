@@ -92,7 +92,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public synchronized void run(Map informationTracker) {
+  public synchronized void run(Map<String,String> informationTracker) {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     if (inputReader == null)
       return;
@@ -100,7 +100,8 @@ public class GomParserPlugin extends GomGenericPlugin {
     try {
       input = new ANTLRReaderStream(inputReader);
     } catch (java.io.IOException e) {
-      getLogger().log(Level.INFO, GomMessage.unableToUseReaderMessage.getMessage(),
+      getLogger().log(Level.INFO,
+          GomMessage.unableToUseReaderMessage.getMessage(),
           new Object[]{});
       // Invalid input stream
       return;

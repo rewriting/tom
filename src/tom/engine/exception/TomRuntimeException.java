@@ -27,6 +27,8 @@ package tom.engine.exception;
 
 public class TomRuntimeException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public TomRuntimeException() {
     super();
   }
