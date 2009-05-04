@@ -32,7 +32,6 @@ package tom.library.sl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import java.lang.RuntimeException;
 
 /**
  * Object that represents an environment of a strategy
@@ -141,20 +140,6 @@ public final class Environment implements Cloneable {
    */
   public Object getRoot() {
     return subterm[0];
-  }
-
-  /**
-   * get the current root
-   * @return the current root
-   */
-  @SuppressWarnings("unchecked")
-  public <T> T getRoot(T any) {
-    Object st = subterm[0];
-    if (any.getClass().isInstance(st)) {
-      return (T)st;
-    } else {
-      throw new RuntimeException("Wrong type");
-    }
   }
 
   /**

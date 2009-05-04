@@ -106,12 +106,13 @@ public abstract class BasicStrategy implements Strategy {
   }
 
 
+  @SuppressWarnings("unchecked")
   public <T> T visit(T any, Introspector introspector) throws VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(introspector));
     environment.setRoot(any);
     int status = visit(introspector);
     if(status == tom.library.sl.Environment.SUCCESS) {
-      return environment.getRoot(any);
+      return (T) environment.getRoot();
     } else {
       throw new VisitFailure();
     }
