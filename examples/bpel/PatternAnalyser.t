@@ -97,7 +97,7 @@ public class PatternAnalyser{
       %match(HashMap nameToCondition) {
         (_*,mapEntry(k,v),_*) -> {
           try {
-            Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).visit((Condition) `v);
+            Condition newCond = `TopDown(Substitute(sourceToName)).visit((Condition)`v);
             nameToCondition.put(`k,newCond);
           } catch(VisitFailure e) {
             throw new tom.engine.exception.TomRuntimeException();
@@ -126,7 +126,7 @@ public class PatternAnalyser{
           throw new tom.engine.exception.TomRuntimeException();
         }
       }
-      node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
+      <(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(operation,NoCond(),NoCond())); 
         %match(TNodeList linklist){
           (_*,<joincondition>cond</joincondition>,_*) -> {
@@ -153,7 +153,7 @@ public class PatternAnalyser{
           throw new tom.engine.exception.TomRuntimeException();
         }
       }
-      node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
+      ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
         wfglist = `ConcWfg(wfglist*,res);
         %match(TNodeList elses) {
@@ -166,7 +166,7 @@ public class PatternAnalyser{
           }
         }
       }
-      node@<assign>list*</assign> -> {
+      <assign>list*</assign> -> {
         StringBuilder buffer = new StringBuilder();
 
         %match(TNodeList list){
@@ -336,7 +336,7 @@ public class PatternAnalyser{
 
   %strategy Print(node:Info,root:Wfg) extends `Identity(){
     visit Wfg{
-      a@Activity[name=name,incond=incond] ->{
+      Activity[name=name,incond=incond] ->{
         Position pos = node.pos;
         if(pos != null){
           Activity act = (Activity) node.pos.getSubterm().visit(root);
@@ -351,7 +351,7 @@ public class PatternAnalyser{
 
   %strategy GetRoot(node:Info,visited:HashSet) extends `Fail(){
     visit Wfg{
-      a@Activity[name=name,incond=incond] ->{
+      a@Activity[] ->{
         Position newPos = getEnvironment().getPosition();
         if (!visited.contains(newPos)) {
           node.pos = getEnvironment().getPosition();
