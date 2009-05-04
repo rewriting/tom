@@ -289,6 +289,26 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
+	/*
+	 * On  recupere ici la structure qu'on cherche a modifier
+	 * de facon a recupere par la liste par tranche 
+	 * Ex : 
+	 * 	  |         |
+	 *  ------    ------
+	 *  | C1 |    | C2 |
+	 *  ------    ------
+	 *    |         |
+	 *  ---------------
+	 *  |      C3     |
+	 *  ---------------
+	 * 	  |         |
+	 *  ------    ------
+	 *  | C4 |    | C5 |
+	 *  ------    ------
+	 *    |         |
+	 *    
+	 *  On recupere d'abord C1, et C2, puis C3 puis C4 et C5
+	 */
 	public static ArrayList<TwoPath> niveauC1(TwoPath tc1){
 		ArrayList<TwoPath> res = new ArrayList<TwoPath>();
 		%match (TwoPath tc1){
@@ -300,6 +320,25 @@ public class XMLhandlerGui {
 		return res;
 	}
 	
+	/*
+	 * Methode qui permet de modifier uniquement la partie basse d'un TwoC1 dans le cadre de la construction d'un TwoC1
+	 * Ex, si on doit modifier un TwoC1 comme celui ci:
+	 * 	  |         |
+	 *  ------    ------
+	 *  | C1 |    | C2 |
+	 *  ------    ------
+	 *    |         |
+	 *  ---------------
+	 *  |      C3     |
+	 *  ---------------
+	 * 	  |         |
+	 *  ------    ------
+	 *  | C4 |    | C5 |
+	 *  ------    ------
+	 *    |         |
+	 *   Alors il faut modifier uniquement C4 et C5 et conservé le reste du TwoC1
+	 *   Pour cela il faut utilisé une méthode qui permet de determiner combien d'element de la liste sont consommé
+	 */
 	public static TwoPath completudemode_1(TwoPath tp,TwoPath sol,int n){
 		ArrayList<TwoPath> tmp = getListeTwoPath(sol);
 		%match (TwoPath tp){
@@ -311,6 +350,9 @@ public class XMLhandlerGui {
 		return sol;
 	}
 	
+	/*
+	 * Methode qui compte le nombre de cellule qu'il faut modifier
+	 */
 	public static int consommation(TwoPath tp){
 		%match (TwoPath tp){
 			TwoId(onepath) -> { return 1;}
@@ -321,42 +363,41 @@ public class XMLhandlerGui {
 		return 0;
 	}
 	
+	/*
+	 * Methode qui cree des TwoC1 (et s'occupe de mettre correctement les fils)
+	 * Mode 0 = On modifie le bas (amodifier) par rapport au haut (modele)
+ 	 * Mode 1 = On modifie le haut (amodifier) par rapport au bas (modele)
+	 */
 	public static TwoPath gestionC1(TwoPath amodifier,TwoPath modele,int mode){
-		System.out.println("MODE : "+mode);
+		
+		// creation de la liste des elements a modifier
 		ArrayList<TwoPath> listeTwoPath_amodifier;
 		if(mode==0) listeTwoPath_amodifier = getListeTwoPathHaut(amodifier);
 		else listeTwoPath_amodifier = getListeTwoPathBas(amodifier);
 		
 		ArrayList<TwoPath> listeTwoPath_retour = new ArrayList<TwoPath>();
 		
+		// creation de la liste des fils de l'element a modifier
 		ArrayList<OnePath> listeOnePath_amodifier;
 		if(mode==0) listeOnePath_amodifier = getListeOnePathSource(amodifier);
 		else listeOnePath_amodifier = getListeOnePathTarget(amodifier);
 		
+		// creation de la liste des fils de l'element modele
 		ArrayList<OnePath> listeOnePath_modele;
 		if(mode==0) listeOnePath_modele = getListeOnePathTarget(modele);
 		else listeOnePath_modele = getListeOnePathSource(modele);
 		
 		ArrayList<OnePath> listeOnePath_tmp  = new ArrayList<OnePath>();
 		
-		System.out.println("amodifier : "+amodifier);
-		System.out.println();
-		System.out.println("modele : "+modele);
-		System.out.println();
-		System.out.println("LM : "+ listeTwoPath_amodifier);
-		System.out.println();
-		System.out.println("LOPM : "+listeOnePath_modele);
-		System.out.println("LOPAM : "+listeOnePath_amodifier);
-		
 		Iterator it_listeOnePath_amodifier = listeOnePath_amodifier.iterator();
 		Iterator it_listeOnePath_modele = listeOnePath_modele.iterator();
 		
-		//On cree les nouveaux OneCell a partir de données du modele et de amodifier
+		// On cree les nouveaux OneCell a partir de données du modele et de amodifier
+		// pour chaque fil du modele, on modifie chaque fil a modifier
+		// Cette methode ignore les ID
 		while(it_listeOnePath_amodifier.hasNext() && it_listeOnePath_modele.hasNext()){
-			
 			OnePath c2 = (OnePath)it_listeOnePath_modele.next();
 			if(c2 instanceof OneCell){
-			
 				OnePath c1 = (OnePath)it_listeOnePath_amodifier.next();
 				if(c1 instanceof OneCell && c2 instanceof OneCell) listeOnePath_tmp.add(`OneCell(c1.getName(),c2.getx(),c1.gety(),c1.gethauteur(),c1.getlargeur()));
 				else listeOnePath_tmp.add(`Id());
@@ -364,29 +405,34 @@ public class XMLhandlerGui {
 		}
 		
 		Iterator it_listeOnePath_retour = listeOnePath_tmp.iterator();
-		
 		Iterator it_listeTwoPath_amodifier = listeTwoPath_amodifier.iterator();
 		int newx = -1;
 		
+		//On modifie maintenant les cellules
 		while(it_listeTwoPath_amodifier.hasNext()){
 			
+			//pour chaque cellule
 			TwoPath tp = (TwoPath)it_listeTwoPath_amodifier.next();
 			int nb=-1;
-			
 			int newlargeur = -1;
-			
-			
 			if(mode==0) nb=tp.sourcesize();
 			else nb=tp.targetsize();
 			
-			
 			ArrayList<OnePath> tmp = new ArrayList<OnePath>();
 			System.out.println(listeOnePath_tmp);
+			// on prend les fils de la liste modele pour les mettre dans la cellule
 			for(int i=0;i<nb;i++){
 				OnePath tmpoc = listeOnePath_tmp.get(0);
 				if(tmpoc instanceof OneCell){
+					// cas particulier : en Mode 0 (ie on modifie bas par rapport a haut)
+					// Lorsque c'est le premier fil, on la cellule sera déplacé jusqu'a la position du fil
 					if (i==0 && mode==0 && newx!=-1) newx=tmpoc.getx();
+					// cas particulier : en Mode 1 (ie on modifie haut par rapport a bas)
+					// La cellule prendra en largeur la position du dernier fil
 					if (i==nb-1 && mode==1) newlargeur=tp.getLargeur();
+					// cas particulier : 
+					// En mode 0, la largeur de la nouvelle cellule sera la position du dernier fil
+					// En mode 1, Si la position du dernier fil est plus loin que la largeur de la cellule, alors modifier la largeur en consequence
 					if ((i==nb-1 && mode==0) ||( i==nb-1 && mode==1 && ((tmpoc.getx())>(newx+tp.getLargeur())))) newlargeur=tmpoc.getx()-newx+4;				
 					tmp.add(tmpoc);
 				} else tmp.add(`Id());
@@ -396,6 +442,7 @@ public class XMLhandlerGui {
 			if(!it_listeTwoPath_amodifier.hasNext()) newlargeur=modele.getLargeur()-newx;
 			System.out.println("new : "+newx+" "+newlargeur);
 			
+			// En fonction du type de cellule, on reconstruit la cellule avec les nouveaux fils selon le mode prévu
 			if(tp instanceof TwoCell){
 				if(mode==0){
 					if(newx!=-1) listeTwoPath_retour.add(`TwoCell(tp.getName(),genererOneC0(tmp),tp.target(),tp.getType(),tp.getID(),newx,tp.getY(),tp.getHauteur(),newlargeur));
@@ -411,9 +458,12 @@ public class XMLhandlerGui {
 			if(mode==0) newx=listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getX()+newlargeur+4;	
 			else newx=listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getX()+listeTwoPath_retour.get(listeTwoPath_retour.size()-1).getLargeur()+4;
 		}
+		// on genere la tranche
 		TwoPath res = genererTwoC0(listeTwoPath_retour,mode);
 		System.out.println("res : "+res);
 		
+		// en mode 1, il peut y avoir le cas particulier, notamment lorsque la partie a modifier
+		// est un TwoC1, il faut alors modifier la tranche basse MAIS aussi conserve le haut
 		if(mode==1){
 			res = completudemode_1(amodifier,res,0);
 		}
@@ -424,7 +474,7 @@ public class XMLhandlerGui {
 	
 
 	/*
-	 * Methode David : Permet d'agrandir la hauteur de l'element cible (path) d'une taille c
+	 * Methode David : Permet d'agrandir la hauteur de l'element cible (path) d'une taille c dans le cadre de la construction d'un TwoC0
 	 */
 	public static TwoPath allongerFils(TwoPath path ,int c){
 		%match (TwoPath path){
@@ -490,6 +540,11 @@ public class XMLhandlerGui {
 		return liste;
 	}
 	
+	/*
+	 * Methode David : Retourne sous forme d'une liste un TwoPath
+	 * Permet d'avoir de maniere detourner une liste de OnePath
+	 * ATTENTION : Ne recupere que les parties hautes
+	 */
 	public static ArrayList<TwoPath> getListeTwoPathHaut(TwoPath path){
 		ArrayList<TwoPath> liste = new ArrayList<TwoPath>();
 		%match (TwoPath path){
@@ -537,11 +592,15 @@ public class XMLhandlerGui {
 		%match (OnePath path){
 			Id() -> {liste.add(path);}
 			OneCell(_,_,_,_,_) -> { liste.add((OneCell)path); }
-		 	OneC0 (head,tail*) -> {liste.addAll(getListeOnePath(`head)); liste.addAll(getListeOnePath(`tail*));}
+		 	OneC0 (head,tail*) -> { liste.addAll(getListeOnePath(`head)); liste.addAll(getListeOnePath(`tail*));}
 		}
 		return liste;
 	}
 	
+	/*
+	 * Methode qui repartie les fils de la cellule de maniere constante
+	 * A relié a la methode : RepartitionFilsTwoCell
+	 */
 	public static TwoPath RepartitionFilsTwoPath(TwoPath path){
 		%match (TwoPath path){
 			TwoId(onepath) -> { return(path);}
@@ -552,6 +611,10 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
+	/*
+	 * Methode qui repartie les fils de la cellule de maniere constante mais seulement le bas de la cellule
+	 * * A relié a la methode : RepartitionFilsTwoCellBas
+	 */
 	public static TwoPath RepartitionFilsTwoPathBas(TwoPath path){
 		%match (TwoPath path){
 			TwoId(onepath) -> { return(path);}
@@ -562,6 +625,10 @@ public class XMLhandlerGui {
 		return path;
 	}
 	
+	
+	/*
+	 * Methode qui repartie les fils de la cellule de maniere constante mais seulement le bas de la cellule
+	 */
 	public static TwoCell RepartitionFilsTwoCellBas(TwoCell path){
 		ArrayList<OnePath> listebas = getListeOnePathTarget(path);
 		Iterator it2 = listebas.iterator();
@@ -581,7 +648,9 @@ public class XMLhandlerGui {
 		return (TwoCell)res;
 	}
 	
-	
+	/*
+	 * Methode qui repartie les fils de la cellule de maniere constante
+	 */
 	public static TwoCell RepartitionFilsTwoCell(TwoCell path){
 		ArrayList<OnePath> listehaut = getListeOnePathSource(path);
 		ArrayList<OnePath> listebas = getListeOnePathTarget(path);
@@ -614,21 +683,24 @@ public class XMLhandlerGui {
 	}
 	
 	/*
-	 * Methode David : Methode qui organise les TwoC1
-	 * Ici, on cherche a donner une taille pour les elements du bas en fonction
-	 * des OnePath du niveau
+	 * Methode David : Methode qui organise et cree les TwoC1
+	 * Emploi les methodes : GestionC1, NiveauC1, Completuremode_1
+	 * 
 	 */
 	public static TwoPath gestionTwoC1(TwoPath haut, TwoPath bas){
 		int taillehaut = haut.getLargeur();
 		int taillebas = bas.getLargeur();
 		System.out.println("Taille haut : "+taillehaut);
 		System.out.println("Taille bas : "+taillebas);
+		// si c'est le bas qu'il faut modifier
 		if(taillehaut>=taillebas){
 			%match (TwoPath bas){
+				// cas particulier ou il faut modifier un TwoC1, il faut alors modifier chaque tranche de celui ci
 				TwoC1(head,tail*) -> {
-					ArrayList<TwoPath> listeniveau = niveauC1(bas);
+					ArrayList<TwoPath> listeniveau = niveauC1(bas); //on recupere alors le haut de la partie basse
 					Iterator it = listeniveau.iterator();
 					TwoPath tptmp1 = haut;
+					//on modifie progressivement depuis le début et on redescent progressivement dans le TwoC1
 					while(it.hasNext()){
 						TwoPath tptmp2 = (TwoPath)it.next();
 						tptmp1 = `TwoC1(tptmp1,decalageY(gestionC1(tptmp2,tptmp1,0),haut.getHauteur()));
@@ -645,7 +717,9 @@ public class XMLhandlerGui {
 		return `TwoC1(haut,bas);
 	}
 	
-	
+	/*
+	 * Methode qui s'occupe d'organiser et de creer des TwoC0 (utilise la methode allongeFils)
+	 */
 	public static TwoPath gestionTwoC0(TwoPath gauche, TwoPath droite){	
 		int taillegauche = gauche.getHauteur();
 		int tailledroite = droite.getHauteur();
