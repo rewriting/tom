@@ -43,14 +43,9 @@ public class Main {
 				fileinput = new FileInputStream(options.in);
 			}
 			// Parse the input expression and build an AST
-			LangageLexer lexer = new LangageLexer(new ANTLRInputStream(fileinput));
+			IptablesLexer lexer = new IptablesLexer(new ANTLRInputStream(fileinput));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			LangageParser ruleParser = new LangageParser(tokens);
-			/*
-			 * MODIFY HERE
-			 * file
-			 * Action
-			 */
+			IptablesParser ruleParser = new IptablesParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			IptablesBlocks inst = (IptablesBlocks) IptablesAdaptor.getTerm(b1);
 			System.out.println("inst = " + inst);

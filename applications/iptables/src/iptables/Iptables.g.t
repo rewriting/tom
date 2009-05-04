@@ -1,5 +1,5 @@
 /* This grammar parses simple firewall */
-grammar Langage;
+grammar Iptables;
 options {
   output=AST;
   ASTLabelType=Tree;
@@ -94,10 +94,10 @@ IPV4CIDR	:
   | INT '.' INT '.' INT '/' INT
   | INT '.' INT '.' INT '.' INT '/' INT;
 
-IPV6HEX		: (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
+IPV6HEX	: (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
 		(HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
 		(HEX8 HEX8);
-IPV6CIDR	: IPV6HEX '/' INT;
+IPV6CIDR : IPV6HEX '/' INT;
 
 HEX8: ('0'..'9') ('0'..'9') ;
 INT : ('0'..'9')+ ;
