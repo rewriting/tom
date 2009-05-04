@@ -1,0 +1,116 @@
+# Required order: options, normalization, queueing, translation, filtering.
+# Note that translation rules are first match while filter rules are last match.
+# See pf.conf5) for syntax and examples
+
+################ Macros ###################################
+# use a macro for the interface name, so it can be changed easily
+ext_if = "fxp0"
+int_if = "fxp1"
+
+################ Tables ####################################
+table <trustedhostsstatic> const {1.1.1.1,trusted.host.domain}
+table <blackliststatic> const {5.5.5.5}
+table <trustedhostsdynamic> persist
+
+################ Options ##################################
+# Timeout Options
+set optimization aggressive
+set loginterface $ext_if
+set block-policy drop
+set require-order yes
+
+################ Normaliztation ############################
+# normalize all incoming traffic. Set ttl to 254 to limit possible mapping of hosts behind firewall.
+# Also set random-id to help with the same. Set mss to ATM network frame size for easy splitting upstream. 
+scrub on $ext_if all random-id min-ttl 254 max-mss 1452 reassemble tcp fragment reassemble
+
+################ Translation ###############################
+# Translation rules are first match
+
+# NAT internal hosts
+nat on $ext_if from !($ext_if) to any -> ($ext_if:0)
+
+# Redirect Bit Torrent traffic to internal machine
+rdr on $ext_if proto tcp from any to any port 7381 -> 192.168.0.41
+# Redirect for MythTV webserver
+rdr on $ext_if proto tcp from any to any port 443 -> 192.168.0.30
+# Redirect for mp3 streaming music (edna)
+rdr on $ext_if proto tcp from any to any port 993 -> 192.168.0.40
+
+# Postfix Mail Server (internal and external)
+rdr on $int_if proto tcp from any to $int_if port smtp -> lo0 port smtp
+rdr on $ext_if proto tcp from any to ($ext_if) port smtp -> lo0 port smtp
+
+# Dovecot pop3s/imap Server (internal interface) redirect for internal hosts.
+rdr on $int_if proto tcp from any to  $int_if  port pop3s -> lo0 port pop3s
+
+# DENY rouge redirections
+no rdr
+
+################ Filtering #################################
+# loopback
+antispoof log quick for lo0 inet
+pass quick on lo0 all
+
+# block inet6
+block in quick inet6
+
+#blacklisted ips
+block in quick on $ext_if from <blackliststatic> to any flags S/SA
+
+# silently drop broadcasts cable modem noise
+block in quick on $ext_if from any to 255.255.255.255
+
+# block and log everything by default
+block log on $ext_if all
+
+# block anything coming from source we have no back routes for
+block in from no-route to any
+
+# Block and log outgoing packets that don't have our address as source,
+# they are either spoofed or something is misconfigured NAT disabled,
+# (for instance), we want to be nice and don't send out garbage.
+block out log quick on $ext_if from ! $ext_if to any
+
+# pass VPN traffic. Turn on if needed.
+# pass in quick proto gre all
+# pass out quick proto gre all
+
+# TCP
+# pass out all TCP connections and modulate state
+pass out on $ext_if proto tcp from ($ext_if) to any flags S/SA modulate state queue (q_def1,q_pri)
+# Tag all packets on the internal interface from the bittorrent machine's ip (alias)
+pass in on $int_if from 192.168.0.41 to any tag TORRENT modulate state
+# Put all packets tagged TORRENT in the torrent queue.
+pass out on $ext_if proto tcp from ($ext_if) to any port > 1024 flags S/SA tagged TORRENT modulate state queue (q_tor)
+pass out on $ext_if proto udp from ($ext_if) to any port > 1024 tagged TORRENT keep state queue (q_tor)
+
+# UDP
+# pass out all UDP connections and keep state
+pass out on $ext_if proto udp from ($ext_if) to any keep state queue (q_def1)
+
+# pass out all ICMP connections and keep state
+pass out on $ext_if inet proto icmp from ($ext_if) to any keep state
+
+# Allow only specific block of trusted ip's to ssh to the firewall.
+pass in quick on $ext_if inet proto tcp from { <trustedhostsstatic>,<trustedhostsdynamic> } to ($ext_if) port 22 flags S/SA keep state queue (q_def1,ssh_login)
+
+# Allow Bit Torrent traffic to internal machine ip (alias)
+pass in on $ext_if proto tcp from any to 192.168.0.41 port 7381 flags S/SA synproxy state $TorSTO queue q_tor
+pass in on $ext_if proto udp from any to 192.168.0.41 port 7381 keep state $TorSTO queue q_tor
+
+# Allow MythTV to inside
+pass in quick on $ext_if inet proto tcp from <trustedhostsstatic> to 192.168.0.30 port 443 flags S/SA keep state queue (q_def1,q_pri)
+
+# Allow mp3 streaming music (edna)
+pass in quick on $ext_if inet proto tcp from <trustedhostsstatic> to 192.168.0.40 port 993 flags S/SA keep state queue (q_mus,q_pri)
+
+# Allow traffic for postfix mail server
+pass in log on $ext_if inet proto tcp from any to lo0 port smtp flags S/SA synproxy state $SpamdSTO queue (q_smtp,q_pri)
+pass in     on $int_if inet proto tcp from 192.168.0.0/24 to lo0 port smtp synproxy state flags S/SA
+
+# Allow traffic for external http server pantz.org
+pass in quick on $ext_if inet proto tcp from any to ($ext_if) port 80 flags S/SA keep state queue (q_http,q_pri)
+
+# Allow traffic to Dovecot pop3 server from any network on the inside. Change to external if needed.
+pass in on $int_if inet proto tcp from any to lo0 port pop3s flags S/SA keep state
