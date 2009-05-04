@@ -34,13 +34,13 @@ import java.util.logging.*;
 public class TestHandler extends Handler {
 
   List<LogRecord> records;
-  Vector mess_attempted;
+  Vector<Object> mess_attempted;
   int index;
 
   /** Constructor */
   public TestHandler(String fileName) {
     records = new ArrayList<LogRecord>();
-    mess_attempted = new Vector();
+    mess_attempted = new Vector<Object>();
     index = 0;
     try {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
@@ -118,7 +118,7 @@ public class TestHandler extends Handler {
 
   public void clear() {
     index=0;
-    mess_attempted = new Vector();
+    mess_attempted = new Vector<Object>();
     records = new ArrayList<LogRecord>();
   }
 
