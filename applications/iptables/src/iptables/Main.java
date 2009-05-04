@@ -61,7 +61,10 @@ public class Main {
 			rs = Analyser.checkIntegrity(rs);
 			System.out.println("new rules = " + rs);
 
+			System.out.println("### Iptables ###");
 			IptablesOutput.printTranslation(rs);
+			System.out.println("### Packet Filter ###");
+			PacketFilterOutput.printTranslation(rs);
 
 			PrintStream outputfile = System.out;
 			if(options.out != null) {

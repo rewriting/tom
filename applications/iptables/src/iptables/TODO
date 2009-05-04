@@ -1,4 +1,4 @@
--Add states in Iptables output
+-Fix doubloons bug in Output classes
 -Fix dest address grammar bug
 -Fix Rule's String grammar bug
 -Fix port grammar bug
