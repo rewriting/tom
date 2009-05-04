@@ -34,7 +34,7 @@ import tom.library.sl.*;
 
 public class Inlining {
 
-  %gom(--withCongruenceStrategies) {
+  %gom(--withSeparateCongruenceStrategies) {
     module Term
       imports int String
       abstract syntax
@@ -59,7 +59,7 @@ public class Inlining {
   %include { Strategy.tom }
   %include { sl/basic.tom }
   %include { sl/composed.tom }
-  //%include { inlining/term/_Term.tom }
+  %include { inlining/term/_Term.tom }
 
   public final static void main(String[] args) {
     try {
