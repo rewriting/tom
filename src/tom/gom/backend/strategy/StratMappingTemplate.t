@@ -63,7 +63,6 @@ public class StratMappingTemplate extends MappingTemplateClass {
     * in a _file.tom
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    System.out.println(generateStratMapping);
     if(generateStratMapping == 1) {
       writer.write("  %include { sl.tom }");
     }
