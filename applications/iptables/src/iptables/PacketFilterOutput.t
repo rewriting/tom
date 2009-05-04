@@ -81,14 +81,14 @@ public class PacketFilterOutput {
 
 	public static String wrapAddressFamily(Address src,Address dest) {
 		%match(src,dest) {
-			Addr4(_,_,_),Addr4(_,_,_) -> { return  AF_IPV4 + " "; }
-			Addr6(_,_,_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6 + " "; }
-			Addr6(_,_,_,_,_),Addr4(_,_,_) -> { return  AF_IPV6 + " "; }
-			Addr4(_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6 + " "; }
-			AddrAny(),Addr6(_,_,_,_,_) -> { return  AF_IPV6 + " "; }
-			Addr6(_,_,_,_,_),AddrAny() -> { return  AF_IPV6 + " "; }
-			AddrAny(),Addr4(_,_,_) -> { return  AF_IPV4 + " "; }
-			Addr4(_,_,_),AddrAny() -> { return  AF_IPV4 + " "; }
+			Addr4(_,_,_),Addr4(_,_,_) -> { return  AF_IPV4; }
+			Addr6(_,_,_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
+			Addr6(_,_,_,_,_),Addr4(_,_,_) -> { return  AF_IPV6; }
+			Addr4(_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
+			AddrAny(),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
+			Addr6(_,_,_,_,_),AddrAny() -> { return  AF_IPV6; }
+			AddrAny(),Addr4(_,_,_) -> { return  AF_IPV4; }
+			Addr4(_,_,_),AddrAny() -> { return  AF_IPV4; }
 		}
 		return "";
 	}
@@ -163,6 +163,7 @@ public class PacketFilterOutput {
 
 	public static void printTranslation(Rules rs) {
 		%match(rs) {
+			/*
 			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
 					NoOpt(),_),
@@ -171,10 +172,9 @@ public class PacketFilterOutput {
 				printCmdPolicy(`action,`target);
 				printTranslation(`X*);
 			}
-
-			Rules(
-				Rule(action,iface,proto,tar,srcaddr,
-					dstaddr,srcport,dstport,opts,_),
+			*/
+			Rules(Rule(action,iface,proto,tar,srcaddr,dstaddr,
+					srcport,dstport,opts,_),
 				X*
 			) -> {
 				%match(action) {

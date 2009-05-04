@@ -172,9 +172,18 @@ public class IptablesOutput {
 
 	public static void printTranslation(Rules rs) {
 		%match(rs) {
-			Rules(
-				Rule(action,iface,proto,tar,srcaddr,
-					dstaddr,srcport,dstport,opts,_),
+			/*
+			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
+					AddrAny(),AddrAny(),PortAny(),PortAny(),
+					NoOpt(),_),
+				X*
+			) -> {
+				printCmdPolicy(TABLE_FILTER,`action,`target);
+				printTranslation(`X*);
+			}
+			*/
+			Rules(Rule(action,iface,proto,tar,srcaddr,dstaddr,
+					srcport,dstport,opts,_),
 				X*
 			) -> {
 				printCmdAppend(TABLE_FILTER,`tar);
@@ -194,16 +203,6 @@ public class IptablesOutput {
 				printOpt(wrapOptions(`opts));
 				print2Opt(OPT_ACTION,wrapAction(`action));
 				printNewLine();
-				printTranslation(`X*);
-			}
-
-			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
-					AddrAny(),AddrAny(),PortAny(),PortAny(),
-
-					NoOpt(),_),
-				X*
-			) -> {
-				printCmdPolicy(TABLE_FILTER,`action,`target);
 				printTranslation(`X*);
 			}
 		}
