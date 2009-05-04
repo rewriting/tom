@@ -55,7 +55,7 @@ public class TomXMLAnalyser {
     if (analysedString != null && !analysedString.equals("")) {
       try {
         xtools = new XmlTools();
-        TNode term = (TNode)xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
+        TNode term = xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
         String res = extractEMail(term.getDocElem());
         return res;
       } catch (Exception e) {

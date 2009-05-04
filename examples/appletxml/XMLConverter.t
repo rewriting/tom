@@ -57,7 +57,7 @@ public class XMLConverter extends JApplet implements ActionListener {
   public void init () {
     String text = "";
     try { //get a text param from html page
-      text = (String) getParameter ("text");
+      text = getParameter("text");
     } catch(Exception e) {}
     if (text==null || text.equals("")) {
       text = defaultText;
