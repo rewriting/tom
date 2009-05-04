@@ -53,7 +53,7 @@ goto end
 rem Check for TOM_LIB variable
 if not "%TOM_LIB%" == "" goto okLib
 rem Add all jars in lib dir to TOM_LIB variable (will include a initial semicolon ";")
-for %%i in ("%TOM_HOME%\lib\*.jar") do call "%TOM_HOME%\bin\tlappend.bat" %%i
+call "%TOM_HOME%\bin\tlappend.bat" "%TOM_HOME%\lib\tom-runtime-full.jar"
 :okLib
 
 rem Check for TOM_OPTS variable
