@@ -111,7 +111,7 @@ public abstract class BasicStrategy implements Strategy {
     environment.setRoot(any);
     int status = visit(introspector);
     if(status == tom.library.sl.Environment.SUCCESS) {
-      return (T) environment.getRoot();
+      return environment.getRoot(any);
     } else {
       throw new VisitFailure();
     }

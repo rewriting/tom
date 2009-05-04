@@ -223,7 +223,7 @@ public abstract class AbstractStrategy implements Strategy {
     setRoot(any);
     int status = visit(m);
     if(status == Environment.SUCCESS) {
-      return (T) getRoot();
+      return getRoot(any);
     } else {
       throw new tom.library.sl.VisitFailure();
     }
@@ -259,6 +259,15 @@ public abstract class AbstractStrategy implements Strategy {
    */
   public Object getRoot() {
     return environment.getRoot();
+  }
+
+  /** 
+   * Get the current root.
+   *
+   * @return the current root
+   */
+  public <T> T getRoot(T any) {
+    return environment.getRoot(any);
   }
 
   /** 
