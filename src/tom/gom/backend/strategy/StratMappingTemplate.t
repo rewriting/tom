@@ -37,7 +37,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
 
   %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateTomMapping) {
+  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateStratMapping) {
     super(gomClass,gomEnvironment);
     this.generateStratMapping = generateStratMapping;
     %match(gomClass) {
@@ -63,9 +63,10 @@ public class StratMappingTemplate extends MappingTemplateClass {
     * in a _file.tom
     */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    //if(generateStratMapping == 1) {
-      writer.write("  %include { Strategy.tom }");
-    //}
+    System.out.println(generateStratMapping);
+    if(generateStratMapping == 1) {
+      writer.write("  %include { sl.tom }");
+    }
     %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
