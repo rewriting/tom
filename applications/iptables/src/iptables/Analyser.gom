@@ -64,14 +64,16 @@ abstract syntax
 	GlobalOptions = GlobalOpts(GlobalOption*)
 
 	GlobalOption =
-		LogLevel(level:int)
+		NoGlobalOpt()
+		| LogLevel(level:int)
 
 	/* Protocol options */
 	ProtocolOptions = ProtoOpts(ProtocolOption*)
 
 	/* >>> TODO: split by protocol */
 	ProtocolOption =
-		ICMPxType(id:int)
+		NoProtoOpt()
+		| ICMPxType(id:int)
 		| ICMPxTTLZero()
 		| ICMPxDestinationUnreachable()
 		| TCPxSyn(val:boolean)

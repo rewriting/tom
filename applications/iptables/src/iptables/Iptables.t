@@ -54,8 +54,8 @@ public class Iptables {
 
 			Options options = `NoOpt();
 			States states = `States(StateAny());
-			GlobalOptions globalOpt = `GlobalOpts();
-			ProtocolOptions protoOpt = `ProtoOpts();
+			GlobalOptions globalOpt = `GlobalOpts(NoGlobalOpt());
+			ProtocolOptions protoOpt = `ProtoOpts(NoProtoOpt());
 
 			%match(o) {
 				IptablesOptions(_*,SourcePort(ns),_*) -> {

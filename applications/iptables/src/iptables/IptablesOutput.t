@@ -15,6 +15,7 @@ public class IptablesOutput {
 		OPT_APPEND = "--append",
 		OPT_POLICY = "--policy",
 		OPT_TABLE = "--table",
+		OPT_STATE = "--state",
 		OPT_PROTOCOL = "--protocol",
 		OPT_IFACE_IN = "--in-interface",
 		OPT_IFACE_OUT = "--out-interface",
@@ -23,6 +24,7 @@ public class IptablesOutput {
 		OPT_PORTSRC = "--source-port",
 		OPT_PORTDST = "--destination-port",
 		OPT_ACTION = "--jump",
+		OPT_LOAD_STATE = "-m state",
 
 		ACTION_ACCEPT = "ACCEPT",
 		ACTION_DROP = "DROP",
@@ -34,7 +36,12 @@ public class IptablesOutput {
 		CHAIN_FORWARD = "FORWARD",
 
 		TABLE_FILTER = "filter",
-		TABLE_NAT = "nat";
+		TABLE_NAT = "nat",
+
+		STATE_NEW = "NEW",
+		STATE_RELATED = "RELATED",
+		STATE_ESTABLISHED = "ESTABLISHED",
+		STATE_INVALID = "INVALID";
 		
 	public static String wrapAction(Action a) {
 		%match(a) {
@@ -56,32 +63,88 @@ public class IptablesOutput {
 	}
 
 	public static String wrapProtocol(Protocol p) {
+		String s = OPT_PROTOCOL + " ";
 		%match(p) {
-			TCP()	-> { return "tcp"; }
-			UDP()	-> { return "udp"; }
-			IPv4()	-> { return "ip4"; }
-			IPv6()	-> { return "ip6"; }
-			ICMP()	-> { return "icmp"; }
-			ARP()	-> { return "arp"; }
-			RIP()	-> { return "rip"; }
-			Ethernet()	-> { return "eth"; }
+			TCP()	-> { return s + "tcp"; }
+			UDP()	-> { return s + "udp"; }
+			IPv4()	-> { return s + "ip4"; }
+			IPv6()	-> { return s + "ip6"; }
+			ICMP()	-> { return s + "icmp"; }
+			ARP()	-> { return s + "arp"; }
+			RIP()	-> { return s + "rip"; }
+			Ethernet()	-> { return s + "eth"; }
 		}
-		return null;
+		return "";
 	}
 
-	public static String wrapAddress(Address a) {
+	public static String wrapAddress(Address a,String opt) {
 		%match(a) {
-			Addr4(_,_,str) -> { return `str; }
-			Addr6(_,_,_,_,str) -> { return `str; }
+			Addr4(_,_,str) -> { return opt + " " + `str; }
+			Addr6(_,_,_,_,str) -> { return opt + " " + `str; }
 		}
-		return null;
+		return "";
 	}
 
-	public static String wrapPort(Port p) {
+	public static String wrapPort(Port p, String opt) {
 		%match(p) {
-			Port(i) -> { return `i + ""; }
+			Port(i) -> { return opt + " " + `i; }
 		}
-		return null;
+		return "";
+	}
+
+	public static String wrapOptGlob(GlobalOptions gopts) {
+		%match(gopts) {
+			GlobalOpts(o@!NoGlobalOpt(),X*) -> {
+				String opt = "";
+				%match(o) {
+				}
+				return opt + wrapOptGlob(`X*);
+			}
+		}
+		return "";
+	}
+
+	public static String wrapOptProto(ProtocolOptions popts) {
+		%match(popts) {
+			ProtoOpts(o@!NoProtoOpt(),X*) -> {
+				String opt = "";
+				%match(o) {
+				}
+				return opt + wrapOptProto(`X*);
+			}
+		}
+		return "";
+	}
+
+	public static String wrapOptStates(States states) {
+		%match(states) {
+			States(s@!StateAny(),X*) -> {
+				String opt = OPT_STATE + " ";
+				%match(s) {
+					New() -> { opt += STATE_NEW + " "; }
+					Related() -> { opt += STATE_RELATED + " "; }
+					Established() -> { opt += STATE_ESTABLISHED + " "; }
+					Invalid() -> { opt += STATE_INVALID + " "; }
+					StateAny() -> { opt = ""; }
+				}
+				return opt + wrapOptStates(`X*);
+			}
+		}
+		return "";
+	}
+
+	public static String wrapOptions(Options opts) {
+		%match(opts) {
+			Opt(glob,proto,states) -> {
+				String states = wrapOptStates(`states);
+				return wrapOptGlob(`glob) 
+					+ wrapOptProto(`proto)
+					+ (states.length() > 0 ?
+						(OPT_LOAD_STATE + " " + states)
+						: "");
+			}
+		}
+		return "";
 	}
 
 	public static void printCmdAppend(String tab, Target t) {
@@ -95,8 +158,14 @@ public class IptablesOutput {
 			+ wrapTarget(`t));
 	}
 
+	public static void printOpt(String optname) {
+		if (optname.length() > 0)
+			System.out.print(optname + " ");
+	}
+
 	public static void print2Opt(String optname, String arg) {
-		System.out.print(optname + " " + arg + " ");
+		if ((optname.length() > 0) && (arg.length() > 0))
+			System.out.print(optname + " " + arg + " ");
 	}
 
 	public static void printNewLine() { System.out.println(""); }
@@ -109,12 +178,6 @@ public class IptablesOutput {
 				X*
 			) -> {
 				printCmdAppend(TABLE_FILTER,`tar);
-				%match(proto) {
-					!ProtoAny() -> {
-						print2Opt(OPT_PROTOCOL,
-							wrapProtocol(`proto));
-					}
-				}
 
 				%match(iface) {
 					Iface(name) -> {
@@ -123,30 +186,12 @@ public class IptablesOutput {
 					}
 				}
 
-				%match(srcport) {
-					!PortAny() -> {
-						print2Opt(OPT_PORTSRC,
-							wrapPort(`srcport));
-					}
-				}
-				%match(dstport) {
-					!PortAny() -> {
-						print2Opt(OPT_PORTDST,
-							wrapPort(`dstport));
-					}
-				}
-				%match(srcaddr) {
-					!AddrAny() -> {
-						print2Opt(OPT_IPSRC,
-							wrapAddress(`srcaddr));
-					}
-				}
-				%match(dstaddr) {
-					!AddrAny() -> {
-						print2Opt(OPT_IPDST,
-							wrapAddress(`dstaddr));
-					}
-				}
+				printOpt(wrapProtocol(`proto));
+				printOpt(wrapPort(`srcport,OPT_PORTSRC));
+				printOpt(wrapPort(`dstport,OPT_PORTDST));
+				printOpt(wrapAddress(`srcaddr,OPT_IPSRC));
+				printOpt(wrapAddress(`dstaddr,OPT_IPDST));
+				printOpt(wrapOptions(`opts));
 				print2Opt(OPT_ACTION,wrapAction(`action));
 				printNewLine();
 				printTranslation(`X*);
