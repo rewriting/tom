@@ -12,7 +12,7 @@
   <property name="iptables.ast"      value="${iptables.package}/Analyser"/>
   <property name="iptables.ast.wrapper"      value="${iptables.package}/AnalyserWrapper"/>
   <property name="iptables.ast.iptables"      value="${iptables.package}/Iptables"/>
-  <property name="iptables.grammarname"  value="Langage"/>
+  <property name="iptables.grammarname"  value="Iptables"/>
   <property name="iptables.grammar"  value="${iptables.package}/${iptables.grammarname}"/>
   
   <import file="${tom.home}/lib/tom-common.xml"/>
