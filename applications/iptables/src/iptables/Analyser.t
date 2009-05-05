@@ -42,10 +42,10 @@ public class Analyser {
 				if (isEquiv(`srcaddr1,`srcaddr2) 
 				&& isEquiv(`dstaddr1,`dstaddr2)) {
 					if (`action1 == `action2) {
-						printWarn("doubloon: " + `r1);
+						printWarn("redundancy: " + `r1);
 						return `Rules(X*,r1,Y*,Z*);
 					} else {
-						printErr("conflict:" 
+						printErr("shadowing:" 
 						+ `r1 + "\t/\t" + `r2 + 
 						" => removing " + `r2);
 						
@@ -58,18 +58,32 @@ public class Analyser {
 
 	%strategy checkInclusion() extends Identity() { 
 		visit Rules {
-			Rules(X*,r1,Y*,r2,Z*) -> {
-				/* looking for generalization */
+			Rules(
+				X*,
+				r1@Rule(act1,_,_,_,_,_,_,_,_,_),
+				Y*,
+				r2@Rule(act2,_,_,_,_,_,_,_,_,_),
+				Z*
+			) -> {
 				int i = isInclude(`r1,`r2);
 				if (i == 1) {
-					printWarn("generalization: " + `r2);
-					return `Rules(X*,r1,Y*,Z*);
-				} else if (i == -1) {
-					printWarn("generalization: " + `r1);
-					return `Rules(X*,Y*,r2,Z*);
-				} else if (i == 0) {
-					printWarn("redundancy: " + `r1);
-					return `Rules(X*,r1,Y*,Z*);
+					if (`act1 == `act2) {
+						printWarn("redundancy: " + `r1);
+						return `Rules(X*,r1,Y*,Z*);
+					} else {
+						printWarn("generalization: " 
+							+ `r1 + "/" + `r2);
+						return `Rules(X*,r1,Y*,Z*);
+					}
+				} else if ((i == -1) || (i == 0)) {
+					if (`act1 == `act2) {
+						printWarn("redundancy: " + `r1);
+						return `Rules(X*,r1,Y*,Z*);
+					} else {
+						printErr("shadowing: " + `r1 
+							+ "/" + `r2);
+						return `Rules(X*,Y*,r2,Z*);
+					}
 				} else if (i == -2) {
 					printWarn("corelation: "+`r1+"/" + `r2);
 				} else if (i == 2) {
