@@ -86,18 +86,13 @@ opt:	proto port		-> ^(port)
 	| STRING		-> ^(UnknownOption STRING)
 	;
 
-IPV4DOTDEC	: (INT|'*') '.' (INT|'*') '.' (INT|'*') '.' (INT|'*');
-//IPV4CIDR	: (INT '.')? (INT '.')? (INT '.')? INT '/' INT;
-IPV4CIDR	: 
-  | INT '/' INT
-  | INT '.' INT '/' INT
-  | INT '.' INT '.' INT '/' INT
-  | INT '.' INT '.' INT '.' INT '/' INT;
-
-IPV6HEX	: (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
-		(HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':') (HEX8 HEX8 ':')
-		(HEX8 HEX8);
-IPV6CIDR : IPV6HEX '/' INT;
+INTDOT		: (INT '.');
+INTSTARDOT	: ((INT|'*') '.');
+IPV4DOTDEC	: (b+=INTSTARDOT)+ { $b.size() <= 3 }? (INT|'*');
+IPV4CIDR	: (b+=INTDOT)+ { $b.size() <= 3 }? INT '/' INT;
+HEX2COLON	: (HEX8 HEX8 ':');
+IPV6HEX		: (b+=HEX2COLON)+ { $b.size() <= 7 }? (HEX8 HEX8);
+IPV6CIDR 	: IPV6HEX '/' INT;
 
 HEX8: ('0'..'9') ('0'..'9') ;
 INT : ('0'..'9')+ ;
