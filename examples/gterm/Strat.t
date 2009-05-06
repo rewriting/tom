@@ -60,7 +60,7 @@ public class Strat {
 
   public void run(int max) {
 		List subject = genere(max);
-    BasicStrategy rule = new RewriteSystem();
+    AbstractBasicStrategy rule = new RewriteSystem();
 		try {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visitLight(subject));
@@ -83,7 +83,7 @@ public class Strat {
     }
   }
   
-	class RewriteSystem extends BasicStrategy {
+	class RewriteSystem extends AbstractBasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }

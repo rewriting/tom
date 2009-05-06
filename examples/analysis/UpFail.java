@@ -32,7 +32,7 @@ package analysis;
 import tom.library.sl.*;
 
 
-public class UpFail extends AbstractStrategy {
+public class UpFail extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public UpFail(Strategy v) {

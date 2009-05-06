@@ -40,7 +40,7 @@ import tom.library.sl.*;
 
 import java.util.Collection;
 
-public class SolveSystem extends BasicStrategy {
+public class SolveSystem extends AbstractBasicStrategy {
 
   %include{ ../term/Term.tom }
   %include{ sl.tom }

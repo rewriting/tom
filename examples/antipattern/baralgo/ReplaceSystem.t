@@ -38,7 +38,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class ReplaceSystem extends BasicStrategy {
+public class ReplaceSystem extends AbstractBasicStrategy {
 	
 	%include{ ../term/Term.tom }
 	%include{ sl.tom }

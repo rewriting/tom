@@ -38,7 +38,7 @@ import antipattern.term.types.*;
 import java.util.Collection;
 import tom.library.sl.*;
 
-public class NegativeCleaning extends BasicStrategy {
+public class NegativeCleaning extends AbstractBasicStrategy {
 
   %include{ ../term/Term.tom }
   %include{ sl.tom }

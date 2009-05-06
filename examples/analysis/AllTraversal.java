@@ -33,7 +33,7 @@ package analysis;
 
 import tom.library.sl.*;
 
-public class AllTraversal extends tom.library.sl.AbstractStrategy {
+public class AllTraversal extends tom.library.sl.AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public AllTraversal(Strategy v) {

@@ -86,7 +86,7 @@ public class TestStrat {
     org.junit.runner.JUnitCore.main(TestStrat.class.getName());
   }
 
-  class RewriteSystem extends tom.library.sl.BasicStrategy {
+  class RewriteSystem extends tom.library.sl.AbstractBasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }
