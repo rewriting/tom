@@ -33,14 +33,14 @@ import java.util.logging.*;
 
 public class TestHandler extends Handler {
 
-  Vector records;
-  Vector mess_attempted;
+  List<LogRecord> records;
+  Vector<Object> mess_attempted;
   int index;
 
   /** Constructor */
   public TestHandler(String fileName) {
-    records = new Vector();
-    mess_attempted = new Vector();
+    records = new ArrayList<LogRecord>();
+    mess_attempted = new Vector<Object>();
     index = 0;
     try {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
@@ -72,9 +72,7 @@ public class TestHandler extends Handler {
   }
 
   public boolean hasLog(Level level) {
-    Enumeration enumeration = records.elements();
-    while (enumeration.hasMoreElements()) {
-      LogRecord record = (LogRecord) enumeration.nextElement();
+    for (LogRecord record : records) {
       if (record.getLevel().equals(level)) {
         return true;
       }
@@ -92,9 +90,7 @@ public class TestHandler extends Handler {
 
   public int nbOfLogs(Level level) {
     int nb_rec =0;
-    Enumeration enumeration = records.elements();
-    while(enumeration.hasMoreElements()){
-      LogRecord record = (LogRecord) enumeration.nextElement();
+    for (LogRecord record : records) {
       if(record.getLevel().equals(level)) nb_rec ++;
     }
     return nb_rec;
@@ -110,7 +106,7 @@ public class TestHandler extends Handler {
 
   public void publish(LogRecord record) {
     records.add(record);
-    if (record instanceof PlatformLogRecord){
+    if (record instanceof PlatformLogRecord) {
       nonRegressionTest((PlatformLogRecord)record);
     }
   }
@@ -122,8 +118,8 @@ public class TestHandler extends Handler {
 
   public void clear() {
     index=0;
-    mess_attempted = new Vector();
-    records = new Vector();
+    mess_attempted = new Vector<Object>();
+    records = new ArrayList<LogRecord>();
   }
 
   public String toString() {

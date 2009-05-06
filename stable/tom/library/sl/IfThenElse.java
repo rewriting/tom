@@ -30,7 +30,7 @@
  **/
 package tom.library.sl;
 
-public class IfThenElse extends AbstractStrategy {
+public class IfThenElse extends AbstractStrategyCombinator {
 
   public final static int CONDITION = 0;
   public final static int TRUE_CASE = 1;

@@ -30,137 +30,9 @@
  **/
 package tom.library.sl;
 
-/**
- * A visitor that it iself visitable with a VisitorVisitor needs
- * to implement the MuStrategy interface. The visitor's arguments
- * should play the role of children.
- */
-
 public abstract class AbstractStrategy implements Strategy {
-  protected Strategy[] visitors;
+
   protected Environment environment;
- 
-  /** 
-   * Initializes subterm
-   */
-  protected void initSubterm() {
-    visitors = new Strategy[] {};
-  }
-
-  /** 
-   * Initializes subterm by using and adding one Strategy
-   *
-   * @param v1 first Strategy to add to the array
-   */
-  protected void initSubterm(Strategy v1) {
-    visitors = new Strategy[] {v1};
-  }
-  
-  /** 
-   * Initializes subterm by using and adding two Strategy
-   *
-   * @param v1 first Strategy to add to the array
-   * @param v2 second Strategy to add to the array
-   */
-  protected void initSubterm(Strategy v1, Strategy v2) {
-    visitors = new Strategy[] {v1,v2};
-  }
- 
-  /** 
-   * Initializes subterm by using abd adding three Strategy
-   *
-   * @param v1 first Strategy to add to the array
-   * @param v2 second Strategy to add to the array
-   * @param v3 third Strategy to add to the array
-   */
-  protected void initSubterm(Strategy v1, Strategy v2, Strategy v3) {
-    visitors = new Strategy[] {v1,v2,v3};
-  }
- 
-  /** 
-   * Initializes subterm by using an array of Strategy
-   *
-   * @param v array used to initialize the subterm
-   */
-  protected void initSubterm(Strategy[] v) {
-    visitors = v;
-  }
-
-  /** 
-   * Returns visitors
-   *
-   * @return visitors
-   */
-  public Strategy[] getVisitors() {
-    return visitors;
-  }
-
-  /** 
-   * Returns the Strategy at the specified position in visitors
-   *
-   * @param i index of the Strategy to return
-   * @return the Strategy at the specified position in visitors
-   */
-  public Strategy getVisitor(int i) {
-    return visitors[i];
-  }
-
-  //visitable
-  /** 
-   * Returns the length of visitors
-   *
-   * @return the length of visitors
-   */
-  public int getChildCount() {
-    return visitors.length;
-  }
-
-  /** 
-   * Returns the Visitable at the specified position in visitors
-   *
-   * @param i index of the Visitable to return
-   * @return the Visitable at the specified position in visitors
-   */
-  public Visitable getChildAt(int i) {
-    return visitors[i];
-  }
-
-  /** 
-   * Returns the list of (non builtin) Visitable children
-   *
-   * @return an array of Visitable
-   */
-  public Visitable[] getChildren() {
-    return (Visitable[]) visitors.clone();
-  }
-
-  /** 
-   * Replaces a child at the specified position
-   *
-   * @param i index of Visitable to set
-   * @param child Visitable so set at the specified position
-   * @return an array of Visitable
-   */
-  public Visitable setChildAt(int i, Visitable child) {
-    visitors[i] = (Strategy) child;
-    return this;
-  }
-
-  /** 
-   * Replaces all children of any visitable at once, and returns this
-   * visitable.
-   *
-   * @param children array of Visitable
-   * @return this Visitable
-   */
-  public Visitable setChildren(Visitable[] children) {
-    Strategy[] newVisitors = new Strategy[children.length];
-    for(int i = 0; i < children.length; i++) {
-      newVisitors[i] = (Strategy) children[i];
-    }
-    this.visitors = newVisitors;
-    return this;
-  }
 
   /** 
    * Executes the strategy in the given environment (on its current subject).
@@ -218,6 +90,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @param m the introspector
    * @throws VisitFailure if visit fails
    */
+  @SuppressWarnings("unchecked")
   public <T> T visit(T any, Introspector m) throws VisitFailure{
     init();
     setRoot(any);
@@ -258,7 +131,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @return the current root
    */
   public Object getRoot() {
-    return environment.getRoot();
+    return getEnvironment().getRoot();
   }
 
   /** 
@@ -267,7 +140,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @param any the current root
    */
   public void setRoot(Object any) {
-    environment.setRoot(any);
+    getEnvironment().setRoot(any);
   }
 
   /** 
@@ -276,7 +149,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @return the current subject
    */
   public Object getSubject() {
-    return environment.getSubject();
+    return getEnvironment().getSubject();
   }
 
   /** 
@@ -285,7 +158,25 @@ public abstract class AbstractStrategy implements Strategy {
    * @param any the subject to set up
    */
   public void setSubject(Object any) {
-    environment.setSubject(any);
+    getEnvironment().setSubject(any);
+  }
+
+  /** 
+   * Get the current position
+   *
+   * @return the current application position
+   */
+  public Position getPosition() {
+    return getEnvironment().getPosition();
+  }
+
+  /** 
+   * Get the current ancestor
+   *
+   * @return the current ancestor
+   */
+  public Object getAncestor() {
+    return getEnvironment().getAncestor();
   }
 
   /** 
@@ -305,14 +196,14 @@ public abstract class AbstractStrategy implements Strategy {
     /* to avoid infinite loop during initialization
      * TODO: use static typing
      */
-    if (((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) || ((s instanceof BasicStrategy) && ((BasicStrategy)s).environment==env)) {
+    if (((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env)) {
       return;
     }
     s.setEnvironment(env);
     for(int i=0 ; i<s.getChildCount() ; i++) {
-      Strategy child = (Strategy) s.getChildAt(i);
+      Visitable child = s.getChildAt(i);
       if(child instanceof Strategy) {
-        init(child,env);
+        init((Strategy)child,env);
       }
     }
   }

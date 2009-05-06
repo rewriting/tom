@@ -59,7 +59,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
   private List<String> inputToCompileList;
 
   /** List of generated object cleared before each run */
-  private List lastGeneratedObjects;
+  private List<Object> lastGeneratedObjects;
 
   /** Radical of the logger */
   private String loggerRadical;
@@ -122,7 +122,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
       //increase a global counter at the beginning of each run()
       ///PluginPlatformFactory.getInstance().increaseThreadsCounter();
       // intialize run instances
-      lastGeneratedObjects = new ArrayList();
+      lastGeneratedObjects = new ArrayList<Object>();
       // for each input we call the sequence of plug-ins
       for(int i=0; i < inputToCompileList.size(); i++) {
         String input = inputToCompileList.get(i);
@@ -232,7 +232,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
   }
 
   /** return the list of last generated objects */
-  public List getLastGeneratedObjects() {
+  public List<Object> getLastGeneratedObjects() {
     return lastGeneratedObjects;
   }
 

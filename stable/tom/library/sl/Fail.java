@@ -39,7 +39,7 @@ package tom.library.sl;
  * <a href="FailTest.java">FailTest</a>
  */
 
-public class Fail extends AbstractStrategy {
+public class Fail extends AbstractStrategyCombinator {
   private String message;
 
   /**

@@ -76,13 +76,13 @@ public class Backend {
     Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
     Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
-    {{if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch1NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{if (!( tomMatch1NameNumber_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch1NameNumber_freshVar_8= tomMatch1NameNumber_end_4.getHeadConcGomClass() ;if ( (tomMatch1NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch1NameNumber_freshVar_7= tomMatch1NameNumber_freshVar_8.getClassName() ;if ( (tomMatch1NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch1NameNumber_end_4.getHeadConcGomClass() ;
+    {{if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch407NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{if (!( tomMatch407NameNumber_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch407NameNumber_freshVar_8= tomMatch407NameNumber_end_4.getHeadConcGomClass() ;if ( (tomMatch407NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch407NameNumber_freshVar_7= tomMatch407NameNumber_freshVar_8.getClassName() ;if ( (tomMatch407NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch407NameNumber_end_4.getHeadConcGomClass() ;
 
 
 
         MappingTemplateClass mapping = null;
         if(generateStratMapping>0) { // generate congruence strategies
-          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch1NameNumber_freshVar_7.getPkg() , "_"+ tomMatch1NameNumber_freshVar_7.getName() ) ;
+          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch407NameNumber_freshVar_7.getPkg() , "_"+ tomMatch407NameNumber_freshVar_7.getName() ) ;
           GomClass nGomClass = tom_gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           if(generateStratMapping==1) {
@@ -98,8 +98,8 @@ public class Backend {
           mapping = templatefactory.makeTomMappingTemplate(tom_gomclass,null,getGomEnvironment());
         }
         mappingSet.add(mapping);
-        generators.put(tomMatch1NameNumber_freshVar_7,mapping);
-      }}}if ( tomMatch1NameNumber_end_4.isEmptyConcGomClass() ) {tomMatch1NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch1NameNumber_end_4= tomMatch1NameNumber_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch1NameNumber_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
+        generators.put(tomMatch407NameNumber_freshVar_7,mapping);
+      }}}if ( tomMatch407NameNumber_end_4.isEmptyConcGomClass() ) {tomMatch407NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch407NameNumber_end_4= tomMatch407NameNumber_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch407NameNumber_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
 
     // generate a class for each element of the list
     while (!classList.isEmptyConcGomClass()) {

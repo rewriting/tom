@@ -41,7 +41,7 @@ package tom.library.sl;
  * <p>
 */
 
-public class Omega extends AbstractStrategy {
+public class Omega extends AbstractStrategyCombinator {
   public final static int ARG = 0;
   protected int indexPosition;
 

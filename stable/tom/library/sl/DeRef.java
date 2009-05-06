@@ -28,7 +28,7 @@
 
 package tom.library.sl;
 
-public class DeRef extends AbstractStrategy {
+public class DeRef extends AbstractStrategyCombinator {
   public final static int ARG = 0;
   // is it an absolute or a relative reference
   private boolean relative = false;

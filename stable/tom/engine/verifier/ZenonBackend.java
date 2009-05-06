@@ -69,10 +69,10 @@ public class ZenonBackend {
 
   public String genZTerm(ZTerm term) {
     {{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zvar) ) {
- return  (( tom.engine.adt.zenon.types.ZTerm )term).getVarname() ; }}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zappl) ) { tom.engine.adt.zenon.types.ZSymbol  tomMatch335NameNumber_freshVar_4= (( tom.engine.adt.zenon.types.ZTerm )term).getZsymb() ;if ( (tomMatch335NameNumber_freshVar_4 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {
+ return  (( tom.engine.adt.zenon.types.ZTerm )term).getVarname() ; }}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zappl) ) { tom.engine.adt.zenon.types.ZSymbol  tomMatch336NameNumber_freshVar_4= (( tom.engine.adt.zenon.types.ZTerm )term).getZsymb() ;if ( (tomMatch336NameNumber_freshVar_4 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {
  
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString( tomMatch335NameNumber_freshVar_4.getName() );
+        String realName = tomiltools.replaceNumbersByString( tomMatch336NameNumber_freshVar_4.getName() );
         return "(" + realName +" "+genZTermList( (( tom.engine.adt.zenon.types.ZTerm )term).getTermlist() )+")"; 
       }}}}{if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {if ( ((( tom.engine.adt.zenon.types.ZTerm )term) instanceof tom.engine.adt.zenon.types.zterm.zst) ) {
  

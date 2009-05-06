@@ -51,10 +51,11 @@ public class XMLToTNode {
 
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
-  private Hashtable ht_Nodes = new Hashtable();
+  private Hashtable<TNode,Collection<Element> > ht_Nodes =
+    new Hashtable<TNode,Collection<Element> >();
 
-  protected Collection getNodes(TNode key) {
-    return (Collection)ht_Nodes.get(key);
+  protected Collection<Element> getNodes(TNode key) {
+    return ht_Nodes.get(key);
   }
 
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
@@ -293,9 +294,9 @@ public class XMLToTNode {
       //System.out.println("sorted attrList = " + attrList);
     TNodeList childList = nodeListToAterm(elem.getChildNodes());
     TNode result =  tom.library.adt.tnode.types.tnode.ElementNode.make(elem.getNodeName(), attrList, childList) ;
-    Collection curCol = (Collection)ht_Nodes.get(elem);
+    Collection<Element> curCol = ht_Nodes.get(elem);
     if (curCol==null) {
-      curCol = new ArrayList();
+      curCol = new ArrayList<Element>();
     }
     curCol.add(elem);
     ht_Nodes.put(result,curCol);
@@ -315,10 +316,10 @@ public class XMLToTNode {
     {{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() ) {
 
         return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(elt,tom_append_list_concTNode(list, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
-      }}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch634NameNumber_freshVar_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch634NameNumber_freshVar_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
+      }}}}}}{if ( (elt instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )elt) instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( (list instanceof tom.library.adt.tnode.types.TNodeList) ) {if ( (((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || ((( tom.library.adt.tnode.types.TNodeList )list) instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if (!( (( tom.library.adt.tnode.types.TNodeList )list).isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch635NameNumber_freshVar_13= (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ;if ( (tomMatch635NameNumber_freshVar_13 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {
 
 
-        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch634NameNumber_freshVar_13.getName() ) >= 0) {
+        if( (( tom.library.adt.tnode.types.TNode )elt).getName() .compareTo( tomMatch635NameNumber_freshVar_13.getName() ) >= 0) {
           TNodeList tl = insertSortedAttribute(elt, (( tom.library.adt.tnode.types.TNodeList )list).getTailconcTNode() );
           return  tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make( (( tom.library.adt.tnode.types.TNodeList )list).getHeadconcTNode() ,tom_append_list_concTNode(tl, tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make() )) ;
         } else {

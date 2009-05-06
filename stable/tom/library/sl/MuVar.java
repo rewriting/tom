@@ -10,7 +10,7 @@ package tom.library.sl;
  * <p>
  */
 
-public class MuVar extends AbstractStrategy {
+public class MuVar extends AbstractStrategyCombinator {
   private Strategy instance = null;
   protected String name;
   

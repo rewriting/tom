@@ -3,14 +3,6 @@
 
 %include { int.tom }
 
-%typeterm ElementaryTheory {
-  implement { tom.engine.adt.theory.types.ElementaryTheory }
-  is_sort(t) { ($t instanceof tom.engine.adt.theory.types.ElementaryTheory) }
-
-  equals(t1,t2) { ($t1==$t2) }
-
-}
-
 %typeterm Theory {
   implement { tom.engine.adt.theory.types.Theory }
   is_sort(t) { ($t instanceof tom.engine.adt.theory.types.Theory) }
@@ -18,6 +10,26 @@
   equals(t1,t2) { ($t1==$t2) }
 
 }
+
+%typeterm ElementaryTheory {
+  implement { tom.engine.adt.theory.types.ElementaryTheory }
+  is_sort(t) { ($t instanceof tom.engine.adt.theory.types.ElementaryTheory) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Theory EmptyconcElementaryTheory() {
+  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory) }
+  make() { tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make() }
+}
+
+%op Theory ConsconcElementaryTheory(HeadconcElementaryTheory:ElementaryTheory, TailconcElementaryTheory:Theory) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory) }
+  get_slot(HeadconcElementaryTheory, t) { $t.getHeadconcElementaryTheory() }
+  get_slot(TailconcElementaryTheory, t) { $t.getTailconcElementaryTheory() }
+  make(t0, t1) { tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make($t0, $t1) }
+}
+
 %op ElementaryTheory Syntactic() {
   is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.Syntactic) }
   make() { tom.engine.adt.theory.types.elementarytheory.Syntactic.make() }
@@ -36,18 +48,6 @@
 %op ElementaryTheory TrueAU() {
   is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.TrueAU) }
   make() { tom.engine.adt.theory.types.elementarytheory.TrueAU.make() }
-}
-
-%op Theory EmptyconcElementaryTheory() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory) }
-  make() { tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make() }
-}
-
-%op Theory ConsconcElementaryTheory(HeadconcElementaryTheory:ElementaryTheory, TailconcElementaryTheory:Theory) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory) }
-  get_slot(HeadconcElementaryTheory, t) { $t.getHeadconcElementaryTheory() }
-  get_slot(TailconcElementaryTheory, t) { $t.getTailconcElementaryTheory() }
-  make(t0, t1) { tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make($t0, $t1) }
 }
 
 

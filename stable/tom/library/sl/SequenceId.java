@@ -38,7 +38,7 @@ package tom.library.sl;
  * one is not the identity.
  */
 
-public class SequenceId   extends AbstractStrategy {
+public class SequenceId   extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public SequenceId(Strategy first, Strategy then) {

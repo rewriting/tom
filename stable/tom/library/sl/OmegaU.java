@@ -39,7 +39,7 @@ package tom.library.sl;
  * <p>
 */
 
-public class OmegaU extends AbstractStrategy {
+public class OmegaU extends AbstractStrategyCombinator {
   public final static int ARG = 0;
   private static java.util.Random random = null;
 

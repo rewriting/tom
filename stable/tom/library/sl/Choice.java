@@ -42,7 +42,7 @@ package tom.library.sl;
  * Note that any side-effects of v1 are not undone when it fails.
  */
 
-public class Choice extends AbstractStrategy {
+public class Choice extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public Choice(Strategy first, Strategy then) {
