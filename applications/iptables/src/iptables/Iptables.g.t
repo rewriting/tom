@@ -86,16 +86,15 @@ opt:	proto port		-> ^(port)
 	| STRING		-> ^(UnknownOption STRING)
 	;
 
+INT : ('0'..'9')+ ;
 INTDOT		: (INT '.');
 INTSTARDOT	: ((INT|'*') '.');
 IPV4DOTDEC	: (b+=INTSTARDOT)+ { $b.size() <= 3 }? (INT|'*');
 IPV4CIDR	: (b+=INTDOT)+ { $b.size() <= 3 }? INT '/' INT;
-HEX2COLON	: (HEX8 HEX8 ':');
-IPV6HEX		: (b+=HEX2COLON)+ { $b.size() <= 7 }? (HEX8 HEX8);
+HEX2COLON	: (('0'..'9') ('0'..'9') ('0'..'9') ('0'..'9') ':');
+IPV6HEX		: (b+=HEX2COLON)+ { $b.size() <= 7 }? (('0'..'9') ('0'..'9') ('0'..'9') ('0'..'9'));
 IPV6CIDR 	: IPV6HEX '/' INT;
 
-HEX8: ('0'..'9') ('0'..'9') ;
-INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;
 STRING : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"' ;
 ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ('*')?;
