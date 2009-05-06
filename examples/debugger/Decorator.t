@@ -16,13 +16,13 @@ public class Decorator extends ADecorator {
     this.name = name;
   }
 
-  // mimics AbstractStrategy
+  // mimics AbstractStrategyCombinator
   public Visitable setChildren(Visitable[] cdn) {
     realCalee = maker.buildDecorated((Strategy[]) cdn);
     return supersetChildren(cdn);
   }
 
-  // mimics AbstractStrategy
+  // mimics AbstractStrategyCombinator
   public Visitable setChildAt(int i, Visitable child) {
     Strategy[] copy = new Strategy[visitors.length];
     for (int k=0; k<visitors.length; k++) {

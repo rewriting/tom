@@ -2,7 +2,7 @@ package debugger;
 
 import tom.library.sl.*;
 
-public abstract class ADecorator extends AbstractStrategy {
+public abstract class ADecorator extends AbstractStrategyCombinator {
 
   %include{sl.tom}
  
@@ -57,7 +57,7 @@ public abstract class ADecorator extends AbstractStrategy {
       System.out.println(repr + spaces + getEnvironment().getSubject());
       //System.out.println(environment);
       //System.out.println(realCalee);
-      AbstractStrategy.init(realCalee,getEnvironment());
+      AbstractStrategyCombinator.init(realCalee,getEnvironment());
       return realCalee.visit(m);
   }
 }

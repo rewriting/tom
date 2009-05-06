@@ -11,14 +11,14 @@ public class BasicDecorator extends ADecorator {
     visitors = (Strategy[]) s.getChildren();
   }
 
-  // mimics AbstractStrategy
+  // mimics AbstractStrategyCombinator
   public Visitable setChildren(Visitable[] cdn) {
     //System.out.println("cdn = " + cdn);
     realCalee.setChildren(cdn);
     return supersetChildren(cdn);
   }
 
-  // mimics AbstractStrategy
+  // mimics AbstractStrategyCombinator
   public Visitable setChildAt(int i, Visitable child) {
     //System.out.println("child = " + child);
     realCalee.setChildAt(i,child);

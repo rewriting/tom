@@ -113,7 +113,7 @@ public class StrategyCompiler {
             inlinedClassName,
             EmptySignature(),
             AccessList(PUBLIC(), SUPER(), SYNCHRONIZED()),
-            "tom/library/sl/AbstractStrategy",
+            "tom/library/sl/AbstractStrategyCombinator",
             EmptyStringList(),
             EmptyInnerClassInfoList(),
             EmptyOuterClassInfo()),
@@ -396,7 +396,7 @@ public class StrategyCompiler {
         if(index_flag) {
           // Gets the subterm normally returned by the `getArgument' call and
           // push it onto the strategy stack.
-          Strategy s = (Strategy)((AbstractStrategy)subject).getChildAt(index);
+          Strategy s = (Strategy)((AbstractStrategyCombinator)subject).getChildAt(index);
           classCollector.pushStrategy(s);
 
           // Replaces the matched instructions by a `Nop()' one to ensure
@@ -556,9 +556,9 @@ public class StrategyCompiler {
     // subject is the first to be inlined.
     boolean isRoot = methodCollector.getInstructionList().isEmptyInstructionList();
 
-    // If subject is an instance of `AbstractStrategy', it means that we are
+    // If subject is an instance of `AbstractStrategyCombinator', it means that we are
     // inlining a 'base brick'.
-    if(subject instanceof AbstractStrategy) {
+    if(subject instanceof AbstractStrategyCombinator) {
       if(subject instanceof Mu) {
         // To be sure that the strategy has been mu-expanded.
         Mu m = (Mu)subject;
@@ -675,7 +675,7 @@ public class StrategyCompiler {
           InstructionList(
             Aload(0),
             Invokespecial(
-              "tom/library/sl/AbstractStrategy",
+              "tom/library/sl/AbstractStrategyCombinator",
               "<init>",
               MethodDescriptor(
                 EmptyFieldDescriptorList(),
