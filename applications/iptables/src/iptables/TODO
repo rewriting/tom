@@ -1,7 +1,4 @@
--Fix doubloons bug in Output classes
--Fix dest address grammar bug
 -Fix Rule's String grammar bug
--Fix port grammar bug
 -Add parser/output interfaces
 -Modify the Analyser ordering Rules
 -Add !iptables parsers/output

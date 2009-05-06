@@ -163,7 +163,6 @@ public class PacketFilterOutput {
 
 	public static void printTranslation(Rules rs) {
 		%match(rs) {
-			/*
 			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
 					NoOpt(),_),
@@ -171,8 +170,8 @@ public class PacketFilterOutput {
 			) -> {
 				printCmdPolicy(`action,`target);
 				printTranslation(`X*);
+				return;
 			}
-			*/
 			Rules(Rule(action,iface,proto,tar,srcaddr,dstaddr,
 					srcport,dstport,opts,_),
 				X*

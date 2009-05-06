@@ -172,7 +172,6 @@ public class IptablesOutput {
 
 	public static void printTranslation(Rules rs) {
 		%match(rs) {
-			/*
 			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
 					NoOpt(),_),
@@ -180,8 +179,9 @@ public class IptablesOutput {
 			) -> {
 				printCmdPolicy(TABLE_FILTER,`action,`target);
 				printTranslation(`X*);
+				return;
 			}
-			*/
+
 			Rules(Rule(action,iface,proto,tar,srcaddr,dstaddr,
 					srcport,dstport,opts,_),
 				X*
