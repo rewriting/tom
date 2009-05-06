@@ -6,7 +6,7 @@ private static Strategy makeTopDownWhenConstraint(Strategy s) {
   return `mu(MuVar("_x"),WhenConstraint(Sequence(s,All(MuVar("_x"))))); 
 }
 
-public static class WhenConstraint extends tom.library.sl.BasicStrategy {
+public static class WhenConstraint extends tom.library.sl.AbstractBasicStrategy {
 
   private  tom.library.sl.Strategy  s;
   

@@ -70,7 +70,7 @@ public class IsOpTemplate extends TemplateClass {
 writer.write(%[
 package @getPackage()@;
 
-public class @className()@ extends tom.library.sl.AbstractStrategy {
+public class @className()@ extends tom.library.sl.AbstractStrategyCombinator {
   private static final String msg = "Not an @className(operator)@";
 
   public @className()@() {

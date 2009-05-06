@@ -30,7 +30,7 @@
  **/
 package tom.library.sl;
 
-public class Up extends AbstractStrategy {
+public class Up extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public Up(Strategy v) {

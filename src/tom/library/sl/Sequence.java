@@ -39,7 +39,7 @@ package tom.library.sl;
  * these visitors one after the other (sequential composition).
  */
 
-public class Sequence extends AbstractStrategy {
+public class Sequence extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public Sequence(Strategy first, Strategy then) {

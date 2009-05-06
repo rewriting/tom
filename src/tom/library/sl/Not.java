@@ -34,7 +34,7 @@ package tom.library.sl;
  * <code>Not(v)</code> succeeds if and only if <code>v</code> fails.
  */
 
-public class Not extends AbstractStrategy {
+public class Not extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public Not(Strategy v) {

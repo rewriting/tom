@@ -47,7 +47,7 @@ import tom.engine.adt.il.types.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
 import tom.library.sl.Introspector;
-import tom.library.sl.BasicStrategy;
+import tom.library.sl.AbstractBasicStrategy;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -870,7 +870,7 @@ public class Verifier {
     return res;
   }
 
-  public class BooleanSimplifier extends BasicStrategy {
+  public class BooleanSimplifier extends AbstractBasicStrategy {
     public BooleanSimplifier() {
       super(`Identity());
     }

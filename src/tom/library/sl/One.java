@@ -47,7 +47,7 @@ package tom.library.sl;
  * <p>
  */       
 
-public class One extends AbstractStrategy {
+public class One extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public One(Strategy v) {

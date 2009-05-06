@@ -86,7 +86,7 @@ public class Expander extends TomGenericPlugin {
   private static final TomType objectArrayType = `TLType(ITL("Object[]"));
   private static final TomType intType = `TLType(ITL("int"));
   
-  private static final TomType basicStratType = `TLType(ITL("tom.library.sl.BasicStrategy"));
+  private static final TomType basicStratType = `TLType(ITL("tom.library.sl.AbstractBasicStrategy"));
   private static final TomType introspectorType = `TLType(ITL("tom.library.sl.Introspector"));
   private static final TomType visitfailureType = `TLType(ITL("tom.library.sl.VisitFailure"));
   // introspector argument of visitLight

@@ -116,12 +116,12 @@ public class Viewer {
   }
 
   //TODO: adapt to traverse any data-structure using newsl
-  static private class Print extends AbstractStrategy {
+  static private class Print extends AbstractBasicStrategy {
 
     protected Writer w;
 
     public Print(Writer w) {
-      initSubterm();
+      super(( new tom.library.sl.Identity() ));
       this.w=w;
     }
 
@@ -333,13 +333,13 @@ public class Viewer {
     }
   }
 
-  static private class PrintStrategy extends AbstractStrategy {
+  static private class PrintStrategy extends AbstractBasicStrategy {
 
     protected Writer w;
 
     //TODO: adapt with newsl to visit anu data-structures
     public PrintStrategy(Writer w) {
-      initSubterm();
+      super(( new tom.library.sl.Identity() ));
       this.w=w;
     }
 

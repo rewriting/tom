@@ -6,7 +6,7 @@ private static Strategy makeTopDownWhenExpression(Strategy s) {
   return `mu(MuVar("_x"),WhenExpression(Sequence(s,All(MuVar("_x"))))); 
 }
 
-public static class WhenExpression extends tom.library.sl.BasicStrategy {
+public static class WhenExpression extends tom.library.sl.AbstractBasicStrategy {
 
   private  tom.library.sl.Strategy  s;
   
@@ -80,7 +80,7 @@ private static Strategy makeTopDownWhenExprConstrOrTerm(Strategy s) {
   return `mu(MuVar("_x"),WhenExprConstrOrTerm(Sequence(s,All(MuVar("_x"))))); 
 }
 
-public static class WhenExprConstrOrTerm extends tom.library.sl.BasicStrategy {
+public static class WhenExprConstrOrTerm extends tom.library.sl.AbstractBasicStrategy {
 
   private  tom.library.sl.Strategy  s;
   

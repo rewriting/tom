@@ -40,7 +40,7 @@ package tom.library.sl;
  * one is not the identity.
  */
 
-public class ChoiceId extends AbstractStrategy {
+public class ChoiceId extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public ChoiceId(Strategy first, Strategy then) {

@@ -42,7 +42,7 @@ package tom.library.sl;
  * undone.
  */
 
-public class OneId extends AbstractStrategy {
+public class OneId extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public OneId(Strategy v) {

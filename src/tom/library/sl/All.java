@@ -47,7 +47,7 @@ package tom.library.sl;
  * If you are interested in a sequential behaviour, {@link tom.library.sl.AllSeq}
  */       
 
-public class All extends AbstractStrategy {
+public class All extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public All(Strategy v) {

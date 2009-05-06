@@ -332,7 +332,7 @@ public class Position implements Cloneable,Path {
    * @return the omega strategy that retrieves the corresponding subterm
    */
   public Strategy getSubterm() {
-    return new AbstractStrategy() {
+    return new AbstractStrategyCombinator() {
       { initSubterm(); }
       public Object visitLight(Object subject, Introspector i) throws VisitFailure {
         final Object[] ref = new Object[1];

@@ -40,7 +40,7 @@ package tom.library.sl;
  * Note that any side-effects of vi are not undone when it fails.
  */
 
-public class ChoiceUndet extends AbstractStrategy {
+public class ChoiceUndet extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   int size;

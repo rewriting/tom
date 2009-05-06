@@ -39,7 +39,7 @@ import java.util.HashSet;
  * Visiting such a combinator fire the mu-expansion which instantiate
  * the MuVar variables and removed the Mu combinator
  **/ 
-public class Mu extends AbstractStrategy {
+public class Mu extends AbstractStrategyCombinator {
   public final static int VAR = 0;
   public final static int V = 1;
 

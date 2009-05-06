@@ -37,7 +37,7 @@ package tom.library.sl;
  * this visitor to all children.
  */
 
-public class AllSeq extends AbstractStrategy {
+public class AllSeq extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public AllSeq(Strategy v) {

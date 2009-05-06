@@ -86,7 +86,7 @@ public class Expander extends TomGenericPlugin {
   private static final TomType objectArrayType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("Object[]") ) ;
   private static final TomType intType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("int") ) ;
   
-  private static final TomType basicStratType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("tom.library.sl.BasicStrategy") ) ;
+  private static final TomType basicStratType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("tom.library.sl.AbstractBasicStrategy") ) ;
   private static final TomType introspectorType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("tom.library.sl.Introspector") ) ;
   private static final TomType visitfailureType =  tom.engine.adt.tomtype.types.tomtype.TLType.make( tom.engine.adt.tomsignature.types.targetlanguage.ITL.make("tom.library.sl.VisitFailure") ) ;
   // introspector argument of visitLight
