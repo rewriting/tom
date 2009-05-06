@@ -28,8 +28,8 @@ block:	'Chain' str=target '(policy' action ')'
 		IptablesBlock target action ^(IptablesRules (rule)*) $str
 	);
 
-rule:	str=action proto oopt address address opts -> ^(
-		IptablesRule action proto address opts $str
+rule:	str=action proto oopt a1=address a2=address opts -> ^(
+		IptablesRule action proto $a1 $a2 opts $str
 	);
 
 action : 

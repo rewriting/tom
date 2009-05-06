@@ -16,7 +16,7 @@ IptablesRule = IptablesRule(
 			action:Action,
 			proto:Protocol,
 			addrsrc: AddressRaw,
-			/* addrdst: AddressRaw, */
+			addrdst: AddressRaw,
 			options: IptablesOptions,
 			input:String)
 
