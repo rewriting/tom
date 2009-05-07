@@ -1,0 +1,525 @@
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+
+%typeterm Expr {
+  implement { Node }
+  is_sort(t) { $t instanceof Node }
+  equals(t1, t2) { $t1.equals($t2) }
+}  
+
+%typeterm ExprList {
+  implement { java.util.List<Node> }
+  is_sort(t) { $t instanceof java.util.List }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%oplist ExprList concExpr(Expr*) {
+  is_fsym(l)       { ($l!= null) && ($l instanceof List) }
+  make_empty()     { new java.util.ArrayList() }
+  make_insert(o,l) { append($o,$l) }
+  get_head(l)      { $l.get(0) }
+  get_tail(l)      { getTail($l) }
+  is_empty(l)      { ($l.isEmpty()) }
+}
+
+private static <T> List<T> deepClone(List<T> l) {
+  ArrayList<T> clone = new ArrayList<T>();
+  for(T e:l) {
+  try {
+    clone.add(`TopDown(Sequence(Debug(),Clone())).visit(e, new LocalIntrospector()));
+  } catch (tom.library.sl.VisitFailure ex ) {
+    throw new RuntimeException("fail to clone");
+  }
+  }
+  return clone;
+}
+
+private static <T> List<T> append(T o, List<T> l) {
+  List<T> res = deepClone(l);
+  res.add(0, o);
+  return res;
+}
+
+private static <T> List<T> getTail(List<T> l) {
+  List<T> res = deepClone(l);
+  res.remove(0);
+  return res;
+}
+
+%op Expr CompositeExpression(exprs:ExprList) {
+  make(exprs) { makeCompositeExpression($exprs) }
+  is_fsym(t) { $t instanceof AstCompositeExpression } 
+  get_slot(exprs, t)  { getExprs($t) }
+}
+
+private static AstCompositeExpression makeCompositeExpression(List<Node> exprs) {
+  AstCompositeExpression e = new AstCompositeExpression(ELParserTreeConstants.JJTCOMPOSITEEXPRESSION);
+  int i =0;
+  for(Node n: exprs) {
+    e.jjtAddChild(n,i);
+    i++;
+  }
+  return e;
+}
+
+private static List<Node> getExprs(Node e) {
+  List<Node> children = new ArrayList<Node>();
+  for(int i =0; i< e.jjtGetNumChildren();i++) {
+    children.add(e.jjtGetChild(i));
+  }
+  return children;
+}
+
+%op Expr  FunctionCall(ids:ExprList, name:String, args:ExprList) {
+  make(ids, name, args) { makeFunctionCall($ids, $name, $args) }
+  is_fsym(t) { $t instanceof org.jboss.el.parser.AstValue && $t.jjtGetChild($t.jjtGetNumChildren() - 1) instanceof AstMethodSuffix} 
+  get_slot(ids, t)  { getChildren($t, 0, $t.jjtGetNumChildren() - 1) }
+  get_slot(args, t)  { getChildren($t.jjtGetChild($t.jjtGetNumChildren() - 1), 0, -1) }
+  get_slot(name, t)  { $t.jjtGetChild($t.jjtGetNumChildren() - 1).getImage() }
+}
+
+%op Expr  ArrayAccess(ids:ExprList, arg:Expr) {
+  make(ids, arg) { makeArrayAccess($ids, $arg) }
+  is_fsym(t) { $t instanceof org.jboss.el.parser.AstValue && $t.jjtGetChild($t.jjtGetNumChildren() - 1) instanceof AstBracketSuffix} 
+  get_slot(ids, t)  { getChildren($t, 0, $t.jjtGetNumChildren() - 1) }
+  get_slot(arg, t)  { $t.jjtGetChild($t.jjtGetNumChildren() - 1).jjtGetChild(0) }
+}
+
+private static AstValue makeFunctionCall(List<Node> ids, String name, List<Node> args) {
+  AstValue v = new AstValue(ELParserTreeConstants.JJTVALUE);
+  AstMethodSuffix suffix = new AstMethodSuffix(ELParserTreeConstants.JJTMETHODSUFFIX);
+  suffix.setImage(name);
+  int i =0;
+  for (Node n: args) {
+    System.out.println("add child to suffix:"+i+"-"+n);
+    suffix.jjtAddChild(n,i);
+    i++;
+  }
+  i=0;
+  for (Node n: ids) {
+    System.out.println("add child to v:"+i+"-"+n);
+    v.jjtAddChild(n,i);
+    i++;
+  }
+  System.out.println("add child to v:"+i+"-"+suffix);
+  v.jjtAddChild(suffix,i);
+  return v;
+}
+
+private static AstValue makeArrayAccess(List<Node> ids, Node arg) {
+  AstValue v = new AstValue(ELParserTreeConstants.JJTVALUE);
+  AstBracketSuffix suffix = new AstBracketSuffix(ELParserTreeConstants.JJTBRACKETSUFFIX);
+  suffix.jjtAddChild(arg,0);
+  int i =0;
+  for (Node n: ids) {
+    v.jjtAddChild(n,i);
+    i++;
+  }
+  v.jjtAddChild(suffix,i);
+  return v;
+}
+
+%op Expr If(cond:Expr, left:Expr, right:Expr) {
+  make(cond, left, right) { makeAstIf($cond, $left, $right) }
+  is_fsym(t) { $t instanceof AstChoice } 
+  get_slot(cond, t)  { get($t,0) }
+  get_slot(left, t)  { get($t,1) }
+  get_slot(right, t)  { get($t,2) }
+}
+
+private static AstChoice makeAstIf(Node cond, Node left, Node right) {
+  AstChoice e = new AstChoice(ELParserTreeConstants.JJTCHOICE);
+  e.jjtAddChild(cond,0);
+  e.jjtAddChild(left,1);
+  e.jjtAddChild(right,2);
+  return e;
+}
+
+private static Node get(Node e, int i) {
+    return e.jjtGetChild(i);
+}
+
+// arithmetic
+%op Expr  Plus(left:Expr, right:Expr) {
+  make(left,right) { makeAstPlus($left,$right) }
+  is_fsym(t) { $t instanceof AstPlus } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstPlus makeAstPlus(Node left, Node right) {
+  AstPlus e = new AstPlus(ELParserTreeConstants.JJTPLUS);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Minus(left:Expr, right:Expr) {
+  make(left,right) { makeAstMinus($left,$right) }
+  is_fsym(t) { $t instanceof AstMinus } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstMinus makeAstMinus(Node left, Node right) {
+  AstMinus e = new AstMinus(ELParserTreeConstants.JJTMINUS);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Mod(left:Expr, right:Expr) {
+  make(left,right) { makeAstMod($left,$right) }
+  is_fsym(t) { $t instanceof AstMod } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstMod makeAstMod(Node left, Node right) {
+  AstMod e = new AstMod(ELParserTreeConstants.JJTMOD);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Mult(left:Expr, right:Expr) {
+  make(left,right) { makeAstMult($left,$right) }
+  is_fsym(t) { $t instanceof AstMult } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstMult makeAstMult(Node left, Node right) {
+  AstMult e = new AstMult(ELParserTreeConstants.JJTMULT);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Div(left:Expr, right:Expr) {
+  make(left,right) { makeAstDiv($left,$right) }
+  is_fsym(t) { $t instanceof AstDiv } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstDiv makeAstDiv(Node left, Node right) {
+  AstDiv e = new AstDiv(ELParserTreeConstants.JJTDIV);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+
+%op Expr  And(left:Expr, right:Expr) {
+  make(left,right) { makeAstAnd($left,$right) }
+  is_fsym(t) { $t instanceof AstAnd } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstAnd makeAstAnd(Node left, Node right) {
+  AstAnd e = new AstAnd(ELParserTreeConstants.JJTAND);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Or(left:Expr, right:Expr) {
+  make(left,right) { makeAstOr($left,$right) }
+  is_fsym(t) { $t instanceof AstOr } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstOr makeAstOr(Node left, Node right) {
+  AstOr e = new AstOr(ELParserTreeConstants.JJTOR);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Equal(left:Expr, right:Expr) {
+  make(left,right) { makeAstEqual($left,$right) }
+  is_fsym(t) { $t instanceof AstEqual } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstEqual makeAstEqual(Node left, Node right) {
+  AstEqual e = new AstEqual(ELParserTreeConstants.JJTEQUAL);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  NotEqual(left:Expr, right:Expr) {
+  make(left,right) { makeAstNotEqual($left,$right) }
+  is_fsym(t) { $t instanceof AstNotEqual } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstNotEqual makeAstNotEqual(Node left, Node right) {
+  AstNotEqual e = new AstNotEqual(ELParserTreeConstants.JJTNOTEQUAL);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  LessThan(left:Expr, right:Expr) {
+  make(left,right) { makeAstLessThan($left,$right) }
+  is_fsym(t) { $t instanceof AstLessThan } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstLessThan makeAstLessThan(Node left, Node right) {
+  AstLessThan e = new AstLessThan(ELParserTreeConstants.JJTLESSTHAN);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  LessThanEqual(left:Expr, right:Expr) {
+  make(left,right) { makeAstLessThanEqual($left,$right) }
+  is_fsym(t) { $t instanceof AstLessThanEqual } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstLessThanEqual makeAstLessThanEqual(Node left, Node right) {
+  AstLessThanEqual e = new AstLessThanEqual(ELParserTreeConstants.JJTLESSTHANEQUAL);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  GreaterThan(left:Expr, right:Expr) {
+  make(left,right) { makeAstGreaterThan($left,$right) }
+  is_fsym(t) { $t instanceof AstGreaterThan } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstGreaterThan makeAstGreaterThan(Node left, Node right) {
+  AstGreaterThan e = new AstGreaterThan(ELParserTreeConstants.JJTGREATERTHAN);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  GreaterThanEqual(left:Expr, right:Expr) {
+  make(left,right) { makeAstGreaterThanEqual($left,$right) }
+  is_fsym(t) { $t instanceof AstGreaterThanEqual } 
+  get_slot(left, t)  { get($t,0) }
+  get_slot(right, t)  { get($t,1) }
+}
+
+private static AstGreaterThanEqual makeAstGreaterThanEqual(Node left, Node right) {
+  AstGreaterThanEqual e = new AstGreaterThanEqual(ELParserTreeConstants.JJTGREATERTHANEQUAL);
+  e.jjtAddChild(left,0);
+  e.jjtAddChild(right,1);
+  return e;
+}
+
+%op Expr  Not_(e:Expr) {
+  make(e) { makeAstNot_($e) }
+  is_fsym(t) { $t instanceof AstNot } 
+  get_slot(e, t)  { get($t,0) }
+}
+
+private static AstNot makeAstNot_(Node n) {
+  AstNot e = new AstNot(ELParserTreeConstants.JJTNOT);
+  e.jjtAddChild(n,0);
+  return e;
+}
+
+%op Expr  Empty(e:Expr) {
+  make(e) { makeAstEmpty($e) }
+  is_fsym(t) { $t instanceof AstEmpty } 
+  get_slot(e, t)  { get($t,0) }
+}
+
+private static AstEmpty makeAstEmpty(Node n) {
+  AstEmpty e = new AstEmpty(ELParserTreeConstants.JJTEMPTY);
+  e.jjtAddChild(n,0);
+  return e;
+}
+
+%op Expr  True(){
+  make() { new AstTrue(0) }
+  is_fsym(t) { $t instanceof AstTrue } 
+}
+
+%op Expr  False(){
+  make() { new AstFalse(0) }
+  is_fsym(t) { $t instanceof AstFalse } 
+}
+
+%op Expr  Literal(value:String) {
+  make(value) { makeLiteral($value) }
+  is_fsym(t) { $t instanceof AstLiteralExpression } 
+  get_slot(value, t)  { $t.getImage() }
+}
+
+private static AstLiteralExpression makeLiteral(String value) {
+  AstLiteralExpression e = new AstLiteralExpression(ELParserTreeConstants.JJTLITERALEXPRESSION);
+  e.setImage(value);
+  return e;
+}
+
+%op Expr  Identifier(value:String) {
+  make(value) { makeIdentifier($value) }
+  is_fsym(t) { $t instanceof AstIdentifier } 
+  get_slot(value, t)  { $t.getImage() }
+}
+
+private static AstIdentifier makeIdentifier(String value) {
+  AstIdentifier e = new AstIdentifier(ELParserTreeConstants.JJTIDENTIFIER);
+  e.setImage(value);
+  return e;
+}
+
+%op Expr  Str(value:String) {
+  make(value) { makeStr($value) }
+  is_fsym(t) { $t instanceof AstString } 
+  get_slot(value, t)  { $t.getImage() }
+}
+
+private static AstString makeStr(String value) {
+  AstString e = new AstString(ELParserTreeConstants.JJTSTRING);
+  e.setImage(value);
+  return e;
+}
+
+%op Expr  PropertySuffix(value:String) {
+  make(value) { makePropertySuffix($value) }
+  is_fsym(t) { $t instanceof AstPropertySuffix } 
+  get_slot(value, t)  { $t.getImage() }
+}
+
+private static AstPropertySuffix makePropertySuffix(String value) {
+  AstPropertySuffix e = new AstPropertySuffix(ELParserTreeConstants.JJTPROPERTYSUFFIX);
+  e.setImage(value);
+  return e;
+}
+
+%op Expr  Integer(value:String) {
+  make(value) { makeInteger($value) }
+  is_fsym(t) { $t instanceof AstInteger } 
+  get_slot(value, t)  { $t.getImage() }
+}
+
+
+private static AstInteger makeInteger(String value) {
+  AstInteger e = new AstInteger(ELParserTreeConstants.JJTINTEGER);
+  e.setImage(value);
+  return e;
+}
+
+  %op Expr  DeferredExpression(expr:Expr) {
+  make(expr) { makeDeferredExpression($expr) }
+  is_fsym(t) { $t instanceof AstDeferredExpression } 
+  get_slot(expr, t)  { $t.jjtGetChild(0) }
+}
+
+
+private static AstDeferredExpression makeDeferredExpression(Node expr) {
+  AstDeferredExpression e = new AstDeferredExpression(ELParserTreeConstants.JJTDEFERREDEXPRESSION);
+  e.jjtAddChild(expr,0);
+  return e;
+}
+  
+  private static List<Node> getChildren(Node node, int start, int end) {
+  List<Node> nodes = new ArrayList<Node>();
+  if(end == -1) {
+    end = node.jjtGetNumChildren();
+  }
+  for(; start < end; start++) {
+    nodes.add(node.jjtGetChild(start));
+  }
+  return nodes;
+}
+  
+%op Expr  Value(values:ExprList) {
+  make(values) { makeValue($values) }
+  is_fsym(t) { $t instanceof AstValue }
+  get_slot(values,t) { getChildren($t, 0, $t.jjtGetNumChildren()) }
+}
+
+private static AstValue makeValue(List<Node> values) {
+  AstValue v = new AstValue(ELParserTreeConstants.JJTVALUE);
+  int i =0;
+  for (Node n: values) {
+    v.jjtAddChild(n,i);
+    i++;
+  }
+  return v;
+}
+
+%op Expr FloatingPoint(value:String) {
+  make(value) { makeFloatingPoint($value) }
+  is_fsym(t) { $t instanceof AstFloatingPoint }
+  get_slot(value,t) { $t.getImage() }
+}
+
+private static AstFloatingPoint makeFloatingPoint(String value) {
+  AstFloatingPoint e = new AstFloatingPoint(ELParserTreeConstants.JJTFLOATINGPOINT);
+  e.setImage(value);
+  return e;
+}
+
+%op Expr Null() {
+  make() { new AstNull(0) }
+  is_fsym(t) { $t instanceof AstNull }
+}
+
+%strategy Clone() extends Identity() {
+  visit Expr {
+    CompositeExpression(exprsList) -> CompositeExpression(exprsList)
+    DeferredExpression(expr) -> DeferredExpression(expr)
+    FunctionCall(idsList, name, argsList) -> FunctionCall(idsList, name, argsList)
+      ArrayAccess(idsList, arg) -> ArrayAccess(idsList, arg)
+      If(cond, left, right) -> If(cond, left, right)
+      Plus(left, right) -> Plus(left, right)
+      Minus(left, right) -> Minus(left, right)
+      Mod(left, right) -> Mod(left, right)
+      Mult(left, right) -> Mult(left, right)
+      Div(left, right) -> Div(left, right)
+      And(opleft, opright) -> And(opleft, opright)
+      Or(opleft, opright) -> Or(opleft, opright)
+      Equal(left, right) -> Equal(left, right)
+      NotEqual(left, right) -> NotEqual(left, right)
+      GreaterThan(left, right) -> GreaterThan(left, right)
+      GreaterThanEqual(left, right) -> GreaterThanEqual(left, right)
+      LessThan(left, right) -> LessThan(left, right)
+      LessThanEqual(left, right) -> LessThanEqual(left, right)
+      Not_(expr) -> Not_(expr)
+      Empty(expr) -> Empty(expr)
+      True() -> True()
+      False() -> False()
+      Str(value) -> Str(value)
+      FloatingPoint(value) -> FloatingPoint(value)
+      Literal(value) -> Literal(value)
+      Integer(value) -> Integer(value)
+      Identifier(name) -> Identifier(name)
+      PropertySuffix(name) -> PropertySuffix(name)
+      Value(valuesList) -> Value(valuesList)
+      Null() -> Null()
+      //x -> {System.out.println("no rule is applied"); }
+  }
+  visit ExprList {
+    e@concExpr(_*) -> {
+      ArrayList l = new ArrayList();
+      l.addAll(`e);
+      return l;
+    }
+  }
+}
+
+
+/**
+  %op Expr  IdPath(names:Names)
+ */
