@@ -68,7 +68,7 @@ public class Utils {
 
          // Match elements with only one attribute named "hashcode".
          %match(attrList) {
-    	   concTNode(attr@AttributeNode[Name="hashcode", Value=hashCode]) -> {
+    	   concTNode(attr@AttributeNode[Name="hashcode", Value=TextNode(hashCode)]) -> {
 
     		   //System.out.println("Convert from XML form " + `name + "/" + `attrList);
     		   Node.CustomTag tag = com.redline.codebraces.jsptools.extractor.jasper.JasperCompiler.getTag(`hashCode);
@@ -77,7 +77,7 @@ public class Utils {
     		   for (int a = 0; a < tag.getAttributes().getLength(); a++) {
 
     			   TNode tnode = `AttributeNode(tag.getAttributes().getLocalName(a), "true", 
-    					   tag.getAttributes().getValue(a));
+    					   TextNode(tag.getAttributes().getValue(a)));
     			   attrListNew = `concTNode(attrListNew*, tnode);
     		   }
 		       // Transform name to the same format as the names in 'tagLibNames'

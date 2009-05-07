@@ -27,7 +27,7 @@ private static <T> List<T> deepClone(List<T> l) {
   ArrayList<T> clone = new ArrayList<T>();
   for(T e:l) {
   try {
-    clone.add(`TopDown(Sequence(Debug(),Clone())).visit(e, new LocalIntrospector()));
+    clone.add(`TopDown(Clone()).visit(e, new LocalIntrospector()));
   } catch (tom.library.sl.VisitFailure ex ) {
     throw new RuntimeException("fail to clone");
   }
@@ -92,17 +92,14 @@ private static AstValue makeFunctionCall(List<Node> ids, String name, List<Node>
   suffix.setImage(name);
   int i =0;
   for (Node n: args) {
-    System.out.println("add child to suffix:"+i+"-"+n);
     suffix.jjtAddChild(n,i);
     i++;
   }
   i=0;
   for (Node n: ids) {
-    System.out.println("add child to v:"+i+"-"+n);
     v.jjtAddChild(n,i);
     i++;
   }
-  System.out.println("add child to v:"+i+"-"+suffix);
   v.jjtAddChild(suffix,i);
   return v;
 }
@@ -508,7 +505,6 @@ private static AstFloatingPoint makeFloatingPoint(String value) {
       PropertySuffix(name) -> PropertySuffix(name)
       Value(valuesList) -> Value(valuesList)
       Null() -> Null()
-      //x -> {System.out.println("no rule is applied"); }
   }
   visit ExprList {
     e@concExpr(_*) -> {

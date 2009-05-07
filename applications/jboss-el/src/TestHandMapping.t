@@ -102,38 +102,17 @@ public class TestHandMapping extends TestCase {
   }
 
   public void testReplaceLiteral() {
-    Node l = `FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal("toto")));
-    //Node node = ELParser.parse("#{contactSearchList.getRowCount()} Clients Total Assets = $ #{contactSearchContext.getTotalAsset()}");
-    //List<Node> l = `concExpr(Value(concExpr(Literal("a"),Literal("c"))),Literal("b"));
-    //deepClone(l);
+    Node node = ELParser.parse("#{contactSearchList.getRowCount()} Clients Total Assets = $ #{contactSearchContext.getTotalAsset()}");
     try {
-      `TopDown(Debug()).visit(l, new LocalIntrospector());
+      `BottomUp(ReplaceLiteral()).visit(node, new LocalIntrospector());
     } catch(tom.library.sl.VisitFailure e ) {}
   }
 
   %strategy ReplaceLiteral() extends Identity() {
     visit Expr {
-      Literal(s) -> {
-        System.out.println("s value "+`s);
-        
-        return `FunctionCall(concExpr(),"get",concExpr(Literal(s)));
-        //return `Literal(s);
-      }
-
-        
-        //FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(s)))
-      /**
-      { 
-        List<Node> l1 = new ArrayList<Node>();
-        l1.add(`Identifier("bundle"));
-        List<Node> l2 = new ArrayList<Node>();
-        l2.add(`Literal(s));
-        return `FunctionCall(l1,"get",l2);
-      }
-      */
+      Literal(s) -> FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(s)))
     }
   }
-
 
   %strategy FindTerms(terms:Collection, cls:Collection) extends Identity() {
     visit Expr {
