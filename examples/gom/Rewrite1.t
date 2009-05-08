@@ -77,7 +77,6 @@ public class Rewrite1 {
       if (o instanceof Term) {
         Term arg = (Term) o;
         %match(Term arg) {
-          //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
           a() -> { 
             Position pos = getEnvironment().getPosition();
             System.out.println("a -> b at " + pos);
