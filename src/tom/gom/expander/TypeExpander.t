@@ -80,16 +80,16 @@ public class TypeExpander {
       GomModule module = consum.getHeadConcGomModule();
       consum = consum.getTailConcGomModule();
 
-      Collection decls = getSortDeclarations(module);
+      Collection<SortDecl> decls = getSortDeclarations(module);
 
-      Collection implicitdecls = getSortDeclarationInCodomain(module);
+      Collection<SortDecl> implicitdecls = getSortDeclarationInCodomain(module);
 
       /* Check that there are no implicit sort declarations
        * Also, check that declared sorts have at least an operator
        */
       if(!decls.containsAll(implicitdecls)) {
         // whine about non declared sorts
-        Collection undeclaredSorts = new HashSet();
+        Collection<SortDecl> undeclaredSorts = new HashSet<SortDecl>();
         undeclaredSorts.addAll(implicitdecls);
         undeclaredSorts.removeAll(decls);
         getLogger().log(Level.WARNING, GomMessage.undeclaredSorts.getMessage(),
@@ -97,23 +97,19 @@ public class TypeExpander {
       }
       if(!implicitdecls.containsAll(decls)) {
         // whine about sorts without operators: this is a real error
-        Collection emptySorts = new HashSet();
+        Collection<SortDecl> emptySorts = new HashSet<SortDecl>();
         emptySorts.addAll(decls);
         emptySorts.removeAll(implicitdecls);
         getLogger().log(Level.SEVERE, GomMessage.emptySorts.getMessage(),
             new Object[]{showSortList(emptySorts)});
         return `ConcModule();
       }
-      Iterator it = implicitdecls.iterator();
-      while(it.hasNext()) {
-        SortDecl decl = (SortDecl)it.next();
+      for (SortDecl decl : implicitdecls) {
         sortDeclList = `ConcSortDecl(decl,sortDeclList*);
       }
       /* Fills sortsForModule */
-      it = decls.iterator();
       SortDeclList declaredSorts = `ConcSortDecl();
-      while(it.hasNext()) {
-        SortDecl decl = (SortDecl)it.next();
+      for (SortDecl decl : decls) {
         declaredSorts = `ConcSortDecl(decl,declaredSorts*);
       }
       GomModuleName moduleName = module.getModuleName();
@@ -259,8 +255,8 @@ public class TypeExpander {
   /*
    * Get all sort declarations in a module
    */
-  private Collection getSortDeclarations(GomModule module) {
-    Collection result = new HashSet();
+  private Collection<SortDecl> getSortDeclarations(GomModule module) {
+    Collection<SortDecl> result = new HashSet<SortDecl>();
     %match(module) {
       GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(_,typeName),_*)),_*)),
@@ -295,8 +291,8 @@ public class TypeExpander {
   /*
    * Get all sort uses in a module (as codomain of an operator)
    */
-  private Collection getSortDeclarationInCodomain(GomModule module) {
-    Collection result = new HashSet();
+  private Collection<SortDecl> getSortDeclarationInCodomain(GomModule module) {
+    Collection<SortDecl> result = new HashSet<SortDecl>();
     %match(module) {
       GomModule(
           moduleName,
@@ -439,15 +435,15 @@ public class TypeExpander {
     return valid;
   }
 
-  private String showSortList(Collection decls) {
+  private String showSortList(Collection<SortDecl> decls) {
     String sorts = "";
-    Iterator it = decls.iterator();
+    Iterator<SortDecl> it = decls.iterator();
     if(it.hasNext()) {
-      SortDecl decl = (SortDecl)it.next();
+      SortDecl decl = it.next();
       sorts += decl.getName();
     }
     while(it.hasNext()) {
-      SortDecl decl = (SortDecl)it.next();
+      SortDecl decl = it.next();
       sorts += ", "+decl.getName();
     }
     return sorts;

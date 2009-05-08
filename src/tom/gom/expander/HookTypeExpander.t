@@ -43,12 +43,12 @@ public class HookTypeExpander {
   %include { ../adt/gom/Gom.tom}
 
   private ModuleList moduleList;
-  private ArrayList sortsWithGraphrules;
+  private ArrayList<Decl> sortsWithGraphrules;
   private GomEnvironment gomEnvironment;
 
   public HookTypeExpander(ModuleList moduleList,GomEnvironment gomEnvironment) {
     this.moduleList = moduleList;
-    sortsWithGraphrules = new ArrayList();
+    sortsWithGraphrules = new ArrayList<Decl>();
     this.gomEnvironment = gomEnvironment;
   }
 
@@ -126,7 +126,7 @@ public class HookTypeExpander {
             }
           }
         }
-        ArrayList examinedOps = new ArrayList();
+        ArrayList<String> examinedOps = new ArrayList<String>();
         %match(prodList) {
           ConcProduction(_*, prod, _*) -> {
             hookList = addDefaultTheoryHooks(`prod,`hookList,examinedOps,`moduleName);
@@ -144,7 +144,7 @@ public class HookTypeExpander {
 
   private HookDeclList addDefaultTheoryHooks(Production prod,
                                              HookDeclList hookList,
-                                             ArrayList examinedOps,
+                                             ArrayList<String> examinedOps,
                                              String moduleName) {
     %match(prod, hookList) {
       /* check domain and codomain are equals */
