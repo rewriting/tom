@@ -60,9 +60,14 @@ public class TomIlTools {
   %include { ../../library/mapping/java/util/types/Set.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
   %include { ../../library/mapping/java/util/types/List.tom}
-  %typeterm Collection {
-    implement { java.util.Collection }
+  %typeterm StringCollection {
+    implement { java.util.Collection<String> }
     is_sort(t) { ($t instanceof java.util.Collection) }
+  }
+  %typeterm TomTermList {
+    implement { java.util.List<TomTerm> }
+    is_sort(t) { $t instanceof java.util.List }  
+    equals(l1,l2) { $l1.equals($l2) }
   }
   // ------------------------------------------------------------
 
@@ -83,7 +88,7 @@ public class TomIlTools {
   /**
    * Methods used to translate a pattern and conditions in zenon signature
    */
-  public ZExpr constraintToZExpr(ConstraintList constraintList, Map map) {
+  public ZExpr constraintToZExpr(ConstraintList constraintList, Map<String,ZTerm> map) {
     // do everything match the empty pattern ?
     ZExpr result = `zfalse();
     while(!constraintList.isEmptyconcConstraint()) {
@@ -94,20 +99,20 @@ public class TomIlTools {
     return result;
   }
 
-  public void getZTermSubjectListFromConstraint(Constraint constraint, List list, Map map) {
-    Set unamedVarSet = new HashSet();
+  public void getZTermSubjectListFromConstraint(Constraint constraint, List<ZTerm> list, Map<String,ZTerm> map) {
+    Set<ZTerm> unamedVarSet = new HashSet<ZTerm>();
     try{
-      ArrayList tmpList = new ArrayList();
+      ArrayList<TomTerm> tmpList = new ArrayList<TomTerm>();
       `TopDown(CollectSubjects(tmpList)).visitLight(constraint);
-      for(Object o:tmpList){
-        list.add(tomTermToZTerm((TomTerm)o,map,unamedVarSet));
+      for(TomTerm t:tmpList){
+        list.add(tomTermToZTerm(t,map,unamedVarSet));
       }
-    }catch(VisitFailure e){
+    } catch(VisitFailure e) {
       throw new TomRuntimeException("VisiFailure in TomIlTools.getZTermSubjectListFromConstraint: " + e.getMessage());
     }
   }
   
-  %strategy CollectSubjects(List list) extends Identity(){
+  %strategy CollectSubjects(TomTermList list) extends Identity(){
     visit Constraint {
       MatchConstraint(_,s) -> {
         list.add(`s);
@@ -115,27 +120,25 @@ public class TomIlTools {
     }
   }
 
-  public ZExpr constraintToZExpr(Constraint constraint, Map map) {
-    Set unamedVariableSet = new HashSet();
-    ArrayList subjectList = new ArrayList();
-    ArrayList patternList = new ArrayList();
+  public ZExpr constraintToZExpr(Constraint constraint, Map<String,ZTerm> map) {
+    Set<ZTerm> unamedVariableSet = new HashSet<ZTerm>();
+    ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
+    ArrayList<TomTerm> patternList = new ArrayList<TomTerm>();
     try{
       `TopDown(CollectSubjectsAndPatterns(subjectList,patternList)).visitLight(constraint);
-    }catch(VisitFailure e){
+    } catch(VisitFailure e) {
       throw new TomRuntimeException("VisiFailure in TomIlTools.constraintToZExpr: " + e.getMessage());
     }
     ZExpr result = `constraintToZExpr(ASTFactory.makeList(subjectList), ASTFactory.makeList(patternList), map, unamedVariableSet);
     // insert existential quantifiers for the unamed variables
-    Iterator it = unamedVariableSet.iterator();
-    while (it.hasNext()) {
-      ZTerm var = (ZTerm) it.next();
+    for (ZTerm var : unamedVariableSet) {
       result = `zexists(var,ztype("T"),result);
     }
     return result;
 
   }
   
-  %strategy CollectSubjectsAndPatterns(List subjectlist, List patternList) extends Identity(){
+  %strategy CollectSubjectsAndPatterns(TomTermList subjectlist, TomTermList patternList) extends Identity(){
     visit Constraint {
       MatchConstraint(p,s) -> {
         subjectlist.add(`s);
@@ -144,7 +147,7 @@ public class TomIlTools {
     }
   }
 
-  public ZExpr constraintToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
+  public ZExpr constraintToZExpr(TomList subjectList, TomList tomList, Map<String,ZTerm> map, Set<ZTerm> unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue();
     while(!tomList.isEmptyconcTomTerm()) {
@@ -158,7 +161,7 @@ public class TomIlTools {
     return res;
   }
 
-  public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map, Set unamedVariableSet) {
+  public ZTerm tomTermToZTerm(TomTerm tomTerm, Map<String,ZTerm> map, Set<ZTerm> unamedVariableSet) {
     %match(tomTerm) {
       TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
         // builds children list
@@ -174,7 +177,7 @@ public class TomIlTools {
       }
       RecordAppl[NameList=concTomName(Name(name),_*),Slots=childrens] -> {
         // builds a map: slotName / TomTerm
-        Map definedSlotMap = new HashMap();
+        Map<TomName,TomTerm> definedSlotMap = new HashMap<TomName,TomTerm>();
         Slot hd = null;
         while (!`childrens.isEmptyconcSlot()) {
           hd = `childrens.getHeadconcSlot();
@@ -195,7 +198,7 @@ public class TomIlTools {
               %match(decl) {
                 GetSlotDecl[SlotName=slotName] -> {
                   if (definedSlotMap.containsKey(`slotName)) {
-                    zchild = `concZTerm(zchild*,tomTermToZTerm((TomTerm)definedSlotMap.get(slotName),map,unamedVariableSet));
+                    zchild = `concZTerm(zchild*,tomTermToZTerm(definedSlotMap.get(slotName),map,unamedVariableSet));
                   }
                   else {
                     // fake an UnamedVariable
@@ -212,7 +215,7 @@ public class TomIlTools {
       }
       Variable[AstName=Name(name)] -> {
         if (map.containsKey(`name)) {
-          return (ZTerm) map.get(`name);
+          return map.get(`name);
         } else {
           System.out.println("tomTermToZTerm 1 Not in map: " + `name + " map: " + map);
           return `zvar(name);
@@ -221,7 +224,7 @@ public class TomIlTools {
       Variable[AstName=PositionName(numberList)] -> {
         String name = TomBase.tomNumberListToString(`numberList);
         if (map.containsKey(name)) {
-          return (ZTerm) map.get(name);
+          return map.get(name);
         } else {
           System.out.println("tomTermToZTerm 2 Not in map: " + name + " map: " + map);
           return `zvar(name);
@@ -238,7 +241,7 @@ public class TomIlTools {
     throw new TomRuntimeException("tomTermToZTerm Strange pattern: " + tomTerm);
   }
 
-  %strategy collect_symbols(store:Collection) extends `Identity() {
+  %strategy collect_symbols(store:StringCollection) extends `Identity() {
     visit ZSymbol {
       zsymbol(name)  -> {
         store.add(`name);
@@ -246,8 +249,8 @@ public class TomIlTools {
     }
   }
 
-  public Collection collectSymbols(ZExpr subject) {
-    Collection result = new HashSet();
+  public Collection<String> collectSymbols(ZExpr subject) {
+    Collection<String> result = new HashSet<String>();
     try {
       `TopDown(collect_symbols(result)).visitLight(subject);
     } catch (tom.library.sl.VisitFailure e) {
@@ -255,8 +258,8 @@ public class TomIlTools {
     }
     return result;
   }
-  public Collection collectSymbolsFromZSpec(ZSpec subject) {
-    Collection result = new HashSet();
+  public Collection<String> collectSymbolsFromZSpec(ZSpec subject) {
+    Collection<String> result = new HashSet<String>();
     try {
       `TopDown(collect_symbols(result)).visitLight(subject);
     } catch (tom.library.sl.VisitFailure e) {
@@ -265,11 +268,9 @@ public class TomIlTools {
     return result;
   }
 
-  public ZAxiomList symbolsDefinition(Collection symbolnames) {
+  public ZAxiomList symbolsDefinition(Collection<String> symbolnames) {
     ZAxiomList res = `zby();
-    Iterator it = symbolnames.iterator();
-    while (it.hasNext()) {
-      String name = (String) it.next();
+    for (String name : symbolnames) {
       TomSymbol symbol = TomBase.getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       ZTerm abstractVariable = `zvar("t");
@@ -298,11 +299,9 @@ public class TomIlTools {
     return res;
   }
 
-  public ZAxiomList subtermsDefinition(Collection symbolnames) {
+  public ZAxiomList subtermsDefinition(Collection<String> symbolnames) {
     ZAxiomList res = `zby();
-    Iterator it = symbolnames.iterator();
-    while (it.hasNext()) {
-      String name = (String) it.next();
+    for (String name : symbolnames) {
       TomSymbol symbol = TomBase.getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       %match(symbol) {
@@ -329,8 +328,8 @@ public class TomIlTools {
     return res;
   }
 
-  public List subtermList(String symbolName) {
-    List nameList = new LinkedList();
+  public List<String> subtermList(String symbolName) {
+    List<String> nameList = new LinkedList<String>();
 
     TomSymbol symbol = TomBase.getSymbolFromName(symbolName,getSymbolTable());
 

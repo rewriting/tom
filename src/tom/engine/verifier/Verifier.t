@@ -122,8 +122,8 @@ public class Verifier {
 
   public Term termFromExpresssion(Expression expression) {
     %match(expression) {
-      GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=Variable[AstName=name]] -> {
-        Term term = termFromTomName(`name);
+      GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=tomterm] -> {
+        Term term = termFromTomTerm(`tomterm);
         return `slot(fsymbol(symbolName),term,slotName);
       }
       TomTermToExpression(Variable[AstName=name]) -> {
@@ -134,7 +134,7 @@ public class Verifier {
         return termFromExpresssion(`expr);
       }
     }
-    System.out.println("termFromExpresssion don't know how to handle this: " + expression);
+    System.out.println("termFromExpression don't know how to handle this: " + expression);
     return `repr("autre foirade avec " + expression);
   }
 
@@ -142,8 +142,8 @@ public class Verifier {
     %match(expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
-      IsFsym[AstName=Name(symbolName),Variable=Variable[AstName=varName]] -> {
-        Term term = termFromTomName(`varName);
+      IsFsym[AstName=Name(symbolName),Variable=tomterm] -> {
+        Term term = termFromTomTerm(`tomterm);
         return `isfsym(term,fsymbol(symbolName));
       }
       EqualTerm[Kid1=t1,Kid2=t2] -> {

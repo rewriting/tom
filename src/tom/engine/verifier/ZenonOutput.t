@@ -70,22 +70,20 @@ public class ZenonOutput {
     this.tomiltools = new TomIlTools(verifier);
   }
 
-  public Collection zspecSetFromConstraintMap(Map constraintMap) {
-    Collection resset = new HashSet();
-    Iterator it = constraintMap.entrySet().iterator();
-    while(it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
+  public Collection<ZSpec> zspecSetFromConstraintMap(Map<Instr,Expr> constraintMap) {
+    Collection<ZSpec> resset = new HashSet<ZSpec>();
+    for (Map.Entry<Instr,Expr> entry : constraintMap.entrySet()) {
       ZSpec spec = zspecFromMapEntry(entry);
       resset.add(spec);
     }
     return resset;
   }
 
-  public ZSpec zspecFromMapEntry(Map.Entry entry) {
-    Instr accept = (Instr) entry.getKey();
-    Expr constraint = (Expr) entry.getValue();
+  public ZSpec zspecFromMapEntry(Map.Entry<Instr,Expr> entry) {
+    Instr accept = entry.getKey();
+    Expr constraint = entry.getValue();
 
-    List subjectList = new LinkedList();
+    List<ZTerm> subjectList = new LinkedList<ZTerm>();
     ZExpr pattern = null;
     ZExpr negpattern = null;
 
@@ -96,11 +94,12 @@ public class ZenonOutput {
         ConstraintList negativePatternList = ConstraintList.fromTerm(`negative);
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
-        Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
-                                                               new HashMap());
+        Map<String,ZTerm> variableMap = ztermVariableMapFromSubstitutionList(
+                                          subsList,
+                                          new HashMap<String,ZTerm>());
         tomiltools.getZTermSubjectListFromConstraint(positivePattern,
-                                                  subjectList,
-                                                  variableMap);
+                                                     subjectList,
+                                                     variableMap);
         pattern = tomiltools.constraintToZExpr(positivePattern,variableMap);
         if (verifier.isCamlSemantics()) {
           negpattern = tomiltools.constraintToZExpr(negativePatternList,variableMap);
@@ -124,15 +123,13 @@ public class ZenonOutput {
     // to TomSignature and Zenon signature
 
     // collects symbols in pattern
-    Collection symbols = tomiltools.collectSymbols(pattern);
+    Collection<String> symbols = tomiltools.collectSymbols(pattern);
     // generates the axioms for this set of symbols
     ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
     // generates axioms for all subterm operations
     ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
 
-    Iterator iter = subjectList.iterator();
-    while(iter.hasNext()) {
-      ZTerm input = (ZTerm)iter.next();
+    for (ZTerm input : subjectList) {
       theorem = `zforall(input,ztype("T"),theorem);
     }
     ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
@@ -251,7 +248,9 @@ public class ZenonOutput {
     return `zvar("Error in ztermFromAbsTerm");
   }
 
-  private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
+  private Map<String,ZTerm> ztermVariableMapFromSubstitutionList(
+                              SubstitutionList sublist,
+                              Map<String,ZTerm> map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
       (undefsubs(),t*)  -> {
