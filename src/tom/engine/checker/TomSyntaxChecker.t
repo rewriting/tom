@@ -102,13 +102,13 @@ public class TomSyntaxChecker extends TomChecker {
   private final static String MAKE        = "make";
 
   /** the list of already studied and declared Types */
-  private  ArrayList alreadyStudiedTypes =  null;
+  private  ArrayList<String> alreadyStudiedTypes =  null;
   /** the list of already studied and declared Symbol */
-  private  ArrayList alreadyStudiedSymbols =  null;
+  private  ArrayList<String> alreadyStudiedSymbols =  null;
 
   /** List of expected functional declaration in each type declaration */
-  private final static ArrayList TypeTermSignature =
-    new ArrayList(Arrays.asList(new String[]{ TomSyntaxChecker.EQUALS }));
+  private final static ArrayList<String> TypeTermSignature =
+    new ArrayList<String>(Arrays.asList(new String[]{ TomSyntaxChecker.EQUALS }));
 
   /** Constructor */
   public TomSyntaxChecker() {
@@ -136,8 +136,8 @@ public class TomSyntaxChecker extends TomChecker {
 
   protected void reinit() {
     super.reinit();
-    alreadyStudiedTypes   = new ArrayList();
-    alreadyStudiedSymbols = new ArrayList();
+    alreadyStudiedTypes   = new ArrayList<String>();
+    alreadyStudiedSymbols = new ArrayList<String>();
   }
 
   public void run(Map informationTracker) {
@@ -244,7 +244,7 @@ public class TomSyntaxChecker extends TomChecker {
     // ensure first definition
     verifyMultipleDefinition(tomName, declType, TYPE);
     // verify Macro functions
-    ArrayList verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
+    ArrayList<String> verifyList = new ArrayList<String>(TomSyntaxChecker.TypeTermSignature);
 
     %match(DeclarationList listOfDeclaration) {
       (_*, d, _*) -> { // for each Declaration
@@ -418,7 +418,7 @@ public class TomSyntaxChecker extends TomChecker {
   } // verifySymbolDomain
 
   private void verifySymbolMacroFunctions(OptionList option, int domainLength, String symbolType) {
-    ArrayList verifyList = new ArrayList();
+    ArrayList<String> verifyList = new ArrayList<String>();
     boolean foundOpMake = false;
     if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) { // Nothing absolutely
                                                           // necessary
@@ -478,7 +478,7 @@ public class TomSyntaxChecker extends TomChecker {
       // we test the necessity to use different names for each
       // variable-parameter.
     int nbArgs = 0;
-    ArrayList listVar = new ArrayList();
+    ArrayList<String> listVar = new ArrayList<String>();
     %match(TomList argsList) {
       (_*, Variable[AstName=Name(name)] ,_*) -> { // for each Macro variable
         if(listVar.contains(`name)) {
@@ -500,7 +500,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   private void verifySymbolPairNameDeclList(PairNameDeclList pairNameDeclList, String symbolType) {
       // we test the existence of 2 same slot names
-    ArrayList listSlot = new ArrayList();
+    ArrayList<String> listSlot = new ArrayList<String>();
     %match(PairNameDeclList pairNameDeclList) {
       (_*, PairNameDecl[SlotName=Name(name)], _*) -> { // for each Slot
         if(listSlot.contains(`name)) {
@@ -539,8 +539,8 @@ public class TomSyntaxChecker extends TomChecker {
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure {
     setCurrentTomStructureOrgTrack(TomBase.findOriginTracking(option));
     ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
-    HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
-    HashMap<Constraint, Instruction> orActionMap = new HashMap();
+    HashMap<TomName, List<TomName>> varRelationsMap = new HashMap<TomName, List<TomName>>();
+    HashMap<Constraint, Instruction> orActionMap = new HashMap<Constraint, Instruction>();
     ArrayList tmp = new ArrayList();
     `TopDownCollect(CollectConstraints(constraints, tmp, orActionMap)).visitLight(constraintInstructionList);
     TomType typeMatch = null;    
@@ -730,7 +730,7 @@ matchLbl: %match(constr) {
             }
           }          
         }
-        freeVarList1 = (ArrayList<TomTerm>)freeVarList2.clone();
+        freeVarList1 = new ArrayList<TomTerm>(freeVarList2);
         freeVarList2.clear();
       }
     }
@@ -1550,8 +1550,8 @@ matchLbl: %match(constr) {
     // and then the associated term
   private void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine) {
   TomName pairSlotName = null;
-  ArrayList listOfPossibleSlot = null;
-  ArrayList studiedSlotIndexList = new ArrayList();
+  ArrayList<String> listOfPossibleSlot = null;
+  ArrayList<Integer> studiedSlotIndexList = new ArrayList<Integer>();
     // for each pair slotName <=> Appl
   while( !slotList.isEmptyconcSlot() ) {
       pairSlotName = slotList.getHeadconcSlot().getSlotName();
@@ -1560,7 +1560,7 @@ matchLbl: %match(constr) {
       if(index < 0) {// Error: bad slot name
         if(listOfPossibleSlot == null) {
           // calculate list of possible slot names..
-          listOfPossibleSlot = new ArrayList();
+          listOfPossibleSlot = new ArrayList<String>();
           PairNameDeclList listOfSlots = tomSymbol.getPairNameDeclList();
           while ( !listOfSlots.isEmptyconcPairNameDecl() ) {
             TomName sname = listOfSlots.getHeadconcPairNameDecl().getSlotName();
