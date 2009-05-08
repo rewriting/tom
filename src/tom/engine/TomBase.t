@@ -134,9 +134,10 @@ public final class TomBase {
     }
   }
 
-  private static LRUCache tomNumberListToStringMap = new LRUCache(LRUCACHE_SIZE); 
+  private static LRUCache<TomNumberList,String> tomNumberListToStringMap =
+    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE); 
   public static String tomNumberListToString(TomNumberList numberList) {
-    String result = (String)tomNumberListToStringMap.get(numberList);
+    String result = tomNumberListToStringMap.get(numberList);
     if(result == null) {
       TomNumberList key = numberList;
       StringBuilder buf = new StringBuilder(30);

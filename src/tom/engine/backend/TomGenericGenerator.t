@@ -51,7 +51,7 @@ import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
-  protected HashMap isFsymMap = new HashMap();
+  protected HashMap<String,String> isFsymMap = new HashMap<String,String>();
   protected boolean lazyMode;
   protected boolean nodeclMode;
   protected boolean inline;
@@ -203,7 +203,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsFsym(opname);
     if(instantiateTemplate(deep,template,`concTomTerm(exp),moduleName) == false) {
-      String s = (String)isFsymMap.get(opname);
+      String s = isFsymMap.get(opname);
       if(s == null) {
         s = "tom_is_fun_sym_" + opname + "(";
         isFsymMap.put(opname,s);
