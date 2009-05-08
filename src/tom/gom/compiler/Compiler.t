@@ -47,11 +47,11 @@ public class Compiler {
   %include { ../adt/objects/Objects.tom}
 
   private GomEnvironment gomEnvironment;
-  private Map sortClassNameForSortDecl;
+  private Map<SortDecl,ClassName> sortClassNameForSortDecl;
 
   public Compiler(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
-    sortClassNameForSortDecl = new HashMap(getGomEnvironment().builtinSortClassMap());
+    sortClassNameForSortDecl = new HashMap<SortDecl,ClassName>(getGomEnvironment().builtinSortClassMap());
   }
 
   public GomEnvironment getGomEnvironment() {
@@ -66,12 +66,16 @@ public class Compiler {
     GomClassList classList = `ConcGomClass();
 
     /* ModuleDecl -> (AbstractType) ClassName */
-    Map abstractTypeNameForModule = new HashMap();
-    Map tomMappingNameForModule = new HashMap();
+    Map<ModuleDecl,ClassName> abstractTypeNameForModule =
+      new HashMap<ModuleDecl,ClassName>();
+    Map<ModuleDecl,ClassName> tomMappingNameForModule =
+      new HashMap<ModuleDecl,ClassName>();
     /* SortDecl -> SortClass */
-    Map sortGomClassForSortDecl = new HashMap();
+    Map<SortDecl,GomClass> sortGomClassForSortDecl =
+      new HashMap<SortDecl,GomClass>();
     /* OperatorDecl -> OperatorClass */
-    Map classForOperatorDecl = new HashMap();
+    Map<OperatorDecl,GomClass> classForOperatorDecl =
+      new HashMap<OperatorDecl,GomClass>();
     /* For each module */
     %match(moduleList) {
       ConcModule(_*,Module[MDecl=moduleDecl],_*) -> {
@@ -113,12 +117,12 @@ public class Compiler {
             _*)],
           _*) -> {
         // get the class name for the sort
-        ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
-        ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
-        ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDecl);
+        ClassName sortClassName = sortClassNameForSortDecl.get(`sortDecl);
+        ClassName abstracttypeName = abstractTypeNameForModule.get(`moduleDecl);
+        ClassName mappingName = tomMappingNameForModule.get(`moduleDecl);
         // create operator classes. Also, store a list of all operators for the sort class
         // use a Set to collect slots and avoid duplicates
-        Set allSortSlots = new HashSet();
+        Set<SlotField> allSortSlots = new HashSet<SlotField>();
         ClassNameList allOperators = `ConcClassName();
         ClassNameList allVariadicOperators = `ConcClassName();
         %match(OperatorDeclList `oplist) {
@@ -135,7 +139,7 @@ public class Compiler {
             ClassName empty = null;
             %match(TypedProduction typedproduction) {
               Variadic[Sort=domain] -> {
-                ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
+                ClassName clsName = sortClassNameForSortDecl.get(`domain);
                 SlotField slotHead = `SlotField("Head"+opname,clsName);
                 SlotField slotTail = `SlotField("Tail"+opname,sortClassName);
                 allSortSlots.add(`slotHead);
@@ -153,7 +157,7 @@ public class Compiler {
                 allOperators = `ConcClassName(empty,allOperators*);
               }
               Slots(ConcSlot(_*,Slot[Name=slotname,Sort=domain],_*)) -> {
-                ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
+                ClassName clsName = sortClassNameForSortDecl.get(`domain);
                 SlotField slotfield = `SlotField(slotname,clsName);
                 allSortSlots.add(slotfield);
                 slots = `ConcSlotField(slots*,slotfield);
@@ -230,14 +234,14 @@ public class Compiler {
             sortconsum = sortconsum.getTailConcSort();
             %match(sort) {
               Sort[Decl=sortDecl] -> {
-                GomClass sortClass = (GomClass) sortGomClassForSortDecl.get(`sortDecl);
+                GomClass sortClass = sortGomClassForSortDecl.get(`sortDecl);
                 allSortClasses = `ConcGomClass(sortClass,allSortClasses*);
               }
             }
           }
           %match(moduleSorts) {
             ConcSort(_*,Sort[OperatorDecls=ConcOperator(_*,opDecl,_*)],_*) -> {
-              GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
+              GomClass opClass = classForOperatorDecl.get(`opDecl);
               allOperatorClasses = `ConcGomClass(opClass,allOperatorClasses*);
               %match(GomClass opClass) {
                 VariadicOperatorClass[Empty=emptyClass,Cons=consClass] -> {
@@ -248,12 +252,10 @@ public class Compiler {
           }
         }
 
-        ClassName abstractTypeClassName = (ClassName)
-          abstractTypeNameForModule.get(`moduleDecl);
+        ClassName abstractTypeClassName = abstractTypeNameForModule.get(`moduleDecl);
 
         /* create a TomMapping */
-        ClassName tomMappingName = (ClassName)
-          tomMappingNameForModule.get(`moduleDecl);
+        ClassName tomMappingName = tomMappingNameForModule.get(`moduleDecl);
         GomClass tommappingclass = `TomMapping(tomMappingName,
                                                allSortClasses,
                                                allOperatorClasses);
@@ -261,8 +263,7 @@ public class Compiler {
 
         /* create the abstractType */
         ClassNameList classSortList = sortClassNames(`moduleList);
-        ClassName abstractTypeName = (ClassName)
-          abstractTypeNameForModule.get(`moduleDecl);
+        ClassName abstractTypeName = abstractTypeNameForModule.get(`moduleDecl);
         GomClass abstracttype =
           `AbstractTypeClass(abstractTypeName,
                              tomMappingName,
@@ -278,17 +279,13 @@ public class Compiler {
     /* for ModuleDecl */
     declToClassName.putAll(abstractTypeNameForModule);
     /* for SortDecl */
-    Iterator it = sortGomClassForSortDecl.entrySet().iterator();
-    while(it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      GomClass sortClass = (GomClass) entry.getValue();
+    for (Map.Entry<SortDecl,GomClass> entry : sortGomClassForSortDecl.entrySet()) {
+      GomClass sortClass = entry.getValue();
       declToClassName.put(entry.getKey(),sortClass.getClassName());
     }
     /* for OperatorDecl */
-    it = classForOperatorDecl.entrySet().iterator();
-    while(it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      GomClass sortClass = (GomClass) entry.getValue();
+    for (Map.Entry<OperatorDecl,GomClass> entry : classForOperatorDecl.entrySet()) {
+      GomClass sortClass = entry.getValue();
       declToClassName.put(entry.getKey(),sortClass.getClassName());
     }
     HookCompiler hcompiler = new HookCompiler(sortClassNameForSortDecl);
@@ -337,11 +334,9 @@ public class Compiler {
     return pkgPrefix.toLowerCase();
   }
 
-  private SlotFieldList slotFieldListFromSet(Set slotFieldSet) {
-    Iterator it = slotFieldSet.iterator();
+  private SlotFieldList slotFieldListFromSet(Set<SlotField> slotFieldSet) {
     SlotFieldList list = `ConcSlotField();
-    while(it.hasNext()) {
-      SlotField slot = (SlotField) it.next();
+    for (SlotField slot : slotFieldSet ) {
       list = `ConcSlotField(list*,slot);
     }
     return list;
