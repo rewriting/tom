@@ -275,7 +275,8 @@ public class Compiler {
     }
     /* Call the hook processor here, to attach hooks to the correct classes */
     /* fist compute the mapping "Decl" -> "ClassName" */
-    Map declToClassName = new HashMap();
+    Map<GomAbstractType,ClassName> declToClassName =
+      new HashMap<GomAbstractType,ClassName>();
     /* for ModuleDecl */
     declToClassName.putAll(abstractTypeNameForModule);
     /* for SortDecl */
