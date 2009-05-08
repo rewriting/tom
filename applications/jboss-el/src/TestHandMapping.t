@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class TestHandMapping extends TestCase {
 
@@ -14,6 +15,7 @@ public class TestHandMapping extends TestCase {
   %include { sl.tom }
   %include { string.tom }
   %include { java/util/types/Collection.tom }
+  %include { java/util/HashSet.tom }
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestHandMapping.class));
@@ -104,8 +106,23 @@ public class TestHandMapping extends TestCase {
   public void testReplaceLiteral() {
     Node node = ELParser.parse("#{contactSearchList.getRowCount()} Clients Total Assets = $ #{contactSearchContext.getTotalAsset()}");
     try {
-      `BottomUp(ReplaceLiteral()).visit(node, new LocalIntrospector());
-    } catch(tom.library.sl.VisitFailure e ) {}
+      node = `BottomUp(ReplaceLiteral()).visitLight(node, new LocalIntrospector());
+      %match(node) {
+        CompositeExpression(concExpr(_, 
+                                    FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(" Clients Total Assets = $ ")))
+                                    , _)) -> { return; }
+      }
+      fail();
+    } catch(tom.library.sl.VisitFailure e ) { fail(); }
+  }
+
+  public void testCollectSuspectCall() {
+    Node node = ELParser.parse("#{contactSearchList.getRowCount()} #{contactSearchList.removeContact(Pierre)} #{contactSearchContext.renameContact(Pierre,Paul)}");
+    try {
+      HashSet bag = new HashSet();
+      `TopDown(CollectSuspectMethodCall(bag)).visitLight(node, new LocalIntrospector());
+      Assert.assertTrue(bag.size() == 2);
+    } catch(tom.library.sl.VisitFailure e ) { fail(); }
   }
 
   %strategy ReplaceLiteral() extends Identity() {
@@ -113,6 +130,13 @@ public class TestHandMapping extends TestCase {
       Literal(s) -> FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(s)))
     }
   }
+
+  %strategy CollectSuspectMethodCall(bag:HashSet) extends Identity() {
+    visit Expr {
+      f@FunctionCall[name=!concString('g','e','t',_*)] -> { bag.add(`f); }
+    }
+  }
+
 
   %strategy FindTerms(terms:Collection, cls:Collection) extends Identity() {
     visit Expr {
