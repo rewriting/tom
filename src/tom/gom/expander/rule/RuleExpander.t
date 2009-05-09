@@ -70,12 +70,13 @@ public class RuleExpander {
   protected HookDeclList expand(RuleList rulelist) {
     HookDeclList hookList = `ConcHookDecl();
     /* collect all rules for a given symbol */
-    Map rulesForOperator = new HashMap();
+    Map<OperatorDecl,RuleList> rulesForOperator =
+      new HashMap<OperatorDecl,RuleList>();
     %match(rulelist) {
       RuleList(_*,rl@(Rule|ConditionalRule)[lhs=Appl[symbol=symbol]],_*) -> {
         OperatorDecl decl = getOperatorDecl(`symbol);
-        if(null!=decl) {
-          RuleList rules = (RuleList) rulesForOperator.get(decl);
+        if (null != decl) {
+          RuleList rules = rulesForOperator.get(decl);
           if (null == rules) {
             rulesForOperator.put(decl,`RuleList(rl));
           } else {
@@ -88,23 +89,21 @@ public class RuleExpander {
       }
     }
     /* Generate a construction hook for each constructor */
-    Iterator it = rulesForOperator.keySet().iterator();
-    while (it.hasNext()) {
-      OperatorDecl opDecl = (OperatorDecl) it.next();
+    for (OperatorDecl opDecl : rulesForOperator.keySet()) {
       TypedProduction prod = opDecl.getProd();
       %match(prod) {
         /* Syntactic operator */
         Slots[Slots=slotList] -> {
           SlotList args = opArgs(`slotList,1);
           String hookCode =
-            generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
+            generateHookCode(args, rulesForOperator.get(opDecl));
           hookList =
             `ConcHookDecl(hookList*,
                 MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules"),true()));
         }
         /* Variadic operator */
         Variadic[Sort=sort] -> {
-          RuleList rules = (RuleList) rulesForOperator.get(opDecl);
+          RuleList rules = rulesForOperator.get(opDecl);
           /* Handle rules for empty: there should be at least one */
           int count = 0;
           RuleList nonEmptyRules = rules;
