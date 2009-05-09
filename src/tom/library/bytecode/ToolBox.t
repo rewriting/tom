@@ -101,14 +101,14 @@ public class ToolBox {
 
   public static int buildAccessValue(AccessList list){
     int value =0;
-    HashMap map = new HashMap();
+    HashMap<Access,Integer> map = new HashMap<Access,Integer>();
     for(int i =0;i<accessObj.length;i++){
-      map.put(accessObj[i],new Integer(accessFlags[i]));
+      map.put(accessObj[i],accessFlags[i]);
     }
 
     %match(list){
       AccessList(_*,acc,_*)->{
-        value = value | ((Integer)map.get(`acc)).intValue();
+        value = value | (map.get(`acc)).intValue();
       }
     }
     return value;   
