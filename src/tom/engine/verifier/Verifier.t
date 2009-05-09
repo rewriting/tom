@@ -279,12 +279,12 @@ public class Verifier {
     return treeList;
   }
 
-  public Map getConstraints(Instruction automata) {
+  public Map<Instr,Expr> getConstraints(Instruction automata) {
     // collects the accept in the automata
     Collection localAccepts = collectAccept(automata);
 
     Iterator iter = localAccepts.iterator();
-    Map constraintList = new HashMap();
+    Map<Instr,Expr> constraintList = new HashMap<Instr,Expr>();
     while(iter.hasNext()) {
       Instr localAccept = (Instr) iter.next();
 

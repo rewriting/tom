@@ -931,7 +931,7 @@ args[list,secondOptionList]
       ASTFactory.makeList(list),
       ASTFactory.makeConstraintList(constraintList)
   );
-  if(anti) { result = `AntiTerm(result); }
+  if (anti) { result = `AntiTerm(result); }
 }
 ;
 
