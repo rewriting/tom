@@ -67,19 +67,19 @@ funappl returns [RawTerm res]
 /* propositions */
 
 prop returns [RawProp res]
-: p=orprop { $res = p; } (IMPL p=orprop { $res = `Rawimplies($res,p); })*;
+: FORALL ID COMMA p=iprop { $res = `Rawforall(RawFa($ID.text,p)); }
+| EXISTS ID COMMA p=iprop { $res = `Rawexists(RawEx($ID.text,p)); }
+| p=iprop { $res = p; }
+;
+
+iprop returns [RawProp res]
+: p=orprop { $res = p; } (IMPL p=iprop { $res = `Rawimplies($res,p); })?;
 
 orprop returns [RawProp res]
 : p=andprop { $res = p; } (OR p=andprop { $res = `Rawor($res,p); })*;
 
 andprop returns [RawProp res]
-: p=forallprop { $res = p; } (AND p=forallprop { $res = `Rawand($res,p); })*;
-
-forallprop returns [RawProp res]
-: FORALL ID COMMA p=atom { $res = `Rawforall(RawFa($ID.text,p)); }
-| EXISTS ID COMMA p=atom { $res = `Rawexists(RawEx($ID.text,p)); }
-| p=atom { $res = p; }
-;
+: p=atom { $res = p; } (AND p=atom { $res = `Rawand($res,p); })*;
 
 atom returns [RawProp res]
 : LPAR p=prop RPAR { $res = p; }

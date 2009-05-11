@@ -2,6 +2,8 @@ package lemu2.util;
 
 import lemu2.kernel.proofterms.types.*;
 import lemu2.kernel.coc.types.*;
+import fj.data.List;
+import fj.F;
 
 public class Pretty {
 
@@ -93,29 +95,38 @@ public class Pretty {
 
   /* raw propositions */
 
-  public static String pretty(RawProp p) {
+  /* precedences :
+       forall, exists : 0
+       =>             : 1
+       /\             : 2
+       \/             : 3
+       P,False,True   : 4 
+  */
+  private static String pretty(RawProp p, int prec) {
     %match(p) {
-      Rawimplies(p1@RawrelApp[],p2) -> { return %[@`pretty(p1)@ => @`pretty(p2)@]% ; }
-      Rawimplies(p1,p2) -> { return %[(@`pretty(p1)@) => @`pretty(p2)@]% ; }
-      Rawor(p1@RawrelApp[],p2) -> { return %[@`pretty(p1)@ \/ @`pretty(p2)@]%; }
-      Rawor(p1,p2) -> { return %[(@`pretty(p1)@) \/ @`pretty(p2)@]%; }
-      Rawand(p1@RawrelApp[],p2) -> { return %[@`pretty(p1)@ /\ @`pretty(p2)@]%; }
-      Rawand(p1,p2) -> { return %[(@`pretty(p1)@) /\ @`pretty(p2)@]%; }
-      Rawforall(RawFa(x,p1)) -> { return %[forall @`x@, (@`pretty(p1)@)]%; }
-      Rawexists(RawEx(x,p1)) -> { return %[exists @`x@, (@`pretty(p1)@)]%; }
-      RawrelApp(r,()) -> { return `r; }
-      // arithmetic pretty print
-      RawrelApp("eq",(x,y)) -> { return %[@`pretty(x)@ = @`pretty(y)@]%; }
-      RawrelApp("gt",(x,y)) -> { return %[@`pretty(x)@ > @`pretty(y)@]%; }
-      RawrelApp("lt",(x,y)) -> { return %[@`pretty(x)@ < @`pretty(y)@]%; }
-      RawrelApp("le",(x,y)) -> { return %[@`pretty(x)@ <= @`pretty(y)@]%; }
-      // set theory prettyprint
-      RawrelApp("in",(x,y)) -> { return `pretty(x) + " \u2208 " + `pretty(y); }
-      RawrelApp(r,x) -> { return %[@`r@(@`pretty(x)@)]%; }
-      Rawbottom() -> { return "False"; }
-      Rawtop() -> { return "True"; }
+      Rawforall(RawFa(x,p1)) -> { if (prec <= 0) return %[forall @`x@, @`pretty(p1,0)@]%; }
+      Rawexists(RawEx(x,p1)) -> { if (prec <= 0) return %[exists @`x@, @`pretty(p1,0)@]%; }
+      Rawimplies(p1,p2)      -> { if (prec <= 1) return %[@`pretty(p1,2)@ => @`pretty(p2,1)@]% ; }
+      Rawor(p1,p2)           -> { if (prec <= 2) return %[@`pretty(p1,2)@ \/ @`pretty(p2,3)@]%; }
+      Rawand(p1,p2)          -> { if (prec <= 3) return %[@`pretty(p1,3)@ /\ @`pretty(p2,4)@]%; }
+      Rawbottom()            -> { return "False"; }
+      Rawtop()               -> { return "True"; }
+      /*-- special cases --*/
+      RawrelApp("eq",(x,y))  -> { return %[(@`pretty(x)@ = @`pretty(y)@)]%; }
+      RawrelApp("gt",(x,y))  -> { return %[(@`pretty(x)@ > @`pretty(y)@)]%; }
+      RawrelApp("lt",(x,y))  -> { return %[(@`pretty(x)@ < @`pretty(y)@)]%; }
+      RawrelApp("le",(x,y))  -> { return %[(@`pretty(x)@ <= @`pretty(y)@)]%; }
+      RawrelApp("in",(x,y))  -> { return "(" + `pretty(x) + " \u2208 " + `pretty(y) + ")"; }
+      /* -- regular case --*/
+      RawrelApp(r,())        -> { return `r; }
+      RawrelApp(r,x)         -> { return %[@`r@(@`pretty(x)@)]%; }
+      p1                     -> { return %[(@`pretty(p1,0)@)]%; }
     }
     throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pretty(RawProp p) {
+    return pretty(p,0);
   }
 
   /* raw first-order terms */
@@ -426,6 +437,21 @@ public class Pretty {
 
   /* --------------- coc terms -------------- */
 
+  private static List<String> freeVars(RawCoCTerm t) {
+    return freeVars(List.<String>nil(),t);
+  }
+
+  private static List<String> freeVars(List<String> ctx, RawCoCTerm t) {
+    %match(t) {
+      RawcocVar(v) -> { return ctx.toCollection().`contains(v) ? ctx : ctx.`cons(v); }
+      RawcocLam(RawCoCLam(x,_,u)) -> { return `freeVars(ctx.cons(x),u); }
+      RawcocPi(RawCoCPi(x,_,u)) -> { return `freeVars(ctx.cons(x),u); }
+      RawcocApp(u,v) -> { return `freeVars(ctx,u).append(`freeVars(ctx,v)); }
+      RawcocConst(_) -> { return List.<String>nil();  }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
   public static String pretty(CoCTerm t) {
     %match(t) {
       cocVar(CoCAtom(x,i)) -> { return `x + `i; }
@@ -443,8 +469,15 @@ public class Pretty {
   public static String pretty(RawCoCTerm t) {
     %match(t) {
       RawcocVar(x) -> { return `x; }
-      RawcocLam(RawCoCLam(x,ty,u)) -> { return %[(fun @`x@:@`pretty(ty)@ => @`pretty(u)@)]%; }
-      RawcocPi(RawCoCPi(x,ty,u)) -> { return %[(forall @`x@:@`pretty(ty)@, @`pretty(u)@)]%; }
+      RawcocLam(RawCoCLam(x,ty,u)) -> { 
+        return %[(fun @`x@:@`pretty(ty)@ => @`pretty(u)@)]%; 
+      }
+      RawcocPi(RawCoCPi(x,ty,u)) -> { 
+        if (`freeVars(u).toCollection().`contains(x))
+          return %[(forall @`x@:@`pretty(ty)@, @`pretty(u)@)]%; 
+        else
+          return %[(@`pretty(ty)@ -> @`pretty(u)@)]%;
+      }
       RawcocApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
       RawcocConst(c) -> { return `c; }
     }
