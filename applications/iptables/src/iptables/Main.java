@@ -56,13 +56,13 @@ public class Main {
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
 				(FirewallRules) AstAdaptor.getTerm(b1);
-			System.out.println("inst = " + inst);
+			System.out.println("***inst = " + inst + "\n");
 
 			Rules rs = (new IptablesWrapper()).wrap(inst);
-			System.out.println("rules = " + rs);
+			System.out.println("***rules = " + rs + "\n");
 
 			rs = Analyser.checkIntegrity(rs);
-			System.out.println("new rules = " + rs);
+			System.out.println("***new rules = " + rs + "\n");
 
 			System.out.println("### Iptables ###");
 			(new IptablesPrinter()).prettyPrinter(rs);

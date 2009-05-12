@@ -3,97 +3,175 @@ package iptables;
 import iptables.analyser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
+import java.io.*;
+
 
 public class Analyser {
+	public static class InteractiveNeededException extends RuntimeException { }
+
 	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
 	public static final int NOT_COMPARABLE = Integer.MAX_VALUE;
 
-	public static void printErr(String msg) {
-		System.err.println("error: " + msg);
+	public static void printError(String errtype, Rule r1, String errmsg,
+		Rule r2) {
+		System.err.println("error[" + errtype + "]: " + `r1 + " <" + 
+			errmsg + "> " + `r2 + "\n");
 	}
 
-	public static void printWarn(String msg) {
-		System.out.println("warning: " + msg);
+	public static void printWarning(String errtype, Rule r1, String errmsg,
+		Rule r2) {
+		System.err.println("warning[" + errtype + "]: " + `r1 + " <"
+			+ errmsg + "> " + `r2 + "\n");
 	}
+
+	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
+		System.out.println("\n[1] " + `r1 + "\n[2] " + `r2 + "\n" + msg 
+			+ " [1/2] ? ");
+		BufferedReader input = 
+			new BufferedReader(new InputStreamReader(System.in));
+	
+		int i = 1;
+		try {
+			String s = input.readLine();
+			System.out.println("S:" + s);
+			i = Integer.parseInt(input.readLine());
+		} catch (Exception e) {}
+		System.out.println("");
+
+		if (i == 1)
+			return `r1;
+		else
+			return `r2;
+	}
+
 
 	public static Rules checkIntegrity(Rules rs) {
 		try {
-			rs = `OutermostId(checkIntersect()).visit(rs);
-			rs = `OutermostId(checkInclusion()).visit(rs);
-			
+			rs = `OutermostId(checkIntegrityStrategy()).visit(rs);
 		} catch (VisitFailure vf) { }
 		return rs;
 	}
- 
-	%strategy checkIntersect() extends Identity() {
+
+
+	%strategy checkIntegrityStrategy() extends Identity() { 
 		visit Rules {
 			Rules(
 				X*,
-				r1@Rule(action1,iface,proto,target,srcaddr1,
-					dstaddr1,srcport,dstport,opts,_),
+				r1@Rule(_,_,_,_,_,_,_,_,_,_),
 				Y*,
-				r2@Rule(action2,iface,proto,target,srcaddr2,
-					dstaddr2,srcport,dstport,opts,_),
+				r2@Rule(_,_,_,_,_,_,_,_,_,_),
 				Z*
 			) -> {
-				/* looking for equivalence in the rules */
-				if (isEquiv(`srcaddr1,`srcaddr2) 
-				&& isEquiv(`dstaddr1,`dstaddr2)) {
-					if (`action1 == `action2) {
-						printWarn("redundancy: " + `r1);
+				Rule del = null;
+
+				/* check redundancies */
+				del = checkRedundancy(`r1,`r2);
+				/* check correlations */
+				checkCorrelation(`r1,`r2);
+
+				try {
+					/* check shadowing */
+					checkShadowing(`r1,`r2);
+					/* check generalization */
+					checkGeneralization(`r1,`r2);
+					
+				} catch (InteractiveNeededException ine) {
+					del = (new Analyser()).getDisplayRuleChoice(
+						"Which rule do you want to delete"
+						,`r1,`r2);
+				}
+
+				if (del != null) {
+					if (del == `r1)
 						return `Rules(X*,r1,Y*,Z*);
-					} else {
-						printErr("shadowing:" 
-						+ `r1 + "\t/\t" + `r2 + 
-						" => removing " + `r2);
-						
-						return `Rules(X*,r1,Y*,Z*);
-					}
+					else 
+						return `Rules(X*,Y*,r2,Z*);
 				}
 			}
 		}
 	}
 
-	%strategy checkInclusion() extends Identity() { 
-		visit Rules {
-			Rules(
-				X*,
-				r1@Rule(act1,_,_,_,_,_,_,_,_,_),
-				Y*,
-				r2@Rule(act2,_,_,_,_,_,_,_,_,_),
-				Z*
-			) -> {
+	public static Rule checkShadowing(Rule r1, Rule r2) 
+					throws InteractiveNeededException {
+		%match(r1,r2) {
+				Rule(_,_,_,_,_,_,_,_,_,_),
+				Rule(_,_,_,_,_,_,_,_,_,_)
+			 -> {
+				int i = isInclude(`r1,`r2);
+				if (i == -2) {
+					printError("shadowing",`r1,
+						"shadows",`r2);
+					throw new InteractiveNeededException();
+				} else if (i == 8) {
+					printError("shadowing",`r1,
+						"in conflict with",`r2);
+					throw new InteractiveNeededException();
+				}
+			}
+		}
+		return null;
+	}
+
+	/* returns englobing rule */
+	public static Rule checkRedundancy(Rule r1, Rule r2) {
+		%match(r1,r2) {
+				Rule(_,_,_,_,_,_,_,_,_,_),
+				Rule(_,_,_,_,_,_,_,_,_,_)
+			 -> {
 				int i = isInclude(`r1,`r2);
 				if (i == 1) {
-					if (`act1 == `act2) {
-						printWarn("redundancy: " + `r1);
-						return `Rules(X*,r1,Y*,Z*);
-					} else {
-						printWarn("generalization: " 
-							+ `r1 + "/" + `r2);
-						return `Rules(X*,r1,Y*,Z*);
-					}
-				} else if ((i == -1) || (i == 0)) {
-					if (`act1 == `act2) {
-						printWarn("redundancy: " + `r1);
-						return `Rules(X*,r1,Y*,Z*);
-					} else {
-						printErr("shadowing: " + `r1 
-							+ "/" + `r2);
-						return `Rules(X*,Y*,r2,Z*);
-					}
-				} else if (i == -2) {
-					printWarn("corelation: "+`r1+"/" + `r2);
-				} else if (i == 2) {
-					printWarn("corelation: "+`r1+"/" + `r2);
+					printWarning("redundancy",`r2,
+						"included in",`r1);
+					return `r1;
+				} else if (i == -1) {
+					printWarning("redundancy",`r1,
+						"included in",`r2);
+					return `r2;
+				} else if (i == 0) {
+					printWarning("redundancy",`r1,
+						"equivalent to",`r2);
+					return `r1;
 				}
 			}
 		}
+		return null;
 	}
 
-	public static boolean isEquiv(Address a1, Address a2) {
+	public static Rule checkGeneralization(Rule r1, Rule r2)
+					throws InteractiveNeededException {
+		%match(r1,r2) {
+				Rule(_,_,_,_,_,_,_,_,_,_),
+				Rule(_,_,_,_,_,_,_,_,_,_)
+			 -> {
+				int i = isInclude(`r1,`r2);
+				if (i == 2) {
+					printWarning("generalization",`r1,
+						"generalized by",`r2);
+					throw new InteractiveNeededException();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Rule checkCorrelation(Rule r1, Rule r2) {
+		%match(r1,r2) {
+				Rule(_,_,_,_,_,_,_,_,_,_),
+				Rule(_,_,_,_,_,_,_,_,_,_)
+			 -> {
+				int i = isInclude(`r1,`r2);
+				if ((i == -2) || (i == -2))  {
+					printWarning("correlation",`r1,
+						"correlated to",`r2);
+				}
+			}
+		}
+		return null;
+	}
+
+	private static boolean isEquiv(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return true; }
 			Addr4(ip1,smask1,_),Addr4(ip2,smask2,_) 
@@ -132,7 +210,7 @@ public class Analyser {
 			-1 if r1 include in r2
 			NOT_COMPARABLE if the 2 rules are not comparable
 	*/
-	public static int isInclude(Rule r1, Rule r2) {
+	private static int isInclude(Rule r1, Rule r2) {
 		%match(r1,r2) {
 			Rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts,_),
 			Rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts,_) -> {
@@ -152,7 +230,7 @@ public class Analyser {
 					if (`action1 == `action2)
 						return ret;
 					else
-						return ret * 2;
+						return (ret == 0 ? 8 : ret * 2);
 					
 				}
 			}
@@ -166,7 +244,7 @@ public class Analyser {
 			-1 if a1 include in a2
 			NOT_COMPARABLE if the 2 addresses are not comparable
 	*/
-	public static int isInclude(Address a1, Address a2) {
+	private static int isInclude(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return 0; }
 			AddrAny(),Addr4(_,_,_) -> { return 1; }
@@ -230,77 +308,5 @@ public class Analyser {
 			}
 		}
 		return NOT_COMPARABLE;
-	}
-
-	public static void main(String[] args) {
-		Rule r1 = `Rule(
-			Accept(),
-			Iface("eth0"),
-			TCP(),
-			In(),
-			AddrAny(),
-			Addr4((16+256+4096+65536),(~0 << 24),"1"),
-			PortAny(),
-			Port(80),
-			NoOpt(),
-			"abc"
-		);
-		Rule r2 = `Rule(
-			Drop(),
-			Iface("eth0"),
-			TCP(),
-			In(),
-			AddrAny(),
-			Addr4((16+256+4096+65536),(~0 << 24),"2"),
-			PortAny(),
-			Port(80),
-			NoOpt(),
-			"def"
-		);
-		Rule r3 = `Rule(
-			Accept(),
-			Iface("eth0"),
-			TCP(),
-			In(),
-			AddrAny(),
-			Addr4((4096+65536),(~0 << 16),"3"),
-			PortAny(),
-			Port(80),
-			NoOpt(),
-			"ghi"
-		);
-
-		Rules rs = `Rules(r1,r2,r3),rsn;
-
-		/* printing tests */
-		System.out.println("\n#printing test: " +rs);
-
-		/* isEquivAddress tests */
-		Address a1,a2;
-		a1 = `Addr4(256,(~0 << 8),"");
-		a2 = `Addr4(312,(~0 << 8),"");
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
-			+ `a2 + "):" + isEquiv(a1,a2));
-		a1 = `Addr6(256,256,~0L,(~0L << 8),"");
-		a2 = `Addr6(256,312,~0L,(~0L << 8),"");
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
-			+ `a2 + "):" + isEquiv(a1,a2));
-		a1 = `Addr4(256,(~0 << 8),"");
-		a2 = `Addr6(0,(256 | (0xffffL << 32)),~0L,(~0L << 8),"");
-		System.out.println("\n# isEquivAddress test: isEquivaddr(" + `a1 + "," 
-			+ `a2 + "):" + isEquiv(a1,a2));
-
-		/* checkIntegrity tests */
-		System.out.println("\n# checkIntegrity test: doubloon");
-		rsn = checkIntegrity(`Rules(r1,r1));
-		System.out.println("RSN: " + rsn);
-		System.out.println("\n# checkIntegrity test: conflict");
-		checkIntegrity(`Rules(r1,r2));
-		System.out.println("\n# checkIntegrity test: nothing wrong");
-		checkIntegrity(`Rules(r1,r3));
-		System.out.println("\n# checkIntegrity test: doubloon & conflict");
-		rs = checkIntegrity(rs);
-		System.out.println("\n[[Rules: " + rs + "]]");
-		checkIntegrity(`Rules(r1,r2,r3,r1));
 	}
 }

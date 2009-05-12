@@ -4,7 +4,7 @@
 -Add !iptables parsers/output
 -Add address translation library
 
--Modify the Analyser performing 5 integrity tests on each pair of rules
+-Modify Main arguments
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing
 -Add a interactive interface / Modify displays
