@@ -36,7 +36,7 @@ public class Analyser {
 		try {
 			i = Integer.parseInt(input.readLine());
 		} catch (Exception e) {}
-		System.out.println("" + i);
+		System.out.println("");
 
 		if (i == 1)
 			return `r2;

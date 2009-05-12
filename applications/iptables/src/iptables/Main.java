@@ -17,10 +17,12 @@ import org.kohsuke.args4j.*;
 
 
 public class Main {
+	private static final int NONE=-1, ALL=0, IPTABLES=1, PF=2, IPFW=3;
 	protected static MainOptions options = new MainOptions();
-
+	
 	public static void main(String[] args) {
 		CmdLineParser optionParser = new CmdLineParser(options);
+		int outlang = NONE;
 		optionParser.setUsageWidth(80);
 		try {
 			// parse the arguments.
@@ -29,6 +31,21 @@ public class Main {
 			if( options.help || options.h ) {
 				throw new CmdLineException("Help");
 			}
+			if (options.lang.compareTo("all") == 0)
+				outlang = ALL;
+			else if (options.lang.compareTo("iptables") == 0)
+				outlang = IPTABLES;
+			else if ((options.lang.compareTo("packetfilter") == 0) 
+				|| (options.lang.compareTo("pf") == 0))
+				outlang = PF;
+			else if (options.lang.compareTo("ipfw") == 0)
+				outlang = IPFW;
+			else {
+				System.err.println("error: Unknown language '" 
+					+ options.lang + "'");
+				return;
+			}
+			
 		} catch( CmdLineException e ) {
 			// if there's a problem in the command line,
 			// you'll get this exception. this will report
@@ -64,10 +81,22 @@ public class Main {
 			rs = Analyser.checkIntegrity(rs);
 			System.out.println("***new rules = " + rs + "\n");
 
-			System.out.println("### Iptables ###");
-			(new IptablesPrinter()).prettyPrinter(rs);
-			System.out.println("### Packet Filter ###");
-			(new PacketFilterPrinter()).prettyPrinter(rs);
+			switch (outlang) {
+			case ALL:
+				System.out.println("### Iptables ###");
+				(new IptablesPrinter()).prettyPrinter(rs);
+				System.out.println("### Packet Filter ###");
+				(new PacketFilterPrinter()).prettyPrinter(rs);
+				break;
+			case IPTABLES:
+				(new IptablesPrinter()).prettyPrinter(rs);
+				break;
+			case PF:
+				(new PacketFilterPrinter()).prettyPrinter(rs);
+				break;
+			default:
+				break;
+			}
 
 			PrintStream outputfile = System.out;
 			if(options.out != null) {
