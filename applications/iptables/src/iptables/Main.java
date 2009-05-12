@@ -40,6 +40,8 @@ public class Main {
 				outlang = PF;
 			else if (options.lang.compareTo("ipfw") == 0)
 				outlang = IPFW;
+			else if (options.lang.compareTo("none") == 0)
+				outlang = NONE;
 			else {
 				System.err.println("error: Unknown language '" 
 					+ options.lang + "'");
@@ -73,13 +75,16 @@ public class Main {
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
 				(FirewallRules) AstAdaptor.getTerm(b1);
-			System.out.println("***inst = " + inst + "\n");
+			if (options.debug)
+				System.out.println("***inst = " + inst + "\n");
 
 			Rules rs = (new IptablesWrapper()).wrap(inst);
-			System.out.println("***rules = " + rs + "\n");
+			if (options.debug)
+				System.out.println("***rules = " + rs + "\n");
 
 			rs = Analyser.checkIntegrity(rs);
-			System.out.println("***new rules = " + rs + "\n");
+			if (options.debug)
+				System.out.println("***new rules = " + rs + "\n");
 
 			switch (outlang) {
 			case ALL:

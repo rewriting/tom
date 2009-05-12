@@ -4,8 +4,6 @@
 -Add !iptables parsers/output
 -Add address translation library
 
--Modify Main arguments
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing
--Add a interactive interface / Modify displays
 -Use different packages

@@ -12,10 +12,12 @@ public class MainOptions {
   @Option(name="-h",usage="print usage")
     public boolean h;
 
+  @Option(name="--debug",usage="debug analysing process")
+    public boolean debug = false;
 
   @Option(name="-l",usage="output firewall language",
 	metaVar="[iptbles/packetfilter/ipfw]")
-    public String lang = "";
+    public String lang = "none";
 
   @Option(name="-o",usage="output to this file",metaVar="OUTPUT")
     public File out = null;
