@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="el" default="build" basedir=".">
+<project name="el" default="test" basedir=".">
   <description>
     Transformation and analysis of jboss-el expressions 
   </description>
@@ -46,6 +46,7 @@
         <fileset dir="${el.dir}/lib">
           <include name="*.jar"/>
         </fileset>
+
       </classpath>
       <include name="**/*.java"/>
     </javac.preset>
@@ -55,4 +56,20 @@
     <delete dir="${el.gen}"/>
     <delete dir="${el.build}"/>
   </target>
+
+  <target name="test" depends="build"
+    description="Runs junit acceptance tests">
+    <junit haltonfailure="false" showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${el.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${el.build}"/>
+      </classpath>
+      <test name="TestHandMapping"/>
+      <test name="TestGomMapping"/>
+    </junit>
+  </target>
+
 </project>

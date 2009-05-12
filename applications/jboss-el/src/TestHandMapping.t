@@ -108,11 +108,10 @@ public class TestHandMapping extends TestCase {
     try {
       node = `BottomUp(ReplaceLiteral()).visitLight(node, new LocalIntrospector());
       %match(node) {
-        CompositeExpression(concExpr(_, 
+        !CompositeExpression(concExpr(_, 
                                     FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(" Clients Total Assets = $ ")))
-                                    , _)) -> { return; }
+                                    , _)) -> { fail(); }
       }
-      fail();
     } catch(tom.library.sl.VisitFailure e ) { fail(); }
   }
 
