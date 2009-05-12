@@ -54,24 +54,24 @@ public class ReverseEngAp extends AbstractBasicStrategy {
         true : false );      
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
     if (o instanceof Constraint) {
       Constraint arg = (Constraint) o;
       %match(Constraint arg) {
         Neg(Match(a,b)) -> {             
-          return `Match(Anti(a),b);
+          return (T) `Match(Anti(a),b);
         }        
         And(concAnd(X*,Match(q1,t1),Z*,Match(q2,t2),Y*)) -> {
           // return `Match(conc);
           System.out.println("ici");
-          return `And(concAnd(X*,Match(Appl("conc",concTerm(q1,q2)),Appl("conc",concTerm(t1,t2))),Z*,Y*));
+          return (T) `And(concAnd(X*,Match(Appl("conc",concTerm(q1,q2)),Appl("conc",concTerm(t1,t2))),Z*,Y*));
         }
         And(concAnd(Match(a,b))) ->{
-          return `Match(a,b);
+          return (T) `Match(a,b);
         }
       }
     }
-    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+    return (isIdentity ? o : (T)`Fail().visitLight(o,i));
   }
 
 }

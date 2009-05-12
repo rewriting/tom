@@ -49,14 +49,14 @@ public class ClassicalPatternMatching extends AbstractBasicStrategy {
         true : false ); 
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
     if (o instanceof Constraint) {
       Constraint arg = (Constraint) o;
       %match(Constraint arg) {
 
         // Delete
         Match(Appl(name,concTerm()),Appl(name,concTerm())) -> {
-          return `True();
+          return (T) `True();
         }
 
         // Decompose
@@ -69,49 +69,49 @@ public class ClassicalPatternMatching extends AbstractBasicStrategy {
             args1 = args1.getTailconcTerm();
             args2 = args2.getTailconcTerm();
           }
-          return `And(l);
+          return (T) `And(l);
         }
 
         // SymbolClash
         Match(Appl(name1,args1),Appl(name2,args2)) -> {
           if(`name1 != `name2) {
-            return `False();
+            return (T) `False();
           }
         }
 
         // MergingClash
         And(concAnd(_*,Match(Variable(x),t1@Appl(_,_)),_*,Match(Variable(x),t2@Appl(_,_)),_*)) -> {
           if(`t1 != `t2) {
-            return `False();
+            return (T) `False();
           }
         }
 
         // PropagateClash
         And(concAnd(_*,False(),_*)) -> {
-          return `False();
+          return (T) `False();
         }
 
         // PropagateSuccess
         And(concAnd()) -> {
-          return `True();
+          return (T) `True();
         }
         And(concAnd(x)) -> {
-          return `x;
+          return (T) `x;
         }
         And(concAnd(X*,True(),Y*)) -> {
-          return `And(concAnd(X*,Y*));
+          return (T) `And(concAnd(X*,Y*));
         } 
 
         // new introduced variables
         Match(Variable(name),_) ->{
           if (`name.startsWith("x_")){
-            return `True();
+            return (T) `True();
           }
         }
 
       }
     }
-    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+    return (T) (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
   }
 
 }

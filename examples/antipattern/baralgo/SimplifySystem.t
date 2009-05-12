@@ -51,18 +51,18 @@ public class SimplifySystem extends AbstractBasicStrategy {
         true : false ); 
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
     if (o instanceof Constraint) {
       Constraint arg = (Constraint) o;
       %match(Constraint arg) {
         // AntiMatch
         Match(Anti(p),s) -> {
-          return `Neg(Match(p,s));
+          return (T) `Neg(Match(p,s));
         }
 
         // Delete
         Match(Appl(name,concTerm()),Appl(name,concTerm())) -> {
-          return `True();
+          return (T) `True();
         }
 
         // Decompose
@@ -75,42 +75,42 @@ public class SimplifySystem extends AbstractBasicStrategy {
             args1 = args1.getTailconcTerm();
             args2 = args2.getTailconcTerm();
           }
-          return `And(l);
+          return (T) `And(l);
         }
 
         // SymbolClash
         Match(Appl(name1,args1),Appl(name2,args2)) -> {
           if(`name1 != `name2) {
-            return `False();
+            return (T) `False();
           }
         }
 
         // PropagateClash
         And(concAnd(_*,False(),_*)) -> {
-          return `False();
+          return (T) `False();
         }
 
         // PropagateSuccess
         And(concAnd()) -> {
-          return `True();
+          return (T) `True();
         }
         And(concAnd(x)) -> {
-          return `x;
+          return (T) `x;
         }
         And(concAnd(X*,True(),Y*)) -> {
-          return `And(concAnd(X*,Y*));
+          return (T) `And(concAnd(X*,Y*));
         }
 
         // BooleanSimplification
-        Neg(Neg(x)) -> { return `x; }
-        Neg(True()) -> { return `False(); }
-        Neg(False()) -> { return `True(); }
+        Neg(Neg(x)) -> { return (T) `x; }
+        Neg(True()) -> { return (T) `False(); }
+        Neg(False()) -> { return (T) `True(); }
         And(concAnd(X*,c,Y*,c,Z*)) -> {
-          return `And(concAnd(X*,c,Y*,Z*));
+          return (T) `And(concAnd(X*,c,Y*,Z*));
         }
 
       }
     }
-    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+    return (isIdentity ? o : (T)`Fail().visitLight(o,i));
   }
 }

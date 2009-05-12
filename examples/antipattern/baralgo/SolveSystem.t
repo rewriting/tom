@@ -55,7 +55,7 @@ public class SolveSystem extends AbstractBasicStrategy {
         true : false );      
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
     if (o instanceof Constraint) {
       Constraint arg = (Constraint) o;
       %match(Constraint arg) {
@@ -63,13 +63,13 @@ public class SolveSystem extends AbstractBasicStrategy {
           solution.add(`match); 
           Constraint res = `True();
           /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
-          return res;
+          return (T) res;
         }
         Neg(match@Match(var@Variable(name),s)) -> {
           solution.add(`match); 
           Constraint res = `False();
           /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
-          return res;
+          return (T) res;
         }
         And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {
           solution.add(`match);
@@ -83,7 +83,7 @@ public class SolveSystem extends AbstractBasicStrategy {
           }            
           Constraint res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
           /* System.out.println("[solve3] -> [" + match + "," + res + "]"); */
-          return res;
+          return (T) res;
         }
         Neg(And(concAnd(X*,match@Match(var@Variable(name),s),Y*))) -> {
           solution.add(`match);
@@ -97,11 +97,11 @@ public class SolveSystem extends AbstractBasicStrategy {
           }
           Constraint res = (Constraint) ruleStrategy.visitLight(`Neg(And(concAnd(X*,Y*))));
           /* System.out.println("[solve4] -> [" + match + "," + res + "]"); */
-          return res;
+          return (T) res;
         }
       }
     }
-    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+    return (isIdentity ? o : (T)`Fail().visitLight(o,i));
   }
 
 }

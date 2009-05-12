@@ -51,24 +51,24 @@ public class NegativeCleaning extends AbstractBasicStrategy {
         true : false );
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
     if (o instanceof Constraint) {
       Constraint arg = (Constraint) o;
       %match(Constraint arg) {  
         Neg(Match(Variable(name),s)) -> {             
-          return `False();
+          return (T)`False();
         }
         // if the conjunction contains negative
         // then it shoudn't be replaced by false
         Neg(And(concAnd(X*,Neg(a),Y*))) -> {
-          return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
+          return (isIdentity ? (T)arg : (T)`Fail().visitLight(arg));
         }
         Neg(And(concAnd(X*))) -> {
-          return `False();
+          return (T)`False();
         }
       }
     }
-    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+    return (isIdentity ? o : (T)`Fail().visitLight(o,i));
   }
 
 }

@@ -55,10 +55,10 @@ public class ReplaceSystem extends AbstractBasicStrategy {
     		  true : false );       
     }
    
-    public Object visitLight(Object o, Introspector i) throws VisitFailure { 
+    public <T> T visitLight(T o, Introspector i) throws VisitFailure { 
       if(o==variable) {
-        return value;
+        return (T)value;
       } 
-      return (isIdentity ? o : (Term)`Fail().visitLight(o,i));
+      return (isIdentity ? o : (T)`Fail().visitLight(o,i));
     }
   }  

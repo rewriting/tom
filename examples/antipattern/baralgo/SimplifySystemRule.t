@@ -198,7 +198,7 @@ public class SimplifySystemRule {
       this.found = false;
     }
 
-    public Object visitLight(Object o, Introspector i) throws VisitFailure { 
+    public <T> T visitLight(T o, Introspector i) throws VisitFailure { 
       if(o == objToSearchFor) {
         found = true;
         System.out.println("!!FOUND!!");

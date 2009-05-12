@@ -51,18 +51,18 @@ public class SolveSystemExtended extends SolveSystem {
     super(c,vis);            
   }
 
-  public Object visitLight(Object o, Introspector i) throws VisitFailure {
-    Object result = null;
+  public <T> T visitLight(T o, Introspector i) throws VisitFailure {
+    T result = null;
     try{
       result = super.visitLight(o,i);
       //if it didn't entered the match of the super.visit_Constraint
       //than maybe it will enter the one of the extendedVisit
       if (isIdentity && o == result){
-        return extendedVisit(o,i);
+        return (T)extendedVisit(o,i);
       }
       return result;
-    }catch(VisitFailure vf){ //can only happen when the visit failed
-      return extendedVisit(o,i);
+    } catch(VisitFailure vf) { //can only happen when the visit failed
+      return (T)extendedVisit(o,i);
     }    	
   }
 
