@@ -33,8 +33,8 @@ package tom.library.sl;
 /**
  * <code>AllSeq(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
  * <p>
- * Basic visitor combinator with one visitor argument, that applies
- * this visitor to all children.
+ * Strategy combinator with one argument, that applies
+ * this argument to all children.
  */
 
 public class AllSeq extends AbstractStrategyCombinator {
@@ -48,7 +48,7 @@ public class AllSeq extends AbstractStrategyCombinator {
     int childCount = introspector.getChildCount(any);
     T result = any;
     for (int i = 0; i < childCount; i++) {
-      Object newChild = visitors[ARG].visitLight(introspector.getChildAt(result,i),introspector);
+      Object newChild = arguments[ARG].visitLight(introspector.getChildAt(result,i),introspector);
       result = introspector.setChildAt(result, i, newChild);
     }
     return result;
@@ -58,7 +58,7 @@ public class AllSeq extends AbstractStrategyCombinator {
     int childCount = introspector.getChildCount(environment.getSubject());
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.up();
         return status;

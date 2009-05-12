@@ -43,7 +43,7 @@ public class Not extends AbstractStrategyCombinator {
 
   public <T> T visitLight(T x, Introspector introspector) throws VisitFailure {
     try {
-      visitors[ARG].visitLight(x, introspector);
+      arguments[ARG].visitLight(x, introspector);
     } catch (VisitFailure f) {
       return x;
     }
@@ -53,7 +53,7 @@ public class Not extends AbstractStrategyCombinator {
   public int visit(Introspector introspector) {
     /* save the current subject */
     Object subject = environment.getSubject();
-    int status = visitors[ARG].visit(introspector);
+    int status = arguments[ARG].visit(introspector);
     /* restore the subject */
     /* we are just interested in the status */
     environment.setSubject(subject);

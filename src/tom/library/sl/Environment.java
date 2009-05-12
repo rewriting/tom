@@ -53,23 +53,23 @@ public final class Environment implements Cloneable {
   protected int current;
   protected int[] omega;
   protected Object[] subterm;
-  protected Introspector mapping;
+  protected Introspector introspector;
   protected int status = Environment.SUCCESS;
 
   public Environment() {
     this(DEFAULT_LENGTH,VisitableIntrospector.getInstance());
   }
 
-  public Environment(Introspector mapping) {
-    this(DEFAULT_LENGTH,mapping);
+  public Environment(Introspector introspector) {
+    this(DEFAULT_LENGTH,introspector);
   }
 
-  private Environment(int length, Introspector mapping) {
+  private Environment(int length, Introspector introspector) {
     omega = new int[length+1];
     subterm = new Object[length+1];
     current = 0; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
-    this.mapping = mapping;
+    this.introspector = introspector;
   }
 
   private void ensureLength(int minLength) {
@@ -186,11 +186,11 @@ public final class Environment implements Cloneable {
   }
 
   public Introspector getIntrospector() {
-    return mapping;
+    return introspector;
   }
 
-  public void setIntrospector(Introspector m) {
-    mapping = m;
+  public void setIntrospector(Introspector i) {
+    introspector = i;
   }
 
   /**
@@ -227,7 +227,7 @@ public final class Environment implements Cloneable {
     int childIndex = omega[current]-1;
     Object child = subterm[current];
     current--;
-    subterm[current] = mapping.setChildAt(subterm[current],childIndex,child);
+    subterm[current] = introspector.setChildAt(subterm[current],childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -253,7 +253,7 @@ public final class Environment implements Cloneable {
         ensureLength(current+1);
       }
       omega[current] = n;
-      subterm[current] = mapping.getChildAt(child,n-1);
+      subterm[current] = introspector.getChildAt(child,n-1);
     }
     //System.out.println("after down: " + this);
   }

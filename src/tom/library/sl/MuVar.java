@@ -4,7 +4,7 @@ package tom.library.sl;
  * <p>
  * Basic strategy combinator with one argument <code>name</code> 
  * which denotes the name of the mu-variable
- * This basic visitor combinator used to build recursive visitors
+ * This basic argument combinator used to build recursive arguments
  * After the mu-expansion, the private variable <code>instance</code>
  * is a pointer to the strategy to execute
  * <p>
@@ -15,7 +15,7 @@ public class MuVar extends AbstractStrategyCombinator {
   protected String name;
   
   public MuVar(String name) {
-    // make sure the MuVar is seen as a leaf for all visitors
+    // make sure the MuVar is seen as a leaf for all arguments
     initSubterm();
     this.name = name;
   }

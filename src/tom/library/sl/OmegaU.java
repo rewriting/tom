@@ -33,7 +33,7 @@ package tom.library.sl;
 /**
  * <code>OmegaU(v)</code>
  * <p>
- * Basic visitor combinator which applies Omega(i,v) with
+ * Strategy combinator which applies Omega(i,v) with
  * i in [1..arity] with a uniform probability
  * i.e. with probability 1/getChildCount
  * <p>
@@ -54,9 +54,9 @@ public class OmegaU extends AbstractStrategyCombinator {
     int arity = introspector.getChildCount(any);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visitLight(any,introspector);
+      return arguments[ARG].visitLight(any,introspector);
     } else {
-      return new Omega(selectedSubterm+1,visitors[ARG]).visitLight(any,introspector);
+      return new Omega(selectedSubterm+1,arguments[ARG]).visitLight(any,introspector);
     }
   }
 
@@ -65,10 +65,10 @@ public class OmegaU extends AbstractStrategyCombinator {
     int arity = introspector.getChildCount(subject);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visit(introspector);
+      return arguments[ARG].visit(introspector);
     } else {
       environment.down(selectedSubterm+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       environment.up();
       return status;
     }

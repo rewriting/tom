@@ -33,8 +33,8 @@ package tom.library.sl;
 /**
  * <code>ChoiceUndet(v1,..,vn) = vi</code> with probability 1/n
  * <p>
- * Visitor combinator with a list of n visitor arguments, 
- * that select a visitor according to the probability 1/n
+ * Visitor combinator with a list of n arguments, 
+ * that select a argument according to the probability 1/n
  * The strategy fails if the selected strategy fails
  * <p>
  * Note that any side-effects of vi are not undone when it fails.
@@ -74,7 +74,7 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
   }
 
   public Strategy getHead() {
-    return visitors[0];
+    return arguments[0];
   }
 
   public Strategy getTail() {
@@ -83,7 +83,7 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
     } else {
       Strategy[] tail = new Strategy[size-1];
       for (int i=0; i<size-1; i++) {
-        tail[i] = visitors[size-1];
+        tail[i] = arguments[size-1];
       }
       return new ChoiceUndet(tail);
     }
@@ -91,12 +91,12 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
 
   public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(size);
-    return visitors[randomInt].visitLight(subject,introspector);
+    return arguments[randomInt].visitLight(subject,introspector);
   }
 
   public int visit(Introspector introspector) {
     int randomInt = random.nextInt(size);
-    return visitors[randomInt].visit(introspector);
+    return arguments[randomInt].visit(introspector);
   }
 
 }

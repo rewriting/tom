@@ -49,30 +49,30 @@ public class IfThenElse extends AbstractStrategyCombinator {
     boolean success;
     T result;
     try {
-      visitors[CONDITION].visitLight(x, introspector);
+      arguments[CONDITION].visitLight(x, introspector);
       success = true;
     } catch (VisitFailure vf) {
       success = false;
     }
     if (success) {
-      result = visitors[TRUE_CASE].visitLight(x, introspector);
+      result = arguments[TRUE_CASE].visitLight(x, introspector);
     } else {
-      result = visitors[FALSE_CASE].visitLight(x, introspector);
+      result = arguments[FALSE_CASE].visitLight(x, introspector);
     }
     return result;
   }
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[CONDITION].visit(introspector);
+    int status = arguments[CONDITION].visit(introspector);
     /* reset modifications from CONDITION */
     /* we are just interested in the status */
     environment.setSubject(subject);
     if(status == Environment.SUCCESS) {
-      return visitors[TRUE_CASE].visit(introspector);
+      return arguments[TRUE_CASE].visit(introspector);
     } else {
       //setStatus(Environment.SUCCESS);
-      return visitors[FALSE_CASE].visit(introspector);
+      return arguments[FALSE_CASE].visit(introspector);
     }
   }
 }

@@ -30,15 +30,29 @@
  **/
 package tom.library.sl;
 
+/** 
+ * <p>
+ * Partial implementation of the strategy interface that can be used to
+ * implement new strategy combinators (like the <code>All</code> strategy).
+ * This class has an attribute of type Strategy array which corresponds to the
+ * combinator arguments. These strategy arguments are also considered as
+ * children when visiting this combinator. Note that this abstract class is
+ * used to define all the <code>sl</code> strategy combinators.
+ *
+ */
+
 public abstract class AbstractStrategyCombinator extends AbstractStrategy {
 
-  protected Strategy[] visitors;
- 
+  /** Strategy arguments of the combinator that can be used to define
+   * <code>visit</code> methods
+   */
+  protected Strategy[] arguments;
+
   /** 
    * Initializes subterm
    */
   protected void initSubterm() {
-    visitors = new Strategy[] {};
+    arguments = new Strategy[] {};
   }
 
   /** 
@@ -47,7 +61,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @param v1 first Strategy to add to the array
    */
   protected void initSubterm(Strategy v1) {
-    visitors = new Strategy[] {v1};
+    arguments = new Strategy[] {v1};
   }
   
   /** 
@@ -57,7 +71,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @param v2 second Strategy to add to the array
    */
   protected void initSubterm(Strategy v1, Strategy v2) {
-    visitors = new Strategy[] {v1,v2};
+    arguments = new Strategy[] {v1,v2};
   }
  
   /** 
@@ -68,7 +82,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @param v3 third Strategy to add to the array
    */
   protected void initSubterm(Strategy v1, Strategy v2, Strategy v3) {
-    visitors = new Strategy[] {v1,v2,v3};
+    arguments = new Strategy[] {v1,v2,v3};
   }
  
   /** 
@@ -77,46 +91,45 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @param v array used to initialize the subterm
    */
   protected void initSubterm(Strategy[] v) {
-    visitors = v;
+    arguments = v;
   }
 
   /** 
-   * Returns visitors
+   * Returns arguments
    *
-   * @return visitors
+   * @return arguments
    */
   public Strategy[] getVisitors() {
-    return visitors;
+    return arguments;
   }
 
   /** 
-   * Returns the Strategy at the specified position in visitors
+   * Returns the Strategy at the specified position in arguments
    *
    * @param i index of the Strategy to return
-   * @return the Strategy at the specified position in visitors
+   * @return the Strategy at the specified position in arguments
    */
   public Strategy getVisitor(int i) {
-    return visitors[i];
+    return arguments[i];
   }
 
-  //visitable
   /** 
-   * Returns the length of visitors
+   * Returns the length of arguments
    *
-   * @return the length of visitors
+   * @return the length of arguments
    */
   public int getChildCount() {
-    return visitors.length;
+    return arguments.length;
   }
 
   /** 
-   * Returns the Visitable at the specified position in visitors
+   * Returns the Visitable at the specified position in arguments
    *
    * @param i index of the Visitable to return
-   * @return the Visitable at the specified position in visitors
+   * @return the Visitable at the specified position in arguments
    */
   public Visitable getChildAt(int i) {
-    return visitors[i];
+    return arguments[i];
   }
 
   /** 
@@ -125,7 +138,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @return an array of Visitable
    */
   public Visitable[] getChildren() {
-    return (Visitable[]) visitors.clone();
+    return (Visitable[]) arguments.clone();
   }
 
   /** 
@@ -136,7 +149,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @return an array of Visitable
    */
   public Visitable setChildAt(int i, Visitable child) {
-    visitors[i] = (Strategy) child;
+    arguments[i] = (Strategy) child;
     return this;
   }
 
@@ -152,7 +165,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
     for(int i = 0; i < children.length; i++) {
       newVisitors[i] = (Strategy) children[i];
     }
-    this.visitors = newVisitors;
+    this.arguments = newVisitors;
     return this;
   }
 

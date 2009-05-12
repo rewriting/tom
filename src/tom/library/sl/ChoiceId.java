@@ -35,8 +35,8 @@ package tom.library.sl;
  * <p>
  * <code>ChoiceId(v1,v2) = v2</code>    otherwise
  * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition), if the first
+ * Strategy combinator with two arguments, that applies
+ * these arguments one after the other (sequential composition), if the first
  * one is not the identity.
  */
 
@@ -48,9 +48,9 @@ public class ChoiceId extends AbstractStrategyCombinator {
   }
 
   public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
-    T v = visitors[FIRST].visitLight(subject, introspector);
+    T v = arguments[FIRST].visitLight(subject, introspector);
     if (v == subject) {
-      return visitors[THEN].visitLight(v, introspector);
+      return arguments[THEN].visitLight(v, introspector);
     } else {
       return v;
     }
@@ -58,7 +58,7 @@ public class ChoiceId extends AbstractStrategyCombinator {
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS && environment.getSubject() != subject) {
       return status;
     } else {
@@ -66,7 +66,7 @@ public class ChoiceId extends AbstractStrategyCombinator {
       /* we are just interested in the status */
       environment.setSubject(subject);
       if(status == Environment.SUCCESS) {
-        return visitors[THEN].visit(introspector);
+        return arguments[THEN].visit(introspector);
       } else {
         return status;
       }

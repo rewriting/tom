@@ -41,10 +41,10 @@ public class Up extends AbstractStrategyCombinator {
    * Visits the subject any without managing any environment
    *
    * @param any the subject to visit
-   * @param m the introspector
+   * @param i the introspector
    * @throws VisitFailure in case of failrue
    */ 
-  public final <T> T visitLight(T any, Introspector m) throws VisitFailure {
+  public final <T> T visitLight(T any, Introspector i) throws VisitFailure {
     throw new RuntimeException("The Strategy Up cannot be used with visitLight");
   }
 
@@ -53,18 +53,18 @@ public class Up extends AbstractStrategyCombinator {
    * and place its result in the environment.
    * Sets the environment flag to Environment.FAILURE in case of failure
    *
-   * @param m the introspector
+   * @param i the introspector
    * @return 0 if success
    */
-  public int visit(Introspector m) {
+  public int visit(Introspector i) {
     //succeeds if it is the root
     if (environment.depth()==0) {
       return Environment.SUCCESS;
     }
-    environment.setIntrospector(m);
+    environment.setIntrospector(i);
     int index = environment.getSubOmega();
     environment.up();
-    int status = visitors[ARG].visit(m);
+    int status = arguments[ARG].visit(i);
     environment.down(index);
     return status;
   }
