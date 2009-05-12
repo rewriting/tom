@@ -4,10 +4,8 @@
 -Add !iptables parsers/output
 -Add address translation library
 
--Add Parser, Wrapper and Printer for all supported firewalls
--Add abstract class for the Printers
--Add interface for the Wrappers
--Add common Wrapper structure which regroups primary firewalls structures
 -Modify the Analyser performing 5 integrity tests on each pair of rules
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing
+-Add a interactive interface / Modify displays
+-Use different packages

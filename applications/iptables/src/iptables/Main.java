@@ -4,9 +4,13 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 import iptables.analyser.types.*;
+/*
 import iptables.analyser.AnalyserAdaptor;
 import iptables.iptables.IptablesAdaptor;
+*/
+import iptables.ast.AstAdaptor;
 import iptables.iptables.types.*;
+import iptables.firewall.types.*;
 import java.util.*;
 import java.io.*;
 import org.kohsuke.args4j.*;
@@ -43,23 +47,27 @@ public class Main {
 				fileinput = new FileInputStream(options.in);
 			}
 			// Parse the input expression and build an AST
-			IptablesLexer lexer = new IptablesLexer(new ANTLRInputStream(fileinput));
+			IptablesParserLexer lexer = 
+				new IptablesParserLexer(
+					new ANTLRInputStream(fileinput));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			IptablesParser ruleParser = new IptablesParser(tokens);
+			IptablesParserParser ruleParser = 
+				new IptablesParserParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
-			IptablesBlocks inst = (IptablesBlocks) IptablesAdaptor.getTerm(b1);
+			FirewallRules inst = 
+				(FirewallRules) AstAdaptor.getTerm(b1);
 			System.out.println("inst = " + inst);
 
-			Rules rs = Iptables.wrapBlocks(inst);
+			Rules rs = (new IptablesWrapper()).wrap(inst);
 			System.out.println("rules = " + rs);
 
 			rs = Analyser.checkIntegrity(rs);
 			System.out.println("new rules = " + rs);
 
 			System.out.println("### Iptables ###");
-			IptablesOutput.printTranslation(rs);
+			(new IptablesPrinter()).prettyPrinter(rs);
 			System.out.println("### Packet Filter ###");
-			PacketFilterOutput.printTranslation(rs);
+			(new PacketFilterPrinter()).prettyPrinter(rs);
 
 			PrintStream outputfile = System.out;
 			if(options.out != null) {

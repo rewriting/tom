@@ -1,0 +1,5 @@
+module iptables.Firewall
+imports Iptables
+abstract syntax
+
+FirewallRules = FirewallRules(ib:IptablesBlocks)

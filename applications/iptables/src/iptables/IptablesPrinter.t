@@ -5,11 +5,11 @@ import iptables.analyser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
-public class IptablesOutput {
+public class IptablesPrinter extends Printer {
 	%include { analyser/Analyser.tom }
 	%include { sl.tom }
 
-	public final static String 
+	private final String 
 		CMD = "iptables",
 		OPT_FLUSH = "--flush",
 		OPT_APPEND = "--append",
@@ -43,7 +43,7 @@ public class IptablesOutput {
 		STATE_ESTABLISHED = "ESTABLISHED",
 		STATE_INVALID = "INVALID";
 		
-	public static String wrapAction(Action a) {
+	private String wrapAction(Action a) {
 		%match(a) {
 			Accept() 	-> { return ACTION_ACCEPT; }
 			Drop() 		-> { return ACTION_DROP; }
@@ -53,7 +53,7 @@ public class IptablesOutput {
 		return null;
 	}
 
-	public static String wrapTarget(Target t) {
+	private String wrapTarget(Target t) {
 		%match(t) {
 			In()		-> { return CHAIN_INPUT; }
 			Out()		-> { return CHAIN_OUTPUT; }
@@ -62,7 +62,7 @@ public class IptablesOutput {
 		return null;
 	}
 
-	public static String wrapProtocol(Protocol p) {
+	private String wrapProtocol(Protocol p) {
 		String s = OPT_PROTOCOL + " ";
 		%match(p) {
 			TCP()	-> { return s + "tcp"; }
@@ -77,7 +77,7 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static String wrapAddress(Address a,String opt) {
+	private String wrapAddress(Address a,String opt) {
 		%match(a) {
 			Addr4(_,_,str) -> { return opt + " " + `str; }
 			Addr6(_,_,_,_,str) -> { return opt + " " + `str; }
@@ -85,14 +85,14 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static String wrapPort(Port p, String opt) {
+	private String wrapPort(Port p, String opt) {
 		%match(p) {
 			Port(i) -> { return opt + " " + `i; }
 		}
 		return "";
 	}
 
-	public static String wrapOptGlob(GlobalOptions gopts) {
+	private String wrapOptGlob(GlobalOptions gopts) {
 		%match(gopts) {
 			GlobalOpts(o@!NoGlobalOpt(),X*) -> {
 				String opt = "";
@@ -104,7 +104,7 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static String wrapOptProto(ProtocolOptions popts) {
+	private String wrapOptProto(ProtocolOptions popts) {
 		%match(popts) {
 			ProtoOpts(o@!NoProtoOpt(),X*) -> {
 				String opt = "";
@@ -116,7 +116,7 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static String wrapOptStates(States states) {
+	private String wrapOptStates(States states) {
 		%match(states) {
 			States(s@!StateAny(),X*) -> {
 				String opt = OPT_STATE + " ";
@@ -133,7 +133,7 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static String wrapOptions(Options opts) {
+	private String wrapOptions(Options opts) {
 		%match(opts) {
 			Opt(glob,proto,states) -> {
 				String states = wrapOptStates(`states);
@@ -147,30 +147,18 @@ public class IptablesOutput {
 		return "";
 	}
 
-	public static void printCmdAppend(String tab, Target t) {
-		System.out.print(CMD + " " + OPT_TABLE + " " + tab + " "
-			+ OPT_APPEND + " " + wrapTarget(`t) + " ");
+	private void printCmdAppend(String tab, Target t) {
+		printStr(CMD + " " + OPT_TABLE + " " + tab + " " + OPT_APPEND 
+			+ " " + wrapTarget(`t) + " ");
 	}
 
-	public static void printCmdPolicy(String tab,Action a,Target t) {
-		System.out.println(CMD + " " + OPT_TABLE + " " + tab + " " 
-			+ OPT_POLICY + " " + wrapAction(`a) + " " 
-			+ wrapTarget(`t));
+	private void printCmdPolicy(String tab,Action a,Target t) {
+		printStr(CMD + " " + OPT_TABLE + " " + tab + " " + OPT_POLICY 
+			+ " " + wrapAction(`a) + " " + wrapTarget(`t) + "\n");
 	}
 
-	public static void printOpt(String optname) {
-		if (optname.length() > 0)
-			System.out.print(optname + " ");
-	}
 
-	public static void print2Opt(String optname, String arg) {
-		if ((optname.length() > 0) && (arg.length() > 0))
-			System.out.print(optname + " " + arg + " ");
-	}
-
-	public static void printNewLine() { System.out.println(""); }
-
-	public static void printTranslation(Rules rs) {
+	public void prettyPrinter(Rules rs) {
 		%match(rs) {
 			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
@@ -178,7 +166,7 @@ public class IptablesOutput {
 				X*
 			) -> {
 				printCmdPolicy(TABLE_FILTER,`action,`target);
-				printTranslation(`X*);
+				prettyPrinter(`X*);
 				return;
 			}
 
@@ -203,7 +191,7 @@ public class IptablesOutput {
 				printOpt(wrapOptions(`opts));
 				print2Opt(OPT_ACTION,wrapAction(`action));
 				printNewLine();
-				printTranslation(`X*);
+				prettyPrinter(`X*);
 			}
 		}
 	}

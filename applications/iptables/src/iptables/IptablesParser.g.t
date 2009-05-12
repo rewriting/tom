@@ -1,14 +1,12 @@
 /* This grammar parses simple firewall */
-grammar Iptables;
+grammar IptablesParser;
 options {
   output=AST;
   ASTLabelType=Tree;
 }
 
 tokens {
-	%include { iptables/analyser/AnalyserTokenList.txt }
-	%include { iptables/analyserwrapper/AnalyserWrapperTokenList.txt }
-	%include { iptables/iptables/IptablesTokenList.txt }
+	%include { iptables/ast/AstTokenList.txt }
 }
 
 @header {
@@ -19,7 +17,7 @@ tokens {
 }
 
 file :
-	(block)* EOF -> ^(IptablesBlocks (block)*)
+	(block)* EOF -> ^(FirewallRules ^(IptablesBlocks (block)*))
      ;
 
 block:	'Chain' str=target '(policy' action ')'
@@ -28,8 +26,7 @@ block:	'Chain' str=target '(policy' action ')'
 		IptablesBlock target action ^(IptablesRules (rule)*) $str
 	);
 
-rule
-:	str=action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
+rule:	str=action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
 		IptablesRule action proto $a1 $a2 opts $str
 	);
 

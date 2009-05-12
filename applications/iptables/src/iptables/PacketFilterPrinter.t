@@ -5,11 +5,11 @@ import iptables.analyser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
-public class PacketFilterOutput {
+public class PacketFilterPrinter extends Printer {
 	%include { analyser/Analyser.tom }
 	%include { sl.tom }
 
-	public final static String 
+	private final String 
 		CMD = "",
 		OPT_PROTOCOL = "proto",
 		OPT_IFACE = "on",
@@ -38,7 +38,7 @@ public class PacketFilterOutput {
 
 		ADDR_ANY = "any";
 		
-	public static String wrapAction(Action a) {
+	private String wrapAction(Action a) {
 		%match(a) {
 			Accept() 	-> { return ACTION_ACCEPT; }
 			Drop() 		-> { return ACTION_DROP; }
@@ -47,7 +47,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapTarget(Target t) {
+	private String wrapTarget(Target t) {
 		%match(t) {
 			In()		-> { return DIR_INPUT; }
 			Out()		-> { return DIR_OUTPUT; }
@@ -55,7 +55,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapProtocol(Protocol p) {
+	private String wrapProtocol(Protocol p) {
 		String s = OPT_PROTOCOL + " ";
 		%match(p) {
 			TCP()	-> { return s + "tcp"; }
@@ -70,7 +70,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapAddress(Address a,String opt) {
+	private String wrapAddress(Address a,String opt) {
 		%match(a) {
 			Addr4(_,_,str) -> { return opt + " " + `str; }
 			Addr6(_,_,_,_,str) -> { return opt + " " + `str; }
@@ -79,7 +79,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapAddressFamily(Address src,Address dest) {
+	private String wrapAddressFamily(Address src,Address dest) {
 		%match(src,dest) {
 			Addr4(_,_,_),Addr4(_,_,_) -> { return  AF_IPV4; }
 			Addr6(_,_,_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
@@ -93,14 +93,14 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapPort(Port p) {
+	private String wrapPort(Port p) {
 		%match(p) {
 			Port(i) -> { return OPT_PORT + " " + `i; }
 		}
 		return "";
 	}
 
-	public static String wrapOptGlob(GlobalOptions gopts) {
+	private String wrapOptGlob(GlobalOptions gopts) {
 		%match(gopts) {
 			GlobalOpts(o@!NoGlobalOpt(),X*) -> {
 				String opt = "";
@@ -112,7 +112,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapOptProto(ProtocolOptions popts) {
+	private String wrapOptProto(ProtocolOptions popts) {
 		%match(popts) {
 			ProtoOpts(o@!NoProtoOpt(),X*) -> {
 				String opt = "";
@@ -124,7 +124,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapOptStates(States states) {
+	private String wrapOptStates(States states) {
 		%match(states) {
 			States(s@!StateAny(),X*) -> {
 				return STATE_KEEP + " ";
@@ -133,7 +133,7 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static String wrapOptions(Options opts) {
+	private String wrapOptions(Options opts) {
 		%match(opts) {
 			Opt(glob,proto,states) -> {
 				return wrapOptGlob(`glob) 
@@ -144,24 +144,12 @@ public class PacketFilterOutput {
 		return "";
 	}
 
-	public static void printCmdPolicy(Action a,Target t) {
-		System.out.println( wrapAction(`a) + " " + wrapTarget(`t) + " " 
-			+ DIR_ALL);
+	private void printCmdPolicy(Action a,Target t) {
+		printStr( wrapAction(`a) + " " + wrapTarget(`t) + " " 
+			+ DIR_ALL + "\n");
 	}
 
-	public static void printOpt(String optname) {
-		if (optname.length() > 0)
-			System.out.print(optname + " ");
-	}
-
-	public static void print2Opt(String optname, String arg) {
-		if ((optname.length() > 0) && (arg.length() > 0))
-			System.out.print(optname + " " + arg + " ");
-	}
-
-	public static void printNewLine() { System.out.println(""); }
-
-	public static void printTranslation(Rules rs) {
+	public void prettyPrinter(Rules rs) {
 		%match(rs) {
 			Rules(Rule(action,IfaceAny(),ProtoAny(),target,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
@@ -169,7 +157,7 @@ public class PacketFilterOutput {
 				X*
 			) -> {
 				printCmdPolicy(`action,`target);
-				printTranslation(`X*);
+				prettyPrinter(`X*);
 				return;
 			}
 			Rules(Rule(action,iface,proto,tar,srcaddr,dstaddr,
@@ -205,7 +193,7 @@ public class PacketFilterOutput {
 				printOpt(wrapPort(`dstport));
 				printOpt(wrapOptions(`opts));
 				printNewLine();
-				printTranslation(`X*);
+				prettyPrinter(`X*);
 			}
 		}
 	}

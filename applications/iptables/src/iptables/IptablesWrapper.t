@@ -3,15 +3,24 @@ package iptables;
 import iptables.iptables.types.*;
 import iptables.analyser.types.*;
 import iptables.analyserwrapper.types.*;
+import iptables.firewall.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
-/* >>> TODO: use superclass */
-public class Iptables {
-	%include { iptables/Iptables.tom }
+public class IptablesWrapper implements Wrapper {
+	%include { iptables/firewall/Firewall.tom }
 	%include { sl.tom }
 
-	public static Rules wrapBlocks(IptablesBlocks ibs) {
+	public Rules wrap(FirewallRules fr) {
+		%match (fr) {
+			FirewallRules(ib@IptablesBlock) -> { 
+				return wrapBlocks(`ib);
+			}
+		}
+		return null;
+	}
+
+	private Rules wrapBlocks(IptablesBlocks ibs) {
 		%match(ibs) {
 			IptablesBlocks(ib,X*) -> {
 				return `RulesA(
@@ -22,7 +31,7 @@ public class Iptables {
 		return `Rules();
 	}
 
-	public static Rules wrapBlock(IptablesBlock ib) {
+	private Rules wrapBlock(IptablesBlock ib) {
 		%match(ib) {
 			IptablesBlock(t,a,is,in) -> {
 				return `RulesL(
@@ -36,7 +45,7 @@ public class Iptables {
 		return `Rules();
 	}
 
-	public static Rules wrapRule(IptablesRules irs,Target t) {
+	private Rules wrapRule(IptablesRules irs,Target t) {
 		%match(irs) {
 		IptablesRules(
 			IptablesRule(
