@@ -27,23 +27,21 @@ public class Analyser {
 	}
 
 	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
-		System.out.println("\n[1] " + `r1 + "\n[2] " + `r2 + "\n" + msg 
+		System.out.print("\n[1] " + `r1 + "\n[2] " + `r2 + "\n" + msg 
 			+ " [1/2] ? ");
 		BufferedReader input = 
 			new BufferedReader(new InputStreamReader(System.in));
 	
 		int i = 1;
 		try {
-			String s = input.readLine();
-			System.out.println("S:" + s);
 			i = Integer.parseInt(input.readLine());
 		} catch (Exception e) {}
-		System.out.println("");
+		System.out.println("" + i);
 
 		if (i == 1)
-			return `r1;
-		else
 			return `r2;
+		else
+			return `r1;
 	}
 
 
