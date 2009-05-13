@@ -54,7 +54,7 @@ public class Mu extends AbstractStrategyCombinator {
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visitLight(any,i);
+    return arguments[V].visitLight(any,i);
   }
 
   public int visit(Introspector i) {
@@ -62,11 +62,11 @@ public class Mu extends AbstractStrategyCombinator {
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visit(i);
+    return arguments[V].visit(i);
   }
 
   private boolean isExpanded() {
-    return ((MuVar)visitors[VAR]).isExpanded();
+    return ((MuVar)arguments[VAR]).isExpanded();
   }
 
   public static void expand(Strategy s) {
@@ -102,7 +102,7 @@ public class Mu extends AbstractStrategyCombinator {
         MuVar muvar = (MuVar) any;
         if(!muvar.isExpanded()) {
           for (Mu m : stack) {
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(n)) {
+            if(((MuVar)m.arguments[Mu.VAR]).getName().equals(n)) {
               //System.out.println("MuVar: setInstance " + n );
               muvar.setInstance(m);
               if(parent!=null) {
@@ -112,8 +112,8 @@ public class Mu extends AbstractStrategyCombinator {
                  */
                 //System.out.println("parent: " + parent);
                 //System.out.println("childNumber: " + childNumber);
-                //System.out.println("V: " + m.visitors[Mu.V]);
-                parent.setChildAt(childNumber,m.visitors[Mu.V]);
+                //System.out.println("V: " + m.arguments[Mu.V]);
+                parent.setChildAt(childNumber,m.arguments[Mu.V]);
               } else {
                 //System.out.println("strange: " + muvar);
               }

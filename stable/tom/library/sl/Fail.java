@@ -33,7 +33,7 @@ package tom.library.sl;
 /**
  * <code>x.accept(Fail)</code> always raises a VisitFailure exception.
  * <p>
- * Basic visitor combinator without arguments, that always fails.
+ * Strategy combinator without arguments, that always fails.
  * <p>
  * Test case documentation:
  * <a href="FailTest.java">FailTest</a>

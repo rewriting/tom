@@ -181,24 +181,20 @@ public class ZenonBackend {
     return res.toString();
   }
 
-  public String genZSpecCollection(Collection collection) {
+  public String genZSpecCollection(Collection<ZSpec> collection) {
     StringBuilder out = new StringBuilder();
 
     out.append("\nRequire Import zenon.\n");
     out.append("\nParameter T S : Set.\n");
 
     // collects all used symbols
-    Collection symbols = new HashSet();
-    Iterator it = collection.iterator();
-    while(it.hasNext()) {
-      ZSpec local = (ZSpec) it.next();
+    Collection<String> symbols = new HashSet<String>();
+    for (ZSpec local : collection) {
       symbols.addAll(tomiltools.collectSymbolsFromZSpec(local));
     }
 
     // Generates types for symbol functions
-    it = symbols.iterator();
-    while(it.hasNext()) {
-      String symbolName = (String) it.next();
+    for (String symbolName : symbols) {
       out.append(genFunctionSymbolDeclaration(symbolName));
       // declares the subterm functions if necessary
       List names = tomiltools.subtermList(symbolName);
@@ -218,10 +214,8 @@ public class ZenonBackend {
     // XXX: define True
     out.append("Parameter true_is_true : True.\n");
     // Generates types for symbols
-    it = symbols.iterator();
     out.append("Parameter ");
-    while(it.hasNext()) {
-      String symbolName = (String) it.next();
+    for (String symbolName : symbols) {
       out.append(genZSymbol( tom.engine.adt.zenon.types.zsymbol.zsymbol.make(symbolName) ) +" ");
     }
     out.append(": S.\n");
@@ -238,14 +232,13 @@ public class ZenonBackend {
 
     // Generates the different proof obligations
     int number=1;
-    it = collection.iterator();
-    while (it.hasNext()) {
+    for (ZSpec local : collection) {
       out.append("\n%%begin-auto-proof\n");
       //out.append("%%location: []\n");
       out.append("%%name: theorem"+number+"\n");
       //out.append("%%syntax: tom\n");
       //out.append("%%statement\n");
-      out.append(genZSpec((ZSpec)it.next()));
+      out.append(genZSpec(local));
 
       // XXX: Outputs the axiom for True (Newer versions of zenon may remove this need)
       out.append("Parameter true_is_true : True.\n");
@@ -254,9 +247,7 @@ public class ZenonBackend {
       // (otherwise, zenon can not know T is not empty)
       // also adds a Parameter fake : T. to make sure zenon knows T is
       // not empty
-      Iterator symbIt = symbols.iterator();
-      while(symbIt.hasNext()) {
-        String symbolName = (String) symbIt.next();
+      for (String symbolName : symbols) {
         out.append(genFunctionSymbolDeclaration(symbolName));
       }
       out.append("Parameter tom_fake : T.\n");

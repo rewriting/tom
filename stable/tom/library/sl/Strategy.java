@@ -47,11 +47,11 @@ public interface Strategy extends Visitable {
   public Environment getEnvironment();
 
   /**
-   * Visit the subject any by providing the environment
-   *
-   * @param any the subject to visit.
-   * @throws VisitFailure in case of failure.
-   */
+   *  Visit the subject any by providing the environment
+   *  
+   *  @param any the subject to visit.
+   *  @throws VisitFailure in case of failure.
+   */  
   public <T extends Visitable> T visit(T any) throws VisitFailure;
 
   /**
@@ -78,7 +78,7 @@ public interface Strategy extends Visitable {
    * @param any the subject to visit.
    * @throws VisitFailure in case of failure.
    */
-  public <T> T visit(T any, Introspector m) throws VisitFailure;
+  public <T> T visit(T any, Introspector i) throws VisitFailure;
 
   /**
    * Visit the subject any in a light way (without environment)
@@ -86,7 +86,7 @@ public interface Strategy extends Visitable {
    * @param any the subject to visit.
    * @throws VisitFailure in case of failure.
    */
-  public <T> T visitLight(T any, Introspector m) throws VisitFailure;
+  public <T> T visitLight(T any, Introspector i) throws VisitFailure;
 
   /**
    * Execute the strategy in the given environment (on its current subject).
@@ -94,18 +94,18 @@ public interface Strategy extends Visitable {
    * strategy but with the current environment of the user strategy.
    *
    * @param envt the environment where execute the strategy.
-   * @param m the instrospector
+   * @param i the instrospector
    * @throws VisitFailure in case of failure.
    */
-  public Object visit(Environment envt, Introspector m) throws VisitFailure;
+  public Object visit(Environment envt, Introspector i) throws VisitFailure;
 
   /**
    *  Visit the current subject (found in the environment)
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
-   *
-   *  @param m the introspector
+   * 
+   *  @param i the introspector
    */
-  public int visit(Introspector m);
+  public int visit(Introspector i);
 
 }

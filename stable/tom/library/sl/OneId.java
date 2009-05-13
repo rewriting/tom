@@ -34,8 +34,8 @@ package tom.library.sl;
  * <code>T(t1,...,ti,...,tN).accept(OneId(v)) = T(t1,...,ti.accept(v),...,tN)</code>
  * if <code>ti</code> is the first child that is modified.
  * <p>
- * Basic visitor combinator with one visitor argument, that applies
- * this visitor to exactly one child. If no children are visited 
+ * Strategy combinator with one argument, that applies
+ * this argument to exactly one child. If no children are visited 
  * successfully, then OneId(v) fails.
  * <p>
  * Note that side-effects of failing visits to children are not
@@ -52,7 +52,7 @@ public class OneId extends AbstractStrategyCombinator {
   public <T> T visitLight(T any, Introspector introspector) throws  VisitFailure {
     int childCount = introspector.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
-      Object newSubterm = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);
+      Object newSubterm = arguments[ARG].visitLight(introspector.getChildAt(any,i),introspector);
       if (newSubterm != introspector.getChildAt(any,i)) {
         return introspector.setChildAt(any,i,newSubterm);
       } 
@@ -71,7 +71,7 @@ public class OneId extends AbstractStrategyCombinator {
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
       Object oldSubject = environment.getSubject();
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       Object newSubject = environment.getSubject();
       if(status == Environment.SUCCESS && oldSubject!=newSubject) {
         environment.up();

@@ -223,7 +223,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
   private void markUsedConstructorDestructor(TomTerm pilCode) {
-    Stack stack = new Stack();
+    Stack<String> stack = new Stack<String>();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {
       ( new tom.library.sl.Mu(( new tom.library.sl.MuVar("markStrategy") ),tom_make_TopDownCollect(tom_make_Collector(( new tom.library.sl.MuVar("markStrategy") ),this,stack))) ).visitLight(pilCode);
@@ -259,7 +259,7 @@ public class TomBackend extends TomGenericPlugin {
    * this strategy also collect the declarations (IsFsymDecl, GetSLotDecl, etc)
    * to fill the mapInliner used by the backend to inline calls to IsFsym, GetSlot, etc.
    */
-  public static class Collector extends tom.library.sl.AbstractBasicStrategy {private  tom.library.sl.Strategy  markStrategy;private  TomBackend  tb;private  Stack  stack;public Collector( tom.library.sl.Strategy  markStrategy,  TomBackend  tb,  Stack  stack) {super(( new tom.library.sl.Identity() ));this.markStrategy=markStrategy;this.tb=tb;this.stack=stack;}public  tom.library.sl.Strategy  getmarkStrategy() {return markStrategy;}public  TomBackend  gettb() {return tb;}public  Stack  getstack() {return stack;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);stratChilds[1] = getmarkStrategy();return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);markStrategy = ( tom.library.sl.Strategy ) children[1];return this;}public int getChildCount() {return 2;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return getmarkStrategy();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: markStrategy = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
+  public static class Collector extends tom.library.sl.AbstractBasicStrategy {private  tom.library.sl.Strategy  markStrategy;private  TomBackend  tb;private  Stack<String>  stack;public Collector( tom.library.sl.Strategy  markStrategy,  TomBackend  tb,  Stack<String>  stack) {super(( new tom.library.sl.Identity() ));this.markStrategy=markStrategy;this.tb=tb;this.stack=stack;}public  tom.library.sl.Strategy  getmarkStrategy() {return markStrategy;}public  TomBackend  gettb() {return tb;}public  Stack<String>  getstack() {return stack;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);stratChilds[1] = getmarkStrategy();return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);markStrategy = ( tom.library.sl.Strategy ) children[1];return this;}public int getChildCount() {return 2;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return getmarkStrategy();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: markStrategy = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.CompiledMatch) ) {
 
 
 
@@ -269,9 +269,9 @@ public class TomBackend extends TomGenericPlugin {
          * or the wrapping modulename if the current one
          * (nested match for example) does not have one
          */
-        if(moduleName==null) {
+        if (moduleName==null) {
           try {
-            moduleName = (String) stack.peek();
+            moduleName = stack.peek();
             stack.push(moduleName);
             //System.out.println("push2: " + moduleName);
           } catch (EmptyStackException e) {
@@ -299,7 +299,7 @@ public class TomBackend extends TomGenericPlugin {
 
         try {
           // System.out.println("list check: " + `name);
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch47NameNumber_freshVar_1.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
@@ -311,7 +311,7 @@ public class TomBackend extends TomGenericPlugin {
 
         try {
           // System.out.println("list check: " + `name);
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch47NameNumber_freshVar_7.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
@@ -324,7 +324,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.setUsedType(moduleName, tomMatch48NameNumber_freshVar_1.getString() ,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -339,7 +339,7 @@ public class TomBackend extends TomGenericPlugin {
         while(!l.isEmptyconcTomName()) {
           try {
             //System.out.println("op: " + l.getHead());
-            String moduleName = (String) stack.peek();
+            String moduleName = stack.peek();
             //System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
             //System.out.println("mark: " + tomSymbol);
@@ -359,7 +359,7 @@ public class TomBackend extends TomGenericPlugin {
 
         try {
           // System.out.println("build: " + `name);
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch49NameNumber_freshVar_5.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
@@ -370,7 +370,7 @@ public class TomBackend extends TomGenericPlugin {
 
         try {
           // System.out.println("build: " + `name);
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch49NameNumber_freshVar_11.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
@@ -397,7 +397,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putIsFsym( tomMatch50NameNumber_freshVar_1.getString() , tomMatch50NameNumber_freshVar_2.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -406,7 +406,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putIsSort( tomMatch50NameNumber_freshVar_14.getString() , tomMatch50NameNumber_freshVar_10.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -415,7 +415,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putEqualTerm( tomMatch50NameNumber_freshVar_27.getString() , tomMatch50NameNumber_freshVar_23.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -424,7 +424,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putGetSlot( tomMatch50NameNumber_freshVar_35.getString() , tomMatch50NameNumber_freshVar_36.getString() , tomMatch50NameNumber_freshVar_37.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -433,7 +433,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMake( tomMatch50NameNumber_freshVar_46.getString() , tomMatch50NameNumber_freshVar_51.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -442,7 +442,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMakeEmptyList( tomMatch50NameNumber_freshVar_56.getString() , tomMatch50NameNumber_freshVar_61.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -451,7 +451,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMakeAddList( tomMatch50NameNumber_freshVar_66.getString() , tomMatch50NameNumber_freshVar_71.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -460,7 +460,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMakeEmptyArray( tomMatch50NameNumber_freshVar_76.getString() , tomMatch50NameNumber_freshVar_81.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -469,7 +469,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMakeAddArray( tomMatch50NameNumber_freshVar_86.getString() , tomMatch50NameNumber_freshVar_91.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -478,12 +478,12 @@ public class TomBackend extends TomGenericPlugin {
 
 
         try {
-          String moduleName = (String) stack.peek();
+          String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putGetSizeArray( tomMatch50NameNumber_freshVar_96.getString() , tomMatch50NameNumber_freshVar_97.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}return _visit_Declaration(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_Collector( tom.library.sl.Strategy  t0,  TomBackend  t1,  Stack  t2) { return new Collector(t0,t1,t2);}
+      }}}}}}return _visit_Declaration(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_Collector( tom.library.sl.Strategy  t0,  TomBackend  t1,  Stack<String>  t2) { return new Collector(t0,t1,t2);}
 
 
 

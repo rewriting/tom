@@ -113,7 +113,7 @@ public class TomVerifier extends TomGenericPlugin {
         // Collection derivations = getDerivations(matchingCode);
         //System.out.println("Derivations : " + derivations);
 
-        Map rawConstraints = getRawConstraints(matchingCode);
+        Map<Instr,Expr> rawConstraints = getRawConstraints(matchingCode);
         //System.out.println(rawConstraints);
 
         // reduce constraints
@@ -122,13 +122,12 @@ public class TomVerifier extends TomGenericPlugin {
           verif.booleanReduce(rawConstraints);
         }
 
-        Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
+        Collection<ZSpec> zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
         if(intermediate) {
           Tools.generateOutputFromCollection(getStreamManager().getOutputFileName() + INTERMEDIATE_SUFFIX, zspecSet);
         }
 
         ZenonBackend back = new ZenonBackend(verif);
-        //System.out.println("output: "+back.genZSpecCollection(zspecSet));
         String output = back.genZSpecCollection(zspecSet);
 
         // do not generate a file if there is no proof to do
@@ -163,16 +162,16 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   protected Collection getMatchingCode() {
-        // here the extraction stuff
-        Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
+    // here the extraction stuff
+    Collection matchSet = collectMatch((TomTerm) getWorkingTerm());
 
-        Collection purified = purify(matchSet);
-         //System.out.println("Purified : " + purified);
+    Collection purified = purify(matchSet);
+    //System.out.println("Purified : " + purified);
 
-        // removes all associative patterns
-        filterAssociative(purified);
+    // removes all associative patterns
+    filterAssociative(purified);
 
-        return purified;
+    return purified;
   }
 
   public PlatformOptionList getDeclaredOptionList() {
@@ -238,7 +237,7 @@ public class TomVerifier extends TomGenericPlugin {
 
 
         return  (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getAutomataInst() ;
-      }}}}return _visit_Instruction(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_ilSimplifier() { return new ilSimplifier();}
+      }}}}return _visit_Instruction(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_ilSimplifier() { return new ilSimplifier();}
 
 
 
@@ -279,7 +278,7 @@ public class TomVerifier extends TomGenericPlugin {
       }}}{if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )tom__arg) instanceof tom.engine.adt.tominstruction.types.instruction.DoWhile) ) {
 
         store.add((( tom.engine.adt.tominstruction.types.Instruction )tom__arg));
-      }}}}return _visit_Instruction(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{}return _visit_Expression(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_associativeOperatorCollector( java.util.Collection  t0) { return new associativeOperatorCollector(t0);}
+      }}}}return _visit_Instruction(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{}return _visit_Expression(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_associativeOperatorCollector( java.util.Collection  t0) { return new associativeOperatorCollector(t0);}
 
 
 
@@ -303,13 +302,13 @@ public class TomVerifier extends TomGenericPlugin {
     return derivations;
   }
 
-  public Map getRawConstraints(Collection subject) {
-    Map rawConstraints = new HashMap();
+  public Map<Instr,Expr> getRawConstraints(Collection subject) {
+    Map<Instr,Expr> rawConstraints = new HashMap<Instr,Expr>();
     Iterator it = subject.iterator();
 
     while (it.hasNext()) {
       Instruction automata = (Instruction) it.next();
-      Map trees = verif.getConstraints(automata);
+      Map<Instr,Expr> trees = verif.getConstraints(automata);
       rawConstraints.putAll(trees);
     }
     return rawConstraints;

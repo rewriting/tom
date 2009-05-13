@@ -118,7 +118,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
 
-      ArrayList tomParams = new ArrayList();      
+      ArrayList<String> tomParams = new ArrayList<String>();      
 
       try {
         Iterator it = importList.iterator();
@@ -165,10 +165,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
         generate(gen);
         InputStream backupIn = System.in;
         System.setIn(new ByteArrayInputStream(gen.toString().getBytes("UTF-8")));
-        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+        int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
 
-        //int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]),informationTracker);
-        //int res = tom.engine.Tom.exec(params);
+        //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         System.setIn(backupIn);
         if (res != 0 ) {
           getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});

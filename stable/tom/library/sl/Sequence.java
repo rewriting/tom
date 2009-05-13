@@ -35,8 +35,8 @@ package tom.library.sl;
  * <p>
  * <code>fails</code> otherwise
  * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition).
+ * Strategy combinator with two arguments, that applies
+ * these arguments one after the other (sequential composition).
  */
 
 public class Sequence extends AbstractStrategyCombinator {
@@ -47,13 +47,13 @@ public class Sequence extends AbstractStrategyCombinator {
   }
 
   public <T> T visitLight(T visitable, Introspector introspector) throws VisitFailure {
-    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable,introspector),introspector);
+    return arguments[THEN].visitLight(arguments[FIRST].visitLight(visitable,introspector),introspector);
   }
 
   public int visit(Introspector introspector) {
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS) {
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
     return status;
   }

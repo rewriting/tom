@@ -53,7 +53,7 @@ import tom.engine.exception.TomRuntimeException;
 public class ZenonOutput {
 
   // ------------------------------------------------------------
-          private static   tom.engine.adt.il.types.TermList  tom_append_list_concTerm( tom.engine.adt.il.types.TermList l1,  tom.engine.adt.il.types.TermList  l2) {     if( l1.isEmptyconcTerm() ) {       return l2;     } else if( l2.isEmptyconcTerm() ) {       return l1;     } else if(  l1.getTailconcTerm() .isEmptyconcTerm() ) {       return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( l1.getHeadconcTerm() ,l2) ;     } else {       return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( l1.getHeadconcTerm() ,tom_append_list_concTerm( l1.getTailconcTerm() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.TermList  tom_get_slice_concTerm( tom.engine.adt.il.types.TermList  begin,  tom.engine.adt.il.types.TermList  end, tom.engine.adt.il.types.TermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTerm()  ||  (end== tom.engine.adt.il.types.termlist.EmptyconcTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( begin.getHeadconcTerm() ,( tom.engine.adt.il.types.TermList )tom_get_slice_concTerm( begin.getTailconcTerm() ,end,tail)) ;   }      private static   tom.engine.adt.il.types.ExprList  tom_append_list_concExpr( tom.engine.adt.il.types.ExprList l1,  tom.engine.adt.il.types.ExprList  l2) {     if( l1.isEmptyconcExpr() ) {       return l2;     } else if( l2.isEmptyconcExpr() ) {       return l1;     } else if(  l1.getTailconcExpr() .isEmptyconcExpr() ) {       return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( l1.getHeadconcExpr() ,l2) ;     } else {       return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( l1.getHeadconcExpr() ,tom_append_list_concExpr( l1.getTailconcExpr() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.ExprList  tom_get_slice_concExpr( tom.engine.adt.il.types.ExprList  begin,  tom.engine.adt.il.types.ExprList  end, tom.engine.adt.il.types.ExprList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcExpr()  ||  (end== tom.engine.adt.il.types.exprlist.EmptyconcExpr.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( begin.getHeadconcExpr() ,( tom.engine.adt.il.types.ExprList )tom_get_slice_concExpr( begin.getTailconcExpr() ,end,tail)) ;   }      private static   tom.engine.adt.il.types.SubstitutionList  tom_append_list_subs( tom.engine.adt.il.types.SubstitutionList l1,  tom.engine.adt.il.types.SubstitutionList  l2) {     if( l1.isEmptysubs() ) {       return l2;     } else if( l2.isEmptysubs() ) {       return l1;     } else if(  l1.getTailsubs() .isEmptysubs() ) {       return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( l1.getHeadsubs() ,l2) ;     } else {       return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( l1.getHeadsubs() ,tom_append_list_subs( l1.getTailsubs() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.SubstitutionList  tom_get_slice_subs( tom.engine.adt.il.types.SubstitutionList  begin,  tom.engine.adt.il.types.SubstitutionList  end, tom.engine.adt.il.types.SubstitutionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptysubs()  ||  (end== tom.engine.adt.il.types.substitutionlist.Emptysubs.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( begin.getHeadsubs() ,( tom.engine.adt.il.types.SubstitutionList )tom_get_slice_subs( begin.getTailsubs() ,end,tail)) ;   }       private static   tom.engine.adt.zenon.types.ZAxiomList  tom_append_list_zby( tom.engine.adt.zenon.types.ZAxiomList l1,  tom.engine.adt.zenon.types.ZAxiomList  l2) {     if( l1.isEmptyzby() ) {       return l2;     } else if( l2.isEmptyzby() ) {       return l1;     } else if(  l1.getTailzby() .isEmptyzby() ) {       return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( l1.getHeadzby() ,l2) ;     } else {       return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( l1.getHeadzby() ,tom_append_list_zby( l1.getTailzby() ,l2)) ;     }   }   private static   tom.engine.adt.zenon.types.ZAxiomList  tom_get_slice_zby( tom.engine.adt.zenon.types.ZAxiomList  begin,  tom.engine.adt.zenon.types.ZAxiomList  end, tom.engine.adt.zenon.types.ZAxiomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyzby()  ||  (end== tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( begin.getHeadzby() ,( tom.engine.adt.zenon.types.ZAxiomList )tom_get_slice_zby( begin.getTailzby() ,end,tail)) ;   }    
+          private static   tom.engine.adt.il.types.ExprList  tom_append_list_concExpr( tom.engine.adt.il.types.ExprList l1,  tom.engine.adt.il.types.ExprList  l2) {     if( l1.isEmptyconcExpr() ) {       return l2;     } else if( l2.isEmptyconcExpr() ) {       return l1;     } else if(  l1.getTailconcExpr() .isEmptyconcExpr() ) {       return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( l1.getHeadconcExpr() ,l2) ;     } else {       return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( l1.getHeadconcExpr() ,tom_append_list_concExpr( l1.getTailconcExpr() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.ExprList  tom_get_slice_concExpr( tom.engine.adt.il.types.ExprList  begin,  tom.engine.adt.il.types.ExprList  end, tom.engine.adt.il.types.ExprList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcExpr()  ||  (end== tom.engine.adt.il.types.exprlist.EmptyconcExpr.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.exprlist.ConsconcExpr.make( begin.getHeadconcExpr() ,( tom.engine.adt.il.types.ExprList )tom_get_slice_concExpr( begin.getTailconcExpr() ,end,tail)) ;   }      private static   tom.engine.adt.il.types.SubstitutionList  tom_append_list_subs( tom.engine.adt.il.types.SubstitutionList l1,  tom.engine.adt.il.types.SubstitutionList  l2) {     if( l1.isEmptysubs() ) {       return l2;     } else if( l2.isEmptysubs() ) {       return l1;     } else if(  l1.getTailsubs() .isEmptysubs() ) {       return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( l1.getHeadsubs() ,l2) ;     } else {       return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( l1.getHeadsubs() ,tom_append_list_subs( l1.getTailsubs() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.SubstitutionList  tom_get_slice_subs( tom.engine.adt.il.types.SubstitutionList  begin,  tom.engine.adt.il.types.SubstitutionList  end, tom.engine.adt.il.types.SubstitutionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptysubs()  ||  (end== tom.engine.adt.il.types.substitutionlist.Emptysubs.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.substitutionlist.Conssubs.make( begin.getHeadsubs() ,( tom.engine.adt.il.types.SubstitutionList )tom_get_slice_subs( begin.getTailsubs() ,end,tail)) ;   }      private static   tom.engine.adt.il.types.TermList  tom_append_list_concTerm( tom.engine.adt.il.types.TermList l1,  tom.engine.adt.il.types.TermList  l2) {     if( l1.isEmptyconcTerm() ) {       return l2;     } else if( l2.isEmptyconcTerm() ) {       return l1;     } else if(  l1.getTailconcTerm() .isEmptyconcTerm() ) {       return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( l1.getHeadconcTerm() ,l2) ;     } else {       return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( l1.getHeadconcTerm() ,tom_append_list_concTerm( l1.getTailconcTerm() ,l2)) ;     }   }   private static   tom.engine.adt.il.types.TermList  tom_get_slice_concTerm( tom.engine.adt.il.types.TermList  begin,  tom.engine.adt.il.types.TermList  end, tom.engine.adt.il.types.TermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTerm()  ||  (end== tom.engine.adt.il.types.termlist.EmptyconcTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.il.types.termlist.ConsconcTerm.make( begin.getHeadconcTerm() ,( tom.engine.adt.il.types.TermList )tom_get_slice_concTerm( begin.getTailconcTerm() ,end,tail)) ;   }       private static   tom.engine.adt.zenon.types.ZAxiomList  tom_append_list_zby( tom.engine.adt.zenon.types.ZAxiomList l1,  tom.engine.adt.zenon.types.ZAxiomList  l2) {     if( l1.isEmptyzby() ) {       return l2;     } else if( l2.isEmptyzby() ) {       return l1;     } else if(  l1.getTailzby() .isEmptyzby() ) {       return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( l1.getHeadzby() ,l2) ;     } else {       return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( l1.getHeadzby() ,tom_append_list_zby( l1.getTailzby() ,l2)) ;     }   }   private static   tom.engine.adt.zenon.types.ZAxiomList  tom_get_slice_zby( tom.engine.adt.zenon.types.ZAxiomList  begin,  tom.engine.adt.zenon.types.ZAxiomList  end, tom.engine.adt.zenon.types.ZAxiomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyzby()  ||  (end== tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.zenon.types.zaxiomlist.Conszby.make( begin.getHeadzby() ,( tom.engine.adt.zenon.types.ZAxiomList )tom_get_slice_zby( begin.getTailzby() ,end,tail)) ;   }    
 
 
 
@@ -70,22 +70,20 @@ public class ZenonOutput {
     this.tomiltools = new TomIlTools(verifier);
   }
 
-  public Collection zspecSetFromConstraintMap(Map constraintMap) {
-    Collection resset = new HashSet();
-    Iterator it = constraintMap.entrySet().iterator();
-    while(it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
+  public Collection<ZSpec> zspecSetFromConstraintMap(Map<Instr,Expr> constraintMap) {
+    Collection<ZSpec> resset = new HashSet<ZSpec>();
+    for (Map.Entry<Instr,Expr> entry : constraintMap.entrySet()) {
       ZSpec spec = zspecFromMapEntry(entry);
       resset.add(spec);
     }
     return resset;
   }
 
-  public ZSpec zspecFromMapEntry(Map.Entry entry) {
-    Instr accept = (Instr) entry.getKey();
-    Expr constraint = (Expr) entry.getValue();
+  public ZSpec zspecFromMapEntry(Map.Entry<Instr,Expr> entry) {
+    Instr accept = entry.getKey();
+    Expr constraint = entry.getValue();
 
-    List subjectList = new LinkedList();
+    List<ZTerm> subjectList = new LinkedList<ZTerm>();
     ZExpr pattern = null;
     ZExpr negpattern = null;
 
@@ -96,11 +94,12 @@ public class ZenonOutput {
         ConstraintList negativePatternList = ConstraintList.fromTerm( (( tom.engine.adt.il.types.Instr )accept).getNegative() );
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
-        Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
-                                                               new HashMap());
+        Map<String,ZTerm> variableMap = ztermVariableMapFromSubstitutionList(
+                                          subsList,
+                                          new HashMap<String,ZTerm>());
         tomiltools.getZTermSubjectListFromConstraint(positivePattern,
-                                                  subjectList,
-                                                  variableMap);
+                                                     subjectList,
+                                                     variableMap);
         pattern = tomiltools.constraintToZExpr(positivePattern,variableMap);
         if (verifier.isCamlSemantics()) {
           negpattern = tomiltools.constraintToZExpr(negativePatternList,variableMap);
@@ -124,15 +123,13 @@ public class ZenonOutput {
     // to TomSignature and Zenon signature
 
     // collects symbols in pattern
-    Collection symbols = tomiltools.collectSymbols(pattern);
+    Collection<String> symbols = tomiltools.collectSymbols(pattern);
     // generates the axioms for this set of symbols
     ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
     // generates axioms for all subterm operations
     ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
 
-    Iterator iter = subjectList.iterator();
-    while(iter.hasNext()) {
-      ZTerm input = (ZTerm)iter.next();
+    for (ZTerm input : subjectList) {
       theorem =  tom.engine.adt.zenon.types.zexpr.zforall.make(input,  tom.engine.adt.zenon.types.ztype.ztype.make("T") , theorem) ;
     }
     ZSpec spec =  tom.engine.adt.zenon.types.zspec.zthm.make(theorem, tom_append_list_zby(symbolsAxioms,tom_append_list_zby(subtermAxioms, tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make() ))) ;
@@ -251,7 +248,9 @@ public class ZenonOutput {
     return  tom.engine.adt.zenon.types.zterm.zvar.make("Error in ztermFromAbsTerm") ;
   }
 
-  private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
+  private Map<String,ZTerm> ztermVariableMapFromSubstitutionList(
+                              SubstitutionList sublist,
+                              Map<String,ZTerm> map) {
     {{if ( (sublist instanceof tom.engine.adt.il.types.SubstitutionList) ) {if ( (((( tom.engine.adt.il.types.SubstitutionList )sublist) instanceof tom.engine.adt.il.types.substitutionlist.Conssubs) || ((( tom.engine.adt.il.types.SubstitutionList )sublist) instanceof tom.engine.adt.il.types.substitutionlist.Emptysubs)) ) {if ( (( tom.engine.adt.il.types.SubstitutionList )sublist).isEmptysubs() ) {
  return map; }}}}{if ( (sublist instanceof tom.engine.adt.il.types.SubstitutionList) ) {if ( (((( tom.engine.adt.il.types.SubstitutionList )sublist) instanceof tom.engine.adt.il.types.substitutionlist.Conssubs) || ((( tom.engine.adt.il.types.SubstitutionList )sublist) instanceof tom.engine.adt.il.types.substitutionlist.Emptysubs)) ) {if (!( (( tom.engine.adt.il.types.SubstitutionList )sublist).isEmptysubs() )) {if ( ( (( tom.engine.adt.il.types.SubstitutionList )sublist).getHeadsubs()  instanceof tom.engine.adt.il.types.substitution.undefsubs) ) {
 

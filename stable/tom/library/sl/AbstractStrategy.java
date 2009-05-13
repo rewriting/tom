@@ -30,13 +30,30 @@
  **/
 package tom.library.sl;
 
+/** 
+ * <p>
+ * Partial implementation of the strategy interface that implements
+ * most of the <code>visit</code> methods. This class is extended by
+ * the two abstract classes <code>AbstractBasicStrategy</code> and
+ * <code>AbstractStrategyCombinator</code> that can be used to
+ * implement respectively new basic transformations (like a rewrite
+ * rule system) and new strategy combinators (like the
+ * <code>All</code> strategy).
+ * <p>
+ * It is not advised to implement directly this abstract class. 
+ *
+ */
 public abstract class AbstractStrategy implements Strategy {
 
+  /**
+   * Environment of the strategy application
+   */
   protected Environment environment;
 
   /** 
    * Executes the strategy in the given environment (on its current subject).
-     This method can only be used inside user strategies to execute another strategy but with the current environment of the user strategy.
+     This method can only be used inside user strategies to execute another
+     strategy but with the current environment of the user strategy.
    *
    * @param envt the environment where execute the strategy. 
    * @throws VisitFailure if visit fails
@@ -57,15 +74,16 @@ public abstract class AbstractStrategy implements Strategy {
 
   /** 
    * Executes the strategy in the given environment (on its current subject).
-     This method can only be used inside user strategies to execute another strategy but with the current environment of the user strategy.  
+     This method can only be used inside user strategies to execute another
+     strategy but with the current environment of the user strategy.  
    *
    * @param envt the environment where execute the strategy.
-   * @param m the introspector
+   * @param i the introspector
    * @throws VisitFailure if visit fails
    */
-  public Object visit(Environment envt, Introspector m) throws VisitFailure {
+  public Object visit(Environment envt, Introspector i) throws VisitFailure {
     AbstractStrategy.init(this,envt);
-    int status = visit(m);
+    int status = visit(i);
     if(status == Environment.SUCCESS) {
       return getSubject();
     } else {
@@ -87,14 +105,14 @@ public abstract class AbstractStrategy implements Strategy {
    * Visits the subject any by providing the introspector 
    *
    * @param any the subject to visit. 
-   * @param m the introspector
+   * @param i the introspector
    * @throws VisitFailure if visit fails
    */
   @SuppressWarnings("unchecked")
-  public <T> T visit(T any, Introspector m) throws VisitFailure{
+  public <T> T visit(T any, Introspector i) throws VisitFailure{
     init();
     setRoot(any);
-    int status = visit(m);
+    int status = visit(i);
     if(status == Environment.SUCCESS) {
       return (T) getRoot();
     } else {
@@ -194,7 +212,6 @@ public abstract class AbstractStrategy implements Strategy {
    */
   public static void init(Strategy s, Environment env) {
     /* to avoid infinite loop during initialization
-     * TODO: use static typing
      */
     if (((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env)) {
       return;

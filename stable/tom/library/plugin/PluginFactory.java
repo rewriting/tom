@@ -83,7 +83,7 @@ public class PluginFactory implements Plugin {
 
   private PlatformOptionList allDeclaredOptions;
   private PlatformOptionList allRequiredOptions;
-  private Map flagOwners;
+  private Map<String,Plugin> flagOwners;
   private Object[] argToRelay;
   private OptionManager optionManager;
 
@@ -99,25 +99,23 @@ public class PluginFactory implements Plugin {
   public PluginFactory(String name, String xmlFile) {
     allDeclaredOptions =  tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ;
     allRequiredOptions =  tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ;
-    flagOwners = new HashMap();
+    flagOwners = new HashMap<String,Plugin>();
 
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
 
-    List classPaths = new ArrayList();
-    List plugins = new ArrayList();
+    List<String> classPaths = new ArrayList<String>();
+    List<Plugin> plugins = new ArrayList<Plugin>();
 
     fillClassPathsList(classPaths, xmlFile);
 
     // creates an instance of each plugin
-    Iterator it = classPaths.iterator();
-    while( it.hasNext() ) {
+    for (String path : classPaths) {
       Object instance;
-      String path = (String)it.next();
       try {
         instance = Class.forName(path).newInstance();
         if(instance instanceof Plugin) {
-          plugins.add(instance);
+          plugins.add((Plugin)instance);
         } else {
           logger.log(Level.SEVERE, "ClassNotAPlugin",
                      new Object[]{pluginName, path});
@@ -131,10 +129,7 @@ public class PluginFactory implements Plugin {
       }
     }
 
-    it = plugins.iterator();
-    while( it.hasNext() ) {
-      Plugin plugin = (Plugin)it.next();
-
+    for (Plugin plugin : plugins) {
       PlatformOptionList declaredList = plugin.getDeclaredOptionList();
       allDeclaredOptions = tom_append_list_concPlatformOption(allDeclaredOptions,tom_append_list_concPlatformOption(declaredList, tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() ));
       String flagName = declaredList.getHeadconcPlatformOption().getName();
@@ -169,20 +164,18 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public void run(Map informationTracker) {
+  public void run(Map<String,String> informationTracker) {
     Plugin activatedPlugin = null;
-    Iterator it = flagOwners.keySet().iterator();
-    while(it.hasNext()) {
-      String flagName = (String)it.next();
+    for (String flagName : flagOwners.keySet()) {
       if( ((Boolean)getOM().getOptionValue(flagName)).booleanValue() ) {
-        activatedPlugin = (Plugin)flagOwners.get(flagName);
+        activatedPlugin = flagOwners.get(flagName);
       }
     }
-    try{
+    try {
       activatedPlugin.setArgs(argToRelay);
       activatedPlugin.run(informationTracker);
       argToRelay = activatedPlugin.getArgs();
-    } catch(NullPointerException npe) {
+    } catch (NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");
       // TODO: when error management has changed, change this
     }
@@ -206,15 +199,15 @@ public class PluginFactory implements Plugin {
    * From OptionOwner interface inherited from Plugin interface
    */
   public PlatformOptionList getRequiredOptionList() {
-    Iterator it = flagOwners.keySet().iterator();
+    Iterator<String> it = flagOwners.keySet().iterator();
     while(it.hasNext()) { // for all plugins
-      String flagName = (String)it.next();
+      String flagName = it.next();
       if(((Boolean)getOM().getOptionValue(flagName)).booleanValue()) {
         // if this plugin is activated
         it = flagOwners.keySet().iterator();
 
         while( it.hasNext() ) {
-          String name = (String)it.next();
+          String name = it.next();
           if( !name.equals(flagName) ) // require that the other aren't
             allRequiredOptions =  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make(name, "", "",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") ,tom_append_list_concPlatformOption(allRequiredOptions, tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() )) ;
         }
@@ -232,23 +225,19 @@ public class PluginFactory implements Plugin {
 
     if(optionValue.equals(Boolean.TRUE)) {
       // no more than 1 plugin can be activated at a time
-      if( flagOwners.keySet().contains(optionName) ) {
+      if(flagOwners.keySet().contains(optionName) ) {
         // if the flag just set is an activation flag...
-        Iterator it = flagOwners.keySet().iterator();
-        while( it.hasNext() ) {
-          String flagName = (String)it.next();
+        for (String flagName : flagOwners.keySet()) {
           if( !flagName.equals(optionName) ) {
-            getOM().setOptionValue(flagName, Boolean.FALSE);
             // ...desactivate the other flags
-            //System.out.println(flagName + " desactivated");
+            getOM().setOptionValue(flagName, Boolean.FALSE);
           }
         }
-        //System.out.println(optionName + " activated");
       }
     }
   }
 
-  private void fillClassPathsList(List classPaths, String xmlFile) {
+  private void fillClassPathsList(List<String> classPaths, String xmlFile) {
     XmlTools xtools = new XmlTools();
     TNode docNode = ( xtools.convertXMLToTNode(xmlFile) ).getDocElem();
 
@@ -261,7 +250,7 @@ public class PluginFactory implements Plugin {
               TNode pluginNode = tom_cl.getHeadconcTNode();
 
               {{if ( (pluginNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )pluginNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch629NameNumber_freshVar_2= (( tom.library.adt.tnode.types.TNode )pluginNode).getAttrList() ; tom.library.adt.tnode.types.TNodeList  tomMatch629NameNumber_freshVar_3= (( tom.library.adt.tnode.types.TNode )pluginNode).getChildList() ;if ( "plugin".equals( (( tom.library.adt.tnode.types.TNode )pluginNode).getName() ) ) {if ( ((tomMatch629NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch629NameNumber_freshVar_2 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) { tom.library.adt.tnode.types.TNodeList  tomMatch629NameNumber_end_9=tomMatch629NameNumber_freshVar_2;do {{if (!( tomMatch629NameNumber_end_9.isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch629NameNumber_freshVar_16= tomMatch629NameNumber_end_9.getHeadconcTNode() ;if ( (tomMatch629NameNumber_freshVar_16 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( "classpath".equals( tomMatch629NameNumber_freshVar_16.getName() ) ) {if ( ((tomMatch629NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch629NameNumber_freshVar_3 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch629NameNumber_freshVar_3.isEmptyconcTNode() ) {
- classPaths.add( tomMatch629NameNumber_freshVar_16.getValue() );/*System.out.println(cp);*/ }}}}}if ( tomMatch629NameNumber_end_9.isEmptyconcTNode() ) {tomMatch629NameNumber_end_9=tomMatch629NameNumber_freshVar_2;} else {tomMatch629NameNumber_end_9= tomMatch629NameNumber_end_9.getTailconcTNode() ;}}} while(!( (tomMatch629NameNumber_end_9==tomMatch629NameNumber_freshVar_2) ));}}}}}}tom_cl
+ classPaths.add( tomMatch629NameNumber_freshVar_16.getValue() ); }}}}}if ( tomMatch629NameNumber_end_9.isEmptyconcTNode() ) {tomMatch629NameNumber_end_9=tomMatch629NameNumber_freshVar_2;} else {tomMatch629NameNumber_end_9= tomMatch629NameNumber_end_9.getTailconcTNode() ;}}} while(!( (tomMatch629NameNumber_end_9==tomMatch629NameNumber_freshVar_2) ));}}}}}}tom_cl
 
 = tom_cl.getTailconcTNode();
             }

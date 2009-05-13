@@ -19,9 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Radu Kopetz e-mail: Radu.Kopetz@loria.fr
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
  **/
 package tom.library.sl;
 
@@ -30,9 +27,21 @@ package tom.library.sl;
  * as a super class by the class generated from %strategy    
  *
  */
+/** 
+ * <p>
+ * Partial implementation of the strategy interface that can be used to
+ * implement new basic transformations (like a rewrite rule system). This class
+ * has an attribute of type Strategy which corresponds to the default strategy
+ * if the transformation system cannot be applied. Note that this abstract
+ * class is used to compile the <code>%strategy</code> Tom instruction.
+ *
+ */
 
 public abstract class AbstractBasicStrategy extends AbstractStrategy {
 
+  /**
+   * Default strategy 
+   */ 
   protected Strategy any;
   
   public AbstractBasicStrategy(Strategy v) {

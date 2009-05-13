@@ -33,8 +33,8 @@ package tom.library.sl;
 /**
  * <code>x.fire(SequenceId (v1,v2)) = x.fire(v1) ; x.fire(v2) if x.fire(v1)!=x</code>
  * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition), if the first
+ * Strategy combinator with two arguments, that applies
+ * these arguments one after the other (sequential composition), if the first
  * one is not the identity.
  */
 
@@ -46,9 +46,9 @@ public class SequenceId   extends AbstractStrategyCombinator {
   }
 
   public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
-    T v = visitors[FIRST].visitLight(subject, introspector);
+    T v = arguments[FIRST].visitLight(subject, introspector);
     if(v != subject) {
-      return visitors[THEN].visitLight(v, introspector);
+      return arguments[THEN].visitLight(v, introspector);
     } else {
       return v;
     }
@@ -56,9 +56,9 @@ public class SequenceId   extends AbstractStrategyCombinator {
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS && environment.getSubject() != subject) {
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
     return status;
   }

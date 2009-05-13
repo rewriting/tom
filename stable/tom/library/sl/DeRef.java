@@ -71,7 +71,7 @@ public class DeRef extends AbstractStrategyCombinator {
       if(strict) {
         // does nothing when it is not a Ref
       } else {
-        return visitors[ARG].visit(introspector);
+        return arguments[ARG].visit(introspector);
       }
     }
     return Environment.SUCCESS;
@@ -81,7 +81,7 @@ public class DeRef extends AbstractStrategyCombinator {
     if(relative) {
       Position current = environment.getPosition();
       environment.followPath(path);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.followPath(current.sub(environment.getPosition()));
         return;

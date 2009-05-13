@@ -33,7 +33,7 @@ package tom.library.sl;
 /**
  * <code>Omega(i,v)</code>
  * <p>
- * Basic visitor combinator which applies v the i-th subterm
+ * Strategy combinator which applies v the i-th subterm
  * 0-th subterm is the term itself
  * 1-th subterm corresponds to the first subterm
  * ...
@@ -56,10 +56,10 @@ public class Omega extends AbstractStrategyCombinator {
 
   public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     if(indexPosition==0) {
-      return visitors[ARG].visitLight(any,introspector);
+      return arguments[ARG].visitLight(any,introspector);
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(any)) {
       int childNumber = indexPosition-1;
-      Object newChild = visitors[ARG].visitLight(introspector.getChildAt(any,childNumber),introspector);
+      Object newChild = arguments[ARG].visitLight(introspector.getChildAt(any,childNumber),introspector);
       return introspector.setChildAt(any,childNumber,newChild);
     } else {
       throw new VisitFailure();
@@ -68,10 +68,10 @@ public class Omega extends AbstractStrategyCombinator {
 
   public int visit(Introspector introspector) {
     if(indexPosition==0) {
-      return visitors[ARG].visit(introspector);
+      return arguments[ARG].visit(introspector);
     } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(environment.getSubject())) {
       environment.down(indexPosition);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       environment.up();
       return status;
     } else {

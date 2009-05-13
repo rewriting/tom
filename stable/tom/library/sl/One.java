@@ -62,7 +62,7 @@ public class One extends AbstractStrategyCombinator {
     int childCount = introspector.getChildCount(any);
     for(int i = 0; i < childCount; i++) {
       try {
-        Object newChild = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);
+        Object newChild = arguments[ARG].visitLight(introspector.getChildAt(any,i),introspector);
         return introspector.setChildAt(any,i,newChild);
       } catch(VisitFailure f) { }
     }
@@ -78,7 +78,7 @@ public class One extends AbstractStrategyCombinator {
     int childCount = introspector.getChildCount(environment.getSubject());
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status == Environment.SUCCESS) {
         environment.up();
         return Environment.SUCCESS;

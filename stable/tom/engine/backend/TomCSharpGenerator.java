@@ -108,9 +108,9 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
   protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
-    ArrayList names = new ArrayList();
-    ArrayList types = new ArrayList();
-    ArrayList stratChild = new ArrayList(); // child of type Strategy.
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> types = new ArrayList<String>();
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
 
     //initialize arrayList with argument names
     int index = 0;
@@ -161,7 +161,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 
     //here index represents the parameter number
     for (int i = 0 ; i < args ; i++) {
-	    String param = (String)names.get(i);
+	    String param = names.get(i);
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
@@ -179,7 +179,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "stratChilds[i]=getChildAt(i);}");
     //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  int j = (stratChild.get(i)).intValue();
     //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
     //}
     output.write(deep, "return stratChilds;}");
@@ -188,7 +188,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "setChildAt(i,children[i]);}");
     //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  int j = (stratChild.get(i)).intValue();
     //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
     //}
     output.write(deep, "return this;}");
@@ -200,7 +200,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.getChildAt(0);");
     for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
+      int j = (stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
     }
     output.write(deep, "default: throw new IndexOutOfRangeException();");
@@ -211,7 +211,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.setChildAt(0, child);");
     for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
+      int j = (stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
     }
     output.write(deep, "default: throw new IndexOutOfRangeException();");
