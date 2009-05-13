@@ -1,4 +1,4 @@
-module iptables.AnalyserWrapper
+module iptables.AddressParser
 imports String
 abstract syntax
 

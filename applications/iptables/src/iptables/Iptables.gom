@@ -1,5 +1,5 @@
 module iptables.Iptables
-imports int String Analyser AnalyserWrapper
+imports int String Analyser AddressParser
 abstract syntax
 
 IptablesBlocks = IptablesBlocks(IptablesBlock*)

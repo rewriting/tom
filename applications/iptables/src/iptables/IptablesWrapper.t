@@ -2,7 +2,7 @@ package iptables;
 
 import iptables.iptables.types.*;
 import iptables.analyser.types.*;
-import iptables.analyserwrapper.types.*;
+import iptables.addressparser.types.*;
 import iptables.firewall.types.*;
 import tom.library.sl.*; 
 import java.util.*;
@@ -52,7 +52,7 @@ public class IptablesWrapper implements Wrapper {
 				act,
 				p,
 				asrc,
-				adst@Address,
+				adst,
 				o,
 				in),
 			X*
@@ -84,7 +84,7 @@ public class IptablesWrapper implements Wrapper {
 				options = `Opt(globalOpt,protoOpt,states);
 
 			return `RulesL(Rule(act,IfaceAny(),p,t,
-					AnalyserWrapper.addressWrapper(asrc),
+					AddressParser.addressWrapper(asrc),
 					AddrAny(),sport,dport,options,in),
 				wrapRule(X*,t));
 		}

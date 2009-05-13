@@ -1,12 +1,12 @@
 package iptables;
 
 import iptables.analyser.types.*;
-import iptables.analyserwrapper.types.*;
+import iptables.addressparser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
-public class AnalyserWrapper {
-	%include {iptables/analyserwrapper/AnalyserWrapper.tom}
+public class AddressParser {
+	%include {iptables/addressparser/AddressParser.tom}
 	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
