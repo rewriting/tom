@@ -79,8 +79,7 @@ public class IptablesPrinter extends Printer {
 
 	private String wrapAddress(Address a,String opt) {
 		%match(a) {
-			Addr4(_,_,str) -> { return opt + " " + `str; }
-			Addr6(_,_,_,_,str) -> { return opt + " " + `str; }
+			(Addr4|Addr6)[str=str] -> { return opt + " " + `str; }
 		}
 		return "";
 	}

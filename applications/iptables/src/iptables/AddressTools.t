@@ -19,10 +19,10 @@ public class AddressTools {
 	public static int isInclude(Address a1, Address a2) {
 		%match(a1,a2) {
 			AddrAny(),AddrAny() -> { return 0; }
-			AddrAny(),Addr4(_,_,_) -> { return 1; }
-			Addr4(_,_,_),AddrAny() -> { return -1; }
-			AddrAny(),Addr6(_,_,_,_,_) -> { return 1; }
-			Addr6(_,_,_,_,_),AddrAny() -> { return -1; }
+			AddrAny(),Addr4[] -> { return 1; }
+			Addr4[],AddrAny() -> { return -1; }
+			AddrAny(),Addr6[] -> { return 1; }
+			Addr6[],AddrAny() -> { return -1; }
 			Addr4(ip1,smask1,_),Addr4(ip2,smask2,_) -> {
 				if (Math.abs(`smask1) < Math.abs(`smask2)) {
 					if ((`ip2 & `smask1) == (`ip1 & `smask1))
@@ -66,13 +66,13 @@ public class AddressTools {
 			/* IPv4 mapped address has its first 80 bits set to zero, 
 			the next 16 set to one, while its last 32 bits represent an 
 			IPv4 address*/
-			Addr6(ipms,ipls,_,smaskls,_),Addr4(_,_,_) 
+			Addr6(ipms,ipls,_,smaskls,_),Addr4[] 
 			&& (ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isInclude(`Addr4((int)ipls,(int)smaskls,""),a2);
 				}
 			}
-			Addr4(_,_,_),Addr6(ipms,ipls,_,smaskls,_)
+			Addr4[],Addr6(ipms,ipls,_,smaskls,_)
 			&& (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isInclude(a1,`Addr4((int)ipls,(int)smaskls,""));
@@ -99,13 +99,13 @@ public class AddressTools {
 					return true;
 				}
 			}
-			Addr6(ipms,ipls,_,smaskls,_),Addr4(_,_,_) 
+			Addr6(ipms,ipls,_,smaskls,_),Addr4[] 
 			&& (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(`Addr4((int)ipls,(int)smaskls,""),a2);
 				}
 			}
-			Addr4(_,_,_),Addr6(ipms,ipls,_,smaskls,_)
+			Addr4[],Addr6(ipms,ipls,_,smaskls,_)
 			&& (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
 					return isEquiv(a1,`Addr4((int)ipls,(int)smaskls,""));

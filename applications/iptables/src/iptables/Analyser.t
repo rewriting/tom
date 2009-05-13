@@ -60,10 +60,9 @@ public class Analyser {
 	%strategy checkIntegrityStrategy() extends Identity() { 
 		visit Rules {
 			Rules(
-				X*,
-				r1@Rule(_,_,_,_,_,_,_,_,_,_),
+				r1@Rule[],
 				Y*,
-				r2@Rule(_,_,_,_,_,_,_,_,_,_),
+				r2@Rule[],
 				Z*
 			) -> {
 				Rule del = null;
@@ -87,9 +86,9 @@ public class Analyser {
 
 				if (del != null) {
 					if (del == `r1)
-						return `Rules(X*,r1,Y*,Z*);
+						return `Rules(r1,Y*,Z*);
 					else 
-						return `Rules(X*,Y*,r2,Z*);
+						return `Rules(Y*,r2,Z*);
 				}
 			}
 		}
@@ -98,8 +97,8 @@ public class Analyser {
 	public static Rule checkShadowing(Rule r1, Rule r2) 
 					throws InteractiveNeededException {
 		%match(r1,r2) {
-				Rule(_,_,_,_,_,_,_,_,_,_),
-				Rule(_,_,_,_,_,_,_,_,_,_)
+				Rule[],
+				Rule[]
 			 -> {
 				int i = isInclude(`r1,`r2);
 				if (i == INCLUDEDDIF) {
@@ -119,8 +118,8 @@ public class Analyser {
 	/* returns englobing rule */
 	public static Rule checkRedundancy(Rule r1, Rule r2) {
 		%match(r1,r2) {
-				Rule(_,_,_,_,_,_,_,_,_,_),
-				Rule(_,_,_,_,_,_,_,_,_,_)
+				Rule[],
+				Rule[]
 			 -> {
 				int i = isInclude(`r1,`r2);
 				if (i == INCLUDESEQ) {
@@ -144,8 +143,8 @@ public class Analyser {
 	public static Rule checkGeneralization(Rule r1, Rule r2)
 					throws InteractiveNeededException {
 		%match(r1,r2) {
-				Rule(_,_,_,_,_,_,_,_,_,_),
-				Rule(_,_,_,_,_,_,_,_,_,_)
+				Rule[],
+				Rule[]
 			 -> {
 				int i = isInclude(`r1,`r2);
 				if (i == INCLUDESDIF) {
@@ -160,8 +159,8 @@ public class Analyser {
 
 	public static Rule checkCorrelation(Rule r1, Rule r2) {
 		%match(r1,r2) {
-				Rule(_,_,_,_,_,_,_,_,_,_),
-				Rule(_,_,_,_,_,_,_,_,_,_)
+				Rule[],
+				Rule[]
 			 -> {
 				int i = isInclude(`r1,`r2);
 				if (i == INCLUDEDDIF)  {

@@ -72,8 +72,7 @@ public class PacketFilterPrinter extends Printer {
 
 	private String wrapAddress(Address a,String opt) {
 		%match(a) {
-			Addr4(_,_,str) -> { return opt + " " + `str; }
-			Addr6(_,_,_,_,str) -> { return opt + " " + `str; }
+			(Addr4|Addr6)[str=str] -> { return opt + " " + `str; }
 			AddrAny() -> { return opt + " " + ADDR_ANY; }
 		}
 		return "";
@@ -81,14 +80,14 @@ public class PacketFilterPrinter extends Printer {
 
 	private String wrapAddressFamily(Address src,Address dest) {
 		%match(src,dest) {
-			Addr4(_,_,_),Addr4(_,_,_) -> { return  AF_IPV4; }
-			Addr6(_,_,_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
-			Addr6(_,_,_,_,_),Addr4(_,_,_) -> { return  AF_IPV6; }
-			Addr4(_,_,_),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
-			AddrAny(),Addr6(_,_,_,_,_) -> { return  AF_IPV6; }
-			Addr6(_,_,_,_,_),AddrAny() -> { return  AF_IPV6; }
-			AddrAny(),Addr4(_,_,_) -> { return  AF_IPV4; }
-			Addr4(_,_,_),AddrAny() -> { return  AF_IPV4; }
+			Addr4[],Addr4[] -> { return  AF_IPV4; }
+			Addr6[],Addr6[] -> { return  AF_IPV6; }
+			Addr6[],Addr4[] -> { return  AF_IPV6; }
+			Addr4[],Addr6[] -> { return  AF_IPV6; }
+			AddrAny(),Addr6[] -> { return  AF_IPV6; }
+			Addr6[],AddrAny() -> { return  AF_IPV6; }
+			AddrAny(),Addr4[] -> { return  AF_IPV4; }
+			Addr4[],AddrAny() -> { return  AF_IPV4; }
 		}
 		return "";
 	}
