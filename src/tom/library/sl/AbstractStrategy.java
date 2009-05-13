@@ -34,7 +34,7 @@ package tom.library.sl;
  * <p>
  * Partial implementation of the strategy interface that implements
  * most of the <code>visit</code> methods. This class is extended by
- * the two abstract classes <code>AbstractBasicStrategy</code> and
+ * the two abstract classes <code>AbstractStrategyBasic</code> and
  * <code>AbstractStrategyCombinator</code> that can be used to
  * implement respectively new basic transformations (like a rewrite
  * rule system) and new strategy combinators (like the

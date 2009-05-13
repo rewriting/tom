@@ -10,7 +10,7 @@ public class MuVarDecorator extends ADecorator {
       !MuVar(_) -> { throw new RuntimeException(); }
       MuVar(x) -> { name = `x; }
     }
-    visitors = new Strategy[] {s};
+    initSubterm(new Strategy[] {s});
   }
 
   public Visitable setChildren(Visitable[] cdn) {
@@ -23,7 +23,7 @@ public class MuVarDecorator extends ADecorator {
   
   public final Object visitLight(Object any, Introspector m) throws VisitFailure {
       System.out.println(this);
-      return visitors[0].visitLight(any,m);
+      return getVisitor(0).visitLight(any,m);
   }
 
   public int visit(Introspector m) {
@@ -31,7 +31,7 @@ public class MuVarDecorator extends ADecorator {
       StringBuffer spaces = new StringBuffer();
       for(int i=0; i<60-repr.length(); i++) spaces.append(' ');
       System.out.println(repr + spaces + getEnvironment().getSubject());
-      return visitors[0].visit(m);
+      return getVisitor(0).visit(m);
   }
 
   public String toString() {

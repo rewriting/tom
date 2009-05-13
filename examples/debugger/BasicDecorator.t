@@ -8,7 +8,9 @@ public class BasicDecorator extends ADecorator {
     String[] names = s.getClass().getName().split("[\\.\\$]");
     name = names[names.length-1];
     realCalee = s;
-    visitors = (Strategy[]) s.getChildren();
+    if(s instanceof AbstractStrategyCombinator) {
+    initSubterm((Strategy[])s.getChildren());
+    }
   }
 
   // mimics AbstractStrategyCombinator

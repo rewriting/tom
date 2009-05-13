@@ -1,8 +1,8 @@
-Tom 2.6 announcement
+Tom 2.7 announcement
 --------------------
 
 It is our great privilege and pleasure to announce the availability of
-Tom version 2.6 .
+Tom version 2.7.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into Java and C.
@@ -31,35 +31,19 @@ programming and debugging support.
 
 This new release contains many improvements and new features:
 
-  - new alternative syntax for '%match', based on atomic constraints
-    that can be combined with '&&' and '||' operators. This gives a
-    higher expressiveness and conciseness.
+  - Tom has been modified to generate statically well typed (using generics)
+    type preserving visit methods of the Strategy library
 
-  - algebraic rules (lhs -> rhs) can now have any conjunction or disjunction of
-    conditions
+  - the Tom compiler is now thread-safe (can compile file in parallel)
 
-  - new syntax for strategies, make the definition of simple rules easier
+  - a Gom extension called FreshGom, which generates support for syntax
+    involving alpha-convertible names and binding operations
 
-  - the double-dispathing mechanism of the strategy library has been replaced
-    by a simpler dispatching approach, making the use of strategies simpler 
-    when Gom is not used
+  - a Gom extension to generate a data-structure without maximal-sharing
 
-  - Gom's lists now implement the interface Collection. Consequently,
-    Java's classic iteration techniques can be employed.
+  - a new traversal combinator in the Strategy Library: Up
 
-  - new tool based on ANTLR 3 for implementing parsers that
-    directly output Gom terms: GomAntlrAdapter.
-
-  - term-graph rewriting support in Gom
-
-  - several speed-ups of the compilation process as well as for the
-    generated code.
-      
-  - a lot of new features for the Eclipse plug-in, including the 
-    availability of all the functionalities of the Java editor for 
-    ".t" files ( a complete list is available on the plug-in page:
-    http://tom.loria.fr/plugin.php )
-	      
+  - the import/export Gom <--> ATerm has been improved for better compatibility
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 

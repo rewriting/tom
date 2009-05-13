@@ -37,14 +37,14 @@ package tom.library.sl;
  *
  */
 
-public abstract class AbstractBasicStrategy extends AbstractStrategy {
+public abstract class AbstractStrategyBasic extends AbstractStrategy {
 
   /**
    * Default strategy 
    */ 
   protected Strategy any;
   
-  public AbstractBasicStrategy(Strategy v) {
+  public AbstractStrategyBasic(Strategy v) {
     this.any = v;
   }
  

@@ -46,7 +46,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
   /** Strategy arguments of the combinator that can be used to define
    * <code>visit</code> methods
    */
-  protected Strategy[] arguments;
+  /*package private*/ Strategy[] arguments;
 
   /** 
    * Initializes subterm
@@ -91,7 +91,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @param v array used to initialize the subterm
    */
   protected void initSubterm(Strategy[] v) {
-    arguments = v;
+    this.arguments = (Strategy[])v.clone();
   }
 
   /** 
@@ -100,7 +100,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
    * @return arguments
    */
   public Strategy[] getVisitors() {
-    return arguments;
+    return (Strategy[]) arguments.clone();
   }
 
   /** 

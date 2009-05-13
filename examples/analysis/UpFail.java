@@ -59,7 +59,7 @@ public class UpFail extends AbstractStrategyCombinator {
     environment.setIntrospector(m);
     int index = environment.getSubOmega();
     environment.up();
-    int status = arguments[ARG].visit(m);
+    int status = getVisitor(ARG).visit(m);
     environment.down(index);
     if(status != Environment.SUCCESS) {
       return status;

@@ -47,7 +47,7 @@ public class AllTraversal extends tom.library.sl.AbstractStrategyCombinator {
     int childCount = m.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
       Object child = m.getChildAt(any,i);
-      arguments[ARG].visitLight(child,m);
+      getVisitor(ARG).visitLight(child,m);
     }
     return any;
   }
@@ -64,7 +64,11 @@ public class AllTraversal extends tom.library.sl.AbstractStrategyCombinator {
 
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
+<<<<<<< .mine
+      int status = getVisitor(ARG).visit(m);
+=======
       int status = arguments[ARG].visit(m);
+>>>>>>> .r8969
       environment.upLocal();
       if(status != Environment.SUCCESS) {
         return status;

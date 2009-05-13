@@ -38,7 +38,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class DecomposeAP extends AbstractBasicStrategy {
+public class DecomposeAP extends AbstractStrategyBasic {
 
   %include{ ../term/Term.tom }
   %include{ sl.tom }

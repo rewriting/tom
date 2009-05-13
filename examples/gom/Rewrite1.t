@@ -68,7 +68,7 @@ public class Rewrite1 {
 
   }
 
-  class RewriteSystem extends tom.library.sl.AbstractBasicStrategy {
+  class RewriteSystem extends tom.library.sl.AbstractStrategyBasic {
     public RewriteSystem() {
       super(`Fail());
     }
@@ -93,7 +93,7 @@ public class Rewrite1 {
     }
   }
 
-  class RewriteSystemId extends tom.library.sl.AbstractBasicStrategy {
+  class RewriteSystemId extends tom.library.sl.AbstractStrategyBasic {
     public RewriteSystemId() {
       super(`Identity());
     }

@@ -187,7 +187,7 @@ public class SimplifySystemRule {
     }
   }
 
-  class ContainsTerm extends AbstractBasicStrategy {
+  class ContainsTerm extends AbstractStrategyBasic {
 
     private boolean found = false;
     private Term objToSearchFor = null;

@@ -116,7 +116,7 @@ public class Viewer {
   }
 
   //TODO: adapt to traverse any data-structure using newsl
-  static private class Print extends AbstractBasicStrategy {
+  static private class Print extends AbstractStrategyBasic {
 
     protected Writer w;
 
@@ -319,7 +319,7 @@ public class Viewer {
     return s;
   }
 
-  public static class RemoveMu extends tom.library.sl.AbstractBasicStrategy {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {if (( ((( tom.library.sl.Strategy )tom__arg) instanceof tom.library.sl.Mu) )) {
+  public static class RemoveMu extends tom.library.sl.AbstractStrategyBasic {public RemoveMu() {super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {if (( ((( tom.library.sl.Strategy )tom__arg) instanceof tom.library.sl.Mu) )) {
 
 
         return ( (tom.library.sl.Strategy)(( tom.library.sl.Strategy )tom__arg).getChildAt(tom.library.sl.Mu.V) );
@@ -333,7 +333,7 @@ public class Viewer {
 
 
 
-  static private class PrintStrategy extends AbstractBasicStrategy {
+  static private class PrintStrategy extends AbstractStrategyBasic {
 
     protected Writer w;
 

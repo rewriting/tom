@@ -22,7 +22,7 @@ public abstract class ADecorator extends AbstractStrategyCombinator {
   }
 
   public String getName() { return name; }
-  public Strategy getSlot(int i) { return visitors[i-1]; }
+  public Strategy getSlot(int i) { return getVisitor(i-1); }
 
   private String pretty(Strategy s) {
     //System.out.println("pretty : " + s.getClass().getName());
@@ -32,15 +32,15 @@ public abstract class ADecorator extends AbstractStrategyCombinator {
 
   public String toString() {
     //System.out.println("toString : " + name);
-    int arity = visitors.length;
+    int arity = getChildCount();
     StringBuffer buf = new StringBuffer();
     buf.append(name);
     buf.append("(");
     for(int i=0; i<arity-1; i++) {
-      buf.append(pretty(visitors[i]));
+      buf.append(pretty(getVisitor(i)));
       buf.append(",");
     }
-    if (arity>0) buf.append(pretty(visitors[arity-1]));
+    if (arity>0) buf.append(pretty(getVisitor(arity-1)));
     buf.append(")");
     return buf.toString();
   }

@@ -1,3 +1,7 @@
+2009-05-13 pem
+ * renamed AbstractBasicStrategy into AbstractStrategyBasic
+ * bootinstall
+
 2009-05-03 pem
  * bootinstall
  * generate better code (less tests) for tom_append_ when domain==codomain

@@ -12,7 +12,7 @@ public class Decorator extends ADecorator {
   public Decorator(String name, Maker maker, Strategy[] children) {
     initSubterm(children);
     this.maker = maker;
-    this.realCalee = maker.buildDecorated(visitors);
+    this.realCalee = maker.buildDecorated(getVisitors());
     this.name = name;
   }
 
@@ -24,9 +24,9 @@ public class Decorator extends ADecorator {
 
   // mimics AbstractStrategyCombinator
   public Visitable setChildAt(int i, Visitable child) {
-    Strategy[] copy = new Strategy[visitors.length];
-    for (int k=0; k<visitors.length; k++) {
-      copy[k] = visitors[k];
+    Strategy[] copy = new Strategy[getChildCount()];
+    for (int k=0; k<getChildCount(); k++) {
+      copy[k] = getVisitor(k);
     }
     copy[i] = (Strategy) child;
     realCalee = maker.buildDecorated(copy);

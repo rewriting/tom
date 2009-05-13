@@ -41,7 +41,7 @@ import java.util.Collection;
 
 import tom.library.sl.*;
 
-public class ReverseEngAp extends AbstractBasicStrategy {
+public class ReverseEngAp extends AbstractStrategyBasic {
 
   %include{ ../term/Term.tom }
   %include{ sl.tom }

@@ -38,7 +38,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class SimplifySystem extends AbstractBasicStrategy {
+public class SimplifySystem extends AbstractStrategyBasic {
 
   %include{ ../term/Term.tom }
   %include{ sl.tom }

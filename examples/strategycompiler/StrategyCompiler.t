@@ -309,7 +309,7 @@ public class StrategyCompiler {
         %match(name){
           //we do not need to create vistors fields after inlining
           //if we create them they are duplicated
-          !"visitors" ->{
+          !"arguments" ->{
             //Renaming of fields is not necessar 
             //String newName = subject.toString().replace('.', '_').replace('@', '_') + "_" + `name;
             %match(subjectFieldList, String `name) {
@@ -368,7 +368,7 @@ public class StrategyCompiler {
       symbolTable:SymbolTable
       ) extends Identity() {
     visit InstructionList {
-      // Match a `visitors[index]' call.
+      // Match a `arguments[index]' call.
       // The index of the wanted argument is computed, and then the
       // corresponding strategy is pushed into strategy stack of the collector.
       // The captured instructions are removed because they will be useless

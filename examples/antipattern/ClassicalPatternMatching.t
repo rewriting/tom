@@ -36,7 +36,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class ClassicalPatternMatching extends AbstractBasicStrategy {
+public class ClassicalPatternMatching extends AbstractStrategyBasic {
 
   %include{ term/Term.tom }
   %include{ sl.tom }
