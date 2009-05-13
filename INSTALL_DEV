@@ -80,4 +80,4 @@ to do:
 
 (windows)
   The CLASSPATH variable is automatically set by the script "tom.bat" to
-  contain the tom-runtime-fulljar in the "%TOM_HOME%\lib" folder.
+  contain the tom-runtime-full.jar in the "%TOM_HOME%\lib" folder.

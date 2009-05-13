@@ -642,7 +642,6 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
     }
-
   }
 
   /*
@@ -657,7 +656,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy IfSwapping(optimizer:TomOptimizer) extends `Identity() {
+  %strategy IfSwapping(optimizer:TomOptimizer) extends Identity() {
     visit Instruction {
       AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
         String s1 = factory.prettyPrint(factory.remove(`cond1));
@@ -673,7 +672,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy BlockFusion() extends `Identity() {
+  %strategy BlockFusion() extends Identity() {
     visit Instruction {
       block@AbstractBlock(concInstruction(X1*,
             Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
@@ -699,7 +698,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy IfFusion() extends `Identity() {
+  %strategy IfFusion() extends Identity() {
     visit Instruction {
       block@(UnamedBlock|AbstractBlock)(concInstruction(X1*,
             If(cond1,success1,failure1),
