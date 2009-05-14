@@ -22,15 +22,20 @@ rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
 rem ---------------------------------------------------------------------------
 
 rem Make sure prerequisite environment variables are set
+rem
 if not "%JAVA_HOME%" == "" goto gotJavaHome
-echo The JAVA_HOME environment variable is not defined
-echo This environment variable is needed to run this program
-goto end
+echo WARNING: The JAVA_HOME environment variable is not defined
+echo The installation may not work
+set JAVA_PREFIX=
+rem goto end
+goto okJavaHome
+
 :gotJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\javaw.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\jdb.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\javac.exe" goto noJavaHome
+set JAVA_PREFIX=%JAVA_HOME%\bin\
 goto okJavaHome
 :noJavaHome
 echo The JAVA_HOME environment variable is not defined correctly
@@ -69,7 +74,7 @@ echo Using JAVA_HOME:       %JAVA_HOME%
 echo Using TOM_HOME:        %TOM_HOME%
 
 rem Set standard command for invoking Java.
-set _RUNJAVA="%JAVA_HOME%\bin\java"
+set _RUNJAVA="%JAVA_PREFIX%java"
 set MAINCLASS=tom.gom.Gom
 
 rem Get command line arguments and save them in 
@@ -97,6 +102,6 @@ set TOM_OPTS=
 :doneSetArgs
 
 rem execute GOM
-%_RUNJAVA% %JAVA_OPTS% -Dtom.home=%TOM_HOME% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
+%_RUNJAVA% %JAVA_OPTS% -Dtom.home="%TOM_HOME%" -cp "%CLASSPATH%""%TOM_LIB%" "%MAINCLASS%" %TOM_OPTS% %CMD_LINE_ARGS%
  
 :end
