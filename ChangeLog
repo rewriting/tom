@@ -1,3 +1,7 @@
+2009-05-14 pem
+ * generate tom-compiler-full.jar
+ * start to modify the scripts (*.bat files are not yet OK)
+
 2009-05-13 pem
  * renamed AbstractBasicStrategy into AbstractStrategyBasic
  * bootinstall

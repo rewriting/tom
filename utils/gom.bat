@@ -54,6 +54,7 @@ rem Check for TOM_LIB variable
 if not "%TOM_LIB%" == "" goto okLib
 rem Add all jars in lib dir to TOM_LIB variable (will include a initial semicolon ";")
 call "%TOM_HOME%\bin\tlappend.bat" "%TOM_HOME%\lib\tom-runtime-full.jar"
+call "%TOM_HOME%\bin\tlappend.bat" "%TOM_HOME%\lib\tom-compiler-full.jar"
 :okLib
 
 rem Check for TOM_OPTS variable

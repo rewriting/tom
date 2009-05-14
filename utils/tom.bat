@@ -10,8 +10,6 @@ rem                 if not, we try to guess.
 rem
 rem   TOM_OPTS      (Optional) TOM options.
 rem
-rem   TOM_LIB       (Optional) TOM classpath.
-rem
 rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
@@ -58,6 +56,7 @@ rem Check for TOM_LIB variable
 if not "%TOM_LIB%" == "" goto okLib
 rem Add all jars in lib dir to TOM_LIB variable (will include a initial semicolon ";")
 call "%TOM_HOME%\bin\tlappend.bat" "%TOM_HOME%\lib\tom-runtime-full.jar"
+call "%TOM_HOME%\bin\tlappend.bat" "%TOM_HOME%\lib\tom-compiler-full.jar"
 :okLib
 
 rem Check for TOM_OPTS variable
@@ -92,7 +91,7 @@ shift
 goto setArgs
 :optClash
 rem Here there are two possibilities:
-rem 1. to encorage the user to use the TOM_OPTS environment variable
+rem 1. to encourage the user to use the TOM_OPTS environment variable
 %echo You should specify the configuration and import files
 %echo using the TOM_OPTS environment variable
 %goto end

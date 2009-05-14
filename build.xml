@@ -531,6 +531,7 @@
   </target>
 
   <target name="stable" description="build and install the boot" depends="stable.dist"/>
+
   <target name="stable.dist"
     description="Prepare a distribution ready stable package"
     depends="clean.stable.dist, prepare.stable.dist, build.stable">
@@ -636,6 +637,31 @@
       </fileset>
     </copy>
 
+    <!-- prepare tom-jar tar file -->
+    <tar tarfile="${dist}/tom-jar-${stable.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="755">
+        <include name="bin/*"/>
+        <exclude name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="**"/>
+        <exclude name="bin/*"/>
+        <exclude name="lib/*-full.jar"/>
+      </tarfileset>
+    </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+    <zip destfile="${stable.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
+    </zip>
+
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
       <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="755">
@@ -648,14 +674,12 @@
       <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
         <include name="**"/>
         <exclude name="bin/*"/>
+        <exclude name="lib/tom/*"/>
+        <exclude name="lib/runtime/*"/>
+        <exclude name="lib/tools/*"/>
       </tarfileset>
     </tar>
 
-    <!-- generate a single runtime jar -->
-    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
-      <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
-    </zip>
 
   </target>
 
@@ -806,6 +830,32 @@
       </fileset>
     </copy>
 
+    <!-- prepare tom-jar tar file -->
+    <tar tarfile="${dist}/tom-jar-${src.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="755">
+        <include name="bin/*"/>
+        <exclude name="bin/*.bat"/>
+        <exclude name="bin/tom.src"/>
+      </tarfileset>
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+        <include name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+        <include name="**"/>
+        <exclude name="bin/*"/>
+        <exclude name="lib/*-full.jar"/>
+      </tarfileset>
+    </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+    <zip destfile="${src.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
+    </zip>
+
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
       <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="755">
@@ -819,14 +869,12 @@
       <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
+        <exclude name="lib/tom/*"/>
+        <exclude name="lib/runtime/*"/>
+        <exclude name="lib/tools/*"/>
       </tarfileset>
     </tar>
 
-    <!-- generate a single runtime jar -->
-    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
-      <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
-    </zip>
 
   </target>
 

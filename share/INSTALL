@@ -68,8 +68,9 @@ Windows
 -------
 We assume that Tom is installed in c:\tom\. The following steps are needed 
 for setting up the environment:
-  - set environment variable TOM_HOME=c:\tom
-  - add %TOM_HOME%\bin to the PATH
+  - in *User Environment Variable*
+  - set TOM_HOME=c:\tom
+  - set PATH=%Path%;%TOM_HOME%\bin
 
 For a detailed description of setting environment variables in Windows, 
 please refer to Windows documentation. For Windows XP, some information 
