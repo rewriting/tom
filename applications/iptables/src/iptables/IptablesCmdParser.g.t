@@ -15,76 +15,77 @@ tokens {
 	package iptables;
 }
 
-file : (rule)* EOF;
+file : (rule)* EOF -> ^(IptablesRules (rule)*);
 
-rule: CMD_IPTABLES command;
+rule: CMD_IPTABLES command -> ^(IptablesRule command);
 
 command:
 	CMD_APPEND target (opts)* OPT_ACTION action
-	| CMD_POLICY target action
+		-> ^(IptablesAppend target (opts)* action)
+	| CMD_POLICY target action -> ^(IptablesPolicy target action)
 	;
 
 action : 
-	'ACCEPT'
-	| 'DROP'
-	| 'REJECT'
-	| 'LOG'
+	'ACCEPT'	-> ^(Accept)
+	| 'DROP'	-> ^(Drop)
+	| 'REJECT'	-> ^(Reject)
+	| 'LOG'		-> ^(Log)
 	;
 
 target :
-	'INPUT'
-	| 'OUTPUT'
-	| 'FORWARD'
+	'INPUT'		-> ^(In);
+	| 'OUTPUT'	-> ^(Out);
+	| 'FORWARD'	-> ^(Forward);
 	;
 
 opts:
-	protoopt
-	| ifaceopt
-	| addressopt
-	| portopt
-	| statesopt
+	protoopt	-> ^(protoopt);
+	| ifaceopt	-> ^(ifaceopt);
+	| addressopt	-> ^(addressopt);
+	| portopt	-> ^(portopt);
+	| statesopt	-> ^(statesopt);
 	;
 
-protoopt: OPT_PROTO proto;
+protoopt: OPT_PROTO proto -> ^(proto);
 proto : 
-	'all'
-	| 'tcp'
-	| 'udp'
-	| 'ip4'
-	| 'ip6'
-	| 'icmp'
-	| 'eth'
+	'all'	-> ^(ProtoAny);
+	| 'tcp' -> ^(TCP);
+	| 'udp' -> ^(UDP);
+	| 'ip4' -> ^(IPv4);
+	| 'ip6' -> ^(IPv6);
+	| 'icmp'-> ^(ICMP);
+	| 'eth' -> ^(Ethernet);
 	;
 
 ifaceopt:
-	OPT_IFACE_IN STRING
-	| OPT_IFACE_OUT STRING
+	OPT_IFACE_IN STRING	-> ^(Iface STRING);
+	| OPT_IFACE_OUT STRING	-> ^(Iface STRING);
 	;
 
 addressopt:
-	OPT_ADDR_SRC address
-	| OPT_ADDR_DEST address
+	OPT_ADDR_SRC address	-> ^(IptablesAddressSrc address);
+	| OPT_ADDR_DEST address -> ^(IptablesAddressDst address);
 	;
-address	: 'anywhere'
-	| 'localhost'
-	| IPV4DOTDEC
-	| IPV4CIDR
-	| IPV6HEX
-	| IPV6CIDR
+
+address	: 'anywhere' 	-> ^(AddrAnyRaw)
+	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost') 
+	| IPV4DOTDEC 	-> ^(AddrStringDotDecimal4 IPV4DOTDEC)
+	| IPV4CIDR 	-> ^(AddrStringCIDR4 IPV4CIDR)
+	| IPV6HEX	-> ^(AddrStringHexadecimal6 IPV6HEX)
+	| IPV6CIDR	-> ^(AddrStringCIDR6 IPV6CIDR)
 	;
 
 portopt:
-	OPT_PORT_SRC INT
-	| OPT_PORT_DEST INT
+	OPT_PORT_SRC INT	-> ^(IptablesPortSrc INT);
+	| OPT_PORT_DEST INT	-> ^(IptablesPortDest INT);
 	;
 	
-statesopt : '-m state' OPT_STATE states;
-states:	state stateIter*;
-stateIter : ',' state;
-state : 'NEW'
-	| 'RELATED'
-	| 'ESTABLISHED'
-	| 'INVALID'
+statesopt: '-m state' OPT_STATE state stateIter* -> ^(States state stateIter*);
+stateIter : ',' state -> ^(state);
+state : 'NEW'		-> ^(New)
+	| 'RELATED'	-> ^(Related)
+	| 'ESTABLISHED'	-> ^(Established)
+	| 'INVALID'	-> ^(Invalid)
 	;
 
 
