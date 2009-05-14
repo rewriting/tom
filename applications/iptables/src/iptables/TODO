@@ -7,3 +7,9 @@
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing
 -Use different packages
+-Use [] in %matches
+-Dispatch isInclude@Analyser in the integrity checking methods
+-Make a comparator system for Rules
+-Add a report system (with % of error types)
+-Comment the code
+-Modify display system: 'none' in deleting rules question

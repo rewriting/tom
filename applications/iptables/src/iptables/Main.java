@@ -66,12 +66,12 @@ public class Main {
 				fileinput = new FileInputStream(options.in);
 			}
 			// Parse the input expression and build an AST
-			IptablesParserLexer lexer = 
-				new IptablesParserLexer(
+			IptablesCmdParserLexer lexer = 
+				new IptablesCmdParserLexer(
 					new ANTLRInputStream(fileinput));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			IptablesParserParser ruleParser = 
-				new IptablesParserParser(tokens);
+			IptablesCmdParserParser ruleParser = 
+				new IptablesCmdParserParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
 				(FirewallRules) AstAdaptor.getTerm(b1);

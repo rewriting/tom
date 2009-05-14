@@ -10,7 +10,7 @@
   <property name="iptables.build"    location="${iptables.dir}/build"/>
   <property name="iptables.package"   value="iptables"/>
   <property name="iptables.ast"      value="${iptables.package}/Ast"/>
-  <property name="iptables.grammarname"  value="IptablesParser"/>
+  <property name="iptables.grammarname"  value="IptablesCmdParser"/>
   <property name="iptables.grammar"  value="${iptables.package}/${iptables.grammarname}"/>
   
   <import file="${tom.home}/lib/tom-common.xml"/>

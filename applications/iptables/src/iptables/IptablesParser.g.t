@@ -1,4 +1,3 @@
-/* This grammar parses simple firewall */
 grammar IptablesParser;
 options {
   output=AST;
@@ -17,8 +16,7 @@ tokens {
 }
 
 file :
-	(block)* EOF -> ^(FirewallRules ^(IptablesBlocks (block)*))
-     ;
+	(block)* EOF -> ^(FirewallRules ^(IptablesBlocks (block)*));
 
 block:	'Chain' str=target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
