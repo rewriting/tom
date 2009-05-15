@@ -28,7 +28,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${iptables.src}"
                 destdir="${iptables.gen}"
-                options="-I ${iptables.gen}"> 
+                import="${iptables.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -36,9 +36,12 @@
   
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${iptables.src}"
-                outputfile="${iptables.gen}/${iptables.grammar}.g"
-                options="-I ${iptables.gen} -I ${iptables.gen}/${iptables.package}"> 
+        outputfile="${iptables.gen}/${iptables.grammar}.g">
       <include name="${iptables.grammar}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${iptables.gen}"/>
+        <pathelement location="${iptables.gen}/${iptables.package}"/>
+      </tomincludedir>
     </tom.preset>
   </target>
   
