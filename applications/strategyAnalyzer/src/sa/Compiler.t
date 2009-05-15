@@ -158,11 +158,12 @@ public class Compiler {
         while(it.hasNext()) {
           String name = it.next();
           int arity = generatedSignature.get(name);
+          int arity_all = arity+1;
           if(arity==0) {
             bag.add(tools.encodeRule(%[rule(@all@(@name@), @name@)]%));
           } else {
             String all_n = all+"_"+name;
-            generatedSignature.put(all_n,1);
+            generatedSignature.put(all_n,arity_all);
             {
               // main case
               // all(f(x1,...,xn)) -> all_n(phi_s(x1),phi_s(x2),...,phi_s(xn),f(x1,...,xn))

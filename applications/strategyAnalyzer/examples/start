@@ -39,19 +39,19 @@
 //td
 
 // innermost(r1)
-//  let S=signature {a:0, b:0, f:1, g:2} in
+//  let S=signature {a:0, b:0, f:1, g:2} in				
 //  let r1 = { a() -> g(b(),b()) } in 
 //  let innermost = mu x.(all(x);((r1;x)<+identity)) in
-// let td = mu y.((innermost<+identity);all(y)) in
+//  let td = mu y.((innermost<+identity);all(y)) in
 //   innermost
 // td
 
 // innermost(r1)
-// let S=signature {a:0, b:0, f:1, g:2} in
-// let r1 = { f(b()) -> a() } in 
-// let innermost = mu x.(all(x);((r1;x)<+identity)) in
+let S=signature {a:0, b:0, f:1, g:2} in
+let r1 = { f(b()) -> a() } in 
+let innermost = mu x.(all(x);((r1;x)<+identity)) in
 // let td = mu y.(r1;all(y)) in
-//  innermost
+ innermost
 // td
 
 // repeat(r1)
@@ -104,22 +104,22 @@
 // innermost1 ; innermost3  could be proven (G)
 // innermost12 ; innermost34  could be proven (G)
 
-let S=signature {times:2, plus:2, zero:0, suc:1} in
-let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
-let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
-let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
-let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
-let r12 =  r1 <+ r2 in
-let r34 =  r3 <+ r4 in
-let obu12 = mu y.(one(y)<+r1) in
-let rep12 = mu x .((obu12;x) <+ identity) in
-// let innermost1 = mu x.(all(x);((r12;x)<+identity)) in
-let obu34 = mu y.(one(y)<+r3) in
-let rep34 = mu x .((obu34;x) <+ identity) in
-// let innermost3 = mu x.(all(x);((r34;x)<+identity)) in
-rep12 <+ rep34
-// innermost1 <+ innermost3
-// innermost1 ; innermost3
+// let S=signature {times:2, plus:2, zero:0, suc:1} in
+// let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
+// let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
+// let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
+// let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
+// let r12 =  r1 <+ r2 in
+// let r34 =  r3 <+ r4 in
+// let obu12 = mu y.(one(y)<+r1) in
+// // let rep12 = mu x .((obu12;x) <+ identity) in
+// // let innermost1 = mu x.(all(x);((r12;x)<+identity)) in
+// let obu34 = mu y.(one(y)<+r3) in
+// let rep34 = mu x .((obu34;x) <+ identity) in
+// // let innermost3 = mu x.(all(x);((r34;x)<+identity)) in
+// rep12 <+ rep34
+// // innermost1 <+ innermost3
+// // innermost1 ; innermost3
 
 
 
