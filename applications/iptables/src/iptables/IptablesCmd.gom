@@ -2,26 +2,26 @@ module iptables.IptablesCmd
 imports int String Analyser AddressParser
 abstract syntax
 
-IptablesRules = IptablesRules(IptablesRule*)
+IptablesCmdRules = IptablesCmdRules(IptablesCmdRule*)
 
-IptablesRule = 
-	IptableAppend(target:Target,opts:IptablesOpts,action:Action)
-	| IptablesPolicy(target:Target,action:Action)
+IptablesCmdRule = 
+	IptablesCmdAppend(target:Target,opts:IptablesCmdOpts,action:Action)
+	| IptablesCmdPolicy(target:Target,action:Action)
 
-IptablesOpts = IptablesOpts(IptablesOpt*)
+IptablesCmdOpts = IptablesCmdOpts(IptablesCmdOpt*)
 
-IptablesOpt =
-	IptablesProto(proto:Protocol)
-	| IptablesIfaceOpt(iface:Iface)
-	| IptablesAddressOpt(addr:IptablesAddress)
-	| IptablesPortOpt(port:IptablesPort)
+IptablesCmdOpt =
+	IptablesCmdProto(proto:Protocol)
+	| IptablesCmdIfaceOpt(iface:Iface)
+	| IptablesCmdAddressOpt(addr:IptablesCmdAddress)
+	| IptablesCmdPortOpt(port:IptablesCmdPort)
 	| IptableStatesOpt(states:States)
 
-IptablesAddress =
-	IptablesAddressSrc(src:AddressRaw)
-	| IptablesAddressDest(dest:AddressRaw)
+IptablesCmdAddress =
+	IptablesCmdAddressSrc(src:AddressRaw)
+	| IptablesCmdAddressDest(dest:AddressRaw)
 
-IptablesPort =
-	IptablesPortSrc(src:Port)
-	| IptablesPortDest(dest:Port)
+IptablesCmdPort =
+	IptablesCmdPortSrc(src:Port)
+	| IptablesCmdPortDest(dest:Port)
 

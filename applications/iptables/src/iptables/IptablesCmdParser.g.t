@@ -15,14 +15,15 @@ tokens {
 	package iptables;
 }
 
-file : (rule)* EOF -> ^(IptablesRules (rule)*);
+file : (rule)* EOF -> ^(IptablesCmdRules (rule)*);
 
-rule: CMD_IPTABLES command -> ^(IptablesRule command);
+rule: CMD_IPTABLES command -> ^(IptablesCmdRule command);
 
 command:
-	CMD_APPEND target (opts)* OPT_ACTION action
-		-> ^(IptablesAppend target (opts)* action)
-	| CMD_POLICY target action -> ^(IptablesPolicy target action)
+	CMD_APPEND target (opts)* OPT_ACTION action 
+		-> ^(IptablesCmdAppend target (opts)* action)
+	| CMD_POLICY target action 
+		-> ^(IptablesCmdPolicy target action)
 	;
 
 action : 
@@ -63,8 +64,8 @@ ifaceopt:
 	;
 
 addressopt:
-	OPT_ADDR_SRC address	-> ^(IptablesAddressSrc address);
-	| OPT_ADDR_DEST address -> ^(IptablesAddressDst address);
+	OPT_ADDR_SRC address	-> ^(IptablesCmdAddressSrc address);
+	| OPT_ADDR_DEST address -> ^(IptablesCmdAddressDst address);
 	;
 
 address	: 'anywhere' 	-> ^(AddrAnyRaw)
@@ -76,8 +77,8 @@ address	: 'anywhere' 	-> ^(AddrAnyRaw)
 	;
 
 portopt:
-	OPT_PORT_SRC INT	-> ^(IptablesPortSrc INT);
-	| OPT_PORT_DEST INT	-> ^(IptablesPortDest INT);
+	OPT_PORT_SRC INT	-> ^(IptablesCmdPortSrc INT);
+	| OPT_PORT_DEST INT	-> ^(IptablesCmdPortDest INT);
 	;
 	
 statesopt: '-m state' OPT_STATE state stateIter* -> ^(States state stateIter*);
