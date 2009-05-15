@@ -1,5 +1,8 @@
 module iptables.Firewall
-imports Iptables
+imports Iptables IptablesCmd
 abstract syntax
 
-FirewallRules = FirewallRules(ib:IptablesBlocks)
+FirewallRules = 
+	FirewallRulesIptables(ib:IptablesBlocks)
+	| FirewallRulesIptablesCmd(icr:IptablesCmdRules)
+

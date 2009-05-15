@@ -13,7 +13,7 @@ public class IptablesWrapper implements Wrapper {
 
 	public Rules wrap(FirewallRules fr) {
 		%match (fr) {
-			FirewallRules(ib@IptablesBlock) -> { 
+			FirewallRulesIptables(ib) -> { 
 				return wrapBlocks(`ib);
 			}
 		}
@@ -85,7 +85,8 @@ public class IptablesWrapper implements Wrapper {
 
 			return `RulesL(Rule(act,IfaceAny(),p,t,
 					AddressParser.addressWrapper(asrc),
-					AddrAny(),sport,dport,options,in),
+					AddressParser.addressWrapper(adst),
+					sport,dport,options,in),
 				wrapRule(X*,t));
 		}
 	}

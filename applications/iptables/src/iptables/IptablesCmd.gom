@@ -5,23 +5,20 @@ abstract syntax
 IptablesCmdRules = IptablesCmdRules(IptablesCmdRule*)
 
 IptablesCmdRule = 
-	IptablesCmdAppend(target:Target,opts:IptablesCmdOpts,action:Action)
-	| IptablesCmdPolicy(target:Target,action:Action)
+	IptablesCmdAppend(
+		target:Target,
+		opts:IptablesCmdOpts,
+		action:Action,
+		input:String)
+	| IptablesCmdPolicy(target:Target,action:Action,input:String)
 
 IptablesCmdOpts = IptablesCmdOpts(IptablesCmdOpt*)
 
 IptablesCmdOpt =
 	IptablesCmdProto(proto:Protocol)
 	| IptablesCmdIfaceOpt(iface:Iface)
-	| IptablesCmdAddressOpt(addr:IptablesCmdAddress)
-	| IptablesCmdPortOpt(port:IptablesCmdPort)
-	| IptableStatesOpt(states:States)
-
-IptablesCmdAddress =
-	IptablesCmdAddressSrc(src:AddressRaw)
-	| IptablesCmdAddressDest(dest:AddressRaw)
-
-IptablesCmdPort =
-	IptablesCmdPortSrc(src:Port)
-	| IptablesCmdPortDest(dest:Port)
-
+	| IptablesCmdAddressSrc(asrc:AddressRaw)
+	| IptablesCmdAddressDest(adest:AddressRaw)
+	| IptablesCmdPortSrc(psrc:Port)
+	| IptablesCmdPortDest(pdest:Port)
+	| IptablesCmdStatesOpt(states:States)

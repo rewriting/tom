@@ -15,7 +15,7 @@ tokens {
 	package iptables;
 }
 
-file : (rule)* EOF -> ^(IptablesCmdRules (rule)*);
+file : (rule)* EOF -> ^(FirewallRulesIptablesCmd ^(IptablesCmdRules (rule)*));
 
 rule: CMD_IPTABLES command -> ^(IptablesCmdRule command);
 
@@ -59,8 +59,8 @@ proto :
 	;
 
 ifaceopt:
-	OPT_IFACE_IN STRING	-> ^(Iface STRING);
-	| OPT_IFACE_OUT STRING	-> ^(Iface STRING);
+	OPT_IFACE_IN STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING));
+	| OPT_IFACE_OUT STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING));
 	;
 
 addressopt:

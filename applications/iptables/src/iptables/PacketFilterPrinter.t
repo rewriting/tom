@@ -125,7 +125,7 @@ public class PacketFilterPrinter extends Printer {
 
 	private String wrapOptStates(States states) {
 		%match(states) {
-			States(s@!StateAny(),X*) -> {
+			States(!StateAny(),X*) -> {
 				return STATE_KEEP + " ";
 			}
 		}
