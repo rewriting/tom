@@ -10,7 +10,7 @@
       <classpath refid="tom.classpath"/>
     </taskdef>
     <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
                 <include name="${example}/**/Lambda.g.t"/>
     </tom.preset>
@@ -20,7 +20,7 @@
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <tom.preset options="-I ${examples.gen}/${example}"
+    <tom.preset import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"
                 destdir="${examples.gen}"> 
                 <include name="${example}/*.t"/>

@@ -14,7 +14,7 @@
     </tom.preset>
     <!--
     <tom.preset outputfile="${examples.gen}/${example}/PolygraphesParser.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/**/PolygraphesParser.g.t"/>
     </tom.preset>

@@ -12,7 +12,7 @@
     </gom.preset>
                                   
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
                 <include name="${example}/**/LambdaTermParser.g.t"/>
     </tom.preset>

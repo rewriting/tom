@@ -5,7 +5,8 @@
   <target name="build" depends="init">
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}"
-	        options="-I ${tom.home}/share/jtom --lazyType">
+                import="${tom.home}/share/jtom --lazyType"
+                options="--lazyType">
       <include name="${example}/**/Record.t"/>
     </tom.preset>
     <tom.preset srcdir="${examples.dir}"

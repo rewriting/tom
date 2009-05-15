@@ -7,7 +7,8 @@
       destdir="${examples.gen}"
       optimize="no"
       optimize2="no"
-      options="-I ${tom.home}/share/jtom --verify">
+      import="${tom.home}/share/jtom"
+      options="--verify">
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/*.g.t"/>
     </tom.preset>

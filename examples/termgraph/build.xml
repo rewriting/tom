@@ -27,12 +27,12 @@
 
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
-      options="-I ${examples.gen}/${example}"
+      import="${examples.gen}/${example}"
       srcdir="${examples.dir}"> 
       <include name="${example}/**/LambdaTermParser.g.t"/>
     </tom.preset>
     <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
-      options="-I ${examples.gen}/${example}"
+      import="${examples.gen}/${example}"
       srcdir="${examples.dir}"> 
       <include name="${example}/**/Lambda.g.t"/>
     </tom.preset>

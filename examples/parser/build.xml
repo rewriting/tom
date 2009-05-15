@@ -29,12 +29,12 @@
     </gomantlradapter.preset>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/Rule.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/Rule.g.t"/>
     </tom.preset>
     <tom.preset outputfile="${examples.gen}/${example}/Graph.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/Graph.g.t"/>
     </tom.preset>

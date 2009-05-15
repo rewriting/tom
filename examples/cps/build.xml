@@ -5,7 +5,7 @@
   <target name="build" depends="init">
     <gomfreshcompile/>
     <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/Lambda.g.t"/>
     </tom.preset>

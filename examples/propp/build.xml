@@ -6,7 +6,7 @@
     <gombuild/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${example}/SeqParser.g"
-                options="-I ${examples.gen}/${example}"
+                import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
       <include name="${example}/**/SeqParser.g.t"/>
     </tom.preset>
