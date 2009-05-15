@@ -20,20 +20,22 @@ public class IptablesCmdWrapper implements Wrapper {
 		return null;
 	}
 
-	private Rules wrapRule(IptablesCmdRules icrs) {
+	private Rules wrapRules(IptablesCmdRules icrs) {
 		%match(icrs) {
 		IptablesCmdRules(IptablesCmdPolicy(tar,act,input),X*) -> {
 			return `RulesL(Rule(act,IfaceAny(),ProtoAny(),tar,
 					AddrAny(),AddrAny(),PortAny(),PortAny(),
 					NoOpt(),input),
-				wrapRule(X*));
+				wrapRules(X*));
 		}
 
 		IptablesCmdRules(IptablesCmdAppend(tar,opts,act,in),X*) -> {
 			boolean opt = false;
 
 			Port sport = `PortAny(), dport = `PortAny();
-			AddressRaw asrc = `AddrRawAny(), adst = `AddrRawAny();
+			AddressRaw asrc = `AddrAnyRaw(), adst = `AddrAnyRaw();
+			Protocol proto = `ProtoAny();
+			Iface iface = `IfaceAny();
 
 			Options options = `NoOpt();
 			States states = `States(StateAny());
@@ -55,14 +57,14 @@ public class IptablesCmdWrapper implements Wrapper {
 					adst = `ad;
 				}
 
-				IptablesCmdOpts(_*,IptablesCmdPortSrc(ns),_*)
+				IptablesCmdOpts(_*,IptablesCmdPortSrc(sp),_*)
 				-> {
-					sport = `Port(ns);
+					sport = `sp;
 				}
 
-				IptablesCmdOpts(_*,IptablesCmdPortDest(nd),_*)
+				IptablesCmdOpts(_*,IptablesCmdPortDest(dp),_*)
 				 -> {
-					dport = `Port(nd);
+					dport = `dp;
 				}
 
 				IptablesCmdOpts(_*,IptablesCmdIfaceOpt(i),_*)
@@ -83,7 +85,7 @@ public class IptablesCmdWrapper implements Wrapper {
 					AddressParser.addressWrapper(asrc),
 					AddressParser.addressWrapper(adst),
 					sport,dport,options,in),
-				wrapRule(X*));
+				wrapRules(X*));
 		}
 	}
 		return `Rules();

@@ -1,4 +1,4 @@
-grammar IptablesParser;
+grammar IptablesListParser;
 options {
   output=AST;
   ASTLabelType=Tree;
@@ -16,16 +16,17 @@ tokens {
 }
 
 file :
-	(block)* EOF -> ^(FirewallRules ^(IptablesBlocks (block)*));
+	(block)* EOF 
+		-> ^(FirewallRulesIptablesList ^(IptablesListBlocks (block)*));
 
 block:	'Chain' str=target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
 	(rule)* -> ^(
-		IptablesBlock target action ^(IptablesRules (rule)*) $str
+		IptablesListBlock target action ^(IptablesListRules (rule)*) $str
 	);
 
 rule:	str=action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
-		IptablesRule action proto $a1 $a2 opts $str
+		IptablesListRule action proto $a1 $a2 opts $str
 	);
 
 action : 
@@ -61,8 +62,8 @@ address	: 'anywhere' 	-> ^(AddrAnyRaw)
 
 oopt: 	'--';
 
-port:	'dpt:' INT	-> ^(DestPort INT)
-	| 'spt:' INT	-> ^(SourcePort INT)
+port:	'spt:' INT	-> ^(IptablesListPortSrc INT)
+	| 'dpt:' INT	-> ^(IptablesListPortDest INT)
 	;
 
 state : 'NEW'		-> ^(New)
@@ -75,10 +76,10 @@ states:	state stateIter* -> ^(States state stateIter*);
 
 stateIter : ',' state -> ^(state);
 
-opts:	opt* -> ^(IptablesOptions opt*);
+opts:	opt* -> ^(IptablesListOptions opt*);
 
 opt:	proto port		-> ^(port)
-	| 'state' states	-> ^(IptablesStates states)
+	| 'state' states	-> ^(IptablesListStates states)
 	| STRING		-> ^(UnknownOption STRING)
 	;
 

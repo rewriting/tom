@@ -1,39 +1,39 @@
 package iptables;
 
-import iptables.iptables.types.*;
+import iptables.iptableslist.types.*;
 import iptables.analyser.types.*;
 import iptables.addressparser.types.*;
 import iptables.firewall.types.*;
 import tom.library.sl.*; 
 import java.util.*;
 
-public class IptablesWrapper implements Wrapper {
+public class IptablesListWrapper implements Wrapper {
 	%include { iptables/firewall/Firewall.tom }
 	%include { sl.tom }
 
 	public Rules wrap(FirewallRules fr) {
 		%match (fr) {
-			FirewallRulesIptables(ib) -> { 
-				return wrapBlocks(`ib);
+			FirewallRulesIptablesList(ilb) -> { 
+				return wrapBlocks(`ilb);
 			}
 		}
 		return null;
 	}
 
-	private Rules wrapBlocks(IptablesBlocks ibs) {
-		%match(ibs) {
-			IptablesBlocks(ib,X*) -> {
+	private Rules wrapBlocks(IptablesListBlocks ilbs) {
+		%match(ilbs) {
+			IptablesListBlocks(ilb,X*) -> {
 				return `RulesA(
-					wrapBlock(ib),
+					wrapBlock(ilb),
 					wrapBlocks(X*));
 			}
 		}
 		return `Rules();
 	}
 
-	private Rules wrapBlock(IptablesBlock ib) {
-		%match(ib) {
-			IptablesBlock(t,a,is,in) -> {
+	private Rules wrapBlock(IptablesListBlock ilb) {
+		%match(ilb) {
+			IptablesListBlock(t,a,is,in) -> {
 				return `RulesL(
 					Rule(a,IfaceAny(),ProtoAny(),t,
 						AddrAny(),AddrAny(),
@@ -45,10 +45,10 @@ public class IptablesWrapper implements Wrapper {
 		return `Rules();
 	}
 
-	private Rules wrapRule(IptablesRules irs,Target t) {
-		%match(irs) {
-		IptablesRules(
-			IptablesRule(
+	private Rules wrapRule(IptablesListRules ilrs,Target t) {
+		%match(ilrs) {
+		IptablesListRules(
+			IptablesListRule(
 				act,
 				p,
 				asrc,
@@ -67,14 +67,20 @@ public class IptablesWrapper implements Wrapper {
 			ProtocolOptions protoOpt = `ProtoOpts(NoProtoOpt());
 
 			%match(o) {
-				IptablesOptions(_*,SourcePort(ns),_*) -> {
+				IptablesListOptions(
+					_*,
+					IptablesListPortSrc(ns),
+					_*) -> {
 					sport = `Port(ns);
 				}
 
-				IptablesOptions(_*,DestPort(nd),_*) -> { 
+				IptablesListOptions(
+					_*,
+					IptablesListPortDest(nd),
+					_*) -> { 
 					dport = `Port(nd);
 				}
-				IptablesOptions(_*,IptablesStates(s),_*) -> {
+				IptablesListOptions(_*,IptablesListStates(s),_*) -> {
 					states = `s;
 					opt = true;
 				}

@@ -1,0 +1,29 @@
+module iptables.IptablesList
+imports int String Analyser AddressParser
+abstract syntax
+
+IptablesListBlocks = IptablesListBlocks(IptablesListBlock*)
+
+IptablesListBlock = IptablesListBlock(
+			target:Target,
+			action:Action, 
+			rules:IptablesListRules,
+		 	input:String)
+
+IptablesListRules = IptablesListRules(IptablesListRule*)
+
+IptablesListRule = IptablesListRule(
+			action:Action,
+			proto:Protocol,
+			addrsrc: AddressRaw,
+			addrdst: AddressRaw,
+			options: IptablesListOptions,
+			input:String)
+
+IptablesListOptions = IptablesListOptions(IptablesListOption*)
+
+IptablesListOption =
+		IptablesListPortSrc(n:int)
+		| IptablesListPortDest(n:int)
+		| IptablesListStates(s:States)
+		| UnknownOption(str:String)

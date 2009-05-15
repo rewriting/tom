@@ -1,6 +1,5 @@
 package iptables;
 
-import iptables.iptables.types.*;
 import iptables.analyser.types.*;
 import tom.library.sl.*; 
 import java.util.*;
