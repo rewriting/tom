@@ -5,12 +5,12 @@
 
 [Setup]
 AppName=Tom
-AppVerName=Tom version 2.7rc1
+AppVerName=Tom version 2.7rc2
 DefaultDirName={pf}\INRIA\Tom
 DefaultGroupName=Tom
 UninstallDisplayIcon={app}\Tom.exe
 SourceDir=../../stable/dist
-OutputBaseFilename=tom-2.7rc1_setup
+OutputBaseFilename=tom-2.7rc2_setup
 OutputDir=../../utils/installKit
 LicenseFile=LICENCE
 ChangesEnvironment=yes
@@ -19,15 +19,14 @@ PrivilegesRequired=none
 [Files]
 Source: "AUTHORS";            DestDir: "{app}"
 Source: "Gom.xml";            DestDir: "{app}"
+Source: "Tom.xml";            DestDir: "{app}"
+Source: "GomAntlrAdaptor.xml"; DestDir: "{app}"
 Source: "INSTALL";            DestDir: "{app}"
 Source: "LICENCE";            DestDir: "{app}"
 Source: "NEWS";               DestDir: "{app}"
 Source: "README";             DestDir: "{app}"; DestName: "README.wri"; Flags: isreadme
-Source: "Tom.xml";            DestDir: "{app}"
 Source: "bin\*";              DestDir: "{app}\bin"
-Source: "lib\runtime\*";      DestDir: "{app}\lib\runtime"
-Source: "lib\tools\*";        DestDir: "{app}\lib\tools"
-Source: "lib\tom\*";          DestDir: "{app}\lib\tom"
+Source: "lib\*.jar";          DestDir: "{app}\lib"
 Source: "lib\tom-common.xml"; DestDir: "{app}\lib"
 Source: "share\*";            DestDir: "{app}\share"; Flags: recursesubdirs createallsubdirs
 
@@ -174,41 +173,18 @@ end;
 procedure UpdateClasspath();
 var
   FindRec: TFindRec;
-  JarName: String;
   OldClasspath: String;
-  TomLib: String;
 begin
   Log('Updating classpath...');
-  TomLib := '';
-  if FindFirst(ExpandConstant('{app}\lib\runtime\*.jar'), FindRec) then begin
-    try
-      repeat
-        TomLib := '%TOM_HOME%\lib\runtime\' + FindRec.Name + ';' + TomLib + ';';
-      until not FindNext(FindRec);
-      if FindFirst(ExpandConstant('{app}\lib\tools\*.jar'), FindRec) then begin
-        repeat
-          TomLib := '%TOM_HOME%\lib\tools\' + FindRec.Name + ';' + TomLib + ';';
-        until not FindNext(FindRec);
-      end
-      if FindFirst(ExpandConstant('{app}\lib\tom\*.jar'), FindRec) then begin
-        repeat
-          TomLib := '%TOM_HOME%\lib\tom\' + FindRec.Name + ';' + TomLib + ';';
-        until not FindNext(FindRec);
-      end
-      RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'TOM_LIB', TomLib + '.;');
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';%TOM_LIB%');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';%TOM_HOME%\lib\tom-runtime-full.jar');
         end
       else
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '%TOM_LIB%');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '%TOM_HOME%\lib\tom-runtime-full.jar');
         end
-    finally
-      FindClose(FindRec);
-    end;
-  end;
 end;
 
 // updates current setup state
