@@ -83,7 +83,7 @@ public class TomTask extends MatchingTask {
   private File configFile = null;
   private String logPropertiesFile;
   private File outputFile;
-  private File importPath;
+  private Path importPath = null;
   private boolean verbose = false;
   private boolean multithread = false;
   private boolean nowarn = false;
@@ -247,16 +247,20 @@ public class TomTask extends MatchingTask {
    * Set the importPath path
    * @param path the importPath path
    */
-  public void setImport(File path) {
-    this.importPath = path;
+  public void setImport(Path path) {
+    if (this.importPath == null) {
+      this.importPath = path;
+    } else {
+      this.importPath.append(path);
+    }
   }
 
-  /**
-   * Gets the importPath path
-   * @return the importPath path
-   */
-  public File getImport() {
-    return importPath;
+  public void addConfiguredTomincludedir(Path anInner) {
+    if (this.importPath == null) {
+      this.importPath = anInner;
+    } else {
+      this.importPath.append(anInner);
+    }
   }
 
   /**
@@ -622,8 +626,10 @@ public class TomTask extends MatchingTask {
         javaRunner.createArg().setFile(outputFile);
       }
       if(importPath != null) {
-        javaRunner.createArg().setValue("--import");
-        javaRunner.createArg().setFile(importPath);
+        for (String elem : importPath.list()) {
+          javaRunner.createArg().setValue("--import");
+          javaRunner.createArg().setFile(new File(elem));
+        }
       }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");

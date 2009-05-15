@@ -7,8 +7,10 @@
     <!-- build tom -->
     <tom destdir="${examples.gen}/${example}"
          srcdir="${examples.dir}/${example}"
-         camlcode="yes"
-         options="-I ${tom.home}/share/jtom">
+         camlcode="yes">
+      <tomincludedir>
+        <pathelement location="${tom.home}/share/tom"/>
+      </tomincludedir>
       <include name="**/*.t"/>
       <classpath refid="tom.classpath"/>
     </tom>
