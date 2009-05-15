@@ -28,7 +28,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${firewall.src}"
                 destdir="${firewall.gen}"
-                options="-I ${firewall.gen}"> 
+                import="${firewall.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -36,9 +36,12 @@
   
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${firewall.src}"
-                outputfile="${firewall.gen}/${firewall.grammar}.g"
-                options="-I ${firewall.gen} -I ${firewall.gen}/${firewall.package}"> 
+        outputfile="${firewall.gen}/${firewall.grammar}.g">
       <include name="${firewall.grammar}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${firewall.gen}"/>
+        <pathelement location="${firewall.gen}/${firewall.package}"/>
+      </tomincludedir>
     </tom.preset>
   </target>
   
