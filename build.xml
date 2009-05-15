@@ -285,29 +285,29 @@
     <!-- Specific stuff for parser generation -->
     <tomcompile fork="no"
       srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/TomLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/TomLanguage.g.t"/>
     </tomcompile>
 
     <tomcompile srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/HostLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/HostLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/BackQuoteLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
-      options="-I ${src.gen}/tom/gom/adt">
+      import="${src.gen}/tom/gom/adt">
       <include name="tom/gom/expander/rule/Rule.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/gom/parser/GomLanguage.g"
-      options="-I ${src.gen}/tom/gom/adt">
+      import="${src.gen}/tom/gom/adt">
       <include name="tom/gom/parser/GomLanguage.g.t"/>
     </tomcompile>
   </target>

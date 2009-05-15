@@ -53,6 +53,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>inlineplus</li>
  * <li>genIntrospector</li>
  * <li>outputfile</li>
+ * <li>import</li>
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>pretty</li>
@@ -82,6 +83,7 @@ public class TomTask extends MatchingTask {
   private File configFile = null;
   private String logPropertiesFile;
   private File outputFile;
+  private File importPath;
   private boolean verbose = false;
   private boolean multithread = false;
   private boolean nowarn = false;
@@ -239,6 +241,22 @@ public class TomTask extends MatchingTask {
    */
   public File getOutputFile() {
     return outputFile;
+  }
+
+  /**
+   * Set the importPath path
+   * @param path the importPath path
+   */
+  public void setImport(File path) {
+    this.importPath = path;
+  }
+
+  /**
+   * Gets the importPath path
+   * @return the importPath path
+   */
+  public File getImport() {
+    return importPath;
   }
 
   /**
@@ -602,6 +620,10 @@ public class TomTask extends MatchingTask {
       if(outputFile != null) {
         javaRunner.createArg().setValue("-o");
         javaRunner.createArg().setFile(outputFile);
+      }
+      if(importPath != null) {
+        javaRunner.createArg().setValue("--import");
+        javaRunner.createArg().setFile(importPath);
       }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");

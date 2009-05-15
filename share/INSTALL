@@ -72,7 +72,7 @@ The following steps are needed for setting up the environment:
   - set JAVA_HOME to where Java JDK is installed (something like C:\Program Files\Java\jdk1.6.0_13)
   - set TOM_HOME to C:\tom
   - set CLASSPATH to .;%TOM_HOME%\lib\tom-runtime-full.jar
-  - set PATH=%Path%;%TOM_HOME%\bin;%JAVA_HOME%\bin
+  - set PATH to %Path%;%TOM_HOME%\bin;%JAVA_HOME%\bin
 
 For a detailed description of setting environment variables in Windows, 
 please refer to Windows documentation. For Windows XP, some information 
@@ -81,15 +81,15 @@ http://support.microsoft.com/default.aspx?scid=kb;en-us;310519&sd=tech
 
 Unix
 ----
-Assume Tom is installed in /usr/local/tom. The following sets up the
+Assume Tom is installed in ${HOME}/tom. The following sets up the
 environment:
 
 (bash)
-  export TOM_HOME=/usr/local/tom
+  export TOM_HOME=${HOME}/tom
   export PATH=${PATH}:${TOM_HOME}/bin
   export CLASSPATH=${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}
 
 (csh)
-  setenv TOM_HOME /usr/local/tom
+  setenv TOM_HOME ${HOME}/tom
   set path=( $path $TOM_HOME/bin )
   setenv CLASSPATH ${TOM_HOME}/lib/tom-runtime-full.jar:${CLASSPATH}
