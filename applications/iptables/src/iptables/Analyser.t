@@ -17,6 +17,7 @@ public class Analyser {
 		INCLUDEDEQ = -1, INCLUDEDDIF = -2,
 		EQUALSEQ = 0, EQUALSDIF = 8,
 		INCLUDESEQ = 1, INCLUDESDIF = 2;
+	public static int[] anomalies = { 0,0,0,0 };
 
 	public static void printError(String errtype, Rule r1, String errmsg,
 		Rule r2) {
@@ -30,9 +31,24 @@ public class Analyser {
 			+ errmsg + "> " + `r2 + "\n");
 	}
 
+	public static void printReport() {
+		int sum = 0;
+		for (int i = 0; i < anomalies.length; i++) {
+			sum += anomalies[i];
+			anomalies[i] *= 100;
+		}
+
+		System.out.println("---\n" + sum + " Anomalie" 
+			+ (sum > 1 ? "s" : "") + " detected.\n\n"
+			+ "Shadowing:\t" + (anomalies[0]/sum) + "%\n"
+			+ "Redundancy:\t" + (anomalies[1]/sum) + "%\n"
+			+ "Generalization:\t" + (anomalies[2]/sum) + "%\n"
+			+ "Correlation:\t" + (anomalies[3]/sum) + "%\n");
+	}
+
 	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
-		System.out.print("\n[1] " + `r1 + "\n[2] " + `r2 + "\n" + msg 
-			+ " [1/2] ? ");
+		System.out.print("\n[1] "+ `r1 + "\n[2] " + `r2 + "\n[0] none\n"
+			+ msg + " [0/1/2] ? ");
 		BufferedReader input = 
 			new BufferedReader(new InputStreamReader(System.in));
 	
@@ -42,7 +58,9 @@ public class Analyser {
 		} catch (Exception e) {}
 		System.out.println("");
 
-		if (i == 1)
+		if (i == 0)
+			return null;
+		else if (i == 1)
 			return `r2;
 		else
 			return `r1;
@@ -53,6 +71,7 @@ public class Analyser {
 		try {
 			rs = `OutermostId(checkIntegrityStrategy()).visit(rs);
 		} catch (VisitFailure vf) { }
+		printReport();
 		return rs;
 	}
 
@@ -104,10 +123,12 @@ public class Analyser {
 				if (i == INCLUDEDDIF) {
 					printError("shadowing",`r1,
 						"shadows",`r2);
+					anomalies[0]++;
 					throw new InteractiveNeededException();
 				} else if (i == EQUALSDIF) {
 					printError("shadowing",`r1,
 						"in conflict with",`r2);
+					anomalies[0]++;
 					throw new InteractiveNeededException();
 				}
 			}
@@ -125,14 +146,17 @@ public class Analyser {
 				if (i == INCLUDESEQ) {
 					printWarning("redundancy",`r2,
 						"included in",`r1);
+					anomalies[1]++;
 					return `r1;
 				} else if (i == INCLUDEDEQ) {
 					printWarning("redundancy",`r1,
 						"included in",`r2);
+					anomalies[1]++;
 					return `r2;
 				} else if (i == EQUALSEQ) {
 					printWarning("redundancy",`r1,
 						"equivalent to",`r2);
+					anomalies[1]++;
 					return `r1;
 				}
 			}
@@ -150,6 +174,7 @@ public class Analyser {
 				if (i == INCLUDESDIF) {
 					printWarning("generalization",`r1,
 						"generalized by",`r2);
+					anomalies[2]++;
 					throw new InteractiveNeededException();
 				}
 			}
@@ -166,6 +191,7 @@ public class Analyser {
 				if (i == INCLUDEDDIF)  {
 					printWarning("correlation",`r1,
 						"correlated to",`r2);
+					anomalies[3]++;
 				}
 			}
 		}
