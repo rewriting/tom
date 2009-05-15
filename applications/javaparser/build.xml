@@ -27,8 +27,7 @@
   
   <target name="tom" depends="gom">
     <tom.preset srcdir="${jparse.src}"
-                destdir="${jparse.gen}"
-                options="-I ${jparse.gen}"> 
+                destdir="${jparse.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -37,7 +36,7 @@
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${jparse.src}"
                 outputfile="${jparse.gen}/${jparse.grammar}.g"
-                options="-I ${jparse.gen}"> 
+                import="${jparse.gen}"> 
       <include name="${jparse.grammar}.g.t"/>
     </tom.preset>
   </target>

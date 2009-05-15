@@ -28,7 +28,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${logo.src}"
                 destdir="${logo.gen}"
-                options="-I ${logo.gen}"> 
+                import="${logo.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -36,9 +36,12 @@
   
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${logo.src}"
-                outputfile="${logo.gen}/${logo.grammar}.g"
-                options="-I ${logo.gen} -I ${logo.gen}/${logo.package}"> 
+        outputfile="${logo.gen}/${logo.grammar}.g">
       <include name="${logo.grammar}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${logo.gen}"/>
+        <pathelement location="${logo.gen}/${logo.package}"/>
+      </tomincludedir>
     </tom.preset>
   </target>
   

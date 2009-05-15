@@ -55,7 +55,7 @@
     <tomcompile package="xrho"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/xrho/RhoParser.g"
-	    options="-I ${rho.gen}/xrho">
+	    import="${rho.gen}/xrho">
 	    <include name="xrho/*.g.t"/>
     </tom.preset>
     <tomantlr target="${rho.gen}/xrho/RhoParser.g"
@@ -70,7 +70,7 @@
     <tomcompile package="matching"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/matching/LamcalParser.g"
-	    options="-I ${rho.gen}/matching">
+	    import="${rho.gen}/matching">
 	    <include name="matching/*.g.t"/>
     </tom.preset>
     <tomantlr target="${rho.gen}/matching/LamcalParser.g"
@@ -89,7 +89,7 @@
     <tomcompile package="lambdaparallel"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/lambdaparallel/LamcalparallelParser.g"
-	    options="-I ${rho.gen}/lambdaparallel/">
+	    import="${rho.gen}/lambdaparallel/">
 	    <include name="lambdaparallel/*.g.t"/>
     </tom.preset>
     <tomantlr target="${rho.gen}/lambdaparallel/LamcalparallelParser.g"

@@ -20,7 +20,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${polygraph.src}"
                 destdir="${polygraph.gen}"
-                options="-I ${polygraph.gen}"> 
+                import="${polygraph.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>

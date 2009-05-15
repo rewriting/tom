@@ -45,7 +45,7 @@
     </tom.preset>
 
     <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
-      options="-I ${lemu.gen}/lemu" 
+      import="${lemu.gen}/lemu" 
       srcdir="${lemu.src}/lemu"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>
@@ -73,7 +73,7 @@
 
     <tom.preset 
       srcdir="${lemu.src}"
-      options="-I ${lemu.gen}/lemu2" 
+      import="${lemu.gen}/lemu2" 
       destdir="${lemu.gen}">
       <include name="lemu2/**/*.t"/>
       <exclude name="**/*.g.t"/>
@@ -81,7 +81,7 @@
 
     <tom.preset 
       outputfile="${lemu.gen}/lemu2/Lemu.g"
-      options="-I ${lemu.gen}/lemu2" 
+      import="${lemu.gen}/lemu2" 
       srcdir="${lemu.src}/lemu2"> 
       <include name="Lemu.g.t"/>
     </tom.preset>

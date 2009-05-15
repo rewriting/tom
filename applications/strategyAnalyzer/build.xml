@@ -28,7 +28,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${sa.src}"
                 destdir="${sa.gen}"
-                options="-I ${sa.gen}"> 
+                import="${sa.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -36,9 +36,10 @@
   
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${sa.src}"
-                outputfile="${sa.gen}/${sa.grammar}.g"
-                options="-I ${sa.gen} -I ${sa.gen}/${sa.package}"> 
+        outputfile="${sa.gen}/${sa.grammar}.g">
       <include name="${sa.grammar}.g.t"/>
+      <tomincludedir path="${sa.gen}"/>
+      <tomincludedir path="${sa.gen}/${sa.package}"/>
     </tom.preset>
   </target>
   

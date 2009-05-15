@@ -20,7 +20,7 @@
   <target name="tom" depends="gom">
     <tom.preset srcdir="${sdfgom.src}"
                 destdir="${sdfgom.gen}"
-                options="-I ${sdfgom.gen}"> 
+                import="${sdfgom.gen}"> 
                 <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
@@ -46,7 +46,7 @@
   <target name="tom.examples" depends="gom.examples">
     <tom.preset srcdir="${sdfgom.examples}"
                 destdir="${sdfgom.gen}"
-                options="-I ${sdfgom.gen}"> 
+                import="${sdfgom.gen}"> 
                 <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
