@@ -9,7 +9,8 @@
   <property name="iptables.gen"      location="${iptables.dir}/gen"/>
   <property name="iptables.build"    location="${iptables.dir}/build"/>
   <property name="iptables.package"   value="iptables"/>
-  <property name="iptables.ast"      value="${iptables.package}/Ast"/>
+  <property name="iptables.astlist"      value="${iptables.package}/IptablesListAst"/>
+  <property name="iptables.astcmd"      value="${iptables.package}/IptablesCmdAst"/>
   <property name="iptables.grammarlistname"  value="IptablesListParser"/>
   <property name="iptables.grammarcmdname"  value="IptablesCmdParser"/>
   <property name="iptables.grammarlist"  value="${iptables.package}/${iptables.grammarlistname}"/>
@@ -60,13 +61,13 @@
                             destdir="${iptables.gen}"
                             grammar="${iptables.grammarlistname}"
                             package="${iptables.package}">
-      <include name="${iptables.ast}.gom"/>
+      <include name="${iptables.astlist}.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset srcdir="${iptables.src}"
                             destdir="${iptables.gen}"
                             grammar="${iptables.grammarcmdname}"
                             package="${iptables.package}">
-      <include name="${iptables.ast}.gom"/>
+      <include name="${iptables.astcmd}.gom"/>
     </gomantlradapter.preset>
   </target>
 

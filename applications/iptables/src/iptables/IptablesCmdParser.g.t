@@ -5,7 +5,7 @@ options {
 }
 
 tokens {
-	%include { iptables/ast/IptablesCmdParserAstTokenList.txt }
+	%include { iptables/iptablescmdast/IptablesCmdAstTokenList.txt }
 }
 
 @header {
