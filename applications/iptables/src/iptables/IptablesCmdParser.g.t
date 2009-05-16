@@ -17,11 +17,11 @@ tokens {
 
 file : (rule)* EOF -> ^(FirewallRulesIptablesCmd ^(IptablesCmdRules (rule)*));
 
-rule: CMD_IPTABLES command -> ^(IptablesCmdRule command);
+rule: CMD_IPTABLES command -> ^(IptablesCmdRules command);
 
 command:
 	CMD_APPEND target (opts)* OPT_ACTION action 
-		-> ^(IptablesCmdAppend target (opts)* action {$command.text})
+		-> ^(IptablesCmdAppend target (opts)* action {$command.text})
 	| CMD_POLICY target action 
 		-> ^(IptablesCmdPolicy target action {$command.text})
 	;
@@ -34,38 +34,38 @@ action :
 	;
 
 target :
-	'INPUT'		-> ^(In);
-	| 'OUTPUT'	-> ^(Out);
-	| 'FORWARD'	-> ^(Forward);
+   'INPUT'		-> ^(In)
+ | 'OUTPUT'	-> ^(Out)
+ | 'FORWARD'	-> ^(Forward)
 	;
 
 opts:
-	protoopt	-> ^(protoopt);
-	| ifaceopt	-> ^(ifaceopt);
-	| addressopt	-> ^(addressopt);
-	| portopt	-> ^(portopt);
-	| statesopt	-> ^(statesopt);
+	protoopt	-> ^(protoopt)
+	| ifaceopt	-> ^(ifaceopt)
+	| addressopt	-> ^(addressopt)
+	| portopt	-> ^(portopt)
+	| statesopt	-> ^(statesopt)
 	;
 
 protoopt: OPT_PROTO proto -> ^(proto);
 proto : 
-	'all'	-> ^(ProtoAny);
-	| 'tcp' -> ^(TCP);
-	| 'udp' -> ^(UDP);
-	| 'ip4' -> ^(IPv4);
-	| 'ip6' -> ^(IPv6);
-	| 'icmp'-> ^(ICMP);
-	| 'eth' -> ^(Ethernet);
+	'all'	-> ^(ProtoAny)
+	| 'tcp' -> ^(TCP)
+	| 'udp' -> ^(UDP)
+	| 'ip4' -> ^(IPv4)
+	| 'ip6' -> ^(IPv6)
+	| 'icmp'-> ^(ICMP)
+	| 'eth' -> ^(Ethernet)
 	;
 
 ifaceopt:
-	OPT_IFACE_IN STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING));
-	| OPT_IFACE_OUT STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING));
+	OPT_IFACE_IN STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING))
+	| OPT_IFACE_OUT STRING	-> ^(IptablesCmdIfaceOpt ^(Iface STRING))
 	;
 
 addressopt:
-	OPT_ADDR_SRC address	-> ^(IptablesCmdAddressSrc address);
-	| OPT_ADDR_DEST address -> ^(IptablesCmdAddressDst address);
+	OPT_ADDR_SRC address	-> ^(IptablesCmdAddressSrc address)
+	| OPT_ADDR_DEST address -> ^(IptablesCmdAddressDest address)
 	;
 
 address	: 'anywhere' 	-> ^(AddrAnyRaw)
@@ -77,8 +77,8 @@ address	: 'anywhere' 	-> ^(AddrAnyRaw)
 	;
 
 portopt:
-	OPT_PORT_SRC INT	-> ^(IptablesCmdPortSrc INT);
-	| OPT_PORT_DEST INT	-> ^(IptablesCmdPortDest INT);
+	OPT_PORT_SRC INT	-> ^(IptablesCmdPortSrc INT)
+	| OPT_PORT_DEST INT	-> ^(IptablesCmdPortDest INT)
 	;
 	
 statesopt: '-m state' OPT_STATE state stateIter* -> ^(States state stateIter*);

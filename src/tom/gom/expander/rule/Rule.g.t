@@ -6,7 +6,7 @@ options {
 }
 
 tokens {
-%include { rule/RuleTokenList.txt }
+%include { rule/RuleRuleTokenList.txt }
 }
 
 @header {

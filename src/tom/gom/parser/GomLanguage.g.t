@@ -29,7 +29,7 @@ options {
 }
 
 tokens {
-  %include { gom/GomTokenList.txt }
+  %include { gom/GomLanguageGomTokenList.txt }
 }
 
 @header {
