@@ -6,7 +6,7 @@ options {
 }
 
 tokens {
-  %include { ast/AstTokenList.txt }
+  %include { ast/LangageAstTokenList.txt }
 }
 
 @header {

@@ -1,3 +1,6 @@
+2009-05-16 pem
+* generate <Grammar><Gom>Adaptor instead of <Gom>Adapter
+
 2009-05-14 pem
  * generate tom-compiler-full.jar
  * start to modify the scripts (*.bat files are not yet OK)

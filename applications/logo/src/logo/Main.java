@@ -3,7 +3,7 @@ package logo;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
-import logo.ast.AstAdaptor;
+import logo.ast.LangageAstAdaptor;
 import logo.ast.types.*;
 import java.util.*;
 import java.io.*;
@@ -47,7 +47,7 @@ public class Main {
       LangageParser ruleParser = new LangageParser(tokens);
 
       Tree b = (Tree) ruleParser.program().getTree();
-      InstructionList il = (InstructionList) AstAdaptor.getTerm(b);
+      InstructionList il = (InstructionList) LangageAstAdaptor.getTerm(b);
       il = Compiler.optimize(il);
       Compiler.eval(il);
 

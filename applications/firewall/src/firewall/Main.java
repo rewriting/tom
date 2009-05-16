@@ -3,7 +3,7 @@ package firewall;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
-import firewall.ast.AstAdaptor;
+import firewall.ast.LangageAstAdaptor;
 import firewall.ast.types.*;
 import java.util.*;
 import java.io.*;
@@ -44,7 +44,7 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LangageParser ruleParser = new LangageParser(tokens);
       Tree b1 = (Tree) ruleParser.instruction().getTree();
-      Instruction inst = (Instruction) AstAdaptor.getTerm(b1);
+      Instruction inst = (Instruction) LangageAstAdaptor.getTerm(b1);
       System.out.println("inst = " + inst);
       System.out.println("PRETTY");
 

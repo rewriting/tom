@@ -3,7 +3,7 @@ package sa;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
-import sa.rule.RuleAdaptor;
+import sa.rule.RuleRuleAdaptor;
 import sa.rule.types.*;
 import java.util.*;
 import java.io.*;
@@ -60,7 +60,7 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser ruleParser = new RuleParser(tokens);
       Tree b = (Tree) ruleParser.expressionlist().getTree();
-      ExpressionList expl = (ExpressionList) RuleAdaptor.getTerm(b);
+      ExpressionList expl = (ExpressionList) RuleRuleAdaptor.getTerm(b);
       //       System.out.println(expl);
 
       // Transforms Let(name,exp,body) into body[name/exp]

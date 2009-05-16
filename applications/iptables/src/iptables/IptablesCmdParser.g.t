@@ -5,7 +5,7 @@ options {
 }
 
 tokens {
-	%include { iptables/ast/AstTokenList.txt }
+	%include { iptables/ast/IptablesCmdParserAstTokenList.txt }
 }
 
 @header {
@@ -21,7 +21,7 @@ rule: CMD_IPTABLES command -> ^(IptablesCmdRule command);
 
 command:
 	CMD_APPEND target (opts)* OPT_ACTION action 
-		->Â ^(IptablesCmdAppend target (opts)* action {$command.text})
+		-> ^(IptablesCmdAppend target (opts)* action {$command.text})
 	| CMD_POLICY target action 
 		-> ^(IptablesCmdPolicy target action {$command.text})
 	;
