@@ -154,7 +154,7 @@ import @grammarPkg@.@grammarName@Parser;
 ]%);
     }
     writer.write(%[
-public class @filename()@Adaptor {
+public class @grammarName+filename()@Adaptor {
   public static shared.SharedObject getTerm(Tree tree) {
     shared.SharedObject res = null;
     if(tree.isNil()) {
@@ -301,7 +301,7 @@ public class @filename()@Adaptor {
         code = `CodeList(code,
             Code("("),
             FullSortClass(sort),
-            Code(")" + filename() + "Adaptor.getTerm(" + tree + ")"));
+            Code(")" + grammarName+filename() + "Adaptor.getTerm(" + tree + ")"));
       }
       BuiltinSortDecl[Name=name] -> {
         if("int".equals(`name)) {
@@ -341,7 +341,7 @@ public class @filename()@Adaptor {
   }
 
   protected String fullFileName() {
-    return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
+    return (adapterPkg() + "." + grammarName+filename()).replace('.',File.separatorChar);
   }
 
   protected String filename() {
@@ -367,10 +367,4 @@ public class @filename()@Adaptor {
     return output;
   }
 
-  protected File treeFileToGenerate() {
-    File output = new File(
-        getStreamManager().getDestDir(),
-        fullFileName()+"Tree.java");
-    return output;
-  }
 }

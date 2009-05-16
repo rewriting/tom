@@ -6,7 +6,7 @@ options {
 }
 
 tokens {
-  %include { term/TermTokenList.txt }
+  %include { term/GraphTermTokenList.txt }
 }
 
 @header {

@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.tree.Tree;
-import parser.rule.RuleAdaptor;
+import parser.rule.RuleRuleAdaptor;
 
 import parser.rule.types.*;
 
@@ -53,7 +53,7 @@ public class TestRuleParser {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser parser = new RuleParser(tokens);
       Tree tree = (Tree) parser.term().getTree();
-      Term term = (Term) RuleAdaptor.getTerm(tree);
+      Term term = (Term) RuleRuleAdaptor.getTerm(tree);
       return term;
     } catch (Exception e) {
       fail("Parse failed, with exception "+e);
@@ -116,7 +116,7 @@ public class TestRuleParser {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       RuleParser parser = new RuleParser(tokens);
       Tree tree = (Tree) parser.ruleset().getTree();
-      RuleList ruleList = (RuleList) RuleAdaptor.getTerm(tree);
+      RuleList ruleList = (RuleList) RuleRuleAdaptor.getTerm(tree);
       return ruleList;
     } catch (Exception e) {
       fail("Parse failed, with exception "+e);

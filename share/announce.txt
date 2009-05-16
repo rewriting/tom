@@ -34,7 +34,7 @@ This new release contains many improvements and new features:
   - Tom has been modified to generate statically well typed (using generics)
     type preserving visit methods of the Strategy library
 
-  - the Tom compiler is now thread-safe (can compile file in parallel)
+  - the Tom compiler is now thread-safe (can compile files in parallel)
 
   - a Gom extension called FreshGom, which generates support for syntax
     involving alpha-convertible names and binding operations
