@@ -56,7 +56,7 @@ public class ChoiceUndet extends AbstractStrategyCombinator {
 
   public ChoiceUndet(Strategy head, Strategy tail) {
     if (tail instanceof ChoiceUndet) {
-      Strategy[] tailstrategies = ((ChoiceUndet)tail).getVisitors();
+      Strategy[] tailstrategies = ((ChoiceUndet)tail).arguments;
       Strategy[] strategies = new Strategy[tailstrategies.length+1];
       strategies[0] = head;
       for (int i=0; i<tailstrategies.length;i++) {

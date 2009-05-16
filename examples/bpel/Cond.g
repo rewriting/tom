@@ -22,7 +22,7 @@ tokens {
 @header {
   package bpel;
   import bpel.wfg.types.*;
-  import bpel.wfg.WfgAdaptor;
+  import bpel.wfg.CondWfgAdaptor;
   import org.antlr.runtime.tree.Tree;
 }
 @lexer::header {
@@ -38,7 +38,7 @@ tokens {
 
       // Parse the input expression
       Tree tree = (Tree) parser.cond().getTree();
-      return (Condition) WfgAdaptor.getTerm(tree);
+      return (Condition) CondWfgAdaptor.getTerm(tree);
     } catch(Exception e ) {
       throw new RuntimeException(e);
     }
