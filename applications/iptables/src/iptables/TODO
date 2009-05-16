@@ -10,3 +10,4 @@
 -Dispatch isInclude@Analyser in the integrity checking methods
 -Make a comparator system for Rules
 -Comment the code
+-Order rules (by target) at creation

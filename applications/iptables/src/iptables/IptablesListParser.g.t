@@ -19,14 +19,14 @@ file :
 	(block)* EOF 
 		-> ^(FirewallRulesIptablesList ^(IptablesListBlocks (block)*));
 
-block:	'Chain' str=target '(policy' action ')'
+block:	'Chain' target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
 	(rule)* -> ^(
-		IptablesListBlock target action ^(IptablesListRules (rule)*) $str
+		IptablesListBlock target action ^(IptablesListRules (rule)*) {$block.text}
 	);
 
-rule:	str=action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
-		IptablesListRule action proto $a1 $a2 opts $str
+rule:	action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
+		IptablesListRule action proto $a1 $a2 opts {$rule.text}
 	);
 
 action : 

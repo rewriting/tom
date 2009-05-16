@@ -21,9 +21,9 @@ rule: CMD_IPTABLES command -> ^(IptablesCmdRule command);
 
 command:
 	CMD_APPEND target (opts)* OPT_ACTION action 
-		-> ^(IptablesCmdAppend target (opts)* action)
+		-> ^(IptablesCmdAppend target (opts)* action {$command.text})
 	| CMD_POLICY target action 
-		-> ^(IptablesCmdPolicy target action)
+		-> ^(IptablesCmdPolicy target action {$command.text})
 	;
 
 action : 

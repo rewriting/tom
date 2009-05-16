@@ -90,6 +90,10 @@ abstract syntax
 		| Invalid() /* packets associated with no known connection */
 
 module Analyser:rules() {
+	RulesL(r@Rule(_,_,_,In(),_,_,_,_,_,_),
+	rs@Rules(X*,
+		r1@Rule(_,_,_,In(),_,_,_,_,_,_),
+		r2@Rule(_,_,_,Out(),_,_,_,_,_,_),Y*)) -> Rules(X*,r1,r,r2,Y*)
 	RulesL(r@Rule(_,_,_,_,_,_,_,_,_,_),rs@Rules(R*)) -> Rules(r,R*)
 	RulesR(rs@Rules(R*),r@Rule(_,_,_,_,_,_,_,_,_,_)) -> Rules(r,R*)
 	RulesA(rsl@Rules(L*),rsr@Rules(R*)) -> Rules(L*,R*)
