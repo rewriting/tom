@@ -1,4 +1,5 @@
 package gui;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -12,7 +13,7 @@ import java.util.Random;
 import adt.polygraphicprogramgui.types.*;
 import adt.polygraphicprogramgui.types.onepath.*;
 import adt.polygraphicprogramgui.types.twopath.*;
-
+import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -21,6 +22,7 @@ public class Graph extends JPanel {
 	private ArrayList<Object> elts;
 	
 	public Graph(){
+		this.setLayout(null); //on enleve le layout pour pouvoir afficher les objets en coordonnees
 		this.elts = new  ArrayList<Object>();
 	}
 	
@@ -67,22 +69,21 @@ public class Graph extends JPanel {
  		while (it.hasNext()){
  			Object tmp = it.next();
  			if (tmp instanceof OneCell){
- 				
  				OneCell tmp2 = (OneCell)tmp;
- 				// this.addComponent(this, (Fil)tmp, ((Fil)tmp).getmX(), ((Fil)tmp).getmY(), ((Fil)tmp).getmWidth(), ((Fil)tmp).getmHeight());
  				g2.setColor(Color.BLUE);
  				g2.drawLine(tmp2.getx(),tmp2.gety(),tmp2.getx(), tmp2.gety()+tmp2.gethauteur());
- 				g2.setColor(Color.GREEN);
- 				g2.drawString(/*tmp2.getName()+*/"("+(tmp2.getX()-15)+","+tmp2.getY()+")",tmp2.getX()-(tmp2.getLargeur()/2),tmp2.getY()+(tmp2.getHauteur()/2));
- 				  //System.out.println("Fil : X = " + tmp2.getmX() + " Y = " + tmp2.getmY() + " Width = " + tmp2.getmWidth() + " Height = " + tmp2.getmHeight());
+ 				g2.setColor(Color.BLACK);
+ 				FontMetrics metrics = g2.getFontMetrics(this.getFont());
+			    int hgt = metrics.getHeight();
+			    int adv = metrics.stringWidth(tmp2.getName());
+			 	g2.drawString(tmp2.getName(),tmp2.getX()+(tmp2.getLargeur()/2)-(adv/2)-2,tmp2.getY()+(tmp2.getHauteur()/2)+(hgt/2));
  			} else if (tmp instanceof TwoCell){
- 				
  				TwoCell tmp2 = (TwoCell)tmp;
  				//this.addComponent(this, (DeuxCellules)tmp, ((DeuxCellules)tmp).getmX(), ((DeuxCellules)tmp).getmY(), ((DeuxCellules)tmp).getmWidth(), ((DeuxCellules)tmp).getmHeight());
  				g2.setColor(Color.RED);
  				//g2.drawRect(((Double)tmp2.getRec().getX()).intValue(), ((Double)tmp2.getRec().getY()).intValue(), ((Double)tmp2.getRec().getWidth()).intValue(), ((Double)tmp2.getRec().getHeight()).intValue());
- 				g2.drawRect(tmp2.getx(),tmp2.gety()+10,tmp2.getLargeur(),tmp2.getHauteur()-(10*2));
- 				g2.setColor(Color.black);
+ 				g2.drawRect(tmp2.getx(),tmp2.gety()+VarGlobale.filhauteurdefaut,tmp2.getLargeur(),tmp2.getHauteur()-(VarGlobale.filhauteurdefaut*2));
+ 				g2.setColor(Color.BLACK);
 			    // get metrics from the graphics
 			    FontMetrics metrics = g2.getFontMetrics(this.getFont());
 			    // get the height of a line of text in this font and render context
@@ -92,7 +93,6 @@ public class Graph extends JPanel {
 			    // calculate the size of a box to hold the text with some padding.
 			    //Dimension size = new Dimension(adv+2, hgt+2);
 			    g2.drawString(tmp2.getName(),(tmp2.getLargeur()- adv)/2+4+tmp2.getX(),(tmp2.getHauteur()+hgt)/2-4+tmp2.getY());
-			    
 			    //Debug contour de l'objet 2 cellules car impossible de faire pour composition
 				/*RandomColor colorGen = new RandomColor();
 

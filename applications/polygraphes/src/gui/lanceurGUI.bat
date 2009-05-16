@@ -1,6 +1,7 @@
 cd %TOM_HOME%\..\..\applications\polygraphes\build
 
-java gui.CompilerGUI "%TOM_HOME%\..\..\applications\polygraphes\examples\GuiTest.xml" "%TOM_HOME%\..\..\applications\polygraphes\build\foo\\"
+java gui.MainGUI "%TOM_HOME%\..\..\applications\polygraphes\examples\testprogramv2.xml" "%TOM_HOME%\..\..\applications\polygraphes\build\foo\\"
+pause
 @rem double slash pour escape
 
 @rem cd foo

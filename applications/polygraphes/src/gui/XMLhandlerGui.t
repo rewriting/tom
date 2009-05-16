@@ -52,7 +52,7 @@ public class XMLhandlerGui {
 	  if(nodeName.equals("OneCell")){
 		  NamedNodeMap attributes=node.getAttributes();
 		  String name=attributes.getNamedItem("Name").getNodeValue();
-		  return `OneCell(name,0,0,10,9);
+		  return `OneCell(name,0,0,VarGlobale.filhauteurdefaut,9);
 	  }
 	  if(nodeName.equals("OneC0")){
 		  NodeList oneC0s=node.getChildNodes();

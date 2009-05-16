@@ -8,31 +8,78 @@ import adt.polygraphicprogramgui.types.twopath.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuBar;
 
 //constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 public class XMLProgramHandlerGui {
   %include { ../adt/polygraphicprogramgui/PolygraphicProgramgui.tom }
   %include { sl.tom }
   
+  /** Returns an ImageIcon, or null if the path was invalid. */
+  protected static ImageIcon createImageIcon(String path) {
+      java.net.URL imgURL = XMLProgramHandlerGui.class.getResource(path);
+      System.out.println(path);
+      if (imgURL != null) {
+          return new ImageIcon(imgURL);
+      } else {
+          System.err.println("Couldn't find file: " + path);
+          return null;
+      }
+  }
+
   	//quite long but core of this part
 	public static String makeRuleStrategy(String filename){
-		
+		 try {
+			    // Set System L&F
+		        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		    } 
+		    catch (Exception e) {
+		       // handle exception
+		    }
 		JFrame frame = new JFrame();
-		frame.setTitle("Polygraphes GUI Alpha 2");
+		frame.setTitle("Polygraphes GUI");
 		frame.setSize(800,500);
+		frame.setDefaultLookAndFeelDecorated(true);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
-		//tp=XMLhandlerGui.RepartitionFilsTwoPath(tp);
+		 JMenuBar mnuBar = new JMenuBar();
+		JMenu menu;
+	    menu = new JMenu("File");
+	    JMenuItem Mnuitem1 = new JMenuItem("Exit",createImageIcon("./applicationexit.png"));
+	    Mnuitem1.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+	    });
+	    menu.add(Mnuitem1);
+	    mnuBar.add(menu);
+	    frame.setJMenuBar(mnuBar);
+
 		Container contentPane = frame.getContentPane();
-		JTabbedPane jtp = new JTabbedPane();
+		JTabbedPane jtp = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
+		ImageIcon iconConstructor = createImageIcon("./target.png");
+		ImageIcon iconFunction = createImageIcon("./gear.png");
 		contentPane.add(jtp);
 		Graph g = new Graph();
 		
@@ -64,34 +111,14 @@ public class XMLProgramHandlerGui {
 								if(!constructorNode.getNodeName().equals("#text")){
 									TwoPath tp = XMLhandlerGui.makeTwoPath(constructorNode);
 									constructors.add(tp);
-									/*System.out.println("******* CIRCUIT *******");
-									System.out.println("");
-									System.out.println(" |      |     | \n" +
-											           "----  ----  ----\n" +
-											           "|C1|  |C2|  |C3|\n" +
-											           "----  ----  ----\n" +
-											           " |      |     | \n"+
-											           " |      |     | \n"+
-											           "---------   ----\n" +
-											           "|   C4  |   |C5|\n" +
-											           "---------   ----\n" +
-											           "    |        |  \n");
-									
-									System.out.println("********** INFORMATION **********");
-									System.out.println("LARGEUR ESTIME DU CIRCUIT : (100+4+100+4+100)=308");
-									System.out.println("HAUTEUR ESTIME DU CIRCUIT : (90+4+90)=184");
-									System.out.println("********** REEL **********");
-									System.out.println("LARGEUR DU CIRCUIT : "+tp.getLargeur());
-									System.out.println("HAUTEUR DU CIRCUIT : "+tp.getHauteur());
-									System.out.println("********** GENERAL STATUS **********");
-									tp.affiche();
-									System.out.println("********** EOF **********");
-									*/
 									tp=XMLhandlerGui.decalageX(tp,15);
 									ajoutfenetre(g,tp);
-									jtp.addTab("Constructor N°("+i+","+j+")", g);
+									String tmp  = "";
+									if (constructorNode.getAttributes().getLength() > 0){
+										tmp =  constructorNode.getAttributes().item(0).getTextContent();
+									} 
+									jtp.addTab("Constructor " + tmp + "("+i+","+j+")",iconConstructor, g);
 									g= new Graph();
-									//System.out.println("CONTROLE NB ELEMENT :"+g.getComponentCount());
 									frame.setVisible(true);
 									
 									
@@ -110,20 +137,36 @@ public class XMLProgramHandlerGui {
 							for (int k = 0; k < ruleNodes.getLength(); k++) {
 								Node ruleNode = ruleNodes.item(k);
 								if(!ruleNode.getNodeName().equals("#text")){
-									System.out.println("NNNNNNNNNNNNEEEEEEEEEEEEEWWWWWWWWWWWWWWWW");
 									ThreePath tp = XMLhandlerGui.makeThreeCell(ruleNode);
-									JTabbedPane jtp2 = new JTabbedPane();
-									jtp.addTab("Function N°("+i+","+k+")",jtp2);
 									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.source(),15));
-									jtp2.addTab("Source", g);
+									JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+									jsp.setDividerLocation(400);
+									JPanel jp1 = new JPanel(new BorderLayout());
+									JLabel jl1 = new JLabel("Source");
+									jp1.add(jl1,BorderLayout.NORTH);
+									//JScrollPane jscroll1 = new JScrollPane();
+									//jscroll1.setLayout(null);
+									//jscroll1.add(g);
+									jp1.add(g,BorderLayout.CENTER);
+										
 									g= new Graph();
-									System.out.println();
-									System.out.println();
-									System.out.println(tp.target());
 									ajoutfenetre(g,XMLhandlerGui.decalageX(tp.target(),15));
-									jtp2.addTab("Target", g);
+									//JScrollPane jscroll2 = new JScrollPane();
+									//jscroll2.setLayout(null);
+									//jscroll2.add(g);
+									JPanel jp2 = new JPanel(new BorderLayout());
+									JLabel jl2 = new JLabel("Target");
+									jp2.add(jl2,BorderLayout.NORTH);
+									jp2.add(g,BorderLayout.CENTER);
+									
+									jsp.add(jp1);
+									jsp.add(jp2);
+								
+									jtp.addTab("Function " + ruleNode.getAttributes().item(0).getTextContent()+ "("+i+","+j+")",iconFunction, jsp);
+									
 									g= new Graph();
 									frame.setVisible(true);
+									
 									/*String rule=makeRule(tp)+"\n";
 									
 									
@@ -153,13 +196,13 @@ public class XMLProgramHandlerGui {
 			//construction of the strategies corresponding to the strategy rules
 			for (Iterator<ThreePath> iterator = structureRules.iterator(); iterator.hasNext();) {
 				ThreePath rulePath =  iterator.next();
-				String rule=makeRule(rulePath)+"\n";
+				/*String rule=makeRule(rulePath)+"\n";
 			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
 		visit TwoPath {
 			@rule@
 		}
 	}
-  	]%;
+  	]%;*/
 			 n++;
 			}
 			//construction of the function that applies all the strategies on a 2-Path
@@ -191,7 +234,7 @@ public class XMLProgramHandlerGui {
 			]%;
 		}
 		catch(Exception e){ e.printStackTrace();}
-		System.out.println("");
+		System.out.println("BUH");
 		
 		
 		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
@@ -274,7 +317,6 @@ public class XMLProgramHandlerGui {
 			TwoId(OneCell(name,x,y,hauteur,largeur)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name,x,y,hauteur,largeur),Constructor(),0,0,0,90,100);} 
 		} 
 	}
-
 
 	//returns the program name from the xml file root tag name field
 	public static String getProgramName(String filename){
