@@ -8,74 +8,66 @@ import java.io.*;
 public class AddressTools {
 	%include {iptables/analyser/Analyser.tom}
 
-	public static final int NOT_COMPARABLE = Integer.MAX_VALUE;
+	public static final int 
+		NOT_COMPARABLE = Integer.MAX_VALUE,
+		INCLUDES = 1,
+		INCLUDED = -1,
+		EQUALS = 0;
 
 	/* 	returns:
-			0 if Addresses are equals, 
-			1 if a2 is included in a1,
-			-1 if a1 include in a2
+			EQUALS if Addresses are equals, 
+			INCLUDES if a2 is included in a1,
+			INCLUDED if a1 included in a2
 			NOT_COMPARABLE if the 2 addresses are not comparable
 	*/
 	public static int isInclude(Address a1, Address a2) {
 		%match(a1,a2) {
-			AddrAny(),AddrAny() -> { return 0; }
-			AddrAny(),Addr4[] -> { return 1; }
-			Addr4[],AddrAny() -> { return -1; }
-			AddrAny(),Addr6[] -> { return 1; }
-			Addr6[],AddrAny() -> { return -1; }
+			AddrAny(),AddrAny() -> { return EQUALS; }
+			AddrAny(),Addr4[] -> { return INCLUDES; }
+			Addr4[],AddrAny() -> { return INCLUDED; }
+			AddrAny(),Addr6[] -> { return INCLUDES; }
+			Addr6[],AddrAny() -> { return INCLUDED; }
 			Addr4(ip1,smask1,_),Addr4(ip2,smask2,_) -> {
-				if (Math.abs(`smask1) < Math.abs(`smask2)) {
-					if ((`ip2 & `smask1) == (`ip1 & `smask1))
-						return 1;
-				} else if (Math.abs(`smask1) > Math.abs(`smask2)) {
-					if ((`ip1 & `smask2) == (`ip2 & `smask2))
-						return -1;
-				} else {
-					if ((`ip1 & `smask1) == (`ip2 & `smask2))
-						return 0;
-				}
+				/* A smaller mask implies a smaller sub-network,
+				 * then we compare the address&mask
+				 */
+				if ((Math.abs(`smask1) < Math.abs(`smask2)) 
+				&& ((`ip2 & `smask1) == (`ip1 & `smask1)))
+						return INCLUDES;
+				else if ((Math.abs(`smask1) > Math.abs(`smask2))
+				&& ((`ip1 & `smask2) == (`ip2 & `smask2)))
+						return INCLUDED;
+				else if ((`ip1 & `smask1) == (`ip2 & `smask2))
+						return EQUALS;
 			}
-			Addr6(ipms1,ipls1,smaskms1,smaskls1,_),
-			Addr6(ipms2,ipls2,smaskms2,smaskls2,_) -> {
-				if (`smaskms1 == `smaskms2) {
-					/* if the most significant mask is filled with 1 bits,
-					compare the less significant masks */
-					if (`smaskms1 == (0x0L - 0x1L)) {
-						if (Math.abs(`smaskls1) < Math.abs(`smaskls2)) {
-							if ((`ipls2 & `smaskls1) == (`ipls1 & `smaskls1))
-								return 1;
-						} else if (Math.abs(`smaskls1) > Math.abs(`smaskls2)) {
-							if ((`ipls1 & `smaskls2) == (`ipls2 & `smaskls2))
-								return -1;
-						} else {
-							if ((`ipls1 & `smaskls1) == (`ipls2 & `smaskls1))
-								return 0;
-						}
-					} else {
-						if ((`ipms1 & `smaskms1) == (`ipms2 & `smaskms1))
-							return 0;
-					}
-				} else if (Math.abs(`smaskms1) < Math.abs(`smaskms2)) {
-					if ((`ipms2 & `smaskms1) == (`ipms1 & `smaskms1))
-						return 1;
-				} else if (Math.abs(`smaskms1) > Math.abs(`smaskms2)) {
-					if ((`ipms1 & `smaskms2) == (`ipms2 & `smaskms2))
-						return -1;
-				}
+			/* Useless to compare the host part in IPv6 */
+			Addr6(ipnet1,_,smask1,_),Addr6(ipnet2,_,smask2,_) -> {
+				/* A smaller mask implies a smaller sub-network,
+				 * then we compare the address&mask
+				 */
+				if ((Math.abs(`smask1) < Math.abs(`smask2)) 
+				&& ((`ipnet2 & `smask1) == (`ipnet1 & `smask1)))
+						return INCLUDES;
+				else if ((Math.abs(`smask1) > Math.abs(`smask2))
+				&& ((`ipnet1 & `smask2) == (`ipnet2 & `smask2)))
+						return INCLUDED;
+				else if ((`ipnet1 & `smask1) == (`ipnet2 & `smask2))
+						return EQUALS;
 			}
 			/* IPv4 mapped address has its first 80 bits set to zero, 
-			the next 16 set to one, while its last 32 bits represent an 
-			IPv4 address*/
-			Addr6(ipms,ipls,_,smaskls,_),Addr4[] 
-			&& (ipms == 0)-> {
+			 * the next 16 set to one, while its last 32 bits
+			 * represent an IPv4 address
+			 */
+			Addr6(ipms,ipls,smask,_),Addr4[] && (ipms == 0)-> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return isInclude(`Addr4((int)ipls,(int)smaskls,""),a2);
+					return isInclude(
+					`Addr4((int)ipls,(int)smask,""),a2);
 				}
 			}
-			Addr4[],Addr6(ipms,ipls,_,smaskls,_)
-			&& (ipms == 0) -> {
+			Addr4[],Addr6(ipms,ipls,smask,_) && (ipms == 0) -> {
 				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return isInclude(a1,`Addr4((int)ipls,(int)smaskls,""));
+					return isInclude(a1,
+					`Addr4((int)ipls,(int)smask,""));
 				}
 			}
 		}
@@ -83,35 +75,6 @@ public class AddressTools {
 	}
 
 	private static boolean isEquiv(Address a1, Address a2) {
-		%match(a1,a2) {
-			AddrAny(),AddrAny() -> { return true; }
-			Addr4(ip1,smask1,_),Addr4(ip2,smask2,_) 
-			&& (smask1 == smask2) 
-			-> {
-				if ((`ip1 & `smask1) == (`ip2 & `smask2))
-					return true;
-			}
-			Addr6(ipms1,ipls1,smaskms1,smaskls1,_),
-			Addr6(ipms2,ipls2,smaskms2,smaskls2,_) 
-			&& (smaskms1 == smaskms2) && (smaskls1 == smaskls2) -> {
-				if (((`ipms1 & `smaskms1) == (`ipms2 & `smaskms2)) 
-				&& ((`ipls1 & `smaskls1) == (`ipls2 & `smaskls2))) {
-					return true;
-				}
-			}
-			Addr6(ipms,ipls,_,smaskls,_),Addr4[] 
-			&& (ipms == 0) -> {
-				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return isEquiv(`Addr4((int)ipls,(int)smaskls,""),a2);
-				}
-			}
-			Addr4[],Addr6(ipms,ipls,_,smaskls,_)
-			&& (ipms == 0) -> {
-				if ((`ipls & (0xffffL << 32)) == (0xffffL << 32)) {
-					return isEquiv(a1,`Addr4((int)ipls,(int)smaskls,""));
-				}
-			}
-		}
-		return false;
+		return (isInclude(a1,a2) == 0);
 	}
 }

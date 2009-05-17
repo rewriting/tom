@@ -1,8 +1,6 @@
 -Fix Rule's String grammar bug
--Add parser/output interfaces
 -Modify the Analyser ordering Rules
 -Add !iptables parsers/output
--Add address translation library
 
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing

@@ -49,7 +49,8 @@ abstract syntax
 	Address =
 		AddrAny()
 		| Addr4(ip:int,smask:int, str:String)
-		| Addr6(ipms:long,ipls:long,smaskms:long,smaskls:long, str:String)
+		/* Only need a subnetmask for the network prefix in IPv6 */
+		| Addr6(ipnet:long,iphost:long,snetmask:long, str:String)
 
 	Port =
 		PortAny()
