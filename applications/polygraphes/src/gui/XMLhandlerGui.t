@@ -112,6 +112,7 @@ public class XMLhandlerGui {
 			  if(ioName.equals("Source")){source=makeOnePath(ioChild);}
 			  if(ioName.equals("Target")){target=makeOnePath(ioChild);}
 		  }
+		  
 		  TwoPath res = `TwoCell(name,source,target,celltype,0,0,0,50,80);
 		  res=RepartitionFilsTwoCell((TwoCell)res);
 		  return res;
@@ -141,9 +142,11 @@ public class XMLhandlerGui {
 					  TwoPath res2=res;
 					  TwoPath res3 = makeTwoPath(twoC1Element);
 					  System.out.println("TwoC1 :(");
-					  System.out.print(" res2:");res2.affiche();
-					  System.out.print(" res3:");res3.affiche();
+					  VarGlobale.ecritLigne("TwoC1 :(");
+					  System.out.print(" res2:");VarGlobale.ecritLigne(" res2:");res2.affiche();
+					  System.out.print(" res3:");  VarGlobale.ecritLigne(" res3:");res3.affiche();
 					  System.out.println(")");
+					  VarGlobale.ecritLigne(")");
 					  res= gestionTwoC1(res3,res2);
 				  }
 			  }
@@ -420,6 +423,7 @@ public class XMLhandlerGui {
 			
 			ArrayList<OnePath> tmp = new ArrayList<OnePath>();
 			System.out.println(listeOnePath_tmp);
+			VarGlobale.ecritLigne(listeOnePath_tmp.toString());
 			// on prend les fils de la liste modele pour les mettre dans la cellule
 			for(int i=0;i<nb;i++){
 				OnePath tmpoc = listeOnePath_tmp.get(0);
@@ -441,6 +445,7 @@ public class XMLhandlerGui {
 			}
 			if(!it_listeTwoPath_amodifier.hasNext()) newlargeur=modele.getLargeur()-newx;
 			System.out.println("new : "+newx+" "+newlargeur);
+			VarGlobale.ecritLigne("new : "+newx+" "+newlargeur);
 			
 			// En fonction du type de cellule, on reconstruit la cellule avec les nouveaux fils selon le mode prévu
 			if(tp instanceof TwoCell){
@@ -461,6 +466,7 @@ public class XMLhandlerGui {
 		// on genere la tranche
 		TwoPath res = genererTwoC0(listeTwoPath_retour,mode);
 		System.out.println("res : "+res);
+		VarGlobale.ecritLigne("res : "+res);
 		
 		// en mode 1, il peut y avoir le cas particulier, notamment lorsque la partie a modifier
 		// est un TwoC1, il faut alors modifier la tranche basse MAIS aussi conserve le haut
@@ -469,6 +475,7 @@ public class XMLhandlerGui {
 		}
 		
 		System.out.println("res : "+res);
+		VarGlobale.ecritLigne("res : "+res);
 		return res;
 	}
 	
@@ -690,8 +697,6 @@ public class XMLhandlerGui {
 	public static TwoPath gestionTwoC1(TwoPath haut, TwoPath bas){
 		int taillehaut = haut.getLargeur();
 		int taillebas = bas.getLargeur();
-		System.out.println("Taille haut : "+taillehaut);
-		System.out.println("Taille bas : "+taillebas);
 		// si c'est le bas qu'il faut modifier
 		if(taillehaut>=taillebas){
 			%match (TwoPath bas){
@@ -742,6 +747,7 @@ public class XMLhandlerGui {
 		}
 		droite = decalageX(droite,gauche.getLargeur()+4);
 		System.out.println("gestionOneC0 : "+gauche+" "+droite);
+		VarGlobale.ecritLigne("gestionOneC0 : "+gauche+" "+droite);
 		return `OneC0(gauche,droite);
 	}
 	

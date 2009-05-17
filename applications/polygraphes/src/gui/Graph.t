@@ -20,47 +20,54 @@ import javax.swing.JPanel;
 public class Graph extends JPanel {
 	int debug = 0;
 	private ArrayList<Object> elts;
-	
-	public Graph(){
-		this.setLayout(null); //on enleve le layout pour pouvoir afficher les objets en coordonnees
-		this.elts = new  ArrayList<Object>();
+
+	public Graph() {
+		this.setLayout(null); // on enleve le layout pour pouvoir afficher les
+								// objets en coordonnees
+		this.elts = new ArrayList<Object>();
 	}
-	
-	public ArrayList<Object> getGraphObjectList(){
-		return this.elts;	
+
+	public ArrayList<Object> getGraphObjectList() {
+		return this.elts;
 	}
-	
-	public void ajouterElement(Object o){
-		this.elts.add(o);		
-		if(o instanceof TwoCell){
-			Iterator<OnePath> itfil = XMLhandlerGui.getListeOnePathSource(((TwoPath)o)).iterator();
-			while (itfil.hasNext()){
-				OnePath op = (OnePath)itfil.next();
-				if(op instanceof OneCell) this.ajouterElement(op);
+
+	public void ajouterElement(Object o) {
+		this.elts.add(o);
+		if (o instanceof TwoCell) {
+			Iterator<OnePath> itfil = XMLhandlerGui.getListeOnePathSource(
+					((TwoPath) o)).iterator();
+			while (itfil.hasNext()) {
+				OnePath op = (OnePath) itfil.next();
+				if (op instanceof OneCell)
+					this.ajouterElement(op);
 			}
-			Iterator<OnePath> itfil2 = XMLhandlerGui.getListeOnePathTarget(((TwoPath)o)).iterator();
-			while (itfil2.hasNext()){
-				OnePath op = (OnePath)itfil2.next();
-				if(op instanceof OneCell) this.ajouterElement(op);
+			Iterator<OnePath> itfil2 = XMLhandlerGui.getListeOnePathTarget(
+					((TwoPath) o)).iterator();
+			while (itfil2.hasNext()) {
+				OnePath op = (OnePath) itfil2.next();
+				if (op instanceof OneCell)
+					this.ajouterElement(op);
 			}
-		}else if(o instanceof TwoId){
-			Iterator<OnePath> itfil = XMLhandlerGui.getListeOnePathSource(((TwoId)o)).iterator();
-			while (itfil.hasNext()){
-				OnePath op = (OnePath)itfil.next();
-				if(op instanceof OneCell) this.ajouterElement(op);
+		} else if (o instanceof TwoId) {
+			Iterator<OnePath> itfil = XMLhandlerGui.getListeOnePathSource(
+					((TwoId) o)).iterator();
+			while (itfil.hasNext()) {
+				OnePath op = (OnePath) itfil.next();
+				if (op instanceof OneCell)
+					this.ajouterElement(op);
 			}
 		}
 	}
-	
-	/** Add Component Without a Layout Manager (Absolute Positioning) */ 
- 	@SuppressWarnings("unused")
-	private void addComponent(Container container,Component c,int x,int y,int width,int height) 
- 	{ 
- 		c.setBounds(x,y,width,height); 
- 		container.add(c); 
- 	}
- 	
- 	public void buildGraph(Graphics g){
+
+	/** Add Component Without a Layout Manager (Absolute Positioning) */
+	@SuppressWarnings("unused")
+	private void addComponent(Container container, Component c, int x, int y,
+			int width, int height) {
+		c.setBounds(x, y, width, height);
+		container.add(c);
+	}
+
+	public void buildGraph(Graphics g){
  		
  		Graphics2D g2 = (Graphics2D) g; 		//apparamment plus optimise
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -70,8 +77,10 @@ public class Graph extends JPanel {
  			Object tmp = it.next();
  			if (tmp instanceof OneCell){
  				OneCell tmp2 = (OneCell)tmp;
+ 				
  				g2.setColor(Color.BLUE);
  				g2.drawLine(tmp2.getx(),tmp2.gety(),tmp2.getx(), tmp2.gety()+tmp2.gethauteur());
+ 				
  				g2.setColor(Color.BLACK);
  				FontMetrics metrics = g2.getFontMetrics(this.getFont());
 			    int hgt = metrics.getHeight();
@@ -79,61 +88,30 @@ public class Graph extends JPanel {
 			 	g2.drawString(tmp2.getName(),tmp2.getX()+(tmp2.getLargeur()/2)-(adv/2)-2,tmp2.getY()+(tmp2.getHauteur()/2)+(hgt/2));
  			} else if (tmp instanceof TwoCell){
  				TwoCell tmp2 = (TwoCell)tmp;
- 				//this.addComponent(this, (DeuxCellules)tmp, ((DeuxCellules)tmp).getmX(), ((DeuxCellules)tmp).getmY(), ((DeuxCellules)tmp).getmWidth(), ((DeuxCellules)tmp).getmHeight());
+ 				
+ 				//Cellule
  				g2.setColor(Color.RED);
- 				//g2.drawRect(((Double)tmp2.getRec().getX()).intValue(), ((Double)tmp2.getRec().getY()).intValue(), ((Double)tmp2.getRec().getWidth()).intValue(), ((Double)tmp2.getRec().getHeight()).intValue());
  				g2.drawRect(tmp2.getx(),tmp2.gety()+VarGlobale.filhauteurdefaut,tmp2.getLargeur(),tmp2.getHauteur()-(VarGlobale.filhauteurdefaut*2));
- 				g2.setColor(Color.BLACK);
-			    // get metrics from the graphics
+ 				
+ 				//Texte
+ 				g2.setColor(Color.BLACK);	
 			    FontMetrics metrics = g2.getFontMetrics(this.getFont());
-			    // get the height of a line of text in this font and render context
 			    int hgt = metrics.getHeight();
-			    // get the advance of my text in this font and render context
 			    int adv = metrics.stringWidth(tmp2.getName());
-			    // calculate the size of a box to hold the text with some padding.
-			    //Dimension size = new Dimension(adv+2, hgt+2);
 			    g2.drawString(tmp2.getName(),(tmp2.getLargeur()- adv)/2+4+tmp2.getX(),(tmp2.getHauteur()+hgt)/2-4+tmp2.getY());
-			    //Debug contour de l'objet 2 cellules car impossible de faire pour composition
-				/*RandomColor colorGen = new RandomColor();
-
-				// affichage des zones de contact
-				Iterator<Integer> contactit = tmp2.getContactHaut().getListContacts().iterator();
-				while (contactit.hasNext()) {
-					int tmpct = (int) (contactit.next());
-					drawCircle(g2,tmp2.getMX() + tmpct, tmp2.getMY(),3);
-				}
-				contactit = tmp2.getContactBas().getListContacts().iterator();
-				while (contactit.hasNext()) {
-					int tmpct = (int) (contactit.next());
-					drawCircle(g2,tmp2.getMX() + tmpct, tmp2.getMY()+tmp2.getMHeight(),3);
-				}
-
-				g2.setColor(colorGen.randomColor());
-				//g2.drawRect(tmp2.getRectangle().x, tmp2.getRectangle().y, tmp2.getRectangle().width, tmp2.getRectangle().height);
-			  	
-			    System.out.println("DeuxCellules : Nom = " + tmp2.getNom()+ " X = " + tmp2.getMX() + " Y = " + tmp2.getMY() + " Width = " + tmp2.getMWidth() + " Height = " + tmp2.getMHeight());*/
- 			}/*
- 			else if ((tmp instanceof Composition0) || (tmp instanceof Composition1)){
- 				//juste du debug
- 				StructureComposition tmpstruct = (StructureComposition)tmp;
- 				//g2.setStroke(s)
- 				g2.setColor(Color.green);
- 				g2.drawRect(tmpstruct.getRectangle().x, tmpstruct.getRectangle().y ,tmpstruct.getRectangle().width, tmpstruct.getRectangle().height);
-	
- 			}*/
+ 			}
  		}
- 	}
- 	
-    // Convenience method to draw from center with radius
-    public void drawCircle(Graphics cg, int xCenter, int yCenter, int r) {
-        cg.drawOval(xCenter-r, yCenter-r, 2*r, 2*r);
-    }//end drawCircle
+	}
 
-    
- 	public void paintComponent(Graphics g) {
-	    super.paintComponent(g);
-	    //System.out.println("Appel de Paintcomponent numero  " +debug);
-	    debug++;
-	    buildGraph(g);
-	  }
+	// method to draw from center with radius
+	public void drawCircle(Graphics cg, int xCenter, int yCenter, int r) {
+		cg.drawOval(xCenter - r, yCenter - r, 2 * r, 2 * r);
+	}// end drawCircle
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		//System.out.println("Appel de Paintcomponent numero  " + debug);
+		debug++;
+		buildGraph(g);
+	}
 }

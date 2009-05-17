@@ -34,7 +34,7 @@ public class CompilerGUI {
 						File gomFile=new File(outputFolderPath+"gui/"+programName+".gom");
 						(new File(outputFolderPath+"gui"+File.separator)).mkdir();
 						if(!gomFile.exists()){gomFile.createNewFile();}
-						String gomFileContent=XMLhandlerGui.load(srcpath+".." +File.separator+"src" + File.separator+ "gui" + File.separator + "PolygraphicProgram.gom");
+						String gomFileContent=XMLhandlerGui.load(srcpath+".." +File.separator+"src" + File.separator+ "gui" + File.separator + "PolygraphicProgramgui.gom");
 						gomFileContent=gomFileContent.replace("PolygraphicProgram", programName);
 						XMLhandlerGui.save(gomFileContent,gomFile);
 						//create XMLhandlerGui file
@@ -471,7 +471,7 @@ public class @programName@{
 
 	private static int getOS(){
 		String name = System.getProperty ( "os.name" );
-		System.out.println("DEBUG OS name = " + name);
+		System.out.println("DEBUG OS name tye = " + name);
 		if (name.toUpperCase().startsWith("WINDOWS")){
 			return OS_WIN;
 		} else {

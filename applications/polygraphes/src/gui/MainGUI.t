@@ -17,5 +17,6 @@ public class MainGUI{
 	  
 		programPath=args[0];
 		XMLProgramHandlerGui.makeRuleStrategy(programPath);
+		VarGlobale.ModeAffichage(args[0]);
 	}
 }

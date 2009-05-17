@@ -27,27 +27,21 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuBar;
+import java.io.*;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 //constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 public class XMLProgramHandlerGui {
   %include { ../adt/polygraphicprogramgui/PolygraphicProgramgui.tom }
   %include { sl.tom }
-  
-  /** Returns an ImageIcon, or null if the path was invalid. */
-  protected static ImageIcon createImageIcon(String path) {
-      java.net.URL imgURL = XMLProgramHandlerGui.class.getResource(path);
-      System.out.println(path);
-      if (imgURL != null) {
-          return new ImageIcon(imgURL);
-      } else {
-          System.err.println("Couldn't find file: " + path);
-          return null;
-      }
-  }
-
-  	//quite long but core of this part
+      
+   	//quite long but core of this part
 	public static String makeRuleStrategy(String filename){
-		 try {
+		VarGlobale.ecritLigne("Entrée de makeRuleStrategy");
+		VarGlobale.ecritLigne(filename);
+		try {
 			    // Set System L&F
 		        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		    } 
@@ -63,10 +57,10 @@ public class XMLProgramHandlerGui {
 				System.exit(0);
 			}
 		});
-		 JMenuBar mnuBar = new JMenuBar();
+		JMenuBar mnuBar = new JMenuBar();
 		JMenu menu;
 	    menu = new JMenu("File");
-	    JMenuItem Mnuitem1 = new JMenuItem("Exit",createImageIcon("./applicationexit.png"));
+	    JMenuItem Mnuitem1 = new JMenuItem("Exit",new ImageIcon(System.getenv("TOM_HOME") + "/../../applications/polygraphes/src/gui/applicationexit.png"));
 	    Mnuitem1.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -78,12 +72,14 @@ public class XMLProgramHandlerGui {
 
 		Container contentPane = frame.getContentPane();
 		JTabbedPane jtp = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
-		ImageIcon iconConstructor = createImageIcon("./target.png");
-		ImageIcon iconFunction = createImageIcon("./gear.png");
+		String mPath = System.getenv("TOM_HOME") + "/../../applications/polygraphes/src/gui/target.png";
+		ImageIcon iconConstructor = new ImageIcon(mPath);
+		mPath = System.getenv("TOM_HOME") + "/../../applications/polygraphes/src/gui/gear.png";
+		ImageIcon iconFunction =  new ImageIcon(mPath);
 		contentPane.add(jtp);
+		
+		 	
 		Graph g = new Graph();
-		
-		
 		String strategy="";
 		int n=0;
 		ArrayList<OneCell> types=new ArrayList<OneCell>();
@@ -114,10 +110,8 @@ public class XMLProgramHandlerGui {
 									tp=XMLhandlerGui.decalageX(tp,15);
 									ajoutfenetre(g,tp);
 									String tmp  = "";
-									if (constructorNode.getAttributes().getLength() > 0){
-										tmp =  constructorNode.getAttributes().item(0).getTextContent();
-									} 
-									jtp.addTab("Constructor " + tmp + "("+i+","+j+")",iconConstructor, g);
+									
+									jtp.addTab("Constructor ("+i+","+j+")",iconConstructor, g);
 									g= new Graph();
 									frame.setVisible(true);
 									
@@ -234,11 +228,11 @@ public class XMLProgramHandlerGui {
 			]%;
 		}
 		catch(Exception e){ e.printStackTrace();}
-		System.out.println("BUH");
-		
-		
+		System.out.println("Done...");
+
 		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
 		return strategy;
+		
 		
 	}
 	
