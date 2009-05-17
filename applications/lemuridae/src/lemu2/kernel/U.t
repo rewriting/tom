@@ -696,11 +696,135 @@ public class U {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static conameList getFreeCoNames(LTerm pt) {
+  public static conameList getFreeCoNames(LTerm pt) {
     return `getFreeCoNames(conameList(),pt);
   }
   
   public static boolean freeIn(CoName a, LTerm pt) {
     return getFreeCoNames(pt).contains(a);
+  }
+
+  /* lambda-bar mu mu~ */
+
+  private static nameList getFreeNames(nameList ctx, LMMTerm pt) {
+    %match(pt) {
+      lmmVar(x) -> { return ctx.`contains(x) ? ctx : `nameList(x,ctx*); }
+      lmmMu(LmmMu(_,_,u)) -> { return `getFreeNames(ctx,u); }
+      lmmLam(LmmLam(x,_,u)) -> { return `getFreeNames(nameList(x,ctx*),u); }
+      lmmFLam(LmmFLam(_,u)) -> { return `getFreeNames(ctx,u); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static nameList getFreeNames(LMMTerm pt) {
+    return `getFreeNames(nameList(),pt);
+  }
+
+  public static boolean freeIn(Name x, LMMTerm pt) {
+    return getFreeNames(pt).contains(x);
+  }
+
+  private static nameList getFreeNames(nameList ctx, LMMContext e) {
+    %match(e) {
+      lmmCoVar(_) -> { return ctx; }
+      lmmMuT(LmmMuT(x,_,e1)) -> { 
+        return `getFreeNames(nameList(x,ctx*),e1); 
+      }
+      lmmDot(v,e1) -> { 
+        NameList l1 = `getFreeNames(ctx,v);
+        NameList l2 = `getFreeNames(ctx,e1);
+        return (nameList) `nameList(l1*,l2*);
+      }
+      lmmFDot(_,e1) -> { return `getFreeNames(ctx,e1); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static nameList getFreeNames(LMMContext e) {
+    return `getFreeNames(nameList(),e);
+  }
+
+  public static boolean freeIn(Name x, LMMContext e) {
+    return getFreeNames(e).contains(x);
+  }
+
+  private static nameList getFreeNames(nameList ctx, LMMCommand c) {
+    %match(c) {
+      lmmCommand(v,e) -> {
+        NameList l1 = `getFreeNames(ctx,v);
+        NameList l2 = `getFreeNames(ctx,e);
+        return (nameList) `nameList(l1*,l2*);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static nameList getFreeNames(LMMCommand c) {
+    return `getFreeNames(nameList(),c);
+  }
+
+  public static boolean freeIn(Name x, LMMCommand c) {
+    return getFreeNames(c).contains(x);
+  }
+
+  private static conameList getFreeCoNames(conameList ctx, LMMTerm pt) {
+    %match(pt) {
+      lmmVar(_) -> { return  ctx; }
+      lmmMu(LmmMu(a,_,u)) -> { return `getFreeCoNames(conameList(a,ctx*),u); }
+      lmmLam(LmmLam(_,_,u)) -> { return `getFreeCoNames(ctx,u); }
+      lmmFLam(LmmFLam(_,u)) -> { return `getFreeCoNames(ctx,u); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static conameList getFreeCoNames(LMMTerm pt) {
+    return `getFreeCoNames(conameList(),pt);
+  }
+
+  public static boolean freeIn(CoName x, LMMTerm pt) {
+    return getFreeCoNames(pt).contains(x);
+  }
+
+  private static conameList getFreeCoNames(conameList ctx, LMMContext e) {
+    %match(e) {
+      lmmCoVar(a) -> { return ctx.`contains(a) ? ctx : `conameList(a,ctx*); }
+      lmmMuT(LmmMuT(_,_,e1)) -> { 
+        return `getFreeCoNames(ctx,e1); 
+      }
+      lmmDot(v,e1) -> { 
+        CoNameList l1 = `getFreeCoNames(ctx,v);
+        CoNameList l2 = `getFreeCoNames(ctx,e1);
+        return (conameList) `conameList(l1*,l2*);
+      }
+      lmmFDot(_,e1) -> { return `getFreeCoNames(ctx,e1); }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static conameList getFreeCoNames(LMMContext e) {
+    return `getFreeCoNames(conameList(),e);
+  }
+
+  public static boolean freeIn(CoName x, LMMContext e) {
+    return getFreeCoNames(e).contains(x);
+  }
+
+  private static conameList getFreeCoNames(conameList ctx, LMMCommand c) {
+    %match(c) {
+      lmmCommand(v,e) -> {
+        CoNameList l1 = `getFreeCoNames(ctx,v);
+        CoNameList l2 = `getFreeCoNames(ctx,e);
+        return (conameList) `conameList(l1*,l2*);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static conameList getFreeCoNames(LMMCommand c) {
+    return `getFreeCoNames(conameList(),c);
+  }
+
+  public static boolean freeIn(CoName x, LMMCommand c) {
+    return getFreeCoNames(c).contains(x);
   }
 }

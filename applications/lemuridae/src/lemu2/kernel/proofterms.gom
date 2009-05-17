@@ -141,3 +141,21 @@ FLam binds FoVar = FLam(x:FoVar, inner t:LTerm)
 Alt binds Name = Alt(x:Name, outer ty:Prop, inner t:LTerm)
 Letin binds FoVar Name = Letin(fx:FoVar, x:Name, inner ty:Prop, outer t:LTerm, inner u:LTerm)
 
+// lambda-bar-mu-mu-tilda
+
+LMMCommand = lmmCommand(v:LMMTerm,e:LMMContext)
+
+LMMTerm = lmmVar(x:Name)
+        | lmmMu(m:LMMMu)
+        | lmmLam(l:LMMLam)
+        | lmmFLam(fl:LMMFLam)
+
+LMMContext = lmmCoVar(a:CoName)
+           | lmmMuT(mt:LMMMuT)
+           | lmmDot(v:LMMTerm,e:LMMContext)
+           | lmmFDot(ft:Term,e:LMMContext)
+
+LMMMu binds CoName = LmmMu(a:CoName, outer p:Prop, inner c:LMMCommand)
+LMMMuT binds Name = LmmMuT(x:Name, outer p:Prop, inner c:LMMCommand)
+LMMLam binds Name = LmmLam(x:Name, outer p:Prop, inner t:LMMTerm)
+LMMFLam binds FoVar = LmmFLam(fx:FoVar, inner t:LMMTerm)

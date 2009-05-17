@@ -484,5 +484,33 @@ public class Pretty {
     throw new RuntimeException("non exhaustive patterns"); 
   }
 
+  /* raw lambda-mu terms */
+
+  public static String pretty(RawLMMTerm t) {
+    %match(t) {
+      RawlmmVar(v) -> { return `v; }
+      RawlmmLam(RawLmmLam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
+      RawlmmFLam(RawLmmFLam(fx,u)) -> { return "\u03BB" + %[@`fx@.@`pretty(u)@]%; }
+      RawlmmMu(RawLmmMu(a,ty,c)) -> { return "\u03BC" + %[@`pr(a,ty)@.@`pretty(c)@]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pretty(RawLMMContext e) {
+    %match(e) {
+      RawlmmCoVar(v) -> { return `v; }
+      RawlmmMuT(RawLmmMuT(x,ty,c)) -> { return "\u03BC\u0303" + %[@`pr(x,ty)@.@`pretty(c)@]%; }
+      RawlmmDot(v,e1) -> { return `pretty(v) + " \u00B7 " + `pretty(e1);  }
+      RawlmmFDot(ft,e1) -> { return `pretty(ft) + " \u00B7 " + `pretty(e1);  }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pretty(RawLMMCommand c) {
+    //%match(c) { RawlmmCommand(v,e) -> { return "\u2329" + `pretty(v) + " | " + `pretty(e) + "\u232A"; } }
+    %match(c) { RawlmmCommand(v,e) -> { return "<" + `pretty(v) + "|" + `pretty(e) + ">"; } }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
 }
 

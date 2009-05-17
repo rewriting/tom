@@ -14,6 +14,8 @@ import lemu2.util.*;
 import org.antlr.runtime.*;
 import java.util.Collection;
 
+import fj.data.List;
+
 public class Main {
 
   %include { kernel/proofterms/proofterms.tom } 
@@ -88,9 +90,23 @@ public class Main {
       System.out.println("after eta-reduction  : " + Pretty.pretty(pure_lmu_eta.export()));
       System.out.println(" : " + Pretty.pretty(LambdaMuTypeChecker.typeof(pure_lmu_eta).export()));
       System.out.println("to coq               : " + Pretty.pretty(LambdaMutoCoq.convert(pure_lmu_eta).export()));
-     
+      LMMTerm pure_lmm = LKtoLambdaBarMuMuT.convert(pure);
+
+
+      /* lambda-bar mu mu~ reduction of the translation */
+      System.out.println("before reduction : " + Pretty.pretty(pure_lmm.export()));
+      System.out.println("reducts : ");
+      Iterable<LMMTerm> red = LambdaBarMuMuT.eta(LambdaBarMuMuT.eval(pure_lmm));
+      List<LMMTerm> buf = List.<LMMTerm>nil();
+      for (LMMTerm t: red) {
+        if (!buf.toCollection().contains(t)) {
+          System.out.println("- " + Pretty.pretty(t.export()));
+          buf = buf.cons(t);
+        }
+      }
+      System.out.println("(" + buf.length() + " normal forms)");
       
-      
+      /* urban reduction */
       System.out.println();
       System.out.println("normal forms :");
       System.out.println(prettyNormalForms(Urban.reduce(pt),rrules,prules,pfrules));
