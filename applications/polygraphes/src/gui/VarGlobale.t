@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 public class VarGlobale{
 	
 	public static int filhauteurdefaut = 15;
-	public static int modeaffichage=0
+	public static int modeaffichage=0;
 	public static Log mLog;
 	
 	public static void ecritLigne(String str){

@@ -1,6 +1,7 @@
 package gui;
 
 import org.w3c.dom.*;
+
 import java.io.File;
 import adt.polygraphicprogramgui.types.*;
 import adt.polygraphicprogramgui.types.onepath.*;
@@ -81,6 +82,7 @@ public class XMLhandlerGui {
 
   // make a 2-path term from its xml description
   public static TwoPath makeTwoPath(Node node){
+		
 	  String nodeName =node.getNodeName();
 	  if(nodeName.equals("TwoPath")){
 		  NodeList nodeChilds=node.getChildNodes();
@@ -93,7 +95,10 @@ public class XMLhandlerGui {
 		  NodeList nodeChilds=node.getChildNodes();
 		  for (int i = 0; i < nodeChilds.getLength(); i++) {
 			  Node nodeChild=nodeChilds.item(i);
-			  if(!nodeChild.getNodeName().equals("#text")){return `TwoId(makeOnePath(nodeChild));}
+			  if(!nodeChild.getNodeName().equals("#text")){
+				  TwoPath ti = `TwoId(makeOnePath(nodeChild));		  
+				  return ti;
+			  }
 		  }
 	  }
 	  if(nodeName.equals("TwoCell")){
