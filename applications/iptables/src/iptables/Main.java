@@ -8,7 +8,7 @@ import iptables.analyser.types.*;
 import iptables.analyser.AnalyserAdaptor;
 import iptables.iptables.IptablesAdaptor;
 */
-import iptables.iptableslistast.IptablesListAstAdaptor;
+import iptables.ast.IptablesListParserAstAdaptor;
 import iptables.iptableslist.types.*;
 import iptables.iptablescmd.types.*;
 import iptables.firewall.types.*;
@@ -75,7 +75,7 @@ public class Main {
 				new IptablesListParserParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
-				(FirewallRules) IptablesListAstAdaptor.getTerm(b1);
+				(FirewallRules) IptablesListParserAstAdaptor.getTerm(b1);
 			if (options.debug)
 				System.out.println("***inst = " + inst + "\n");
 

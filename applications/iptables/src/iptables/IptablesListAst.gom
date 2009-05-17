@@ -1,3 +1,0 @@
-module iptables.IptablesListAst
-imports Analyser AddressParser Firewall IptablesList IptablesCmd
-abstract syntax
