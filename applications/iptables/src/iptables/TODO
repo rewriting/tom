@@ -1,5 +1,4 @@
 -Fix Rule's String grammar bug
--Modify the Analyser ordering Rules
 -Add !iptables parsers/output
 
 -Modify Analyser structure to allow unknown options (String)

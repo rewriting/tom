@@ -12,11 +12,6 @@ public class Analyser {
 	%include {iptables/analyser/Analyser.tom}
 	%include {sl.tom}
 
-	public static final int 
-		NOT_COMPARABLE = Integer.MAX_VALUE,
-		INCLUDEDEQ = -1, INCLUDEDDIF = -2,
-		EQUALSEQ = 0, EQUALSDIF = 8,
-		INCLUDESEQ = 1, INCLUDESDIF = 2;
 	public static int[] anomalies = { 0,0,0,0 };
 
 	public static void printError(String errtype, Rule r1, String errmsg,
@@ -47,7 +42,7 @@ public class Analyser {
 	}
 
 	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
-		System.out.print("\n[1] "+ `r1 + "\n[2] " + `r2 + "\n[0] none\n"
+		System.out.print("\n[1] "+ `r1 + "\n[2] " + `r2 + "\n[0] None\n"
 			+ msg + " [0/1/2] ? ");
 		BufferedReader input = 
 			new BufferedReader(new InputStreamReader(System.in));
@@ -116,16 +111,35 @@ public class Analyser {
 	public static Rule checkShadowing(Rule r1, Rule r2) 
 					throws InteractiveNeededException {
 		%match(r1,r2) {
-				Rule[],
-				Rule[]
+			/* The first rule has the better priority (order) */
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
 			 -> {
-				int i = isInclude(`r1,`r2);
-				if (i == INCLUDEDDIF) {
+				/* No problems if the actions are equals */
+				if (`a1 == `a2)
+					return null;
+
+				int incs = AddressTools.isInclude(
+					`srcaddr1,`srcaddr2),
+				    incd = AddressTools.isInclude(
+					`dstaddr1,`dstaddr2);
+
+				/* If the first rule is included in the second */
+				if (((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.INCLUDED))
+				|| ((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.EQUALS))
+				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDED))
+				) {
 					printError("shadowing",`r1,
 						"shadows",`r2);
 					anomalies[0]++;
 					throw new InteractiveNeededException();
-				} else if (i == EQUALSDIF) {
+
+				/* If the two rules are equals */
+				} else if ((incs == AddressTools.EQUALS)
+				&& (incd == AddressTools.EQUALS)) {
 					printError("shadowing",`r1,
 						"in conflict with",`r2);
 					anomalies[0]++;
@@ -139,25 +153,50 @@ public class Analyser {
 	/* returns englobing rule */
 	public static Rule checkRedundancy(Rule r1, Rule r2) {
 		%match(r1,r2) {
-				Rule[],
-				Rule[]
+			/* The first rule has the better priority (order) */
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
 			 -> {
-				int i = isInclude(`r1,`r2);
-				if (i == INCLUDESEQ) {
+				/* No problems if actions are differents */
+				if (`a1 != `a2)
+					return null;
+
+				int incs = AddressTools.isInclude(
+					`srcaddr1,`srcaddr2),
+				    incd = AddressTools.isInclude(
+					`dstaddr1,`dstaddr2);
+
+				/* If the second rule is included in the first */
+				if (((incs == AddressTools.INCLUDES)
+					&& (incd == AddressTools.INCLUDES))
+				|| ((incs == AddressTools.INCLUDES)
+					&& (incd == AddressTools.EQUALS))
+				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDES))
+				) {
 					printWarning("redundancy",`r2,
 						"included in",`r1);
 					anomalies[1]++;
 					return `r1;
-				} else if (i == INCLUDEDEQ) {
+				/* If the first rule is included in the second */
+				} else if (((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.INCLUDED))
+				|| ((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.EQUALS))
+				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDED))
+				) {
 					printWarning("redundancy",`r1,
 						"included in",`r2);
 					anomalies[1]++;
 					return `r2;
-				} else if (i == EQUALSEQ) {
+				/* If the two rules are equals */
+				} else if ((incs == AddressTools.EQUALS)
+				&& (incd == AddressTools.EQUALS)) {
 					printWarning("redundancy",`r1,
 						"equivalent to",`r2);
 					anomalies[1]++;
-					return `r1;
+					return `r2;
 				}
 			}
 		}
@@ -167,11 +206,27 @@ public class Analyser {
 	public static Rule checkGeneralization(Rule r1, Rule r2)
 					throws InteractiveNeededException {
 		%match(r1,r2) {
-				Rule[],
-				Rule[]
+			/* The first rule has the better priority (order) */
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
 			 -> {
-				int i = isInclude(`r1,`r2);
-				if (i == INCLUDESDIF) {
+				/* No problems if actions are equals */
+				if (`a1 == `a2)
+					return null;
+
+				int incs = AddressTools.isInclude(
+					`srcaddr1,`srcaddr2),
+				    incd = AddressTools.isInclude(
+					`dstaddr1,`dstaddr2);
+
+				/* If the second rule is included in the first */
+				if (((incs == AddressTools.INCLUDES)
+					&& (incd == AddressTools.INCLUDES))
+				|| ((incs == AddressTools.INCLUDES)
+					&& (incd == AddressTools.EQUALS))
+				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDES))
+				) {
 					printWarning("generalization",`r1,
 						"generalized by",`r2);
 					anomalies[2]++;
@@ -182,13 +237,30 @@ public class Analyser {
 		return null;
 	}
 
+	/* >>>TODO: rewrite this test respecting the publication specification */
 	public static Rule checkCorrelation(Rule r1, Rule r2) {
 		%match(r1,r2) {
-				Rule[],
-				Rule[]
-			 -> {
-				int i = isInclude(`r1,`r2);
-				if (i == INCLUDEDDIF)  {
+			/* The first rule has the better priority (order) */
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
+			-> {
+				/* No problems if actions are equals */
+				if (`a1 == `a2)
+					return null;
+
+				int incs = AddressTools.isInclude(
+					`srcaddr1,`srcaddr2),
+				    incd = AddressTools.isInclude(
+					`dstaddr1,`dstaddr2);
+
+				/* If the first rule is included in the second */
+				if (((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.INCLUDED))
+				|| ((incs == AddressTools.INCLUDED)
+					&& (incd == AddressTools.EQUALS))
+				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDED))
+				) {
 					printWarning("correlation",`r1,
 						"correlated to",`r2);
 					anomalies[3]++;
@@ -196,40 +268,5 @@ public class Analyser {
 			}
 		}
 		return null;
-	}
-
-	/* 	returns:
-			0 if Rules are equals, 
-			1 if r2 is included in r1,
-			-1 if r1 include in r2
-			NOT_COMPARABLE if the 2 rules are not comparable
-	*/
-	private static int isInclude(Rule r1, Rule r2) {
-		%match(r1,r2) {
-			Rule(action1,iface,proto,target,srcaddr1,dstaddr1,srcport,dstport,opts,_),
-			Rule(action2,iface,proto,target,srcaddr2,dstaddr2,srcport,dstport,opts,_) -> {
-				int i1 = AddressTools.isInclude(`srcaddr1,`srcaddr2),
-					i2 = AddressTools.isInclude(`dstaddr1,`dstaddr2),ret = Integer.MAX_VALUE;
-				if ((i1 != NOT_COMPARABLE) && (i2 != NOT_COMPARABLE)) {
-					if (i1 == 0) {
-						ret = i2;
-					} else if (i2 == 0) {
-						ret = i1;
-					} else {
-						if ((i1 > 0) && (i2 > 0))
-							ret = INCLUDESEQ;
-						else if ((i1 < 0) && (i2 < 0))
-							ret = INCLUDEDEQ;
-					}
-					if (`action1 == `action2)
-						return ret;
-					else
-						return (ret == EQUALSEQ ? 
-							EQUALSDIF : ret * 2);
-					
-				}
-			}
-		}
-		return NOT_COMPARABLE;
 	}
 }
