@@ -712,6 +712,7 @@ public class U {
       lmmMu(LmmMu(_,_,u)) -> { return `getFreeNames(ctx,u); }
       lmmLam(LmmLam(x,_,u)) -> { return `getFreeNames(nameList(x,ctx*),u); }
       lmmFLam(LmmFLam(_,u)) -> { return `getFreeNames(ctx,u); }
+      lmmFoldR(_,u) -> { return `getFreeNames(ctx,u); }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
@@ -736,6 +737,7 @@ public class U {
         return (nameList) `nameList(l1*,l2*);
       }
       lmmFDot(_,e1) -> { return `getFreeNames(ctx,e1); }
+      lmmFoldL(_,e1) -> { return `getFreeNames(ctx,e1); }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
@@ -773,6 +775,7 @@ public class U {
       lmmMu(LmmMu(a,_,u)) -> { return `getFreeCoNames(conameList(a,ctx*),u); }
       lmmLam(LmmLam(_,_,u)) -> { return `getFreeCoNames(ctx,u); }
       lmmFLam(LmmFLam(_,u)) -> { return `getFreeCoNames(ctx,u); }
+      lmmFoldR(_,u) -> { return `getFreeCoNames(ctx,u); }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }
@@ -797,6 +800,7 @@ public class U {
         return (conameList) `conameList(l1*,l2*);
       }
       lmmFDot(_,e1) -> { return `getFreeCoNames(ctx,e1); }
+      lmmFoldL(_,e1) -> { return `getFreeCoNames(ctx,e1); }
     }
     throw new RuntimeException("non exhaustive patterns"); 
   }

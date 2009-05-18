@@ -149,11 +149,13 @@ LMMTerm = lmmVar(x:Name)
         | lmmMu(m:LMMMu)
         | lmmLam(l:LMMLam)
         | lmmFLam(fl:LMMFLam)
+        | lmmFoldR(rule:String,t:LMMTerm)
 
 LMMContext = lmmCoVar(a:CoName)
            | lmmMuT(mt:LMMMuT)
            | lmmDot(v:LMMTerm,e:LMMContext)
            | lmmFDot(ft:Term,e:LMMContext)
+           | lmmFoldL(rule:String,e:LMMContext)
 
 LMMMu binds CoName = LmmMu(a:CoName, outer p:Prop, inner c:LMMCommand)
 LMMMuT binds Name = LmmMuT(x:Name, outer p:Prop, inner c:LMMCommand)

@@ -90,10 +90,10 @@ public class Main {
       System.out.println("after eta-reduction  : " + Pretty.pretty(pure_lmu_eta.export()));
       System.out.println(" : " + Pretty.pretty(LambdaMuTypeChecker.typeof(pure_lmu_eta).export()));
       System.out.println("to coq               : " + Pretty.pretty(LambdaMutoCoq.convert(pure_lmu_eta).export()));
-      LMMTerm pure_lmm = LKtoLambdaBarMuMuT.convert(pure);
 
 
       /* lambda-bar mu mu~ reduction of the translation */
+      LMMTerm pure_lmm = LKFtoLambdaBarMuMuTF.convert(pt);
       System.out.println("before reduction : " + Pretty.pretty(pure_lmm.export()));
       System.out.println("reducts : ");
       Iterable<LMMTerm> red = LambdaBarMuMuT.eta(LambdaBarMuMuT.eval(pure_lmm));

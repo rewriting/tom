@@ -492,6 +492,7 @@ public class Pretty {
       RawlmmLam(RawLmmLam(x,ty,u)) -> { return "\u03BB" + %[@`pr(x,ty)@.@`pretty(u)@]%; }
       RawlmmFLam(RawLmmFLam(fx,u)) -> { return "\u03BB" + %[@`fx@.@`pretty(u)@]%; }
       RawlmmMu(RawLmmMu(a,ty,c)) -> { return "\u03BC" + %[@`pr(a,ty)@.@`pretty(c)@]%; }
+      RawlmmFoldR(rule,u) -> { return %[(lfold[@`rule@] @`pretty(u)@)]%; } 
     }
     throw new RuntimeException("non exhaustive patterns");
   }
@@ -502,6 +503,7 @@ public class Pretty {
       RawlmmMuT(RawLmmMuT(x,ty,c)) -> { return "\u03BC\u0303" + %[@`pr(x,ty)@.@`pretty(c)@]%; }
       RawlmmDot(v,e1) -> { return `pretty(v) + " \u00B7 " + `pretty(e1);  }
       RawlmmFDot(ft,e1) -> { return `pretty(ft) + " \u00B7 " + `pretty(e1);  }
+      RawlmmFoldL(rule,e1) -> { return %[(rfold[@`rule@] @`pretty(e1)@)]%; } 
     }
     throw new RuntimeException("non exhaustive patterns");
   }
