@@ -71,7 +71,7 @@ public class AddressParser {
 					(~0 << (32 - Integer.parseInt(strs[1])));
 				byte[] bs={0};
 				try {
-					bs = (InetAddress.getByName(`ipStr))
+					bs = (Inet4Address.getByName(strs[0]))
 						.getAddress();
 				} catch(Exception e) {};
 				
@@ -86,7 +86,7 @@ public class AddressParser {
 					(~0L << (32 - Integer.parseInt(strs[1])));
 				byte[] bs={0};
 				try {
-					bs = (InetAddress.getByName(`ipStr))
+					bs = (Inet6Address.getByName(strs[0]))
 						.getAddress();
 				} catch(Exception e) {};
 				
