@@ -17,7 +17,7 @@ tokens {
 
 file : (rule)* EOF -> ^(FirewallRulesIptablesCmd ^(IptablesCmdRules (rule)*));
 
-rule: CMD_IPTABLES command -> ^(IptablesCmdRules command);
+rule: CMD_IPTABLES command -> ^(command);
 
 command:
 	CMD_APPEND target (opts)* OPT_ACTION action { String str = $command.text; }

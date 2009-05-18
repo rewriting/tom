@@ -9,7 +9,7 @@ import iptables.analyser.AnalyserAdaptor;
 import iptables.iptables.IptablesAdaptor;
 */
 import iptables.ast.IptablesListParserAstAdaptor;
-import iptables.ast.IptablesListParserAstAdaptor;
+import iptables.ast.IptablesCmdParserAstAdaptor;
 import iptables.iptableslist.types.*;
 import iptables.iptablescmd.types.*;
 import iptables.firewall.types.*;
@@ -68,19 +68,19 @@ public class Main {
 				fileinput = new FileInputStream(options.in);
 			}
 			// Parse the input expression and build an AST
-			IptablesListParserLexer lexer = 
-				new IptablesListParserLexer(
+			IptablesCmdParserLexer lexer = 
+				new IptablesCmdParserLexer(
 					new ANTLRInputStream(fileinput));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			IptablesListParserParser ruleParser = 
-				new IptablesListParserParser(tokens);
+			IptablesCmdParserParser ruleParser = 
+				new IptablesCmdParserParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
-				(FirewallRules) IptablesListParserAstAdaptor.getTerm(b1);
+				(FirewallRules) IptablesCmdParserAstAdaptor.getTerm(b1);
 			if (options.debug)
 				System.out.println("***inst = " + inst + "\n");
 
-			Rules rs = (new IptablesListWrapper()).wrap(inst);
+			Rules rs = (new IptablesCmdWrapper()).wrap(inst);
 			if (options.debug)
 				System.out.println("***rules = " + rs + "\n");
 
