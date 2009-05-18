@@ -6,8 +6,10 @@
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${example}">
       <fileset dir="${examples.dir}/${example}">
+      <include name="examples"/>
+      <include name="examplefreshlambda"/>
       </fileset>
-    </copy>
+   </copy>
     <gom.preset srcdir="${examples.dir}"
       termgraph="true"
       destdir="${examples.gen}">          
