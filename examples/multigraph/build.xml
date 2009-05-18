@@ -4,7 +4,6 @@
   <property name="example" value="multigraph"/>
   <target name="build" depends="init">
     <gom.preset srcdir="${examples.dir}"
-      package="${example}"
       termpointer="true"
       withCongruenceStrategies="true"
       destdir="${examples.gen}">          

@@ -1,4 +1,4 @@
-module Elist
+module gom.Elist
 imports int
 abstract syntax
 Elist = Nil()

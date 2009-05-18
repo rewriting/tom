@@ -4,7 +4,6 @@
   <property name="example" value="lambdacalculi"/>
   <target name="build" depends="init">
     <gom.preset srcdir="${examples.dir}"
-      package="${example}"
       termgraph="true"
       withCongruenceStrategies="true"
       destdir="${examples.gen}">          

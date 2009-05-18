@@ -1,4 +1,4 @@
-module term
+module multigraph.term
 imports String
 abstract syntax
 

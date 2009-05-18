@@ -1,4 +1,4 @@
-module lambdaterm
+module termgraph.lambdaterm
 imports String
 abstract syntax
 LambdaTerm =

@@ -9,7 +9,6 @@
       </fileset>
     </copy>
     <gom.preset srcdir="${examples.dir}"
-      package="${example}"
       termgraph="true"
       destdir="${examples.gen}">          
       <include name="${example}/**/*.gom"/>
@@ -17,7 +16,6 @@
       <exclude name="${example}/**/lambdaterm.gom"/>
     </gom.preset>
     <gom.preset srcdir="${examples.dir}"
-      package="${example}"
       termgraph="true"
       withCongruenceStrategies="true"
       destdir="${examples.gen}">          

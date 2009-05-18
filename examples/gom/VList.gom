@@ -1,4 +1,4 @@
-module VList
+module gom.VList
 imports int
 abstract syntax
 VList = conc( int* )

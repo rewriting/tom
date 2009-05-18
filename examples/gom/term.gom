@@ -1,4 +1,4 @@
-module term
+module gom.term
 abstract syntax
 Term = a()
      | b()

@@ -5,7 +5,6 @@
 
   <target name="build" depends="init">
   <gom.preset srcdir="${examples.dir}"
-    package="${example}"
     withCongruenceStrategies="true"
     destdir="${examples.gen}">          
     <include name="${example}/**/Trees.gom"/>

@@ -1,4 +1,4 @@
-module Wfg
+module bpel.Wfg
 imports String 
 abstract syntax
 

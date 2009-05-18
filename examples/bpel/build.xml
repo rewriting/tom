@@ -6,7 +6,6 @@
     <!-- copy resources in build -->
     <mkdir dir="${examples.gen}/${example}"/>
     <gom.preset srcdir="${examples.dir}"
-      package="${example}"
       termgraph="true"
       withCongruenceStrategies="true"
       destdir="${examples.gen}">          

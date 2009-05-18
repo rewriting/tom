@@ -1,4 +1,4 @@
-module freshlambda
+module termgraph.freshlambda
 imports int String
 abstract syntax
 
