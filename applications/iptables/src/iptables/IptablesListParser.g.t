@@ -21,12 +21,12 @@ file :
 
 block:	'Chain' target '(policy' action ')'
 	'target' 'prot' 'opt' 'source' 'destination'
-	(rule)* -> ^(
-		IptablesListBlock target action ^(IptablesListRules (rule)*) {$block.text}
+	(rule)* { String str = $rule.text; } -> ^(
+		IptablesListBlock target action ^(IptablesListRules (rule)*) STRING[str]
 	);
 
-rule:	action proto oopt a1=address a2=address opts /*{str = $rule.text; System.out.println("*** " + str); }*/ -> ^(
-		IptablesListRule action proto $a1 $a2 opts {$rule.text}
+rule:	action proto oopt a1=address a2=address opts { String str = $rule.text; } -> ^(
+		IptablesListRule action proto $a1 $a2 opts STRING[str]
 	);
 
 action : 

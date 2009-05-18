@@ -9,6 +9,7 @@ import iptables.analyser.AnalyserAdaptor;
 import iptables.iptables.IptablesAdaptor;
 */
 import iptables.ast.IptablesListParserAstAdaptor;
+import iptables.ast.IptablesListParserAstAdaptor;
 import iptables.iptableslist.types.*;
 import iptables.iptablescmd.types.*;
 import iptables.firewall.types.*;

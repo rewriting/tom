@@ -14,16 +14,16 @@ public class Analyser {
 
 	public static int[] anomalies = { 0,0,0,0 };
 
-	public static void printError(String errtype, Rule r1, String errmsg,
-		Rule r2) {
-		System.err.println("error[" + errtype + "]: " + `r1 + " <" + 
-			errmsg + "> " + `r2 + "\n");
+	public static void printError(String errtype, String r1, String errmsg,
+		String r2) {
+		System.err.println("error[" + errtype + "]: \n---\n'" + r1 
+			+ "' \n\t<" + errmsg + "> \n'" + r2 + "'\n---");
 	}
 
-	public static void printWarning(String errtype, Rule r1, String errmsg,
-		Rule r2) {
-		System.err.println("warning[" + errtype + "]: " + `r1 + " <"
-			+ errmsg + "> " + `r2 + "\n");
+	public static void printWarning(String errtype, String r1,
+		String errmsg, String r2) {
+		System.err.println("warning[" + errtype + "]: " + r1 + " <"
+			+ errmsg + "> " + r2 + "\n");
 	}
 
 	public static void printReport() {
@@ -42,8 +42,12 @@ public class Analyser {
 	}
 
 	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
-		System.out.print("\n[1] "+ `r1 + "\n[2] " + `r2 + "\n[0] None\n"
-			+ msg + " [0/1/2] ? ");
+		%match(r1,r2) {
+			Rule[input=s1],Rule[input=s2] -> {
+				System.out.print("[1] "+ `s1 + "\n[2] " + `s2 
+					+ "\n[0] None\n" + msg + " [0/1/2] ? ");
+			}
+		}
 		BufferedReader input = 
 			new BufferedReader(new InputStreamReader(System.in));
 	
@@ -112,8 +116,8 @@ public class Analyser {
 					throws InteractiveNeededException {
 		%match(r1,r2) {
 			/* The first rule has the better priority (order) */
-			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
-			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,s1),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,s2)
 			 -> {
 				/* No problems if the actions are equals */
 				if (`a1 == `a2)
@@ -132,16 +136,16 @@ public class Analyser {
 				|| ((incs == AddressTools.EQUALS)
 					&& (incd == AddressTools.INCLUDED))
 				) {
-					printError("shadowing",`r1,
-						"shadows",`r2);
+					printError("shadowing",`s1,
+						"shadows",`s2);
 					anomalies[0]++;
 					throw new InteractiveNeededException();
 
 				/* If the two rules are equals */
 				} else if ((incs == AddressTools.EQUALS)
 				&& (incd == AddressTools.EQUALS)) {
-					printError("shadowing",`r1,
-						"in conflict with",`r2);
+					printError("shadowing",`s1,
+						"in conflict with",`s2);
 					anomalies[0]++;
 					throw new InteractiveNeededException();
 				}
@@ -154,8 +158,8 @@ public class Analyser {
 	public static Rule checkRedundancy(Rule r1, Rule r2) {
 		%match(r1,r2) {
 			/* The first rule has the better priority (order) */
-			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
-			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,s1),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,s2)
 			 -> {
 				/* No problems if actions are differents */
 				if (`a1 != `a2)
@@ -174,8 +178,8 @@ public class Analyser {
 				|| ((incs == AddressTools.EQUALS)
 					&& (incd == AddressTools.INCLUDES))
 				) {
-					printWarning("redundancy",`r2,
-						"included in",`r1);
+					printWarning("redundancy",`s2,
+						"included in",`s1);
 					anomalies[1]++;
 					return `r1;
 				/* If the first rule is included in the second */
@@ -186,15 +190,15 @@ public class Analyser {
 				|| ((incs == AddressTools.EQUALS)
 					&& (incd == AddressTools.INCLUDED))
 				) {
-					printWarning("redundancy",`r1,
-						"included in",`r2);
+					printWarning("redundancy",`s1,
+						"included in",`s2);
 					anomalies[1]++;
 					return `r2;
 				/* If the two rules are equals */
 				} else if ((incs == AddressTools.EQUALS)
 				&& (incd == AddressTools.EQUALS)) {
-					printWarning("redundancy",`r1,
-						"equivalent to",`r2);
+					printWarning("redundancy",`s1,
+						"equivalent to",`s2);
 					anomalies[1]++;
 					return `r2;
 				}
@@ -207,8 +211,8 @@ public class Analyser {
 					throws InteractiveNeededException {
 		%match(r1,r2) {
 			/* The first rule has the better priority (order) */
-			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
-			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,s1),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,s2)
 			 -> {
 				/* No problems if actions are equals */
 				if (`a1 == `a2)
@@ -227,8 +231,8 @@ public class Analyser {
 				|| ((incs == AddressTools.EQUALS)
 					&& (incd == AddressTools.INCLUDES))
 				) {
-					printWarning("generalization",`r1,
-						"generalized by",`r2);
+					printWarning("generalization",`s1,
+						"generalized by",`s2);
 					anomalies[2]++;
 					throw new InteractiveNeededException();
 				}
@@ -241,8 +245,8 @@ public class Analyser {
 	public static Rule checkCorrelation(Rule r1, Rule r2) {
 		%match(r1,r2) {
 			/* The first rule has the better priority (order) */
-			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,_),
-			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,_)
+			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,s1),
+			Rule(a2,i,p,t,srcaddr2,dstaddr2,spt,dpt,opts,s2)
 			-> {
 				/* No problems if actions are equals */
 				if (`a1 == `a2)
@@ -261,8 +265,8 @@ public class Analyser {
 				|| ((incs == AddressTools.EQUALS)
 					&& (incd == AddressTools.INCLUDED))
 				) {
-					printWarning("correlation",`r1,
-						"correlated to",`r2);
+					printWarning("correlation",`s1,
+						"correlated to",`s2);
 					anomalies[3]++;
 				}
 			}

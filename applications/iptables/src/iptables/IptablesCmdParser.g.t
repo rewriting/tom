@@ -20,10 +20,10 @@ file : (rule)* EOF -> ^(FirewallRulesIptablesCmd ^(IptablesCmdRules (rule)*));
 rule: CMD_IPTABLES command -> ^(IptablesCmdRules command);
 
 command:
-	CMD_APPEND target (opts)* OPT_ACTION action 
-		-> ^(IptablesCmdAppend target (opts)* action {$command.text})
-	| CMD_POLICY target action 
-		-> ^(IptablesCmdPolicy target action {$command.text})
+	CMD_APPEND target (opts)* OPT_ACTION action { String str = $command.text; }
+		-> ^(IptablesCmdAppend target (opts)* action STRING[str])
+	| CMD_POLICY target action { String str = $command.text; }
+		-> ^(IptablesCmdPolicy target action STRING[str])
 	;
 
 action : 
