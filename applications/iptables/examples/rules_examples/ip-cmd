@@ -1,0 +1,1 @@
+iptables -A INPUT -p tcp –syn –destination-port 22 -j ACCEPT
