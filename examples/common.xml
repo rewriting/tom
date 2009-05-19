@@ -165,6 +165,9 @@
         <include name="${example}/**/*.ml"/>
         <include name="${example}/**/*.xml"/>
         <include name="${example}/**/*.txt"/>
+        <include name="${example}/**/*.jrag"/>
+        <include name="${example}/**/*.jadd"/>
+        <include name="${example}/**/*.ast"/>
         <include name="${example}/**/Makefile"/>
         <include name="${example}/**/*.html"/>
         <include name="${example}/**/*.gif"/>
