@@ -259,10 +259,8 @@ public class Analyser {
 
 				/* If the first rule is included in the second */
 				if (((incs == AddressTools.INCLUDED)
-					&& (incd == AddressTools.INCLUDED))
-				|| ((incs == AddressTools.INCLUDED)
-					&& (incd == AddressTools.EQUALS))
-				|| ((incs == AddressTools.EQUALS)
+					&& (incd == AddressTools.INCLUDES))
+				|| ((incs == AddressTools.INCLUDES)
 					&& (incd == AddressTools.INCLUDED))
 				) {
 					printWarning("correlation",`s1,
