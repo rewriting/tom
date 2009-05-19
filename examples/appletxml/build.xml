@@ -6,7 +6,7 @@
     <!-- Create a jar for the applet -->
     <path id="tom-runtime.path">
       <fileset dir="${tom.home}/lib">
-        <include name="tom-runtime-full*.jar"/>
+        <include name="tom-runtime-full.jar"/>
       </fileset>
     </path>
     <property name="tom-runtime.jar" refid="tom-runtime.path"/>

@@ -35,7 +35,7 @@
     <!-- Create a jar for the applet -->
     <path id="runtime.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="**/tom-runtime*.jar"/>
+        <include name="tom-runtime-full.jar"/>
       </fileset>
     </path>
     <property name="tom-runtime.jar" refid="runtime.path"/>

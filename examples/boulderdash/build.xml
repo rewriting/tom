@@ -21,12 +21,12 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <path id="runtime.path"> <!-- ugly hack to find the jar -->
+    <path id="tom-runtime.path">
       <fileset dir="${tom.home}/lib">
-        <include name="**/tom-runtime*.jar"/>
+        <include name="tom-runtime-full.jar"/>
       </fileset>
     </path>
-    <property name="tom-runtime.jar" refid="runtime.path"/>
+    <property name="tom-runtime.jar" refid="tom-runtime.path"/>
     <jar jarfile="${examples.build}/${example}/boulder.jar">
       <fileset dir="${examples.build}">
         <include name="${example}/**/*.class"/>
