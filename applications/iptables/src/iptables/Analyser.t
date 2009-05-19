@@ -17,13 +17,13 @@ public class Analyser {
 	public static void printError(String errtype, String r1, String errmsg,
 		String r2) {
 		System.err.println("error[" + errtype + "]: \n---\n'" + r1 
-			+ "' \n\t<" + errmsg + "> \n'" + r2 + "'\n---");
+			+ "'\n\t<" + errmsg + "> \n'" + r2 + "'\n---");
 	}
 
 	public static void printWarning(String errtype, String r1,
 		String errmsg, String r2) {
-		System.err.println("warning[" + errtype + "]: " + r1 + " <"
-			+ errmsg + "> " + r2 + "\n");
+		System.err.println("warning[" + errtype + "] \n---\n'" + r1 
+			+ "'\n\t<"+ errmsg + "> \n'" + r2 + "'\n---");
 	}
 
 	public static void printReport() {
