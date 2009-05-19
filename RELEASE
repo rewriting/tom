@@ -8,15 +8,12 @@ How to prepare a release:
 - ./build.sh all
 - svn commit
 
-- update the version of the manual (template.hva, tom.sty)
-- update the date of the manual (manual.tex)
-- build manual
-- cp manual.pdf manual-<version>.pdf
-- make manual.zip
-- mkdir manual-<version> ; cd manual-<version> ; unzip ../manual.zip
-- cd .. ; zip -r manual-<version>.zip manual-<version>
+- update the version of the manual
+- update the date of the manual
+- build a pdf version of the manual
+- update javadoc on the web site
 
-- prepare the eclipse plugin
+(- prepare the eclipse plugin_
 
 - prepare installation kit for windows 
 
@@ -29,7 +26,6 @@ How to prepare a release:
 
 
 - update Changelog, commit, tag the release with
-  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.6 -m "tag tree"
+  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
 
-- add news entry in jtom-doc/www/{index.php,news.php}
 

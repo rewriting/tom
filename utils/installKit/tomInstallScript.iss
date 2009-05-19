@@ -179,11 +179,11 @@ begin
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';%TOM_HOME%\lib\tom-runtime-full.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath + ';.;%TOM_HOME%\lib\tom-runtime-full.jar');
         end
       else
         begin
-          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '%TOM_HOME%\lib\tom-runtime-full.jar');
+          RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '.;%TOM_HOME%\lib\tom-runtime-full.jar');
         end
 end;
 
