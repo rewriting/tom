@@ -65,8 +65,8 @@ public class Pretty {
 
   public static String toString(Instruction i) {
     %match(i) {
-      Ins(t,p,o,s,d,lo) -> {
-        return toString(`t) + "\t" + toString(`p) + " " + toString(`o) + " " + toString(`s) + "\t\t" + toString(`d) 
+      Ins(n,t,p,o,s,d,lo) -> {
+        return `n + " : " + toString(`t) + "\t" + toString(`p) + " " + toString(`o) + " " + toString(`s) + "\t\t" + toString(`d) 
 	       		    + "\t\t" + toString(`lo) ;
       }
     }

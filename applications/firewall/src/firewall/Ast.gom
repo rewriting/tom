@@ -19,7 +19,7 @@ Policy = PolicyAccept()
 
 InstructionList = InstructionList(Instruction*)
 
-Instruction = Ins(target:Target,prot:Protocol,opt:Opt,source:Communication,destination:Communication,options:Opts)
+Instruction = Ins(num:int,target:Target,prot:Protocol,opt:Opt,source:Communication,destination:Communication,options:Opts)
 
 Target = Accept()
         |Classify()

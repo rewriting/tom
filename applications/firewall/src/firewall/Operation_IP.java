@@ -1,4 +1,4 @@
-
+package firewall;
 /**
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -20,7 +20,7 @@ public class Operation_IP {
     private static int nb_if;
     private static Object[][] if_addresses;
 
-    // --------------------- SETUP ENVIRONNEMENT METHODS -----------------------
+    // ------------------ SETUP LOCAL ENVIRONNEMENT METHODS --------------------
     /**
      * This method retrives the list of network interface on the host computer, including loopback.
      * @throws java.net.SocketException
@@ -210,7 +210,7 @@ public class Operation_IP {
         for (int i = 0; i < tab.length; i++) {
             offsets = "";
             temp = Integer.toBinaryString(tab[i]);
-            if (temp.length() < 4) {
+            if (temp.length() < 8) {
                 for (int j = 0; j < (8 - temp.length()); j++) {
                     offsets += "0";
                 }
@@ -249,11 +249,62 @@ public class Operation_IP {
     }
 
     /**
+     * This method test if the first and the second ip addresses are on the same network.
+     * @param ip1a the first element of the ipv4 address (ie : 192)
+     * @param ip1b the second element of the ipv4 address (ie : 168)
+     * @param ip1c the third element of the ipv4 address (ie : 0)
+     * @param ip1d the fourth element of the ipv4 address (ie : 1)
+     * @param suffix1 the suffix of the first ipv4 address
+     * @param ip2a the first element of the ipv4 address (ie : 192)
+     * @param ip2b the second element of the ipv4 address (ie : 168)
+     * @param ip2c the third element of the ipv4 address (ie : 0)
+     * @param ip2d the fourth element of the ipv4 address (ie : 3)
+     * @param suffix2 the suffix of the second ipv4 address
+     * @return true if both adressess are on the same network, false otherwise.
+     */
+    public static boolean belongsToNetwork(int ip1a, int ip1b, int ip1c, int ip1d, int suffix1,
+            int ip2a, int ip2b, int ip2c, int ip2d, int suffix2) {
+
+        String net1 = networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix1);
+        String net2 = networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix2);
+        System.out.println("Reseau ip1 : " + net1 + "/" + suffix1 + " reseau ip2 : " + net2 + "/" + suffix2);
+        return (net1.compareToIgnoreCase(net2) == 0) ? true : false;
+    }
+
+    /**
+     * This method test if the first or second ip networks are subnets.
+     * @param ip1a the first element of the ipv4 address (ie : 192)
+     * @param ip1b the second element of the ipv4 address (ie : 168)
+     * @param ip1c the third element of the ipv4 address (ie : 0)
+     * @param ip1d the fourth element of the ipv4 address (ie : 0)
+     * @param suffix1 the suffix of the first ipv4 address (ie : 24)
+     * @param ip2a the first element of the ipv4 address (ie : 192)
+     * @param ip2b the second element of the ipv4 address (ie : 168)
+     * @param ip2c the third element of the ipv4 address (ie : 1)
+     * @param ip2d the fourth element of the ipv4 address (ie : 0)
+     * @param suffix2 the suffix of the second ipv4 address (ie : 24)
+     * @return true if one of the network is subnet of the other, false otherwise.
+     */
+    public static boolean areSubNetworks(int ip1a, int ip1b, int ip1c, int ip1d, int suffix1,
+            int ip2a, int ip2b, int ip2c, int ip2d, int suffix2) {
+        boolean ans = false;
+        String net1 = networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix1);
+        String net2 = networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix2);
+        if (suffix1<suffix2){
+            ans = (networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix1).compareToIgnoreCase(networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix1)) ==0) ? true : false;
+        }/*else {
+            ans = (networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix2).compareToIgnoreCase(networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix2)) ==0) ? true : false;
+        }*/
+        return ans;
+    }
+
+    /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SocketException {
-        setEnvironnement();
+        //setEnvironnement();
         //displayNetworkAddressesMaskAndSuffix();
-        System.out.println("reseau :" + networkFromIPv4AndMask(192, 168, 0, 158, 30));
+        //System.out.println("reseau :" + networkFromIPv4AndMask(192, 168, 0, 158, 30));
+        System.out.println("Is subnet ? :" + areSubNetworks(192, 168, 10, 0, 24, 192, 168, 0, 0, 16));
     }
 }
