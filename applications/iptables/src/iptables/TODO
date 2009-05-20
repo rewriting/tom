@@ -1,4 +1,7 @@
 -Add !iptables parsers/output
+-Fix bug in IptablesListParser, crash when empty chain
+-Analyser: no inclusion detecter when protol included ('tcp' included in 'all')
+-Fix bug in AddressTools (address parsing is wrong)
 
 -Modify Analyser structure to allow unknown options (String)
 -Add a "unavailable translation [OPT]" message for the unknown options when pretty printing

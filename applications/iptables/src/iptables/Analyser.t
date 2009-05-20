@@ -35,10 +35,10 @@ public class Analyser {
 
 		System.out.println("---\n" + sum + " Anomalie" 
 			+ (sum > 1 ? "s" : "") + " detected.\n\n"
-			+ "Shadowing:\t" + (anomalies[0]/sum) + "%\n"
-			+ "Redundancy:\t" + (anomalies[1]/sum) + "%\n"
-			+ "Generalization:\t" + (anomalies[2]/sum) + "%\n"
-			+ "Correlation:\t" + (anomalies[3]/sum) + "%\n");
+			+ "Shadowing:\t"+(sum>0?(anomalies[0]/sum):0)+"%\n"
+			+ "Redundancy:\t"+(sum>0?(anomalies[1]/sum):0)+"%\n"
+			+ "Generalization:\t"+(sum>0?(anomalies[2]/sum):0)+"%\n"
+			+ "Correlation:\t"+(sum>0?(anomalies[3]/sum):0)+"%\n");
 	}
 
 	public Rule getDisplayRuleChoice(String msg, Rule r1, Rule r2) {
@@ -89,12 +89,12 @@ public class Analyser {
 				del = checkRedundancy(`r1,`r2);
 				/* check correlations */
 				checkCorrelation(`r1,`r2);
+				/* check generalization */
+				checkGeneralization(`r1,`r2);
 
 				try {
 					/* check shadowing */
 					checkShadowing(`r1,`r2);
-					/* check generalization */
-					checkGeneralization(`r1,`r2);
 					
 				} catch (InteractiveNeededException ine) {
 					del = (new Analyser()).getDisplayRuleChoice(
@@ -207,8 +207,7 @@ public class Analyser {
 		return null;
 	}
 
-	public static Rule checkGeneralization(Rule r1, Rule r2)
-					throws InteractiveNeededException {
+	public static Rule checkGeneralization(Rule r1, Rule r2) {
 		%match(r1,r2) {
 			/* The first rule has the better priority (order) */
 			Rule(a1,i,p,t,srcaddr1,dstaddr1,spt,dpt,opts,s1),
@@ -234,7 +233,6 @@ public class Analyser {
 					printWarning("generalization",`s1,
 						"generalized by",`s2);
 					anomalies[2]++;
-					throw new InteractiveNeededException();
 				}
 			}
 		}
