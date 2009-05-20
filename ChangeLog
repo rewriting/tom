@@ -1,5 +1,5 @@
 2009-05-16 pem
-* generate <Grammar><Gom>Adaptor instead of <Gom>Adapter
+ * generate <Grammar><Gom>Adaptor instead of <Gom>Adapter
 
 2009-05-14 pem
  * generate tom-compiler-full.jar
@@ -65,7 +65,7 @@
 2009-03-23 jcb
  * ATerms produced by external tools can be used in Gom by creating a
    converter and using it as a second parameter of fromTerm method
-   (to see how to use this mechanism : jtom/applicationis/sdfgom)
+   (to see how to use this mechanism : jtom/applications/sdfgom)
 
 2009-03-18 pem
   * bootinstall
