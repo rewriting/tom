@@ -15,7 +15,7 @@ The binary distribution of Tom consists of the following directory layout:
    |     |     +--- Bytecode           // ADT for ASM Bytecode library
    |     |     +--- TNode              // ADT for XML
    |     |
-   |     +--- tom (GPL Licence)                                                                                  
+   |     +--- tom (GPL Licence)
    |     |     +--- tom                // Tom compiler
    |     |     +--- gom                // Gom compiler
    |     |     +--- GomADT             // ADT for Gom 

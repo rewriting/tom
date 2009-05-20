@@ -3,6 +3,8 @@ How to prepare a release:
 
 - prepare release note (announce.txt)
 - in build.xml, update the property stable.version
+- ./build.sh clean.all
+- ./build.sh
 - ./build.sh bootstrap
 - ./build.sh bootinstall
 - ./build.sh all
