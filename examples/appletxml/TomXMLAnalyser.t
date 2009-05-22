@@ -44,7 +44,6 @@ public class TomXMLAnalyser {
   public static void main (String args[]) {
     TomXMLAnalyser test = new TomXMLAnalyser();
     try {
-      
       test.run(args[0]);
     } catch (Exception e) {
       System.out.println("Usage: java TomXMLAnalyser <Valid XML string>");
@@ -53,13 +52,17 @@ public class TomXMLAnalyser {
   
   public String run(String analysedString) {  
     if (analysedString != null && !analysedString.equals("")) {
+      analysedString = analysedString.trim();
       try {
         xtools = new XmlTools();
         TNode term = xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
         String res = extractEMail(term.getDocElem());
         return res;
       } catch (Exception e) {
-        return "Exception catched: Enter a Valid XML string";
+        StringWriter swriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(swriter);
+        e.printStackTrace(writer);
+        return "Exception catched: Enter a Valid XML string\n"+swriter;
       }
     } else {
       return "Enter a Valid XML string";

@@ -42,17 +42,15 @@ public class XMLConverter extends JApplet implements ActionListener {
 
   XMLConverter xmlconv;
   JButton button;
-  JTextArea input, output;
+  JTextArea inputArea, outputArea;
   String defaultText = %[
-<?xml version="1.0" encoding="windows-1252" ?>
+<?xml version="1.0" encoding="windows-1252"?>
   <authors domain="loria.fr">
   <author firstname="Pierre-Etienne" lastname="MOREAU"/>
   <author firstname="Julien" lastname="GUYON"/>
   <author firstname="Antoine" lastname="REILLES"/>
 </authors>
-]%;
-
-    /*<?xml version="1.0" encoding="windows-1252"?><authors domain="loria.fr"><author firstname="Pierre-Etienne" lastname="MOREAU"/><author firstname="Julien" lastname="GUYON"/></authors>*/
+]%.trim();
 
   public void init () {
     String text = "";
@@ -68,33 +66,33 @@ public class XMLConverter extends JApplet implements ActionListener {
     getContentPane().setBackground(Color.lightGray);
     getContentPane().setLayout(new FlowLayout());
 
-    input = new JTextArea(text, 10, 45);
-    output = new JTextArea(10, 45);
+    inputArea = new JTextArea(10, 45);
+    inputArea.setText(text);
+    outputArea = new JTextArea(10, 45);
     button = new JButton ("Generate solutions");
 
-    input.setBackground (Color.white);
-    output.setBackground(Color.white);
+    inputArea.setBackground(Color.white);
+    outputArea.setBackground(Color.white);
 
-    getContentPane().add(input);
+    getContentPane().add(inputArea);
     getContentPane().add(button);
-    getContentPane().add(output);
+    getContentPane().add(outputArea);
 
     button.addActionListener(this);
   }
 
-  public void actionPerformed (ActionEvent e) {
+  public void actionPerformed(ActionEvent e) {
     if (e.getSource() == button) {
-      String result = xmlconv.convert (input.getText());
+      String result = xmlconv.convert(inputArea.getText());
       if(result.equals("")) {
         result = "No solution found";
       }
-      output.setText(result);
+      outputArea.setText(result);
     }
   }
 
-  public String convert (String s) {
+  public String convert(String s) {
     TomXMLAnalyser conv = new TomXMLAnalyser();
     return conv.run(s);
   }
-
 }
