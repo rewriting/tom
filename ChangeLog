@@ -1,3 +1,7 @@
+2009-05-22 pem
+ * version 2.7
+ * handle \' and \\ in concString(_*,'\'',_*)
+
 2009-05-16 pem
  * generate <Grammar><Gom>Adaptor instead of <Gom>Adapter
 

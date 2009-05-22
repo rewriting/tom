@@ -133,20 +133,6 @@ options{
 
 }
 
-constant returns [Token result]
-{
-    result = null;
-}
-  : (
-          t1:NUM_INT {result = t1;}
-        | t2:CHARACTER {result = t2;}
-        | t3:STRING {result = t3;}
-        | t4:NUM_FLOAT {result = t4;}
-        | t5:NUM_LONG {result = t5;}
-        | t6:NUM_DOUBLE {result = t6;}
-        )
-    ;
-
 // the %match construct :
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
@@ -1590,6 +1576,20 @@ headConstantList [List<Option> optionList] returns [TomNameList result]
   )*
 ;
 
+constant returns [Token result]
+{
+    result = null;
+}
+  : (
+          t1:NUM_INT {result = t1;}
+        | t2:CHARACTER {result = t2;}
+        | t3:STRING {result = t3;}
+        | t4:NUM_FLOAT {result = t4;}
+        | t5:NUM_LONG {result = t5;}
+        | t6:NUM_DOUBLE {result = t6;}
+        )
+    ;
+
 headConstant [List<Option> optionList] returns [TomName result]
 { 
     result = null;
@@ -2585,7 +2585,6 @@ NUM_INT
   ;
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;
-protected QUOTE         :   '\''    ;
 protected EXPONENT      :   ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+  ;
 protected DOT           :   '.' ;
 protected FLOAT_SUFFIX  : 'f'|'F'|'d'|'D' ;

@@ -275,6 +275,25 @@ public class TestBuiltin {
   }
 
   @Test
+  public void testMatchString4() {
+    String s = "a'b\"c\\d'''e";
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int aa = 0;
+    %match(s) {
+      concString(_*,'\'',_*) -> { a++; }
+      concString(_*,'"',_*) -> { b++; }
+      concString(_*,'\\',_*) -> { c++; }
+      concString(_*,'\'\'',_*) -> { aa++; }
+    }
+    assertEquals(a,4);
+    assertEquals(b,1);
+    assertEquals(c,1);
+    assertEquals(aa,2);
+  }
+
+  @Test
   public void testMatchStringDefault() {
     assertTrue("Unknown".equals(matchString("Marcel")));
   }

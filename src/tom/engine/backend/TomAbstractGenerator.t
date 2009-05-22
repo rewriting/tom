@@ -115,6 +115,14 @@ public abstract class TomAbstractGenerator {
       }
 
       BuildConstant[AstName=Name(name)] -> {
+        if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
+          String substring = `name.substring(1,`name.length()-1);
+          //System.out.println("BuildConstant: " + substring);
+          substring = substring.replace("\\","\\\\"); // replace backslash by backslash-backslash
+          substring = substring.replace("'","\\'"); // replace quote by backslash-quote
+          output.write("'" + substring + "'");
+          return;
+        }
         output.write(`name);
         return;
       }

@@ -331,9 +331,14 @@ public class Typer extends TomGenericPlugin {
             if(symbolTable().isCharType(type) && `tomName.length()>3) {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
                 SlotList newArgs = `concSlot();
-                //System.out.println("bingo -> " + stringSymbol);
-                for(int i=`tomName.length()-2 ; i>0 ;  i--) {
-                  char c = `tomName.charAt(i);
+                String substring = `tomName.substring(1,`tomName.length()-1);
+                //System.out.println("bingo -> " + substring);
+                substring = substring.replace("\\'","'"); // replace backslash-quote by quote
+                substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
+                //System.out.println("after encoding -> " + substring);
+
+                for(int i=substring.length()-1 ; i>=0 ;  i--) {
+                  char c = substring.charAt(i);
                   String newName = "'" + c + "'";
                   TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
                   symbolTable().putSymbol(newName,newSymbol);

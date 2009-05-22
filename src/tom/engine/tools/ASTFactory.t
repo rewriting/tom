@@ -259,6 +259,7 @@ public class ASTFactory {
                              String value, List optionList) {
     String sort = "char";
     makeSortSymbol(symbolTable, sort, value, optionList);
+    //System.out.println("makeCharSymbol: -" + value + "-"); 
   }
     /*
      * create a double symbol

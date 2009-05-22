@@ -112,10 +112,18 @@ public abstract class TomAbstractGenerator {
 
         generateListInclude(deep, (( tom.engine.adt.tomterm.types.TomTerm )subject).getTomList() , moduleName);
         return;
-      }}}{if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConstant) ) { tom.engine.adt.tomname.types.TomName  tomMatch39NameNumber_freshVar_7= (( tom.engine.adt.tomterm.types.TomTerm )subject).getAstName() ;if ( (tomMatch39NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}{if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConstant) ) { tom.engine.adt.tomname.types.TomName  tomMatch39NameNumber_freshVar_7= (( tom.engine.adt.tomterm.types.TomTerm )subject).getAstName() ;if ( (tomMatch39NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch39NameNumber_freshVar_7.getString() ;
 
 
-        output.write( tomMatch39NameNumber_freshVar_7.getString() );
+        if(tom_name.charAt(0)=='\'' && tom_name.charAt(tom_name.length()-1)=='\'') {
+          String substring = tom_name.substring(1,tom_name.length()-1);
+          //System.out.println("BuildConstant: " + substring);
+          substring = substring.replace("\\","\\\\"); // replace backslash by backslash-backslash
+          substring = substring.replace("'","\\'"); // replace quote by backslash-quote
+          output.write("'" + substring + "'");
+          return;
+        }
+        output.write(tom_name);
         return;
       }}}}{if ( (subject instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )subject) instanceof tom.engine.adt.tomterm.types.tomterm.BuildTerm) ) { tom.engine.adt.tomname.types.TomName  tomMatch39NameNumber_freshVar_12= (( tom.engine.adt.tomterm.types.TomTerm )subject).getAstName() ;if ( (tomMatch39NameNumber_freshVar_12 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {buildTerm(deep, tomMatch39NameNumber_freshVar_12.getString() , (( tom.engine.adt.tomterm.types.TomTerm )subject).getArgs() , (( tom.engine.adt.tomterm.types.TomTerm )subject).getModuleName() )
 
