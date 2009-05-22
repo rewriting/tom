@@ -21,20 +21,12 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <path id="tom-runtime.path">
-      <fileset dir="${tom.home}/lib">
-        <include name="tom-runtime-full.jar"/>
-      </fileset>
-    </path>
-    <property name="tom-runtime.jar" refid="tom-runtime.path"/>
     <jar jarfile="${examples.build}/${example}/boulder.jar">
       <fileset dir="${examples.build}">
         <include name="${example}/**/*.class"/>
         <include name="${example}/**/*.gif"/>
       </fileset>
-      <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar"/>
-      <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/*"/>
+      <zipfileset src="${tom.home}/lib/tom-runtime-full.jar"/>
     </jar>
   </target>
   <property name="distribute" value="yes"/>
