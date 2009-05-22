@@ -31,5 +31,41 @@
       </fileset>
     </copy>
   </target>
+  <target name="junit" depends="common.junit">
+    <path id="junit.classpath">
+      <path refid="external.classpath"/>
+      <fileset dir="${tom.home}/lib">
+	<include name="**/junit.jar"/>
+      </fileset>
+    </path>
+    <taskdef name="applet.junit"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="junit.classpath"/>
+    </taskdef>
+    <applet.junit printsummary="on"
+	    fork="on"
+	    haltonfailure="false"
+	    failureproperty="tests.failed"
+	    showoutput="true">
+      <formatter type="brief" usefile="no"/>
+      <classpath>
+        <path refid="junit.classpath"/>
+        <fileset dir="${examples.build}/${example}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+      <sysproperty key="basedir" value="${examples.dir}"/>
+      <formatter type="xml" if="test.xmlreport"/>
+    </applet.junit>
+  </target>
   <property name="distribute" value="yes"/>
 </project>
