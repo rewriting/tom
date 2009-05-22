@@ -38,8 +38,6 @@ import java.io.*;
 public class TomXMLAnalyser {
 
   %include{ adt/tnode/TNode.tom }
-  
-  private XmlTools xtools;
 
   public static void main (String args[]) {
     TomXMLAnalyser test = new TomXMLAnalyser();
@@ -54,7 +52,7 @@ public class TomXMLAnalyser {
     if (analysedString != null && !analysedString.equals("")) {
       analysedString = analysedString.trim();
       try {
-        xtools = new XmlTools();
+        XmlTools xtools = new XmlTools();
         TNode term = xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
         String res = extractEMail(term.getDocElem());
         return res;
