@@ -16,6 +16,28 @@ LicenseFile=LICENCE
 ChangesEnvironment=yes
 PrivilegesRequired=none
 
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"
+Name: "sp"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "sk"; MessagesFile: "compiler:Languages\Slovak.isl"
+Name: "sl"; MessagesFile: "compiler:Languages\Slovenian.isl"
+Name: "no"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "hu"; MessagesFile: "compiler:Languages\Hungarian.isl"
+Name: "he"; MessagesFile: "compiler:Languages\Hebrew.isl"
+Name: "fi"; MessagesFile: "compiler:Languages\Finnish.isl"
+Name: "da"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "cs"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "ca"; MessagesFile: "compiler:Languages\Catalan.isl"
+Name: "br"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "eu"; MessagesFile: "compiler:Languages\Basque.isl"
+
 [Files]
 Source: "AUTHORS";            DestDir: "{app}"
 Source: "Gom.xml";            DestDir: "{app}"
