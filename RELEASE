@@ -15,7 +15,7 @@ How to prepare a release:
 - build a pdf version of the manual
 - update javadoc on the web site
 
-(- prepare the eclipse plugin_
+(- prepare the eclipse plugin)
 
 - prepare installation kit for windows 
 
@@ -29,5 +29,6 @@ How to prepare a release:
 
 - update Changelog, commit, tag the release with
   svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
+  svn copy svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/trunk svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/tags/tom-2.7 -m "tag tree"
 
 
