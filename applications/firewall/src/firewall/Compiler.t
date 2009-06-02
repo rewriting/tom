@@ -41,13 +41,11 @@ public class Compiler {
 	%strategy dispShadowedAnomalies() extends `Identity() {
 		visit IpTablesOutput {
 			Blocks(_*,Block(r,_,InstructionList(_*,Ins(n1,t1,p1,op1,s1,d1,o1),_*,Ins(n2,t2,p2,op2,s2,d2,o2),_*)),_*) -> {
-				%match {
-					t1!=t2 -> {
-						if (`p1.equals(`p2) || `p1.equals(`All_())) {
-							if (`s1.equals(`s2) || isIncludeIn(`s2,`s1)) {
-								if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
-									dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
-							}
+				if (!`t1.equals(`t2)) {
+					if (`p1.equals(`p2) || `p1.equals(`All_())) {
+						if (`s1.equals(`s2) || isIncludeIn(`s2,`s1)) {
+							if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
+								dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
 						}
 					}
 				}
@@ -67,34 +65,30 @@ public class Compiler {
 	// Display redondant anomalies
 	%strategy dispRedondantAnomalies() extends `Identity() {
 		visit IpTablesOutput {
-			Blocks(_*,Block(r,_,InstructionList(_*,Ins(n1,t1,p1,op1,s1,d1,o1),_*,Ins(n2,t2,p2,op2,s2,d2,o2),_*)),_*) -> {
+			Blocks(_*,Block(r,_,InstructionList(_*,Ins(n1,t,p1,op1,s1,d1,o1),_*,Ins(n2,t,p2,op2,s2,d2,o2),_*)),_*) -> {
 				%match {
-					t1==t2 -> {
-						%match {
-							p1==p2 -> {
-								if (`s1.equals(`s2)) {
-									if (isIncludeIn(`d1,`d2) || isIncludeIn(`d2,`d1))
-										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
-								}
-								else {
-									if (isIncludeIn(`s1 ,`s2)) {
-										if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
-											dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
-									}
-								}
+					p1==p2 -> {
+						if (`s1.equals(`s2)) {
+							if (isIncludeIn(`d1,`d2) || isIncludeIn(`d2,`d1))
+								dispRA(`r,`Ins(n1,t,p1,op1,s1,d1,o1),`Ins(n2,t,p2,op2,s2,d2,o2));
+						}
+						else {
+							if (isIncludeIn(`s1 ,`s2)) {
+								if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
+									dispRA(`r,`Ins(n1,t,p1,op1,s1,d1,o1),`Ins(n2,t,p2,op2,s2,d2,o2));
 							}
-							p1==All_() -> {
-								if (`s1.equals(`s2) || isIncludeIn(`s2,`s1)) {
-									if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
-										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
-								}
-							}
-							p2==All_() -> {
-								if (`s1.equals(`s2) || isIncludeIn(`s1,`s2)) {
-									if (`d1.equals(`d2) || isIncludeIn(`d1,`d2))
-										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
-								}
-							}
+						}
+					}
+					p1==All_() -> {
+						if (`s1.equals(`s2) || isIncludeIn(`s2,`s1)) {
+							if (`d1.equals(`d2) || isIncludeIn(`d2,`d1))
+								dispRA(`r,`Ins(n1,t,p1,op1,s1,d1,o1),`Ins(n2,t,p2,op2,s2,d2,o2));
+						}
+					}
+					p2==All_() -> {
+						if (`s1.equals(`s2) || isIncludeIn(`s1,`s2)) {
+							if (`d1.equals(`d2) || isIncludeIn(`d1,`d2))
+								dispRA(`r,`Ins(n1,t,p1,op1,s1,d1,o1),`Ins(n2,t,p2,op2,s2,d2,o2));
 						}
 					}
 				}
@@ -121,12 +115,12 @@ public class Compiler {
 							p1==p2 -> {
 								if (`s1.equals(`s2)) {
 									if (isIncludeIn(`d1,`d2))
-									dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+										dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
 								}
 								else {
 									if (isIncludeIn(`s1,`s2)) {
 										if (`d1.equals(`d2) || isIncludeIn(`d1,`d2))
-										dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+											dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
 									}
 								}
 							}
@@ -207,6 +201,127 @@ public class Compiler {
 		System.out.println();
 	}
 
+	
+	// Display all anomalies
+	%strategy dispAllAnomalies() extends `Identity() {
+		visit IpTablesOutput {
+			Blocks(_*,Block(r,_,InstructionList(_*,Ins(n1,t1,p1,op1,s1,d1,o1),_*,Ins(n2,t2,p2,op2,s2,d2,o2),_*)),_*) -> {
+				if (`p1.equals(`p2)) {
+					if (`s1.equals(`s2)) {
+						if (`d1.equals(`d2)) {
+							if (`t1.equals(`t2)) {
+								dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+							}
+							else {
+								dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+							}
+						}
+						else {
+							if (isIncludeIn(`d1,`d2)) {
+								if (`t1.equals(`t2)) {
+									dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+								else {
+									dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+							else {
+								if (isIncludeIn(`d2,`d1)) {
+									if (`t1.equals(`t2)) {
+										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+									else {
+										dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+								}
+							}
+						}
+					}
+					else {
+						if (isIncludeIn(`s1,`s2)) {
+							if (`d1.equals(`d2) || isIncludeIn(`d1,`d2)) {
+								if (`t1.equals(`t2)) {
+									dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+								else {
+									dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+							else {
+								if (isIncludeIn(`d2,`d1))
+									dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+							}
+						}
+						else {
+							if (isIncludeIn(`s2,`s1)) {
+								if (`d1.equals(`d2) || isIncludeIn(`d2,`d1)) {
+									if (`t1.equals(`t2)) {
+										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+									else {
+										dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+								}
+								else {
+									if (isIncludeIn(`d1,`d2))
+										dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+						}
+					}
+				}
+				else {
+					if (`p1.equals(`All_())) {
+						if (`s1.equals(`s2) || isIncludeIn(`s2,`s1)) {
+							if (`d1.equals(`d2) || isIncludeIn(`d2,`d1)) {
+								if (`t1.equals(`t2)) {
+									dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+								else {
+									dispSA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+							else {
+								if (isIncludeIn(`d1,`d2))
+									dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+							}
+						}
+						else {
+							if (isIncludeIn(`s1,`s2)) {
+								if (`d1.equals(`d2) || isIncludeIn(`d1,`d2) || isIncludeIn(`d2,`d1))
+									dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+							}
+						}
+					}
+					else {
+						if (`p2.equals(`All_())) {
+							if (`s1.equals(`s2) || isIncludeIn(`s1,`s2)) {
+								if (`d1.equals(`d2) || isIncludeIn(`d1,`d2)) {
+									if (`t1.equals(`t2)) {
+										dispRA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+									else {
+										dispGA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+									}
+								}
+								else {
+									if (isIncludeIn(`d2,`d1))
+										dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+							else {
+								if (isIncludeIn(`s2,`s1)) {
+									if (`d1.equals(`d2) || isIncludeIn(`d1,`d2) || isIncludeIn(`d2,`d1))
+										dispCA(`r,`Ins(n1,t1,p1,op1,s1,d1,o1),`Ins(n2,t2,p2,op2,s2,d2,o2));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * This method tests if c1<c2.
@@ -229,34 +344,26 @@ public class Compiler {
   public static void main(String[] args) {
      IpTablesOutput t = `Blocks(
 		Block(Input(),PolicyDrop(),InstructionList(
-			Ins(1,Drop(),All_(),None(),Anywhere(),Anywhere(),Opts("blablabla")),
-			Ins(2,Accept(),All_(),None(),Anywhere(),Anywhere(),Opts("le")),
-			Ins(3,Accept(),All_(),None(),Localhost(),Localhost(),Opts("citron")),
-			Ins(4,Accept(),All_(),None(),Ipv4_Addr(Ipv4(1,2,3,40),12),Ipv4_Addr(Ipv4(5,6,7,80),17),Opts("dit :")),
-			Ins(5,Drop(),All_(),None(),Ipv4_Addr(Ipv4(1,2,3,40),12),Ipv4_Addr(Ipv4(5,6,7,80),17),Opts("dit :"))
+			Ins(1,Reject(),Tcp(),None(),Ipv4_Addr(Ipv4(10,1,1,0),25),Anywhere(),Opts("")),
+			Ins(2,Accept(),Udp(),None(),Anywhere(),Ipv4_Addr(Ipv4(192,168,1,0),24),Opts("")),
+			Ins(3,Reject(),Tcp(),None(),Ipv4_Addr(Ipv4(10,1,1,128),25),Anywhere(),Opts("")),
+			Ins(4,Reject(),Udp(),None(),Ipv4_Addr(Ipv4(172,16,1,0),24),Ipv4_Addr(Ipv4(192,168,1,0),24),Opts("")),
+			Ins(5,Accept(),Tcp(),None(),Ipv4_Addr(Ipv4(10,1,1,0),24),Anywhere(),Opts("")),
+			Ins(6,Reject(),Udp(),None(),Ipv4_Addr(Ipv4(10,1,1,0),24),Ipv4_Addr(Ipv4(192,168,0,0),16),Opts("")),
+			Ins(7,Accept(),Udp(),None(),Ipv4_Addr(Ipv4(172,16,1,0),24),Anywhere(),Opts(""))
 			)
 		),
-		Block(Forward(),PolicyAccept(),InstructionList(
-			Ins(1,Accept(),All_(),None(),Anywhere(),Anywhere(),Opts("blablabla")),
-			Ins(2,UserRuleCall("Rule 1"),Icmp(),None(),Localhost(),Anywhere(),Opts("plus")),
-			Ins(3,Drop(),Tcp(),None(),Anywhere(),Localhost(),Opts("un"))
-			)
+		Block(Forward(),PolicyAccept(),InstructionList()
 		),
-		Block(Postrouting(),PolicyDrop(),InstructionList(
-			Ins(1,Mirror(),Udp(),None(),Ipv6_Addr("...9.10.11.12..."),Anywhere(),Opts("zeste"))
-			)
+		Block(Postrouting(),PolicyDrop(),InstructionList()
 		),
-		Block(UserRuleDef("fail2ban-apache"),Ref(0),InstructionList(
-			Ins(1,Drop(),All_(),None(),Ipv4_Addr(Ipv4(1,2,3,40),24),Localhost(),Opts("blablabla")),
-			Ins(2,Log(),All_(),None(),Anywhere(),Anywhere(),Opts("!!!!!!"))
-			)     			
+		Block(UserRuleDef("fail2ban-apache"),Ref(0),InstructionList()     			
 		)
 	       ) ;
      
      System.out.println(Pretty.toString(t));
      try{
-			System.out.println(Pretty.toString(`RepeatId(dispBanishments()).visit(t)));
-			`RepeatId(dispShadowedAnomalies()).visit(t) ;
+			`dispAllAnomalies().visit(t) ;
      }catch(tom.library.sl.VisitFailure e){
        System.out.println("echec : " + e.getMessage());
      }

@@ -290,11 +290,9 @@ public class Operation_IP {
         boolean ans = false;
         String net1 = networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix1);
         String net2 = networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix2);
-        if (suffix1<suffix2){
+        if (suffix1>suffix2){
             ans = (networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix1).compareToIgnoreCase(networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix1)) ==0) ? true : false;
-        }/*else {
-            ans = (networkFromIPv4AndMask(ip1a, ip1b, ip1c, ip1d, suffix2).compareToIgnoreCase(networkFromIPv4AndMask(ip2a, ip2b, ip2c, ip2d, suffix2)) ==0) ? true : false;
-        }*/
+        }
         return ans;
     }
 
