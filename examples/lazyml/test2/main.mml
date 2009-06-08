@@ -1,0 +1,253 @@
+(* demo file for lazyml compiler 
+   computes most general type of a lambda-term *)
+
+type U = U()
+type List(a) = Nil() | Cons(a,List(a))
+
+type Term = FVar(String) 
+          | BVar(Int) 
+          | Lam(String,Term) 
+          | App(Term,Term) 
+
+type Type = UVar(Int) | Atom(String) | Arrow(Type,Type) 
+type NextUVar = NextUVar(Int,U -> NextUVar)
+type Option(a) = None() | Some(a)
+
+type P2(a,b) = P2(a,b)
+type P3(a,b,c) = P3(a,b,c)
+
+extern Bool @eqInt(Int,Int)
+extern Bool @gt(Int,Int)
+extern Bool @eqString(String,String)
+extern Int @plus(Int,Int)
+extern Int @minus(Int,Int)
+extern String @append(String,String)
+extern String @showInt(Int)
+
+;
+
+(* -- utils -- *)
+
+let suc n = @plus(n,1)
+in let pred n = @minus(n,1)
+in let ap x y = @append(x,y)
+in let eqString x y = @eqString(x,y)
+in let eqInt x y = @eqInt(x,y) 
+in let not x = if x then False() else True() end
+
+in let rec map f l = 
+  match l with
+  | Nil() -> Nil()
+  | Cons(x,xs) -> Cons(f x, map f xs)
+  end
+
+in let rec append l1 l2 =
+  match l1 with
+  | Nil() -> l2
+  | Cons(x,xs) -> Cons(x,append xs l2)
+  end
+
+in let rec foldLeft a f l = 
+  match l with
+  | Nil() -> a
+  | Cons(x,xs) -> f x (foldLeft a f xs)
+  end
+
+in let max n m = if @gt(n,m) then n else m end
+
+in let rec assoc eq x l = 
+  match l with
+  | Nil() -> None()
+  | Cons(P2(y,r),cs) -> if eq x y then Some(r) else assoc eq x cs end
+  end
+
+in let and x y = if x then y else False() end
+
+in let rec eqType a b = 
+  match a with
+  | Atom(x) -> match b with
+               | Atom(y) -> @eqString(x,y)
+               | otherwise -> False()
+               end
+  | UVar(i) -> match b with
+               | UVar(j) -> @eqInt(i,j)
+               | otherwise -> False()
+               end
+  | Arrow(t1,t2) -> match b with
+                    | Arrow(t3,t4) -> and (eqType t1 t3) (eqType t2 t4)
+                    | otherwise -> False()
+                    end
+  end
+
+in let rec elem eq x l = 
+  match l with
+  | Nil() -> False()
+  | Cons(y,ys) -> if eq x y then True() else elem eq x ys end
+  end
+
+(* -- uvars -- *)
+
+in let uvargen i = 
+  let rec f n u = NextUVar(n,f (suc n))
+  in f i
+
+in let rec uvars t = 
+  match t with
+  | Atom(s)     -> Nil()
+  | UVar(n)     -> Cons(n,Nil())
+  | Arrow (x,y) -> append (uvars x) (uvars y)
+  end
+
+(* -- locally nameless -- *)
+
+in let abs x t = 
+  let rec abs_ i t = 
+    match t with
+    | FVar(y)  -> if @eqString(y,x) then BVar(i) else FVar(y) end
+    | BVar(j)  -> BVar(j)
+    | Lam(s,u) -> Lam(s,abs_ (suc i) u)
+    | App(a,b) -> App(abs_ i a, abs_ i b)
+    end
+  in abs_ 0 t
+
+in let inst u t = 
+  let rec inst_ i t = 
+    match t with
+    | FVar(x)  -> FVar(x)
+    | BVar(j)  -> if @eqInt(j,i) then u else BVar(j) end
+    | Lam(s,v) -> Lam(s,inst_ (suc i) v)
+    | App(a,b) -> App(inst_ i a, inst_ i b)
+    end
+  in inst_ 0 t
+
+in let substitute x u t = inst u (abs x t)
+
+in let name s c =
+  let rec incr c =
+    match c with
+    | Cons(P2(x,n),c1) -> 
+      if @eqString(x,s)
+        then P2(suc n,Cons(P2(x,suc n),c1))
+        else let P2(res,newc1) = incr c1
+             in P2(res,Cons(P2(x,n),newc1))
+      end
+    | Nil() -> P2(0,Cons(P2(s,0),Nil()))
+    end
+  in let render n = if @eqInt(n,0) then s else ap s @showInt(n) end 
+  in let P2(n,c1) = incr c 
+  in P2(render n, c1)
+
+in let down c t = 
+  let Lam(s,u) = t in 
+  let P2(n,c1) = name s c in
+    P3(c1, n, inst FVar(n) u)
+
+(* -- pretty printers -- *)
+
+in let parens s = ap "(" (ap s ")")
+
+in let prettyTerm t = 
+  let rec aux c t = 
+    match t with
+    | FVar(x) -> x
+    | BVar(i) -> @showInt(i)
+    | Lam(s,u) -> 
+        let P3(c1,x,u) = down c t 
+        in parens (ap (ap (ap "fun " x) " -> ") (aux c1 u))
+    | App(a,b) -> parens (ap (ap (aux c a) " ") (aux c b))
+    end
+  in aux Nil() t
+
+in let rec prettyType ty = 
+  match ty with
+  | Atom(a) -> a
+  | UVar(i) -> ap "a" @showInt(i)
+  | Arrow(a,b) -> parens (ap (ap (prettyType a) " -> ") (prettyType b))
+  end
+
+(* -- unification -- *)
+
+(* subst x by u in t *)
+in let rec substInType x u t = 
+  match t with
+  | Atom(a) -> t
+  | UVar(n) -> if @eqInt(x,n) then u else t end
+  | Arrow(ty1,ty2) -> 
+      Arrow(substInType x u ty1, substInType x u ty2)
+  end
+
+(* subst x by u in constraint *)
+in let substInConstraint x u c = 
+  let P2(l,r) = c in P2(substInType x u l, substInType x u r)
+
+(* subst x by u in constaints *)
+in let substInConstraints x u c = map (substInConstraint x u) c
+
+(* apply s to type t *)
+in let applySubst s t = 
+  foldLeft t (fun s p -> let P2(x,u) = s in substInType x u p) s
+
+in let rec unify con =
+  (* simulating pattern gards with auxiliary functions *)
+  let aux3 c cs = 
+    let P2(Arrow(t1,t2),Arrow(t3,t4)) = c in
+      unify Cons(P2(t1,t3),Cons(P2(t2,t4),cs))
+  in let aux2 c cs = 
+    let P2(u,UVar(x)) = c in
+    if not (elem eqInt x (uvars u)) 
+      then Cons(P2(x,u),unify (substInConstraints x u cs))
+      else aux3 c cs
+    end
+  in let aux1 c cs =
+    let P2(UVar(x),u) = c in
+    if not (elem eqInt x (uvars u)) 
+      then Cons(P2(x,u),unify (substInConstraints x u cs))
+      else aux2 c cs
+    end
+  in match con with
+     | Nil() -> Nil()
+     | Cons(c,cs) ->
+        let P2(s,u) = c in if eqType s u then unify cs else
+          match c with
+          | P2(UVar(x),v) -> aux1 c cs
+          | P2(v,UVar(x)) -> aux2 c cs
+          | P2(Arrow(t1,t2),Arrow(t3,t4)) -> aux3 c cs
+          end
+        end
+     end
+
+(* -- constraint generation -- *)
+
+in let rec recon state c gen t =
+  match t with 
+  | FVar(x) -> 
+      let Some(ty) = assoc eqString x c 
+      in P3(ty , gen, Nil())
+  | Lam(s,u) -> 
+      let P3(state1,x,u) = down state t in
+      let NextUVar(j,gen1) = gen U() in
+      let ty1 = UVar(j) in
+      let P3(ty2,gen2,con) = recon state1 Cons(P2(x,ty1),c) gen1 u in
+        P3(Arrow(ty1,ty2), gen2, con)
+  | App(u,v) -> 
+      let P3(ty1,gen1,con1) = recon state c gen u in
+      let P3(ty2,gen2,con2) = recon state c gen1 v in
+      let NextUVar(j,gen3) = gen2 U() in
+      let ty3 = UVar(j) in
+      let con3 = Cons(P2(ty1,Arrow(ty2,ty3)),append con1 con2) in
+        P3(ty3, gen3, con3)
+  end
+
+(* -- type inference -- *)
+
+in let getType t = 
+  let P3(ty,g,con) = recon Nil() Nil() (uvargen 0) t in
+  let subst = unify con in
+    applySubst subst ty
+
+(* -- main -- *)
+
+in let test = Lam("f",Lam("x",Lam("x",App(BVar(2),App(BVar(1),BVar(0))))))
+in let testrep = prettyTerm test
+in let tyrep = prettyType (getType test)
+in ap (ap testrep " : ") tyrep
