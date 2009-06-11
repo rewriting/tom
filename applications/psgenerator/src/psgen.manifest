@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: fr.loria.protheo.psgenerator.Generator
-Class-Path: commandline.jar

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="tom.home"        location="../../src/dist"/>
+  <property name="mi.dir"      location="."/>
+  <property name="mi.src"      location="${mi.dir}/src"/>
+  <property name="mi.gen"      location="${mi.dir}/gen"/>
+  <property name="mi.build"    location="${mi.dir}/build"/>
+  
+  <import file="${tom.home}/lib/tom-common.xml"/>
+  
+  <target name="init" depends="tom.init">
+    <mkdir dir="${mi.build}"/>
+    <mkdir dir="${mi.gen}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${mi.src}"
+                destdir="${mi.gen}"
+                import="${mi.gen}"> 
+      <include name="**/*.t"/>
+    </tom.preset>
+  </target>
+
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${mi.src}" destdir="${mi.gen}">
+      <include name="**/*.gom"/>
+    </gom.preset>
+  </target>
+
+  <target name="javac" depends="tom">
+    <javac.preset destdir="${mi.build}" >
+      <src path="${mi.gen}"/>
+      <src path="${mi.src}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${mi.gen}"/>
+    <delete dir="${mi.build}"/>
+  </target>
+  
+</project>

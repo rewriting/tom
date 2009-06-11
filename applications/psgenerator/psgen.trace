@@ -1,5 +1,0 @@
-TRACE: fr.loria.protheo.psgenerator.Generator.main(Generator.java:31)
-TRACE: fr.loria.protheo.psgenerator.generator.GeneratorManager.registerGenerators(GeneratorManager.java:43)
-TRACE: fr.loria.protheo.psgenerator.parser.ParserManager.registerParsers(ParserManager.java:45)
-TRACE: fr.loria.protheo.psgenerator.generator.GeneratorManager.getOptionNames(GeneratorManager.java:86)
-TRACE: fr.loria.protheo.psgenerator.parser.ParserManager.getOptionNames(ParserManager.java:77)
