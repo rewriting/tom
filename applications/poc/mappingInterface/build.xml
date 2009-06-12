@@ -3,7 +3,7 @@
 <project default="javac" basedir=".">
   
   <property environment="env"/>
-  <property name="tom.home"        location="../../src/dist"/>
+  <property name="tom.home"        location="../../../src/dist"/>
   <property name="mi.dir"      location="."/>
   <property name="mi.src"      location="${mi.dir}/src"/>
   <property name="mi.gen"      location="${mi.dir}/gen"/>
