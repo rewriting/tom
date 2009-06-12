@@ -1,0 +1,9 @@
+module mi.data
+  imports int 
+  abstract syntax 
+ 
+  T1 = a()
+     | f(s1:T1, s2:T2)
+  
+  T2 = b()
+     | g(s2:T2)
