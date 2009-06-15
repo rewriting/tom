@@ -450,7 +450,7 @@ matchBlock: {
           String code = %[
             Object[] newChildren = getChildren(o);
             newChildren[i] = child;
-            return newChildren;
+            return setChildren(o, newChildren);
           ]%;
           l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar,intVar,childVar),objectType,EmptyType(),TargetLanguageToInstruction(ITL(code))));
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
