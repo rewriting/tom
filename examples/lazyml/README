@@ -44,5 +44,5 @@ The backend (system F to Java) is really simple and minimalist.
      cd lazyml/test1
      make
      cd ../test2
-     make
+     make < test.ml
 

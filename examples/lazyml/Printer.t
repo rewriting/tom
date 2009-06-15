@@ -63,6 +63,7 @@ public class Printer {
       Constr(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
       PrimFun(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
       Lit(i) -> { return ""+`i; }
+      Chr(c) -> { return "'" + `c + "'"; }
       Str(s) -> { return "\"" + `s + "\""; }
       Case(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%;
@@ -153,6 +154,7 @@ public class Printer {
       RawConstr(f,l) -> { return "(" + `f + "(" + `prettyLTermList(l) + "))"; }
       RawPrimFun(f,l) -> { return "(" + `f + "(" + `prettyLTermList(l) + "))"; }
       RawLit(i) -> { return ""+`i; }
+      RawChr(c) -> { return "'" + `c + "'"; }
       RawStr(s) -> { return "\"" + `s + "\""; }
       RawCase(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%;
@@ -187,6 +189,7 @@ public class Printer {
       FConstr(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       FPrimFun(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       FLit(i) -> { return ""+`i; }
+      FChr(c) -> { return "'" + `c + "'"; }
       FStr(s) -> { return "\"" + `s + "\""; }
       FCase(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; }
@@ -214,7 +217,8 @@ public class Printer {
       RawFConstr(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       RawFPrimFun(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       RawFLit(i) -> { return ""+`i; }
-      RawFStr(s) -> { return `s; }
+      RawFChr(c) -> { return "'" +`c + "'"; }
+      RawFStr(s) -> { return "\"" + `s + "\""; }
       RawFCase(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; }
     }

@@ -10,6 +10,95 @@ public class Typer {
   %include { lambda/lambda.tom }
   %include { sl.tom }
 
+
+  // replaces every free type variable by Foo
+  private static LType replaceFreeTVars(LType ty, TVarList free) {
+    %match(ty) {
+      Atom(a) -> { return `Atom(a); }
+      Arrow(a,b) -> { return `Arrow(replaceFreeTVars(a,free),replaceFreeTVars(b,free)); }
+      TypeVar(X) -> { if (((Collection)free).`contains(X)) return `TypeVar(X);
+        else return `Atom("Foo");
+      }
+      Forall(Fa(X,a)) -> { return `Forall(Fa(X,replaceFreeTVars(a,TVarList(X,free*)))); }
+      TyConstr(c,tys) -> { return `TyConstr(c,replaceFreeTVars(tys,free)); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  // replaces every free type variable by Foo
+  private static TyList replaceFreeTVars(TyList tys, TVarList free) {
+    %match(tys) {
+      TyList() -> { return `TyList(); }
+      TyList(x,xs*) -> { 
+        TyList xs1 = `replaceFreeTVars(xs,free);
+        return `TyList(replaceFreeTVars(x,free),xs1*);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  // replaces every free type variable by Foo
+  private static FTerm replaceFreeTVars(FTerm t, TVarList free) {
+    %match(t) {
+      FApp(t1,t2) -> { 
+        return `FApp(replaceFreeTVars(t1,free),replaceFreeTVars(t2,free)); 
+      }
+      FTApp(u,ty) -> {
+        return `FTApp(replaceFreeTVars(u,free),replaceFreeTVars(ty,free));
+      }
+      FAbs(FLam(v,ty,t1)) -> { 
+        return `FAbs(
+            FLam(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free))); 
+      }
+      FTAbs(FTLam(X,u)) -> {
+        return `FTAbs(FTLam(X,replaceFreeTVars(u,TVarList(X,free*))));
+      }
+      FLet(FLetin(v,ty,t1,t2)) -> {
+        return `FLet(FLetin(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free),replaceFreeTVars(t2,free)));
+      }
+      FFix(FFixpoint(v,ty,t1)) -> { 
+        return `FFix(FFixpoint(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free))); }
+      FVar(y) -> { return `FVar(y); }
+      FConstr(f,c) -> { return `FConstr(f,replaceFreeTVars(c,free)); }
+      FPrimFun(f,c) -> { return `FPrimFun(f,replaceFreeTVars(c,free)); }
+      FCase(s,r) -> { return `FCase(replaceFreeTVars(s,free),replaceFreeTVars(r,free)); }
+      FLit(i) -> { return `FLit(i); }
+      FChr(c) -> { return `FChr(c); }
+      FStr(s) -> { return `FStr(s); }
+    }
+    throw new RuntimeException();
+  }
+
+  // replaces every free type variable by Foo
+  private static FRules replaceFreeTVars(FRules r, TVarList free) {
+    %match(r) {
+      FRList() -> { return r; }
+      FRList(t,ts*) -> {
+        return `ConsFRList(replaceFreeTVars(t,free),replaceFreeTVars(ts,free));
+      }
+    }
+    throw new RuntimeException();
+  }
+
+  // replaces every free type variable by Foo
+  private static FClause replaceFreeTVars(FClause c, TVarList free) {
+    %match(c) {
+      FRule(p,t) -> { return `FRule(p,replaceFreeTVars(t,free)); }
+    }
+    throw new RuntimeException();
+  }
+
+  // replaces every free type variable by Foo
+  private static FTermList replaceFreeTVars(FTermList l, TVarList free) {
+    %match(l) {
+      FTermList() -> { return l; }
+      FTermList(t,ts*) -> {
+        return `ConsFTermList(replaceFreeTVars(t,free),replaceFreeTVars(ts,free));
+      }
+    }
+    throw new RuntimeException();
+  }
+
   public static class IllFormedTerm extends RuntimeException {};
   public static class UnificationError extends RuntimeException {};
   public static class ConstructorNotDeclared extends RuntimeException {
@@ -102,7 +191,9 @@ public class Typer {
         LType tty = `applySubst(subst,ty);
         FTerm fft = `applySubst(subst,ft);
         TVarList vs = `getFreeTypeVars(tty);
-        return `Pair(abstractTVars(vs,fft), abstractTVars(vs,tty));
+        return `Pair(
+            replaceFreeTVars(abstractTVars(vs,fft),TVarList()),
+            abstractTVars(vs,tty));
       } 
     }
     throw new RuntimeException("non exhaustive patterns");
@@ -160,6 +251,7 @@ public class Typer {
   }
 
   private static LType tyInt = `Atom("Int");
+  private static LType tyChar = `Atom("Char");
   private static LType tyStr = `Atom("String");
 
   private static ReconResult recon(Context c, LTerm t) {
@@ -229,6 +321,9 @@ public class Typer {
       }
       Lit(i) -> {
         return `RR(FLit(i),tyInt,CList());
+      }
+      Chr(c) -> {
+        return `RR(FChr(c),tyChar,CList());
       }
       Str(s) -> {
         return `RR(FStr(s),tyStr,CList());

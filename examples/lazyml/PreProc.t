@@ -157,6 +157,7 @@ public class PreProc {
       PrimFun(f, children) -> { return `freeze(PrimFun(f,thunkify(children))); }
       Case(subject,rules) -> { return `Case(force(thunkify(subject)),thunkify(rules)); }
       Lit(i) -> { return `freeze(Lit(i)); }
+      Chr(c) -> { return `freeze(Chr(c)); }
       Str(s) -> { return `freeze(Str(s)); }
     }
     throw new RuntimeException("non exhaustive patterns");

@@ -33,9 +33,11 @@ public class Main {
         crt = PreProc.thunkify(crt);
         ctx = PreProc.freeze(ctx);
       }
+      //System.out.println(Printer.`pretty(crt));
       TypeOfResult res = Typer.`typeOf(ctx,crt);
       %match(res) {
         Pair(ft,ty) -> {
+          //System.out.println(Printer.`pretty(ft));
           System.err.println(Printer.`pretty(ty.export()));
           System.out.println(Compiler.`compile(ft.export()));
         }

@@ -126,6 +126,7 @@ aterm returns [RawLTerm res]
    try { $res = `RawLit(Integer.parseInt($NUM.text)); }
    catch (NumberFormatException e) { throw new RuntimeException(); } 
   }
+| CHAR { $res = `RawChr($CHAR.text.charAt(1)); }
 | STRING { $res = `RawStr($STRING.text.substring(1,$STRING.text.length()-1)); }
 | UPID '(' l=ltermlist ')' { $res = `RawConstr($UPID.text,l); }
 | PRIMID '(' l=ltermlist ')' { $res = `RawPrimFun($PRIMID.text,l); }
@@ -218,9 +219,9 @@ tydec returns [RawContext res]
 ;
 
 extern returns [RawJugement res]
-: EXTERN UPID PRIMID dom=domain
+: EXTERN codom=type PRIMID dom=domain
   { $res = `RawRangeOf($PRIMID.text,
-      RawRange(RawRa(EmptyRawBVarList(),dom,RawAtom($UPID.text)))); }
+      RawRange(RawRa(EmptyRawBVarList(),dom,codom))); }
 ;
 
 tydecs returns [RawContext res]
@@ -251,8 +252,34 @@ ID : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 UPID : ('A'..'Z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 PRIMID : ('@')('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\.')+ ;
 
-STRING :  '"' (~('\\'|'"') )* '"' ;
+CHAR: '\'' 
+      (   EscapeSequence 
+      |   ~( '\'' | '\\' | '\r' | '\n' )
+      ) 
+      '\''
+    ; 
 
+STRING: '"' 
+        (   EscapeSequence
+        |   ~( '\\' | '"' | '\r' | '\n' )        
+        )* 
+        '"' 
+    ;
+
+EscapeSequence: 
+  '\\' ('b' 
+       | 't' 
+       | 'n' 
+       | 'f' 
+       | 'r' 
+       | '\"' 
+       | '\'' 
+       | '\\' 
+       | ('0'..'3') ('0'..'7') ('0'..'7')
+       | ('0'..'7') ('0'..'7') 
+       | ('0'..'7')
+       )          
+;     
 
 COMMA : ',';
 SEMI  : ';' ;

@@ -20,10 +20,11 @@ public class Eval {
       }
       Fix(fixpoint(v,t1)) -> { return `Fix(fixpoint(v,substitute(t1,x,u))); }
       Var(y) -> { if (`y.equals(x)) return u; else return t; }
-      Constr(f, c) -> { return `Constr(f,substitute(c,x,u)); }
-      PrimFun(f, c) -> { return `PrimFun(f,substitute(c,x,u)); }
+      Constr(f,c) -> { return `Constr(f,substitute(c,x,u)); }
+      PrimFun(f,c) -> { return `PrimFun(f,substitute(c,x,u)); }
       Case(s,r) -> { return `Case(substitute(s,x,u),substitute(r,x,u)); }
       Lit(i) -> { return `Lit(i); }
+      Chr(c) -> { return `Chr(c); }
       Str(s) -> { return `Str(s); }
     }
     throw new RuntimeException();

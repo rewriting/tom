@@ -6,11 +6,9 @@ interface F {
 }
 class C {
   public String f;
-  public int hash;
   public Object[] c;
-  public C(String f, int hash, Object[] c) {
+  public C(String f, Object[] c) {
     this.f = f;
-    this.hash = hash;
     this.c = c;
   }
   public String toString() {
@@ -51,8 +49,8 @@ public class Test {
     return ((Integer)x)*((Integer)y);
   }
 
-  public static C True = new C("True","True".hashCode(),new C[] {});
-  public static C False = new C("False","False".hashCode(),new C[] {});
+  public static C True = new C("True",new C[] {});
+  public static C False = new C("False",new C[] {});
   public static C eqInt(Object x, Object y) {
     return ((Integer)x)==((Integer)y) ? True : False;
   }

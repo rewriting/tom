@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the lazyml example" default="build" basedir="..">
 
-  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
-
   <import file="../common.xml"/>
   <property name="example" value="lazyml"/>
 
