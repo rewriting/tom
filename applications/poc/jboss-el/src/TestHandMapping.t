@@ -124,6 +124,18 @@ public class TestHandMapping extends TestCase {
     } catch(tom.library.sl.VisitFailure e ) { fail(); }
   }
 
+  public void testCollectLeft() {
+    Node node = ELParser.parse("#{1 and 'abc'}");
+
+    try {
+      Node res = (Node) `Repeat(OnceBottomUp(CollectLeft())).visitLight(node, new LocalIntrospector());
+      System.out.println("res = " + res);
+    } catch(tom.library.sl.VisitFailure e) {
+      System.out.println("failure");
+    }
+
+  }
+
   %strategy ReplaceLiteral() extends Identity() {
     visit Expr {
       Literal(s) -> FunctionCall(concExpr(Identifier("bundle")),"get",concExpr(Literal(s)))
@@ -170,6 +182,14 @@ public class TestHandMapping extends TestCase {
       return exprs;
     }catch(tom.library.sl.VisitFailure e){
       throw new RuntimeException(e);
+    }
+  }
+
+  %strategy CollectLeft() extends Fail() {
+    visit Expr {
+      And(l, r) -> {
+        return `l;
+      }
     }
   }
 
