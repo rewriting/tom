@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project default="javac" basedir=".">
-  
-  <property environment="env"/>
-  <property name="tom.home"        location="../../../src/dist"/>
-  <property name="mi.dir"      location="."/>
-  <property name="mi.src"      location="${mi.dir}/src"/>
-  <property name="mi.gen"      location="${mi.dir}/gen"/>
-  <property name="mi.build"    location="${mi.dir}/build"/>
-  
-  <import file="${tom.home}/lib/tom-common.xml"/>
-  
-  <target name="init" depends="tom.init">
-    <mkdir dir="${mi.build}"/>
-    <mkdir dir="${mi.gen}"/>
-  </target>
-  
-  <target name="tom" depends="gom">
-    <tom.preset srcdir="${mi.src}"
-                destdir="${mi.gen}"
-                import="${mi.gen}"> 
-      <include name="**/*.t"/>
-    </tom.preset>
-  </target>
+<project default="test" basedir=".">
 
-  <target name="gom" depends="init">
-    <gom.preset srcdir="${mi.src}" destdir="${mi.gen}">
-      <include name="**/*.gom"/>
-    </gom.preset>
-  </target>
+    <property name="javacSource" value="1.5"/>
+    <property name="javacTarget" value="1.5"/>
+    <property name="optimize" value="off"/>
+    <property name="optimize2" value="off"/>
+    <property name="genIntrospector" value="on"/>
+    <property name="pretty" value="on"/>
 
-  <target name="javac" depends="tom">
-    <javac.preset destdir="${mi.build}" >
-      <src path="${mi.gen}"/>
-      <src path="${mi.src}"/>
-      <include name="**/*.java"/>
-    </javac.preset>
-  </target>
-  
-  <target name="clean">
-    <delete dir="${mi.gen}"/>
-    <delete dir="${mi.build}"/>
-  </target>
-  
+    <property environment="env"/>
+    <property name="tom.home" location="../../../src/dist"/>
+    <property name="mi.dir" location="."/>
+    <property name="mi.src" location="${mi.dir}/src"/>
+    <property name="mi.gen" location="${mi.dir}/gen"/>
+    <property name="mi.build" location="${mi.dir}/build"/>
+
+    <import file="${tom.home}/lib/tom-common.xml"/>
+
+    <target name="init" depends="tom.init">
+        <mkdir dir="${mi.build}"/>
+        <mkdir dir="${mi.gen}"/>
+    </target>
+
+    <target name="generate" depends="init">
+
+        <gom.preset srcdir="${mi.src}" destdir="${mi.gen}" withCongruenceStrategies="false">
+            <include name="**/*.gom"/>
+        </gom.preset>
+
+        <tom.preset srcdir="${mi.src}"
+                    destdir="${mi.gen}"
+                    import="${mi.src};${mi.gen}">
+            <include name="**/*.t"/>
+        </tom.preset>
+    </target>
+
+    <target name="build" depends="generate">
+
+        <javac.preset destdir="${mi.build}" debug="on">
+            <src path="${mi.gen}"/>
+            <src path="${mi.src}"/>
+            <include name="**/*.java"/>
+        </javac.preset>
+    </target>
+
+    <target name="clean">
+        <delete dir="${mi.gen}"/>
+        <delete dir="${mi.build}"/>
+    </target>
+
+    <target name="test" depends="build"
+            description="Runs junit acceptance tests">
+        <junit haltonfailure="false" showoutput="true">
+            <classpath>
+                <path refid="tom.classpath"/>
+                <!--<fileset dir="${mi.dir}/lib">-->
+                    <!--<include name="*.jar"/>-->
+                <!--</fileset>-->
+                <pathelement location="${mi.build}"/>
+            </classpath>
+            <test name="mi.Main"/>
+            <test name="mi._Main"/>
+        </junit>
+    </target>
+
 </project>

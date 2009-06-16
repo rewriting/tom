@@ -1,13 +1,21 @@
 package mi;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Assert;
+
 import mi.data.types.*;
 import tom.library.sl.*;
 
-public class Main {
+public class Main extends TestCase {
   %include { mi/data/data.tom }
   %include { sl.tom }
 
-  public final static void main(String[] args) {
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(Main.class));
+  }
+
+  public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     System.out.println("subject = " + subject);
 
