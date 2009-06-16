@@ -89,12 +89,6 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   private tom.library.sl.Strategy[] args;
 
-  public tom.library.sl.Strategy getArgument(int i) {
-    return args[i];
-  }
-  public void setArgument(int i, tom.library.sl.Strategy child) {
-    args[i]= child;
-  }
   public int getChildCount() {
     return args.length;
   }
@@ -243,7 +237,7 @@ public String generateMapping() {
 
   return %[
   %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
-    is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@)))}
+    is_fsym(t) { (($t!=null) && ($t instanceof @fullClassName()@))}
     @genGetSlot(slotList.length(),"arg")@
     make(@genConstrArgs(slotList.length(),"arg",false)@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg",true)@) }
   }
@@ -254,7 +248,7 @@ private String genGetSlot(int count, String arg) {
   StringBuilder out = new StringBuilder();
   for (int i = 0; i < count; ++i) {
     out.append(%[
-        get_slot(@arg+i@, t) { $t.getArgument(@i@) }]%);
+        get_slot(@arg+i@, t) { (tom.library.sl.Strategy)((@fullClassName()@)$t).getChildAt(@i@) }]%);
   }
   return out.toString();
 }
