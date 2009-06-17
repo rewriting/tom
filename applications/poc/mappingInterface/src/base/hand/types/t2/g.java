@@ -1,6 +1,6 @@
-package mi1.data.types.t2;
+package base.hand.types.t2;
 
-import mi1.data.types.T2;
+import base.hand.types.T2;
 
 /**
  * @author nvintila

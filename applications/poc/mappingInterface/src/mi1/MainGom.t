@@ -11,7 +11,7 @@ import base.data.types.t2.*;
 import tom.library.sl.*;
 
 public class MainGom extends TestCase {
-  %include { base/datamapping.tom }
+  %include { gom/mapping.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {

@@ -1,10 +1,10 @@
-package mi1.data;
+package mi1.hand;
 
-import mi1.data.types.t1.*;
-import mi1.data.types.t2.*;
-import mi1.data.types.T2;
-import mi1.data.types.T1;
-import mi1.data.types.T;
+import base.hand.types.t1.*;
+import base.hand.types.t2.*;
+import base.hand.types.T2;
+import base.hand.types.T1;
+import base.hand.types.T;
 
 import mapping.Mapping;
 

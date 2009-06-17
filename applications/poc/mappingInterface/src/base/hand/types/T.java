@@ -1,4 +1,4 @@
-package mi1.data.types;
+package base.hand.types;
 
 /**
  * @author nvintila

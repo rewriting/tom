@@ -56,9 +56,9 @@
             <!--</fileset>-->
           <pathelement location="${mi.build}"/>
         </classpath>
-        <test name="mi.Main"/>
-        <test name="mi.MainGomMapping"/>
-        <test name="mi._Main"/>
+        <test name="base.Main"/>
+        <test name="mi1.MainGom"/>
+        <test name="mi1.MainHand"/>
       </junit>
     </target>
 

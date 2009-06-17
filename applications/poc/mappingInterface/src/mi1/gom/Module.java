@@ -1,4 +1,4 @@
-package base.data;
+package mi1.gom;
 
 import base.data.types.t1.*;
 import base.data.types.t2.*;
@@ -14,7 +14,6 @@ import mapping.Mapping;
 public class Module {
 
     public static final Module instance = new Module();
-
 
     /**
      * Mapping interface - contract between Tom and an arbitrary type.

@@ -5,13 +5,13 @@ import junit.framework.TestSuite;
 import junit.framework.Assert;
 
 
-import mi1.data.types.*;
-import mi1.data.types.t1.*;
-import mi1.data.types.t2.*;
+import base.hand.types.*;
+import base.hand.types.t1.*;
+import base.hand.types.t2.*;
 import tom.library.sl.*;
 
 public class MainHand extends TestCase {
-  %include { mi1/data/data.tom }
+  %include { mi1/hand/mapping.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {
