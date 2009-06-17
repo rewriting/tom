@@ -364,18 +364,19 @@ in let prettyTermDoc t =
     | App(a,b) -> par (cb (aux c a) (aux c b))
     | Let(x,u,Let(y,uu,vv)) -> 
         let P4(c1,n,u,v) = open_let c t
-        in par (cs   (text "let")
-               (cs   (text x)
-               (conc (text "=")
-               (cb   (nest 2 (conc brk (aux c u)))
-               (cs   (text "in") (aux c1 v))))))
+        in (cs   (text "let")
+           (cs   (text x)
+           (conc (text "=")
+           (cb   (group (nest 2 (conc brk (aux c u))))
+           (cs   (text "in") (aux c1 v))))))
     | Let(x,u,v) -> 
         let P4(c1,n,u,v) = open_let c t
-        in par (cs   (text "let")
-               (cs   (text x)
-               (conc (text "=")
-               (cb   (nest 2 (conc brk (aux c u)))
-               (conc (text "in") (nest 2 (conc brk (aux c1 v))))))))
+        in (cs    (text "let")
+           (cs    (text x)
+           (conc  (text "=")
+           (cb    (group (nest 2 (conc brk (aux c u))))
+           (group (conc (text "in") 
+                        (nest 2 (conc brk (aux c1 v)))))))))
     | Fix(x,u) ->
         let P3(c1,x,u) = open_fix c t 
         in par (cs (text "fix")
@@ -383,7 +384,7 @@ in let prettyTermDoc t =
     end
   in aux Nil() t
 
-in let prettyTerm t = pretty 40 (prettyTermDoc t) 
+in let prettyTerm t = pretty 70 (prettyTermDoc t) 
 
 in let parens s = ap "(" (ap s ")")
 in let rec prettyType ty = 
@@ -566,7 +567,7 @@ in let P5(expr,atom,lam,paren,letin) = tie
 (* -- main -- *)
 
 in let input = @getInput() 
-in let test = runParser expr @convertString(input)
+in let test = runParser (seq junk expr) @convertString(input)
 in match test with
    | Left(e) -> e
    | Right(t) -> let testrep = prettyTerm t in
