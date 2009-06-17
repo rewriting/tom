@@ -44,6 +44,10 @@ public class Module {
             return new a();
         }
 
+        public a make(Object[] children) {
+          return make();
+        }
+
         // LocalIntrospector
         public a setChildren(Object o, Object[] children) {
             return make();
@@ -90,6 +94,10 @@ public class Module {
         // Make
         public b make() {
             return new b();
+        }
+
+        public b make(Object[] children) {
+          return make();
         }
 
         // LocalIntrospector
@@ -146,6 +154,9 @@ public class Module {
             return new f((T1)s1, (T2)s2);
         }
 
+        public f make(Object[] children) {
+          return make((T)children[0],(T)children[1]);
+        }
 
         public T1 getS1(Object t) {
             return ((f)t).getS1();
@@ -221,6 +232,9 @@ public class Module {
         // Make
         public g make(T s2) {
             return new g((T2)s2);
+        }
+        public g make(Object[] children) {
+          return make((T)children[0]);
         }
 
         public T2 getS2(Object t) {
