@@ -30,6 +30,7 @@ extern String @append(String,String)
 extern String @showInt(Int)
 extern Bool @eqChar(Char,Char)
 extern String @consString(Char,String)
+extern Int @strLen(String)
 
 type Either(a,b) = Left(a) | Right(b)
 type Parser(a) = Parser(List(Char) -> Either(String,P2(a,List(Char))))
@@ -39,6 +40,30 @@ extern List(Char) @convertString(String)
 extern Int @valueOf(Char)
 extern String @getInput()
 
+(* imported modules *)
+
+type ModulePretty = ModulePretty(
+  (* conc *) Doc -> Doc -> Doc,
+  (* empty *) Doc,
+  (* text *) String -> Doc,
+  (* nest *) Int -> Doc -> Doc,
+  (* brk *) Doc,
+  (* breakWith *) String -> Doc,
+  (* group *) Doc -> Doc,
+  (* pretty *) Int -> Doc -> String
+)
+
+extern ModulePretty @modulePretty()
+
+
+(* pretty printer *)
+
+type Doc = DocNil()
+         | DocCons(Doc,Doc)
+         | DocText(String)
+         | DocNest(Int,Doc)
+         | DocBreak(String)
+         | DocGroup(Doc)
 
 (* -- test -- *)
 type Expr = Lit(Int) | Plus(Expr,Expr) | Minus(Expr,Expr) | Times(Expr,Expr)
@@ -46,9 +71,13 @@ type Expr = Lit(Int) | Plus(Expr,Expr) | Minus(Expr,Expr) | Times(Expr,Expr)
 
 ;
 
+(* imports *)
+
+let ModulePretty(conc,empty,text,nest,brk,breakWith,group,pretty) = @modulePretty()
+
 (* -- utils -- *)
 
-let suc n = @plus(n,1)
+in let suc n = @plus(n,1)
 in let pred n = @minus(n,1)
 in let ap x y = @append(x,y)
 in let eqString x y = @eqString(x,y)
@@ -65,6 +94,19 @@ in let cgt = liftToChar gt
 in let cge = liftToChar ge
 in let clt = liftToChar lt
 in let cle = liftToChar le
+in let strlen s = @strLen(s)
+
+in let rec replicate i x =
+  if eqInt 0 i 
+    then Nil() 
+    else Cons(x,replicate (pred i) x)
+  end
+
+in let rec length l = 
+  match l with
+  | Nil() -> 0
+  | Cons(x,xs) -> @plus(1,length xs)
+  end
 
 in let rec toString l = 
   match l with
@@ -230,6 +272,7 @@ in let rec oneof l =
   end
 in let space = oneof @convertString(" \n\r\t")
 
+
 (* -- uvars -- *)
 
 in let uvargen i = 
@@ -238,9 +281,9 @@ in let uvargen i =
 
 in let rec uvars t = 
   match t with
-  | Atom(s)     -> Nil()
-  | UVar(n)     -> Cons(n,Nil())
-  | Arrow (x,y) -> append (uvars x) (uvars y)
+  | Atom(s)    -> Nil()
+  | UVar(n)    -> Cons(n,Nil())
+  | Arrow(x,y) -> append (uvars x) (uvars y)
   end
 
 (* -- locally nameless -- *)
@@ -301,27 +344,48 @@ in let open_fix c t =
 
 (* -- pretty printers -- *)
 
-in let parens s = ap "(" (ap s ")")
+(* conc and break *)
 
-in let prettyTerm t = 
+in let cb x y = conc x (conc brk y)
+in let par x = group (conc (text "(") (conc x (text ")")))
+in let cs x y = conc x (conc (text " ") y)
+
+in let prettyTermDoc t = 
   let rec aux c t = 
     match t with
-    | FVar(x) -> x
-    | BVar(i) -> @showInt(i)
+    | FVar(x) -> text x
+    | BVar(i) -> text @showInt(i)
     | Lam(s,u) -> 
         let P3(c1,x,u) = open_lam c t 
-        in parens (ap (ap (ap "fun " x) " -> ") (aux c1 u))
-    | App(a,b) -> parens (ap (ap (aux c a) " ") (aux c b))
+        in par (cs (text "fun")
+               (cs (text x) 
+               (conc (text "->")
+                     (nest 2 (conc brk (aux c1 u))))))
+    | App(a,b) -> par (cb (aux c a) (aux c b))
+    | Let(x,u,Let(y,uu,vv)) -> 
+        let P4(c1,n,u,v) = open_let c t
+        in par (cs   (text "let")
+               (cs   (text x)
+               (conc (text "=")
+               (cb   (nest 2 (conc brk (aux c u)))
+               (cs   (text "in") (aux c1 v))))))
     | Let(x,u,v) -> 
         let P4(c1,n,u,v) = open_let c t
-        in parens (ap (ap (ap (ap (ap "let " n) " = ") (aux c u)) " in ") (aux c1 v))
+        in par (cs   (text "let")
+               (cs   (text x)
+               (conc (text "=")
+               (cb   (nest 2 (conc brk (aux c u)))
+               (conc (text "in") (nest 2 (conc brk (aux c1 v))))))))
     | Fix(x,u) ->
         let P3(c1,x,u) = open_fix c t 
-        in parens (ap (ap (ap "fix " x) " ") (aux c1 u))
-
+        in par (cs (text "fix")
+               (cs (text x) (aux c1 u)))
     end
   in aux Nil() t
 
+in let prettyTerm t = pretty 40 (prettyTermDoc t) 
+
+in let parens s = ap "(" (ap s ")")
 in let rec prettyType ty = 
   match ty with
   | Atom(a) -> a
@@ -513,6 +577,11 @@ in match test with
                              end 
                  in ap (ap testrep " : ") tyrep
    end
+
+(*
+in let toto = group (conc (text "aabbbb") (conc brk (text "idjs djsi")))
+in pretty 50 toto
+*)
 
 (*
 in let plus x y = Plus(x,y)

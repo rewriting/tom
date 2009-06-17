@@ -68,6 +68,7 @@ public class Printer {
       Case(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%;
       }
+      Error(m) -> { return %[(error "@`m@")]%; }
     }
     return null;
   }
@@ -159,6 +160,7 @@ public class Printer {
       RawCase(s,l) -> {
         return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%;
       }
+      RawError(m) -> { return %[(error "@`m@")]%; }
     }
     return null;
   }
@@ -192,7 +194,9 @@ public class Printer {
       FChr(c) -> { return "'" + `c + "'"; }
       FStr(s) -> { return "\"" + `s + "\""; }
       FCase(s,l) -> {
-        return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; }
+        return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; 
+      }
+      FError(m) -> { return %[(error "@`m@")]%; }
     }
     return null;
   }
@@ -220,7 +224,9 @@ public class Printer {
       RawFChr(c) -> { return "'" +`c + "'"; }
       RawFStr(s) -> { return "\"" + `s + "\""; }
       RawFCase(s,l) -> {
-        return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; }
+        return %[(match @`pretty(s)@ with@`prettyFRules(l)@ end)]%; 
+      }
+      RawFError(m) -> { return %[(error "@`m@")]%; }
     }
     return null;
   }

@@ -10,91 +10,218 @@ public class PreProc {
   %include { lambda/lambda.tom }
   %include { sl.tom }
 
-  %strategy Unfold() extends Identity() {
-    visit LTerm {
-      c@Case(_,RList(_*,Rule(PFun(_,PList(_*,PFun[],_*)),_),_*)) -> {
-          return `unfoldCase(c);
-      }
-    }
-  }
-
-  private static PatternList freshPvarsFromPList(PatternList pl) {
+  private static PVarList freshPvarsFromPList(PatternList pl) {
     %match(pl) {
-      PList() -> { return `PList(); }
+      PList() -> { return `PVarList(); }
       PList(_,ps*) -> {
         LVar fresh = LVar.freshLVar("p");
-        PatternList nps = `freshPvarsFromPList(ps);
-        return `PList(PVar(fresh),nps*); 
+        PVarList nps = `freshPvarsFromPList(ps);
+        return `PVarList(fresh,nps*); 
       }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static LTerm unfoldCase(LTerm t) {
-    %match(t) {
-      Case(s,rl) -> {
-        Rules newrules = `RList();
-
-        Set<String> ctors = new HashSet<String>();
-        %match(rl) { RList(_*,Rule(PFun(f,_),_),_*) -> { ctors.`add(f); }}
-
-        for(String f: ctors) {
-          Rules rulesf = `RList();
-          PatternList sample = null;
-          %match(rl) {
-            RList(_*,r@Rule(PFun(g,pl),_),_*) && g << String f -> { 
-              sample = `pl;
-              rulesf = `RList(rulesf*,r); 
-            }
+  private static Partition partitionVar(Equations vs, Equations qs) {
+    %match(qs) {
+      Equations() -> { return `Part(vs,Equations()); }
+      Equations(eq,eqs*) -> {
+        %match(eq) {
+          Equation(PList(PVar[],_*),_) -> {
+            return `partitionVar(Equations(vs*,eq),eqs*);
           }
+          _ -> {
+            return `Part(vs,qs);
+          }
+        }
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
 
-          PatternList vars = `freshPvarsFromPList(sample);
-          %match(vars) {
-            PList() -> { newrules = `RList(rulesf*,newrules*); }
-            PList(PVar(x),vs*) -> {
-              Clause rulef = `Rule(PFun(f,vars),Case(Var(x),unfold(vs,rulesf)));
-              newrules = `RList(rulef,newrules*);
+  private static Partition partitionCon(Equations vs, Equations qs) {
+    %match(qs) {
+      Equations() -> { return `Part(vs,Equations()); }
+      Equations(eq,eqs*) -> {
+        %match(eq) {
+          Equation(PList(PFun[],_*),_) -> {
+            return `partitionCon(Equations(vs*,eq),eqs*);
+          }
+          _ -> {
+            return `Part(vs,qs);
+          }
+        }
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static LTerm match(PVarList vars, Equations eqns, LTerm def) {
+    %match(vars) {
+      PVarList() -> { 
+        %match(eqns) {
+          Equations() -> { return def; }
+          Equations(Equation(PList(),e)) -> { return `e; }
+          _ -> { 
+            throw new RuntimeException("redundant clauses " + eqns); 
+          }
+        }
+      }
+      us -> {
+        %match(eqns) {
+          Equations() -> { return `def; }
+          Equations(Equation(PList(p,_*),_),_*) -> {
+            %match(p) {
+              PVar[] -> {
+                %match(partitionVar(Equations(),eqns)) {
+                  Part(same,rem) -> {
+                    return `matchVar(us,same,match(us,rem,def));
+                  }
+                }
+              }
+              PFun[] -> {
+                %match(partitionCon(Equations(),eqns)) {
+                  Part(same,rem) -> {
+                    return `matchCon(us,same,match(us,rem,def));
+                  }
+                }
+              }
             }
           }
         }
-        return `Case(s,newrules);
       }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static Rules unfold(PatternList vars, Rules rs) {
-    %match(rs) {
-      RList() -> { return `RList(); }
-      RList(Rule(PFun(_,pl),rhs),rs1*) -> {
-        Rules remain = `unfold(vars,rs1);
-        Clause prule = `unfoldAux(pl,vars,rhs);
-        return `RList(prule,remain*);
+  /* preconditions
+       length vars > 0 
+       eqns = [(PVar v1:_,_),(PVar v2:_,_),...] 
+   */
+  private static LTerm matchVar(PVarList vars, Equations eqns, LTerm def) {
+    %match(vars) {
+      PVarList(u,us*) -> {
+        Equations res = `Equations();
+        %match(eqns) {
+          Equations(_*,Equation(PList(PVar(v),ps*),e),_*) -> {
+            res = `Equations(res*,Equation(ps,Eval.substitute(e,v,Var(u))));
+          }
+        }
+        return `match(us,res,def);
       }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  /* pl   = p1 p2 p3 ...
-     vars = x2 x3 x4 ...  */
-  private static Clause unfoldAux(PatternList pl, PatternList vars, LTerm rhs) {
-    %match(vars,pl) {
-      PList(), PList(p_n) -> { 
-        return `Rule(p_n,rhs); 
-      }
-      PList(PVar(x),vs*), PList(p,ps*) -> {
-        Clause remain = `unfoldAux(ps,vs,rhs);
-        return `Rule(p,Case(Var(x),RList(remain)));
+  /* preconditions
+       length vars > 0 
+       eqns = [(PFun f1 c1:_,_),(PFun f2 c2:_,_),...] 
+   */
+  private static LTerm matchCon(PVarList vars, Equations eqns, LTerm def) {
+    CtorList ctors = ctors(eqns);
+    Rules res = `RList();
+    %match(vars) {
+      PVarList(u,us*) -> {
+        %match(ctors) {
+          CtorList(_*,c,_*) -> {
+            Equations ceqns = `Equations();
+            %match(eqns) {
+              Equations(_*,e@Equation(PList(PFun(f,_),_*),_),_*) 
+                && f << String c -> {
+                  ceqns = `Equations(ceqns*,e);
+                }
+            }
+            res = `RList(res*,matchClause(us,ceqns,def));
+          }
+        }
+        return `Case(Var(u),RList(res*,Rule(PVar(LVar.freshLVar("DEFAULT")),def)));
       }
     }
-    throw new RuntimeException("non exhaustive patterns");
+    throw new RuntimeException("non exhaustive patterns"); 
   }
 
+  private static CtorList nub(CtorList l) {
+    %match(l) {
+      CtorList(X*,x,Y*,x,Z*) -> {
+        return `nub(CtorList(X*,x,Y*,Z*));
+      }
+      ok -> { return `ok; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
 
+  private static CtorList ctors(Equations qs) {
+    CtorList res = `CtorList();
+    %match(qs) {
+      Equations(_*,Equation(PList(PFun(f,_),_*),_),_*) -> { 
+        res = `CtorList(res*,f); 
+      }
+    }
+    return nub(res);
+  }
+
+  /* preconditions
+        length qs > 0 
+        qs = [(PFun c ps1:_,_),(PFun c ps2:_,_),...]  (ie. same c everywhere)
+   */
+  private static Clause matchClause(PVarList vars, Equations qs, LTerm def) {
+    String con = null;
+    PVarList fresh = null;
+    %match(qs) {
+      Equations(Equation(PList(PFun(c,ps),_*),_),_*) -> {
+        con = `c;
+        fresh = `freshPvarsFromPList(ps);
+      }
+    }
+    Equations nqs = `Equations();
+    %match(qs) {
+      Equations(_*,Equation(PList(PFun(_,ps1),ps*),e),_*) -> {
+        nqs = `Equations(nqs*,Equation(PList(ps1*,ps*),e));
+      }
+    }
+    return `Rule(PFun(con,wrap(fresh)),match(PVarList(fresh*,vars*),nqs,def));
+  }
+
+  /* map PVar vl */
+  private static PatternList wrap(PVarList vl) {
+    %match(vl) {
+      PVarList() -> { return `PList(); }
+      PVarList(v,vs*) -> { 
+        PatternList pvs = `wrap(vs*);
+        return `PList(PVar(v),pvs*);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  %strategy Unfold() extends Identity() {
+    visit LTerm {
+      Case(s,rls) -> {
+        LVar sub = LVar.freshLVar("sub");
+        String message = "non exhaustive patterns";
+        LTerm t = `match(PVarList(sub),convert(rls),Error(message));
+        return `App(Abs(lam(sub,t)),s);
+      }
+    }
+  }
+
+  public static Equations convert(Rules rls) {
+    %match(rls) {
+      RList() -> { return `Equations(); }
+      RList(Rule(p,e),rs*) -> {
+        Equations qs = `convert(rs);
+        return  `Equations(Equation(PList(p),e),qs*);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+  
   public static LTerm unfoldCases(LTerm t) {
-    try { return `TopDown(Unfold()).visitLight(t); }
+    try { return `BottomUp(Unfold()).visitLight(t); }
     catch (VisitFailure e) { throw new RuntimeException("never happens"); }
   }
+
+  /* --- freeze --- */
 
   private static LTerm unit = `Constr("Unit",LTList());
   private static LVar freshvar() { return LVar.freshLVar("u"); }
@@ -159,6 +286,7 @@ public class PreProc {
       Lit(i) -> { return `freeze(Lit(i)); }
       Chr(c) -> { return `freeze(Chr(c)); }
       Str(s) -> { return `freeze(Str(s)); }
+      Error(s) -> { return `freeze(Error(s)); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }

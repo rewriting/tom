@@ -8,7 +8,11 @@ main.code: main.mml
 	@printf "compiling $<: " 
 	@java -Xss128M -cp ${CP} lazyml.Main < $< > $@ 
 
-Test.java: Test.pre.java main.code
+pretty.code: pretty.mml
+	@printf "compiling $<: " 
+	@java -Xss128M -cp ${CP} lazyml.Main < $< > $@ 
+
+Test.java: Test.pre.java main.code pretty.code
 	@printf "including generated code\n" 
 	@cpp -P Test.pre.java > Test.java
 

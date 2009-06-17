@@ -65,6 +65,7 @@ public class Typer {
       FLit(i) -> { return `FLit(i); }
       FChr(c) -> { return `FChr(c); }
       FStr(s) -> { return `FStr(s); }
+      FError(s) -> { return `FError(s); }
     }
     throw new RuntimeException();
   }
@@ -83,7 +84,7 @@ public class Typer {
   // replaces every free type variable by Foo
   private static FClause replaceFreeTVars(FClause c, TVarList free) {
     %match(c) {
-      FRule(p,t) -> { return `FRule(p,replaceFreeTVars(t,free)); }
+      FRule(p,t) -> { return `FRule(replaceFreeTVars(p,free),replaceFreeTVars(t,free)); }
     }
     throw new RuntimeException();
   }
@@ -94,6 +95,31 @@ public class Typer {
       FTermList() -> { return l; }
       FTermList(t,ts*) -> {
         return `ConsFTermList(replaceFreeTVars(t,free),replaceFreeTVars(ts,free));
+      }
+    }
+    throw new RuntimeException();
+  }
+
+  // replaces every free type variable by Foo
+  private static FPattern replaceFreeTVars(FPattern p, TVarList free) {
+    %match(p) {
+      FPFun(f,pl) -> { return `FPFun(f,replaceFreeTVars(pl,free)); }
+      FPVar(x,ty) -> {
+        LType rty = `replaceFreeTVars(ty,free);
+        return `FPVar(x,rty);
+      }
+    }
+    throw new RuntimeException();
+  }
+
+  // replaces every free type variable by Foo
+  private static FPatternList replaceFreeTVars(FPatternList l, TVarList free) {
+    %match(l) {
+      FPList() -> { return `FPList(); }
+      FPList(p,ps*) -> { 
+        FPattern rp = `replaceFreeTVars(p,free);
+        FPatternList rps = `replaceFreeTVars(ps,free);
+        return `FPList(rp,rps*);
       }
     }
     throw new RuntimeException();
@@ -318,6 +344,10 @@ public class Typer {
             return `RR(FPrimFun(f,children),codom,cl);
           }
         }
+      }
+      Error(s) -> {
+        LType ty1 = freshTypeVar();
+        return `RR(FError(s),ty1,CList());
       }
       Lit(i) -> {
         return `RR(FLit(i),tyInt,CList());

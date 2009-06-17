@@ -34,8 +34,8 @@ The backend (system F to Java) is really simple and minimalist.
 ** demos
 
  - test1: demo of lazy capabilities, sum (take 100 [1..])
- - test2: towards a bootstrap of the compiler: type inference
-          making use of polymorphism and extern java functions 
+ - test2: towards a bootstrap of the compiler: parsing + type inference +
+          pretty printing making use of polymorphism and extern java functions
           invocation
 
  - to run the demos:
@@ -44,5 +44,5 @@ The backend (system F to Java) is really simple and minimalist.
      cd lazyml/test1
      make
      cd ../test2
-     make < test.ml
+     make < examples/test2.ml
 

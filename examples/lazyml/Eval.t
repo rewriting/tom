@@ -26,6 +26,7 @@ public class Eval {
       Lit(i) -> { return `Lit(i); }
       Chr(c) -> { return `Chr(c); }
       Str(s) -> { return `Str(s); }
+      Error(s) -> { return `Error(s); }
     }
     throw new RuntimeException();
   }

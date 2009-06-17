@@ -64,6 +64,10 @@ public class Test {
     return res;
   }
 
+  public static int strLen(Object o) {
+    return ((String) o).length();
+  }
+
   public static C True = new C("True", new C[] {});
   public static C False = new C("False", new C[] {});
   public static C eqInt(Object x, Object y) {
@@ -95,11 +99,23 @@ public class Test {
     }
   }
 
+  public static Object modulePretty() {
+    return 
+    #include "pretty.code"
+    ;
+  }
+
   public static void main(String[] args) {
 
     Object res1 = 
     #include "main.code" 
     ;
+
+    /*
+    Object res1 = 
+#include "toto.code"
+    ;
+    */
 
     System.out.println(res1);
   }

@@ -10,17 +10,6 @@ public class Compiler {
   %include { lambda/lambda.tom }
   %include { sl.tom }
 
-/*
-  private static String type(RawLType ty) {
-    %match(ty) {
-      RawAtom(s) -> { return `s; }
-      RawTypeVar(i) -> { return "A" + `i; }
-      RawArrow(a,b) -> { return "Fun<" + `type(a) + "," + `type(b) + ">"; }
-    }
-    return null;
-  }
-*/
-  
   private static int cptr = 0;
   private static String freshSubject() {
     return "_sub" + (cptr++);
@@ -49,7 +38,7 @@ public class Compiler {
 
   private static String compile(RawFRules l, String s, FixVars fv) {
     %match(l) {
-      RawFRList() -> { return "throw new RuntimeException(\"non exhaustive patterns for " + s +"\");"; }
+      //RawFRList() -> { return "throw new RuntimeException(\"non exhaustive patterns for " + s +"\");"; }
       RawFRList(RawFRule(RawFPVar(x,_),rhs),_*) -> { 
         return %[final Object @`x@ = @`s@; return @`compile(rhs,fv)@;]%;
       }
@@ -137,16 +126,48 @@ public class Compiler {
             }
           }).v()]%;
       }
-      RawFLet(RawFLetin(x,_,u,v)) -> {
+      let@RawFLet[] -> {
+        %match (compileLets(let,fv)) {
+          RawLets(prelude,concl) -> {
+            return %[
+              (new V() {
+                 @`prelude@
+                 public Object v() {
+                   return @`compile(concl,fv)@;
+                 }
+               }).v()]%;
+          }
+        }
+      }
+      RawFError(m) -> {
         return %[
-          (new V() {
-            public Object v() {
-              final Object @`x@ = @`compile(u,fv)@;
-              return @`compile(v,fv)@;
+          (new V() { 
+            public Object v() { 
+              throw new RuntimeException("@`m@"); 
             }
           }).v()]%;
       }
     }
     return null;
   }
+
+  public static RawLets compileLets (RawFTerm t,FixVars fv) {
+      %match(t) {
+        RawFLet(RawFLetin(x,_,u,v)) -> {
+          %match(compileLets(v,fv)) {
+            RawLets(s,c) -> {
+              String s1 = %[
+                public final Object @`x@ = @`compile(u,fv)@;
+              ]%;
+              return `RawLets(s1+s,c);
+            }
+          }
+        }
+        o -> {
+          return `RawLets("",o);
+        }
+      }
+      return null;
+    }
+
 }
