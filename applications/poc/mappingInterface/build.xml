@@ -4,6 +4,7 @@
 
     <property name="javacSource" value="1.5"/>
     <property name="javacTarget" value="1.5"/>
+    <property name="javacDebug" value="on"/>
     <property name="optimize" value="off"/>
     <property name="optimize2" value="off"/>
     <property name="genIntrospector" value="on"/>
@@ -23,22 +24,22 @@
         <mkdir dir="${mi.gen}"/>
     </target>
 
-    <target name="generate" depends="init">
+    <!--<target name="generate" depends="init">-->
 
-        <gom.preset srcdir="${mi.src}" destdir="${mi.gen}" withCongruenceStrategies="true">
-            <include name="**/*.gom"/>
-        </gom.preset>
+        <!--<gom.preset srcdir="${mi.src}" destdir="${mi.gen}" withCongruenceStrategies="true">-->
+            <!--<include name="**/*.gom"/>-->
+        <!--</gom.preset>-->
 
-        <tom.preset srcdir="${mi.src}"
-                    destdir="${mi.gen}"
-                    import="${mi.src};${mi.gen}">
-            <include name="**/*.t"/>
-        </tom.preset>
-    </target>
+        <!--<tom.preset srcdir="${mi.src}"-->
+                    <!--destdir="${mi.gen}"-->
+                    <!--import="${mi.src};${mi.gen}">-->
+            <!--<include name="**/*.t"/>-->
+        <!--</tom.preset>-->
+    <!--</target>-->
 
-    <target name="build" depends="generate">
+    <target name="build" depends="init">
 
-        <javac.preset destdir="${mi.build}" debug="on">
+        <javac.preset destdir="${mi.build}">
             <src path="${mi.gen}"/>
             <src path="${mi.src}"/>
             <include name="**/*.java"/>

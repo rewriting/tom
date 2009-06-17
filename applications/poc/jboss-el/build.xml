@@ -11,7 +11,7 @@
   <property name="pretty"   value="on"/>
  
   <property environment="env"/>
-  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <property name="tom.home" value="../../../src/dist"/>
   <import file="${tom.home}/lib/tom-common.xml"/>
 
   <property name="el.dir"      location="."/>
@@ -26,11 +26,12 @@
   </target>
 
   <target name="build" depends="init">
-    <gom config="${gomconfigfile}"
-      srcdir="${el.src}"
-      destdir="${el.gen}">
+    <gom.preset config="${gomconfigfile}"
+                 srcdir="${el.src}"
+                 destdir="${el.gen}"
+                 withCongruenceStrategies="false">
          <include name="**/*.gom"/>
-    </gom>
+    </gom.preset>
 
     <tom.preset srcdir="${el.src}"
       destdir="${el.gen}">

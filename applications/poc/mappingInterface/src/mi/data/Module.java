@@ -30,7 +30,7 @@ public class Module {
         a make();
     }
 
-    public static class a_Mapping extends Mapping implements a_MappingI {
+    public static class a_Mapping extends Mapping<a> implements a_MappingI {
         public static a_Mapping instance = new a_Mapping();
 
         // Test
@@ -41,6 +41,10 @@ public class Module {
         // Make
         public a make() {
             return a.make();
+        }
+
+        public a make(Object[] children) {
+            return make();
         }
 
         // LocalIntrospector
@@ -78,7 +82,7 @@ public class Module {
         b make();
     }
 
-    public static class b_Mapping extends Mapping implements b_MappingI {
+    public static class b_Mapping extends Mapping<b> implements b_MappingI {
         public static b_Mapping instance = new b_Mapping();
 
         // Test
@@ -89,6 +93,10 @@ public class Module {
         // Make
         public b make() {
             return b.make();
+        }
+
+        public b make(Object[] children) {
+            return make();
         }
 
         // LocalIntrospector
@@ -132,7 +140,7 @@ public class Module {
 
     }
 
-    public static class f_Mapping extends Mapping implements f_MappingI {
+    public static class f_Mapping extends Mapping<f> implements f_MappingI {
         public static f_Mapping instance = new f_Mapping();
 
         // Test
@@ -145,6 +153,9 @@ public class Module {
             return f.make((T1)s1, (T2)s2);
         }
 
+        public f make(Object[] children) {
+            return make(children[0], children[1]);
+        }
 
         public T1 gets1(Object t) {
             return ((f)t).gets1();
@@ -209,7 +220,7 @@ public class Module {
 
     }
 
-    public static class g_Mapping extends Mapping implements g_MappingI {
+    public static class g_Mapping extends Mapping<g> implements g_MappingI {
         public static g_Mapping instance = new g_Mapping();
 
         // Test
@@ -220,6 +231,10 @@ public class Module {
         // Make
         public g make(Object s2) {
             return g.make((T2)s2);
+        }
+
+        public g make(Object[] children) {
+            return make(children[0]);
         }
 
         public T2 gets2(Object t) {
