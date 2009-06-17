@@ -1,0 +1,39 @@
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+
+%typeterm T1 {
+  implement { base.data.types.T1 }
+  is_sort(t) { $t instanceof base.data.types.T1 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%typeterm T2 {
+  implement { base.data.types.T2 }
+  is_sort(t) { $t instanceof base.data.types.T2 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%op T1 a() {
+  make() { base.data.Module.a_Mapping.instance.make() }
+  is_fsym(t) { base.data.Module.a_Mapping.instance.isSym($t) }
+}
+
+%op T2 b() {
+  make() { base.data.Module.b_Mapping.instance.make() }
+  is_fsym(t) { base.data.Module.b_Mapping.instance.isSym($t) }
+}
+
+%op T1 f(s1:T1, s2:T2) {
+  make(s1, s2) { base.data.Module.f_Mapping.instance.make($s1, $s2) }
+  is_fsym(t) { base.data.Module.f_Mapping.instance.isSym($t) }
+  get_slot(s1, t)  { base.data.Module.f_Mapping.instance.gets1($t) }
+  get_slot(s2, t)  { base.data.Module.f_Mapping.instance.gets2($t) }
+}
+
+%op T2 g(s2:T2) {
+  make(s2) { base.data.Module.g_Mapping.instance.make($s2) }
+  is_fsym(t) { base.data.Module.g_Mapping.instance.isSym($t) }
+  get_slot(s2, t)  { base.data.Module.g_Mapping.instance.gets2($t) }
+}
+

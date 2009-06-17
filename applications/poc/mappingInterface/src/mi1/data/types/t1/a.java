@@ -1,6 +1,6 @@
-package mi._.data.types.t1;
+package mi1.data.types.t1;
 
-import mi._.data.types.T1;
+import mi1.data.types.T1;
 
 /**
  * @author nvintila

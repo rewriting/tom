@@ -1,21 +1,21 @@
-package mi;
+package mi1;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Assert;
 
 
-import mi.data.types.*;
-import mi.data.types.t1.*;
-import mi.data.types.t2.*;
+import base.data.types.*;
+import base.data.types.t1.*;
+import base.data.types.t2.*;
 import tom.library.sl.*;
 
-public class MainGomMapping extends TestCase {
-  %include { mi/data/datamapping.tom }
+public class MainGom extends TestCase {
+  %include { base/datamapping.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(MainGomMapping.class));
+    junit.textui.TestRunner.run(new TestSuite(MainGom.class));
   }
 
   public void testMatch() {

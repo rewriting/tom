@@ -1,14 +1,14 @@
-package mi;
+package base;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Assert;
 
-import mi.data.types.*;
+import base.data.types.*;
 import tom.library.sl.*;
 
 public class Main extends TestCase {
-  %include { mi/data/data.tom }
+  %include { base/data/data.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {
@@ -30,7 +30,7 @@ public class Main extends TestCase {
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, tom.library.mapping.Introspector.instance);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject);
       assertEquals(res, `a());
     } catch(VisitFailure e) {
       fail();

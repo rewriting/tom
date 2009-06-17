@@ -1,4 +1,4 @@
-package mi._.data.types;
+package mi1.data.types;
 
 /**
  * @author nvintila

@@ -1,21 +1,21 @@
-package mi;
+package mi1;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Assert;
 
 
-import mi._.data.types.*;
-import mi._.data.types.t1.*;
-import mi._.data.types.t2.*;
+import mi1.data.types.*;
+import mi1.data.types.t1.*;
+import mi1.data.types.t2.*;
 import tom.library.sl.*;
 
-public class _Main extends TestCase {
-  %include { mi/_/data/data.tom }
+public class MainHand extends TestCase {
+  %include { mi1/data/data.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(_Main.class));
+    junit.textui.TestRunner.run(new TestSuite(MainHand.class));
   }
 
   public void testMatch() {
@@ -33,7 +33,7 @@ public class _Main extends TestCase {
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, tom.library.mapping.Introspector.instance);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mapping.Introspector.instance);
       assertEquals(res, `a());
     } catch(VisitFailure e) {
       fail();

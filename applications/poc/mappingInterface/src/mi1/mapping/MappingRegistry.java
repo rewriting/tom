@@ -1,4 +1,4 @@
-package tom.library.mapping;
+package mapping;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public class MappingRegistry {
 
-    public static final Map<Class, Mapping> runtime = new HashMap<Class, Mapping>();
+    private static final Map<Class, Mapping> runtime = new HashMap<Class, Mapping>();
 
     public static Mapping getMappingOf(Object o) {
         return runtime.get(o.getClass());

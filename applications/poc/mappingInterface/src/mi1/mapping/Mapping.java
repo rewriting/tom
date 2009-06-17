@@ -1,4 +1,4 @@
-package tom.library.mapping;
+package mapping;
 
 /**
  * @author nvintila

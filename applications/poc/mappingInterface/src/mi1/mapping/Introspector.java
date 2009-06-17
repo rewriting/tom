@@ -1,4 +1,4 @@
-package tom.library.mapping;
+package mapping;
 
 public class Introspector implements tom.library.sl.Introspector {
 

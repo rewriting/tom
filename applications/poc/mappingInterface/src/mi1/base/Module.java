@@ -1,12 +1,11 @@
-package mi._.data;
+package base.data;
 
-import mi._.data.types.t1.*;
-import mi._.data.types.t2.*;
-import mi._.data.types.T2;
-import mi._.data.types.T1;
-import mi._.data.types.T;
+import base.data.types.t1.*;
+import base.data.types.t2.*;
+import base.data.types.T2;
+import base.data.types.T1;
 
-import tom.library.mapping.Mapping;
+import mapping.Mapping;
 
 /**
  * @author nvintila
@@ -24,14 +23,14 @@ public class Module {
      * interface.
      * Alternatively, the impl can be manually written thus permitting completely manual mappings!
      */
-    public static interface a_MappingI /*extends tom.library.sl.Introspector */ {
+    public static interface a_MappingI {
         // Test
         boolean isSym(Object t);// Slot getters
 
         a make();
     }
 
-    public static class a_Mapping extends Mapping implements a_MappingI {
+    public static class a_Mapping extends Mapping<a> implements a_MappingI {
         public static a_Mapping instance = new a_Mapping();
 
         // Test
@@ -41,11 +40,11 @@ public class Module {
 
         // Make
         public a make() {
-            return new a();
+            return a.make();
         }
 
         public a make(Object[] children) {
-          return make();
+            return make();
         }
 
         // LocalIntrospector
@@ -76,14 +75,14 @@ public class Module {
     }
 
     /** ------------------------------ */
-    public static interface b_MappingI /*extends tom.library.sl.Introspector*/ {
+    public static interface b_MappingI {
         // Test
         boolean isSym(Object t);// Slot getters
 
         b make();
     }
 
-    public static class b_Mapping extends Mapping implements b_MappingI {
+    public static class b_Mapping extends Mapping<b> implements b_MappingI {
         public static b_Mapping instance = new b_Mapping();
 
         // Test
@@ -93,11 +92,11 @@ public class Module {
 
         // Make
         public b make() {
-            return new b();
+            return b.make();
         }
 
         public b make(Object[] children) {
-          return make();
+            return make();
         }
 
         // LocalIntrospector
@@ -128,20 +127,20 @@ public class Module {
     }
 
     /** ------------------------------ */
-    public static interface f_MappingI /*extends tom.library.sl.Introspector*/ {
+    public static interface f_MappingI {
         // Test
         boolean isSym(Object t);
 
-        f make(T s1, T s2);
+        f make(Object s1, Object s2);
 
         // Slot getters
-        T1 getS1(Object t);
+        T1 gets1(Object t);
 
-        T2 getS2(Object t);
+        T2 gets2(Object t);
 
     }
 
-    public static class f_Mapping extends Mapping implements f_MappingI {
+    public static class f_Mapping extends Mapping<f> implements f_MappingI {
         public static f_Mapping instance = new f_Mapping();
 
         // Test
@@ -150,37 +149,37 @@ public class Module {
         }
 
         // Make
-        public f make(T s1, T s2) {
-            return new f((T1)s1, (T2)s2);
+        public f make(Object s1, Object s2) {
+            return f.make((T1)s1, (T2)s2);
         }
 
         public f make(Object[] children) {
-          return make((T)children[0],(T)children[1]);
+            return make(children[0], children[1]);
         }
 
-        public T1 getS1(Object t) {
-            return ((f)t).getS1();
+        public T1 gets1(Object t) {
+            return ((f)t).gets1();
         }
 
-        public T2 getS2(Object t) {
-            return ((f)t).getS2();
+        public T2 gets2(Object t) {
+            return ((f)t).gets2();
         }
 
         // LocalIntrospector
         public f setChildren(Object o, Object[] children) {
-            return make((T1)children[0], (T2)children[1]);
+            return make(children[0], children[1]);
         }
 
         public Object[] getChildren(Object o) {
-            return new Object[]{ ((f)o).getS1(), ((f)o).getS2() };
+            return new Object[]{ ((f)o).gets1(), ((f)o).gets2() };
         }
 
         public Object setChildAt(Object o, int i, Object child) {
             switch (i) {
                 case 0:
-                    return make((T1)child, ((f)o).getS2());
+                    return make(child, ((f)o).gets2());
                 case 1:
-                    return make(((f)o).getS1(), (T2)child);
+                    return make(((f)o).gets1(), (T2)child);
                 //todo: or ((f)o).setS2((T2)child); ?
             }
             assert false : "Unexpected call.";
@@ -190,9 +189,9 @@ public class Module {
         public Object getChildAt(Object o, int i) {
             switch (i) {
                 case 0:
-                    return getS1(o);
+                    return gets1(o);
                 case 1:
-                    return getS2(o);
+                    return gets2(o);
             }
             assert false : "Unexpected call.";
             return null;
@@ -214,14 +213,14 @@ public class Module {
         // Test
         boolean isSym(Object t);
 
-        g make(T s2);
+        g make(Object s2);
 
         // Slot getters
-        T2 getS2(Object t);
+        T2 gets2(Object t);
 
     }
 
-    public static class g_Mapping extends Mapping implements g_MappingI {
+    public static class g_Mapping extends Mapping<g> implements g_MappingI {
         public static g_Mapping instance = new g_Mapping();
 
         // Test
@@ -230,30 +229,31 @@ public class Module {
         }
 
         // Make
-        public g make(T s2) {
-            return new g((T2)s2);
-        }
-        public g make(Object[] children) {
-          return make((T)children[0]);
+        public g make(Object s2) {
+            return g.make((T2)s2);
         }
 
-        public T2 getS2(Object t) {
-            return ((g)t).getS2();
+        public g make(Object[] children) {
+            return make(children[0]);
+        }
+
+        public T2 gets2(Object t) {
+            return ((g)t).gets2();
         }
 
         // LocalIntrospector
         public g setChildren(Object o, Object[] children) {
-            return make((T2)children[0]);
+            return make(children[0]);
         }
 
         public Object[] getChildren(Object o) {
-            return new Object[]{ (((g)o).getS2()) };
+            return new Object[]{ (((g)o).gets2()) };
         }
 
         public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
             switch (i) {
                 case 0:
-                    return make((T2)child);
+                    return make(child);
                 //todo : or ((g)o).setS2((T2)child); ?
             }
             assert false : "Unexpected call.";
@@ -263,7 +263,7 @@ public class Module {
         public Object getChildAt(Object o, int i) {
             switch (i) {
                 case 0:
-                    return getS2(o);
+                    return gets2(o);
             }
             assert false : "Unexpected call.";
             return null;
