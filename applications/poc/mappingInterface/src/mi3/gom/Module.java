@@ -5,7 +5,6 @@ import base.data.types.t2.*;
 import base.data.types.T2;
 import base.data.types.T1;
 
-import mi3.mapping.IntrospectorMapping;
 
 public class Module {
 
