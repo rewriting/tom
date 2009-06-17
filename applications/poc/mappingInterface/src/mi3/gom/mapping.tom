@@ -1,0 +1,39 @@
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+
+%typeterm T1 {
+  implement { base.data.types.T1 }
+  is_sort(t) { $t instanceof base.data.types.T1 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%typeterm T2 {
+  implement { base.data.types.T2 }
+  is_sort(t) { $t instanceof base.data.types.T2 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%op T1 a() {
+  make() { mi3.gom.Module.a_Mapping.getInstance().make(new Object[] {}) }
+  is_fsym(t) { mi3.gom.Module.a_Mapping.getInstance().isInstanceOf($t,null) }
+}
+
+%op T2 b() {
+  make() { mi3.gom.Module.b_Mapping.getInstance().make(new Object[] {}) }
+  is_fsym(t) { mi3.gom.Module.b_Mapping.getInstance().isInstanceOf($t,null) }
+}
+
+%op T1 f(s1:T1, s2:T2) {
+  make(s1, s2) { mi3.gom.Module.f_Mapping.getInstance().make(new Object[] {$s1, $s2}) }
+  is_fsym(t) { mi3.gom.Module.f_Mapping.getInstance().isInstanceOf($t,null) }
+  get_slot(s1, t)  { (T1) mi3.gom.Module.f_Mapping.getInstance().getChildAt($t,0) }
+  get_slot(s2, t)  { (T2) mi3.gom.Module.f_Mapping.getInstance().getChildAt($t,1) }
+}
+
+%op T2 g(s2:T2) {
+  make(s2) { mi3.gom.Module.g_Mapping.getInstance().make(new Object[]{$s2}) }
+  is_fsym(t) { mi3.gom.Module.g_Mapping.getInstance().isInstanceOf($t,null) }
+  get_slot(s2, t)  { (T2) mi3.gom.Module.g_Mapping.getInstance().getChildAt($t,0) }
+}
+
