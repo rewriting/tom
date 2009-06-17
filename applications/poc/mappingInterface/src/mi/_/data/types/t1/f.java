@@ -34,4 +34,12 @@ public class f extends T1 {
         this.s2 = s2;
     }
 
+    public boolean equals(Object o) {
+      if (o instanceof f) {
+        f oo = (f) o;
+        return s1.equals(oo.getS1()) && s2.equals(oo.getS2());
+      }
+      return false;
+    }
+
 }

@@ -18,27 +18,33 @@ public class _Main extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(_Main.class));
   }
 
-  public void testVisit() {
-    T1 subject = new f(new f(new a(),new b()), new g(new b()));
-    System.out.println("subject = " + subject);
-
+  public void testMatch() {
+    T1 subject = `f(f(a(),b()),g(b()));
     %match(subject) {
-      f(x,g(y)) -> { System.out.println(`x + " -- " + `y); }
+      f(x,g(y)) -> { 
+        assertEquals(`x,`f(a(),b()));
+        assertEquals(`y,`b());
+        return;
+      }
     }
+    fail();
+  }
 
+  public void testVisit() {
+    T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, new LocalIntrospector());
-      System.out.println("res = " + res);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, tom.library.mapping.Introspector.instance);
+      assertEquals(res, `a());
     } catch(VisitFailure e) {
-      System.out.println("failure");
+      fail();
     }
 
   }
 
+
   %strategy Rule() extends Fail() {
     visit T1 {
       f(x,y) -> {
-        System.out.println("Rule(): " + `x);
         return `x;
       }
     }

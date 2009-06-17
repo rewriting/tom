@@ -24,46 +24,42 @@
         <mkdir dir="${mi.gen}"/>
     </target>
 
-    <!--<target name="generate" depends="init">-->
+    <target name="generate" depends="init">
+      <gom.preset srcdir="${mi.src}" destdir="${mi.gen}" withCongruenceStrategies="true">
+        <include name="**/*.gom"/>
+      </gom.preset>
+      <tom.preset srcdir="${mi.src}" destdir="${mi.gen}" import="${mi.src};${mi.gen}">
+        <include name="**/*.t"/>
+      </tom.preset>
+    </target>
 
-        <!--<gom.preset srcdir="${mi.src}" destdir="${mi.gen}" withCongruenceStrategies="true">-->
-            <!--<include name="**/*.gom"/>-->
-        <!--</gom.preset>-->
-
-        <!--<tom.preset srcdir="${mi.src}"-->
-                    <!--destdir="${mi.gen}"-->
-                    <!--import="${mi.src};${mi.gen}">-->
-            <!--<include name="**/*.t"/>-->
-        <!--</tom.preset>-->
-    <!--</target>-->
-
-    <target name="build" depends="init">
-
-        <javac.preset destdir="${mi.build}">
-            <src path="${mi.gen}"/>
-            <src path="${mi.src}"/>
-            <include name="**/*.java"/>
-        </javac.preset>
+    <target name="build" depends="generate">
+      <javac.preset destdir="${mi.build}">
+        <src path="${mi.gen}"/>
+        <src path="${mi.src}"/>
+        <include name="**/*.java"/>
+      </javac.preset>
     </target>
 
     <target name="clean">
-        <delete dir="${mi.gen}"/>
-        <delete dir="${mi.build}"/>
+      <delete dir="${mi.gen}"/>
+      <delete dir="${mi.build}"/>
     </target>
 
     <target name="test" depends="build"
-            description="Runs junit acceptance tests">
-        <junit haltonfailure="false" showoutput="true">
-            <classpath>
-                <path refid="tom.classpath"/>
-                <!--<fileset dir="${mi.dir}/lib">-->
-                    <!--<include name="*.jar"/>-->
-                <!--</fileset>-->
-                <pathelement location="${mi.build}"/>
-            </classpath>
-            <test name="mi.Main"/>
-            <test name="mi._Main"/>
-        </junit>
+      description="Runs junit acceptance tests">
+      <junit haltonfailure="false" showoutput="true">
+        <classpath>
+          <path refid="tom.classpath"/>
+          <!--<fileset dir="${mi.dir}/lib">-->
+            <!--<include name="*.jar"/>-->
+            <!--</fileset>-->
+          <pathelement location="${mi.build}"/>
+        </classpath>
+        <test name="mi.Main"/>
+        <test name="mi.MainGomMapping"/>
+        <test name="mi._Main"/>
+      </junit>
     </target>
 
-</project>
+  </project>

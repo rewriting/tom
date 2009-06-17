@@ -7,6 +7,5 @@
   data/datamapping.tom: hand written mapping based on Module.java
 
 * Java mapping interface for hand written data-structures
-  _Maint.t
+  _Main.t
   _/*: everything is hand written but the interfaces could be automatically generated
-  

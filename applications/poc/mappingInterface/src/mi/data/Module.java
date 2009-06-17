@@ -23,7 +23,7 @@ public class Module {
      * interface.
      * Alternatively, the impl can be manually written thus permitting completely manual mappings!
      */
-    public static interface a_MappingI /*extends tom.library.sl.Introspector */ {
+    public static interface a_MappingI {
         // Test
         boolean isSym(Object t);// Slot getters
 
@@ -75,7 +75,7 @@ public class Module {
     }
 
     /** ------------------------------ */
-    public static interface b_MappingI /*extends tom.library.sl.Introspector*/ {
+    public static interface b_MappingI {
         // Test
         boolean isSym(Object t);// Slot getters
 
@@ -127,7 +127,7 @@ public class Module {
     }
 
     /** ------------------------------ */
-    public static interface f_MappingI /*extends tom.library.sl.Introspector*/ {
+    public static interface f_MappingI {
         // Test
         boolean isSym(Object t);
 

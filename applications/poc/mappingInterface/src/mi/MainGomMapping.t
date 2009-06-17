@@ -18,19 +18,26 @@ public class MainGomMapping extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(MainGomMapping.class));
   }
 
+  public void testMatch() {
+    T1 subject = `f(f(a(),b()),g(b()));
+    %match(subject) {
+      f(x,g(y)) -> { 
+        assertEquals(`x,`f(a(),b()));
+        assertEquals(`y,`b());
+        return;
+      }
+    }
+    fail();
+  }
+
+
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
-    System.out.println("subject = " + subject);
-
-    %match(subject) {
-      f(x,g(y)) -> { System.out.println(`x + " -- " + `y); }
-    }
-
     try {
       T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, new LocalIntrospector());
-      System.out.println("res = " + res);
+      assertEquals(res, `a());
     } catch(VisitFailure e) {
-      System.out.println("failure");
+      fail();
     }
 
   }
@@ -38,7 +45,6 @@ public class MainGomMapping extends TestCase {
   %strategy Rule() extends Fail() {
     visit T1 {
       f(x,y) -> {
-        System.out.println("Rule(): " + `x);
         return `x;
       }
     }
