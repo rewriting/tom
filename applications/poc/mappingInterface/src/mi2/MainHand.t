@@ -33,7 +33,7 @@ public class MainHand extends TestCase {
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mapping.Introspector.instance);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi2.mapping.Introspector.instance);
       assertEquals(res, `a());
     } catch(VisitFailure e) {
       fail();
