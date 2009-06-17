@@ -6,11 +6,10 @@ package mi2.mapping;
  */
 public abstract class Mapping<T> {
 
-    public Mapping() {
-        MappingRegistry.registerMappingOf(this);
-    }
+  public Mapping() {
+    MappingRegistry.registerMappingOf(this);
+  }
 
-    public abstract Class forType();
+  public abstract Class forType();
 
-    public abstract T make(Object[] children);
 }
