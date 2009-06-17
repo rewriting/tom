@@ -187,10 +187,25 @@ public class TypeExpander {
       Map<SortDecl,OperatorDeclList> operatorsForSort) {
 
     %match(prod) {
-      Production(name,domain,GomType(_,codomain),_) -> {
+      //Production(name,domain,GomType(_,codomain)) -> {
+      //Production(name,domain,GomType(_,codomain),OptionList(_,opt@Details[Comments=comment])) -> {
+      Production(name,domain,GomType(_,codomain),options) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
-        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts);
+///
+        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, Details("")); //default case, when no comment is present
+        if (`options.isConsOptionList()) { // usual case : 
+          Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)`options).toArray();
+          for (int i=0;i<`options.length();i++) {
+            if (opts[i] instanceof tom.gom.adt.gom.types.option.Details) {
+              decl = `OperatorDecl(name,codomainSort, domainSorts, (tom.gom.adt.gom.types.option.Details)opts[i]);
+              break;
+            }
+          }
+        } else if (`options.isDetails()) { // just in case, but for moment, it shouldn't be possible to have it
+          decl = `OperatorDecl(name,codomainSort, domainSorts, options);
+        }
+///
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort,`ConcOperator(decl,list*));
@@ -199,6 +214,7 @@ public class TypeExpander {
         }
         return decl;
       }
+
     }
     throw new GomRuntimeException(
         "TypeExpander::getOperatorDecl: wrong Production?");

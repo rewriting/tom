@@ -50,7 +50,7 @@ package tom.gom.parser;
 }
 
 module :
-  MODULE modulename (imps=imports)? section EOF
+ MODULE modulename (imps=imports)? section EOF
   -> {imps!=null}? ^(GomModule modulename ^(ConcSection imports section))
   -> ^(GomModule modulename ^(ConcSection section))
   ;
@@ -88,7 +88,7 @@ adtgrammar :
   ;
 
 syntax :
-  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)*
+  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)* 
     -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr4)* ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
@@ -104,7 +104,7 @@ atomdecl :
   ;
 
 typedecl :
-    typename=ID  EQUALS alts=alternatives[typename]
+    typename=ID EQUALS alts=alternatives[typename]
       -> ^(SortType ^(GomType ^(ExpressionType) $typename) ^(ConcAtom) $alts)
   |  ptypename=ID BINDS b=atoms EQUALS palts=pattern_alternatives[ptypename]
       -> ^(SortType ^(GomType ^(PatternType) $ptypename) $b $palts)
@@ -115,23 +115,31 @@ atoms :
   ;
 
 alternatives[Token typename] :
-  (ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
+  /*(ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
+  -> ^(ConcProduction (opdecl)+)*/
+  /*(((jd1=(JAVADOC)? ALT)?) | ((ALT jd1=(JAVADOC)?)?) | (JAVADOC)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?*/
+  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?
   -> ^(ConcProduction (opdecl)+)
   ;
 
+/* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_alternatives[Token typename] :
   (ALT)? pattern_opdecl[typename] (ALT pattern_opdecl[typename])* (SEMI)?
   -> ^(ConcProduction (pattern_opdecl)+)
   ;
 
-opdecl[Token type] :
-  ID fieldlist
+opdecl[Token type, Token JAVADOC] :
+ ID fieldlist
+  -> {JAVADOC!=null}? ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+      /*^(Origin ID[""+input.LT(1).getLine()]))*/
+      ^(OptionList ^(Origin ID[""+input.LT(1).getLine()]) ^(Details ID[JAVADOC])))
   -> ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 
+/* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_opdecl[Token type] :
-  ID pattern_fieldlist
+ ID pattern_fieldlist
   -> ^(Production ID pattern_fieldlist ^(GomType ^(PatternType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
@@ -139,6 +147,7 @@ pattern_opdecl[Token type] :
 fieldlist :
   LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
 
+/* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_fieldlist :
   LPAREN (pattern_field (COMMA pattern_field)* )? RPAREN -> ^(ConcField (pattern_field)*) ;
 
@@ -146,6 +155,7 @@ type:
   ID -> ^(GomType ^(ExpressionType) ID)
   ;
 
+/* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_type:
   ID -> ^(GomType ^(PatternType) ID)
   ;
@@ -157,6 +167,7 @@ field:
   | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(Refresh) ID pattern_type)
   ;
 
+/* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_field:
     pattern_type STAR -> ^(StarredField pattern_type ^(None))
   | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
@@ -242,7 +253,12 @@ SLCOMMENT :
   ;
 
 MLCOMMENT :
-  '/*' .* '*/' {$channel=HIDDEN;}
+  '/*' ~'*'.* '*/'
+  {$channel=HIDDEN;}
+  ;
+
+JAVADOC :
+  '/**' .* '*/'
   ;
 
 ID : ('a'..'z' | 'A'..'Z')

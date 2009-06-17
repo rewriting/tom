@@ -40,6 +40,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
   ClassName sortName;
   GomClass empty;
   GomClass cons;
+  String comments;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -54,11 +55,13 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
       VariadicOperatorClass[AbstractType=abstractType,
                             SortName=sortName,
                             Empty=empty,
-                            Cons=cons] -> {
+                            Cons=cons,
+                            Comments=comments] -> {
         this.abstractType = `abstractType;
         this.sortName = `sortName;
         this.empty = `empty;
         this.cons = `cons;
+        this.comments = `comments;
         return;
       }
     }
@@ -76,6 +79,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 package @getPackage()@;
 @generateImport()@
 
+@comments@
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
 @generateBlock()@
 ]%);

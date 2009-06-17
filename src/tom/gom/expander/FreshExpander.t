@@ -1315,7 +1315,7 @@ public class FreshExpander {
                 ConcField(
                   NamedField(None(),"n",GomType(ExpressionType(),"int")),
                   NamedField(None(),"hint",GomType(ExpressionType(),"String"))),
-                GomType(AtomType(),name),Origin(-1)))); 
+                GomType(AtomType(),name),Origin(-1))));
       }
     }
   }

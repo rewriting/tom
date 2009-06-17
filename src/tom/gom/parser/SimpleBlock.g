@@ -84,7 +84,7 @@ SL_COMMENT :
 
 //fragment
 ML_COMMENT
-  : '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+  : '/*' ( options {greedy=false;} : . )* '*/' //{$channel=HIDDEN;}
   ;
 
 // the rule for the filter: just append the text to the buffer

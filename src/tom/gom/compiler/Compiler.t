@@ -129,7 +129,8 @@ public class Compiler {
           ConcOperator(_*,
               opdecl@OperatorDecl[Name=opname,
               Sort=SortDecl[Name=sortName],
-              Prod=typedproduction],
+              Prod=typedproduction,
+              Option=Details[Comments=comments]],
               _*) -> {
             String sortNamePackage = `sortName.toLowerCase();
             ClassName operatorClassName =
@@ -173,7 +174,8 @@ public class Compiler {
                   mappingName,
                   sortClassName,
                   slots,
-                  ConcHook());
+                  ConcHook(),
+                  comments);
 
               GomClass emptyClass = `OperatorClass(empty,
                                                    abstracttypeName,
@@ -181,7 +183,8 @@ public class Compiler {
                                                    mappingName,
                                                    sortClassName,
                                                    ConcSlotField(),
-                                                   ConcHook());
+                                                   ConcHook(),
+                                                   comments);
 
               operatorClass = `VariadicOperatorClass(variadicOpClassName,
                                                      abstracttypeName,
@@ -189,7 +192,8 @@ public class Compiler {
                                                      sortClassName,
                                                      emptyClass,
                                                      consClass,
-                                                     ConcHook());
+                                                     ConcHook(),
+                                                     comments);
             } else {
               operatorClass = `OperatorClass(operatorClassName,
                                              abstracttypeName,
@@ -197,7 +201,8 @@ public class Compiler {
                                              mappingName,
                                              sortClassName,
                                              slots,
-                                             ConcHook());
+                                             ConcHook(),
+                                             comments);
             }
             classForOperatorDecl.put(`opdecl,operatorClass);
             classList = `ConcGomClass(operatorClass,classList*);

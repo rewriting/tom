@@ -139,13 +139,13 @@ public class GraphExpander {
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
         // for now, we need also to fill the symbol table 
-        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()),Slot("term"+sortname,sortdecl))));
+        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()),Slot("term"+sortname,sortdecl))),Details("/** labOp */"));
         ge.getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
-        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
+        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))),Details("/** refOp */"));
         ge.getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
-        OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(ge.getIntSortDecl()));
+        OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(ge.getIntSortDecl()),Details("/** pathOp */"));
         ge.getSymbolTable().addVariadicConstructor("Path"+`sortname,"int",`sortname);
-        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))));
+        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))),Details("/** varOp */"));
         ge.getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         hookList.add(ge.pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));

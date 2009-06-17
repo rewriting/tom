@@ -40,6 +40,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName extendsType;
   ClassName sortName;
   SlotFieldList slotList;
+  String comments;
   boolean multithread;
   boolean maximalsharing;
 
@@ -60,11 +61,13 @@ public class OperatorTemplate extends TemplateHookedClass {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
                     SortName=sortName,
-                    SlotFields=slots] -> {
+                    SlotFields=slots,
+                    Comments=comments] -> {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;
         this.sortName = `sortName;
         this.slotList = `slots;
+        this.comments = `comments;
         return;
       }
     }
@@ -87,6 +90,7 @@ package @getPackage()@;
 if (maximalsharing) {
   writer.write(
 %[
+@generateComments()@
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
   @generateBlock()@
   private static String symbolName = "@className()@";
@@ -111,6 +115,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 } else {
   writer.write(
 %[
+@generateComments()@
 public final class @className()@ extends @fullClassName(extendsType)@ implements Cloneable, tom.library.sl.Visitable @generateInterface()@ {
   @generateBlock()@
   private static String symbolName = "@className()@";
@@ -139,13 +144,19 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   }
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    if (!comments.equals("")) {
+      writer.write(%[
+  @generateComments()@
+        ]%);
+    } else {
     writer.write(%[
-    /**
-     * Constructor that builds a term rooted by @className()@
-     *
-     * @@return a term rooted by @className()@
-     */
+  /**
+   * Constructor that builds a term rooted by @className()@
+   *
+   * @@return a term rooted by @className()@
+   */
 ]%);
+    }
 generateConstructor(writer);
 
 if(slotList.length()>0) {
@@ -655,6 +666,15 @@ writer.write(%[
 
 }
 
+  private String generateComments() {
+    if (!comments.equals("") && comments.contains("@param")) {
+      // "@param chaine " -> "@param _chaine "
+      return comments.replaceAll("@param ","@param _");
+    } else {
+      return comments;
+    }
+  }
+
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
     %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
@@ -1138,7 +1158,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
       /* If there is at least one MakeHook */
 lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       hasHooks = true;
-      writer.write(%[
+      writer.write(%[    
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);

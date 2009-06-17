@@ -5,6 +5,7 @@ abstract syntax
 Option = Origin(Line:int)
        | OptionList(Option*)
        | HasTomCode(Value:boolean)
+       | Details(Comments:String)
 
 /* Output from the parser */
 GomModule = GomModule(ModuleName:GomModuleName, SectionList:SectionList)
@@ -53,7 +54,7 @@ SortDecl = SortDecl(Name:String,ModuleDecl:ModuleDecl)
          | BuiltinSortDecl(Name:String)
 SortDeclList = ConcSortDecl(SortDecl*)
 OperatorDecl = OperatorDecl(Name:String,Sort:SortDecl,
-                            Prod:TypedProduction)
+                            Prod:TypedProduction,Option:Option)
 OperatorDeclList = ConcOperator(OperatorDecl*)
 TypedProduction = Slots(Slots:SlotList)
                 | Variadic(Sort:SortDecl)
