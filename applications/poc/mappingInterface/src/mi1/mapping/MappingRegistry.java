@@ -1,4 +1,4 @@
-package mapping;
+package mi1.mapping;
 
 import java.util.Map;
 import java.util.HashMap;

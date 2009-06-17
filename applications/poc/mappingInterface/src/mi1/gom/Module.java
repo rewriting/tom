@@ -5,7 +5,7 @@ import base.data.types.t2.*;
 import base.data.types.T2;
 import base.data.types.T1;
 
-import mapping.Mapping;
+import mi1.mapping.Mapping;
 
 /**
  * @author nvintila

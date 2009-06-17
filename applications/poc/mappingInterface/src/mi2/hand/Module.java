@@ -6,7 +6,7 @@ import base.hand.types.T2;
 import base.hand.types.T1;
 import base.hand.types.T;
 
-import mapping.Mapping;
+import mi2.mapping.Mapping;
 
 /**
  * @author nvintila

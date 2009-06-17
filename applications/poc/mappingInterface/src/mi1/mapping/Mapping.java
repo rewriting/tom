@@ -1,4 +1,4 @@
-package mapping;
+package mi1.mapping;
 
 /**
  * @author nvintila
