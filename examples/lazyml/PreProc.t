@@ -224,17 +224,32 @@ public class PreProc {
   /* --- freeze --- */
 
   private static LTerm unit = `Constr("Unit",LTList());
-  private static LVar freshvar() { return LVar.freshLVar("u"); }
+  private static LVar freshvar() { return LVar.freshLVar("__U"); }
 
   private static LTerm freeze(LTerm t) {
     LVar fresh = freshvar();
     return `Abs(lam(fresh,t));
   }
 
+
+  private static LType suspend(LType ty) {
+    return `Arrow(Atom("Unit"),ty);
+  }
+
   private static LType freeze(LType ty) {
     %match(ty) {
-      v@TypeVar[] -> { return `v; }
-      t           -> { return `Arrow(Atom("Unit"),t); }
+      TypeVar[]     -> { return `ty; }
+      Atom[]        -> { return `suspend(ty); }
+      Arrow(a,b)    -> { return `Arrow(suspend(freeze(a)),freeze(b)); }
+      TyConstr(c,l) -> { return `suspend(TyConstr(c,freeze(l))); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static TyList freeze(TyList tyl) {
+    %match(tyl) {
+      EmptyTyList() -> { return `EmptyTyList(); }
+      ConsTyList(ty,tys) -> { return `ConsTyList(freeze(ty),freeze(tys)); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
@@ -247,9 +262,17 @@ public class PreProc {
     throw new RuntimeException("non exhaustive patterns");
   }
 
+  private static LType freezeCodom(LType codom) {
+    %match(codom) {
+      Atom(a) -> { return `Atom(a); }
+      TyConstr(c,l) -> { return `TyConstr(c,freeze(l)); }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
   private static Range freeze(Range rg) {
     %match(rg) {
-      Range(Ra(vars,dom,codom)) -> { return `Range(Ra(vars,freeze(dom),codom)); }
+      Range(Ra(vars,dom,codom)) -> { return `Range(Ra(vars,freeze(dom),freezeCodom(codom))); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
@@ -286,7 +309,7 @@ public class PreProc {
       Lit(i) -> { return `freeze(Lit(i)); }
       Chr(c) -> { return `freeze(Chr(c)); }
       Str(s) -> { return `freeze(Str(s)); }
-      Error(s) -> { return `freeze(Error(s)); }
+      Error(s) -> { return `Error(s); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }

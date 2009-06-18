@@ -129,10 +129,12 @@ public class Eval {
       Context prelude = Main.prelude;
       ctx = `Context(prelude*,ctx*);
       ctx = PreProc.freeze(ctx);
+      System.err.println("context:\n" + Printer.pretty(ctx.export()));
       RawLTerm rt = parser.lterm();
       LTerm crt = rt.convert();
       crt = PreProc.unfoldCases(crt);
       crt = PreProc.thunkify(crt);
+      System.out.println("\nthunkified: " + Printer.`pretty(crt.export()));
       RawTypeOfResult res = Typer.`typeOf(ctx,crt).export();
       %match(res) {
         RawPair(rawft,rawty) -> {

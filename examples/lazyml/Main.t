@@ -32,6 +32,7 @@ public class Main {
       if(lazy) {
         crt = PreProc.thunkify(crt);
         ctx = PreProc.freeze(ctx);
+        System.err.println("transformed context:\n" + Printer.pretty(ctx.export()));
       }
       //System.out.println(Printer.`pretty(crt));
       TypeOfResult res = Typer.`typeOf(ctx,crt);

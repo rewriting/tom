@@ -336,6 +336,50 @@ public class Printer {
     return null;
   }
 
+  public static String pretty(RawContext c) {
+    %match(c) {
+      RawContext() -> { return ""; }
+      RawContext(t) -> { return "  " + `pretty(t); }
+      RawContext(t,ts*) -> { return "  " + `pretty(t) + "\n" + `pretty(ts); }
+    }
+    return null;
+  }
 
+  public static String pretty(RawJugement j) {
+    %match(j) {
+      RawJugement(v,ty) -> { return %[@`v@ : @`pretty(ty)@]%; }
+      RawRangeOf(c,r)   -> { return %[@`c@ : @`pretty(r)@]%; }
+    }
+    return null;
+  }
+
+  public static String pretty(RawRange r) {
+    %match(r) {
+      RawRange(RawRa(vars,dom,cd)) -> { 
+        String prefix =  
+          (((Collection)`vars).isEmpty()) ? "" : "\u2200 "+`pretty(vars)+". ";
+        return prefix + %[(@`pretty(dom)@) -> @`pretty(cd)@]%;
+      }
+    }
+    return null;
+  }
+
+  public static String pretty(RawBVarList l) {
+    %match(l) {
+      RawBVarList() -> { return ""; }
+      RawBVarList(t) -> { return `t; }
+      RawBVarList(t,ts*) -> { return `t + " " + `pretty(ts); }
+    }
+    return null;
+  }
+
+  public static String pretty(RawDomain d) {
+    %match(d) {
+      RawDomain() -> { return ""; }
+      RawDomain(t) -> { return `pretty(t); }
+      RawDomain(t,ts*) -> { return `pretty(t) + " * " + `pretty(ts); }
+    }
+    return null;
+  }
 
 }
