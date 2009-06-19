@@ -41,9 +41,11 @@ public class Main extends TestCase {
     t1List subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
 
     %match(subject) {
-      concT1(first, _*) -> {
+      concT1(first, middle*, last) -> {
 
         assertEquals(`first, `a());
+        assertEquals(`last, `f(a(),g(b())));
+        assertEquals(`middle*, `concT1(f(a(),b())));
         return;
       }
     }
