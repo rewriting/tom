@@ -1,16 +1,16 @@
 package mi2.hand;
 
-import base.hand.types.t1.*;
-import base.hand.types.t2.*;
-import base.hand.types.T2;
 import base.hand.types.T1;
-import base.hand.types.T;
+import base.hand.types.T2;
+import base.hand.types.t1.a;
+import base.hand.types.t1.f;
+import base.hand.types.t2.b;
+import base.hand.types.t2.g;
+import base.hand.types.t2.h;
 
-import mi2.mapping.Mapping;
-
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author nvintila
