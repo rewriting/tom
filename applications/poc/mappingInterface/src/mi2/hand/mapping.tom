@@ -43,3 +43,44 @@
   get_slot(s2, t)  { mi2.hand.Module.g_Mapping.instance.getS2($t) }
 }
 
+%op T2 h(ts:t1List) {
+  make(ts) { mi2.hand.Module.h_Mapping.instance.make($ts) }
+  is_fsym(t) { mi2.hand.Module.h_Mapping.instance.isSym($t) }
+  get_slot(ts, t)  { mi2.hand.Module.h_Mapping.instance.getTs($t) }
+}
+
+%typeterm t1List {
+  implement { java.util.List<T1> }
+  is_sort(t) { $t instanceof java.util.List }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%oplist t1List concT1(T1*) {
+  is_fsym(l)       { ($l!= null) && ($l instanceof java.util.List) }
+  make_empty()     { new java.util.ArrayList() }
+  make_insert(o,l) { append($o,$l) }
+  get_head(l)      { $l.get(0) }
+  get_tail(l)      { getTail($l) }
+  is_empty(l)      { ($l.isEmpty()) }
+}
+
+private static <T> List<T> deepClone(List<T> l) {
+    List<T> l_ = new ArrayList<T>(l);
+
+    return l_;
+}
+
+private static <T> List<T> append(T o, List<T> l) {
+  List<T> res = deepClone(l);
+  res.add(0, o);
+  return res;
+}
+
+private static <T> List<T> getTail(List<T> l) {
+  List<T> res = deepClone(l);
+  res.remove(0);
+  return res;
+}
+
+
+

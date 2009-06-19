@@ -7,3 +7,6 @@ module base.data
   
   T2 = b()
      | g(s2:T2)
+     | h(fs:t1List)
+
+t1List = concT1(T1*)

@@ -7,7 +7,7 @@
     <property name="javacDebug" value="on"/>
     <property name="optimize" value="off"/>
     <property name="optimize2" value="off"/>
-    <property name="genIntrospector" value="on"/>
+    <property name="genIntrospector" value="on"/> <!-- Just for MainGom.t -->
     <property name="pretty" value="on"/>
 
     <property environment="env"/>
@@ -33,7 +33,7 @@
       </tom.preset>
     </target>
 
-    <target name="build" depends="generate">
+    <target name="build" depends="init">
       <javac.preset destdir="${mi.build}">
         <src path="${mi.gen}"/>
         <src path="${mi.src}"/>
