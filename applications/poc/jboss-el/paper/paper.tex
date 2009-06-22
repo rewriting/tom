@@ -1,0 +1,65 @@
+%% vim: set spell spelllang=en:
+\documentclass[runningheads]{llncs}
+
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{ifpdf}
+\usepackage[all]{xy}
+
+\ifpdf
+%    \usepackage{hyperref}
+   \DeclareGraphicsRule{*}{mps}{*}{}
+ \else
+%    \usepackage[hypertex]{hyperref}
+\fi
+\pagenumbering{arabic}  % [ck: Mar 10 06] numero de page ON
+
+\title{Strategic rewriting on existing ASTs}
+
+\author{Emilie Balland \and Pierre-Etienne Moreau \and Nicolae Vintila}
+
+\institute{INRIA \& LORIA,\\
+  BP 101, 54602 Villers-l{\`e}s-Nancy Cedex France\\
+\email{\{Emilie.Balland,Pierre-Etienne.Moreau\}@loria.fr,nvintila@yahoo.com}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+
+\section{Tom: strategic rewriting piggybacked on Java}
+
+Light presentation of the Tom language
+
+\section{Mapping exisiting ASTs}
+
+\subsection{Mapping data-structures}
+
+\%typeterm and \%op
+
+\subsection{Strategic rewriting for existing data-structures}
+
+intropsectors
+
+\section{Application to JBoss-EL analysis}
+
+\section{Related Works}
+
+Rule based languages (Elan, Stratego, Maude, \ldots)
+
+Philip Wadler's views and Pizza.
+
+F\# (active patterns), Scala (extractors), \ldots
+
+\section{Conclusion}
+
+\end{document}
