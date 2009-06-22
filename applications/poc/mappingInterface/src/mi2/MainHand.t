@@ -68,6 +68,18 @@ public class MainHand extends TestCase {
     fail();
   }
 
+  public void test_listMatchCount() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
+
+    int i = 0;
+    %match(subject) {
+      h(concT1(_*, x, _*)) -> {
+        i++;
+      }
+    }
+    assertEquals(i,3);
+  }
+
   public void test_listMatchAny() {
     T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
 
@@ -77,8 +89,8 @@ public class MainHand extends TestCase {
         return;
       }
     }
-    System.out.println("h takes a() as argument.");
   }
+
 
   public void test_congWithListMatch() {
     T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
