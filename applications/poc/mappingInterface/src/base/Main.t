@@ -65,6 +65,35 @@ public class Main extends TestCase {
     fail();
   }
 
+  public void test_listMatchCount() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
+
+    int i = 0;
+    %match(subject) {
+      h(concT1(_*, x, _*)) -> {
+        i++;
+      }
+    }
+    assertEquals(i,3);
+  }
+
+  public void test_listMatchNonLinear() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(),b()), a(), f(a(), g(b()))));
+
+    %match(subject) {
+      h(concT1(X1*, x, X2*,x,X3*)) -> {
+        assertEquals(`x,`a());
+        assertEquals(`X1,`concT1());
+        assertEquals(`X2,`concT1(f(a(),b()),f(a(),b())));
+        assertEquals(`X3,`concT1(f(a(),g(b()))));
+        return;
+      }
+      _ -> {
+        fail();
+      }
+    }
+  }
+
   public void test_listMatchAny() {
     T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
 
@@ -74,7 +103,6 @@ public class Main extends TestCase {
         return;
       }
     }
-    System.out.println("h takes a() as argument.");
   }
 
   public void test_congWithListMatch() {
