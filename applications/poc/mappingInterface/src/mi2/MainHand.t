@@ -13,7 +13,6 @@ import tom.library.sl.*;
 
 public class MainHand extends TestCase {
   %include { mi2/hand/mapping.tom }
-  %include { java/util/ArrayList.tom }
   %include { sl.tom }
 
   public static void main(String[] args) {

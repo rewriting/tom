@@ -64,9 +64,8 @@
   is_empty(l)      { ($l.isEmpty()) }
 }
 
-private static <T> List<T> deepClone(List<T> l) {
-    List<T> l_ = new ArrayList<T>(l);
-
+private static <T> java.util.List<T> deepClone(List<T> l) {
+    java.util.List<T> l_ = new java.util.ArrayList<T>(l);
     return l_;
 }
 

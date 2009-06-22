@@ -33,7 +33,7 @@
       </tom.preset>
     </target>
 
-    <target name="build" depends="init">
+    <target name="build" depends="generate">
       <javac.preset destdir="${mi.build}">
         <src path="${mi.gen}"/>
         <src path="${mi.src}"/>
