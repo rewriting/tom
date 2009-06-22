@@ -55,31 +55,12 @@
   equals(t1, t2) { $t1.equals($t2) }
 }
 
+
 %oplist t1List concT1(T1*) {
-  is_fsym(l)       { ($l!= null) && ($l instanceof java.util.List) }
-  make_empty()     { new java.util.ArrayList() }
-  make_insert(o,l) { append($o,$l) }
-  get_head(l)      { $l.get(0) }
-  get_tail(l)      { getTail($l) }
-  is_empty(l)      { ($l.isEmpty()) }
+  is_fsym(l)       { mi2.hand.Module.concT1_Mapping.instance.isFsym($l) }
+  make_empty()     {  mi2.hand.Module.concT1_Mapping.instance.makeEmpty()}
+  make_insert(o,l) { mi2.hand.Module.concT1_Mapping.instance.makeInsert($o,$l) }
+  get_head(l)      { mi2.hand.Module.concT1_Mapping.instance.getHead($l) }
+  get_tail(l)      { mi2.hand.Module.concT1_Mapping.instance.getTail($l) }
+  is_empty(l)      { mi2.hand.Module.concT1_Mapping.instance.isEmpty($l) }
 }
-
-private static <T> java.util.List<T> deepClone(List<T> l) {
-    java.util.List<T> l_ = new java.util.ArrayList<T>(l);
-    return l_;
-}
-
-private static <T> List<T> append(T o, List<T> l) {
-  List<T> res = deepClone(l);
-  res.add(0, o);
-  return res;
-}
-
-private static <T> List<T> getTail(List<T> l) {
-  List<T> res = deepClone(l);
-  res.remove(0);
-  return res;
-}
-
-
-

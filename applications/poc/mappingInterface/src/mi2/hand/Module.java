@@ -357,4 +357,90 @@ public class Module {
 
     }
 
+    /* mapping for a list operator */
+
+    public static interface concT1_MappingI {
+        // should be generated automatically
+        boolean isSym(Object t);
+        boolean isEmpty(List<T1> l);
+        List<T1> makeEmpty();
+        List<T1> makeInsert(T1 o, List<T1> l);
+        T1 getHead(List<T1> l);
+        List<T1> getTail(List<T1> l);
+    }
+
+    public static abstract class concT1_Introspector extends mi2.mapping.IntrospectorMapping<List<T1>> implements concT1_MappingI {
+
+      public T1 setChildren(Object o, Object[] children) {
+        //TODO
+        return null;
+      }
+
+      public Object[] getChildren(Object o) {
+        //TODO
+        return null;
+      }
+
+      public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+        //TODO
+        return null;
+      }
+
+      public Object getChildAt(Object o, int i) {
+        //TODO
+        return null;
+      }
+
+      public int getChildCount(Object o) {
+        if (isEmpty((List<T1>)o)) {
+          return 0;
+        } else {
+          return 2;
+        }
+      }
+
+      public Class forType() {
+        return List.class;
+      }
+    }
+
+    public static class concT1_Mapping extends concT1_Introspector {
+      public static concT1_Mapping instance = new concT1_Mapping();
+
+      // Test
+      public boolean isSym(Object t) {
+        return (t!= null) && (t instanceof List);
+      }
+
+      public boolean isEmpty(List<T1> l) {
+        return ((List<T1>) l).isEmpty();
+      }
+
+      public List<T1> makeEmpty() {
+        return new ArrayList();
+      }
+
+      public List<T1> makeInsert(T1 o, List<T1> l) {
+        List<T1> res = deepClone(l);
+        res.add(0, o);
+        return res;
+      }
+
+      public T1 getHead(List<T1> l) {
+        return ((List<T1>)l).get(0);
+      }
+
+      public List<T1> getTail(List<T1> l) {
+        List<T1> res = deepClone(l);
+        res.remove(0);
+        return res;
+      }
+
+      private static <T> List<T> deepClone(List<T> l) {
+        List<T> l_ = new ArrayList<T>(l);
+        return l_;
+      }
+
+    }
+
 }
