@@ -100,6 +100,7 @@ Substitution = MList(Mapping*)
 
 /* compilation */
 FixVars = FixVarList(String*)
+FrozenVars = FrozenVarList(String*)
 Lets = Lets(prelude:String,conclusion:FTerm)
 
 /* parsing */

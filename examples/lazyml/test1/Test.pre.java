@@ -20,6 +20,17 @@ class C {
   }
 }
 
+abstract class Thunk {
+  public Object cache = null;
+  public Object get() {
+    if (cache != null) return cache;
+    else {
+      cache = val();
+      return cache;
+    }
+  }
+  public abstract Object val();
+}
 
 public class Test {
 
@@ -30,10 +41,8 @@ public class Test {
         res.c[i] = force(res.c[i]);
       }
       return res;
-    } else if (o instanceof F) {
-      return force(((F)o).f(null));
-    } else if (o instanceof V) {
-      return ((V)o).v();
+    } else if (o instanceof Thunk) {
+      return force(((Thunk)o).get());
     } else {
       return o;
     }

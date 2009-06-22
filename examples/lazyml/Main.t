@@ -29,18 +29,13 @@ public class Main {
       RawLTerm rt = parser.lterm();
       LTerm crt = rt.convert();
       crt = PreProc.unfoldCases(crt);
-      if(lazy) {
-        crt = PreProc.thunkify(crt);
-        ctx = PreProc.freeze(ctx);
-        System.err.println("transformed context:\n" + Printer.pretty(ctx.export()));
-      }
-      //System.out.println(Printer.`pretty(crt));
+      //crt = PreProc.deforest(crt);
+      //System.err.println("after deforestation:\n" + Printer.pretty(crt.export()));
       TypeOfResult res = Typer.`typeOf(ctx,crt);
       %match(res) {
         Pair(ft,ty) -> {
-          //System.out.println(Printer.`pretty(ft));
           System.err.println(Printer.`pretty(ty.export()));
-          System.out.println(Compiler.`compile(ft.export()));
+          System.out.println(lazy ? LazyCompiler.`compile(ft.export()) : Compiler.`compile(ft.export()));
         }
       }
     } catch(Exception e) {

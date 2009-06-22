@@ -357,4 +357,85 @@ public class PreProc {
     }
     throw new RuntimeException("non exhaustive patterns");
   }
+
+  /* deforestation */
+
+
+  %strategy Candidate() extends Fail() {
+    visit LTerm {
+      v@Var(LVar(_,s)) -> {
+        if (`s.equals("foldr") || `s.equals("build"))
+          return `v;
+      }
+    }
+  }
+
+  private static boolean candidate(LTerm t) {
+    try { `OnceTopDown(Candidate()).visitLight(t); return true; }
+    catch (VisitFailure e) { return false; }
+  }
+
+  %strategy SmartInline() extends Identity() {
+    visit LTerm {
+      Let(letin(x@LVar(_,n),u@!Fix[],t)) -> { 
+        if (`candidate(u) && (!`n.equals("foldr")) && (!`n.equals("build"))) {
+          System.err.println("inlining " + `n);
+          return Eval.`substitute(t,x,u);
+        }
+      }
+      App(Abs(lam(x,t)),u) -> { return Eval.`substitute(t,x,u); }
+      Case(t,r) -> { try {return Eval.`caseof(t,r);} catch (Exception e){} }
+    }
+  }
+
+  %strategy Inline() extends Identity() {
+    visit LTerm {
+      Let(letin(x@LVar(_,n),u,t)) -> { 
+        if (`n.equals("foldr") || `n.equals("build")) {
+          System.err.println("inlining " + `n);
+          return Eval.`substitute(t,x,u); 
+        }
+      }
+      App(Abs(lam(x,t)),u) -> { return Eval.`substitute(t,x,u); }
+      Case(t,r) -> { try{return Eval.`caseof(t,r);} catch (Exception e){} }
+    }
+  }
+
+  %strategy Debug(s:String) extends Identity() {
+    visit LTerm {
+      _ -> { System.err.println(s); }
+    }
+  }
+
+  %strategy Deforest() extends Identity() {
+    visit LTerm {
+      /*
+      App(App(App(App(App(Var(LVar(_,"tfold")),f),g),a),b),
+          App(Var(LVar(_,"tbuild")),h)) -> { 
+        System.err.println("deforestation !!");
+        return `App(App(App(App(h,f),g),a),b); 
+      }
+      */
+      App(App(App(Var(LVar(_,"foldr")),c),n),App(Var(LVar(_,"build")),h)) -> {
+        System.err.println("deforestation!");
+        return `App(App(h,c),n); 
+      }
+    }
+  }
+
+  public static LTerm deforest(LTerm t) {
+    try { 
+      return `Sequence(
+          RepeatId(
+            Sequence(
+              Debug("smart inline"),
+              InnermostId(SmartInline()),
+              Debug("deforest"),
+              InnermostId(Deforest()))),
+          Debug("inline fold and build"),
+          InnermostId(Inline()),
+          Debug("done")).visitLight(t); 
+    }
+    catch (VisitFailure e) { throw new RuntimeException("never happens"); }
+  }
 }

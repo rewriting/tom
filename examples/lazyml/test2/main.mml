@@ -96,35 +96,20 @@ in let clt = liftToChar lt
 in let cle = liftToChar le
 in let strlen s = @strLen(s)
 
-in let rec replicate i x =
-  if eqInt 0 i 
-    then Nil() 
-    else Cons(x,replicate (pred i) x)
-  end
-
-in let rec length l = 
+in let rec foldr f z l = 
   match l with
-  | Nil() -> 0
-  | Cons(x,xs) -> @plus(1,length xs)
+  | Nil() -> z
+  | Cons(x,xs) -> f x (foldr f z xs)
   end
+in let build g = g (fun x xs -> Cons(x,xs)) Nil()
+in let cons x xs = build (fun c n -> c x (foldr c n xs))
+in let nil = build (fun c n -> n)
 
-in let rec toString l = 
-  match l with
-  | Nil () -> ""
-  | Cons(x,xs) -> @consString(x,toString xs)
-  end
+in let toString = foldr (fun x s -> @consString(x,s)) ""
 
-in let rec map f l = 
-  match l with
-  | Nil() -> Nil()
-  | Cons(x,xs) -> Cons(f x, map f xs)
-  end
+in let map f l = build (fun c n -> foldr (fun x xs -> c (f x) xs) n l)
 
-in let rec append l1 l2 =
-  match l1 with
-  | Nil() -> l2
-  | Cons(x,xs) -> Cons(x,append xs l2)
-  end
+in let append l1 l2 = build (fun c n -> foldr (fun x xs -> c x xs) l2 l1)
 
 in let rec foldl f a l = 
   match l with
@@ -137,12 +122,6 @@ in let foldl1 f l =
   | Cons(x,xs) -> foldl f x xs
   end
 
-in let rec foldr f z l = 
-  match l with
-  | Nil() -> z
-  | Cons(x,xs) -> f x (foldr f z xs)
-  end
-
 in let rec foldr1 f l = 
   match l with
   | Cons(x,xs) -> match xs with
@@ -153,11 +132,7 @@ in let rec foldr1 f l =
 
 in let max n m = if @gt(n,m) then n else m end
 
-in let rec assoc eq x l = 
-  match l with
-  | Nil() -> None()
-  | Cons(P2(y,r),cs) -> if eq x y then Some(r) else assoc eq x cs end
-  end
+in let assoc eq x = foldr (fun c cs -> let P2(y,r) = c in if eq x y then Some(r) else cs end) None()
 
 in let rec eqType a b = 
   match a with
@@ -175,11 +150,7 @@ in let rec eqType a b =
                     end
   end
 
-in let rec elem eq x l = 
-  match l with
-  | Nil() -> False()
-  | Cons(y,ys) -> if eq x y then True() else elem eq x ys end
-  end
+in let elem eq x = foldr (fun a b -> or (eq a x) b) False()
 
 (* -- monadic parser combinators -- *)
 
@@ -224,14 +195,14 @@ in let alphanum = mplus letter digit
 in let rec many p = 
   let aux = bind p (fun x  ->
             bind (many p) (fun xs ->
-            ret Cons(x,xs)))
-  in mplus aux (ret Nil())
+            ret (cons x xs)))
+  in mplus aux (ret nil)
 in let ident = bind lower (fun x ->
                bind (many alphanum) (fun xs -> 
-               ret Cons(x,xs)))
+               ret (cons x xs)))
 in let many1 p = bind p (fun x ->
                  bind (many p) (fun xs ->
-                 ret Cons(x,xs)))
+                 ret (cons x xs)))
 in let nat = 
   let op m n = @plus(@times(10,m),n)
   in let eval num = foldl1 op (map (fun x -> @minus(@valueOf(x),@valueOf('0'))) num)
@@ -242,8 +213,8 @@ in let bracket l e r = bind l (fun foo ->
                        bind r (fun bar -> ret res)))
 in let sepby1 p sep = bind p (fun x ->
                       bind (many (seq sep p)) (fun xs ->
-                      ret Cons(x,xs)))
-in let sepby p sep = mplus (sepby1 p sep) (ret Nil())
+                      ret (cons x xs)))
+in let sepby p sep = mplus (sepby1 p sep) (ret nil)
 (* usage : addop = ops Cons(P2(chr '+', plus), Cons(P2(chr '-', minus), Nil())) *)
 in let ops xs = foldr1 mplus (map (fun c -> let P2(p,op) = c in (seq p (ret op))) xs) 
 in let chainl1 p op = 
@@ -254,15 +225,15 @@ in let rec chainr1 p op =
   bind p (fun x ->
   mplus (bind op (fun f ->
          bind (chainr1 p op) (fun y ->
-         ret (f x y)))) (ret Cons(x,Nil())))
-in let chainl p op v = mplus (chainl1 p op) (ret Cons(v,Nil()))
-in let chainr p op v = mplus (chainr1 p op) (ret Cons(v,Nil()))
+         ret (f x y)))) (ret (cons x nil)))
+in let chainl p op v = mplus (chainl1 p op) (ret (cons v nil))
+in let chainr p op v = mplus (chainr1 p op) (ret (cons v nil))
 in let str s = 
   let rec go s =
     match s with
-    | Nil()      -> ret Nil()
+    | Nil()      -> ret nil
     | Cons(c,cs) ->  seq (chr c)
-                     (seq (go cs) (ret Cons(c,cs)))
+                     (seq (go cs) (ret (cons c s)))
     end
   in go @convertString(s)
 in let rec oneof l = 
@@ -281,8 +252,8 @@ in let uvargen i =
 
 in let rec uvars t = 
   match t with
-  | Atom(s)    -> Nil()
-  | UVar(n)    -> Cons(n,Nil())
+  | Atom(s)    -> nil
+  | UVar(n)    -> (cons n nil)
   | Arrow(x,y) -> append (uvars x) (uvars y)
   end
 
@@ -319,11 +290,11 @@ in let name s c =
     match c with
     | Cons(P2(x,n),c1) -> 
       if @eqString(x,s)
-        then P2(suc n,Cons(P2(x,suc n),c1))
+        then P2(suc n,(cons P2(x,suc n) c1))
         else let P2(res,newc1) = incr c1
-             in P2(res,Cons(P2(x,n),newc1))
+             in P2(res,(cons P2(x,n) newc1))
       end
-    | Nil() -> P2(0,Cons(P2(s,0),Nil()))
+    | Nil() -> P2(0,(cons P2(s,0) nil))
     end
   in let render n = if @eqInt(n,0) then s else ap s @showInt(n) end 
   in let P2(n,c1) = incr c 
@@ -455,12 +426,12 @@ in let rec recon state c gen t =
   match t with 
   | FVar(x) -> 
       let Some(ty) = assoc eqString x c 
-      in P3(ty , gen, Nil())
+      in P3(ty , gen, nil)
   | Lam(s,u) -> 
       let P3(state1,x,u) = open_lam state t in
       let NextUVar(j,gen1) = gen U() in
       let ty1 = UVar(j) in
-      let P3(ty2,gen2,con) = recon state1 Cons(P2(x,ty1),c) gen1 u in
+      let P3(ty2,gen2,con) = recon state1 (cons P2(x,ty1) c) gen1 u in
         P3(Arrow(ty1,ty2), gen2, con)
   | Let(s,u,v) -> recon state c gen (substitute s u v)
   | App(u,v) -> 
@@ -474,8 +445,8 @@ in let rec recon state c gen t =
       let P3(state1,x,u) = open_fix state t in
       let NextUVar(j,gen1) = gen U() in
       let ty1 = UVar(j) in
-      let P3(ty2,gen2,con) = recon state1 Cons(P2(x,ty1),c) gen1 u in
-        P3(ty1, gen2, Cons(P2(ty1,ty2),con))
+      let P3(ty2,gen2,con) = recon state1 (cons P2(x,ty1) c) gen1 u in
+        P3(ty1, gen2, (cons P2(ty1,ty2) con))
   end
 
 (* -- type inference -- *)
@@ -512,9 +483,9 @@ in let rec eqStr xs ys =
 in let identifier ks = token 
   (let ks = map (fun x -> @convertString(x)) ks
    in bind ident (fun x ->
-      if not (elem eqStr x ks) then ret x else mzero end) )
+      if not (elem eqStr x ks) then ret x else mzero end))
 
-in let variable = identifier Cons("let",Cons("in",Cons("rec",Nil())))
+in let variable = identifier (cons "let" (cons "in" (cons "rec" nil)))
 in let expr atom = chainl1 atom (ret (fun x y -> App(x,y))) 
 in let atom lam letin var paren = mplus lam (mplus letin (mplus var paren))
 in let prefix xs = runParser (many letter) xs
@@ -578,7 +549,6 @@ in match test with
                              end 
                  in ap (ap testrep " : ") tyrep
    end
-
 (*
 in let toto = group (conc (text "aabbbb") (conc brk (text "idjs djsi")))
 in pretty 50 toto

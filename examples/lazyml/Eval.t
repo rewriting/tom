@@ -133,15 +133,15 @@ public class Eval {
       RawLTerm rt = parser.lterm();
       LTerm crt = rt.convert();
       crt = PreProc.unfoldCases(crt);
-      crt = PreProc.thunkify(crt);
-      System.out.println("\nthunkified: " + Printer.`pretty(crt.export()));
+      //crt = PreProc.thunkify(crt);
+      //System.out.println("\nthunkified: " + Printer.`pretty(crt.export()));
       RawTypeOfResult res = Typer.`typeOf(ctx,crt).export();
       %match(res) {
         RawPair(rawft,rawty) -> {
           System.out.println("\nparsed: " + 
               Printer.`pretty(rawft) + " : " + Printer.`pretty(rawty));
           System.out.println("\njava translation :\n" + 
-              Compiler.`compile(rawft));
+              LazyCompiler.`compile(rawft));
         }
       }
       System.out.println("\nnormal form : " + 

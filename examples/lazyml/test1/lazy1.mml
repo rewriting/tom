@@ -23,4 +23,3 @@ in let rec foldR z f l =
   end
 in let sum = foldR 0 (fun x y -> @plus(x,y))
 in sum (take 1000 naturals)
-

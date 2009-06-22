@@ -27,12 +27,7 @@ class C {
   }
 }
 
-
 public class Test {
-
-  public static Object force(Object o) {
-      return o;
-  }
 
   public static int plus(Object x, Object y) {
     return ((Integer)x)+((Integer)y);
@@ -110,12 +105,6 @@ public class Test {
     Object res1 = 
     #include "main.code" 
     ;
-
-    /*
-    Object res1 = 
-#include "toto.code"
-    ;
-    */
 
     System.out.println(res1);
   }

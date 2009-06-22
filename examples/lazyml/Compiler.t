@@ -30,8 +30,8 @@ public class Compiler {
   private static String compileArgs(RawFTermList l, FixVars fv) {
     %match(l) {
       RawFTermList() -> { return ""; }
-      RawFTermList(x) -> { return "force(" + `compile(x,fv) + ")"; }
-      RawFTermList(x,xs*) -> { return "force(" + `compile(x,fv) + ")," + `compileArgs(xs,fv); }
+      RawFTermList(x) -> { return `compile(x,fv); }
+      RawFTermList(x,xs*) -> { return `compile(x,fv) + "," + `compileArgs(xs,fv); }
     }
     return null;
   }
