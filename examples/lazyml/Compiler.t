@@ -15,10 +15,10 @@ public class Compiler {
     return "_sub" + (cptr++);
   }
 
-  private static String compile(RawFTermList l, FixVars fv) {
+  private static String compile(RawFTermList l, RawFixVars fv) {
     return "(new Object[] {" + compileAux(l,fv) + "})";
   }
-  private static String compileAux(RawFTermList l, FixVars fv) {
+  private static String compileAux(RawFTermList l, RawFixVars fv) {
     %match(l) {
       RawFTermList() -> { return ""; }
       RawFTermList(x) -> { return `compile(x,fv); }
@@ -27,7 +27,7 @@ public class Compiler {
     return null;
   }
 
-  private static String compileArgs(RawFTermList l, FixVars fv) {
+  private static String compileArgs(RawFTermList l, RawFixVars fv) {
     %match(l) {
       RawFTermList() -> { return ""; }
       RawFTermList(x) -> { return `compile(x,fv); }
@@ -36,7 +36,7 @@ public class Compiler {
     return null;
   }
 
-  private static String compile(RawFRules l, String s, FixVars fv) {
+  private static String compile(RawFRules l, String s, RawFixVars fv) {
     %match(l) {
       //RawFRList() -> { return "throw new RuntimeException(\"non exhaustive patterns for " + s +"\");"; }
       RawFRList(RawFRule(RawFPVar(x,_),rhs),_*) -> { 
@@ -62,10 +62,10 @@ public class Compiler {
   }
 
   public static String compile(RawFTerm t) {
-    return `compile(t,FixVarList());
+    return `compile(t,RawFixVarList());
   }
 
-  private static String compile(RawFTerm t, FixVars fv) {
+  private static String compile(RawFTerm t, RawFixVars fv) {
     %match(t) {
       RawFVar(x) -> { 
         if (((Collection) fv).contains(`x)) return %[((V)@`x@).v()]%;
@@ -88,10 +88,7 @@ public class Compiler {
       RawFTApp(u,_) -> {
         return `compile(u,fv);
       }
-      RawFConstr("Unit",RawFTermList()) -> {
-        return null;
-      }
-      RawFConstr(f,tl) -> {
+      RawFConstr(f,_,tl) -> {
         return %[(new C("@`f@",@`compile(tl,fv)@))]%;
       }
       RawFPrimFun(f,tl) -> {
@@ -122,7 +119,7 @@ public class Compiler {
           (new V() {
             public Object v() {
               final Object @`f@ = this;
-              return @`compile(u,FixVarList(f,fv*))@;
+              return @`compile(u,RawFixVarList(f,fv*))@;
             }
           }).v()]%;
       }
@@ -151,7 +148,7 @@ public class Compiler {
     return null;
   }
 
-  public static RawLets compileLets (RawFTerm t,FixVars fv) {
+  public static RawLets compileLets (RawFTerm t,RawFixVars fv) {
       %match(t) {
         RawFLet(RawFLetin(x,_,u,v)) -> {
           %match(compileLets(v,fv)) {

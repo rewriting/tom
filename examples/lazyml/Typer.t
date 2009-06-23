@@ -59,7 +59,10 @@ public class Typer {
       FFix(FFixpoint(v,ty,t1)) -> { 
         return `FFix(FFixpoint(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free))); }
       FVar(y) -> { return `FVar(y); }
-      FConstr(f,c) -> { return `FConstr(f,replaceFreeTVars(c,free)); }
+      FConstr(f,tys,c) -> { 
+				return `FConstr(f,replaceFreeTVars(tys,free),
+												replaceFreeTVars(c,free)); 
+			}
       FPrimFun(f,c) -> { return `FPrimFun(f,replaceFreeTVars(c,free)); }
       FCase(s,r) -> { return `FCase(replaceFreeTVars(s,free),replaceFreeTVars(r,free)); }
       FLit(i) -> { return `FLit(i); }
@@ -142,7 +145,7 @@ public class Typer {
       return res;
     }
 
-  static <T extends lazyml.lambda.lambdaAbstractType> T 
+  public static <T extends lazyml.lambda.lambdaAbstractType> T 
     substType(TVar v, LType ty, T t) {
       try { return (T) `TopDown(SubstType(v,ty)).visitLight(t); }
       catch(VisitFailure e) { throw new RuntimeException("never happens"); }
@@ -225,14 +228,14 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static LType assoc(Context c, LVar x) {
+  public static LType assoc(Context c, LVar x) {
     %match(c) {
       Context(_*,Jugement(v,ty),_*) && v << LVar x -> { return `ty; }
     }
     throw new IllFormedTerm();
   }
 
-  private static Range assoc(Context c, String cons) {
+  public static Range assoc(Context c, String cons) {
     %match(c) {
       Context(_*,RangeOf(v,r),_*) && v << String cons -> { return `r; }
     }
@@ -275,6 +278,16 @@ public class Typer {
     }
     throw new RuntimeException("non exhaustive patterns");
   }
+
+	private static TyList wrap(BVarList tvl) {
+		%match(tvl) {
+		  EmptyBVarList()    -> { return `EmptyTyList();} 
+			ConsBVarList(v,vs) -> { 
+				return `ConsTyList(TypeVar(v),wrap(vs));
+			}
+		}
+    throw new RuntimeException("non exhaustive patterns");
+	}
 
   private static LType tyInt = `Atom("Int");
   private static LType tyChar = `Atom("Char");
@@ -327,14 +340,15 @@ public class Typer {
       }
       Constr(f,tl) -> {
         %match(assoc(c,f)) {
-          Range(Ra(_,dom,codom)) -> {
-            ReconChildrenResult res = `recon(c,tl,dom);
-            FTermList children = res.gettl();
-            ConstraintList cl = res.getcl();
-            return `RR(FConstr(f,children),codom,cl);
-          }
-        }
-      }
+          Range(Ra(tvl,dom,codom)) -> {
+            %match(recon(c,tl,dom)) {
+							Pair2(children,cl) -> {
+								return `RR(FConstr(f,wrap(tvl),children),codom,cl);
+							}
+						}
+					}
+				}
+			}
       PrimFun(f,tl) -> {
         %match(assoc(c,f)) {
           Range(Ra(_,dom,codom)) -> {
@@ -384,25 +398,27 @@ public class Typer {
 
   private static ReconChildrenResult 
     recon(Context c, LTermList tl, Domain dom) {
-      return reconRange(c,tl,dom,`FTermList(),`CList());
-    }
+		return reconRange(c,tl,dom,`FTermList(),`CList());
+	}
 
   private static ReconChildrenResult 
     reconRange(Context c, LTermList tl, Domain dom,
-        FTermList res, ConstraintList cl) {
-      %match(tl,dom) {
-        LTList(), Domain() -> { return `Pair2(res,cl); }
-        LTList(t,ts*), Domain(ty,tys*) -> { 
-          %match(recon(c,t)) {
-            RR(tb,ty1,cl1) -> {
-              return `reconRange(c,ts,tys,FTermList(res*,tb),CList(Constraint(ty,ty1),cl1*,cl*));    
-            }
-          } 
-        }
-      }
-      throw new RuntimeException("Type reconstruction failed.");
-    }
-
+							 FTermList res, ConstraintList cl) {
+		%match(tl,dom) {
+			LTList(), Domain() -> { return `Pair2(res,cl); }
+			LTList(t,ts*), Domain(ty,tys*) -> {
+				%match(recon(c,t)) {
+					RR(tb,ty1,cl1) -> {
+						return `reconRange(c,ts,tys,
+															 FTermList(res*,tb),
+															 CList(Constraint(ty,ty1),cl1*,cl*));    
+					}
+				}
+			}
+		}
+		throw new RuntimeException("Type reconstruction failed.");
+	}
+	
   private static ReconRulesResult recon(Context c, Rules rl, LType subject) {
     LType fresh = freshTypeVar();
     return reconRules(c,rl,subject,fresh,`FRList(),`CList());

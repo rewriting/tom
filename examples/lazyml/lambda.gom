@@ -43,7 +43,7 @@ PatternList binds LVar = PList(Pattern*)
 
 Lam binds LVar = lam(x:LVar, inner t:LTerm)
 Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
-Fixpoint binds LVar = fixpoint(x:LVar, inner t:LTerm)
+			Fixpoint binds LVar = fixpoint(x:LVar, inner t:LTerm)
 
 /* typed version */
 
@@ -53,7 +53,7 @@ FTerm = FApp(t1:FTerm,t2:FTerm)
       | FTAbs(b:<FTLam>)
       | FFix(c:<FFixpoint>)
       | FVar(x:LVar)
-      | FConstr(f:String, children:FTermList)
+      | FConstr(f:String,tys:TyList,children:FTermList)
       | FCase(subject:FTerm,rules:FRules)
       | FLet(let:<FLetin>)
       | FLit(i:int)
@@ -87,7 +87,8 @@ ReconRulesResult = Triple(rls:FRules,ty:LType,cl:ConstraintList)
 ReconClauseResult = Pair3(c:FClause,cl:ConstraintList)
 ReconPatternResult = 
   Quadruple(c:Context,p:FPattern,ty:LType,cl:ConstraintList)
-ReconPatternListResult = Triple2(c:Context,pl:FPatternList,cl:ConstraintList)
+ReconPatternListResult = 
+  Triple2(c:Context,pl:FPatternList,cl:ConstraintList)
 Domain = Domain(LType*)
 Range = Range(ra:<Ra>)
 Ra binds TVar = Ra(vars:BVarList, inner dom:Domain, inner codom:LType)
@@ -99,9 +100,10 @@ Mapping = MapsTo(v:TVar,ty:LType)
 Substitution = MList(Mapping*)
 
 /* compilation */
-FixVars = FixVarList(String*)
+FixVars = FixVarList(LVar*)
 FrozenVars = FrozenVarList(String*)
 Lets = Lets(prelude:String,conclusion:FTerm)
+
 
 /* parsing */
 NameAndDomain = NameAndDomain(name:String,dom:Domain)

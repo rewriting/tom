@@ -75,7 +75,11 @@ public class Utils {
         return `TVarList(fa*,fb*);
       }
       FVar(_) -> { return `TVarList(); }
-      FConstr(_,c) -> { return `getFreeTVars(c,free); }
+      FConstr(_,ty,c) -> { 
+        TVarList fa = `getFreeTVars(ty,free);
+        TVarList fb = `getFreeTVars(c,free);
+        return `TVarList(fa*,fb*);
+			}
       FPrimFun(_,c) -> { return `getFreeTVars(c,free); }
       FCase(s,r) -> { 
         TVarList fa = `getFreeTVars(s,free);
@@ -187,7 +191,7 @@ public class Utils {
         if (((Collection)free).contains(`x)) return `LVarList();
         else return `LVarList(x);
       }
-      FConstr(_,c) -> { return `getFreeVars(c,free); }
+      FConstr(_,_,c) -> { return `getFreeVars(c,free); }
       FPrimFun(_,c) -> { return `getFreeVars(c,free); }
       FCase(s,r) -> { 
         LVarList fa = `getFreeVars(s,free);
@@ -271,4 +275,94 @@ public class Utils {
     return `nub(getFreeVars(t,LVarList()));
   }
 
+	public static LType getType(Context c, FRules rs) {
+		%match(FRules rs) {
+		  EmptyFRList()   -> { 
+				throw new RuntimeException("malformed term: empty case");
+			} 
+			ConsFRList(cl,_) -> { 
+				return `getType(c,cl);
+			}
+		}
+		throw new RuntimeException("non exhaustive patterns");
+	}
+
+	public static LType getType(Context c, FClause r) {
+		%match(FClause r) {
+		  FRule(FPFun(_,vs),t) -> { 
+				%match(FPatternList vs) {
+				  FPList(_*,FPVar(x,ty),_*) -> { 
+						c = `Context(Jugement(x,ty),c*);
+						return `getType(c,t);
+					}
+				}
+			}
+			FRule(FPVar[],_) -> {
+				throw new RuntimeException("something got wrong during case unfolding: case with first clause of the form var -> rhs");
+			}
+		}
+		throw new RuntimeException("non exhaustive patterns");
+	}
+
+	public static LType getType(Context c, FTerm t) {
+		%match(FTerm t) {
+			FTApp(u,ty) -> {
+				%match(getType(c,u)) {
+					Forall(Fa(X,T)) -> {
+						return Typer.`substType(X,ty,T);
+					}
+				}
+			}
+			FTAbs(FTLam(X,u)) -> {
+				return `Forall(Fa(X,getType(c,u)));
+			}
+		  FApp(t1,_) -> {
+				LType ty1 = `getType(c,t1);
+				%match(ty1) {
+					Arrow(_,res) -> { return `res; } 
+				}
+			}
+			FAbs(FLam(x,ty1,u)) -> {
+				return `Arrow(ty1,getType(Context(Jugement(x,ty1),c*),u));
+			}
+			FLet(FLetin(x,ty1,_,u)) -> { 
+				return `getType(Context(Jugement(x,ty1),c*),u);
+			}
+			FFix(FFixpoint(x,ty1,u)) -> {
+				return `getType(Context(Jugement(x,ty1),c*),u);
+			} 
+			FVar(x) -> {
+				return Typer.`assoc(c,x);
+			}
+			FConstr(f,tys,_) -> {
+				%match(Typer.assoc(c,f)) {
+				  Range(Ra(_,_,a@Atom[])) -> { 
+						return `a;
+					}
+					Range(Ra(_,_,TyConstr(C,_))) -> { 
+						return `TyConstr(C,tys);
+					}
+				}
+			}
+			FCase(_,rules) -> { 
+				return `getType(c,rules);
+			} 
+			FLit(_) -> { 
+				return `Atom("Int");
+			} 
+			FStr(_) -> {
+				return `Atom("String");
+			} 
+			FChr(_) -> {
+				return `Atom("Character");
+			} 
+			FPrimFun(f,_) -> {
+				return Typer.`assoc(c,f).getra().getcodom();
+			}
+			FError(_) -> {
+				return null;
+			}
+		}
+		throw new RuntimeException("not yet implemented " + t);
+	}
 }

@@ -33,12 +33,14 @@ extern String @consString(Char,String)
 extern Int @strLen(String)
 
 type Either(a,b) = Left(a) | Right(b)
-type Parser(a) = Parser(List(Char) -> Either(String,P2(a,List(Char))))
+type Parser(a) = Parser(P3(Int,Int,List(Char)) -> Either(ParseError,P2(a,P3(Int,Int,List(Char)))))
+type ParseError = ParseError(String,Int,Int)
 
 extern String @showChar(Char)
 extern List(Char) @convertString(String)
 extern Int @valueOf(Char)
 extern String @getInput()
+extern Bool @eol(Char)
 
 (* imported modules *)
 
@@ -153,9 +155,8 @@ in let rec eqType a b =
 in let elem eq x = foldr (fun a b -> or (eq a x) b) False()
 
 (* -- monadic parser combinators -- *)
-
 in let runParser p s = 
-  let Parser(f) = p in match f s with
+  let Parser(f) = p in match f P3(1,1,s) with
                        | Left(e) -> Left(e)
                        | Right(P2(x,rem)) -> Right(x)
                        end
@@ -165,29 +166,64 @@ in let bind pm f =
                      | Left(e) -> Left(e)
                      | Right(P2(x,s1)) -> let Parser(m1) = f x in m1 s1
                      end)
+
 in let seq p q = bind p (fun foo -> q)
 in let ret x = Parser (fun s -> Right(P2(x,s)))
-in let err m = Parser (fun s -> Left(m))
-in let message c = ap (ap "unexpected character '" @showChar(c)) "'"
+in let err m = Parser (fun s -> let P3(l,c,rem) = s in Left(ParseError(m,l,c)))
+in let message p = let ParseError(m,l,c) = p in
+                       (ap m 
+                       (ap ", line "
+                       (ap @showInt(l)
+                       (ap ", character " @showInt(c)))))
 in let eof = Parser (fun inp -> match inp with
-                                | Nil() -> Right(P2(U(),Nil()))
-                                | Cons(x,xs) -> Left(message x)
+                                | P3(l,c,Nil()) -> Right(P2(U(),P3(l,c,Nil())))
+                                | P3(l,c,Cons(x,xs)) -> Left(ParseError(ap "expected eof, found '" (ap @showChar(x) "'"),l,c))
                                 end)
-in let item = Parser (fun inp -> match inp with
-                                 | Nil() -> Left("unexpected end of file")
-                                 | Cons(x,xs) -> Right(P2(x,xs))
-                                 end)
-in let sat p = bind item (fun c -> if p c then ret c else err (message c) end)
+in let sat p = Parser (fun s -> let P3(l,c,rem) = s in 
+                         match rem with
+                         | Nil() -> Left(ParseError("unexpected end of file",0,0))
+                         | Cons(x,xs) -> 
+                             if p x 
+                               then if @eol(x)
+                                     then Right(P2(x,P3(@plus(l,1),1,xs)))
+                                     else Right(P2(x,P3(l,@plus(c,1),xs)))
+                                    end
+                               else Left(ParseError(ap "unexpected character '" (ap @showChar(x) "'"),l,c)) 
+                             end
+                         end)
+in let item = sat (fun x -> True())
 in let chr x = sat (fun y -> @eqChar(x,y))
 in let digit = sat (fun c -> and (cle '0' c) (cle c '9'))
 in let lower = sat (fun c -> and (cle 'a' c) (cle c 'z'))
 in let upper = sat (fun c -> and (cle 'A' c) (cle c 'Z'))
 in let mzero = err ""
+in let bestError e1 e2 =
+  let ParseError(m1,l1,c1) = e1 in
+  let ParseError(m2,l2,c2) = e2 in
+    if @eqString(m1,"") 
+      then e2 
+      else if @eqString(m2,"") 
+        then e1 
+        else if gt l1 l2 
+          then e1
+          else if gt l2 l1 
+                 then e2 
+                 else if gt c1 c2 
+                        then e1
+                        else e2
+                      end
+               end
+        end
+      end 
+    end
 in let mplus a b =
   let Parser(p) = a in
   let Parser(q) = b in
     Parser(fun inp -> match p inp with
-                      | Left(e) -> q inp
+                      | Left(e) -> match (q inp) with
+                                   | Left(e1) -> Left(bestError e e1)
+                                   | Right(r) -> Right(r)
+                                   end
                       | Right(r) -> Right(r)
                       end)
 in let letter = mplus lower upper
@@ -242,7 +278,6 @@ in let rec oneof l =
   | Cons(c,cs) -> mplus (chr c) (oneof cs)
   end
 in let space = oneof @convertString(" \n\r\t")
-
 
 (* -- uvars -- *)
 
@@ -332,7 +367,7 @@ in let prettyTermDoc t =
                (cs (text x) 
                (conc (text "->")
                      (nest 2 (conc brk (aux c1 u))))))
-    | App(a,b) -> par (cb (aux c a) (aux c b))
+    | App(a,b) -> (cb (par (aux c a)) (aux c b))
     | Let(x,u,Let(y,uu,vv)) -> 
         let P4(c1,n,u,v) = open_let c t
         in (cs   (text "let")
@@ -540,7 +575,7 @@ in let P5(expr,atom,lam,paren,letin) = tie
 in let input = @getInput() 
 in let test = runParser (seq junk expr) @convertString(input)
 in match test with
-   | Left(e) -> e
+   | Left(e) -> message e
    | Right(t) -> let testrep = prettyTerm t in
                  let mty = getType t in
                  let tyrep = match mty with 

@@ -128,7 +128,7 @@ public class Eval {
       Context ctx = rctx.convert();
       Context prelude = Main.prelude;
       ctx = `Context(prelude*,ctx*);
-      ctx = PreProc.freeze(ctx);
+      //ctx = PreProc.freeze(ctx);
       System.err.println("context:\n" + Printer.pretty(ctx.export()));
       RawLTerm rt = parser.lterm();
       LTerm crt = rt.convert();

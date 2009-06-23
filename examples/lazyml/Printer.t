@@ -188,7 +188,9 @@ public class Printer {
       FFix(FFixpoint(x,_,u)) -> {
         return %[(fix @`pretty(x)@ @`pretty(u)@)]%;
       }
-      FConstr(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
+	    FConstr(f,tys,l) -> { 
+		    return `f + "[" + `pretty(tys) + "](" + `prettyFTermList(l) + ")"; 
+	    }
       FPrimFun(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       FLit(i) -> { return ""+`i; }
       FChr(c) -> { return "'" + `c + "'"; }
@@ -218,7 +220,9 @@ public class Printer {
       RawFFix(RawFFixpoint(x,_,u)) -> {
         return %[(fix @`x@ @`pretty(u)@)]%;
       }
-      RawFConstr(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
+      RawFConstr(f,tys,l) -> { 
+		    return `f + "[" + `pretty(tys) + "](" + `prettyFTermList(l) + ")"; 
+      }
       RawFPrimFun(f,l) -> { return `f + "(" + `prettyFTermList(l) + ")"; }
       RawFLit(i) -> { return ""+`i; }
       RawFChr(c) -> { return "'" +`c + "'"; }

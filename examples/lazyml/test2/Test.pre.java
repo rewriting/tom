@@ -87,12 +87,16 @@ public class Test {
       StringBuilder result = new StringBuilder();
       while ((line = br.readLine()) != null) {
         result.append(line);
+        result.append("\n");
       }
       return result.toString();
     } catch (java.io.IOException e) {
       return "";
     }
   }
+	public static C eol(Object x) {
+    return ((Character)x).equals('\n') ? True : False;
+	}
 
   public static Object modulePretty() {
     return 
