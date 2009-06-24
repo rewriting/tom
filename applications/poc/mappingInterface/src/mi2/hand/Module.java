@@ -359,8 +359,8 @@ public class Module {
 
     }
 
-    public static class concT1_Mapping extends List_Mapping<T1> {
-      public static concT1_Mapping instance = new concT1_Mapping();
+    public static class listOf_T1_Mapping extends List_Mapping<T1> {
+        public static listOf_T1_Mapping instance = new listOf_T1_Mapping();
 
     }
 
