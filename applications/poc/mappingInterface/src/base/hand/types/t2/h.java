@@ -26,11 +26,15 @@ public class h extends T2 {
     }
 
     public boolean equals(Object o) {
-      if (o instanceof h) {
-        h oo = (h) o;
-        return ts.equals(oo.getTs());
-      }
-      return false;
+        if (o instanceof h) {
+            h oo = (h) o;
+            return ts.equals(oo.getTs());
+        }
+        return false;
     }
 
+    @Override
+    public String toString() {
+        return "h(" + ts + ")";
+    }
 }

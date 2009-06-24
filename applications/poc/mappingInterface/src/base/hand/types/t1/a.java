@@ -9,8 +9,12 @@ import base.hand.types.T1;
 public class a extends T1 {
 
 
-  public boolean equals(Object o) {
-    return o instanceof a;
-  }
+    public boolean equals(Object o) {
+        return o instanceof a;
+    }
 
+    @Override
+    public String toString() {
+        return "a";
+    }
 }

@@ -23,11 +23,15 @@ public class g extends T2 {
     }
 
     public boolean equals(Object o) {
-      if (o instanceof g) {
-        g oo = (g) o;
-        return s2.equals(oo.getS2());
-      }
-      return false;
+        if (o instanceof g) {
+            g oo = (g) o;
+            return s2.equals(oo.getS2());
+        }
+        return false;
     }
 
+    @Override
+    public String toString() {
+        return "g(" + s2 + ")";
+    }
 }

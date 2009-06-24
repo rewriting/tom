@@ -35,11 +35,15 @@ public class f extends T1 {
     }
 
     public boolean equals(Object o) {
-      if (o instanceof f) {
-        f oo = (f) o;
-        return s1.equals(oo.getS1()) && s2.equals(oo.getS2());
-      }
-      return false;
+        if (o instanceof f) {
+            f oo = (f) o;
+            return s1.equals(oo.getS1()) && s2.equals(oo.getS2());
+        }
+        return false;
     }
 
+    @Override
+    public String toString() {
+        return "f(" + s1 + "," + s2 + ")";
+    }
 }
