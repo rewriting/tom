@@ -33,13 +33,19 @@ public abstract class List_Mapping<T> extends List_Introspector<T> {
     }
 
     public List<T> getTail(List<T> l) {
-        List<T> res = deepClone(l);
-        res.remove(0);
-        return res;
+//        List<T> res = deepClone(l);
+//        res.remove(0);
+//        return res;
+        // todo: would this optimization work?
+        if (l instanceof ProjectionList) {
+            ((ProjectionList) l).advanceOffset();
+            return l;
+        } else {
+            return new ProjectionList<T>(l, 1);
+        }
     }
 
     private static <T> List<T> deepClone(List<T> l) {
-        List<T> l_ = new ArrayList<T>(l);
-        return l_;
+        return new ArrayList<T>(l);
     }
 }
