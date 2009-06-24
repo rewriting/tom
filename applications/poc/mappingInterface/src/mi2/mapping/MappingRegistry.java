@@ -1,7 +1,7 @@
 package mi2.mapping;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author nvintila
