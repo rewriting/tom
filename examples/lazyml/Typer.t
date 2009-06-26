@@ -12,7 +12,7 @@ public class Typer {
 
 
   // replaces every free type variable by Foo
-  private static LType replaceFreeTVars(LType ty, TVarList free) {
+  private static LType replaceFreeTVars(final LType ty, final TVarList free) {
     %match(ty) {
       Atom(a) -> { return `Atom(a); }
       Arrow(a,b) -> { return `Arrow(replaceFreeTVars(a,free),replaceFreeTVars(b,free)); }
@@ -26,7 +26,7 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static TyList replaceFreeTVars(TyList tys, TVarList free) {
+  private static TyList replaceFreeTVars(final TyList tys, final TVarList free) {
     %match(tys) {
       TyList() -> { return `TyList(); }
       TyList(x,xs*) -> { 
@@ -38,7 +38,7 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static FTerm replaceFreeTVars(FTerm t, TVarList free) {
+  private static FTerm replaceFreeTVars(final FTerm t, final TVarList free) {
     %match(t) {
       FApp(t1,t2) -> { 
         return `FApp(replaceFreeTVars(t1,free),replaceFreeTVars(t2,free)); 
@@ -54,17 +54,24 @@ public class Typer {
         return `FTAbs(FTLam(X,replaceFreeTVars(u,TVarList(X,free*))));
       }
       FLet(FLetin(v,ty,t1,t2)) -> {
-        return `FLet(FLetin(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free),replaceFreeTVars(t2,free)));
+        return `FLet(FLetin(v,
+														replaceFreeTVars(ty,free),
+														replaceFreeTVars(t1,free),
+														replaceFreeTVars(t2,free)));
       }
       FFix(FFixpoint(v,ty,t1)) -> { 
-        return `FFix(FFixpoint(v,replaceFreeTVars(ty,free),replaceFreeTVars(t1,free))); }
+        return `FFix(FFixpoint(v,
+															 replaceFreeTVars(ty,free),
+															 replaceFreeTVars(t1,free))); }
       FVar(y) -> { return `FVar(y); }
       FConstr(f,tys,c) -> { 
 				return `FConstr(f,replaceFreeTVars(tys,free),
 												replaceFreeTVars(c,free)); 
 			}
       FPrimFun(f,c) -> { return `FPrimFun(f,replaceFreeTVars(c,free)); }
-      FCase(s,r) -> { return `FCase(replaceFreeTVars(s,free),replaceFreeTVars(r,free)); }
+      FCase(s,r) -> { 
+				return `FCase(replaceFreeTVars(s,free),replaceFreeTVars(r,free)); 
+			}
       FLit(i) -> { return `FLit(i); }
       FChr(c) -> { return `FChr(c); }
       FStr(s) -> { return `FStr(s); }
@@ -74,7 +81,7 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static FRules replaceFreeTVars(FRules r, TVarList free) {
+  private static FRules replaceFreeTVars(final FRules r, final TVarList free) {
     %match(r) {
       FRList() -> { return r; }
       FRList(t,ts*) -> {
@@ -85,7 +92,7 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static FClause replaceFreeTVars(FClause c, TVarList free) {
+  private static FClause replaceFreeTVars(final FClause c, final TVarList free) {
     %match(c) {
       FRule(p,t) -> { return `FRule(replaceFreeTVars(p,free),replaceFreeTVars(t,free)); }
     }
@@ -93,7 +100,7 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static FTermList replaceFreeTVars(FTermList l, TVarList free) {
+  private static FTermList replaceFreeTVars(final FTermList l, final TVarList free) {
     %match(l) {
       FTermList() -> { return l; }
       FTermList(t,ts*) -> {
@@ -104,29 +111,33 @@ public class Typer {
   }
 
   // replaces every free type variable by Foo
-  private static FPattern replaceFreeTVars(FPattern p, TVarList free) {
+  private static FPattern replaceFreeTVars(final FPattern p, final TVarList free) {
     %match(p) {
       FPFun(f,pl) -> { return `FPFun(f,replaceFreeTVars(pl,free)); }
-      FPVar(x,ty) -> {
-        LType rty = `replaceFreeTVars(ty,free);
-        return `FPVar(x,rty);
-      }
+      FDefault() -> { return `FDefault(); }
     }
     throw new RuntimeException();
   }
 
   // replaces every free type variable by Foo
-  private static FPatternList replaceFreeTVars(FPatternList l, TVarList free) {
+  private static FPVarList replaceFreeTVars(final FPVarList l, final TVarList free) {
     %match(l) {
-      FPList() -> { return `FPList(); }
-      FPList(p,ps*) -> { 
-        FPattern rp = `replaceFreeTVars(p,free);
-        FPatternList rps = `replaceFreeTVars(ps,free);
-        return `FPList(rp,rps*);
+      FPVarList() -> { return `FPVarList(); }
+      FPVarList(v,vs*) -> {
+        FPVar rp = `replaceFreeTVars(v,free);
+        FPVarList rps = `replaceFreeTVars(vs,free);
+        return `FPVarList(rp,rps*);
       }
     }
     throw new RuntimeException();
   }
+
+  private static FPVar replaceFreeTVars(final FPVar v, final TVarList free) {
+		%match(FPVar v) {
+		  FPVar(x,t) -> { return `FPVar(x,replaceFreeTVars(t,free)); } 
+		}
+    throw new RuntimeException();
+	}
 
   public static class IllFormedTerm extends RuntimeException {};
   public static class UnificationError extends RuntimeException {};
@@ -164,8 +175,8 @@ public class Typer {
   }
 
   private static lazyml.lambda.types.tvarlist.TVarList getFreeTypeVars(
-      LType ty,  
-      lazyml.lambda.types.tvarlist.TVarList ctx) {
+      final LType ty,  
+      final lazyml.lambda.types.tvarlist.TVarList ctx) {
     %match(ty) {
        Atom(_) -> { return (lazyml.lambda.types.tvarlist.TVarList) `TVarList(); }
        Arrow(a,b) -> {
@@ -186,7 +197,7 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static lazyml.lambda.types.tvarlist.TVarList getFreeTypeVars(TyList tyl) {
+  private static lazyml.lambda.types.tvarlist.TVarList getFreeTypeVars(final TyList tyl) {
     %match(tyl) {
       TyList() -> { return (lazyml.lambda.types.tvarlist.TVarList) `TVarList(); }
       TyList(ty,tys*) -> { 
@@ -206,14 +217,10 @@ public class Typer {
     return `TypeVar(freshTVar());
   }
 
-  public static LType freeze(LType ty) {
-    return `Arrow(Atom("Unit"),ty);
-  }
-
   private static TVar fresh1 = freshTVar();
   private static TVar fresh2 = freshTVar();
 
-  public static TypeOfResult typeOf(Context ctx, LTerm t) {
+  public static TypeOfResult typeOf(final Context ctx, final LTerm t) {
     %match(recon(ctx,t)) {
       RR(ft,ty,con) -> { 
         Substitution subst = `unify(con);
@@ -228,21 +235,21 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  public static LType assoc(Context c, LVar x) {
+  public static LType assoc(final Context c, final LVar x) {
     %match(c) {
       Context(_*,Jugement(v,ty),_*) && v << LVar x -> { return `ty; }
     }
     throw new IllFormedTerm();
   }
 
-  public static Range assoc(Context c, String cons) {
+  public static Range assoc(final Context c, final String cons) {
     %match(c) {
       Context(_*,RangeOf(v,r),_*) && v << String cons -> { return `r; }
     }
     throw new ConstructorNotDeclared(cons);
   }
 
-  private static instanciateForallsResult instanciateForalls(LType ty) {
+  private static instanciateForallsResult instanciateForalls(final LType ty) {
     %match (ty) {
       Forall(Fa(x,a)) -> {
         TVar fresh = freshTVar();
@@ -255,7 +262,7 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static FTerm applyToTVars(FTerm t, TVarList vs) {
+  private static FTerm applyToTVars(final FTerm t, final TVarList vs) {
     %match(vs) {
       TVarList(v,vs1*) -> { return `applyToTVars(FTApp(t,TypeVar(v)),vs1); }
       TVarList() -> { return t; }
@@ -263,7 +270,7 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
   
-  private static FTerm abstractTVars(TVarList vs, FTerm t) {
+  private static FTerm abstractTVars(final TVarList vs, final FTerm t) {
     %match(vs) {
       TVarList(v,vs1*) -> { return `FTAbs(FTLam(v,abstractTVars(vs1,t))); }
       TVarList()      -> { return t; }
@@ -271,7 +278,7 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static LType abstractTVars(TVarList vs, LType ty) {
+  private static LType abstractTVars(final TVarList vs, final LType ty) {
     %match(vs) {
       TVarList(v,vs1*) -> { return `Forall(Fa(v,abstractTVars(vs1,ty))); }
       TVarList()      -> { return ty; }
@@ -279,7 +286,7 @@ public class Typer {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-	private static TyList wrap(BVarList tvl) {
+	private static TyList wrap(final BVarList tvl) {
 		%match(tvl) {
 		  EmptyBVarList()    -> { return `EmptyTyList();} 
 			ConsBVarList(v,vs) -> { 
@@ -293,7 +300,7 @@ public class Typer {
   private static LType tyChar = `Atom("Char");
   private static LType tyStr = `Atom("String");
 
-  private static ReconResult recon(Context c, LTerm t) {
+  private static ReconResult recon(final Context c, final LTerm t) {
     %match(t) {
       Var(x) -> { 
         LType ty = `assoc(c,x);
@@ -397,13 +404,13 @@ public class Typer {
   }
 
   private static ReconChildrenResult 
-    recon(Context c, LTermList tl, Domain dom) {
+    recon(final Context c, final LTermList tl, final Domain dom) {
 		return reconRange(c,tl,dom,`FTermList(),`CList());
 	}
 
   private static ReconChildrenResult 
-    reconRange(Context c, LTermList tl, Domain dom,
-							 FTermList res, ConstraintList cl) {
+    reconRange(final Context c, final LTermList tl, final Domain dom,
+							 final FTermList res, final ConstraintList cl) {
 		%match(tl,dom) {
 			LTList(), Domain() -> { return `Pair2(res,cl); }
 			LTList(t,ts*), Domain(ty,tys*) -> {
@@ -419,14 +426,14 @@ public class Typer {
 		throw new RuntimeException("Type reconstruction failed.");
 	}
 	
-  private static ReconRulesResult recon(Context c, Rules rl, LType subject) {
+  private static ReconRulesResult recon(final Context c, final Rules rl, final LType subject) {
     LType fresh = freshTypeVar();
     return reconRules(c,rl,subject,fresh,`FRList(),`CList());
   }
 
   private static ReconRulesResult
-    reconRules(Context c, Rules rl, LType sub, LType rhs, 
-        FRules rls, ConstraintList cl) {
+    reconRules(final Context c, final Rules rl, final LType sub, final LType rhs, 
+        final FRules rls, final ConstraintList cl) {
       %match(rl) {
         RList() -> { return `Triple(rls,rhs,cl); }
         RList(r,rs*) -> {
@@ -442,7 +449,7 @@ public class Typer {
     }
 
   private static ReconClauseResult 
-    reconClause(Context c, Clause r, LType sub, LType rhs) {
+    reconClause(final Context c, final Clause r, final LType sub, final LType rhs) {
       %match(r) {
         Rule(p,t) -> {
           %match(recon(c,p)) {
@@ -462,7 +469,7 @@ public class Typer {
       throw new RuntimeException("Type reconstruction failed.");
     }
 
-  private static ReconPatternResult recon(Context c, Pattern p) {
+  private static ReconPatternResult recon(final Context c, final Pattern p) {
     %match(p) {
       PFun(f,pl) -> {
         %match(assoc(c,f)) {
@@ -475,40 +482,38 @@ public class Typer {
           }
         }
       }
-      PVar(x) -> {
+      PVar[/*DEFAULT*/] -> {
         LType ty = freshTypeVar();
-        FPattern res = `FPVar(x,ty); 
-        return `Quadruple(Context(Jugement(x,ty)),res,ty,CList());
+        return `Quadruple(Context(),FDefault(),ty,CList());
       }
     }
     throw new RuntimeException("Type reconstruction failed.");
   }
 
   private static ReconPatternListResult
-    recon(Context c, PatternList pl, Domain dom) {
-      return reconRange(c,pl,dom,`FPList(),`Context(),`CList());
+    recon(final Context c, final PatternList pl, final Domain dom) {
+      return reconRange(c,pl,dom);
     }
 
   private static ReconPatternListResult 
-    reconRange(Context c, PatternList pl, Domain dom, 
-        FPatternList typl, Context ctx, ConstraintList cl) {
-      %match(pl,dom) {
-        PList(), Domain() -> { return `Triple2(ctx,typl,cl); }
-        PList(p,ps*), Domain(ty,tys*) -> { 
-          %match(recon(c,p)) {
-            Quadruple(ctx1,pb,ty1,cl1) -> {
-              return `reconRange(c,ps,tys,
-                  FPList(typl*,pb),
-                  Context(ctx1*,ctx*),
-                  CList(Constraint(ty,ty1),cl1*,cl*));
-            }
-          } 
+    reconRange(final Context c, final PatternList vl, final Domain dom) {
+		%match(vl,dom) {
+			PList(), Domain() -> { return `Triple2(c,FPVarList(),CList()); }
+			PList(PVar(v),vs*), Domain(ty,tys*) -> {
+				LType Tv = freshTypeVar();
+				%match(reconRange(c,vs,tys)) {
+					Triple2(c1,pvl,cl) -> {
+						return `Triple2(Context(Jugement(v,Tv),c1*),
+														FPVarList(FPVar(v,Tv),pvl*),
+														CList(Constraint(ty,Tv),cl*));	
+					}
         }
       }
-      throw new RuntimeException("Type reconstruction failed.");
-    }
+		}
+		throw new RuntimeException("Type reconstruction failed.");
+	}
 
-  private static ConstraintList getConstraints(TyList l1, TyList l2) {
+  private static ConstraintList getConstraints(final TyList l1, final TyList l2) {
     %match(l1,l2) {
       TyList(), TyList() -> { return `CList(); }
       TyList(ty1,tys1*), TyList(ty2,tys2*) -> {
@@ -519,7 +524,7 @@ public class Typer {
     throw new UnificationError();
   }
 
-  private static Substitution unify(ConstraintList cl) {
+  private static Substitution unify(final ConstraintList cl) {
     %match(cl) {
       CList() -> { return `MList(); }
       CList(c,cs*) -> {

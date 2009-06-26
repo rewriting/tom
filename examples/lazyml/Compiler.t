@@ -38,15 +38,14 @@ public class Compiler {
 
   private static String compile(RawFRules l, String s, RawFixVars fv) {
     %match(l) {
-      //RawFRList() -> { return "throw new RuntimeException(\"non exhaustive patterns for " + s +"\");"; }
-      RawFRList(RawFRule(RawFPVar(x,_),rhs),_*) -> { 
-        return %[final Object @`x@ = @`s@; return @`compile(rhs,fv)@;]%;
+      RawFRList(RawFRule(RawFDefault(),rhs),_*) -> { 
+        return %[return @`compile(rhs,fv)@;]%;
       }
       RawFRList(RawFRule(RawFPFun(c,vars),rhs),xs*) -> {
         String assigns = "";
         int i = 0;
         %match(vars) {
-          RawFPList(_*,RawFPVar(x,_),_*) -> { 
+          RawFPVarList(_*,RawFPVar(x,_),_*) -> { 
             assigns += %[final Object @`x@ = ((C)@`s@).c[@`i@];]%; 
             i++;
           }

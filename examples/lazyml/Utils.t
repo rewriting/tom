@@ -132,15 +132,15 @@ public class Utils {
   private static TVarList getFreeTVars(FPattern p, TVarList free) {
     %match(p) {
       FPFun(_,pl) -> { return `getFreeTVars(pl,free); }
-      FPVar(_,ty) -> { return `getFreeTVars(ty,free); }
+      FDefault() -> { return `TVarList(); }
     }
     throw new RuntimeException();
   }
 
-  private static TVarList getFreeTVars(FPatternList l, TVarList free) {
+  private static TVarList getFreeTVars(FPVarList l, TVarList free) {
     %match(l) {
-      FPList() -> { return `TVarList(); }
-      FPList(p,ps*) -> { 
+      FPVarList() -> { return `TVarList(); }
+      FPVarList(p,ps*) -> { 
         TVarList fp = `getFreeTVars(p,free);
         TVarList fps = `getFreeTVars(ps,free);
         return `TVarList(fp*,fps*);
@@ -148,6 +148,13 @@ public class Utils {
     }
     throw new RuntimeException();
   }
+
+  private static TVarList getFreeTVars(FPVar v, TVarList free) {
+    %match(v) {
+			FPVar(_,T) -> { return `getFreeTVars(T,free); }
+		}
+		throw new RuntimeException("pattern matching non exhaustive");
+	}
 
   private static TVarList nub(TVarList l) {
     %match(l) {
@@ -243,18 +250,17 @@ public class Utils {
   private static LVarList getVars(FPattern p) {
     %match(p) {
       FPFun(_,pl) -> { return `getVars(pl); }
-      FPVar(x,_) -> { return `LVarList(x); }
+      FDefault() -> { return `LVarList(); }
     }
     throw new RuntimeException();
   }
 
-  private static LVarList getVars(FPatternList l) {
+  private static LVarList getVars(FPVarList l) {
     %match(l) {
-      FPList() -> { return `LVarList(); }
-      FPList(p,ps*) -> { 
-        LVarList fp = `getVars(p);
-        LVarList fps = `getVars(ps);
-        return `LVarList(fp*,fps*);
+      FPVarList() -> { return `LVarList(); }
+      FPVarList(FPVar(v,_),vs*) -> {
+				LVarList vl = `getVars(vs); 
+        return `LVarList(v,vl*);
       }
     }
     throw new RuntimeException();
@@ -290,14 +296,14 @@ public class Utils {
 	public static LType getType(Context c, FClause r) {
 		%match(FClause r) {
 		  FRule(FPFun(_,vs),t) -> { 
-				%match(FPatternList vs) {
-				  FPList(_*,FPVar(x,ty),_*) -> { 
+				%match(FPVarList vs) {
+				  FPVarList(_*,FPVar(x,ty),_*) -> { 
 						c = `Context(Jugement(x,ty),c*);
 						return `getType(c,t);
 					}
 				}
 			}
-			FRule(FPVar[],_) -> {
+			FRule(FDefault[],_) -> {
 				throw new RuntimeException("something got wrong during case unfolding: case with first clause of the form var -> rhs");
 			}
 		}

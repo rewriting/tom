@@ -35,6 +35,7 @@ public class Main {
       %match(res) {
         Pair(ft,ty) -> {
           System.err.println(Printer.`pretty(ty.export()));
+          //System.err.println(Printer.`pretty(ft.export()));
           System.out.println(lazy ? LazyCompiler.`compile(ft.export()) : Compiler.`compile(ft.export()));
         }
       }

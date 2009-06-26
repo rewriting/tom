@@ -24,10 +24,11 @@ The backend (system F to Java) is really simple and minimalist.
 
  - lambda.gom: (fresh)gom signature of typed and untyped programs
  - Lambda.g.t: parser
- - PreProc.t: 'case .. of' unfolding + thunkification
+ - PreProc.t: 'case .. of' unfolding 
  - Typer.t: lambda -> system F (type inference)
  - Eval.t: symbolic evaluation for debugging
  - Compiler.t: system F -> Java
+ - Lazy Compiler.t: system F -> thunks in Java
  - Printer.t: various pretty-print functions for debugging
  - Main.t: parses, pre-processes, types, compiles
 

@@ -261,18 +261,17 @@ public class Printer {
 
   public static String prettyFPattern(FPattern p) {
     %match (p) {
-      FPVar(x,ty) -> { return `pretty(x) +":" + `pretty(ty); }
-      FPFun(f,EmptyFPList()) -> { return `f; }
-      FPFun(f,l) -> { return `f + "(" + `prettyFPatternList(l) + ")"; }
+      FPFun(f,l) -> { return `f + "(" + `prettyFPVarList(l) + ")"; }
+			FDefault() -> { return "DEFAULT"; }
     }
     return null;
   }
 
-  public static String prettyFPatternList(FPatternList l) {
+  public static String prettyFPVarList(FPVarList l) {
     %match(l) {
-      EmptyFPList() -> { return ""; }
-      ConsFPList(x,EmptyFPList()) -> { return `prettyFPattern(x); }
-      ConsFPList(x,xs) -> { return `prettyFPattern(x) + "," + `prettyFPatternList(xs); }
+      EmptyFPVarList() -> { return ""; }
+      ConsFPVarList(FPVar(x,T),EmptyFPVarList()) -> { return `x + ":" + `pretty(T); }
+      ConsFPVarList(FPVar(x,T),xs) -> { return `x + ":" + `pretty(T) + "," + `prettyFPVarList(xs); }
     }
     return null;
   }
@@ -303,18 +302,16 @@ public class Printer {
 
   public static String prettyFPattern(RawFPattern p) {
     %match (p) {
-      RawFPVar(x,ty) -> { return `x +":" + `pretty(ty); }
-      RawFPFun(f,EmptyRawFPList()) -> { return `f; }
-      RawFPFun(f,l) -> { return `f + "(" + `prettyFPatternList(l) + ")"; }
+      RawFPFun(f,l) -> { return `f + "(" + `prettyFPVarList(l) + ")"; }
     }
     return null;
   }
 
-  public static String prettyFPatternList(RawFPatternList l) {
+  public static String prettyFPVarList(RawFPVarList l) {
     %match(l) {
-      EmptyRawFPList() -> { return ""; }
-      ConsRawFPList(x,EmptyRawFPList()) -> { return `prettyFPattern(x); }
-      ConsRawFPList(x,xs) -> { return `prettyFPattern(x) + "," + `prettyFPatternList(xs); }
+      EmptyRawFPVarList() -> { return ""; }
+      ConsRawFPVarList(RawFPVar(x,T),EmptyRawFPVarList()) -> { return `x + ":" + `pretty(T); }
+      ConsRawFPVarList(RawFPVar(x,T),xs) -> { return `x + ":" + `pretty(T) + "," + `prettyFPVarList(xs); }
     }
     return null;
   }
