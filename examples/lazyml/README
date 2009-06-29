@@ -34,16 +34,16 @@ The backend (system F to Java) is really simple and minimalist.
 
 ** demos
 
- - test1: demo of lazy capabilities, sum (take 100 [1..])
- - test2: towards a bootstrap of the compiler: parsing + type inference +
+ - demo1: demo of lazy capabilities, sum (take 100 [1..])
+ - demo2: towards a bootstrap of the compiler: parsing + type inference +
           pretty printing making use of polymorphism and extern java functions
           invocation
 
  - to run the demos:
      cd examples
      ./build.sh lazyml
-     cd lazyml/test1
+     cd lazyml/demo1
      make
-     cd ../test2
-     make < examples/test2.ml
+     cd ../demo2
+     make < examples/demo2.ml
 
