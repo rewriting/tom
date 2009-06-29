@@ -1,0 +1,43 @@
+type Nat = Z() | S(Nat)
+type List(a) = Nil() | Cons(a,List(a))
+
+extern Bool @eqInt(Int,Int)
+extern Int @plus(Int,Int)
+extern Int @minus(Int,Int)
+
+;
+
+let pred n = @minus(n,1)
+in let rec go n = Cons(n,go S(n))  
+in let naturals = go Z()
+in let rec take n l =
+  match n with
+  | Z() -> Nil()
+  | S(m) -> match l with
+            | Cons(x,xs) -> Cons(x,take m xs)
+            end
+  end
+in let rec foldR z f l = 
+  match l with
+  | Nil() -> z
+  | Cons(x,xs) -> f x (foldR z f xs)
+  end
+in let rec toNat n =
+  if @eqInt(n,0)
+    then Z()
+    else S(toNat (pred n))
+  end
+in let rec plus n m = 
+  match n with
+  | Z()  -> m
+  | S(p) -> S(plus p m) 
+  end
+in let sum = foldR Z() plus
+in let res = sum (take (toNat 256) naturals)
+in let rec convert n =
+  match n with
+  | Z() -> 0
+  | S(m) -> @plus(1,convert m)
+  end
+in convert res
+

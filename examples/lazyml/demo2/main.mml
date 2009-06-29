@@ -1,0 +1,615 @@
+(* demo file for lazyml compiler 
+   computes most general type of a lambda-term *)
+
+type U = U()
+type List(a) = Nil() | Cons(a,List(a))
+
+type Term = FVar(String) 
+          | BVar(Int) 
+          | Lam(String,Term) 
+          | App(Term,Term)
+          | Let(String,Term,Term)
+          | Fix(String,Term)
+
+type Type = UVar(Int) | Atom(String) | Arrow(Type,Type) 
+type NextUVar = NextUVar(Int,U -> NextUVar)
+type Option(a) = None() | Some(a)
+
+type P2(a,b) = P2(a,b)
+type P3(a,b,c) = P3(a,b,c)
+type P4(a,b,c,d) = P4(a,b,c,d)
+type P5(a,b,c,d,e) = P5(a,b,c,d,e)
+
+extern Bool @eqInt(Int,Int)
+extern Bool @gt(Int,Int)
+extern Bool @eqString(String,String)
+extern Int @plus(Int,Int)
+extern Int @minus(Int,Int)
+extern Int @times(Int,Int)
+extern String @append(String,String)
+extern String @showInt(Int)
+extern Bool @eqChar(Char,Char)
+extern String @consString(Char,String)
+extern Int @strLen(String)
+
+type Either(a,b) = Left(a) | Right(b)
+type Parser(a) = Parser(P3(Int,Int,List(Char)) -> Either(ParseError,P2(a,P3(Int,Int,List(Char)))))
+type ParseError = ParseError(String,Int,Int)
+
+extern String @showChar(Char)
+extern List(Char) @convertString(String)
+extern Int @valueOf(Char)
+extern String @getInput()
+extern Bool @eol(Char)
+
+(* imported modules *)
+
+type ModulePretty = ModulePretty(
+  (* conc *) Doc -> Doc -> Doc,
+  (* empty *) Doc,
+  (* text *) String -> Doc,
+  (* nest *) Int -> Doc -> Doc,
+  (* brk *) Doc,
+  (* breakWith *) String -> Doc,
+  (* group *) Doc -> Doc,
+  (* pretty *) Int -> Doc -> String
+)
+
+extern ModulePretty @modulePretty()
+
+
+(* pretty printer *)
+
+type Doc = DocNil()
+         | DocCons(Doc,Doc)
+         | DocText(String)
+         | DocNest(Int,Doc)
+         | DocBreak(String)
+         | DocGroup(Doc)
+
+(* -- test -- *)
+type Expr = Lit(Int) | Plus(Expr,Expr) | Minus(Expr,Expr) | Times(Expr,Expr)
+(* -- fin test -- *)
+
+;
+
+(* imports *)
+
+let ModulePretty(conc,empty,text,nest,brk,breakWith,group,pretty) = @modulePretty()
+
+(* -- utils -- *)
+
+in let suc n = @plus(n,1)
+in let pred n = @minus(n,1)
+in let ap x y = @append(x,y)
+in let eqString x y = @eqString(x,y)
+in let eqInt x y = @eqInt(x,y) 
+in let not x = if x then False() else True() end
+in let and x y = if x then y else False() end
+in let or x y = if x then True() else y end
+in let gt x y = @gt(x,y)
+in let le x y = not (gt x y)
+in let lt x y = and (le x y) (not (eqInt x y))
+in let ge x y = or (gt x y) (eqInt x y)
+in let liftToChar f x y = f @valueOf(x) @valueOf(y)
+in let cgt = liftToChar gt
+in let cge = liftToChar ge
+in let clt = liftToChar lt
+in let cle = liftToChar le
+in let strlen s = @strLen(s)
+
+in let rec foldr f z l = 
+  match l with
+  | Nil() -> z
+  | Cons(x,xs) -> f x (foldr f z xs)
+  end
+in let build g = g (fun x xs -> Cons(x,xs)) Nil()
+in let cons x xs = build (fun c n -> c x (foldr c n xs))
+in let nil = build (fun c n -> n)
+
+in let toString = foldr (fun x s -> @consString(x,s)) ""
+
+in let map f l = build (fun c n -> foldr (fun x xs -> c (f x) xs) n l)
+
+in let append l1 l2 = build (fun c n -> foldr (fun x xs -> c x xs) l2 l1)
+
+in let rec foldl f a l = 
+  match l with
+  | Nil() -> a
+  | Cons(x,xs) -> foldl f (f x a) xs
+  end
+
+in let foldl1 f l = 
+  match l with
+  | Cons(x,xs) -> foldl f x xs
+  end
+
+in let rec foldr1 f l = 
+  match l with
+  | Cons(x,xs) -> match xs with
+                     | Nil() -> x
+                     | xs -> f x (foldr1 f xs)
+                     end
+  end
+
+in let max n m = if @gt(n,m) then n else m end
+
+in let assoc eq x = foldr (fun c cs -> let P2(y,r) = c in if eq x y then Some(r) else cs end) None()
+
+in let rec eqType a b = 
+  match a with
+  | Atom(x) -> match b with
+               | Atom(y) -> @eqString(x,y)
+               | otherwise -> False()
+               end
+  | UVar(i) -> match b with
+               | UVar(j) -> @eqInt(i,j)
+               | otherwise -> False()
+               end
+  | Arrow(t1,t2) -> match b with
+                    | Arrow(t3,t4) -> and (eqType t1 t3) (eqType t2 t4)
+                    | otherwise -> False()
+                    end
+  end
+
+in let elem eq x = foldr (fun a b -> or (eq a x) b) False()
+
+(* -- monadic parser combinators -- *)
+in let runParser p s = 
+  let Parser(f) = p in match f P3(1,1,s) with
+                       | Left(e) -> Left(e)
+                       | Right(P2(x,rem)) -> Right(x)
+                       end
+in let bind pm f = 
+  let Parser(m) = pm
+  in Parser(fun s -> match m s with
+                     | Left(e) -> Left(e)
+                     | Right(P2(x,s1)) -> let Parser(m1) = f x in m1 s1
+                     end)
+
+in let seq p q = bind p (fun foo -> q)
+in let ret x = Parser (fun s -> Right(P2(x,s)))
+in let err m = Parser (fun s -> let P3(l,c,rem) = s in Left(ParseError(m,l,c)))
+in let message p = let ParseError(m,l,c) = p in
+                       (ap m 
+                       (ap ", line "
+                       (ap @showInt(l)
+                       (ap ", character " @showInt(c)))))
+in let eof = Parser (fun inp -> match inp with
+                                | P3(l,c,Nil()) -> Right(P2(U(),P3(l,c,Nil())))
+                                | P3(l,c,Cons(x,xs)) -> Left(ParseError(ap "expected eof, found '" (ap @showChar(x) "'"),l,c))
+                                end)
+in let sat p = Parser (fun s -> let P3(l,c,rem) = s in 
+                         match rem with
+                         | Nil() -> Left(ParseError("unexpected end of file",0,0))
+                         | Cons(x,xs) -> 
+                             if p x 
+                               then if @eol(x)
+                                     then Right(P2(x,P3(@plus(l,1),1,xs)))
+                                     else Right(P2(x,P3(l,@plus(c,1),xs)))
+                                    end
+                               else Left(ParseError(ap "unexpected character '" (ap @showChar(x) "'"),l,c)) 
+                             end
+                         end)
+in let item = sat (fun x -> True())
+in let chr x = sat (fun y -> @eqChar(x,y))
+in let digit = sat (fun c -> and (cle '0' c) (cle c '9'))
+in let lower = sat (fun c -> and (cle 'a' c) (cle c 'z'))
+in let upper = sat (fun c -> and (cle 'A' c) (cle c 'Z'))
+in let mzero = err ""
+in let bestError e1 e2 =
+  let ParseError(m1,l1,c1) = e1 in
+  let ParseError(m2,l2,c2) = e2 in
+    if @eqString(m1,"") 
+      then e2 
+      else if @eqString(m2,"") 
+        then e1 
+        else if gt l1 l2 
+          then e1
+          else if gt l2 l1 
+                 then e2 
+                 else if gt c1 c2 
+                        then e1
+                        else e2
+                      end
+               end
+        end
+      end 
+    end
+in let mplus a b =
+  let Parser(p) = a in
+  let Parser(q) = b in
+    Parser(fun inp -> match p inp with
+                      | Left(e) -> match (q inp) with
+                                   | Left(e1) -> Left(bestError e e1)
+                                   | Right(r) -> Right(r)
+                                   end
+                      | Right(r) -> Right(r)
+                      end)
+in let letter = mplus lower upper
+in let alphanum = mplus letter digit
+in let rec many p = 
+  let aux = bind p (fun x  ->
+            bind (many p) (fun xs ->
+            ret (cons x xs)))
+  in mplus aux (ret nil)
+in let ident = bind lower (fun x ->
+               bind (many alphanum) (fun xs -> 
+               ret (cons x xs)))
+in let many1 p = bind p (fun x ->
+                 bind (many p) (fun xs ->
+                 ret (cons x xs)))
+in let nat = 
+  let op m n = @plus(@times(10,m),n)
+  in let eval num = foldl1 op (map (fun x -> @minus(@valueOf(x),@valueOf('0'))) num)
+  in bind (many1 digit) (fun num -> ret (eval num))
+    
+in let bracket l e r = bind l (fun foo -> 
+                       bind e (fun res -> 
+                       bind r (fun bar -> ret res)))
+in let sepby1 p sep = bind p (fun x ->
+                      bind (many (seq sep p)) (fun xs ->
+                      ret (cons x xs)))
+in let sepby p sep = mplus (sepby1 p sep) (ret nil)
+(* usage : addop = ops Cons(P2(chr '+', plus), Cons(P2(chr '-', minus), Nil())) *)
+in let ops xs = foldr1 mplus (map (fun c -> let P2(p,op) = c in (seq p (ret op))) xs) 
+in let chainl1 p op = 
+  let rec rest x = mplus (bind op (fun f ->
+                          bind p (fun y -> rest (f x y)))) (ret x)
+  in bind p rest
+in let rec chainr1 p op = 
+  bind p (fun x ->
+  mplus (bind op (fun f ->
+         bind (chainr1 p op) (fun y ->
+         ret (f x y)))) (ret (cons x nil)))
+in let chainl p op v = mplus (chainl1 p op) (ret (cons v nil))
+in let chainr p op v = mplus (chainr1 p op) (ret (cons v nil))
+in let str s = 
+  let rec go s =
+    match s with
+    | Nil()      -> ret nil
+    | Cons(c,cs) ->  seq (chr c)
+                     (seq (go cs) (ret (cons c s)))
+    end
+  in go @convertString(s)
+in let rec oneof l = 
+  match l with
+  | Nil()      -> mzero
+  | Cons(c,cs) -> mplus (chr c) (oneof cs)
+  end
+in let space = oneof @convertString(" \n\r\t")
+
+(* -- uvars -- *)
+
+in let uvargen i = 
+  let rec f n u = NextUVar(n,f (suc n))
+  in f i
+
+in let rec uvars t = 
+  match t with
+  | Atom(s)    -> nil
+  | UVar(n)    -> (cons n nil)
+  | Arrow(x,y) -> append (uvars x) (uvars y)
+  end
+
+(* -- locally nameless -- *)
+
+in let abs x t = 
+  let rec abs_ i t = 
+    match t with
+    | FVar(y)    -> if @eqString(y,x) then BVar(i) else FVar(y) end
+    | BVar(j)    -> BVar(j)
+    | Lam(s,u)   -> Lam(s, abs_ (suc i) u)
+    | Fix(s,u)   -> Fix(s, abs_ (suc i) u)
+    | Let(s,u,v) -> Let(s, abs_ i u, abs_ (suc i) v)
+    | App(a,b)   -> App(abs_ i a, abs_ i b)
+    end
+  in abs_ 0 t
+
+in let inst u t = 
+  let rec inst_ i t = 
+    match t with
+    | FVar(x)    -> FVar(x)
+    | BVar(j)    -> if @eqInt(j,i) then u else BVar(j) end
+    | Lam(s,v)   -> Lam(s, inst_ (suc i) v)
+    | Fix(s,u)   -> Fix(s, inst_ (suc i) u)
+    | Let(s,u,v) -> Let(s, inst_ i u, inst_ (suc i) v)
+    | App(a,b)   -> App(inst_ i a, inst_ i b)
+    end
+  in inst_ 0 t
+
+in let substitute x u t = inst u (abs x t)
+
+in let name s c =
+  let rec incr c =
+    match c with
+    | Cons(P2(x,n),c1) -> 
+      if @eqString(x,s)
+        then P2(suc n,(cons P2(x,suc n) c1))
+        else let P2(res,newc1) = incr c1
+             in P2(res,(cons P2(x,n) newc1))
+      end
+    | Nil() -> P2(0,(cons P2(s,0) nil))
+    end
+  in let render n = if @eqInt(n,0) then s else ap s @showInt(n) end 
+  in let P2(n,c1) = incr c 
+  in P2(render n, c1)
+
+in let open_lam c t = 
+  let Lam(s,u) = t in 
+  let P2(n,c1) = name s c in
+    P3(c1, n, inst FVar(n) u)
+in let open_let c t = 
+  let Let(s,u,v) = t in
+  let P2(n,c1) = name s c in
+    P4(c1, n, u, inst FVar(n) v)
+in let open_fix c t = 
+  let Fix(s,u) = t in
+  let P2(n,c1) = name s c in
+    P3(c1, n, inst FVar(n) u)
+
+(* -- pretty printers -- *)
+
+(* conc and break *)
+
+in let cb x y = conc x (conc brk y)
+in let par x = group (conc (text "(") (conc x (text ")")))
+in let cs x y = conc x (conc (text " ") y)
+
+in let prettyTermDoc t = 
+  let rec aux c t = 
+    match t with
+    | FVar(x) -> text x
+    | BVar(i) -> text @showInt(i)
+    | Lam(s,u) -> 
+        let P3(c1,x,u) = open_lam c t 
+        in par (cs (text "fun")
+               (cs (text x) 
+               (conc (text "->")
+                     (nest 2 (conc brk (aux c1 u))))))
+    | App(a,b) -> (cb (par (aux c a)) (aux c b))
+    | Let(x,u,Let(y,uu,vv)) -> 
+        let P4(c1,n,u,v) = open_let c t
+        in (cs   (text "let")
+           (cs   (text x)
+           (conc (text "=")
+           (cb   (group (nest 2 (conc brk (aux c u))))
+           (cs   (text "in") (aux c1 v))))))
+    | Let(x,u,v) -> 
+        let P4(c1,n,u,v) = open_let c t
+        in (cs    (text "let")
+           (cs    (text x)
+           (conc  (text "=")
+           (cb    (group (nest 2 (conc brk (aux c u))))
+           (group (conc (text "in") 
+                        (nest 2 (conc brk (aux c1 v)))))))))
+    | Fix(x,u) ->
+        let P3(c1,x,u) = open_fix c t 
+        in par (cs (text "fix")
+               (cs (text x) (aux c1 u)))
+    end
+  in aux Nil() t
+
+in let prettyTerm t = pretty 70 (prettyTermDoc t) 
+
+in let parens s = ap "(" (ap s ")")
+in let rec prettyType ty = 
+  match ty with
+  | Atom(a) -> a
+  | UVar(i) -> ap "a" @showInt(i)
+  | Arrow(a,b) -> parens (ap (ap (prettyType a) " -> ") (prettyType b))
+  end
+
+(* -- unification -- *)
+
+(* subst x by u in t *)
+in let rec substInType x u t = 
+  match t with
+  | Atom(a) -> t
+  | UVar(n) -> if @eqInt(x,n) then u else t end
+  | Arrow(ty1,ty2) -> 
+      Arrow(substInType x u ty1, substInType x u ty2)
+  end
+
+(* subst x by u in constraint *)
+in let substInConstraint x u c = 
+  let P2(l,r) = c in P2(substInType x u l, substInType x u r)
+
+(* subst x by u in constaints *)
+in let substInConstraints x u c = map (substInConstraint x u) c
+
+(* apply s to type t *)
+in let applySubst s t = 
+  foldl (fun s p -> let P2(x,u) = s in substInType x u p) t s
+
+
+in let ebind m f = 
+  match m with
+  | None() -> None()
+  | Some(x) -> f x
+  end
+
+in let eret x = Some(x)
+in let fail = None()
+in let rec unify con =
+  let aux1 x u cs = 
+    if not (elem eqInt x (uvars u)) 
+      then ebind (unify (substInConstraints x u cs)) (fun cs1 -> 
+           eret Cons(P2(x,u),cs1))
+      else fail
+    end
+  in let aux2 c cs = 
+    let P2(Arrow(t1,t2),Arrow(t3,t4)) = c in
+      unify Cons(P2(t1,t3),Cons(P2(t2,t4),cs))
+  in match con with
+     | Nil() -> eret Nil()
+     | Cons(c,cs) ->
+        let P2(s,u) = c in if eqType s u then unify cs else
+          match s with 
+          | UVar(x) -> aux1 x u cs
+          | v       -> match u with
+                       | UVar(x) -> aux1 x v cs
+                       | a       -> aux2 c cs
+                       end
+          end
+        end
+     end
+
+(* -- constraint generation -- *)
+
+in let rec recon state c gen t =
+  match t with 
+  | FVar(x) -> 
+      let Some(ty) = assoc eqString x c 
+      in P3(ty , gen, nil)
+  | Lam(s,u) -> 
+      let P3(state1,x,u) = open_lam state t in
+      let NextUVar(j,gen1) = gen U() in
+      let ty1 = UVar(j) in
+      let P3(ty2,gen2,con) = recon state1 (cons P2(x,ty1) c) gen1 u in
+        P3(Arrow(ty1,ty2), gen2, con)
+  | Let(s,u,v) -> recon state c gen (substitute s u v)
+  | App(u,v) -> 
+      let P3(ty1,gen1,con1) = recon state c gen u in
+      let P3(ty2,gen2,con2) = recon state c gen1 v in
+      let NextUVar(j,gen3) = gen2 U() in
+      let ty3 = UVar(j) in
+      let con3 = Cons(P2(ty1,Arrow(ty2,ty3)),append con1 con2) in
+        P3(ty3, gen3, con3)
+  | Fix(s,u) ->
+      let P3(state1,x,u) = open_fix state t in
+      let NextUVar(j,gen1) = gen U() in
+      let ty1 = UVar(j) in
+      let P3(ty2,gen2,con) = recon state1 (cons P2(x,ty1) c) gen1 u in
+        P3(ty1, gen2, (cons P2(ty1,ty2) con))
+  end
+
+(* -- type inference -- *)
+
+in let getType t = 
+  let P3(ty,g,con) = recon Nil() Nil() (uvargen 0) t in
+  let msubst = unify con in
+    match msubst with
+    | None() -> Left("occur check")
+    | Some(subst) -> Right(applySubst subst ty)
+    end
+
+(* -- lambda-terms parser -- *)
+
+in let junk = many space
+
+in let token p = bind p (fun x -> bind junk (fun y -> ret x))
+in let parse p = bind junk (fun x -> bind p (fun y -> ret y))
+
+in let symbol s = token (str s)
+
+in let rec eqStr xs ys =
+  match xs with
+  | Nil() -> match ys with
+             | Nil() -> True()
+             | Cons(y,ys) -> False()
+             end
+  | Cons(x,xs) -> match ys with
+                  | Nil() -> False()
+                  | Cons(y,ys) -> and @eqChar(x,y) (eqStr xs ys)
+                  end
+  end
+
+in let identifier ks = token 
+  (let ks = map (fun x -> @convertString(x)) ks
+   in bind ident (fun x ->
+      if not (elem eqStr x ks) then ret x else mzero end))
+
+in let variable = identifier (cons "let" (cons "in" (cons "rec" nil)))
+in let expr atom = chainl1 atom (ret (fun x y -> App(x,y))) 
+in let atom lam letin var paren = mplus lam (mplus letin (mplus var paren))
+in let prefix xs = runParser (many letter) xs
+in let lam variable expr = bind (symbol "fun") (fun foo ->
+                           bind variable (fun x ->
+                           bind (symbol "->") (fun bar ->
+                           bind expr (fun e -> 
+                             let Right(pre) = prefix x
+                             in ret Lam(toString pre, abs (toString x) e)))))
+in let nonrecur variable expr = bind variable (fun x ->
+                                bind (symbol "=") (fun bar ->
+                                bind expr (fun u ->
+                                bind (symbol "in") (fun baz ->
+                                bind expr (fun v ->
+                                let Right(pre) = prefix x
+                                  in ret Let(toString pre, u, abs (toString x) v))))))
+in let recur variable expr = bind variable (fun x ->
+                             bind (symbol "=") (fun bar ->
+                             bind expr (fun u ->
+                             bind (symbol "in") (fun baz ->
+                             bind expr (fun v ->
+                             let Right(pre) = prefix x in
+                             let rpre = toString pre in
+                             let rx = toString x in
+                               ret Let(rpre, Fix(rpre, abs rx u), abs rx v))))))
+in let letin variable expr = seq (symbol "let") 
+                                 (mplus (seq (symbol "rec") (recur variable expr))
+                                        (nonrecur variable expr))
+in let paren expr = bracket (symbol "(") expr (symbol ")")
+in let var = bind variable (fun x -> ret FVar(toString x))
+
+in let p5_1 t = let P5(x,y,z,w,v) = t in x
+in let p5_2 t = let P5(x,y,z,w,v) = t in y
+in let p5_3 t = let P5(x,y,z,w,v) = t in z
+in let p5_4 t = let P5(x,y,z,w,v) = t in w
+in let p5_5 t = let P5(x,y,z,w,v) = t in v
+
+in let rec tie = 
+  P5(expr  Parser(fun s -> let Parser(f) = p5_2 tie in f s),
+     atom  Parser(fun s -> let Parser(f) = p5_3 tie in f s)
+           Parser(fun s -> let Parser(f) = p5_5 tie in f s)
+           var
+           Parser(fun s -> let Parser(f) = p5_4 tie in f s),
+     lam   variable Parser(fun s -> let Parser(f) = p5_1 tie in f s),
+     paren Parser(fun s -> let Parser(f) = p5_1 tie in f s),
+     letin variable Parser(fun s -> let Parser(f) = p5_1 tie in f s))
+
+in let P5(expr,atom,lam,paren,letin) = tie
+
+(* -- main -- *)
+
+in let input = @getInput() 
+in let test = runParser (seq junk expr) @convertString(input)
+in match test with
+   | Left(e) -> message e
+   | Right(t) -> let testrep = prettyTerm t in
+                 let mty = getType t in
+                 let tyrep = match mty with 
+                             | Left(e) -> e 
+                             | Right(ty) ->  prettyType ty 
+                             end 
+                 in ap (ap testrep " : ") tyrep
+   end
+(*
+in let toto = group (conc (text "aabbbb") (conc brk (text "idjs djsi")))
+in pretty 50 toto
+*)
+
+(*
+in let plus x y = Plus(x,y)
+in let minus x y = Minus(x,y)
+in let times x y = Times(x,y)
+in let addop = ops Cons(P2(chr '+', plus),Cons(P2(chr '-', minus),Nil()))
+in let expop = ops Cons(P2(chr '*', times),Nil())
+
+in let pre_expr term = chainl1 term addop
+n let pre_term factor = chainl1 factor expop
+in let pre_factor expr = mplus (bind nat (fun n -> ret Lit(n))) (bracket (chr '(') expr (chr ')'))
+
+in let fst  t = let P3(x,y,z) = t in x
+in let snd  t = let P3(x,y,z) = t in y
+in let thrd t = let P3(x,y,z) = t in z
+
+in let rec tie = 
+  P3(pre_expr   Parser(fun s -> let Parser(f) = snd  tie in f s),
+     pre_term   Parser(fun s -> let Parser(f) = thrd tie in f s),
+     pre_factor Parser(fun s -> let Parser(f) = fst  tie in f s))
+
+in runParser (fst tie) @convertString("1+2*3")
+*)
+
+
