@@ -138,7 +138,7 @@ public class Eval {
           System.out.println("\nparsed: " + 
               Printer.`pretty(rawft) + " : " + Printer.`pretty(rawty));
           System.out.println("\njava translation :\n" + 
-              LazyCompiler.`compile(rawft));
+              Compiler.`compile(rawft));
         }
       }
       System.out.println("\nnormal form : " + 
