@@ -57,10 +57,10 @@
 
 
 %oplist t1List concT1(T1*) {
-  is_fsym(l)       { mi2.hand.Module.listOf_T1_Mapping.instance.isSym($l) }
-  make_empty()     { mi2.hand.Module.listOf_T1_Mapping.instance.makeEmpty() } 
-  make_insert(o,l) { mi2.hand.Module.listOf_T1_Mapping.instance.makeInsert($o,$l) }
-  get_head(l)      { mi2.hand.Module.listOf_T1_Mapping.instance.getHead($l) }
-  get_tail(l)      { mi2.hand.Module.listOf_T1_Mapping.instance.getTail($l) }
-  is_empty(l)      { mi2.hand.Module.listOf_T1_Mapping.instance.isEmpty($l) }
+  is_fsym(l)       { mi2.hand.Module.concT1_Mapping.instance.isSym($l) }
+  make_empty()     { mi2.hand.Module.concT1_Mapping.instance.makeEmpty() } 
+  make_insert(o,l) { mi2.hand.Module.concT1_Mapping.instance.makeInsert($o,$l) }
+  get_head(l)      { mi2.hand.Module.concT1_Mapping.instance.getHead($l) }
+  get_tail(l)      { mi2.hand.Module.concT1_Mapping.instance.getTail($l) }
+  is_empty(l)      { mi2.hand.Module.concT1_Mapping.instance.isEmpty($l) }
 }

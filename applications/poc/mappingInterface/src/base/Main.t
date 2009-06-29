@@ -38,7 +38,7 @@ public class Main extends TestCase {
   }
 
   public void test_listMatchFirst() {
-    t1List subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
+   ListT1 subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
 
     %match(subject) {
       concT1(first, middle*, last) -> {

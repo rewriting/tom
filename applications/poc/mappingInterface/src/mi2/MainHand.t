@@ -43,7 +43,7 @@ public class MainHand extends TestCase {
   }
 
   public void test_listMatchFirst() {
-    /*t1List*/List<T1> subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
+    List<T1> subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
 
     %match(subject) {
       concT1(first, _*) -> {

@@ -25,7 +25,7 @@ public class Module {
     a make();
   }
 
-  public static abstract class a_Introspector extends mi2.mapping.IntrospectorMapping<a> implements a_MappingI {
+  public static abstract class a_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,a_MappingI {
     // should be generated automatically
     public abstract a make();
 
@@ -75,7 +75,7 @@ public class Module {
     b make();
   }
 
-  public static abstract class b_Introspector extends mi2.mapping.IntrospectorMapping<b> implements b_MappingI {
+  public static abstract class b_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,b_MappingI {
     public abstract b make();
 
     public b setChildren(Object o, Object[] children) {
@@ -131,7 +131,7 @@ public class Module {
 
   }
 
-  public static abstract class f_Introspector extends mi2.mapping.IntrospectorMapping<f> implements f_MappingI {
+  public static abstract class f_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,f_MappingI {
 
     // LocalIntrospector
     public f setChildren(Object o, Object[] children) {
@@ -217,7 +217,7 @@ public class Module {
 
   }
 
-  public static abstract class g_Introspector extends mi2.mapping.IntrospectorMapping<g> implements g_MappingI {
+  public static abstract class g_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,g_MappingI {
     public g setChildren(Object o, Object[] children) {
       return make(children[0]);
     }

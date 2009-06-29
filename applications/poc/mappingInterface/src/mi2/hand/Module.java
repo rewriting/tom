@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mi2.mapping.List_Mapping;
+import mi2.mapping.List_MappingI;
+import mi2.mapping.ProjectionList;
 
 /**
  * @author nvintila
@@ -31,11 +32,11 @@ public class Module {
     public static interface a_MappingI {
         // should be generated automatically
         boolean isSym(Object t);
-
+        // NOTE: somewhere, Tom has to know that the constructor 'a' is implement by the class 'a'
         a make();
     }
 
-    public static abstract class a_Introspector extends mi2.mapping.IntrospectorMapping<a> implements a_MappingI {
+    public static abstract class a_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,a_MappingI {
         // should be generated automatically
         public abstract a make();
 
@@ -83,12 +84,14 @@ public class Module {
      * ------------------------------
      */
     public static interface b_MappingI {
+        // should be generated automatically
         boolean isSym(Object t);
 
         b make();
     }
 
-    public static abstract class b_Introspector extends mi2.mapping.IntrospectorMapping<b> implements b_MappingI {
+    public static abstract class b_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,b_MappingI {
+        // should be generated automatically
         public abstract b make();
 
         public b setChildren(Object o, Object[] children) {
@@ -134,7 +137,7 @@ public class Module {
      * ------------------------------
      */
     public static interface f_MappingI {
-        // Test
+        // should be generated automatically
         boolean isSym(Object t);
 
         f make(Object s1, Object s2);
@@ -146,9 +149,8 @@ public class Module {
 
     }
 
-    public static abstract class f_Introspector extends mi2.mapping.IntrospectorMapping<f> implements f_MappingI {
-
-        // LocalIntrospector
+    public static abstract class f_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,f_MappingI {
+        // should be generated automatically
         public f setChildren(Object o, Object[] children) {
             return make(children[0], children[1]);
         }
@@ -193,8 +195,6 @@ public class Module {
 
     public static class f_Mapping extends f_Introspector {
         public static f_Mapping instance = new f_Mapping();
-
-        // Test
         public boolean isSym(Object t) {
             return t instanceof f;
         }
@@ -219,7 +219,7 @@ public class Module {
      * ------------------------------
      */
     public static interface g_MappingI {
-        // Test
+        // should be generated automatically
         boolean isSym(Object t);
 
         g make(Object s2);
@@ -229,7 +229,8 @@ public class Module {
 
     }
 
-    public static abstract class g_Introspector extends mi2.mapping.IntrospectorMapping<g> implements g_MappingI {
+    public static abstract class g_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,g_MappingI {
+        // should be generated automatically
         public g setChildren(Object o, Object[] children) {
             return make(children[0]);
         }
@@ -268,8 +269,6 @@ public class Module {
 
     public static class g_Mapping extends g_Introspector {
         public static g_Mapping instance = new g_Mapping();
-
-        // Test
         public boolean isSym(Object t) {
             return t instanceof g;
         }
@@ -289,7 +288,7 @@ public class Module {
      * ------------------------------
      */
     public static interface h_MappingI {
-        // Test
+        // should be generated automatically
         boolean isSym(Object t);
 
         h make(List<T1> ts);
@@ -299,8 +298,8 @@ public class Module {
 
     }
 
-    public static abstract class h_Introspector extends mi2.mapping.IntrospectorMapping<h> implements h_MappingI {
-
+    public static abstract class h_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,h_MappingI {
+        // should be generated automatically
         public h setChildren(Object o, Object[] children) {
             // todo: this cast might blow..
             return make(Arrays.asList((T1[]) children[0]));
@@ -343,8 +342,6 @@ public class Module {
 
     public static class h_Mapping extends h_Introspector {
         public static h_Mapping instance = new h_Mapping();
-
-        // Test
         public boolean isSym(Object t) {
             return t instanceof h;
         }
@@ -359,9 +356,89 @@ public class Module {
 
     }
 
-    public static class listOf_T1_Mapping extends List_Mapping<T1> {
-        public static listOf_T1_Mapping instance = new listOf_T1_Mapping();
+    /**
+     * ------------------------------
+     */
+    public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,List_MappingI<T1,List<T1>> {
+      // should be generated automatically
+      public List<T1> setChildren(Object o, Object[] children) {
+        //TODO
+        assert false : "Unexpected call!";
+        return null;
+      }
+
+      public Object[] getChildren(Object o) {
+        //TODO
+        assert false : "Unexpected call!";
+        return null;
+      }
+
+      public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+        //TODO
+        assert false : "Unexpected call.";
+        return null;
+      }
+
+      public Object getChildAt(Object o, int i) {
+        //TODO
+        assert false : "Unexpected call.";
+        return null;
+      }
+
+      public int getChildCount(Object o) {
+        //TODO
+        assert false : "Unexpected call!";
+        return 0;
+      }
+
+      public Class forType() {
+        return List.class;
+      }
+    }
+
+    public static class concT1_Mapping extends concT1_Introspector {
+      public static concT1_Mapping instance = new concT1_Mapping();
+
+      public boolean isSym(Object t) {
+        return (t != null) && (t instanceof List);
+      }
+
+      public boolean isEmpty(List<T1> l) {
+        return l.isEmpty();
+      }
+
+      public List<T1> makeEmpty() {
+        return new ArrayList<T1>();
+      }
+
+      public List<T1> makeInsert(T1 o, List<T1> l) {
+        List<T1> res = deepClone(l);
+        res.add(0, o);
+        return res;
+      }
+
+      public T1 getHead(List<T1> l) {
+        return l.get(0);
+      }
+
+      public List<T1> getTail(List<T1> l) {
+                List<T1> res = deepClone(l);
+                res.remove(0);
+                return res;
+        // todo: would this optimization work?
+        //if (l instanceof ProjectionList) {
+        //  ((ProjectionList) l).advanceOffset();
+        //  return l;
+        //} else {
+        //  return new ProjectionList<T1>(l, 1);
+       // }
+      }
+
+      private static <T1> List<T1> deepClone(List<T1> l) {
+        return new ArrayList<T1>(l);
+      }
 
     }
+
 
 }

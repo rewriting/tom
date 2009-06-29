@@ -37,6 +37,9 @@
   get_slot(s2, t)  { mi2.gom.Module.g_Mapping.instance.gets2($t) }
 }
 
+
+
+
 %include { sl.tom }
 
 %op Strategy _a() {

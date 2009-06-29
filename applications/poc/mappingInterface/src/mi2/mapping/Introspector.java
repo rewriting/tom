@@ -11,8 +11,8 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public <T> T setChildren(T o, Object[] children) {
     Mapping m = MappingRegistry.getMappingOf(o);
-    if (m instanceof IntrospectorMapping) {
-      return ((IntrospectorMapping)m).setChildren (o, children);
+    if (m instanceof tom.library.sl.Introspector) {
+      return ((tom.library.sl.Introspector)m).setChildren (o, children);
     }
     return null;
   }
@@ -23,8 +23,8 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public Object[] getChildren(Object o) { 
     Mapping m = MappingRegistry.getMappingOf(o);
-    if (m instanceof IntrospectorMapping) {
-      return ((IntrospectorMapping)m).getChildren (o);
+    if (m instanceof tom.library.sl.Introspector) {
+      return ((tom.library.sl.Introspector)m).getChildren (o);
     }
     return null;
   }
@@ -37,8 +37,8 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public <T> T setChildAt(T o, int i, Object child)  {
     Mapping m = MappingRegistry.getMappingOf(o);
-    if (m instanceof IntrospectorMapping) {
-      return ((IntrospectorMapping)m).setChildAt(o, i , child);
+    if (m instanceof tom.library.sl.Introspector) {
+      return ((tom.library.sl.Introspector)m).setChildAt(o, i , child);
     }
     return null;
   }
@@ -50,8 +50,8 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public Object getChildAt(Object o, int i)  {
     Mapping m = MappingRegistry.getMappingOf(o);
-    if (m instanceof IntrospectorMapping) {
-      return ((IntrospectorMapping)m).getChildAt(o, i);
+    if (m instanceof tom.library.sl.Introspector) {
+      return ((tom.library.sl.Introspector)m).getChildAt(o, i);
     }
     return null;
   }
@@ -64,8 +64,8 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public int getChildCount(Object o)  {
     Mapping m = MappingRegistry.getMappingOf(o);
-    if (m instanceof IntrospectorMapping) {
-      return ((IntrospectorMapping)m).getChildCount(o);
+    if (m instanceof tom.library.sl.Introspector) {
+      return ((tom.library.sl.Introspector)m).getChildCount(o);
     }
     return 0;
   }
