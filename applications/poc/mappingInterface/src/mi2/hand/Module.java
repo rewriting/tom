@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mi2.mapping.List_MappingI;
-import mi2.mapping.ProjectionList;
-
 /**
  * @author nvintila
  * @date 2:32:06 PM Jun 13, 2009
@@ -359,7 +356,7 @@ public class Module {
     /**
      * ------------------------------
      */
-    public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,List_MappingI<T1,List<T1>> {
+    public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,mi2.mapping.List_MappingI<T1,List<T1>> {
       // should be generated automatically
       public List<T1> setChildren(Object o, Object[] children) {
         //TODO
@@ -426,11 +423,11 @@ public class Module {
                 res.remove(0);
                 return res;
         // todo: would this optimization work?
-        //if (l instanceof ProjectionList) {
-        //  ((ProjectionList) l).advanceOffset();
+        //if (l instanceof mi2.mapping.ProjectionList) {
+        //  ((mi2.mapping.ProjectionList) l).advanceOffset();
         //  return l;
         //} else {
-        //  return new ProjectionList<T1>(l, 1);
+        //  return new mi2.mapping.ProjectionList<T1>(l, 1);
        // }
       }
 

@@ -37,8 +37,26 @@
   get_slot(s2, t)  { mi2.gom.Module.g_Mapping.instance.gets2($t) }
 }
 
+%op T2 h(ts:ListT1) {
+  make(s) { mi2.gom.Module.h_Mapping.instance.make($s) }
+  is_fsym(t) { mi2.gom.Module.h_Mapping.instance.isSym($t) }
+  get_slot(ts, t)  { mi2.gom.Module.h_Mapping.instance.getts($t) }
+}
 
+%typeterm ListT1 {
+  implement { base.data.types.ListT1 }
+  is_sort(t) { $t instanceof base.data.types.ListT1 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
 
+%oplist ListT1 concT1(T1*) {
+  is_fsym(l)       { mi2.gom.Module.concT1_Mapping.instance.isSym($l) }
+  make_empty()     { mi2.gom.Module.concT1_Mapping.instance.makeEmpty() } 
+  make_insert(o,l) { mi2.gom.Module.concT1_Mapping.instance.makeInsert($o,$l) }
+  get_head(l)      { mi2.gom.Module.concT1_Mapping.instance.getHead($l) }
+  get_tail(l)      { mi2.gom.Module.concT1_Mapping.instance.getTail($l) }
+  is_empty(l)      { mi2.gom.Module.concT1_Mapping.instance.isEmpty($l) }
+}
 
 %include { sl.tom }
 

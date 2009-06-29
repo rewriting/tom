@@ -2,8 +2,10 @@ package mi2.gom;
 
 import base.data.types.t1.*;
 import base.data.types.t2.*;
+import base.data.types.listt1.*;
 import base.data.types.T2;
 import base.data.types.T1;
+import base.data.types.ListT1;
 
 /**
  * @author nvintila
@@ -276,7 +278,138 @@ public class Module {
     }
 
   }
+  /** ------------------------------ */
+  public static interface h_MappingI {
+    boolean isSym(Object t);
+    h make(Object s);
+    ListT1 getts(Object t);
 
+  }
 
+  public static abstract class h_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,h_MappingI {
+    public h setChildren(Object o, Object[] children) {
+      return make(children[0]);
+    }
+
+    public Object[] getChildren(Object o) {
+      return new Object[]{ (((h)o).gets2()) };
+    }
+
+    public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+      switch (i) {
+        case 0:
+          return make(child);
+      }
+      assert false : "Unexpected call.";
+      return null;
+    }
+
+    public Object getChildAt(Object o, int i) {
+      switch (i) {
+        case 0:
+          return getts(o);
+      }
+      assert false : "Unexpected call.";
+      return null;
+    }
+
+    public int getChildCount(Object o) {
+      return 1;
+    }
+
+    public Class forType() {
+      return h.class;
+    }
+  }
+
+  public static class h_Mapping extends h_Introspector {
+    public static h_Mapping instance = new h_Mapping();
+
+    public boolean isSym(Object t) {
+      return t instanceof h;
+    }
+
+    public h make(Object s) {
+      return h.make((ListT1)s);
+    }
+
+    public h make(Object[] children) {
+      return make(children[0]);
+    }
+
+    public ListT1 getts(Object t) {
+      return ((h)t).getts();
+    }
+
+  }
+
+    /**
+     * ------------------------------
+     */
+    public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,mi2.mapping.List_MappingI<T1,ListT1> {
+      // should be generated automatically
+      public ListT1 setChildren(Object o, Object[] children) {
+        //TODO
+        assert false : "Unexpected call!";
+        return null;
+      }
+
+      public Object[] getChildren(Object o) {
+        //TODO
+        assert false : "Unexpected call!";
+        return null;
+      }
+
+      public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+        //TODO
+        assert false : "Unexpected call.";
+        return null;
+      }
+
+      public Object getChildAt(Object o, int i) {
+        //TODO
+        assert false : "Unexpected call.";
+        return null;
+      }
+
+      public int getChildCount(Object o) {
+        //TODO
+        assert false : "Unexpected call!";
+        return 0;
+      }
+
+      public Class forType() {
+        return ListT1.class;
+      }
+    }
+
+    public static class concT1_Mapping extends concT1_Introspector {
+      public static concT1_Mapping instance = new concT1_Mapping();
+
+      public boolean isSym(Object t) {
+        return (t instanceof base.data.types.listt1.ConsconcT1) || (t instanceof base.data.types.listt1.EmptyconcT1);
+      }
+
+      public boolean isEmpty(ListT1 l) {
+        return l.isEmptyconcT1();
+      }
+
+      public ListT1 makeEmpty() {
+        return base.data.types.listt1.EmptyconcT1.make();
+      }
+
+      public ListT1 makeInsert(T1 o, ListT1 l) {
+        return base.data.types.listt1.ConsconcT1.make(o,l);
+      }
+
+      public T1 getHead(ListT1 l) {
+        return l.getHeadconcT1();
+      }
+
+      public ListT1 getTail(ListT1 l) {
+        return l.getTailconcT1();
+      }
+
+    }
 
 }

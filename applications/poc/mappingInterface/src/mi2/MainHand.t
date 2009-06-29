@@ -42,6 +42,14 @@ public class MainHand extends TestCase {
 
   }
 
+  %strategy Rule() extends Fail() {
+    visit T1 {
+      f(x,y) -> {
+        return `x;
+      }
+    }
+  }
+
   public void test_listMatchFirst() {
     List<T1> subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
 
@@ -113,14 +121,6 @@ public class MainHand extends TestCase {
 
     // todo: how to do this?
     //`_h(_concT1(map(Print()))).visitLight(subject);
-  }
-
-  %strategy Rule() extends Fail() {
-    visit T1 {
-      f(x,y) -> {
-        return `x;
-      }
-    }
   }
 
 }

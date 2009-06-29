@@ -50,4 +50,77 @@ public class MainGom extends TestCase {
     }
   }
 
+  public void test_listMatchFirst() {
+    ListT1 subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
+
+    %match(subject) {
+      concT1(first, _*) -> {
+
+        assertEquals(`first, `a());
+        return;
+      }
+    }
+    fail();
+  }
+
+  public void test_listMatchLast() {
+    Object subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
+
+    %match(subject) {
+      concT1(_*, last) -> {
+
+        assertEquals(`last, `f(a(), g(b())));
+        return;
+      }
+    }
+    fail();
+  }
+
+  public void test_listMatchCount() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
+
+    int i = 0;
+    %match(subject) {
+      h(concT1(_*, x, _*)) -> {
+        i++;
+      }
+    }
+    assertEquals(i,3);
+  }
+
+  public void test_listMatchNonLinear() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(),b()), a(), f(a(), g(b()))));
+
+    %match(subject) {
+      h(concT1(X1*, x, X2*, x, X3*)) -> {
+        assertEquals(`x,`a());
+        assertEquals(`X1,`concT1());
+        assertEquals(`X2,`concT1(f(a(),b()), f(a(),b())));
+        assertEquals(`X3,`concT1(f(a(), g(b()))));
+        return;
+      }
+      _ -> {
+        fail();
+      }
+    }
+  }
+
+  public void test_listMatchAny() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
+
+    %match(subject) {
+      !h(concT1(_*, a(), _*)) -> {
+        fail();
+        return;
+      }
+    }
+  }
+
+  public void test_congWithListMatch() {
+    T2 subject = `h(concT1(a(), f(a(), b()), f(a(), g(b()))));
+
+    // todo: how to do this?
+    //`_h(_concT1(map(Print()))).visitLight(subject);
+  }
+
 }
