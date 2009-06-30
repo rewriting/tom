@@ -36,7 +36,7 @@ public class Main {
         Pair(ft,ty) -> {
           System.err.println(Printer.`pretty(ty.export()));
           //System.err.println(Printer.`pretty(ft.export()));
-          System.out.println(lazy ? Compiler.`compile(ft.export()) : Compiler.`compile(ft.export()));
+          System.out.println(lazy ? LazyCompiler.`compile(ft.export()) : Compiler.`compile(ft.export()));
         }
       }
     } catch(Exception e) {
