@@ -32,7 +32,7 @@ abstract class Thunk {
   public abstract Object val();
 }
 
-public class Demo {
+public class Main {
 
   public static Object force(Object o) {
     if (o instanceof C) {

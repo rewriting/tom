@@ -27,7 +27,7 @@ class C {
   }
 }
 
-public class Demo {
+public class Main {
 
   public static int plus(Object x, Object y) {
     return ((Integer)x)+((Integer)y);
