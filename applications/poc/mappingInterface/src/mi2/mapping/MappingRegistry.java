@@ -9,13 +9,13 @@ import java.util.Map;
  */
 public class MappingRegistry {
 
-    public static final Map<Class, Mapping> runtime = new HashMap<Class, Mapping>();
+    public static final Map<Class, MappingI> runtime = new HashMap<Class, MappingI>();
 
-    public static Mapping getMappingOf(Object o) {
+    public static MappingI getMappingOf(Object o) {
         return runtime.get(o.getClass());
     }
 
-    public static void registerMappingOf(Mapping mapping) {
+    public static void registerMappingOf(MappingI mapping) {
         runtime.put(mapping.forType(), mapping);
     }
 }

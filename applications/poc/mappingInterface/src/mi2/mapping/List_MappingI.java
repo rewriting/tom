@@ -6,7 +6,7 @@ import java.util.List;
  * @author nick-vintila
  * @date Jun 23, 2009  9:06:06 PM
  */
-public interface List_MappingI<Domain,Codomain> {
+public interface List_MappingI<Domain,Codomain> extends MappingI<Codomain> {
 
     boolean isSym(Object t);
 

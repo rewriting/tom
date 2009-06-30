@@ -10,7 +10,7 @@ public class Introspector implements tom.library.sl.Introspector {
    * @param children the new subterm of the object
    */
   public <T> T setChildren(T o, Object[] children) {
-    Mapping m = MappingRegistry.getMappingOf(o);
+    MappingI m = MappingRegistry.getMappingOf(o);
     if (m instanceof tom.library.sl.Introspector) {
       return ((tom.library.sl.Introspector)m).setChildren (o, children);
     }
@@ -22,7 +22,7 @@ public class Introspector implements tom.library.sl.Introspector {
    * @param o the subject
    */
   public Object[] getChildren(Object o) { 
-    Mapping m = MappingRegistry.getMappingOf(o);
+    MappingI m = MappingRegistry.getMappingOf(o);
     if (m instanceof tom.library.sl.Introspector) {
       return ((tom.library.sl.Introspector)m).getChildren (o);
     }
@@ -36,7 +36,7 @@ public class Introspector implements tom.library.sl.Introspector {
    * @param child the new subterm 
    */
   public <T> T setChildAt(T o, int i, Object child)  {
-    Mapping m = MappingRegistry.getMappingOf(o);
+    MappingI m = MappingRegistry.getMappingOf(o);
     if (m instanceof tom.library.sl.Introspector) {
       return ((tom.library.sl.Introspector)m).setChildAt(o, i , child);
     }
@@ -49,7 +49,7 @@ public class Introspector implements tom.library.sl.Introspector {
    * @param i the index of the subterm (0<=i<=childCount)
    */
   public Object getChildAt(Object o, int i)  {
-    Mapping m = MappingRegistry.getMappingOf(o);
+    MappingI m = MappingRegistry.getMappingOf(o);
     if (m instanceof tom.library.sl.Introspector) {
       return ((tom.library.sl.Introspector)m).getChildAt(o, i);
     }
@@ -63,7 +63,7 @@ public class Introspector implements tom.library.sl.Introspector {
    * @return the number of children
    */
   public int getChildCount(Object o)  {
-    Mapping m = MappingRegistry.getMappingOf(o);
+    MappingI m = MappingRegistry.getMappingOf(o);
     if (m instanceof tom.library.sl.Introspector) {
       return ((tom.library.sl.Introspector)m).getChildCount(o);
     }

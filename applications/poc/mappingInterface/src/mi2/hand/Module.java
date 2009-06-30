@@ -356,7 +356,7 @@ public class Module {
     /**
      * ------------------------------
      */
-    public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,mi2.mapping.List_MappingI<T1,List<T1>> {
+    public static abstract class concT1_Introspector extends mi2.mapping.List_Mapping<T1,List<T1>> implements tom.library.sl.Introspector {
       // should be generated automatically
       public List<T1> setChildren(Object o, Object[] children) {
         //TODO
