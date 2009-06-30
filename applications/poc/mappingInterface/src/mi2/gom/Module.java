@@ -31,8 +31,8 @@ public class Module {
     // should be generated automatically
     public abstract a make();
 
-    public a setChildren(Object o, Object[] children) {
-      return make();
+    public <T> T setChildren(T o, Object[] children) {
+      return (T) make();
     }
 
     public Object[] getChildren(Object o) {
@@ -80,8 +80,8 @@ public class Module {
   public static abstract class b_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,b_MappingI {
     public abstract b make();
 
-    public b setChildren(Object o, Object[] children) {
-      return make();
+    public <T> T setChildren(T o, Object[] children) {
+      return (T) make();
     }
 
     public Object[] getChildren(Object o) {
@@ -136,20 +136,20 @@ public class Module {
   public static abstract class f_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,f_MappingI {
 
     // LocalIntrospector
-    public f setChildren(Object o, Object[] children) {
-      return make(children[0], children[1]);
+    public <T> T setChildren(T o, Object[] children) {
+      return (T) make(children[0], children[1]);
     }
 
     public Object[] getChildren(Object o) {
       return new Object[]{ ((f)o).gets1(), ((f)o).gets2() };
     }
 
-    public Object setChildAt(Object o, int i, Object child) {
+    public <T> T setChildAt(T o, int i, Object child) {
       switch (i) {
         case 0:
-          return make(child, ((f)o).gets2());
+          return (T) make(child, ((f)o).gets2());
         case 1:
-          return make(((f)o).gets1(), (T2)child);
+          return (T) make(((f)o).gets1(), (T2)child);
           //todo: or ((f)o).setS2((T2)child); ?
       }
       assert false : "Unexpected call.";
@@ -220,18 +220,18 @@ public class Module {
   }
 
   public static abstract class g_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,g_MappingI {
-    public g setChildren(Object o, Object[] children) {
-      return make(children[0]);
+    public <T> T setChildren(T o, Object[] children) {
+      return (T) make(children[0]);
     }
 
     public Object[] getChildren(Object o) {
       return new Object[]{ (((g)o).gets2()) };
     }
 
-    public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+    public <T> T setChildAt(T o, int i, Object child) {
       switch (i) {
         case 0:
-          return make(child);
+          return (T) make(child);
           //todo : or ((g)o).setS2((T2)child); ?
       }
       assert false : "Unexpected call.";
@@ -287,18 +287,18 @@ public class Module {
   }
 
   public static abstract class h_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,h_MappingI {
-    public h setChildren(Object o, Object[] children) {
-      return make(children[0]);
+    public <T> T setChildren(T o, Object[] children) {
+      return (T) make(children[0]);
     }
 
     public Object[] getChildren(Object o) {
       return new Object[]{ (((h)o).gets2()) };
     }
 
-    public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+    public <T> T setChildAt(T o, int i, Object child) {
       switch (i) {
         case 0:
-          return make(child);
+          return (T) make(child);
       }
       assert false : "Unexpected call.";
       return null;
@@ -348,7 +348,7 @@ public class Module {
      */
     public static abstract class concT1_Introspector extends mi2.mapping.Mapping implements tom.library.sl.Introspector,mi2.mapping.List_MappingI<T1,ListT1> {
       // should be generated automatically
-      public ListT1 setChildren(Object o, Object[] children) {
+      public <T> T setChildren(T o, Object[] children) {
         //TODO
         assert false : "Unexpected call!";
         return null;
@@ -360,7 +360,7 @@ public class Module {
         return null;
       }
 
-      public /*<T> T*/ Object setChildAt(/*T*/Object o, int i, Object child) {
+      public <T> T setChildAt(T o, int i, Object child) {
         //TODO
         assert false : "Unexpected call.";
         return null;

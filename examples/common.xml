@@ -19,14 +19,16 @@
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen"   location="gen"/>
   <property name="examples.build" location="build"/>
+  <property name="examples.report" location="report"/>
 
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
     <fail unless="TOM_HOME"
           message="TOM_HOME has to be defined in your environment, 
           to find the Tom classes"/>-->
-    <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
+    <mkdir dir="${examples.build}"/>
+    <mkdir dir="${examples.report}"/>
     <path id="tom.examples.classpath">
       <fileset dir="${examples.dir}/${examples.lib}">
         <include name="*.jar"/>
@@ -127,6 +129,7 @@
   <target name="clean.examples" description="Cleans examples directory">
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
+    <delete dir="${examples.report}"/>
   </target>
 
   <target name="clean.dist" description="Mr proper" depends="clean.examples">
@@ -136,6 +139,7 @@
   <target name="clean" description="Cleans example directory" if="example">
     <delete dir="${examples.gen}/${example}"/>
     <delete dir="${examples.build}/${example}"/>
+    <delete dir="${examples.report}/${example}"/>
   </target>
 
   <target name="build" depends="init" if="example">
@@ -177,11 +181,7 @@
     </zip>
   </target>
 
-  <target name="report.init" if="examples.report">
-    <mkdir dir="${examples.report}"/>
-  </target>
-
-  <target name="junit" depends="tom.init,report.init,build" if="example"
+  <target name="junit" depends="tom.init,build" if="example"
     description="Runs junit acceptance tests">
     <tom.junit printsummary="on"
 	    fork="on"
