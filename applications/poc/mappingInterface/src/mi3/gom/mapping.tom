@@ -37,3 +37,25 @@
   get_slot(s2, t)  { getSignature().getMapping_g().get0($t) }
 }
 
+%op T2 h(ts:ListT1) {
+  make(s) { getSignature().getMapping_h().make($s) }
+  is_fsym(t) { getSignature().getMapping_h().isInstanceOf($t) }
+  get_slot(ts, t)  { getSignature().getMapping_h().get0($t) }
+}
+
+%typeterm ListT1 {
+  implement { base.data.types.ListT1 }
+  is_sort(t) { $t instanceof base.data.types.ListT1 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%oplist ListT1 concT1(T1*) {
+  is_fsym(l)       { getSignature().getMapping_concT1().isInstanceOf($l) }
+  make_empty()     { getSignature().getMapping_concT1().makeEmpty() } 
+  make_insert(o,l) { getSignature().getMapping_concT1().makeInsert($o,$l) }
+  get_head(l)      { getSignature().getMapping_concT1().getHead($l) }
+  get_tail(l)      { getSignature().getMapping_concT1().getTail($l) }
+  is_empty(l)      { getSignature().getMapping_concT1().isEmpty($l) }
+}
+
+
