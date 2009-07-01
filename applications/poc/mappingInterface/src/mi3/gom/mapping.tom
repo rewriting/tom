@@ -16,24 +16,24 @@
 
 %op T1 a() {
   make() { mi3.gom.Module.a_Mapping.getInstance().make() }
-  is_fsym(t) { mi3.gom.Module.a_Mapping.getInstance().isInstanceOf($t,null) }
+  is_fsym(t) { mi3.gom.Module.a_Mapping.getInstance().isInstanceOf($t) }
 }
 
 %op T2 b() {
   make() { mi3.gom.Module.b_Mapping.getInstance().make() }
-  is_fsym(t) { mi3.gom.Module.b_Mapping.getInstance().isInstanceOf($t,null) }
+  is_fsym(t) { mi3.gom.Module.b_Mapping.getInstance().isInstanceOf($t) }
 }
 
 %op T1 f(s1:T1, s2:T2) {
   make(s1, s2) { mi3.gom.Module.f_Mapping.getInstance().make($s1, $s2) }
-  is_fsym(t) { mi3.gom.Module.f_Mapping.getInstance().isInstanceOf($t,null) }
-  get_slot(s1, t)  { (T1) mi3.gom.Module.f_Mapping.getInstance().getChildAt($t,0) }
-  get_slot(s2, t)  { (T2) mi3.gom.Module.f_Mapping.getInstance().getChildAt($t,1) }
+  is_fsym(t) { mi3.gom.Module.f_Mapping.getInstance().isInstanceOf($t) }
+  get_slot(s1, t)  { (T1) mi3.gom.Module.f_Mapping.getInstance().get0($t) }
+  get_slot(s2, t)  { (T2) mi3.gom.Module.f_Mapping.getInstance().get1($t) }
 }
 
 %op T2 g(s2:T2) {
   make(s2) { mi3.gom.Module.g_Mapping.getInstance().make($s2) }
-  is_fsym(t) { mi3.gom.Module.g_Mapping.getInstance().isInstanceOf($t,null) }
-  get_slot(s2, t)  { (T2) mi3.gom.Module.g_Mapping.getInstance().getChildAt($t,0) }
+  is_fsym(t) { mi3.gom.Module.g_Mapping.getInstance().isInstanceOf($t) }
+  get_slot(s2, t)  { (T2) mi3.gom.Module.g_Mapping.getInstance().get0($t) }
 }
 

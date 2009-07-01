@@ -11,22 +11,112 @@ public class Module {
   public static final Module instance = new Module();
 
   // generic mapping interfaces
-  public static interface Mapping0<C> extends Introspector {
-    boolean isInstanceOf(Object subject, C classObject);
+  
+  public static interface IMapping {
+    public boolean isInstanceOf(Object subject);
+    public Introspector getIntrospector();
+  }
+
+  public static interface IMapping0<C> extends IMapping {
     C make();
   }
 
-  public static interface Mapping1<C, D1> extends Introspector {
-    boolean isInstanceOf(Object subject, C classObject);
-    C make(D1 t);
-    D1 get1(C c);
+  public static abstract class Mapping0<C> implements IMapping0<C> {
+  
+    public Introspector getIntrospector() {
+      return new Introspector() {
+
+        public <T> T setChildAt(T o, int i, Object child) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object getChildAt(Object o, int i) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public int getChildCount(Object o) {
+          return 0;
+        }
+
+        public <T> T setChildren(T o, Object[] children) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object[] getChildren(Object o) {
+          return new Object[]{};
+        }
+      };
+    }
+
   }
 
-  public static interface Mapping2<C, D1, D2> extends Introspector {
-    boolean isInstanceOf(Object subject, C classObject);
+  public static interface IMapping1<C, D1> extends IMapping {
+    C make(D1 t);
+    D1 get0(C c);
+  }
+
+  public static abstract class Mapping1<C, D1> implements IMapping1<C, D1> {
+  
+    public Introspector getIntrospector() {
+      return new Introspector() {
+
+        public <T> T setChildAt(T o, int i, Object child) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object getChildAt(Object o, int i) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public int getChildCount(Object o) {
+          return 0;
+        }
+
+        public <T> T setChildren(T o, Object[] children) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object[] getChildren(Object o) {
+          return new Object[]{};
+        }
+      };
+    }
+
+  }
+
+  public static interface IMapping2<C, D1, D2> extends IMapping {
     C make(D1 t1, D2 t2);
-    D1 get1(C c);
-    D2 get2(C c);
+    D1 get0(C c);
+    D2 get1(C c);
+  }
+
+  public static abstract class Mapping2<C, D1, D2> implements IMapping2<C, D1, D2> {
+  
+    public Introspector getIntrospector() {
+      return new Introspector() {
+
+        public <T> T setChildAt(T o, int i, Object child) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object getChildAt(Object o, int i) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public int getChildCount(Object o) {
+          return 0;
+        }
+
+        public <T> T setChildren(T o, Object[] children) {
+          throw new RuntimeException("unexpected call");
+        }
+
+        public Object[] getChildren(Object o) {
+          return new Object[]{};
+        }
+      };
+    }
+
   }
 
   // split SL introspectors
@@ -72,7 +162,7 @@ public class Module {
     }
 
     public Introspector makeFromInstrospector2(final Introspector2 introspector) {
-       return new Introspector() {
+      return new Introspector() {
 
         public <T> T setChildAt(T o, int i, Object child) {
           return introspector.setChildAt(o, i, child);
@@ -89,7 +179,7 @@ public class Module {
         //FIX in case of normalization rules
         public <T> T setChildren(T o, Object[] children) {
           for (int i = 0; i<children.length ; i++) {
-             o = setChildAt(o, i, children[i]);
+            o = setChildAt(o, i, children[i]);
           }
           return o;
         }
@@ -108,14 +198,14 @@ public class Module {
 
   //implementation of the interfaces defined by users
 
-  public static class a_Mapping implements Mapping0<T1> {
+  public static class a_Mapping extends Mapping0<T1> {
     private static Mapping0<T1> instance = new a_Mapping();
 
     public static Mapping0<T1> getInstance() {
       return instance;
     }
 
-    public boolean isInstanceOf(Object subject, T1 classObject) {
+    public boolean isInstanceOf(Object subject) {
       return subject instanceof a;
     }
 
@@ -148,14 +238,14 @@ public class Module {
 
   /** ------------------------------ */
 
-  public static class b_Mapping implements Mapping0<T2> {
+  public static class b_Mapping extends Mapping0<T2> {
     private static Mapping0<T2> instance = new b_Mapping();
 
     public static Mapping0<T2> getInstance() {
       return instance;
     }
 
-    public boolean isInstanceOf(Object subject, T2 classObject) {
+    public boolean isInstanceOf(Object subject) {
       return subject instanceof b;
     }
 
@@ -191,14 +281,14 @@ public class Module {
   }
 
   /** ------------------------------ */
-  public static class f_Mapping implements Mapping2<T1, T1, T2> {
+  public static class f_Mapping extends Mapping2<T1, T1, T2> {
     private static Mapping2<T1, T1, T2> instance = new f_Mapping();
 
     public static Mapping2<T1, T1, T2> getInstance() {
       return instance;
     }
 
-    public boolean isInstanceOf(Object subject, T1 classObject) {
+    public boolean isInstanceOf(Object subject) {
       return subject instanceof f;
     }
 
@@ -206,11 +296,11 @@ public class Module {
       return f.make(t1, t2);
     }
 
-    public T1 get1(T1 t) {
+    public T1 get0(T1 t) {
       return ((f)t).gets1(); 
     }
 
-    public T2 get2(T1 t) {
+    public T2 get1(T1 t) {
       return ((f)t).gets2(); 
     }
 
@@ -252,14 +342,14 @@ public class Module {
   }
 
   /** ------------------------------ */
-  public static class g_Mapping implements Mapping1<T2, T2> {
+  public static class g_Mapping extends Mapping1<T2, T2> {
     private static Mapping1<T2, T2> instance = new g_Mapping();
 
     public static Mapping1<T2, T2> getInstance() {
       return instance;
     }
 
-    public boolean isInstanceOf(Object subject, T2 classObject) {
+    public boolean isInstanceOf(Object subject) {
       return subject instanceof g;
     }
 
@@ -267,7 +357,7 @@ public class Module {
       return g.make(t2);
     }
 
-    public T2 get1(T2 t) {
+    public T2 get0(T2 t) {
       return ((g) t).gets2();
     }
 
