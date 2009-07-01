@@ -4,77 +4,125 @@ import base.data.types.t1.*;
 import base.data.types.t2.*;
 import base.data.types.T2;
 import base.data.types.T1;
-
+import tom.library.sl.Introspector;
 
 public class Module {
 
   public static final Module instance = new Module();
 
-  public static interface Mapping0<C> extends tom.library.sl.Introspector {
+  // generic mapping interfaces
+  public static interface Mapping0<C> extends Introspector {
     boolean isInstanceOf(Object subject, C classObject);
     C make();
   }
 
-  public static interface Mapping1<C, D1> extends tom.library.sl.Introspector {
+  public static interface Mapping1<C, D1> extends Introspector {
     boolean isInstanceOf(Object subject, C classObject);
     C make(D1 t);
     D1 get1(C c);
   }
 
-public interface Introspector1 {
-  public <T> T setChildren(T o, Object[] children);
-  public Object[] getChildren(Object o);
-}
-
-  public static interface Mapping2<C, D1, D2> extends tom.library.sl.Introspector {
+  public static interface Mapping2<C, D1, D2> extends Introspector {
     boolean isInstanceOf(Object subject, C classObject);
     C make(D1 t1, D2 t2);
     D1 get1(C c);
     D2 get2(C c);
   }
 
-
-
-public interface Introspector2 {
-  public <T> T setChildAt(T o, int i, Object child);
-  public Object getChildAt(Object o, int i);
-  public int getChildCount(Object o);
-}
-
-  public static class a_Mapping implements Mapping0<T1> {
-    private static Mapping0<T1> instance = new a_Mapping();
+  // split SL introspectors
+  public interface Introspector1 {
+    public <T> T setChildren(T o, Object[] children);
+    public Object[] getChildren(Object o);
   }
 
 
-// move into SL
-public class IntrospectorFactory {
-  private IntrospectorFactory() {}
-  public static tom.library.sl.Introspector makeFromInstrospertor1(Introspector1 i) {
+  public interface Introspector2 {
+    public <T> T setChildAt(T o, int i, Object child);
+    public Object getChildAt(Object o, int i);
+    public int getChildCount(Object o);
   }
 
-  public static Mapping0<T1> getInstance() {
-    return instance;
-  }
+  public class IntrospectorFactory {
 
-  public static tom.library.sl.Introspector makeFromInstrospertor2(Introspector2 i) {
-    public boolean isInstanceOf(Object subject, T1 classObject) {
-      return subject instanceof a;
+    public Introspector makeFromIntrospector1(final Introspector1 introspector) {
+      return new Introspector() {
+
+        public <T> T setChildAt(T o, int i, Object child) {
+          Object[] children = getChildren(o);
+          children[i] = child;
+          return setChildren(o, children);
+        }
+
+        public Object getChildAt(Object o, int i) {
+          return getChildren(o)[i];
+        }
+
+        public int getChildCount(Object o) {
+          return getChildren(o).length;
+        }
+
+        public <T> T setChildren(T o, Object[] children) {
+          return introspector.setChildren(o, children);
+        }
+
+        public Object[] getChildren(Object o) {
+          return introspector.getChildren(o);
+        }
+      };
+    }
+
+    public Introspector makeFromInstrospector2(final Introspector2 introspector) {
+       return new Introspector() {
+
+        public <T> T setChildAt(T o, int i, Object child) {
+          return introspector.setChildAt(o, i, child);
+        }
+
+        public Object getChildAt(Object o, int i) {
+          return introspector.getChildAt(o, i);
+        }
+
+        public int getChildCount(Object o) {
+          return introspector.getChildCount(o);
+        }
+
+        //FIX in case of normalization rules
+        public <T> T setChildren(T o, Object[] children) {
+          for (int i = 0; i<children.length ; i++) {
+             o = setChildAt(o, i, children[i]);
+          }
+          return o;
+        }
+
+        public Object[] getChildren(Object o) {
+          Object[] children = new Object[getChildCount(o)];
+          for (int i = 0; i< getChildCount(o); i++) {
+            children[i] = getChildAt(o, i);
+          }
+          return children;
+        }
+      };
     }
 
   }
 
-  public static tom.library.sl.Introspector makeFromInstrospertor12(Introspector1 i1, Introspector2 i2) {
-    return new tom.library.sl.Introspector() {
-    };
-  }
+  //implementation of the interfaces defined by users
 
-  public T1 make() {
-    return a.make();
-  }
+  public static class a_Mapping implements Mapping0<T1> {
+    private static Mapping0<T1> instance = new a_Mapping();
 
-}
+    public static Mapping0<T1> getInstance() {
+      return instance;
+    }
 
-private Introspector1 introspector1 = new Introspector1() {
+    public boolean isInstanceOf(Object subject, T1 classObject) {
+      return subject instanceof a;
+    }
+
+    public T1 make() {
+      return a.make();
+    }
+
     public Object setChildren(Object o, Object[] children) {
       return a.make();
     }
@@ -82,9 +130,7 @@ private Introspector1 introspector1 = new Introspector1() {
     public Object[] getChildren(Object o) {
       return new Object[]{ };
     }
-}
 
-private Introspector2 introspector2 = new Introspector2() {
     public <T> T setChildAt(T o, int i, Object child) {
       assert false : "Unexpected call.";
       return null;
@@ -97,34 +143,7 @@ private Introspector2 introspector2 = new Introspector2() {
     public int getChildCount(Object o) {
       return 0;
     }
-}
 
-  public static class a_Mapping implements MappingI<a> {
-    private tom.library.sl.Introspector introspector;
-    public a_Mapping(tom.library.sl.Introspector i) {
-      this.introspector = i;
-    }
-
-    private static MappingI<a> instance = new a_Mapping();
-
-    public static MappingI<a> getInstance() {
-      return instance;
-    }
-
-    public boolean isInstanceOf(Object subject, a classObject) {
-      return subject instanceof a;
-    }
-
-    public a make(Object[] children) {
-      return a.make();
-    }
-
-    // LocalIntrospector
-
-
-    public Class forType() {
-      return a.class;
-    }
   }
 
   /** ------------------------------ */
