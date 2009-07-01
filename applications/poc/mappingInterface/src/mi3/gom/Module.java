@@ -21,6 +21,11 @@ public class Module {
     D1 get1(C c);
   }
 
+public interface Introspector1 {
+  public <T> T setChildren(T o, Object[] children);
+  public Object[] getChildren(Object o);
+}
+
   public static interface Mapping2<C, D1, D2> extends tom.library.sl.Introspector {
     boolean isInstanceOf(Object subject, C classObject);
     C make(D1 t1, D2 t2);
@@ -28,22 +33,48 @@ public class Module {
     D2 get2(C c);
   }
 
+
+
+public interface Introspector2 {
+  public <T> T setChildAt(T o, int i, Object child);
+  public Object getChildAt(Object o, int i);
+  public int getChildCount(Object o);
+}
+
   public static class a_Mapping implements Mapping0<T1> {
     private static Mapping0<T1> instance = new a_Mapping();
+  }
 
-    public static Mapping0<T1> getInstance() {
-      return instance;
-    }
 
+// move into SL
+public class IntrospectorFactory {
+  private IntrospectorFactory() {}
+  public static tom.library.sl.Introspector makeFromInstrospertor1(Introspector1 i) {
+  }
+
+  public static Mapping0<T1> getInstance() {
+    return instance;
+  }
+
+  public static tom.library.sl.Introspector makeFromInstrospertor2(Introspector2 i) {
     public boolean isInstanceOf(Object subject, T1 classObject) {
       return subject instanceof a;
     }
 
-    public T1 make() {
-      return a.make();
-    }
+  }
 
-    // LocalIntrospector
+  public static tom.library.sl.Introspector makeFromInstrospertor12(Introspector1 i1, Introspector2 i2) {
+    return new tom.library.sl.Introspector() {
+    };
+  }
+
+  public T1 make() {
+    return a.make();
+  }
+
+}
+
+private Introspector1 introspector1 = new Introspector1() {
     public Object setChildren(Object o, Object[] children) {
       return a.make();
     }
@@ -51,7 +82,9 @@ public class Module {
     public Object[] getChildren(Object o) {
       return new Object[]{ };
     }
+}
 
+private Introspector2 introspector2 = new Introspector2() {
     public <T> T setChildAt(T o, int i, Object child) {
       assert false : "Unexpected call.";
       return null;
@@ -64,6 +97,30 @@ public class Module {
     public int getChildCount(Object o) {
       return 0;
     }
+}
+
+  public static class a_Mapping implements MappingI<a> {
+    private tom.library.sl.Introspector introspector;
+    public a_Mapping(tom.library.sl.Introspector i) {
+      this.introspector = i;
+    }
+
+    private static MappingI<a> instance = new a_Mapping();
+
+    public static MappingI<a> getInstance() {
+      return instance;
+    }
+
+    public boolean isInstanceOf(Object subject, a classObject) {
+      return subject instanceof a;
+    }
+
+    public a make(Object[] children) {
+      return a.make();
+    }
+
+    // LocalIntrospector
+
 
     public Class forType() {
       return a.class;
