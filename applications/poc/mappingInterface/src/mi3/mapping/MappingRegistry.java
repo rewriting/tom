@@ -5,13 +5,13 @@ import java.util.HashMap;
 
 public class MappingRegistry {
 
-  public static final Map<Class, Mapping> runtime = new HashMap<Class, Mapping>();
+  public static final Map<Class, IMapping> runtime = new HashMap<Class, IMapping>();
 
-  public static Mapping getMappingOf(Object o) {
+  public static IMapping getMappingOf(Object o) {
     return runtime.get(o.getClass());
   }
 
-  public static void registerMappingOf(Mapping mapping) {
-    runtime.put(mapping.forType(), mapping);
+  public static void registerMappingOf(IMapping mapping) {
+    runtime.put(mapping.getImplementation(), mapping);
   }
 }
