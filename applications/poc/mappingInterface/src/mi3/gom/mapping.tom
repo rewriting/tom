@@ -15,25 +15,25 @@
 }
 
 %op T1 a() {
-  make() { mi3.gom.Module.a_Mapping.make() }
-  is_fsym(t) { mi3.gom.Module.a_Mapping.isInstanceOf($t) }
+  make() { getSignature().getMapping_a().make() }
+  is_fsym(t) { getSignature().getMapping_a().isInstanceOf($t) }
 }
 
 %op T2 b() {
-  make() { mi3.gom.Module.b_Mapping.make() }
-  is_fsym(t) { mi3.gom.Module.b_Mapping.isInstanceOf($t) }
+  make() { getSignature().getMapping_b().make() }
+  is_fsym(t) { getSignature().getMapping_b().isInstanceOf($t) }
 }
 
 %op T1 f(s1:T1, s2:T2) {
-  make(s1, s2) { mi3.gom.Module.f_Mapping.make($s1, $s2) }
-  is_fsym(t) { mi3.gom.Module.f_Mapping.isInstanceOf($t) }
-  get_slot(s1, t)  { (T1) mi3.gom.Module.f_Mapping.get0($t) }
-  get_slot(s2, t)  { (T2) mi3.gom.Module.f_Mapping.get1($t) }
+  make(s1, s2) { getSignature().getMapping_f().make($s1, $s2) }
+  is_fsym(t) { getSignature().getMapping_f().isInstanceOf($t) }
+  get_slot(s1, t)  { getSignature().getMapping_f().get0($t) }
+  get_slot(s2, t)  { getSignature().getMapping_f().get1($t) }
 }
 
 %op T2 g(s2:T2) {
-  make(s2) { mi3.gom.Module.g_Mapping.make($s2) }
-  is_fsym(t) { mi3.gom.Module.g_Mapping.isInstanceOf($t) }
-  get_slot(s2, t)  { (T2) mi3.gom.Module.g_Mapping.get0($t) }
+  make(s2) { getSignature().getMapping_g().make($s2) }
+  is_fsym(t) { getSignature().getMapping_g().isInstanceOf($t) }
+  get_slot(s2, t)  { getSignature().getMapping_g().get0($t) }
 }
 
