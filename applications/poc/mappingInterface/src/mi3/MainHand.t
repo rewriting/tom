@@ -43,6 +43,37 @@ public class MainHand extends TestCase {
     mi3.mapping.ListMapping<java.util.List<T1>,base.hand.types.T1> getMapping_concT1();
   }
 
+  public static Strategy _a() {
+    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
+    s.initMapping(getSignature().getMapping_a());
+    return s;
+  }
+
+  public static Strategy _b() {
+    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
+    s.initMapping(getSignature().getMapping_b());
+    return s;
+  }
+
+  public static Strategy _f(Strategy s1, Strategy s2) {
+    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1, s2);
+    s.initMapping(getSignature().getMapping_f());
+    return s;
+  }
+
+  public static Strategy _g(Strategy s1) {
+    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
+    s.initMapping(getSignature().getMapping_g());
+    return s;
+  }
+
+  public static Strategy _h(Strategy s1) {
+    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
+    s.initMapping(getSignature().getMapping_h());
+    return s;
+  }
+
+
   /*
    * the body of the following method is hand-written
    * but an empty method with return null; is generated
@@ -96,6 +127,16 @@ public class MainHand extends TestCase {
 
   }
 
+  public void testCongruence() {
+    T1 subject = `f(f(a(),b()),g(b()));
+    try {
+      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.instance);
+      assertEquals(res, `f(a(),b()));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
   %strategy Rule() extends Fail() {
     visit T1 {
       f(x,y) -> {
@@ -103,6 +144,14 @@ public class MainHand extends TestCase {
       }
     }
   }
+
+  %strategy Rule2() extends Fail() {
+    visit T2 {
+      g(x) -> x
+    }
+  }
+
+
 
   public void test_listMatchFirst() {
     List<T1> subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
