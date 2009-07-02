@@ -66,6 +66,9 @@
   morecomment=[s]{/*}{*/},
   morestring=[b]",
 }
+\lstnewenvironment{el}[1][]%
+{\lstset{frame=tb,#1}}
+{}
 \lstnewenvironment{gomcode}[1][]%
 {\lstset{language={gom},frame=tb,#1}}
 {}
@@ -354,12 +357,12 @@ details how deconstructing a list, by separating the head element and the rest
 of the list.
 
 \begin{tomcode}[morekeywords={equals}]
-  %typeterm List {
+  %typeterm NatList {
     implement { MyIntList }
     equals(l1,l2)  { l1.equals(l2) }
   }
 
-  %oplist List conc( Nat* ) {
+  %oplist NatList conc( Nat* ) {
     is_fsym(t)       { t instanceof MyIntList  }
     make_empty()     { new MyIntList() }
     make_insert(e,l) { new MyIntList(e,l) }
@@ -374,17 +377,54 @@ The definition \lex{\%oplist} for the list of \texttt{Nat} elements is
 implemented by the class \texttt{MyIntList} which extends
 \texttt{ArrayList<integer>}. It offers functions to construct an empty list and
 a list from an element representing his head and a list corresponding to the
-tail.  A mapping should not necessarily be complete. It is sometimes useful to
+tail.  
+
+\medskip
+
+A mapping should not necessarily be complete. It is sometimes useful to
 specify only the destructive part. For example, the {\tom} runtime library
 provides mappings for partial standard implementations of the {\java}
 collection library (\texttt{java.util} package) which can be used to match any
-{\java} collection in a declarative way.
+{\java} collection in a declarative way. For example, we define the following
+type mapping for the {\java} \verb+List+ interface:
 
-\emph{Give an example with HashMap}
+\begin{tomcode}
+%typeterm List {
+  implement      { java.util.List }
+  is_sort(t)      { $t instanceof java.util.List }  
+  equals(l1,l2)  { $l1.equals($l2) }
+}
+\end{tomcode}
+
+Thus we can define this partial list constructor mapping to match any objects
+of type \verb+List+:
+
+\begin{tomcode}
+  %oplist List conc( Object* ) {
+    is_fsym(t)       { t instanceof java.util.List  }
+    get_head(l)      { l.get(0) }
+    get_tail(l)      { l.sublist(1,l.size()) }
+    is_empty(l)      { l.isEmpty() }
+ }
+\end{tomcode}
+
+\emph{Add a simple example with non-linearity on lists}
 
 \subsection{Strategic rewriting for existing data-structures}
 
-Introspectors
+In term rewriting, a strategy is a way to control the application of a set of
+rules on a term. The strategy specifies which rules are applied and at which
+positions. We argue that strategy languages are also well-adapted for
+collecting information inside a complex tree structure. Thus the combination of
+pattern-matching and strategies can greatly facilitate the development of code
+analysers. {\tom} offers a strategy language smoothly integrated into {\java},
+flexible enough to express complex traversals and to collect information
+using {\java} collections. This language is influenced by the strategy
+languages offered by {\elan} and {\stratego}. One of its main characteristics
+is its data-structure independence. Any {\java} data-structure can be
+traversed thanks to {\tom} mappings presented in previous examples.
+
+\emph{Present introspectors}
 
 \section{{\jbossel} analysis}
 
@@ -401,11 +441,11 @@ transformation and analysis in a declarative way.
 In a {\jsp} page, expressions are enclosed by \texttt{\$\{\}}. When rendering
 the page, expressions are dynamically evaluated. For example:
 
-\begin{verbatim}            
+\begin{el}            
 <c:if test="${car.price > 1000}" >
   ...
 </c:if> 
-\end{verbatim}            
+\end{el}            
 
 In this code, we assume that an instance of the \verb+Car+ {\java} Bean lives
 in some scope such as session scope or application scope.  The instance is
@@ -433,21 +473,23 @@ translating structures for using other rule-based languages.
 
 \subsection{{\jbossel} transformation and analysis}
 
+\subsubsection{Optimizing by rule-based transformation}
+
 As an example, suppose we want to replace the use of text literals with calls
 to \verb+bundle.get("...")+ in order to facilitate internationalization. For
 example, suppose we have the following code:
 
-\begin{verbatim}
+\begin{el}
 ${cars.getRowCount()} Cars' total price = 
   $ ${cars.getTotalPrice()}
-\end{verbatim}
+\end{el}
 
 It will be replaced by:
 
-\begin{verbatim}
+\begin{el}
 ${cars.getRowCount()} ${bundle.get("Cars' total price"}} = 
     $ ${cars.getTotalPrice()}
-\end{verbatim}
+\end{el}
     
 After this transformation, the developer can fix it manually by properly
 placing text in resource bundles which can thus be internationalized.
@@ -481,7 +523,7 @@ expression argument. The result of the method is a new expression of type
 the rule contains \verb+Literal(s)+ which means that the transformation can be
 fired again.
 
-\medskip
+\subsubsection{Retrieving information by pattern-matching}
 
 An other simple example of {\jbossel} analysis consists in identifying all
 method calls that do not start with \emph{get} as they are suspects for code
