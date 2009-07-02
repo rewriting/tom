@@ -144,7 +144,7 @@ public class TestHandMapping extends TestCase {
 
   %strategy CollectSuspectMethodCall(bag:HashSet) extends Identity() {
     visit Expr {
-      f@FunctionCall[name=!concString('g','e','t',_*)] -> { bag.add(`f); }
+      f@FunctionCall[name=!concString('get',_*)] -> { bag.add(`f); }
     }
   }
 
