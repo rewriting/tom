@@ -345,13 +345,13 @@ the mapping used to compile the match statement.  The \texttt{make} construction
 is used to specify how to construct a term whose head symbol is this operator
 and whose subterms are given as parameters.
 
-Variadic operators are defined similarly using the \lex{\%oplist} construction.
-The first line specifies the domain and co-domain of the operator, as its name
-suggests. Specific operations to lists must be defined, they are used to
-compile the filtering list. Mappings specifies how to construct an empty list,
-and insert a new element at the top of a list. It also details how
-deconstructing a list, by separating the head element and the rest of
-the list.
+Variadic operators (unfixed arity) are defined similarly using the
+\lex{\%oplist} construction.  The first line specifies the domain and co-domain
+of the operator, as its name suggests. Specific operations to lists must be
+defined, they are used to compile the filtering list. Mappings specifies how to
+construct an empty list, and insert a new element at the top of a list. It also
+details how deconstructing a list, by separating the head element and the rest
+of the list.
 
 \begin{tomcode}[morekeywords={equals}]
   %typeterm List {
@@ -386,19 +386,20 @@ collection library (\texttt{java.util} package) which can be used to match any
 
 Introspectors
 
-\section{Application to {\jbossel} analysis}
+\section{{\jbossel} analysis}
 
-{\jbossel} is an extension of the unified expression language proposed by
-\texttt{Sun} for accessing datas from Java Server Pages ({\jsp}). As these
-expressions are simply strings, {\jboss} offers a parser in order to manipulate
-them as abstract syntax trees. We will present in this Section how we
-can directly map the AST given by {\jboss} and describe simple analysis
-in a declarative way using the {\tom} language.
+{\jbossel} is an extension of the unified expression language (EL) proposed by
+\texttt{Sun} for manipulating datas from Java Server Pages ({\jsp}).
+Expressions can call Java methods and evaluate simple arithmetic and boolean
+expressions. As these expressions are simply strings, {\jboss} offers a parser
+in order to manipulate them as abstract syntax trees. We will present in this
+Section how we can directly map the AST given by {\jboss} and describe simple
+security analysis in a declarative way using the {\tom} language.
 
 \subsection{Brief description of {\jbossel}}
 
-The {\jsp} expression evaluator detects expressions enclosed by \texttt{\$\{\}}
-and evaluates dynamically them. For example:
+In a {\jsp} page, expressions are enclosed by \texttt{\$\{\}}. When rendering
+the page, expressions are dynamically evaluated. For example:
 
 \begin{verbatim}            
 <c:if test="${car.price > 1000}" >
@@ -406,23 +407,87 @@ and evaluates dynamically them. For example:
 </c:if> 
 \end{verbatim}            
 
-In this code, the \texttt{car} name identifies an instance of the bean
-\texttt{Car} placed onto a request attribute under the name \emph{"car"}
+In this code, we assume that an instance of the \verb+Car+ {\java} Bean lives
+in some scope such as session scope or application scope.  The instance is
+bound to the name \emph{car} and is accessible from a request attribute
 (equivalent to the {\jsp} code \verb+request.getAttribute("car");+). The
 \verb+${car.price > 5000}+ expression is evaluated dynamically and the
 corresponding result (which can be \verb+true+ or \verb+false+ strings) takes
 the place of the expression.
 
-{\jbossel} provides an extension to the standard Unified Expression Language
-(EL). For example, it allows programmers to use a method with user defined
-parameters and also offers a mechanism for projection (The result of
-    \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list' prices) 
-
+{\jbossel} provides an extension to the Unified Expression Language (EL). For
+example, it allows programmers to use a method with user defined parameters (as
+    in \verb+${car.setPrice(price)}+) and also offers a mechanism for
+projection (The result of \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list'
+    prices).  This extended language is used in {\jboss} products such as
+{\jboss} Seam and will illustrate the mechanism of {\tom} mappings. In fact.
+{\jboss} provides a parsing library for constructing the AST corresponding to
+an expression. Our goal is to realize security analysis directly on these ASTs.
+The main interest of our approach is that we can directly use the {\tom}
+language on existing structures. In this way, analysis or transformations can
+be expressed in a declarative way without coding by hand complex visitors or
+translating structures for using other rule-based languages.
 
 \subsection{Mapping {\jbossel} trees}
 
 
 \subsection{{\jbossel} analysis}
+
+As an example, suppose we want to create a tool that replaces the use of text
+literals with calls to \verb+getProperty("...")+ in order to facilitate
+internationalization. For example, suppose we have the following code:
+
+\begin{verbatim}
+#{cars.getRowCount()} Cars' total price = 
+  $ #{cars.getTotalPrice()}"
+\end{verbatim}
+
+It will be replaced by:
+
+\begin{verbatim}
+#{cars.getRowCount()} bundle.get("Cars' total price"} = 
+    $ #{cars.getTotalPrice()}"
+\end{verbatim}
+    
+After this transformation, the developer can fix it manually by properly
+placing text in resource bundles which can thus be internationalized.
+
+\begin{tomcode} 
+  %strategy ReplaceLiteral() extends Identity() {
+    visit Expr {
+      Literal(s) -> 
+        FunctionCall(Identifier("bundle"),"get",Literal(s))
+    }
+  }
+
+  public String replaceLiteral(String expression) {
+    Node ast = ELParser.parse(expression);
+    Node new_ast= `BottomUp(ReplaceLiteral()).visit(node);
+    return new_ast.getExpression();
+  }
+\end{tomcode} 
+
+Another example consists in identifying all method calls that do not start
+with 'get' - these are suspects for code that mutates the state of the
+application during rendering of the page.
+
+\begin{tomcode}
+
+  %strategy CollectSuspectCall(bag:Set) extends Identity() {
+    visit Expr {
+      f@FunctionCall[name=!concString('get',_*)] -> { 
+        bag.add(`f); 
+      }
+    }
+  }
+
+  public Set collectSuspectCalls(String expression) {
+    Node ast = ELParser.parse(expression);
+    Set bag = new HashSet();
+    `TopDown(CollectSuspectCall(bag)).visit(node);
+    return bag;
+  }
+\end{tomcode} 
 
 
 \section{Related Works}
