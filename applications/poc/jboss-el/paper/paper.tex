@@ -151,7 +151,7 @@ public int plus(int t1, int t2) {
 
 public void run() {
     System.out.println("plus(1,2) = " + plus(1,2));
-} 
+}
 \end{tomcode}
 
 In this example, given two terms  $t_1$ and $t_2$ representing Peano integers,
@@ -162,10 +162,13 @@ is intanciated by $t_1$. When the $suc(y)$ pattern matches $t_2$, it means
 that the $t_2$ term is rooted by the $suc$ symbol; the subterm $y$ is added
 to $x$, and the successor of this term is returned. The backquote construction
 \texttt{`} enables the construction of new algebraic terms and can reuse
-variables instanciated by matching.
+variables instantiated by matching.
 
 Note that the matching statement proposed by {\tom} is more expressive than
-ones proposed by functional languages. For example,  it is possible to use
+ones proposed by functional languages. 
+\marginpar{Nick: I believe it would be great to have a dedicated section on comparing Tom's capabilities with other languages. I would include Stratego and Kiama, a new Scala based language that assimilated some Stratego power into Scala.}
+
+For example,  it is possible to use
 equational matching or negative matching. Moreover, the right hand side of the
 match statement are not restricted to terms but can be any instruction from the
 host language. As for the \texttt{switch/case} statement, if the match
@@ -174,7 +177,7 @@ is not interrupted, the following patterns are tried. The \texttt{plus} method
 uses the {\java} \texttt{return} statement in order to interrupt the
 control flow when a pattern succeeds. Even if this \texttt{plus} method is
 defined by matching, it can be used as any other {\java} method in the
-surrounding {\java} code. 
+surrounding {\java} code.
 
 When using rewriting as a programming or modeling paradigm, it is common to
 consider rewrite systems that are non-confluent or non-terminating. To be able
@@ -286,6 +289,8 @@ In this section, we will present how the {\tom} language can be directly used
 on any Java objects using a mechanism of mappings. In particular, we will show
 that it can be used to manipulate in a direct way ASTs like Eclipse's JDT.
 
+\marginpar{Nick: for Eclipse it seems more complicated because of the special APIs Eclipse has for refactoring. I can send some links if you'd like.}
+
 \subsection{Mapping data-structures}
 
 In the previous example, we can notice that the {\java} \texttt{plus} method
@@ -310,10 +315,10 @@ equality between two terms using the concrete representations.
 
 \medskip
 \begin{tomcode}[morekeywords={equals}]
-%typeterm Nat { 
-    implement { int } 
-    equals(t1,t2) { t1 == t2 } 
-} 
+%typeterm Nat {
+    implement { int }
+    equals(t1,t2) { t1 == t2 }
+}
 \end{tomcode}
 
 The \texttt{nat} type is declared by the \lex{\%typeterm} construction and is
@@ -326,16 +331,16 @@ whose head is the symbol of the declared operator. We can define the
 \texttt{zero} and \texttt{suc} constructors as follows:
 
 \begin{tomcode}
-%op Nat zero() { 
-  is_fsym(i) { i==0 } 
-  make() { 0 } 
-} 
+%op Nat zero() {
+  is_fsym(i) { i==0 }
+  make() { 0 }
+}
 
-%op Nat suc(p:Nat) { 
-  is_fsym(i) { i>0 } 
-  get_slot(p,i) { i-1 } 
-  make(i) { i+1 } 
-} 
+%op Nat suc(p:Nat) {
+  is_fsym(i) { i>0 }
+  get_slot(p,i) { i-1 }
+  make(i) { i+1 }
+}
 \end{tomcode}
 
 	
@@ -377,7 +382,7 @@ The definition \lex{\%oplist} for the list of \texttt{Nat} elements is
 implemented by the class \texttt{MyIntList} which extends
 \texttt{ArrayList<integer>}. It offers functions to construct an empty list and
 a list from an element representing his head and a list corresponding to the
-tail.  
+tail.
 
 \medskip
 
@@ -391,7 +396,7 @@ type mapping for the {\java} \verb+List+ interface:
 \begin{tomcode}
 %typeterm List {
   implement      { java.util.List }
-  is_sort(t)      { $t instanceof java.util.List }  
+  is_sort(t)      { $t instanceof java.util.List }
   equals(l1,l2)  { $l1.equals($l2) }
 }
 \end{tomcode}
@@ -409,6 +414,9 @@ of type \verb+List+:
 \end{tomcode}
 
 \emph{Add a simple example with non-linearity on lists}
+
+\marginpar{As you know, I did not understand well where each of these ADT APIs are used in the Tom generated code.
+For example when is a deep clone needed and when not, is maximal sharing or immutability a strong requirement? Should I make a new term when a child is set or can I just call a setter in the native AST? It would be great to have a section about this in detail!!}
 
 \subsection{Strategic rewriting for existing data-structures}
 
@@ -441,11 +449,11 @@ transformation and analysis in a declarative way.
 In a {\jsp} page, expressions are enclosed by \texttt{\$\{\}}. When rendering
 the page, expressions are dynamically evaluated. For example:
 
-\begin{el}            
+\begin{el}
 <c:if test="${car.price > 1000}" >
   ...
-</c:if> 
-\end{el}            
+</c:if>
+\end{el}
 
 In this code, we assume that an instance of the \verb+Car+ {\java} Bean lives
 in some scope such as session scope or application scope.  The instance is
@@ -480,27 +488,27 @@ to \verb+bundle.get("...")+ in order to facilitate internationalization. For
 example, suppose we have the following code:
 
 \begin{el}
-${cars.getRowCount()} Cars' total price = 
+${cars.getRowCount()} Cars' total price =
   $ ${cars.getTotalPrice()}
 \end{el}
 
 It will be replaced by:
 
 \begin{el}
-${cars.getRowCount()} ${bundle.get("Cars' total price"}} = 
+${cars.getRowCount()} ${bundle.get("Cars' total price"}} =
     $ ${cars.getTotalPrice()}
 \end{el}
-    
+
 After this transformation, the developer can fix it manually by properly
 placing text in resource bundles which can thus be internationalized.
 In {\tom}, such transformation is implemented by identifying literals using
 pattern-matching and replace it by a function call on bundle. The corresponding
 {\tom}+{\java} code realizes completely this transformation:
 
-\begin{tomcode} 
+\begin{tomcode}
   %strategy ReplaceLiteral() extends Identity() {
     visit Expr {
-      Literal(s) -> 
+      Literal(s) ->
         FunctionCall(Identifier("bundle"),"get",Literal(s))
     }
   }
@@ -510,7 +518,7 @@ pattern-matching and replace it by a function call on bundle. The corresponding
     Node new_ast= `BottomUp(ReplaceLiteral()).visit(node);
     return new_ast.getExpression();
   }
-\end{tomcode} 
+\end{tomcode}
 
 First we define the transformation rule using the \verb+%strategy+ construct.
 This basic transformation is identified by the \texttt{ReplaceLiteral} name and
@@ -534,8 +542,8 @@ this case, we will use strategies to collect information in the AST:
 \begin{tomcode}
   %strategy CollectSuspectCall(bag:Set) extends Identity() {
     visit Expr {
-      f@FunctionCall[name=!concString('get',_*)] -> { 
-        bag.add(`f); 
+      f@FunctionCall[name=!concString('get',_*)] -> {
+        bag.add(`f);
       }
     }
   }
@@ -546,7 +554,7 @@ this case, we will use strategies to collect information in the AST:
     `TopDown(CollectSuspectCall(bag)).visit(node);
     return bag;
   }
-\end{tomcode} 
+\end{tomcode}
 
 
 \section{Related Works}
