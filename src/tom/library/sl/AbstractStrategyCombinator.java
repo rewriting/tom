@@ -46,7 +46,7 @@ public abstract class AbstractStrategyCombinator extends AbstractStrategy {
   /** Strategy arguments of the combinator that can be used to define
    * <code>visit</code> methods
    */
-  /*package private*/ Strategy[] arguments;
+  protected Strategy[] arguments;
 
   /** 
    * Initializes subterm
