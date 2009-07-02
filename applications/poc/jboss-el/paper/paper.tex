@@ -168,7 +168,7 @@ match statement are not restricted to terms but can be any instruction from the
 host language. As for the \texttt{switch/case} statement, if the match
 succeeds, the instructions are executed and if the control flow of the program
 is not interrupted, the following patterns are tried. The \texttt{plus} method
-example uses the {\java} \texttt{return} statement in order to interrupt the
+uses the {\java} \texttt{return} statement in order to interrupt the
 control flow when a pattern succeeds. Even if this \texttt{plus} method is
 defined by matching, it can be used as any other {\java} method in the
 surrounding {\java} code. 
@@ -394,7 +394,7 @@ Expressions can call Java methods and evaluate simple arithmetic and boolean
 expressions. As these expressions are simply strings, {\jboss} offers a parser
 in order to manipulate them as abstract syntax trees. We will present in this
 Section how we can directly map the AST given by {\jboss} and describe simple
-security analysis in a declarative way using the {\tom} language.
+transformation and analysis in a declarative way.
 
 \subsection{Brief description of {\jbossel}}
 
@@ -431,26 +431,29 @@ translating structures for using other rule-based languages.
 \subsection{Mapping {\jbossel} trees}
 
 
-\subsection{{\jbossel} analysis}
+\subsection{{\jbossel} transformation and analysis}
 
-As an example, suppose we want to create a tool that replaces the use of text
-literals with calls to \verb+getProperty("...")+ in order to facilitate
-internationalization. For example, suppose we have the following code:
+As an example, suppose we want to replace the use of text literals with calls
+to \verb+bundle.get("...")+ in order to facilitate internationalization. For
+example, suppose we have the following code:
 
 \begin{verbatim}
-#{cars.getRowCount()} Cars' total price = 
-  $ #{cars.getTotalPrice()}"
+${cars.getRowCount()} Cars' total price = 
+  $ ${cars.getTotalPrice()}
 \end{verbatim}
 
 It will be replaced by:
 
 \begin{verbatim}
-#{cars.getRowCount()} bundle.get("Cars' total price"} = 
-    $ #{cars.getTotalPrice()}"
+${cars.getRowCount()} ${bundle.get("Cars' total price"}} = 
+    $ ${cars.getTotalPrice()}
 \end{verbatim}
     
 After this transformation, the developer can fix it manually by properly
 placing text in resource bundles which can thus be internationalized.
+In {\tom}, such transformation is implemented by identifying literals using
+pattern-matching and replace it by a function call on bundle. The corresponding
+{\tom}+{\java} code realizes completely this transformation:
 
 \begin{tomcode} 
   %strategy ReplaceLiteral() extends Identity() {
@@ -460,19 +463,33 @@ placing text in resource bundles which can thus be internationalized.
     }
   }
 
-  public String replaceLiteral(String expression) {
+  public String internationalize(String expression) {
     Node ast = ELParser.parse(expression);
     Node new_ast= `BottomUp(ReplaceLiteral()).visit(node);
     return new_ast.getExpression();
   }
 \end{tomcode} 
 
-Another example consists in identifying all method calls that do not start
-with 'get' - these are suspects for code that mutates the state of the
-application during rendering of the page.
+First we define the transformation rule using the \verb+%strategy+ construct.
+This basic transformation is identified by the \texttt{ReplaceLiteral} name and
+can now be applied as a basic strategy. As we want to apply this improvement in
+the whole AST, the {\java} method named \texttt{internationalize} applies this
+rule in a bottom-up way (using the {\tom} strategy language) on the AST of its
+expression argument. The result of the method is a new expression of type
+\texttt{String}. Note that if we replace the \verb+BottomUp+ strategy by a
+\verb+TopDown+, the program does not terminate because the right-hand side of
+the rule contains \verb+Literal(s)+ which means that the transformation can be
+fired again.
+
+\medskip
+
+An other simple example of {\jbossel} analysis consists in identifying all
+method calls that do not start with \emph{get} as they are suspects for code
+that mutates the state of the application during rendering of the page. In this
+example, we will use a {\java} collection for collecting each suspect call. In
+this case, we will use strategies to collect information in the AST:
 
 \begin{tomcode}
-
   %strategy CollectSuspectCall(bag:Set) extends Identity() {
     visit Expr {
       f@FunctionCall[name=!concString('get',_*)] -> { 
