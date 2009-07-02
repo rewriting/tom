@@ -22,6 +22,9 @@
 \newcommand{\pizza}{\textsc{Pizza}}
 \newcommand{\jmatch}{\textsc{JMatch}}
 \newcommand{\jbossrules}{\textsc{JBoss Rules}}
+\newcommand{\jbossel}{\textsc{JBoss-EL}}
+\newcommand{\jboss}{\textsc{JBoss}}
+\newcommand{\jsp}{\textsc{JSP}}
 \newcommand{\jess}{\textsc{Jess}}
 \newcommand{\jrules}{\textsc{JRules}}
 \newcommand{\stratego}{\textsc{Stratego}}
@@ -165,10 +168,10 @@ match statement are not restricted to terms but can be any instruction from the
 host language. As for the \texttt{switch/case} statement, if the match
 succeeds, the instructions are executed and if the control flow of the program
 is not interrupted, the following patterns are tried. The \texttt{plus} method
-of the~\ref{ex:tom:match} example uses the {\java} \texttt{return} statement in
-order to interrupt the control flow when a pattern succeeds. Even if this
-\texttt{plus} method is defined by matching, it can be used as any other
-{\java} method in the surrounding {\java} code. 
+example uses the {\java} \texttt{return} statement in order to interrupt the
+control flow when a pattern succeeds. Even if this \texttt{plus} method is
+defined by matching, it can be used as any other {\java} method in the
+surrounding {\java} code. 
 
 When using rewriting as a programming or modeling paradigm, it is common to
 consider rewrite systems that are non-confluent or non-terminating. To be able
@@ -369,13 +372,13 @@ the list.
 	
 The definition \lex{\%oplist} for the list of \texttt{Nat} elements is
 implemented by the class \texttt{MyIntList} which extends
-\texttt{ArrayList<integer>} offers functions to construct an empty list and a
-list from element of his head and a list corresponding to the tail.  A mapping
-should not necessarily be complete. It is sometimes useful to specify only the
-destructive part. For example, the {\tom} runtime library provides mappings for
-partial standard implementations of the {\java} collection library
-(\texttt{java.util} package) which can be used to match any {\java} collection
-in a declarative way.
+\texttt{ArrayList<integer>}. It offers functions to construct an empty list and
+a list from an element representing his head and a list corresponding to the
+tail.  A mapping should not necessarily be complete. It is sometimes useful to
+specify only the destructive part. For example, the {\tom} runtime library
+provides mappings for partial standard implementations of the {\java}
+collection library (\texttt{java.util} package) which can be used to match any
+{\java} collection in a declarative way.
 
 \emph{Give an example with HashMap}
 
@@ -383,7 +386,31 @@ in a declarative way.
 
 Introspectors
 
-\section{Application to JBoss-EL analysis}
+\section{Application to {\jbossel} analysis}
+
+{\jbossel} is an extension of the unified expression language proposed by
+\texttt{Sun} for accessing datas from Java Server Pages ({\jsp}). As these
+expressions are simply strings, {\jboss} offers a parser in order to manipulate
+them as abstract syntax trees. We will present in this Section how we
+can directly map the AST given by {\jboss} and describe simple analysis
+in a declarative way using the {\tom} language.
+
+\subsection{Brief description of {\jbossel}}
+
+The {\jsp} expression evaluator detects expressions enclosed by \texttt{\$\{\}}
+and evaluates dynamically them. For example:
+
+\begin{verbatim}            
+<c:if test="${car.price > 1000}" >
+  ...
+</c:if> 
+\end{verbatim}            
+
+\subsection{Mapping {\jbossel} trees}
+
+
+\subsection{{\jbossel} analysis}
+
 
 \section{Related Works}
 
