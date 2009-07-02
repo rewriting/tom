@@ -406,6 +406,19 @@ and evaluates dynamically them. For example:
 </c:if> 
 \end{verbatim}            
 
+In this code, the \texttt{car} name identifies an instance of the bean
+\texttt{Car} placed onto a request attribute under the name \emph{"car"}
+(equivalent to the {\jsp} code \verb+request.getAttribute("car");+). The
+\verb+${car.price > 5000}+ expression is evaluated dynamically and the
+corresponding result (which can be \verb+true+ or \verb+false+ strings) takes
+the place of the expression.
+
+{\jbossel} provides an extension to the standard Unified Expression Language
+(EL). For example, it allows programmers to use a method with user defined
+parameters and also offers a mechanism for projection (The result of
+    \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list' prices) 
+
+
 \subsection{Mapping {\jbossel} trees}
 
 
