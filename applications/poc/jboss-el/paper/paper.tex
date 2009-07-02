@@ -104,7 +104,8 @@
   morekeywords={where,end},
   frame=tb,#1}}
 {}
-
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 
 \title{Strategic rewriting on existing ASTs}
 
@@ -483,6 +484,8 @@ translating structures for using other rule-based languages.
 
 \subsubsection{Optimizing by rule-based transformation}
 
+\subsubsection{Eliminate hardcoded strings in UI code}
+
 As an example, suppose we want to replace the use of text literals with calls
 to \verb+bundle.get("...")+ in order to facilitate internationalization. For
 example, suppose we have the following code:
@@ -530,6 +533,15 @@ expression argument. The result of the method is a new expression of type
 \verb+TopDown+, the program does not terminate because the right-hand side of
 the rule contains \verb+Literal(s)+ which means that the transformation can be
 fired again.
+
+\subsubsection{List beans read and/or written in a screen}
+
+Todo: Detecting writes would require also processing the (X)HTML around the EL to detect EL inside forms.
+Another aspect of this is detecting if the display of the page causes state mutations.
+
+\subsubsection{List controller actions}
+
+Todo: Detect method calls from links and buttons inside forms to determine which controller layer apis are called}
 
 \subsubsection{Retrieving information by pattern-matching}
 
