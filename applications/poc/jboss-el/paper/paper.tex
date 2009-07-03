@@ -107,6 +107,9 @@
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
+% code samples
+\newcommand{\comment}[2]{\marginpar{{\small\sf---#1: #2 }}{ \fbox{\sf --#1}}}
+
 \title{Strategic rewriting on existing ASTs}
 
 \author{Emilie Balland \and Pierre-Etienne Moreau \and Nicolae Vintila}
@@ -167,7 +170,11 @@ variables instantiated by matching.
 
 Note that the matching statement proposed by {\tom} is more expressive than
 ones proposed by functional languages. 
-\marginpar{Nick: I believe it would be great to have a dedicated section on comparing Tom's capabilities with other languages. I would include Stratego and Kiama, a new Scala based language that assimilated some Stratego power into Scala. Google for "stratego dynamic rules context" to see this powerful feature in Stratego: maybe this can spark new ideas.}
+\comment{Nick}{I believe it would be great to have a dedicated section on
+  comparing Tom's capabilities with other languages. I would include Stratego
+    and Kiama, a new Scala based language that assimilated some Stratego power
+    into Scala. Google for "stratego dynamic rules context" to see this
+    powerful feature in Stratego: maybe this can spark new ideas.}
 
 For example,  it is possible to use
 equational matching or negative matching. Moreover, the right hand side of the
@@ -290,7 +297,8 @@ In this section, we will present how the {\tom} language can be directly used
 on any Java objects using a mechanism of mappings. In particular, we will show
 that it can be used to manipulate in a direct way ASTs like Eclipse's JDT.
 
-\marginpar{Nick: for Eclipse it seems more complicated because of the special APIs Eclipse has for refactoring. I can send some links if you'd like.}
+\comment{Nick}{for Eclipse it seems more complicated because of the special
+  APIs Eclipse has for refactoring. I can send some links if you'd like.}
 
 \subsection{Mapping data-structures}
 
@@ -416,8 +424,14 @@ of type \verb+List+:
 
 \emph{Add a simple example with non-linearity on lists}
 
-\marginpar{As you know, I did not understand well where each of these ADT APIs are used in the Tom generated code.
-For example when is a deep clone needed and when not, is maximal sharing or immutability a strong requirement? Should I make a new term when a child is set or can I just call a setter in the native AST? It would be great to have a section about this in detail!!}
+\comment{Nick}{As you know, I did not understand well where each of these ADT
+  APIs are used in the Tom generated code.}
+  
+ \comment{Nick}{ For example when is a deep clone
+    needed and when not, is maximal sharing or immutability a strong
+    requirement? Should I make a new term when a child is set or can I just
+    call a setter in the native AST? It would be great to have a section about
+    this in detail!!}
 
 \subsection{Strategic rewriting for existing data-structures}
 
@@ -433,7 +447,7 @@ languages offered by {\elan} and {\stratego}. One of its main characteristics
 is its data-structure independence. Any {\java} data-structure can be
 traversed thanks to {\tom} mappings presented in previous examples.
 
-\emph{Present introspectors}
+\comment{Emilie}{Present introspectors}
 
 \section{{\jbossel} analysis}
 
@@ -536,12 +550,12 @@ fired again.
 
 \subsubsection{List beans read and/or written in a screen}
 
-Todo: Detecting writes would require also processing the (X)HTML around the EL to detect EL inside forms.
-Another aspect of this is detecting if the display of the page causes state mutations.
+\comment{Nick}{Detecting writes would require also processing the (X)HTML around the EL to detect EL inside forms.
+Another aspect of this is detecting if the display of the page causes state mutations.}
 
 \subsubsection{List controller actions}
 
-Todo: Detect method calls from links and buttons inside forms to determine which controller layer apis are called}
+\comment{Nick}{Detect method calls from links and buttons inside forms to determine which controller layer apis are called}
 
 \subsubsection{Retrieving information by pattern-matching}
 
