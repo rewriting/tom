@@ -110,12 +110,20 @@
 % code samples
 \newcommand{\comment}[2]{\marginpar{{\small\sf---#1: #2 }}{ \fbox{\sf --#1}}}
 
+%\title{Strategic rewriting on existing ASTs}
+%\title{Analysing and Transforming Third-Party Data-Structures using Data-Abstraction and Strategic Rewriting}
 \title{Analysing and Transforming Third-Party Data-Structures by combining Data-Abstraction and Strategic Rewriting}
+%\title{Analysis and Transformation of Third-Party ASTs based on Strategies and ADTs}
+%\title{A platform for developing tools using strategic programming and ADTs over existing ASTs}
 
 \author{Emilie Balland \and Pierre-Etienne Moreau \and Nicolae Vintila}
 
 \institute{INRIA \& LORIA,\\
   BP 101, 54602 Villers-l{\`e}s-Nancy Cedex France\\
+
+% Domain Specific Consulting Inc.
+% 
+% Canada
 \email{\{Emilie.Balland,Pierre-Etienne.Moreau\}@loria.fr,nick@domainspecificconsulting.com}}
 
 \begin{document}
@@ -136,6 +144,17 @@ JDT. To illustrate this aspect, we present the {\jbossel} library and show how
 we can manipulate {\jbossel} expressions using {\tom} for defining
 transformation and analysis in a declarative way.
 \end{abstract}
+
+%
+% outline
+% -------
+% what is the general problem: analysing and transforming existing ASTs
+% an example: JBoss-EL
+% what do we provide: a way to describe a mapping (and Tom)
+% we present mi3 and how easy it is to implement Introspector
+% application of this technology to JBoss-EL
+% extension: congruence strategies
+%
 
 \section{Introduction}
 
@@ -462,7 +481,7 @@ traversed thanks to {\tom} mappings presented in previous examples.
 
 \section{{\jbossel} analysis}
 
-{\jbossel} is an extension of the unified expression language (EL) proposed by
+{\jbossel} is an extension of the Unified Expression Language (EL) proposed by
 \texttt{Sun} for manipulating datas from Java Server Pages ({\jsp}).
 Expressions can call Java methods and evaluate simple arithmetic and boolean
 expressions. As these expressions are simply strings, {\jboss} offers a parser
@@ -483,16 +502,16 @@ the page, expressions are dynamically evaluated. For example:
 
 In this code, we assume that an instance of the \verb+Car+ {\java} Bean lives
 in some scope such as session scope or application scope.  The instance is
-bound to the name \emph{car} and is accessible from a request attribute
-(equivalent to the {\jsp} code \verb+request.getAttribute("car");+). The
-\verb+${car.price > 5000}+ expression is evaluated dynamically and the
+bound to the name \texttt{car} and is accessible from a request attribute
+(equivalent to the {\jsp} code \verb+request.getAttribute("car")+). The
+\verb+${car.price > 1000}+ expression is evaluated dynamically and the
 corresponding result (which can be \verb+true+ or \verb+false+ strings) takes
 the place of the expression.
 
 {\jbossel} provides an extension to the Unified Expression Language (EL). For
 example, it allows programmers to use a method with user defined parameters (as
     in \verb+${car.setPrice(price)}+) and also offers a mechanism for
-projection (The result of \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list'
+projection (the result of \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list'
     prices).  This extended language is used in {\jboss} products such as
 {\jboss} Seam and will illustrate the mechanism of {\tom} mappings. In fact.
 {\jboss} provides a parsing library for constructing the AST corresponding to
@@ -524,7 +543,7 @@ It will be replaced by:
 
 \begin{el}
 ${cars.getRowCount()} ${bundle.get("Cars' total price"}} =
-    $ ${cars.getTotalPrice()}
+  $ ${cars.getTotalPrice()}
 \end{el}
 
 After this transformation, the developer can fix it manually by properly
