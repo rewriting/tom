@@ -6,12 +6,9 @@ public class _Strategy extends tom.library.sl.AbstractStrategyCombinator {
 
   protected mi3.mapping.IMapping mapping;
 
-  public _Strategy(Strategy... s) {
-    initSubterm(s);
-  }
-
-  public void initMapping(mi3.mapping.IMapping mapping) {
+  public _Strategy(mi3.mapping.IMapping mapping,Strategy... s) {
     this.mapping = mapping;
+    initSubterm(s);
   }
 
   /** 

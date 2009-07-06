@@ -46,33 +46,23 @@ public class MainGom extends TestCase {
   }
 
   public static Strategy _a() {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
-    s.initMapping(getSignature().getMapping_a());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_a());
   }
 
   public static Strategy _b() {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
-    s.initMapping(getSignature().getMapping_b());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_b());
   }
 
   public static Strategy _f(Strategy s1, Strategy s2) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1, s2);
-    s.initMapping(getSignature().getMapping_f());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_f(),s1,s2);
   }
 
   public static Strategy _g(Strategy s1) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
-    s.initMapping(getSignature().getMapping_g());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_g(),s1);
   }
 
   public static Strategy _h(Strategy s1) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
-    s.initMapping(getSignature().getMapping_h());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_h(),s1);
   }
 
   /*

@@ -630,7 +630,8 @@ generateGetters(writer);
   }
 ]%);
 
-if (maximalsharing) {
+if(false && maximalsharing) {
+  // OLD VERSION
     writer.write(%[
     /**
      * Compute a hashcode for this term.  
@@ -658,6 +659,46 @@ writer.write(%[
     a -= b; a -= c; a ^= (c >> 3);
     b -= c; b -= a; b ^= (a << 10);
     c -= a; c -= b; c ^= (b >> 15);
+    /* ------------------------------------------- report the result */
+    return c;
+  }
+]%);
+}
+
+if(maximalsharing) {
+  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c 
+  int length = slotList.length();
+    writer.write(%[
+    /**
+     * Compute a hashcode for this term.  
+     * (for internal use)
+     *
+     * @@return a hash value
+     */
+  protected@((length==0)?" static":"")@ int hashFunction() {
+    int a, b, c;
+    /* Set up the internal state */
+    a = b = c = 
+    0xdeadbeef + (getArity()<<2) + 
+    (@shared.HashFunctions.stringHashFunction(fullClassName(),length)@<<8);
+    /* -------------------------------------- handle most of the key */
+    /* ------------------------------------ handle the last 11 bytes */
+]%);
+generateHashArgsLookup3(writer);
+  if(length>0 && (length%3)>0 ) {
+writer.write(%[
+    // final(a,b,c)
+    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14)))); 
+    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11)))); 
+    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25)))); 
+    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16)))); 
+    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));  
+    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14)))); 
+    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24)))); 
+]%);
+  }
+
+writer.write(%[
     /* ------------------------------------------- report the result */
     return c;
   }
@@ -1147,6 +1188,62 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         }
         if (shift!=0) { writer.write(" << "+(shift)); }
         writer.write(");\n");
+        index--;
+      }
+    }
+  }
+
+  private void generateHashArgsLookup3(java.io.Writer writer) throws java.io.IOException {
+    int k=0;
+    int index = slotList.length() - 1;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
+        k++;
+        switch(k % 3) {
+          case 1: writer.write("    a += ("); break;
+          case 2: writer.write("    b += ("); break;
+          case 0: writer.write("    c += ("); break;
+          default:
+        }
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
+          writer.write(fieldName(`slotName)+".hashCode()");
+        } else {
+          if (`domain.equals(`ClassName("","int"))
+              || `domain.equals(`ClassName("","long"))
+              || `domain.equals(`ClassName("","float"))
+              || `domain.equals(`ClassName("","char"))) {
+            writer.write(fieldName(`slotName));
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            writer.write("("+fieldName(`slotName)+"?1:0)");
+          } else if (`domain.equals(`ClassName("","String"))) {
+            // Use the string hashFunction for Strings, and pass index as arity
+            writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
+          } else if (`domain.equals(`ClassName("","double"))) {
+            writer.write("(int)(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")^(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")>>>32");
+            writer.write("))");
+          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
+            // Use the string hashFunction for Strings, and pass index as arity
+            writer.write(fieldName(`slotName)+".hashCode()");
+          }  else {
+            throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
+          }
+        }
+        writer.write(");\n");
+        if(k % 3 == 0) {
+          writer.write(%[
+    // mix(a,b,c)
+    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b; 
+    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c; 
+    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a; 
+    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b; 
+    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c; 
+    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a; 
+]%);
+        }
         index--;
       }
     }
