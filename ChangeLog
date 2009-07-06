@@ -1,3 +1,7 @@
+2009-07-06 pem
+ * Gom generates a new, simpler hash-function
+   (http://burtleburtle.net/bob/c/lookup3.c)
+
 2009-05-22 pem
  * version 2.7
  * handle \' and \\ in concString(_*,'\'',_*)

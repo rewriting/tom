@@ -630,7 +630,7 @@ generateGetters(writer);
   }
 ]%);
 
-if(false && maximalsharing) {
+if(maximalsharing) {
   // OLD VERSION
     writer.write(%[
     /**
@@ -665,8 +665,9 @@ writer.write(%[
 ]%);
 }
 
-if(maximalsharing) {
+if(false && maximalsharing) {
   // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c 
+  // seems to be a bit slower than the OLD version
   int length = slotList.length();
     writer.write(%[
     /**
