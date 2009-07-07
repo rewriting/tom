@@ -32,13 +32,13 @@ package tom.library.sl;
 /**
  * <p>
  * Strategy combinator with one strategy argument <code>s</code>, that
- * applies this strategy <code>s</code> in a top-down way to all children. 
+ * applies this strategy <code>s</code> in a bottom-up way to all children. 
  */       
 
-public class BuiltinTopDown extends AbstractStrategyCombinator {
+public class BuiltinBottomUp extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
-  public BuiltinTopDown(Strategy v) {
+  public BuiltinBottomUp(Strategy v) {
     initSubterm(v);
   }
 
@@ -50,15 +50,37 @@ public class BuiltinTopDown extends AbstractStrategyCombinator {
    * @return a Visitable
    * @throws VisitFailure if visitLight fails
    */ 
+  /*
   public final <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
+    // recursive calls
+    Object[] children = introspector.getChildren(subject);
+    boolean modification = false;
+    for(int i = 0; i < children.length ; i++) {
+      Object newChild = this.visitLight(children[i],introspector);
+      //System.out.println("child " + i + ": " + children[i] + " --> " + newChild);
+      if(newChild != children[i]) {
+        children[i] = newChild;
+        modification = true;
+      }
+    }
+    if(modification) {
+      subject = introspector.setChildren(subject,children);
+    }
     // apply the strategy
+    //System.out.println("subject: " + subject);
     subject = arguments[ARG].visitLight(subject,introspector);
+    //System.out.println("result: " + subject);
+    return subject;
+  }
+  */
+  public final <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     // recursive calls
     Object[] children = null;
     int childCount = introspector.getChildCount(subject);
     for(int i = 0; i < childCount ; i++) {
       Object oldChild = introspector.getChildAt(subject,i);
       Object newChild = this.visitLight(oldChild,introspector);
+      //System.out.println("child " + i + ": " + children[i] + " --> " + newChild);
       if(children != null) {
         children[i] = newChild;
       } else if(newChild != oldChild) {
@@ -68,8 +90,12 @@ public class BuiltinTopDown extends AbstractStrategyCombinator {
       }
     }
     if(children!=null) {
-      return introspector.setChildren(subject,children);
+      subject = introspector.setChildren(subject,children);
     }
+    // apply the strategy
+    //System.out.println("subject: " + subject);
+    subject = arguments[ARG].visitLight(subject,introspector);
+    //System.out.println("result: " + subject);
     return subject;
   }
 
@@ -83,18 +109,14 @@ public class BuiltinTopDown extends AbstractStrategyCombinator {
    */
   public int visit(Introspector introspector) {
     environment.setIntrospector(introspector);
-    // apply the strategy
-    int status = arguments[ARG].visit(introspector);
-    if(status != Environment.SUCCESS) {
-      return status;
-    }
     // recursive calls
     Object subject = environment.getSubject();
     Object[] children = introspector.getChildren(subject);
     boolean modification = false;
     for(int i = 0; i < children.length ; i++) {
       environment.down(i+1);
-      status = this.visit(introspector);
+      int status = this.visit(introspector);
+      //System.out.println("child " + i + ": " + children[i] + " --> " + environment.getSubject());
       if(status != Environment.SUCCESS) {
         environment.upLocal();
         return status;
@@ -109,6 +131,13 @@ public class BuiltinTopDown extends AbstractStrategyCombinator {
     if(modification) {
       environment.setSubject(introspector.setChildren(subject,children));
     }
+    // apply the strategy
+    //System.out.println("subject: " + getSubject());
+    int status = arguments[ARG].visit(introspector);
+    if(status != Environment.SUCCESS) {
+      return status;
+    }
+    //System.out.println("result: " + getSubject());
     return Environment.SUCCESS;
   }
 

@@ -190,7 +190,7 @@ public class Compiler extends TomGenericPlugin {
   private TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     getCompilerEnvironment().setSymbolTable(symbolTable);
     // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
-    return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
+    return `BuiltinTopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
   // looks for a 'Match' instruction:

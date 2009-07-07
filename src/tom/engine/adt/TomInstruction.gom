@@ -27,7 +27,6 @@ Instruction =
    * @param Source the value to give to the variable
    */
   | Assign(Variable:TomTerm,Source:Expression)
-  /**/
   | Return(Kid1:TomTerm)
   | Nop()
   /*
@@ -59,13 +58,14 @@ Instruction =
 
   | TypedAction(AstInstruction:Instruction,PositivePattern:Constraint,NegativePatternList:ConstraintList)
   
-/**
+/*
  * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)
  *
  * @param Constraint a constraint (can be a OR or an AND)
  * @param Action the action to execute if the constraints are evaluated to true
  */  
 ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Option:OptionList)  
+
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
 InstructionList = concInstruction(Instruction*)

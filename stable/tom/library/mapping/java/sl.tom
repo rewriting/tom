@@ -35,6 +35,7 @@
 %include { Position.tom }
 
 %include { sl/basic.tom }
+%include { sl/builtin.tom }
 %include { sl/graph.tom }
 %include { sl/composed.tom }
 

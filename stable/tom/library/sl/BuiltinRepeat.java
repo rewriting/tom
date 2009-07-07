@@ -28,31 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
+package tom.library.sl;
+/**
+ * <p>
+ * Strategy combinator with one strategy argument <code>s</code>, that
+ * repeats the application of <code>s</code> until it fails
+ */       
 
-/*
- * builtin strategies
- */
-%op Strategy BuiltinRepeat(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinRepeat) )}
-  make(v) {( new tom.library.sl.BuiltinRepeat($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinRepeat.ARG) )}
+public class BuiltinRepeat extends AbstractStrategyCombinator {
+  public final static int ARG = 0;
+
+  public BuiltinRepeat(Strategy v) {
+    initSubterm(v);
+  }
+
+  /** 
+   * Visit the subject any without managing any environment
+   *
+   * @param any the subject to visit
+   * @param introspector the introspector
+   * @return a Visitable
+   * @throws VisitFailure if visitLight fails
+   */ 
+  public final <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
+    try {
+      while(true) { 
+        subject = arguments[ARG].visitLight(subject,introspector);
+      }
+    } catch(VisitFailure e) {
+      return subject;
+    }
+  }
+
+  /**
+   * Visit the current subject (found in the environment)
+   * and place its result in the environment.
+   * Sets the environment flag to Environment.FAILURE in case of failure
+   *
+   * @param introspector the introspector
+   * @return Environment.SUCCESS if success
+   */
+  public int visit(Introspector introspector) {
+    environment.setIntrospector(introspector);
+    while(arguments[ARG].visit(introspector) == Environment.SUCCESS);
+    return Environment.SUCCESS;
+  }
+
 }
-
-%op Strategy BuiltinRepeatId(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinRepeatId) )}
-  make(v) {( new tom.library.sl.BuiltinRepeatId($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinRepeatId.ARG) )}
-}
-
-%op Strategy BuiltinTopDown(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinTopDown) )}
-  make(v) {( new tom.library.sl.BuiltinTopDown($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinTopDown.ARG) )}
-}
-
-%op Strategy BuiltinBottomUp(s1:Strategy) {
-  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinBottomUp) )}
-  make(v) {( new tom.library.sl.BuiltinBottomUp($v) )}
-  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinBottomUp.ARG) )}
-}
-

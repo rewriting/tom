@@ -119,20 +119,21 @@ public class TomOptimizer extends TomGenericPlugin {
         if(getOptionBooleanValue("optimize2")) {
           Strategy optStrategy2 = `Sequence(
               InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
-              InnermostId(
-                ChoiceId(
-                  Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
-                  SequenceId(InterBlock(this),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
+              InnermostId(ChoiceId(
+                  Sequence(BuiltinRepeatId(IfSwapping(this)), 
+                           BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+                  SequenceId(InterBlock(this),
+                             OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten()))))
                 )
               );
           renamedTerm = optStrategy2.visitLight(renamedTerm);
-          renamedTerm = `BottomUp(Inline(TrueConstraint())).visit(renamedTerm);
+          renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint())).visit(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
 //System.out.println("opt renamedTerm = " + renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
                 InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
-                BottomUp(Inline(TrueConstraint())));
+                BuiltinBottomUp(Inline(TrueConstraint())));
 
           renamedTerm = optStrategy.visit(renamedTerm);
         }
