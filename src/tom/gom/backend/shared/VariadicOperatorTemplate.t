@@ -492,10 +492,17 @@ writer.write(%[
       OperatorClass[
         SlotFields=ConcSlotField(head@SlotField[Domain=headDomain], tail)
       ] -> {
+        String mappingtype = "%oplist";
+        /**
+        TODO
+        if (isAC()) {
+          mappingtype = "%opac";
+        } 
+        */
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();
     writer.write(%[
-%oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
+@mappingtype@ @className(sortName)@ @className()@(@className(`headDomain)@*) {
   is_fsym(t) { (($t instanceof @fullClassName(consClass)@) || ($t instanceof @fullClassName(emptyClass)@)) }
   make_empty() { @fullClassName(emptyClass)@.make() }
   make_insert(e,l) { @fullClassName(consClass)@.make($e,$l) }
