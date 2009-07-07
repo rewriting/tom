@@ -36,6 +36,7 @@
   make(v) {( `Choice(v,Identity()) )}
 }
 
+
 %op Strategy TopDown(s1:Strategy) {
   make(v) {( `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) )}
 }

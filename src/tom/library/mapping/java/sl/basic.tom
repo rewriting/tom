@@ -172,3 +172,25 @@
   make(v) {( new tom.library.sl.Up($v) )}
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Up.ARG) )}
 }
+
+/*
+ * builtin strategies
+ */
+%op Strategy BuiltinRepeat(s1:Strategy) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinRepeat) )}
+  make(v) {( new tom.library.sl.BuiltinRepeat($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinRepeat.ARG) )}
+}
+
+%op Strategy BuiltinRepeatId(s1:Strategy) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinRepeatId) )}
+  make(v) {( new tom.library.sl.BuiltinRepeatId($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinRepeatId.ARG) )}
+}
+
+%op Strategy BuiltinTopDown(s1:Strategy) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.BuiltinTopDown) )}
+  make(v) {( new tom.library.sl.BuiltinTopDown($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.BuiltinTopDown.ARG) )}
+}
+
