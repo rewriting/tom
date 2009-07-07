@@ -424,4 +424,10 @@ matchBlock: {
     s.append("\n # end def " + declName + "_" + suffix + "\n");
     output.write(s);
   }
+
+
+  protected void buildLetAssignArray(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, Instruction body, String moduleName) throws IOException { 
+    //TODO 
+  }
+
 }

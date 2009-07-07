@@ -7,15 +7,13 @@
     <delete dir="${examples.build}/${actest}"/>
   </target>
   <target name="build" depends="init">
-    <!--<gomcompile example="${actest}"/> -->
+    <gomcompile example="${actest}"/>
     <!--
     "Wait for the static %rule problem to be resolved"
     <tomcompile example="${antipattern}"/>
     -->
     <tom.preset srcdir="${examples.dir}"
-	        options="--noStatic"
-			optimize="no"
-			optimize2="no"
+	        options="--noStatic --prettyPIL --optimize --optimize2"
                 destdir="${examples.gen}">          
        <include name="${actest}/**/*.t"/>
        <exclude name="${actest}/**/*.g.t"/>

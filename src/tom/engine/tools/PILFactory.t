@@ -135,6 +135,10 @@ public class PILFactory {
 	return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
+      LetAssignArray(variable,index,value,body) -> {
+	return "letAssignArray " + prettyPrint(`variable) + "["+prettyPrint(`index)+"] = " + prettyPrint(`value) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+      }
+
       Assign(variable,src) -> {
 	return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
       }
@@ -201,12 +205,20 @@ public class PILFactory {
 	return "not " + prettyPrint(`exp);
       }
 
+       And(Arg1,Arg2) -> {
+         return prettyPrint(`Arg1) + " && " + prettyPrint(`Arg2) ;
+       }
+       
+       Or(Arg1,Arg2) -> {
+         return prettyPrint(`Arg1) + " || " + prettyPrint(`Arg2) ;
+       }
+
       IsEmptyList[Variable=kid1] -> {
 	return "is_empty(" + prettyPrint(`kid1) + ")";
       }
 
       EqualTerm(_,kid1,kid2) -> {
-	return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
+	return prettyPrint(`kid1) + "==" + prettyPrint(`kid2) + ")";
       }
 
       GetSliceList(astName,variableBeginAST,variableEndAST,tail) -> {
@@ -224,55 +236,94 @@ public class PILFactory {
       GetSlot(_,astName,slotNameString,variable) -> {
 	return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
       }
+           
+      GetElement[Variable=variable,Index=index] -> {
+        return prettyPrint(`variable)+"["+prettyPrint(`index)+"]";
+      }
+
+      GetSize[Variable=variable] -> {
+        return "size("+prettyPrint(`variable)+")";
+      }
+
+      GreaterOrEqualThan(e1, e2) -> {
+        return prettyPrint(`e1)+" >= "+prettyPrint(`e2);
+      }
+      GreaterThan(e1, e2) -> {
+        return prettyPrint(`e1)+" > "+prettyPrint(`e2);
+      }
+      Integer(i) -> {
+        return ""+`i;
+      }
+      AddOne(Variable) -> {
+        return prettyPrint(`Variable)+"+1";
+      }
+      SubstractOne(Variable) -> {
+        return prettyPrint(`Variable)+"-1";
+      }
     }
 
     %match(TomTerm subject) {
       Variable(_,name,_,_) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       VariableStar(_,name,_,_) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       Ref(term) -> {
-	return prettyPrint(`term);
+        return prettyPrint(`term);
       }
 
       RecordAppl(_,nameList,_,_) ->{
-	return prettyPrint(`nameList); 
+        return prettyPrint(`nameList); 
+      }
+      ExpressionToTomTerm(astTerm) -> {
+        return prettyPrint(`astTerm);
+      }
+      FunctionCall(AstName,AstType,Args) -> {
+        String s = "";
+        %match(Args) {
+          concTomTerm(_*,x,_*) -> {
+            s += ","+prettyPrint(`x);
+          }
+        }
+        return prettyPrint(`AstName)+"("+s.substring(1, s.length())+")";
+      }
+      BuildEmptyArray[AstName=name,Size=size] -> {
+        return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
       }
     }
 
     %match(TomName subject) {
       PositionName(number_list) -> {
-	return "t"+ TomBase.tomNumberListToString(`number_list);
+        return "t"+ TomBase.tomNumberListToString(`number_list);
       }
       Name(string) -> {
-	return `string;
+        return `string;
       }
 
     }
 
     %match(TomNumber subject) {
       Position(i) -> {
-	return "" + `i;
+        return "" + `i;
       }
 
       NameNumber(name) -> {
-	return prettyPrint(`name);
+        return prettyPrint(`name);
       }
 
       ListNumber(number) -> {
-	return "listNumber"+`number;
+        return "listNumber"+`number;
       }
 
       Begin(number) -> {
-	return "begin"+`number;
+        return "begin"+`number;
       }
 
       End(number) -> {
-	return "end"+`number;
+        return "end"+`number;
       }
 
     }
@@ -280,16 +331,16 @@ public class PILFactory {
     if(subject instanceof InstructionList) {
       InstructionList list = (InstructionList)subject;
       if(list.isEmptyconcInstruction()) {
-	return "";
+        return "";
       } else {
-	return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
+        return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
       }
     }  else if(subject instanceof TomNumberList) {
       TomNumberList list = (TomNumberList)subject;
       if(list.isEmptyconcTomNumber()) {
-	return "";
+        return "";
       } else {
-	return prettyPrint(list.getTailconcTomNumber()) + prettyPrint(list.getTailconcTomNumber());
+        return prettyPrint(list.getTailconcTomNumber()) + prettyPrint(list.getTailconcTomNumber());
       }
     }
     return subject.toString();
@@ -298,7 +349,7 @@ public class PILFactory {
   %strategy collectMatch(c:Collection) extends `Identity() {
     visit Instruction {
       m@CompiledMatch[AutomataInst=_]  -> {
-	c.add(`m);
+        c.add(`m);
       }
     }
   } 

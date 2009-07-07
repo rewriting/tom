@@ -63,17 +63,14 @@ public class ACGenerator implements IBaseGenerator {
       
       ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName))],subject)) -> {
         // if this is not an AC symbol, nothing to do
-        if(!TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `ce; }
-        
-        // TODO - generate all the functions
-               
-        System.out.println("Pattern:" + `pattern);
-        
-        return `ACMatchLoop(pattern, subject);
+        if(TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { 
+          // TODO - generate all the functions
+          return `ACMatchLoop(pattern, subject);
+        }
       }
     } // end visit
   } // end strategy  
-  
-  
-   
+
+
+
 }

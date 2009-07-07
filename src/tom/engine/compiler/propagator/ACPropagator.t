@@ -54,7 +54,7 @@ public class ACPropagator implements IBasePropagator {
     //return (Constraint)`TopDown(ACPatternMatching()).visitLight(constraint);		
   }	
 
-  %strategy ACMatching() extends `Identity() {
+  %strategy ACMatching() extends Identity() {
     visit Constraint {
       // TODO RK 04/07/2008: here we should handle all the cases of the AC match
       // that are supposed to be solved by programm transformation 

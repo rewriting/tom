@@ -33,7 +33,7 @@ import actest.peano.types.*;
 public class ACTest {
 
     %include{ peano/Peano.tom }  
-    %include{ intarray.tom   }
+    %include{ intarray.tom }
     %include{ int.tom }
   
   private void run() {
