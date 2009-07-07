@@ -44,35 +44,24 @@ public class MainHand extends TestCase {
   }
 
   public static Strategy _a() {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
-    s.initMapping(getSignature().getMapping_a());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_a());
   }
 
   public static Strategy _b() {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy();
-    s.initMapping(getSignature().getMapping_b());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_b());
   }
 
   public static Strategy _f(Strategy s1, Strategy s2) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1, s2);
-    s.initMapping(getSignature().getMapping_f());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_f(),s1,s2);
   }
 
   public static Strategy _g(Strategy s1) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
-    s.initMapping(getSignature().getMapping_g());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_g(),s1);
   }
 
   public static Strategy _h(Strategy s1) {
-    mi3.congruence._Strategy s = new mi3.congruence._Strategy(s1);
-    s.initMapping(getSignature().getMapping_h());
-    return s;
+    return new mi3.congruence._Strategy(getSignature().getMapping_h(),s1);
   }
-
 
   /*
    * the body of the following method is hand-written
@@ -119,7 +108,7 @@ public class MainHand extends TestCase {
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.Introspector.instance);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.Introspector.getInstance());
       assertEquals(res, `a());
     } catch(VisitFailure e) {
       fail();
@@ -130,7 +119,7 @@ public class MainHand extends TestCase {
   public void testCongruence() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.instance);
+      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.getInstance());
       assertEquals(res, `f(a(),b()));
     } catch(VisitFailure e) {
       fail();

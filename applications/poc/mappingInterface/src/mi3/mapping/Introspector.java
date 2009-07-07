@@ -2,7 +2,10 @@ package mi3.mapping;
 
 public class Introspector implements tom.library.sl.Introspector {
 
-  public static final Introspector instance = new Introspector();
+  private static final Introspector instance = new Introspector();
+  public static Introspector getInstance() { 
+    return instance;
+  }
 
   /**
    * Replace all children of a given object, and return the new object

@@ -19,9 +19,6 @@ public class Module {
    * this file is hand-written (or generated for Gom data-structures)
    */
 
-  public static final Module instance = new Module();
-
-
   //implementation of the interfaces defined by users
   public static class a_Mapping extends Mapping0<T1> {
     public Class getImplementation() {

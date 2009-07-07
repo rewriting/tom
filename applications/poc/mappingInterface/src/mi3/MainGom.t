@@ -82,12 +82,12 @@ public class MainGom extends TestCase {
     private mi3.gom.Module.h_Mapping h_Mapping = new mi3.gom.Module.h_Mapping();
     private mi3.gom.Module.concT1_Mapping concT1_Mapping = new mi3.gom.Module.concT1_Mapping();
 
-    public mi3.mapping.Mapping0<T1>       getMapping_a() { return a_Mapping; }
-    public mi3.mapping.Mapping0<T2>       getMapping_b() { return b_Mapping; }
-    public mi3.mapping.Mapping2<T1,T1,T2> getMapping_f() { return f_Mapping; }
-    public mi3.mapping.Mapping1<T2,T2>    getMapping_g() { return g_Mapping; }
+    public mi3.mapping.Mapping0<T1>           getMapping_a() { return a_Mapping; }
+    public mi3.mapping.Mapping0<T2>           getMapping_b() { return b_Mapping; }
+    public mi3.mapping.Mapping2<T1,T1,T2>     getMapping_f() { return f_Mapping; }
+    public mi3.mapping.Mapping1<T2,T2>        getMapping_g() { return g_Mapping; }
     public mi3.mapping.Mapping1<T2,ListT1>    getMapping_h() { return h_Mapping; }
-    public mi3.mapping.ListMapping<ListT1,T1>    getMapping_concT1() { return concT1_Mapping; }
+    public mi3.mapping.ListMapping<ListT1,T1> getMapping_concT1() { return concT1_Mapping; }
   };
 
   public static void main(String[] args) {
@@ -106,11 +106,10 @@ public class MainGom extends TestCase {
     fail();
   }
 
-
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.Introspector.instance);
+      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.Introspector.getInstance());
       assertEquals(res, `a());
     } catch(VisitFailure e) {
       fail();
@@ -121,7 +120,7 @@ public class MainGom extends TestCase {
   public void testCongruence() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.instance);
+      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.getInstance());
       assertEquals(res, `f(a(),b()));
     } catch(VisitFailure e) {
       fail();
@@ -139,7 +138,6 @@ public class MainGom extends TestCase {
       g(x) -> x
     }
   }
-
 
   public void test_listMatchFirst() {
     ListT1 subject = `concT1(a(), f(a(), b()), f(a(), g(b())));
