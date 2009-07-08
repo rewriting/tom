@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2009-05-22 15:12:38
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2009-07-07 16:34:47
 
   package tom.gom.parser;
 
@@ -451,7 +451,6 @@ public class SimpleBlockLexer extends Lexer {
 
             match("*/"); 
 
-            _channel=HIDDEN;
 
             }
 
@@ -589,7 +588,7 @@ public class SimpleBlockLexer extends Lexer {
     static final String DFA8_acceptS =
         "\1\uffff\1\1\1\2\1\3\1\uffff\1\6\5\uffff\1\4\2\uffff\1\5\1\uffff";
     static final String DFA8_specialS =
-        "\1\2\5\uffff\1\6\1\7\1\3\1\uffff\1\5\1\uffff\1\1\1\0\1\uffff\1\4}>";
+        "\1\1\5\uffff\1\5\1\2\1\7\1\uffff\1\4\1\uffff\1\0\1\3\1\uffff\1\6}>";
     static final String[] DFA8_transitionS = {
             "\42\5\1\3\14\5\1\4\113\5\1\1\1\5\1\2\uff82\5",
             "",
@@ -650,20 +649,6 @@ public class SimpleBlockLexer extends Lexer {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA8_13 = input.LA(1);
-
-                        s = -1;
-                        if ( (LA8_13=='*') ) {s = 12;}
-
-                        else if ( ((LA8_13>='\u0000' && LA8_13<='!')||(LA8_13>='#' && LA8_13<=')')||(LA8_13>='+' && LA8_13<='z')||LA8_13=='|'||(LA8_13>='~' && LA8_13<='\uFFFF')) ) {s = 13;}
-
-                        else if ( (LA8_13=='\"'||LA8_13=='{'||LA8_13=='}') ) {s = 14;}
-
-                        else s = 5;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA8_12 = input.LA(1);
 
                         s = -1;
@@ -679,7 +664,7 @@ public class SimpleBlockLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
+                    case 1 : 
                         int LA8_0 = input.LA(1);
 
                         s = -1;
@@ -695,35 +680,35 @@ public class SimpleBlockLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 3 : 
-                        int LA8_8 = input.LA(1);
+                    case 2 : 
+                        int LA8_7 = input.LA(1);
 
                         s = -1;
-                        if ( (LA8_8=='\r') ) {s = 9;}
+                        if ( (LA8_7=='*') ) {s = 12;}
 
-                        else if ( (LA8_8=='\n') ) {s = 10;}
+                        else if ( ((LA8_7>='\u0000' && LA8_7<='!')||(LA8_7>='#' && LA8_7<=')')||(LA8_7>='+' && LA8_7<='z')||LA8_7=='|'||(LA8_7>='~' && LA8_7<='\uFFFF')) ) {s = 13;}
 
-                        else if ( ((LA8_8>='\u0000' && LA8_8<='\t')||(LA8_8>='\u000B' && LA8_8<='\f')||(LA8_8>='\u000E' && LA8_8<='!')||(LA8_8>='#' && LA8_8<='z')||LA8_8=='|'||(LA8_8>='~' && LA8_8<='\uFFFF')) ) {s = 8;}
+                        else if ( (LA8_7=='\"'||LA8_7=='{'||LA8_7=='}') ) {s = 14;}
 
-                        else if ( (LA8_8=='\"'||LA8_8=='{'||LA8_8=='}') ) {s = 11;}
+                        else s = 5;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
+                        int LA8_13 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA8_13=='*') ) {s = 12;}
+
+                        else if ( ((LA8_13>='\u0000' && LA8_13<='!')||(LA8_13>='#' && LA8_13<=')')||(LA8_13>='+' && LA8_13<='z')||LA8_13=='|'||(LA8_13>='~' && LA8_13<='\uFFFF')) ) {s = 13;}
+
+                        else if ( (LA8_13=='\"'||LA8_13=='{'||LA8_13=='}') ) {s = 14;}
 
                         else s = 5;
 
                         if ( s>=0 ) return s;
                         break;
                     case 4 : 
-                        int LA8_15 = input.LA(1);
-
-                        s = -1;
-                        if ( (LA8_15=='*') ) {s = 12;}
-
-                        else if ( ((LA8_15>='\u0000' && LA8_15<='!')||(LA8_15>='#' && LA8_15<=')')||(LA8_15>='+' && LA8_15<='z')||LA8_15=='|'||(LA8_15>='~' && LA8_15<='\uFFFF')) ) {s = 13;}
-
-                        else s = 14;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 5 : 
                         int LA8_10 = input.LA(1);
 
                         s = -1;
@@ -733,7 +718,7 @@ public class SimpleBlockLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 6 : 
+                    case 5 : 
                         int LA8_6 = input.LA(1);
 
                         s = -1;
@@ -749,15 +734,29 @@ public class SimpleBlockLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
-                        int LA8_7 = input.LA(1);
+                    case 6 : 
+                        int LA8_15 = input.LA(1);
 
                         s = -1;
-                        if ( (LA8_7=='*') ) {s = 12;}
+                        if ( (LA8_15=='*') ) {s = 12;}
 
-                        else if ( ((LA8_7>='\u0000' && LA8_7<='!')||(LA8_7>='#' && LA8_7<=')')||(LA8_7>='+' && LA8_7<='z')||LA8_7=='|'||(LA8_7>='~' && LA8_7<='\uFFFF')) ) {s = 13;}
+                        else if ( ((LA8_15>='\u0000' && LA8_15<='!')||(LA8_15>='#' && LA8_15<=')')||(LA8_15>='+' && LA8_15<='z')||LA8_15=='|'||(LA8_15>='~' && LA8_15<='\uFFFF')) ) {s = 13;}
 
-                        else if ( (LA8_7=='\"'||LA8_7=='{'||LA8_7=='}') ) {s = 14;}
+                        else s = 14;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 7 : 
+                        int LA8_8 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA8_8=='\r') ) {s = 9;}
+
+                        else if ( (LA8_8=='\n') ) {s = 10;}
+
+                        else if ( ((LA8_8>='\u0000' && LA8_8<='\t')||(LA8_8>='\u000B' && LA8_8<='\f')||(LA8_8>='\u000E' && LA8_8<='!')||(LA8_8>='#' && LA8_8<='z')||LA8_8=='|'||(LA8_8>='~' && LA8_8<='\uFFFF')) ) {s = 8;}
+
+                        else if ( (LA8_8=='\"'||LA8_8=='{'||LA8_8=='}') ) {s = 11;}
 
                         else s = 5;
 

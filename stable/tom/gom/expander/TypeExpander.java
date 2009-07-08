@@ -186,11 +186,26 @@ public class TypeExpander {
       SortDeclList sortDeclList,
       Map<SortDecl,OperatorDeclList> operatorsForSort) {
 
-    {{if ( (prod instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )prod) instanceof tom.gom.adt.gom.types.production.Production) ) { tom.gom.adt.gom.types.GomType  tomMatch544NameNumber_freshVar_3= (( tom.gom.adt.gom.types.Production )prod).getCodomain() ;if ( (tomMatch544NameNumber_freshVar_3 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
+    {{if ( (prod instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )prod) instanceof tom.gom.adt.gom.types.production.Production) ) { tom.gom.adt.gom.types.GomType  tomMatch544NameNumber_freshVar_3= (( tom.gom.adt.gom.types.Production )prod).getCodomain() ; String  tom_name= (( tom.gom.adt.gom.types.Production )prod).getName() ;if ( (tomMatch544NameNumber_freshVar_3 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { tom.gom.adt.gom.types.Option  tom_options= (( tom.gom.adt.gom.types.Production )prod).getOption() ;
+
+
 
         SortDecl codomainSort = declFromTypename( tomMatch544NameNumber_freshVar_3.getName() ,sortDeclList);
         TypedProduction domainSorts = typedProduction( (( tom.gom.adt.gom.types.Production )prod).getDomainList() ,sortDeclList);
-        OperatorDecl decl =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make( (( tom.gom.adt.gom.types.Production )prod).getName() , codomainSort, domainSorts) ;
+///
+        OperatorDecl decl =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make(tom_name, codomainSort, domainSorts,  tom.gom.adt.gom.types.option.Details.make("") ) ; //default case, when no comment is present
+        if (tom_options.isConsOptionList()) { // usual case : 
+          Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)tom_options).toArray();
+          for (int i=0;i<tom_options.length();i++) {
+            if (opts[i] instanceof tom.gom.adt.gom.types.option.Details) {
+              decl =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make(tom_name, codomainSort, domainSorts, (tom.gom.adt.gom.types.option.Details)opts[i]) ;
+              break;
+            }
+          }
+        } else if (tom_options.isDetails()) { // just in case, but for moment, it shouldn't be possible to have it
+          decl =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make(tom_name, codomainSort, domainSorts, tom_options) ;
+        }
+///
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort, tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make(decl,tom_append_list_ConcOperator(list, tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() )) );
@@ -199,6 +214,7 @@ public class TypeExpander {
         }
         return decl;
       }}}}}
+
 
     throw new GomRuntimeException(
         "TypeExpander::getOperatorDecl: wrong Production?");

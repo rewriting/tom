@@ -150,7 +150,6 @@ public BlockParser(ParserSharedInputState state) {
 		"ESC",
 		"HEX_DIGIT",
 		"WS",
-		"COMMENT",
 		"SL_COMMENT",
 		"ML_COMMENT",
 		"TARGET"

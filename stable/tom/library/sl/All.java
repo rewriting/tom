@@ -59,7 +59,7 @@ public class All extends AbstractStrategyCombinator {
    * Visit the subject any without managing any environment
    *
    * @param any the subject to visit
-   * @param i the introspector
+   * @param introspector the introspector
    * @return a Visitable
    * @throws VisitFailure if visitLight fails
    */ 
@@ -89,7 +89,7 @@ public class All extends AbstractStrategyCombinator {
    * and place its result in the environment.
    * Sets the environment flag to Environment.FAILURE in case of failure
    *
-   * @param i the introspector
+   * @param introspector the introspector
    * @return 0 if success
    */
   public int visit(Introspector introspector) {

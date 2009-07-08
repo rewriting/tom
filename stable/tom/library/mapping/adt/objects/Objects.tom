@@ -554,7 +554,7 @@
   make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.SortClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
 }
 
-%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, SlotFields:SlotFieldList, Hooks:HookList) {
+%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, SlotFields:SlotFieldList, Hooks:HookList, Comments:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -563,10 +563,11 @@
   get_slot(SortName, t) { $t.getSortName() }
   get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
 }
 
-%op GomClass VariadicOperatorClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, SortName:ClassName, Empty:GomClass, Cons:GomClass, Hooks:HookList) {
+%op GomClass VariadicOperatorClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, SortName:ClassName, Empty:GomClass, Cons:GomClass, Hooks:HookList, Comments:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -575,7 +576,8 @@
   get_slot(Empty, t) { $t.getEmpty() }
   get_slot(Cons, t) { $t.getCons() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
 }
 
 %op GomClass TomMapping(ClassName:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {
@@ -765,12 +767,13 @@
   make(t0, t1) { tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl.make($t0, $t1) }
 }
 
-%op OperatorDecl OperatorDecl(Name:String, Sort:SortDecl, Prod:TypedProduction) {
+%op OperatorDecl OperatorDecl(Name:String, Sort:SortDecl, Prod:TypedProduction, Option:Option) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) }
   get_slot(Name, t) { $t.getName() }
   get_slot(Sort, t) { $t.getSort() }
   get_slot(Prod, t) { $t.getProd() }
-  make(t0, t1, t2) { tom.gom.adt.gom.types.operatordecl.OperatorDecl.make($t0, $t1, $t2) }
+  get_slot(Option, t) { $t.getOption() }
+  make(t0, t1, t2, t3) { tom.gom.adt.gom.types.operatordecl.OperatorDecl.make($t0, $t1, $t2, $t3) }
 }
 
 %op GomModule GomModule(ModuleName:GomModuleName, SectionList:SectionList) {
@@ -1151,6 +1154,12 @@
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.option.HasTomCode) }
   get_slot(Value, t) { $t.getValue() }
   make(t0) { tom.gom.adt.gom.types.option.HasTomCode.make($t0) }
+}
+
+%op Option Details(Comments:String) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.option.Details) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0) { tom.gom.adt.gom.types.option.Details.make($t0) }
 }
 
 %op HookKind HookKind(kind:String) {

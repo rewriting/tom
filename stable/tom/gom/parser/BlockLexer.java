@@ -116,12 +116,6 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
-				case '/':
-				{
-					mCOMMENT(true);
-					theRetToken=_returnToken;
-					break;
-				}
 				default:
 				{
 					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
@@ -460,31 +454,6 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	public final void mCOMMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = COMMENT;
-		int _saveIndex;
-		
-		{
-		if ((LA(1)=='/') && (LA(2)=='/')) {
-			mSL_COMMENT(false);
-		}
-		else if ((LA(1)=='/') && (LA(2)=='*')) {
-			mML_COMMENT(false);
-		}
-		else {
-			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-		}
-		
-		}
-		_ttype = Token.SKIP;
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	protected final void mSL_COMMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = SL_COMMENT;
@@ -492,7 +461,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop28:
+		_loop26:
 		do {
 			if ((_tokenSet_1.member(LA(1)))) {
 				{
@@ -500,7 +469,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop28;
+				break _loop26;
 			}
 			
 		} while (true);
@@ -524,6 +493,7 @@ tryAgain:
 		
 		target.append(new String(text.getBuffer(),_begin,text.length()-_begin));
 		newline(); 
+		_ttype = Token.SKIP;
 		
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -550,10 +520,10 @@ tryAgain:
 		
 		}
 		{
-		_loop34:
+		_loop32:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop34;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop32;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -573,13 +543,15 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop34;
+				break _loop32;
 			}
 			
 		} while (true);
 		}
 		match("*/");
 		target.append(new String(text.getBuffer(),_begin,text.length()-_begin));
+		//$setType(Token.SKIP);
+		
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));

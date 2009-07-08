@@ -172,7 +172,7 @@ writer.write("\npackage "+getPackage()+";\n\npublic class "+className()+" implem
   }
 
   public String generateMapping() {
-    return "\n  %op Strategy "+className()+"("+genStratArgs(slotList,"arg")+") {\n    is_fsym(t) { (($t!=null) && ($t instanceof ("+fullClassName()+"))) }\n"+genGetSlot(slotList,"arg")+"\n    make("+genMakeArguments(slotList,false)+") { new "+fullClassName()+"("+genMakeArguments(slotList,true)+") }\n  }\n"
+    return "\n  %op Strategy "+className()+"("+genStratArgs(slotList,"arg")+") {\n    is_fsym(t) { (($t!=null) && ($t instanceof "+fullClassName()+")) }\n"+genGetSlot(slotList.length(),"arg")+"\n    make("+genMakeArguments(slotList,false)+") { new "+fullClassName()+"("+genMakeArguments(slotList,true)+") }\n  }\n"
 
 
 
@@ -181,21 +181,16 @@ writer.write("\npackage "+getPackage()+";\n\npublic class "+className()+" implem
 ;
   }
 
-  private String genGetSlot(SlotFieldList slots, String arg) {
-    StringBuilder out = new StringBuilder();
-    while(!slots.isEmptyConcSlotField()) {
-      SlotField head = slots.getHeadConcSlotField();
-      slots = slots.getTailConcSlotField();
-      {{if ( (head instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )head) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )head).getName() ;
-
-          out.append("\n  get_slot("+fieldName(tom_name)+", t) { $t."+fieldName(tom_name)+" }"
+private String genGetSlot(int count, String arg) {
+  StringBuilder out = new StringBuilder();
+  for (int i = 0; i < count; ++i) {
+    out.append("\n        get_slot("+arg+i+", t) { (tom.library.sl.Strategy)(("+fullClassName()+")$t).getChildAt("+i+") }"
 );
-        }}}}
-
-    }
-    return out.toString();
   }
-  private String genStratArgs(SlotFieldList slots,String arg) {
+  return out.toString();
+}
+  
+private String genStratArgs(SlotFieldList slots,String arg) {
     StringBuilder args = new StringBuilder();
     int i = 0;
     while(!slots.isEmptyConcSlotField()) {
@@ -205,7 +200,8 @@ writer.write("\npackage "+getPackage()+";\n\npublic class "+className()+" implem
       {{if ( (head instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )head) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tom_domain= (( tom.gom.adt.objects.types.SlotField )head).getDomain() ;
 
           args.append((i==0?"":", "));
-          args.append(fieldName( (( tom.gom.adt.objects.types.SlotField )head).getName() ));
+          args.append(arg);
+          args.append(i);
           if (!getGomEnvironment().isBuiltinClass(tom_domain)) {
             args.append(":Strategy");
           } else {

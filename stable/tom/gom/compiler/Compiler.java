@@ -125,7 +125,8 @@ public class Compiler {
         Set<SlotField> allSortSlots = new HashSet<SlotField>();
         ClassNameList allOperators =  tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() ;
         ClassNameList allVariadicOperators =  tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() ;
-        {{if ( (tom_oplist instanceof tom.gom.adt.gom.types.OperatorDeclList) ) {if ( (((( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist) instanceof tom.gom.adt.gom.types.operatordecllist.ConsConcOperator) || ((( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist) instanceof tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator)) ) { tom.gom.adt.gom.types.OperatorDeclList  tomMatch487NameNumber_end_4=(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist);do {{if (!( tomMatch487NameNumber_end_4.isEmptyConcOperator() )) { tom.gom.adt.gom.types.OperatorDecl  tomMatch487NameNumber_freshVar_10= tomMatch487NameNumber_end_4.getHeadConcOperator() ;if ( (tomMatch487NameNumber_freshVar_10 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch487NameNumber_freshVar_8= tomMatch487NameNumber_freshVar_10.getSort() ; String  tom_opname= tomMatch487NameNumber_freshVar_10.getName() ;if ( (tomMatch487NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { tom.gom.adt.gom.types.TypedProduction  tom_typedproduction= tomMatch487NameNumber_freshVar_10.getProd() ;
+        {{if ( (tom_oplist instanceof tom.gom.adt.gom.types.OperatorDeclList) ) {if ( (((( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist) instanceof tom.gom.adt.gom.types.operatordecllist.ConsConcOperator) || ((( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist) instanceof tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator)) ) { tom.gom.adt.gom.types.OperatorDeclList  tomMatch487NameNumber_end_4=(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist);do {{if (!( tomMatch487NameNumber_end_4.isEmptyConcOperator() )) { tom.gom.adt.gom.types.OperatorDecl  tomMatch487NameNumber_freshVar_11= tomMatch487NameNumber_end_4.getHeadConcOperator() ;if ( (tomMatch487NameNumber_freshVar_11 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch487NameNumber_freshVar_8= tomMatch487NameNumber_freshVar_11.getSort() ; tom.gom.adt.gom.types.Option  tomMatch487NameNumber_freshVar_10= tomMatch487NameNumber_freshVar_11.getOption() ; String  tom_opname= tomMatch487NameNumber_freshVar_11.getName() ;if ( (tomMatch487NameNumber_freshVar_8 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) { tom.gom.adt.gom.types.TypedProduction  tom_typedproduction= tomMatch487NameNumber_freshVar_11.getProd() ;if ( (tomMatch487NameNumber_freshVar_10 instanceof tom.gom.adt.gom.types.option.Details) ) { String  tom_comments= tomMatch487NameNumber_freshVar_10.getComments() ;
+
 
 
 
@@ -167,15 +168,8 @@ public class Compiler {
             allOperators =  tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make(operatorClassName,tom_append_list_ConcClassName(allOperators, tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() )) ;
             if(variadicOpClassName != null) {
               /* We just processed a variadic operator */
-              GomClass consClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(operatorClassName, abstracttypeName, variadicOpClassName, mappingName, sortClassName, slots,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) 
+              GomClass consClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(operatorClassName, abstracttypeName, variadicOpClassName, mappingName, sortClassName, slots,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() , tom_comments) 
 
-
-
-
-
-;
-
-              GomClass emptyClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(empty, abstracttypeName, variadicOpClassName, mappingName, sortClassName,  tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) 
 
 
 
@@ -183,7 +177,17 @@ public class Compiler {
 
 ;
 
-              operatorClass =  tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make(variadicOpClassName, abstracttypeName, mappingName, sortClassName, emptyClass, consClass,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) 
+              GomClass emptyClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(empty, abstracttypeName, variadicOpClassName, mappingName, sortClassName,  tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() ,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() , tom_comments) 
+
+
+
+
+
+
+;
+
+              operatorClass =  tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make(variadicOpClassName, abstracttypeName, mappingName, sortClassName, emptyClass, consClass,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() , tom_comments) 
+
 
 
 
@@ -191,7 +195,8 @@ public class Compiler {
 
 ;
             } else {
-              operatorClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(operatorClassName, abstracttypeName, sortClassName, mappingName, sortClassName, slots,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) 
+              operatorClass =  tom.gom.adt.objects.types.gomclass.OperatorClass.make(operatorClassName, abstracttypeName, sortClassName, mappingName, sortClassName, slots,  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() , tom_comments) 
+
 
 
 
@@ -201,7 +206,7 @@ public class Compiler {
             }
             classForOperatorDecl.put( tomMatch487NameNumber_end_4.getHeadConcOperator() ,operatorClass);
             classList =  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make(operatorClass,tom_append_list_ConcGomClass(classList, tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() )) ;
-          }}}if ( tomMatch487NameNumber_end_4.isEmptyConcOperator() ) {tomMatch487NameNumber_end_4=(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist);} else {tomMatch487NameNumber_end_4= tomMatch487NameNumber_end_4.getTailConcOperator() ;}}} while(!( (tomMatch487NameNumber_end_4==(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist)) ));}}}}
+          }}}}if ( tomMatch487NameNumber_end_4.isEmptyConcOperator() ) {tomMatch487NameNumber_end_4=(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist);} else {tomMatch487NameNumber_end_4= tomMatch487NameNumber_end_4.getTailConcOperator() ;}}} while(!( (tomMatch487NameNumber_end_4==(( tom.gom.adt.gom.types.OperatorDeclList )tom_oplist)) ));}}}}
 
         // create the sort class and add it to the list
         GomClass sortClass =  tom.gom.adt.objects.types.gomclass.SortClass.make(sortClassName, abstracttypeName, mappingName, allOperators, allVariadicOperators, slotFieldListFromSet(allSortSlots),  tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() ) 

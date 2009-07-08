@@ -114,7 +114,7 @@ public class ConstraintPropagator {
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
             // add constraint to the list
-            result = `AndConstraint(MatchConstraint(var,g),result*);                                                                                                                       
+            result = `AndConstraint(MatchConstraint(var,g),result*);
           }
         }// end match   
       }      
@@ -122,7 +122,7 @@ public class ConstraintPropagator {
         TomTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
-            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);                                                                                                                       
+            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
           }
         }// end match   
         result = `AndConstraint(MatchConstraint(freshVariable,g),
