@@ -64,6 +64,10 @@ public class MainGom extends TestCase {
   public static Strategy _h(Strategy s1) {
     return new mi3.congruence._Strategy(getSignature().getMapping_h(),s1);
   }
+  
+  public static Strategy _concT1(Strategy s) {
+    return new mi3.congruence._StrategyList(getSignature().getMapping_concT1(),s);
+  }
 
   /*
    * the body of the following method is hand-written
@@ -122,6 +126,16 @@ public class MainGom extends TestCase {
     try {
       T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.getInstance());
       assertEquals(res, `f(a(),b()));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void test_listMatchCongruence() {
+    ListT1 subject = `concT1(f(a(),b()),a(),f(a(),b()));
+    try {
+      ListT1 res = (ListT1) `_concT1(Try(Rule())).visitLight(subject, mi3.mapping.Introspector.getInstance());
+      assertEquals(res, `concT1(a(),a(),a()));
     } catch(VisitFailure e) {
       fail();
     }
