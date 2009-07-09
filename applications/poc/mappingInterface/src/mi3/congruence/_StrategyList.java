@@ -12,6 +12,16 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
   }
 
   /** 
+   * Visits the subject any in a light way (without environment)  
+   *
+   * @param any the subject to visit
+   * @throws VisitFailure if visitLight fails
+   */
+  public <T extends Visitable> T visitLight(T any) throws VisitFailure {
+    return visitLight(any,mapping.getIntrospector());
+  }
+
+  /** 
    * Visit the subject any without managing any environment
    *
    * @param any the subject to visit
@@ -38,6 +48,16 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
     }
   }
 
+  /** 
+   * Visits the subject any by providing the environment 
+   *
+   * @param any the subject to visit. 
+   * @throws VisitFailure if visit fails
+   */
+  public <T extends Visitable> T visit(T any) throws VisitFailure {
+    return visit(any,mapping.getIntrospector());
+  }
+
   /**
    * Visit the current subject (found in the environment)
    * and place its result in the environment.
@@ -47,20 +67,13 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
    * @return 0 if success
    */
   public int visit(Introspector introspector) {
-      return tom.library.sl.Environment.SUCCESS;
-  }
+    //environment.setIntrospector(introspector);
+    System.out.println("getSubject: " + environment.getSubject());
+    System.out.println("strat: " + arguments[0]);
+    System.out.println("instrospector: " + introspector);
 
-  private <C,D> int map(mi3.mapping.IListMapping<C,D> mapping, Strategy s, Introspector introspector) {
-    C subject = (C)environment.getSubject();
-    if(mapping.isEmpty(subject)) {
-      return tom.library.sl.Environment.SUCCESS;
-    } else {
-      environment.down(1);
-      // DEPEND ON INTROSPECTOR, EVEN FOR LIST!
-      //D head = s.visit(mapping.getHead(subject),introspector);
-      //C tail = mapLight(mapping, s, mapping.getTail(subject), introspector);
-      //return mapping.makeInsert(head,tail);
-    }
-    return tom.library.sl.Environment.SUCCESS;
+    introspector.getChildCount(environment.getSubject());
+
+    return new tom.library.sl.All(arguments[0]).visit(introspector);
   }
 }
