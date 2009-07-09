@@ -63,6 +63,10 @@ public class MainHand extends TestCase {
     return new mi3.congruence._Strategy(getSignature().getMapping_h(),s1);
   }
 
+  public static Strategy _concT1(Strategy s) {
+    return new mi3.congruence._StrategyList(getSignature().getMapping_concT1(),s);
+  }
+
   /*
    * the body of the following method is hand-written
    * but an empty method with return null; is generated
@@ -108,8 +112,10 @@ public class MainHand extends TestCase {
   public void testVisit() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.Introspector.getInstance());
-      assertEquals(res, `a());
+      T1 res1 = (T1) `Repeat(OnceBottomUp(Rule())).visitLight(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      T1 res2 = (T1) `Repeat(OnceBottomUp(Rule())).visit(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      assertEquals(res1, `a());
+      assertEquals(res1, res2);
     } catch(VisitFailure e) {
       fail();
     }
@@ -119,13 +125,26 @@ public class MainHand extends TestCase {
   public void testCongruence() {
     T1 subject = `f(f(a(),b()),g(b()));
     try {
-      T1 res = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.Introspector.getInstance());
-      assertEquals(res, `f(a(),b()));
+      T1 res1 = (T1) `_f(Rule(), Rule2()).visitLight(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      T1 res2 = (T1) `_f(Rule(), Rule2()).visit(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      assertEquals(res1, `f(a(),b()));
+      assertEquals(res1, res2);
     } catch(VisitFailure e) {
       fail();
     }
   }
 
+  public void test_listMatchCongruence() {
+    List<T1> subject = `concT1(f(a(),b()),a(),f(a(),b()));
+    try {
+      List<T1> res1 = (List<T1>) `_concT1(Try(Rule())).visitLight(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      List<T1> res2 = (List<T1>) `_concT1(Try(Rule())).visit(subject, mi3.mapping.MappingRegistry.getMappingOf(subject).getIntrospector());
+      assertEquals(res1, `concT1(a(),a(),a()));
+      assertEquals(res1, res2);
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
   %strategy Rule() extends Fail() {
     visit T1 {
       f(x,y) -> {
@@ -139,8 +158,6 @@ public class MainHand extends TestCase {
       g(x) -> x
     }
   }
-
-
 
   public void test_listMatchFirst() {
     List<T1> subject = `concT1(a(), f(a(), b()), f(a(), g(b())));

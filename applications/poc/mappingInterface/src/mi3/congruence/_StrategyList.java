@@ -67,13 +67,32 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
    * @return 0 if success
    */
   public int visit(Introspector introspector) {
-    //environment.setIntrospector(introspector);
-    System.out.println("getSubject: " + environment.getSubject());
-    System.out.println("strat: " + arguments[0]);
-    System.out.println("instrospector: " + introspector);
+    environment.setIntrospector(introspector);
+    Object any = environment.getSubject();
+    int childCount = introspector.getChildCount(any);
+    Object[] childs = null;
 
-    introspector.getChildCount(environment.getSubject());
-
-    return new tom.library.sl.All(arguments[0]).visit(introspector);
+    for(int i = 0; i < childCount; i++) {
+      Object oldChild = introspector.getChildAt(any,i);
+      environment.down(i+1);
+      int status = arguments[0].visit(introspector);
+      if(status != Environment.SUCCESS) {
+        environment.upLocal();
+        return status;
+      }
+      Object newChild = environment.getSubject();
+      if(childs != null) {
+        childs[i] = newChild;
+      } else if(newChild != oldChild) {
+        // allocate the array, and fill it
+        childs = introspector.getChildren(any);
+        childs[i] = newChild;
+      } 
+      environment.upLocal();
+    }
+    if(childs!=null) {
+      environment.setSubject(introspector.setChildren(any,childs));
+    }
+    return Environment.SUCCESS;
   }
 }

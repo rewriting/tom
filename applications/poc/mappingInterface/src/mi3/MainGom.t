@@ -138,11 +138,12 @@ public class MainGom extends TestCase {
   public void test_listMatchCongruence() {
     ListT1 subject = `concT1(f(a(),b()),a(),f(a(),b()));
     try {
-      System.out.println("listMatchCongruence");
-      ListT1 res1 = (ListT1) `_concT1(Try(Rule())).visit(subject);
-      System.out.println("res1 = " + res1);
-      //assertEquals(res1, `concT1(a(),a(),a()));
-      //assertEquals(res1, res2);
+      //System.out.println("listMatchCongruence");
+      ListT1 res1 = (ListT1) `_concT1(Try(Rule())).visitLight(subject);
+      ListT1 res2 = (ListT1) `_concT1(Try(Rule())).visit(subject);
+      //System.out.println("res1 = " + res1);
+      assertEquals(res1, `concT1(a(),a(),a()));
+      assertEquals(res1, res2);
     } catch(VisitFailure e) {
       fail();
     }

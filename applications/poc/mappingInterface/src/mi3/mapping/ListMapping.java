@@ -23,12 +23,12 @@ public abstract class ListMapping<C, D> implements IListMapping<C,D> {
     }
 
     public Object getChildAt(Object o, int i) {
-      System.out.println("getChildAt: " + o + ", " + i);
+      //System.out.println("getChildAt: " + o + ", " + i);
       C l = (C)o;
       int index = 0;
       while(index<=i && !isEmpty(l)) {
         if(index==i) {
-          System.out.println("getChildAt: res = " + getHead(l));
+          //System.out.println("getChildAt: res = " + getHead(l));
           return getHead(l);
         }
         index++;
@@ -38,14 +38,14 @@ public abstract class ListMapping<C, D> implements IListMapping<C,D> {
     }
 
     public int getChildCount(Object o) {
-      System.out.println("getChildCount: " + o);
+      //System.out.println("getChildCount: " + o);
       C l = (C)o;
       int res = 0;
       while(!isEmpty(l)) {
         res++;
         l = getTail(l);
       }
-      System.out.println("getChildCount: res = " + res);
+      //System.out.println("getChildCount: res = " + res);
       return res;
       //throw new RuntimeException(" not defined for: " + o.getClass());
     }
@@ -59,14 +59,14 @@ public abstract class ListMapping<C, D> implements IListMapping<C,D> {
     }
 
     public Object[] getChildren(Object o) {
-      System.out.println("getChildren: " + o);
+      //System.out.println("getChildren: " + o);
       C l = (C)o;
       java.util.ArrayList<D> res = new java.util.ArrayList<D>();
       while(!isEmpty(l)) {
         res.add(getHead(l));
         l = getTail(l);
       }
-      System.out.println("getChildren: res = " + res);
+      //System.out.println("getChildren: res = " + res);
       return res.toArray();
     }
 
