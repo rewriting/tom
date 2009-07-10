@@ -251,6 +251,12 @@ public class PILFactory {
       GreaterThan(e1, e2) -> {
         return prettyPrint(`e1)+" > "+prettyPrint(`e2);
       }
+      LessOrEqualThan(e1, e2) -> {
+        return prettyPrint(`e1)+" <= "+prettyPrint(`e2);
+      }
+      LessThan(e1, e2) -> {
+        return prettyPrint(`e1)+" < "+prettyPrint(`e2);
+      }
       Integer(i) -> {
         return ""+`i;
       }

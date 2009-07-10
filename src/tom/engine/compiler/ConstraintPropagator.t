@@ -68,6 +68,9 @@ public class ConstraintPropagator {
     }
     
     Constraint result= null;
+    //call ACPropagator by hand
+    constraintToCompile = new tom.engine.compiler.propagator.ACPropagator().propagate(constraintToCompile);
+    
     mainLoop: while(true) {
       for(int i=0 ; i < propNb ; i++) {
         result = prop[i].propagate(constraintToCompile);

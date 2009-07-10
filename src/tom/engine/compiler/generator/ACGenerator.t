@@ -61,8 +61,7 @@ public class ACGenerator implements IBaseGenerator {
   %strategy Generator() extends Identity() {
     visit Expression {
       
-      ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName))],subject)) -> {
-        // if this is not an AC symbol, nothing to do
+      ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
         if(TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { 
           // TODO - generate all the functions
           return `ACMatchLoop(pattern, subject);
