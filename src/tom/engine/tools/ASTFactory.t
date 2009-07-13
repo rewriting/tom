@@ -279,23 +279,6 @@ public class ASTFactory {
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-    /*
-     * update the root of lhs: it becomes a defined symbol
-     */
-  public static TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
-    if(term.isTermAppl() || term.isRecordAppl()) {
-      String key = term.getNameList().getHeadconcTomName().getString();
-      TomSymbol symbol = symbolTable.getSymbolFromName(key);
-      if(symbol != null) {
-        OptionList optionList = symbol.getOption();
-        optionList = `concOption(optionList*,DefinedSymbol());
-        symbolTable.putSymbol(key,symbol.setOption(optionList));
-        return symbol;
-      }
-    }
-    return null;
-  }
-
   public static String makeSingleLineCode(String code, boolean pretty) {
     if(!pretty) {
       code = code.replace('\n', ' ');

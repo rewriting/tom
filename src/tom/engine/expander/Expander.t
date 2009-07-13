@@ -189,8 +189,6 @@ public class Expander extends TomGenericPlugin {
             return ASTFactory.buildList(`name,tomListArgs,expander.symbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
             return ASTFactory.buildArray(`name,tomListArgs,expander.symbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
             String moduleName = TomBase.getModuleName(`optionList);
             if(moduleName==null) {

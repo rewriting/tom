@@ -60,6 +60,10 @@ import aterm.ATerm;
 
 import tom.library.sl.*;
 
+
+/* TODO: remove */
+import tom.library.utils.Viewer;
+
 /**
  * The Typer plugin.
  * Perform syntax expansion and more.
@@ -100,15 +104,33 @@ public class Typer extends TomGenericPlugin {
     //System.out.println("(debug) I'm in the Tom typer : TSM"+getStreamManager().toString());
     TomTerm typedTerm = null;
     try {
+      //getStreamManager().getSymbolTable().dump();
       kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
 
+      // WARNING side effect on the symbol table
       updateSymbolTable();
+      //getStreamManager().getSymbolTable().dump();
 
+      // expands known (ie != "unknown type") TypeAlone in the AST into Type
+      // TODO : remove this phase ?
       syntaxExpandedTerm = expandType(syntaxExpandedTerm);
+
+      // Viewer.toTree(syntaxExpandedTerm);
+
+      // replaces (infers) unknown types of pattern variables into Types
+      // and propagates them in the action part
       TomTerm variableExpandedTerm = (TomTerm) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedTerm);
+      
+      Viewer.toTree(variableExpandedTerm);
+      System.out.println("-----------------");
+
       /* transform each BackQuoteTerm into its compiled form */
+
+      // BackquoteAppl --> BuildTerm || FunctionCall || BuildList || BuildArray 
       TomTerm backQuoteExpandedTerm = `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
+      Viewer.toTree(backQuoteExpandedTerm);
+
       TomTerm stringExpandedTerm = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
       typedTerm = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
       typedTerm = kernelTyper.propagateVariablesTypes(typedTerm);
@@ -445,8 +467,6 @@ public class Typer extends TomGenericPlugin {
               return ASTFactory.buildList(`name,args,typer.symbolTable());
             } else if(TomBase.isArrayOperator(tomSymbol)) {
               return ASTFactory.buildArray(`name,args,typer.symbolTable());
-            } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-              return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
             } else {
               String moduleName = TomBase.getModuleName(`optionList);
               if(moduleName==null) {

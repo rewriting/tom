@@ -44,6 +44,9 @@ import tom.engine.adt.tomtype.types.*;
 
 import tom.platform.OptionManager;
 
+/* TODO: remove */
+import tom.library.utils.Viewer;
+
 public class SymbolTable {
 
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -62,7 +65,7 @@ public class SymbolTable {
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
-  /** associate a type to a name */
+  /** associate a type (a TomType, ie a type definition) to a name */
   private Map<String,TomType> mapTypeName = null;
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
@@ -71,6 +74,24 @@ public class SymbolTable {
   private boolean jCode = false;
   private boolean camlCode = false;
   private boolean pCode = false;
+
+  public void dump() {
+    System.out.println("mapSymbolName:");
+    for(Map.Entry<String,TomSymbol> e: mapSymbolName.entrySet()) {
+      System.out.println(e.getKey() + ":");
+      Viewer.toTree(e.getValue());
+    }
+    System.out.println("-----------------------------------------------------------");
+    System.out.println("mapTypeName:");
+    for(Map.Entry<String,TomType> e: mapTypeName.entrySet()) {
+      System.out.println(e.getKey() + ":");
+      Viewer.toTree(e.getValue());
+    }
+    System.out.println("-----------------------------------------------------------");
+    System.out.println("usedKeyEntry:");
+    for(KeyEntry e: usedKeyEntry)
+      Viewer.toTree(e);
+  }
 
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap<String,TomSymbol>();
@@ -103,11 +124,17 @@ public class SymbolTable {
     TomSymbol result = mapSymbolName.put(name,astSymbol);
   }
 
+  /**
+   * returns the TomSymbol associated to a name
+   */
   public TomSymbol getSymbolFromName(String name) {
     TomSymbol res = mapSymbolName.get(name);
     return res;
   }
 
+  /**
+   * returns the list of symbols whose codomain is type
+   */
   public TomSymbolList getSymbolFromType(TomType type) {
     TomSymbolList res = `concTomSymbol();
     Iterator<TomSymbol> it = mapSymbolName.values().iterator();
