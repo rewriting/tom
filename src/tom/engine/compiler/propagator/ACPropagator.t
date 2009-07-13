@@ -70,7 +70,7 @@ public class ACPropagator implements IBasePropagator {
 
   private static Constraint decompose(Constraint c) {
     %match(c) {
-      MatchConstraint(pattern@RecordAppl[Option=option, NameList=(Name(tomName)), Slots=slots],subject) -> {
+      MatchConstraint(pattern@RecordAppl[Option=option, NameList=(name@Name(tomName)), Slots=slots],subject) -> {
         %match(slots) {
           concSlot(slot@!PairSlotAppl[Appl=VariableStar[]],tail*) -> {
 
@@ -81,31 +81,37 @@ public class ACPropagator implements IBasePropagator {
             TomTerm X2 = Compiler.getFreshVariableStar(listType);
             TomName X2_Name = X2.getAstName();				
 
-            //generate: f(slot) << X1 && f(X1,X2) << subject && decompose(f(tail) << X2) 
+            //generate: f(X1,X2) << subject && f(slot) << X1 && decompose(f(tail) << X2) 
             Constraint c1 = 
-              `MatchConstraint(RecordAppl(option, concTomName(Name(tomName)),concSlot(slot),concConstraint()),X1);
+              `MatchConstraint(RecordAppl(option,
+                    concTomName(Name(tomName)),concSlot(PairSlotAppl(X1_Name,X1),PairSlotAppl(X2_Name,X2)),
+                    concConstraint()),subject);
             Constraint c2 = 
-              `MatchConstraint(RecordAppl(option, concTomName(Name(tomName)),concSlot(PairSlotAppl(X1_Name,X1),PairSlotAppl(X2_Name,X2)), concConstraint()),subject);
-            Constraint c3 = decompose(`MatchConstraint(RecordAppl(option, concTomName(Name(tomName)),tail,concConstraint()),X2));
-            return `AndConstraint(c3, c2, c1);
+              `MatchConstraint(RecordAppl(option,
+                    concTomName(Name(tomName)),concSlot(slot),concConstraint()),X1);
+            Constraint c3 = decompose(`MatchConstraint(RecordAppl(option,
+                    concTomName(Name(tomName)),tail,concConstraint()),X2));
+            return `AndConstraint(c1, c2, c3);
           }
 
-         concSlot(vstar@PairSlotAppl[Appl=VariableStar[]], tail*) -> {
-           // get fresh variables
-           TomType listType = Compiler.getTermTypeFromTerm(`pattern);
-           TomTerm X1 = Compiler.getFreshVariableStar(listType);				
-           TomName X1_Name = X1.getAstName();				
+          concSlot(vstar@PairSlotAppl[Appl=VariableStar[]], tail*) -> {
+            // get fresh variables
+            TomType listType = Compiler.getTermTypeFromTerm(`pattern);
+            TomTerm X1 = Compiler.getFreshVariableStar(listType);				
+            TomName X1_Name = X1.getAstName();				
 
-           //generate: f(vstar,X1) << subject && decompose(f(tail) << X1) 
-           Constraint c1 = 
-             `MatchConstraint(RecordAppl(option, concTomName(Name(tomName)),concSlot(vstar,PairSlotAppl(X1_Name,X1)), concConstraint()),subject);
-           Constraint c2 = decompose(`MatchConstraint(RecordAppl(option, concTomName(Name(tomName)),tail,concConstraint()),X1));
-           return `AndConstraint(c2, c1);
-         }
-
-         concSlot() -> {
-           return `TrueConstraint();
-         }
+            //generate: f(vstar,X1) << subject && decompose(f(tail) << X1) 
+            Constraint c1 = 
+              `MatchConstraint(RecordAppl(option,
+                    concTomName(Name(tomName)),concSlot(vstar,PairSlotAppl(X1_Name,X1)),
+                    concConstraint()),subject);
+            Constraint c2 = decompose(`MatchConstraint(RecordAppl(option,
+                    concTomName(Name(tomName)),tail,concConstraint()),X1));
+            return `AndConstraint(c1, c2);
+          }
+          concSlot() -> {
+            return `EmptyListConstraint(name,subject);
+          }
         }
       }
     }

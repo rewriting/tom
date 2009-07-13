@@ -226,7 +226,7 @@ public final class TomBase {
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
-            ACSymbol[] -> { return false; }
+            //ACSymbol[] -> { return false; }
             DeclarationToOption(MakeEmptyList[]) -> { isListOp = true; }
             DeclarationToOption(MakeAddList[])   -> { isListOp = true; }
           }
@@ -269,7 +269,7 @@ public final class TomBase {
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
-            ACSymbol[] -> { return false; }
+            //ACSymbol[] -> { return false; }
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
           }

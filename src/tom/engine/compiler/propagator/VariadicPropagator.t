@@ -65,8 +65,9 @@ public class VariadicPropagator implements IBasePropagator {
        * 
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
-        // if this is not a list, nothing to do
+        // if this is not a list or if this is an AC operator, nothing to do
         if(!TomBase.isListOperator(Compiler.getSymbolTable().
+            getSymbolFromName(`tomName)) || TomBase.isACOperator(Compiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
         Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
         if (detachedConstr != `m) { return detachedConstr; }
@@ -88,8 +89,9 @@ public class VariadicPropagator implements IBasePropagator {
        *        a@...b@conc(...) << t -> conc(...) << t /\ a << t /\ ... /\ b << t   
        */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
-        // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(Compiler.getSymbolTable().
+        // if this is not a list or if this is an AC operator, nothing to do
+     if(!TomBase.isListOperator(Compiler.getSymbolTable().
+            getSymbolFromName(`tomName)) || TomBase.isACOperator(Compiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }        
         // declare fresh variable
         TomType listType = Compiler.getTermTypeFromTerm(`t);

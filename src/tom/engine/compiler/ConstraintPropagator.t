@@ -57,6 +57,7 @@ public class ConstraintPropagator {
   public static Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{
     
+    System.out.println(new tom.engine.tools.TomConstraintPrettyPrinter().prettyPrint(constraintToCompile));
     // counts the propagators that didn't change the expression
     int propCounter = 0;
     int propNb = propagatorsNames.length;    	
@@ -68,7 +69,7 @@ public class ConstraintPropagator {
     }
     
     Constraint result= null;
-    //call ACPropagator by hand
+    //call for the moment ACPropagator by hand
     constraintToCompile = new tom.engine.compiler.propagator.ACPropagator().propagate(constraintToCompile);
     
     mainLoop: while(true) {
@@ -82,7 +83,7 @@ public class ConstraintPropagator {
         // reinitialize
         constraintToCompile = result;
       }
-    } // end while    
+    } // end while
     return result;
   }
   
