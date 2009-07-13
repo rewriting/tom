@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,8 @@
  **/
 package tom.library.sl;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Object that represents an environment of a strategy
@@ -52,23 +53,23 @@ public final class Environment implements Cloneable {
   protected int current;
   protected int[] omega;
   protected Object[] subterm;
-  protected Introspector mapping;
+  protected Introspector introspector;
   protected int status = Environment.SUCCESS;
 
   public Environment() {
     this(DEFAULT_LENGTH,VisitableIntrospector.getInstance());
   }
 
-  public Environment(Introspector mapping) {
-    this(DEFAULT_LENGTH,mapping);
+  public Environment(Introspector introspector) {
+    this(DEFAULT_LENGTH,introspector);
   }
 
-  private Environment(int length, Introspector mapping) {
+  private Environment(int length, Introspector introspector) {
     omega = new int[length+1];
     subterm = new Object[length+1];
     current = 0; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
-    this.mapping = mapping;
+    this.introspector = introspector;
   }
 
   private void ensureLength(int minLength) {
@@ -97,12 +98,12 @@ public final class Environment implements Cloneable {
    * Tests if two environments are equals
    */
   public boolean equals(Object o) {
-    if (o instanceof Environment) {
+    if(o instanceof Environment) {
       Environment p = (Environment)o;
       /* we need to check only the meaningful part of the omega and subterm arrays */
-      if (current==p.current) {
+      if(current==p.current) {
         for(int i=0; i<current+1; i++) {
-          if (omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
+          if(omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
             return false;
           }
         }
@@ -119,14 +120,19 @@ public final class Environment implements Cloneable {
     /* Hash only the interesting part of the array */
     int[] hashedOmega = new int[current+1];
     Object[] hashedSubterm = new Object[current+1];
+    // TODO: remove arraycopy
     System.arraycopy(omega,0,hashedOmega,0,current+1);
     System.arraycopy(subterm,0,hashedSubterm,0,current+1);
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
-  public int getStatus() { return status; } 
+  public int getStatus() { 
+    return status; 
+  } 
 
-  public void setStatus(int s) { this.status = s; }
+  public void setStatus(int s) {
+    this.status = s; 
+  }
 
   /**
    * get the current root
@@ -146,12 +152,20 @@ public final class Environment implements Cloneable {
   /**
    * get the current stack
    */
-  public Vector<Object> getCurrentStack() {
-    Vector<Object> v = new Vector<Object>();
-    for (int i=0;i<depth();i++) {
+  public List<Object> getCurrentStack() {
+    List<Object> v = new ArrayList<Object>();
+    for(int i=0;i<depth();i++) {
       v.add(subterm[i]);
     }
     return v;
+  }
+
+  /**
+   * get the term that corresponds to the ancestor of current position
+   * @return the ancestor of the current term
+   */
+  public Object getAncestor() {
+    return subterm[current-1];
   }
 
   /**
@@ -172,11 +186,11 @@ public final class Environment implements Cloneable {
   }
 
   public Introspector getIntrospector() {
-    return mapping;
+    return introspector;
   }
 
-  public void setIntrospector(Introspector m) {
-    mapping = m;
+  public void setIntrospector(Introspector i) {
+    introspector = i;
   }
 
   /**
@@ -192,12 +206,8 @@ public final class Environment implements Cloneable {
    * @return the current position
    */
   public Position getPosition() {
-    int[] reducedOmega = new int[depth()];
-    System.arraycopy(omega,1,reducedOmega,0,depth());
-    return new Position(reducedOmega);
+    return Position.makeFromSubarray(omega,1,depth());
   }
-
-
 
   /**
    * Get the depth of the position in the tree
@@ -217,7 +227,7 @@ public final class Environment implements Cloneable {
     int childIndex = omega[current]-1;
     Object child = subterm[current];
     current--;
-    subterm[current] = mapping.setChildAt(subterm[current],childIndex,child);
+    subterm[current] = introspector.setChildAt(subterm[current],childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -243,49 +253,40 @@ public final class Environment implements Cloneable {
         ensureLength(current+1);
       }
       omega[current] = n;
-      subterm[current] = mapping.getChildAt(child,n-1);
+      subterm[current] = introspector.getChildAt(child,n-1);
     }
     //System.out.println("after down: " + this);
-  }
-
-  public void followPath(Path path) {
-    Path normalizedPath = path.getCanonicalPath();
-    int length = normalizedPath.length();
-    for(int i=0;i<length;i++) {
-      int head = normalizedPath.getHead();
-      normalizedPath = normalizedPath.getTail();
-      if(head>0){
-        down(head);
-        if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
-          // we do not want to follow the last reference
-          followPath((Path)subterm[current]);
-        }
-      } else {
-        //verify that getsubomega() = -head
-        up();
-      }
-    }
   }
 
   public void goToPosition(Position p) {
     followPath(p.sub(getPosition()));
   }
 
+  public void followPath(Path path) {
+    genericFollowPath(path,false);
+  }
+
   public void followPathLocal(Path path) {
-    Path normalizedPath = path.getCanonicalPath();
-    int length = normalizedPath.length();
+    genericFollowPath(path,true);
+  }
+
+  private void genericFollowPath(Path path, boolean local) {
+    int[] normalizedPathArray = path.getCanonicalPath().toIntArray();
+    int length = normalizedPathArray.length;
     for(int i=0;i<length;i++) {
-      int head = normalizedPath.getHead();
-      normalizedPath = normalizedPath.getTail();
-      if(head>0){
-        down(head);
-        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+      if(normalizedPathArray[i]>0) {
+        down(normalizedPathArray[i]);
+        if(subterm[current] instanceof Path && i+1<length) {
           // we do not want to follow the last reference
-          followPath((Path)subterm[current]);
+          genericFollowPath((Path)subterm[current],local);
         }
       } else {
-        //verify that getsubomega() = -head
-        upLocal();
+        //verify that getsubomega() = -normalizedPathArray[i]
+        if(local) {
+          upLocal();
+        } else {
+          up();
+        }
       }
     }
   }

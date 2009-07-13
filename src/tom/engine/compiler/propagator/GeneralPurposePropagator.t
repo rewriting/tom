@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -47,18 +47,36 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
 
-  // contains variables that were already replaced (for optimizing reasons)
-  private static ArrayList replacedVariables = null; 
+  %typeterm GeneralPurposePropagator {
+    implement { GeneralPurposePropagator }
+    is_sort(t) { ($t instanceof GeneralPurposePropagator) }
+  }
+
+  private Compiler compiler;  
+  private ConstraintPropagator constraintPropagator; 
+
+  public GeneralPurposePropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    replacedVariables = new ArrayList();
-    return  (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
+    return `TopDownWhenConstraint(GeneralPropagations(this)).visitLight(constraint);
   }	
 
-  %strategy GeneralPropagations() extends `Identity() {
+  %strategy GeneralPropagations(gpp:GeneralPurposePropagator) extends Identity() {
     visit Constraint {      
       /**
        * Antipattern
@@ -68,7 +86,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
         return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
-            ConstraintPropagator.performDetach(MatchConstraint(term,s)));
+            gpp.getConstraintPropagator().performDetach(MatchConstraint(term,s)));
       }      
       /**
        * SwitchAnti : here is just for efficiency reasons, and not for ordering, 
@@ -85,14 +103,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
        * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
        */
-      AndConstraint(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[],AstType=type],value),Y*) -> {
-        if (!replacedVariables.contains(`x)){
-          replacedVariables.add(`x);
-          Constraint toApplyOn = `AndConstraint(Y*);
-          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v,value)).visitLight(toApplyOn);
-          if(res != toApplyOn) {
-            return `AndConstraint(X*,eq,res);
-          }
+      AndConstraint(X*,eq@MatchConstraint[Pattern=(Variable|VariableStar)[AstName=varName@!PositionName[]]],Y*) -> {
+        // we cannot cache already renamed variables, because disjunctions have to be taken into account
+        // for example: g(x) || f(x,x) -> ...
+        Constraint res = (Constraint)`TopDownWhenConstraint(ReplaceMatchConstraint(varName,gpp)).visitLight(`Y*);
+        if(res != `Y*) {
+          return `AndConstraint(X*,eq,res*);
         }
       }  
       /**
@@ -102,8 +118,8 @@ public class GeneralPurposePropagator implements IBasePropagator {
        *  a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
       m@MatchConstraint(term@(Variable|VariableStar|UnamedVariableStar|UnamedVariable)[Constraints = !concConstraint()],g) -> {
-        Constraint result = ConstraintPropagator.performDetach(`m);
-        if (`term.isVariable()) {
+        Constraint result = gpp.getConstraintPropagator().performDetach(`m);
+        if(`term.isVariable()) {
           result = `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g),result);
         }
         return result;
@@ -117,54 +133,57 @@ public class GeneralPurposePropagator implements IBasePropagator {
 
     }
   }// end %strategy
-  
+
   /**
    * Detach sublists
    * 
-   * Make sure that the sublists in a list are replaced by star variables - this is only happening 
-   * when the lists and the sublists have the same name
+   * Make sure that the sublists in a list are replaced by star variables 
+   * this is only happening when the lists and the sublists have the same name
    * 
    * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
    * 
    */ 
-  public static Constraint detachSublists(Constraint constraint) {
+  public Constraint detachSublists(Constraint constraint) {
     // will hold the new slots of t
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
     %match(constraint) {      
-      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {      
-      %match(slots) { 
-        concSlot(_*,slot,_*) -> {
-matchSlot:  %match(slot,TomName name) {
-            ps@PairSlotAppl[Appl=appl],childName &&  
-              (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
-              TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
-              constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
-              newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
-              break matchSlot;
+      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {
+
+        %match(slots) { 
+          concSlot(_*,slot,_*) -> {
+matchSlot:  %match(slot, TomName name) {
+              ps@PairSlotAppl[Appl=appl],childName &&  
+                (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
+                  TomTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
+                  constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
+                  newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
+                  break matchSlot;
+                }
+              // else we just add the slot back to the list
+              x,_ -> {
+                newSlots = `concSlot(newSlots*,x);
+              }
             }
-            // else we just add the slot back to the list
-            x,_ -> {
-              newSlots = `concSlot(newSlots*,x);
-            }
-          }            
+          }
         }
-      }  
-      return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g),constraintList*);   
+        return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g),constraintList*);   
+      }
     }
-   }
     // never gets here
     throw new TomRuntimeException("GeneralPurposePropagator:detachSublists - unexpected result");
   }
-  
-  
-  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm, value:TomTerm) extends `Identity() {
+
+  /*
+   * x << s -> fresh << s ^ fresh==x
+   */
+  %strategy ReplaceMatchConstraint(varName:TomName,gpp:GeneralPurposePropagator) extends Identity() {
     visit Constraint {
-      // we can have the same variable both as variablestar and as variable
+      // we can have the same variable both as variableStar and as variable
       // we know that this is ok, because the type checker authorized it
-      MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) && name << TomName varName -> {        
-        TomTerm freshVar = `v.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
-        return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
+      MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
+        TomTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
+        return `AndConstraint(MatchConstraint(freshVar,subject),MatchConstraint(TestVar(freshVar),var));
       }
     }
   }

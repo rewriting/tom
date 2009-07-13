@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -30,17 +30,18 @@
 package tom.library.bytecode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 public class ToolBox {
+
   %include { ../mapping/java/sl.tom }
-  %include { adt/bytecode/Bytecode.tom }
+  %include { ../adt/bytecode/Bytecode.tom }
 
   private final static int[] accessFlags = {
     Opcodes.ACC_ABSTRACT,
@@ -63,7 +64,8 @@ public class ToolBox {
     Opcodes.ACC_VARARGS,
     Opcodes.ACC_VOLATILE
   };
-  private final static TAccess[] accessObj = {
+
+  private final static Access[] accessObj = {
     `ABSTRACT(),
     `ANNOTATION(),
     `BRIDGE(),
@@ -85,9 +87,9 @@ public class ToolBox {
     `VOLATILE()
   };
 
-  public static TAccessList buildTAccess(int access) {
-    TAccessList list = `AccessList();
-    
+  public static AccessList buildAccess(int access) {
+    AccessList list = `AccessList();
+
     for(int i = 0; i < accessFlags.length; i++) {
       if((access & accessFlags[i]) != 0)
         list = `ConsAccessList(accessObj[i], list);
@@ -97,30 +99,30 @@ public class ToolBox {
   }
 
 
-  public static int buildAccessValue(TAccessList list){
+  public static int buildAccessValue(AccessList list){
     int value =0;
-    HashMap map = new HashMap();
+    HashMap<Access,Integer> map = new HashMap<Access,Integer>();
     for(int i =0;i<accessObj.length;i++){
-      map.put(accessObj[i],new Integer(accessFlags[i]));
+      map.put(accessObj[i],accessFlags[i]);
     }
 
-    %match(TAccessList list){
+    %match(list){
       AccessList(_*,acc,_*)->{
-        value = value | ((Integer)map.get(`acc)).intValue();
+        value = value | (map.get(`acc)).intValue();
       }
     }
     return value;   
   }
 
-  public static String buildSignature(TSignature signature){
+  public static String buildSignature(Signature signature){
     String sig = null;
-    %match(TSignature signature){
+    %match(signature){
       Signature(s) -> {sig=`s;}
     }
     return sig;
   }
 
-  public static TValue buildTValue(Object v) {
+  public static Value buildValue(Object v) {
     if(v instanceof String)
       return `StringValue((String)v);
     else if(v instanceof Integer)
@@ -135,19 +137,19 @@ public class ToolBox {
     return null;
   }
 
-  public static Object buildConstant(TValue value) {
-      %match(TValue value){
-        StringValue(v) -> { return `v;}
-        IntValue(v) -> {return new Integer(`v);}
-        LongValue(v) -> {return new Long(`v);}
-        FloatValue(v) -> {return new Float(`v);}
-        DoubleValue(v) -> {return new Double(`v);}
-      }
-      return null;
+  public static Object buildConstant(Value value) {
+    %match(value){
+      StringValue(v) -> { return `v;}
+      IntValue(v) -> {return new Integer(`v);}
+      LongValue(v) -> {return new Long(`v);}
+      FloatValue(v) -> {return new Float(`v);}
+      DoubleValue(v) -> {return new Double(`v);}
+    }
+    return null;
   }
 
-  public static TStringList buildTStringList(String[] array) {
-    TStringList list = `StringList();
+  public static StringList buildStringList(String[] array) {
+    StringList list = `StringList();
     if(array != null) {
       for(int i = array.length - 1; i >= 0; i--)
         list = `ConsStringList(array[i], list);
@@ -156,70 +158,58 @@ public class ToolBox {
     return list;
   }
 
-  public static TintList buildTintList(int[] array) {
-    TintList list = `intList();
+  public static IntList buildIntList(int[] array) {
+    IntList list = `IntList();
     if(array != null) {
       for(int i = array.length - 1; i >= 0; i--) {
-        list = `ConsintList(array[i], list);
+        list = `ConsIntList(array[i], list);
       }
     }
 
     return list;
   }
 
-  public static TType buildTType(String type) {
+  public static TypeNode buildType(String type) {
     int t = Type.getType(type).getSort();
-    TType ret = null;
     switch(t) {
       case Type.ARRAY:
-        ret = `ARRAY();
-        break;
+        return `ARRAY();
       case Type.BOOLEAN:
-        ret = `BOOLEAN();
-        break;
+        return `BOOLEAN();
       case Type.BYTE:
-        ret = `BYTE();
-        break;
+        return `BYTE();
       case Type.CHAR:
-        ret = `CHAR();
-        break;
+        return `CHAR();
       case Type.DOUBLE:
-        ret = `DOUBLE();
-        break;
+        return `DOUBLE();
       case Type.FLOAT:
-        ret = `FLOAT();
-        break;
+        return `FLOAT();
       case Type.INT:
-        ret = `INT();
-        break;
+        return `INT();
       case Type.LONG:
-        ret = `LONG();
-        break;
+        return `LONG();
       case Type.OBJECT:
-        ret = `OBJECT();
-        break;
+        return `OBJECT();
       case Type.SHORT:
-        ret = `SHORT();
-        break;
+        return `SHORT();
       case Type.VOID:
-        ret = `VOID();
-        break;
+        return `VOID();
+      default:
+        throw new RuntimeException("Unsupported Type :"+t);
     }
-
-    return ret;
   }
 
   private static class Counter { public int count = 0; }
-  public static TFieldDescriptor buildTFieldDescriptor(String desc) {
+  public static FieldDescriptor buildFieldDescriptor(String desc) {
     Counter count = new Counter();
-    TFieldDescriptor fDesc = buildTFieldDescriptorFrom(desc, count);
+    FieldDescriptor fDesc = buildFieldDescriptorFrom(desc, count);
     if(count.count != desc.length())
       System.err.println("Malformed descriptor : " + desc);
     return fDesc;
   }
 
-  private static TFieldDescriptor buildTFieldDescriptorFrom(String desc, Counter count) {
-    TFieldDescriptor fDesc = null;
+  private static FieldDescriptor buildFieldDescriptorFrom(String desc, Counter count) {
+    FieldDescriptor fDesc = null;
     switch(desc.charAt(count.count)) {
       case 'L':
         count.count++;
@@ -232,7 +222,7 @@ public class ToolBox {
         break;
       case '[':
         count.count++;
-        fDesc = `ArrayType(buildTFieldDescriptorFrom(desc, count));
+        fDesc = `ArrayType(buildFieldDescriptorFrom(desc, count));
         break;
       case 'B':
         count.count++;
@@ -272,25 +262,25 @@ public class ToolBox {
     return fDesc;
   }
 
-  public static TReturnDescriptor buildTReturnDescriptor(String desc) {
+  public static ReturnDescriptor buildReturnDescriptor(String desc) {
     if(desc.charAt(0) == 'V' && desc.length() == 1)
       return `Void();
-    return `ReturnDescriptor(buildTFieldDescriptor(desc));
+    return `ReturnDescriptor(buildFieldDescriptor(desc));
   }
 
-  public static TMethodDescriptor buildTMethodDescriptor(String desc) {
+  public static MethodDescriptor buildMethodDescriptor(String desc) {
     int endParam = desc.indexOf(')', 1);
     if(desc.charAt(0) != '(' || endParam == -1)
       System.err.println("Malformed descriptor : " + desc);
 
-    TFieldDescriptorList fList = `FieldDescriptorList();
+    FieldDescriptorList fList = `FieldDescriptorList();
     Counter count = new Counter();
     count.count++;
     while(count.count < endParam)
-      fList = `FieldDescriptorList(fList*, buildTFieldDescriptorFrom(desc, count));
+      fList = `FieldDescriptorList(fList*, buildFieldDescriptorFrom(desc, count));
     if(count.count != endParam)
       System.err.println("Malformed descriptor : " + desc);
-    TReturnDescriptor ret = buildTReturnDescriptor(desc.substring(count.count + 1));
+    ReturnDescriptor ret = buildReturnDescriptor(desc.substring(count.count + 1));
     return `MethodDescriptor(fList, ret);
   }
 
@@ -298,8 +288,9 @@ public class ToolBox {
     implement { StringBuilder }
     is_sort(t) { ($t instanceof StringBuilder) }
   }
+
   %strategy BuildDescriptor(sb:StringBuilder) extends Identity() {
-    visit TFieldDescriptor {
+    visit FieldDescriptor {
       ObjectType(className) -> { sb.append("L" + `className + ";"); }
       ArrayType[] -> { sb.append('['); }
       B() -> { sb.append('B'); }
@@ -312,29 +303,31 @@ public class ToolBox {
       Z() -> { sb.append('Z'); }
     }
 
-    visit TMethodDescriptor {
+    visit MethodDescriptor {
       _ -> { sb.append('('); }
     }
 
-    visit TReturnDescriptor {
+    visit ReturnDescriptor {
       _ -> { sb.append(')'); }
       Void() -> { sb.append('V'); }
     }
   }
 
-  public static String buildDescriptor(TFieldDescriptor desc) {
+  public static String buildDescriptor(FieldDescriptor desc) {
     StringBuilder sb = new StringBuilder();
     try {
       `TopDown(BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
-  public static String buildDescriptor(TMethodDescriptor desc) {
+
+  public static String buildDescriptor(MethodDescriptor desc) {
     StringBuilder sb = new StringBuilder();
     try {
       `TopDown(BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
-}
+
+ }
 

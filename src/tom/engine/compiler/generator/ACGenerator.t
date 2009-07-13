@@ -53,16 +53,31 @@ public class ACGenerator implements IBaseGenerator {
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
+  %typeterm ACGenerator {
+    implement { ACGenerator }
+    is_sort(t) { ($t instanceof ACGenerator) }
+  }
+
+  private Compiler compiler; 
+  
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+
+  public ACGenerator(Compiler compiler) {
+    this.compiler = compiler;
+  }
+ 
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDown(Generator()).visitLight(expression);
+    return `TopDown(Generator(this)).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy Generator() extends Identity() {
+  %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
       
-      ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
-        if(TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { 
+      ce@ConstraintToExpression(ACMatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
+        if(TomBase.isACOperator(acg.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) { 
           // TODO - generate all the functions
           return `ACMatchLoop(pattern, subject);
         }

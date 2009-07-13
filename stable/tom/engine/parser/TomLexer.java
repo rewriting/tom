@@ -4,7 +4,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ public TomLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("make_append", this), new Integer(57));
 	literals.put(new ANTLRHashString("make_insert", this), new Integer(56));
 	literals.put(new ANTLRHashString("is_empty", this), new Integer(48));
-	literals.put(new ANTLRHashString("extends", this), new Integer(28));
+	literals.put(new ANTLRHashString("extends", this), new Integer(22));
 	literals.put(new ANTLRHashString("get_element", this), new Integer(49));
 	literals.put(new ANTLRHashString("equals", this), new Integer(44));
 	literals.put(new ANTLRHashString("if", this), new Integer(59));
@@ -1488,6 +1488,11 @@ inputState.guessing--;
 					match('_');
 					break;
 				}
+				case '.':
+				{
+					match('.');
+					break;
+				}
 				default:
 				{
 					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
@@ -1963,17 +1968,17 @@ inputState.guessing--;
 		}
 		}
 		{
-		int _cnt339=0;
-		_loop339:
+		int _cnt338=0;
+		_loop338:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				matchRange('0','9');
 			}
 			else {
-				if ( _cnt339>=1 ) { break _loop339; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt338>=1 ) { break _loop338; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt339++;
+			_cnt338++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -2034,19 +2039,6 @@ inputState.guessing--;
 		_returnToken = _token;
 	}
 	
-	protected final void mQUOTE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = QUOTE;
-		int _saveIndex;
-		
-		match('\'');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[2048];
@@ -2092,14 +2084,14 @@ inputState.guessing--;
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
 	private static final long[] mk_tokenSet_6() {
 		long[] data = new long[1025];
-		data[0]=287984085547089920L;
+		data[0]=288054454291267584L;
 		data[1]=576460745995190270L;
 		return data;
 	}
 	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 	private static final long[] mk_tokenSet_7() {
 		long[] data = new long[1025];
-		data[0]=287948901175001088L;
+		data[0]=288019269919178752L;
 		data[1]=576460745995190270L;
 		return data;
 	}

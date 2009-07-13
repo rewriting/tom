@@ -81,6 +81,15 @@
         altName='tg'
         description='Extend the signature for term-graphs' 
         value='false'/> 
+      <boolean name='fresh' 
+        altName='f'
+        description='Extend the signature to deal with terms with binders' 
+        value='false'/> 
+      <boolean name='termgraph' 
+        altName='tg'
+        description='Extend the signature for term-graphs' 
+        value='false'/> 
+
       <boolean name='debug'
         altName='vv'
         description='Display debugging info'

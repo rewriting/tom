@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,22 +33,22 @@ package tom.library.sl;
 /**
  * <code>AllSeq(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
  * <p>
- * Basic visitor combinator with one visitor argument, that applies
- * this visitor to all children.
+ * Strategy combinator with one argument, that applies
+ * this argument to all children.
  */
 
-public class AllSeq extends AbstractStrategy {
+public class AllSeq extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public AllSeq(Strategy v) {
     initSubterm(v);
   }
 
-  public final Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public final <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int childCount = introspector.getChildCount(any);
-    Object result = any;
+    T result = any;
     for (int i = 0; i < childCount; i++) {
-      Object newChild = visitors[ARG].visitLight(introspector.getChildAt(result,i),introspector);
+      Object newChild = arguments[ARG].visitLight(introspector.getChildAt(result,i),introspector);
       result = introspector.setChildAt(result, i, newChild);
     }
     return result;
@@ -58,7 +58,7 @@ public class AllSeq extends AbstractStrategy {
     int childCount = introspector.getChildCount(environment.getSubject());
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.up();
         return status;

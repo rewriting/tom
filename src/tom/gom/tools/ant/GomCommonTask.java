@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,9 @@ package tom.gom.tools.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+
+import java.util.List;
+import java.util.ArrayList;
 
 import tom.engine.tools.ant.TomRegexpPatternMapper;
 import org.apache.tools.ant.BuildException;
@@ -55,6 +57,9 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>withCongruenceStrategies</li>
+ * <li>withSeparateCongruenceStrategies</li>
+ * <li>fresh</li>
  * <li>multithread</li>
  * <li>nosharing</li>
  * <li></li>
@@ -79,6 +84,9 @@ public class GomCommonTask extends MatchingTask {
   protected boolean fork = false;
   protected boolean termpointer = false;
   protected boolean termgraph = false;
+  protected boolean withCongruenceStrategies = false;
+  protected boolean withSeparateCongruenceStrategies = false;
+  protected boolean fresh = false;
   protected boolean multithread = false;
   protected boolean nosharing = false;
 
@@ -171,6 +179,54 @@ public class GomCommonTask extends MatchingTask {
   }
 
   /**
+   * If true, generates congruence strategies
+   * @param withCongruenceStrategies if true, generates congruence strategies
+   */
+  public void setWithCongruenceStrategies(boolean flag) {
+    this.withCongruenceStrategies = flag;
+  }
+
+  /**
+   * Gets the withCongruenceStrategies flag.
+   * @return the withCongruenceStrategies flag
+   */
+  public boolean getWithCongruenceStrategies() {
+    return withCongruenceStrategies;
+  }
+
+  /**
+   * If true, generates congruence strategies
+   * @param withSeparateCongruenceStrategies if true, generates congruence strategies
+   */
+  public void setWithSeparateCongruenceStrategies(boolean flag) {
+    this.withSeparateCongruenceStrategies = flag;
+  }
+
+  /**
+   * Gets the withSeparateCongruenceStrategies flag.
+   * @return the withSeparateCongruenceStrategies flag
+   */
+  public boolean getWithSeparateCongruenceStrategies() {
+    return withSeparateCongruenceStrategies;
+  }
+
+  /**
+   * If true, asks the compiler for Gom signature with binders.
+   * @param fresh if true, asks the compiler for Gom signature with pointers
+   */
+  public void setFresh(boolean fresh) {
+    this.fresh = fresh;
+  }
+
+  /**
+   * Gets the fresh flag.
+   * @return the fresh flag
+   */
+  public boolean getFresh() {
+    return fresh;
+  }
+
+  /**
    * If true, Gom generate data-structure compatible with multi-threading
    * @param flag if true, activate the option
    */
@@ -187,7 +243,7 @@ public class GomCommonTask extends MatchingTask {
   }
 
   /**
-   * If true, Gom generate data-structure compatible with no sharing 
+   * If true, Gom generate data-structure compatible with no sharing
    * @param flag if true, activate the option
    */
   public void setNosharing(boolean flag) {
@@ -232,17 +288,16 @@ public class GomCommonTask extends MatchingTask {
    */
   String[] split(String str) {
     try {
-      String res[] = new String[0];
       int begin = 0;
       int end = 0;
-      Vector list = new Vector();
+      List<String> list = new ArrayList<String>();
       while(end < str.length()) {
         while(end < str.length() && str.charAt(end) != ' ')
           end++;
         list.add(str.substring(begin, end));
         begin = ++end;
       }
-      return (String[])list.toArray(res);
+      return list.toArray(new String[0]);
     } catch(Exception x) {
       return new String[0];
     }
@@ -352,20 +407,29 @@ public class GomCommonTask extends MatchingTask {
         javaRunner.createArg().setValue("--destdir");
         javaRunner.createArg().setFile(getDestdir());
       }
-      if(getVerbose() == true) {
+      if(getVerbose()) {
         javaRunner.createArg().setValue("--verbose");
       }
-      if(getTermgraph() == true) {
+      if(getTermgraph()) {
         javaRunner.createArg().setValue("--termgraph");
       }
-      if(getMultithread() == true) {
+      if(getFresh()) {
+        javaRunner.createArg().setValue("--fresh");
+      }
+      if(getMultithread()) {
         javaRunner.createArg().setValue("--multithread");
       }
-      if(getNosharing() == true) {
+      if(getNosharing()) {
         javaRunner.createArg().setValue("--nosharing");
       }
-      if(getTermpointer() == true) {
+      if(getTermpointer()) {
         javaRunner.createArg().setValue("--termpointer");
+      }
+      if(getWithCongruenceStrategies()) {
+        javaRunner.createArg().setValue("--withCongruenceStrategies");
+      }
+      if(getWithSeparateCongruenceStrategies()) {
+        javaRunner.createArg().setValue("--withSeparateCongruenceStrategies");
       }
       processAdditionalOptions(javaRunner);
 
@@ -398,7 +462,7 @@ public class GomCommonTask extends MatchingTask {
     if (cl.length == 0) {
       return;
     }
-    String output = "Compiling :";
+    String output = "Compiling:";
     for (int i = 0; i<cl.length; i++) {
       output = output + " " + cl[i].getAbsolutePath();
     }

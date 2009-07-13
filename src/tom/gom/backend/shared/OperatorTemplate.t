@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName extendsType;
   ClassName sortName;
   SlotFieldList slotList;
+  String comments;
   boolean multithread;
   boolean maximalsharing;
 
@@ -51,24 +52,31 @@ public class OperatorTemplate extends TemplateHookedClass {
                           GomClass gomClass,
                           TemplateClass mapping,
                           boolean multithread,
-                          boolean maximalsharing) {
-    super(gomClass,manager,tomHomePath,importList,mapping);
+                          boolean maximalsharing,
+                          GomEnvironment gomEnvironment) {
+    super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.multithread = multithread;
     this.maximalsharing = maximalsharing;
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
                     SortName=sortName,
-                    SlotFields=slots] -> {
+                    SlotFields=slots,
+                    Comments=comments] -> {
         this.abstractType = `abstractType;
-        this.extendsType = `extendsType;;
+        this.extendsType = `extendsType;
         this.sortName = `sortName;
         this.slotList = `slots;
+        this.comments = `comments;
         return;
       }
     }
     throw new GomRuntimeException(
         "Bad argument for OperatorTemplate: " + gomClass);
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -82,6 +90,7 @@ package @getPackage()@;
 if (maximalsharing) {
   writer.write(
 %[
+@generateComments()@
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
   @generateBlock()@
   private static String symbolName = "@className()@";
@@ -106,6 +115,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 } else {
   writer.write(
 %[
+@generateComments()@
 public final class @className()@ extends @fullClassName(extendsType)@ implements Cloneable, tom.library.sl.Visitable @generateInterface()@ {
   @generateBlock()@
   private static String symbolName = "@className()@";
@@ -123,7 +133,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   ]%);
 }
 
-  if (!hooks.isEmptyConcHook()) {
+  if (hooks.containsTomCode()) {
     mapping.generate(writer); 
   }
   generateMembers(writer);
@@ -134,15 +144,31 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
   }
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    if (!comments.equals("")) {
+      writer.write(%[
+  @generateComments()@
+        ]%);
+    } else {
     writer.write(%[
-    /* static constructor */
+  /**
+   * Constructor that builds a term rooted by @className()@
+   *
+   * @@return a term rooted by @className()@
+   */
 ]%);
+    }
 generateConstructor(writer);
 
 if(slotList.length()>0) {
 
 if (maximalsharing) {
 writer.write(%[
+  /**
+   * Initializes attributes and hashcode of the class
+   * 
+   * @@param @childListOnePerLine(slotList)@
+   * @@param hashCode hashCode of @className()@
+   */
   private void init(@childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @int hashCode) {
 ]%);
 generateMembersInit(writer);
@@ -150,22 +176,38 @@ writer.write(%[
     this.hashCode = hashCode;
   }
 
+  /**
+   * Initializes attributes and hashcode of the class
+   * 
+   * @@param @childListOnePerLine(slotList)@
+   */
   private void initHashCode(@childListWithType(slotList)@) {
 ]%);
 generateMembersInit(writer);
 writer.write(%[
-  this.hashCode = hashFunction();
+    this.hashCode = hashFunction();
   }
 ]%);
 }
 
 writer.write(%[
   /* name and arity */
+
+  /** 
+   * Returns the name of the symbol
+   * 
+   * @@return the name of the symbol
+   */
   @@Override
   public String symbolName() {
     return "@className()@";
   }
 
+  /** 
+   * Returns the arity of the symbol
+   * 
+   * @@return the arity of the symbol
+   */
   private int getArity() {
     return @slotList.length()@;
   }
@@ -173,6 +215,12 @@ writer.write(%[
 
 
 if (maximalsharing) {
+  writer.write(%[
+  /** 
+   * Copy the object and returns the copy
+   * 
+   * @@return a clone of the SharedObject
+   */]%);
 if(multithread) {
   writer.write(%[
   public shared.SharedObject duplicate() {
@@ -195,11 +243,22 @@ if(multithread) {
     // case: constant
 writer.write(%[
   /* name and arity */
+  
+  /** 
+   * Returns the name of the symbol
+   * 
+   * @@return the name of the symbol
+   */
   @@Override
   public String symbolName() {
     return "@className()@";
   }
 
+  /** 
+   * Returns the arity of the symbol
+   * 
+   * @@return arity of the symbol 
+   */
   private static int getArity() {
     return 0;
   }
@@ -208,6 +267,11 @@ writer.write(%[
 
 if (maximalsharing) {
 writer.write(%[
+  /** 
+   * Copy the object and returns the copy
+   * 
+   * @@return a clone of the SharedObject
+   */
   public shared.SharedObject duplicate() {
     // the proto is a constant object: no need to clone it
     return this;
@@ -223,6 +287,11 @@ writer.write(%[
    */
   if (sortName == extendsType) {
 writer.write(%[
+  /**
+   * Appends a string representation of this term to the buffer given as argument.
+   *
+   * @@param buffer the buffer to which a string represention of this term is appended.
+   */
   @@Override
   public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
@@ -235,8 +304,14 @@ writer.write(%[
 writer.write(%[
 
   /**
-    * This method implements a lexicographic order
-    */
+   * Compares two terms. This functions implements a total lexicographic path ordering.
+   * 
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareToLPO(Object o) {
     /*
@@ -260,6 +335,15 @@ writer.write(%[
 
 if (maximalsharing) {
 writer.write(%[
+ /**
+   * Compares two terms. This functions implements a total order.
+   *
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareTo(Object o) {
     /*
@@ -286,11 +370,22 @@ writer.write(%[
   }
 
  //shared.SharedObject
+  /** 
+   * Returns hashCode
+   * 
+   * @@return hashCode
+   */
   @@Override
   public final int hashCode() {
     return hashCode;
   }
 
+  /** 
+   * Checks if a SharedObject is equivalent to the current object
+   * 
+   * @@param obj SharedObject to test
+   * @@return true if obj is a @className()@ and its members are equal, else false
+   */
   public final boolean equivalent(shared.SharedObject obj) {
     if(obj instanceof @className()@) {
 @generateMembersEqualityTest("peer")@
@@ -302,11 +397,25 @@ writer.write(%[
 } else {
   //XXX: compareTo must be correctly implemented
 writer.write(%[
+  /**
+   * Compares two terms. This functions implements a total order.
+   *
+   * @@param o object to which this term is compared
+   * @@return a negative integer, zero, or a positive integer as this
+   *         term is less than, equal to, or greater than the argument
+   * @@throws ClassCastException in case of invalid arguments
+   * @@throws RuntimeException if unable to compare childs
+   */
   @@Override
   public int compareTo(Object o) {
     throw new UnsupportedOperationException("Unable to compare"); 
   }
 
+  /** 
+   * Clones the object
+   * 
+   * @@return the copy
+   */
   @@Override
   public Object clone() {
 ]%);
@@ -322,7 +431,7 @@ if(slots.isEmptyConcSlotField()) {
 SlotField head = slots.getHeadConcSlotField();
 slots = slots.getTailConcSlotField();
 
-if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
   writer.write(%[
       return new @className()@(@getMethod(head)@()]%);
 
@@ -334,7 +443,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 while(!slots.isEmptyConcSlotField()) {
   head = slots.getHeadConcSlotField();
   slots = slots.getTailConcSlotField();
-  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
    writer.write(%[,@getMethod(head)@()]%);
   } else {
   writer.write(%[,(@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
@@ -344,6 +453,12 @@ writer.write(");\n}");
 }
 
 writer.write(%[
+  /** 
+   * Checks if an object is strictly equal to the current object
+   * 
+   * @@param o object to compare
+   * @@return true if each member is equal, else false
+   */
   @@Override
   public final boolean deepEquals(Object o) {
     if (o instanceof @className()@) {
@@ -358,7 +473,7 @@ if(slots.isEmptyConcSlotField()) {
 } else {
 SlotField head = slots.getHeadConcSlotField();
 slots = slots.getTailConcSlotField();
-if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
   writer.write(%[
       return @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
       ]%);
@@ -372,7 +487,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 while(!slots.isEmptyConcSlotField()) {
   head = slots.getHeadConcSlotField();
   slots = slots.getTailConcSlotField();
-  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  if (getGomEnvironment().isBuiltinClass(head.getDomain())) {
     writer.write(%[
         && @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
         ]%);
@@ -394,6 +509,11 @@ writer.write(%[
 
 writer.write(%[
    //@className(sortName)@ interface
+  /** 
+   * Returns true if the term is rooted by the symbol @className.getName()@
+   *
+   * @@return true, because this is rooted by @className.getName()@
+   */
   @@Override
   public boolean @isOperatorMethod(className)@() {
     return true;
@@ -404,41 +524,79 @@ generateGetters(writer);
 
     writer.write(%[
   /* AbstractType */
+  /** 
+   * Returns an ATerm representation of this term.
+   * 
+   * @@return an ATerm representation of this term.
+   */
   @@Override
   public aterm.ATerm toATerm() {
+    aterm.ATerm res = super.toATerm();
+    if(res != null) {
+      // the super class has produced an ATerm (may be a variadic operator)
+      return res;
+    }
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
-  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
+  /** 
+   * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
+   * 
+   * @@param trm ATerm to convert into a Gom term
+   * @@param atConv ATerm Converter used to convert the ATerm
+   * @@return the Gom term
+   */
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
+    trm = atConv.convert(trm);
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(symbolName.equals(appl.getName())) {
+      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {
         return make(
-@generatefromATermChilds("appl")@
+@generatefromATermChilds("appl","atConv")@
         );
       }
     }
     return null;
   }
-
 ]%);
-
 
     writer.write(%[
   /* Visitable */
+  /** 
+   * Returns the number of childs of the term
+   * 
+   * @@return the number of childs of the term
+   */
   public int getChildCount() {
     return @visitableCount()@;
   }
 
+  /** 
+   * Returns the child at the specified index
+   * 
+   * @@param index index of the child to return; must be
+             nonnegative and less than the childCount
+   * @@return the child at the specified index
+   * @@throws IndexOutOfBoundsException if the index out of range
+   */
   public tom.library.sl.Visitable getChildAt(int index) {
     switch(index) {
 @getCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
-
+  
+  /** 
+   * Set the child at the specified index
+   * 
+   * @@param index index of the child to set; must be 
+             nonnegative and less than the childCount
+   * @@param v child to set at the specified index
+   * @@return the child which was just set
+   * @@throws IndexOutOfBoundsException if the index out of range
+   */
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
     switch(index) {
 @makeCases("v")@
@@ -446,22 +604,41 @@ generateGetters(writer);
     }
   }
 
+  /** 
+   * Set children to the term
+   * 
+   * @@param childs array of children to set
+   * @@return an array of children which just were set
+   * @@throws IndexOutOfBoundsException if length of "childs" is different than @slotList.length()@
+   */
+  @@SuppressWarnings("unchecked")
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
-    if (childs.length == @slotList.length()@) {
+    if (childs.length == @slotList.length()@ @arrayCheck("childs")@) {
       return @arrayMake("childs")@;
     } else {
       throw new IndexOutOfBoundsException();
     }
   }
 
+  /** 
+   * Returns the whole children of the term
+   * 
+   * @@return the children of the term
+   */
   public tom.library.sl.Visitable[] getChildren() {
     return new tom.library.sl.Visitable[] { @visitableList(slotList)@ };
   }
 ]%);
 
-if (maximalsharing) {
+if(maximalsharing) {
+  // OLD VERSION
     writer.write(%[
-    /* internal use */
+    /**
+     * Compute a hashcode for this term.  
+     * (for internal use)
+     *
+     * @@return a hash value
+     */
   protected@((slotList.length()==0)?" static":"")@ int hashFunction() {
     int a, b, c;
     /* Set up the internal state */
@@ -488,10 +665,60 @@ writer.write(%[
 ]%);
 }
 
+if(false && maximalsharing) {
+  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c 
+  // seems to be a bit slower than the OLD version
+  int length = slotList.length();
+    writer.write(%[
+    /**
+     * Compute a hashcode for this term.  
+     * (for internal use)
+     *
+     * @@return a hash value
+     */
+  protected@((length==0)?" static":"")@ int hashFunction() {
+    int a, b, c;
+    /* Set up the internal state */
+    a = b = c = 
+    0xdeadbeef + (getArity()<<2) + 
+    (@shared.HashFunctions.stringHashFunction(fullClassName(),length)@<<8);
+    /* -------------------------------------- handle most of the key */
+    /* ------------------------------------ handle the last 11 bytes */
+]%);
+generateHashArgsLookup3(writer);
+  if(length>0 && (length%3)>0 ) {
+writer.write(%[
+    // final(a,b,c)
+    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14)))); 
+    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11)))); 
+    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25)))); 
+    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16)))); 
+    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));  
+    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14)))); 
+    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24)))); 
+]%);
+  }
+
+writer.write(%[
+    /* ------------------------------------------- report the result */
+    return c;
+  }
+]%);
 }
 
+}
+
+  private String generateComments() {
+    if (!comments.equals("") && comments.contains("@param")) {
+      // "@param chaine " -> "@param _chaine "
+      return comments.replaceAll("@param ","@param _");
+    } else {
+      return comments;
+    }
+  }
+
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
         writer.write("  private ");
         writer.write(fullClassName(`domainClass));
@@ -503,13 +730,13 @@ writer.write(%[
   }
 
   private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         writer.write("    this.");
         writer.write(fieldName(`fieldName));
         writer.write(" = ");
         writer.write(fieldName(`fieldName));
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
+        if (getGomEnvironment().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
           writer.write(".intern()");
         }
         writer.write(";\n");
@@ -523,17 +750,29 @@ writer.write(%[
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
       writer.write(%[
+  /** 
+   * Returns the attribute @slotDomain(head)@
+   * 
+   * @@return the attribute @slotDomain(head)@
+   */
   @@Override
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getName())@;
   }
-  ]%);
+  
+  /**
+   * Sets and returns the attribute @fullClassName(sortName)@
+   * 
+   * @@param set_arg the argument to set
+   * @@return the attribute @slotDomain(head)@ which just has been set
+   */]%);
       if (maximalsharing) {
       writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
-  }]%);
+  }
+  ]%);
       } else {
       writer.write(%[
   @@Override
@@ -551,7 +790,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      if (res.length()!=0) {
+      if(res.length()!=0) {
         res.append(", ");
       }
       toATermSlotField(res,head);
@@ -559,7 +798,7 @@ writer.write(%[
     return res.toString();
   }
 
-  private String generatefromATermChilds(String appl) {
+  private String generatefromATermChilds(String appl, String atConv) {
     StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
@@ -569,7 +808,7 @@ writer.write(%[
       if (res.length()!=0) {
         res.append(", ");
       }
-      fromATermSlotField(res,head, appl+".getArgument("+index+")");
+      fromATermSlotField(res,head, appl+".getArgument("+index+")",atConv);
       index++;
     }
     return res.toString();
@@ -579,12 +818,24 @@ writer.write(%[
     return "_"+fieldName;
   }
 
+  /** 
+   * This method is used to generate a part of comments of init method
+   * 
+   * @param slots fields of the class being generated
+   * @return a String composed of one line per field
+   */
+  private String childListOnePerLine(SlotFieldList slots) {
+    String str = childList(slots);
+    return str.replaceAll(", ", "\n   * @param");
+  }
+
+
   private String childListWithType(SlotFieldList slots) {
     StringBuilder res = new StringBuilder();
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -602,7 +853,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -620,7 +871,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -637,7 +888,7 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
@@ -657,7 +908,7 @@ writer.write(%[
     }
     res.append(%[
       return ]%);
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName],_*) -> {
         res.append(fieldName(`fieldName));
         res.append("==");
@@ -674,9 +925,9 @@ writer.write(%[
   private String getCases() {
     StringBuilder res = new StringBuilder();
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append("      case ");
           res.append(index);
           res.append(": return ");
@@ -703,13 +954,13 @@ writer.write(%[
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      %match(SlotField head) {
+      %match(head) {
         SlotField[Domain=domain,Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
           res.append(" ");
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(fieldName(`name));
         } else {
           res.append("new tom.library.sl.VisitableBuiltin<");
@@ -736,10 +987,10 @@ writer.write(%[
   private String arrayMake(String arrayName) {
     StringBuilder res = new StringBuilder("make(");
     int index = 0;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
         if(index>0) { res.append(", "); }
-       if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
          res.append("(");
          res.append(fullClassName(`domain));
          res.append(") ");
@@ -763,6 +1014,22 @@ writer.write(%[
     res.append(")");
     return res.toString();
   }
+
+  private String arrayCheck(String arrayName) {
+    StringBuilder res = new StringBuilder();
+    int index = 0;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Domain=domain],_*) -> {
+       if (!getGomEnvironment().isBuiltinClass(`domain)) {
+         res.append(%[ && @arrayName@[@index@] instanceof @fullClassName(`domain)@]%);
+       } else {
+         res.append(%[ && @arrayName@[@index@] instanceof tom.library.sl.VisitableBuiltin]%);
+       }
+       index++;
+      }
+    }
+    return res.toString();
+  }
 private String makeCases(String argName) {
   StringBuilder res = new StringBuilder();
   int index = 0;
@@ -777,10 +1044,10 @@ private String makeCases(String argName) {
 private String generateMakeArgsFor(int argIndex, String argName) {
   StringBuilder res = new StringBuilder();
   int index = 0;
-  %match(SlotFieldList slotList) {
+  %match(slotList) {
     ConcSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
       if(index>0) { res.append(", "); }
-      if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+      if (getGomEnvironment().isBuiltinClass(`domain)) {
         res.append(getMethod(`slot));
         res.append("()");
       } else {
@@ -801,7 +1068,7 @@ private String generateMakeArgsFor(int argIndex, String argName) {
 private String generateMakeArgsFor(SlotField slot, String argName) {
   StringBuilder res = new StringBuilder();
   int fullindex = 0;
-  %match(SlotFieldList slotList) {
+  %match(slotList) {
     ConcSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
       if(fullindex>0) { res.append(", "); }
       if (`itslot == slot) {
@@ -839,9 +1106,9 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     if(!slotList.isEmptyConcSlotField()) {
     res.append(%[@className()@ @other@ = (@className()@) @oldOther@;]%);
     }
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (getGomEnvironment().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))
              || `domain.equals(`ClassName("","long"))
              || `domain.equals(`ClassName("","double"))
@@ -888,12 +1155,12 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
   private void generateHashArgs(java.io.Writer writer) throws java.io.IOException {
     int index = slotList.length() - 1;
-    %match(SlotFieldList slotList) {
+    %match(slotList) {
       ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         writer.write("    "+accum+" += (");
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
           writer.write(fieldName(`slotName)+".hashCode()");
         } else {
           if (`domain.equals(`ClassName("","int"))
@@ -927,13 +1194,69 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     }
   }
 
+  private void generateHashArgsLookup3(java.io.Writer writer) throws java.io.IOException {
+    int k=0;
+    int index = slotList.length() - 1;
+    %match(slotList) {
+      ConcSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
+        k++;
+        switch(k % 3) {
+          case 1: writer.write("    a += ("); break;
+          case 2: writer.write("    b += ("); break;
+          case 0: writer.write("    c += ("); break;
+          default:
+        }
+        if (!getGomEnvironment().isBuiltinClass(`domain)) {
+          writer.write(fieldName(`slotName)+".hashCode()");
+        } else {
+          if (`domain.equals(`ClassName("","int"))
+              || `domain.equals(`ClassName("","long"))
+              || `domain.equals(`ClassName("","float"))
+              || `domain.equals(`ClassName("","char"))) {
+            writer.write(fieldName(`slotName));
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            writer.write("("+fieldName(`slotName)+"?1:0)");
+          } else if (`domain.equals(`ClassName("","String"))) {
+            // Use the string hashFunction for Strings, and pass index as arity
+            writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
+          } else if (`domain.equals(`ClassName("","double"))) {
+            writer.write("(int)(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")^(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")>>>32");
+            writer.write("))");
+          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
+            // Use the string hashFunction for Strings, and pass index as arity
+            writer.write(fieldName(`slotName)+".hashCode()");
+          }  else {
+            throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
+          }
+        }
+        writer.write(");\n");
+        if(k % 3 == 0) {
+          writer.write(%[
+    // mix(a,b,c)
+    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b; 
+    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c; 
+    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a; 
+    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b; 
+    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c; 
+    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a; 
+]%);
+        }
+        index--;
+      }
+    }
+  }
+
   public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
     boolean hasHooks = false;
     %match(hooks) {
       /* If there is at least one MakeHook */
 lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       hasHooks = true;
-      writer.write(%[
+      writer.write(%[    
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
@@ -996,7 +1319,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         /* skip non Make hooks */
         return generateMakeHooks(`tail, oArgs, writer);
       }
-      ConcHook(MakeHook(args, code),tail*) -> {
+      ConcHook(MakeHook[HookArguments=args, Code=code],tail*) -> {
         /* Rename the previous arguments according to new, if needed */
         if(oArgs != null && oArgs != `args) {
           recVarNameRemap(oArgs,`args, writer);

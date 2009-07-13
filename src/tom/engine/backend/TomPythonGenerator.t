@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -70,18 +70,9 @@ public class TomPythonGenerator extends TomGenericGenerator {
   }
   */
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
-    output.write("=");
-    generateExpression(deep,exp,moduleName);
-    output.write(";\n");
-  } 
-  
-  protected void buildAssignArrayVar(int deep, TomTerm var, OptionList list, TomTerm index, 
-      Expression exp, String moduleName) throws IOException {    
-    //output.indent(deep);
-    generateArray(deep,var,index,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.write(";\n");
@@ -172,24 +163,13 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep,var,optionList,exp,moduleName);
+    buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
-  }
-  
-  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomType tlType, TomTerm index, 
-      Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignArrayVar(deep,var,optionList, index, exp, moduleName);
-    generateInstruction(deep,body,moduleName);
-  }
-
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep, var, list, exp, moduleName);
-    generateInstruction(deep,body, moduleName);
   }
 
   protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
@@ -302,7 +282,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              %match(TomTerm arg) {
+              %match(arg) {
                 Variable[AstName=Name(name), AstType=Type[TlType=TLType[]]] -> {
                   s.append(`name);
                   break matchBlock;
@@ -372,7 +352,7 @@ matchBlock: {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
 matchBlock: {
-              %match(TomTerm localVar) {
+              %match(localVar) {
                 v@Variable[] -> {
                   //output.write(deep,getTLType(`type2) + " ");
                   generate(deep,`v,moduleName);
@@ -395,10 +375,6 @@ matchBlock: {
     output.writeln(": ");
     generateInstruction(deep+1,instruction,moduleName);
     output.write(deep, "\n# end def " + tomName + "\n");
-  }
-
-  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
-    generate(deep,term,moduleName);
   }
 
   protected void genDecl(String returnType,
@@ -424,10 +400,4 @@ matchBlock: {
     s.append("\n # end def " + declName + "_" + suffix + "\n");
     output.write(s);
   }
-
-
-  protected void buildLetAssignArray(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, Instruction body, String moduleName) throws IOException { 
-    //TODO 
-  }
-
 }

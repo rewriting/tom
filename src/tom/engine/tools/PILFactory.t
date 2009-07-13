@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ public class PILFactory {
    */
   private int level = 0;
 
-  public PILFactory() {
+public PILFactory() {
     super();
     init(1);
   }
@@ -68,7 +68,7 @@ public class PILFactory {
     this.level = level;
   }
 
-  public tom.library.sl.Visitable remove(tom.library.sl.Visitable subject) {
+  public <T extends tom.library.sl.Visitable> T remove(T subject) {
     try {
       return `TopDown(replaceRemove()).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
@@ -79,7 +79,7 @@ public class PILFactory {
 
   public TomTerm remove(TomTerm subject) {
     try {
-      return (TomTerm) `TopDown(replaceRemove()).visitLight(subject);
+      return `TopDown(replaceRemove()).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -100,8 +100,8 @@ public class PILFactory {
     }
     visit Expression {
       // clean Expressions
-      Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
-      Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
+      Cast[Source=e] -> { return `TopDown(replaceRemove()).visitLight(`e); }
+      Or[Arg1=e,Arg2=FalseTL()] -> { return `TopDown(replaceRemove()).visitLight(`e); }
     }
   }
 
@@ -118,83 +118,74 @@ public class PILFactory {
   }
 
   public String prettyPrint(tom.library.sl.Visitable subject) {
-    %match(Instruction subject) {
+    %match(subject) {
       CompiledMatch(automata,_) -> { 
-	return prettyPrint(`automata); 
+        return prettyPrint(`automata); 
       }
 
       Let(variable,src,body) -> {
-	return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+        return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       LetRef(variable,src,body) -> {
-	return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
-      }
-
-      LetAssign(variable,src,body) -> {
-	return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
-      }
-
-      LetAssignArray(variable,index,value,body) -> {
-	return "letAssignArray " + prettyPrint(`variable) + "["+prettyPrint(`index)+"] = " + prettyPrint(`value) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
+        return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       Assign(variable,src) -> {
-	return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
+        return prettyPrint(`variable) + " := " + prettyPrint(`src);
       }
 
-
       DoWhile(doInst,condition) ->{
-	return "do\n\t " + prettyPrint(`doInst).replace("\n","\n\t") +"while "+ prettyPrint(`condition);
+        return "do\n\t " + prettyPrint(`doInst).replace("\n","\n\t") +"while "+ prettyPrint(`condition);
       }
 
       WhileDo(condition,doInst) ->{
-	return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replace("\n","\n\t");
+        return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replace("\n","\n\t");
       }
 
 
       If(cond,success,Nop()) -> {
-	return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t"); 
+        return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t"); 
       }
 
       If(cond,success,failure) -> {
-	return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replace("\n","\n\t")+"\n";
+        return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replace("\n","\n\t")+"\n";
       }
 
       AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
-	return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
+        return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
       }
 
       AbstractBlock(instList) -> {
-	return prettyPrint(`instList);
+        return prettyPrint(`instList);
       }
 
       UnamedBlock(instList) -> {
-	return prettyPrint(`instList);
+        return prettyPrint(`instList);
       }
 
       NamedBlock(name,instList) -> {
-	return `name + " : " + prettyPrint(`instList);
+        return `name + " : " + prettyPrint(`instList);
       }
 
 
       TypedAction(_,_,_) -> {
-	return "targetLanguageInstructions";
+        return "targetLanguageInstructions";
       }
 
       CompiledPattern(_,automata) -> { 
-	return prettyPrint(`automata); 
+        return prettyPrint(`automata); 
       }
 
     }
 
-    %match(Expression subject) {
+    %match(subject) {
       TomTermToExpression(astTerm) -> {
-	return prettyPrint(`astTerm);
+        return prettyPrint(`astTerm);
       }
 
-      IsSort[] -> {
-	return "isSort\n\t";
+      IsSort(type,var) -> {
+        return "isSort("+prettyPrint(`type)+","+prettyPrint(`var)+")";
       }
 
       IsFsym(name,term) -> {
@@ -202,73 +193,48 @@ public class PILFactory {
       }
 
       Negation(exp) -> {
-	return "not " + prettyPrint(`exp);
+        return "not " + prettyPrint(`exp);
       }
 
-       And(Arg1,Arg2) -> {
-         return prettyPrint(`Arg1) + " && " + prettyPrint(`Arg2) ;
-       }
-       
-       Or(Arg1,Arg2) -> {
-         return prettyPrint(`Arg1) + " || " + prettyPrint(`Arg2) ;
-       }
+      Or(exp1,exp2) -> {
+        return "("+prettyPrint(`exp1)+" || "+ prettyPrint(`exp2)+")"; 
+      }
 
       IsEmptyList[Variable=kid1] -> {
-	return "is_empty(" + prettyPrint(`kid1) + ")";
+        return "is_empty(" + prettyPrint(`kid1) + ")";
       }
 
       EqualTerm(_,kid1,kid2) -> {
-	return prettyPrint(`kid1) + "==" + prettyPrint(`kid2) + ")";
+        return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
       }
 
       GetSliceList(astName,variableBeginAST,variableEndAST,tail) -> {
-	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
+        return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
       }
 
       GetHead[Variable=variable] -> {
-	return "getHead("+prettyPrint(`variable)+")";
+        return "getHead("+prettyPrint(`variable)+")";
       }
 
       GetTail[Variable=variable] -> {
-	return "getTail("+prettyPrint(`variable)+")";
+        return "getTail("+prettyPrint(`variable)+")";
       }
 
       GetSlot(_,astName,slotNameString,variable) -> {
-	return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
-      }
-           
-      GetElement[Variable=variable,Index=index] -> {
-        return prettyPrint(`variable)+"["+prettyPrint(`index)+"]";
+        return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
       }
 
-      GetSize[Variable=variable] -> {
-        return "size("+prettyPrint(`variable)+")";
+      Conditional[Cond=Cond,Then=Then,Else=Else] -> {
+        return prettyPrint(`Cond)+"?"+prettyPrint(`Then)+":"+prettyPrint(`Else);
       }
 
-      GreaterOrEqualThan(e1, e2) -> {
-        return prettyPrint(`e1)+" >= "+prettyPrint(`e2);
-      }
-      GreaterThan(e1, e2) -> {
-        return prettyPrint(`e1)+" > "+prettyPrint(`e2);
-      }
-      LessOrEqualThan(e1, e2) -> {
-        return prettyPrint(`e1)+" <= "+prettyPrint(`e2);
-      }
-      LessThan(e1, e2) -> {
-        return prettyPrint(`e1)+" < "+prettyPrint(`e2);
-      }
-      Integer(i) -> {
-        return ""+`i;
-      }
-      AddOne(Variable) -> {
-        return prettyPrint(`Variable)+"+1";
-      }
-      SubstractOne(Variable) -> {
-        return prettyPrint(`Variable)+"-1";
-      }
     }
 
-    %match(TomTerm subject) {
+    %match(subject) {
+      ExpressionToTomTerm(term) -> {
+        return prettyPrint(`term);
+      }
+
       Variable(_,name,_,_) -> {
         return prettyPrint(`name);
       }
@@ -277,31 +243,12 @@ public class PILFactory {
         return prettyPrint(`name);
       }
 
-      Ref(term) -> {
-        return prettyPrint(`term);
-      }
-
       RecordAppl(_,nameList,_,_) ->{
         return prettyPrint(`nameList); 
       }
-      ExpressionToTomTerm(astTerm) -> {
-        return prettyPrint(`astTerm);
-      }
-      FunctionCall(AstName,AstType,Args) -> {
-        String s = "";
-        %match(Args) {
-          concTomTerm(_*,x,_*) -> {
-            s += ","+prettyPrint(`x);
-          }
-        }
-        return prettyPrint(`AstName)+"("+s.substring(1, s.length())+")";
-      }
-      BuildEmptyArray[AstName=name,Size=size] -> {
-        return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
-      }
     }
 
-    %match(TomName subject) {
+    %match(subject) {
       PositionName(number_list) -> {
         return "t"+ TomBase.tomNumberListToString(`number_list);
       }
@@ -311,7 +258,11 @@ public class PILFactory {
 
     }
 
-    %match(TomNumber subject) {
+    %match(subject) {
+      Type[TomType = ASTTomType(name)] -> { return `name; }
+    }
+
+    %match(subject) {
       Position(i) -> {
         return "" + `i;
       }
@@ -354,7 +305,7 @@ public class PILFactory {
 
   %strategy collectMatch(c:Collection) extends `Identity() {
     visit Instruction {
-      m@CompiledMatch[AutomataInst=_]  -> {
+      m@CompiledMatch[]  -> {
         c.add(`m);
       }
     }

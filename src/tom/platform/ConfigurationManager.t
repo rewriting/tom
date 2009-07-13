@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ public class ConfigurationManager {
   private String xmlConfigurationFileName;
 
   /** The plugins instance list*/
-  private List pluginsList;
+  private List<Plugin> pluginsList;
 
   /** The OptionManager */
   private OptionManager optionManager;
@@ -71,7 +71,7 @@ public class ConfigurationManager {
    */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
-    this.pluginsList = new ArrayList();
+    this.pluginsList = new ArrayList<Plugin>();
   }
   
   /**
@@ -104,12 +104,12 @@ public class ConfigurationManager {
   }
 
   /** Accessor method */
-  public List getPluginsList() {
+  public List<Plugin> getPluginsList() {
     return pluginsList;
   }
 
   /** Accessor method */
-  public OptionManager  getOptionManager() {
+  public OptionManager getOptionManager() {
     return optionManager;
   }
   
@@ -124,7 +124,7 @@ public class ConfigurationManager {
    * </ul>
    */
   private int createPlugins(TNode configurationNode) {
-    List pluginsClassList = extractClassPaths(configurationNode);
+    List<String> pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
       getLogger().log(Level.SEVERE, PluginPlatformMessage.noPluginFound.getMessage(), xmlConfigurationFileName);
@@ -132,13 +132,11 @@ public class ConfigurationManager {
       return 1;
     }
     // creates an instance of each plugin
-    Iterator classPathIt = pluginsClassList.iterator();
-    while(classPathIt.hasNext()) {
-      String pluginClass = (String)classPathIt.next();
+    for (String pluginClass : pluginsClassList) {
       try { 
         Object pluginInstance = Class.forName(pluginClass).newInstance();
         if(pluginInstance instanceof Plugin) {
-          pluginsList.add(pluginInstance);
+          pluginsList.add((Plugin)pluginInstance);
         } else {
           getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotAPlugin.getMessage(), pluginClass);
           pluginsList = null;
@@ -164,9 +162,9 @@ public class ConfigurationManager {
    * @param node the node containing the XML document
    * @return the List of plugins class path
    */
-  private List extractClassPaths(TNode node) {
-    List res = new ArrayList();
-    %match(TNode node) {
+  private List<String> extractClassPaths(TNode node) {
+    List<String> res = new ArrayList<String>();
+    %match(node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
          res.add(`cp);
          getLogger().log(Level.FINER, PluginPlatformMessage.classPathRead.getMessage(), `cp);
@@ -187,7 +185,7 @@ public class ConfigurationManager {
    * </ul>
    */
   private int createOptionManager(TNode node) {
-    %match(TNode node) {
+    %match(node) {
       <platform><optionmanager class=omclass><options>(globalOptions*)</options></optionmanager></platform> -> {
         try {
           Object omInstance = Class.forName(`omclass).newInstance();

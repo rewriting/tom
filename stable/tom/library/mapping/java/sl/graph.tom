@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -79,6 +79,11 @@
 %op Strategy AF(s:Strategy) {
   make(s) {`AU(Identity(),s) }
 }
+
+%op Strategy AG(s:Strategy) {
+  make(s) {`TopDown(s) }
+}
+
 
 %op Strategy EF(s:Strategy) {
   make(s) {`EU(Identity(),s) }

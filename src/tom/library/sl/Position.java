@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,51 +44,39 @@ public class Position implements Cloneable,Path {
 
   private int[] omega;
 
+  private static Position ROOT = null;
+
   /* construct the root position */
-  public Position(){
-    omega = new int[0];
-  }
+  private Position() {}
 
-  public Position(int[] omega){
-    setValue(omega);
-  }
-
-  public Position(Position p) {
-    setValue(p);
-  }
-
-  public Position(Position prefix, Position suffix){
-    int[] prefixArray = prefix.toArray();
-    int[] suffixArray = suffix.toArray();
-    omega = new int[suffixArray.length+prefixArray.length];
-    for( int i=0;i<prefixArray.length;i++){
-      omega[i]=prefixArray[i];
+  public static Position make() {
+    if(ROOT == null) {
+      int[] array = new int[0];
+      ROOT = makeFromArrayWithoutCopy(array);
     }
-    for( int i=0;i<suffixArray.length;i++){
-      omega[i+prefixArray.length]=suffixArray[i];
-    }
+    return ROOT;
   }
 
-  public int[] toArray(){
-    int[] copy  = new int[depth()];
-    System.arraycopy(omega, 0, copy, 0, depth());
-    return copy;
+  private static Position makeFromArrayWithoutCopy(int[] array) {
+    Position res = new Position();
+    res.omega=array;
+    return res;
   }
 
-  public void setValue(int[] omega){
-    this.omega = new int[omega.length];
-    System.arraycopy(omega, 0, this.omega, 0, omega.length);
+  public static Position makeFromSubarray(int[] src, int srcIndex, int length) {
+    int[] array = new int[length];
+    System.arraycopy(src, srcIndex, array, 0, length);
+    return makeFromArrayWithoutCopy(array);
   }
 
-  public void setValue(Position p) {
-    int size = p.length();
-    omega = new int[size];
-    for(int i=0;i<size;i++){
-      omega[i]= p.getHead();
-      p = (Position) p.getTail();
-    }
+  public static Position makeFromArray(int[] array) {
+    return makeFromSubarray(array,0,array.length);
   }
 
+  public static Position makeFromPath(Path p) {
+    return makeFromArrayWithoutCopy(p.toIntArray());
+  }
+  
   public Object clone() {
     Position clone = null;
     try {
@@ -96,40 +84,17 @@ public class Position implements Cloneable,Path {
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException("Position cloning error");
     }
-    clone.omega = new int[omega.length];
-    System.arraycopy(omega, 0, clone.omega, 0, depth());
+    clone.omega = new int[length()];
+    System.arraycopy(omega, 0, clone.omega, 0, length());
     return clone;
   }
 
   public int hashCode() {
     int hashCode = 0;
-    for(int i = 0; i < depth(); i++) {
+    for(int i = 0; i < length(); i++) {
       hashCode = hashCode * 31 + omega[i];
     }
     return hashCode;
-
-    /* Hash only the interesting part of the array */
-    /*
-    if (depth()==0) {
-      return 0;
-    } else {
-      int[] hashedData = new int[depth()];
-      System.arraycopy(omega,0,hashedData,0,depth());
-      StringBuilder r = new StringBuilder();
-      for(int i=0 ; i<depth() ; i++) {
-        r.append(omega[i]);
-      }
-      return Integer.parseInt(r.toString());
-    }
-    */
-  }
-
-  /**
-   * Get the depth of the position in the tree
-   * @return depth on the position
-   */
-  public int depth() {
-    return omega.length;
   }
 
   /**
@@ -140,29 +105,26 @@ public class Position implements Cloneable,Path {
       Position p1  = (Position) this.getCanonicalPath();
       Position p2  = (Position) ((Position)o).getCanonicalPath();
       /* we need to check only the meaningful part of the omega array */
-      if (p1.depth()==p2.depth()) {
-        for(int i=0; i<p1.depth(); i++) {
+      if (p1.length()==p2.length()) {
+        for (int i=0; i<p1.length(); i++) {
           if (p1.omega[i]!=p2.omega[i]) {
             return false;
           }
         }
         return true;
-      } else {
-        return false;
       }
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
    * Compares two positions
    */
   public int compare(Path path) {
-    Position p = Position.make(path);
+    Position p = Position.makeFromPath(path);
     /* we need to check only the meaningful part of the omega array */
-    for(int i=0; i<depth(); i++) {
-      if(i == p.depth() || omega[i]>p.omega[i]) {
+    for(int i=0; i<length(); i++) {
+      if(i == p.length() || omega[i]>p.omega[i]) {
         return 1;
       }
       else{
@@ -171,7 +133,7 @@ public class Position implements Cloneable,Path {
         }
       }
     }
-    return depth()==p.depth()?0:-1;
+    return length()==p.length()?0:-1;
   }
 
   /**
@@ -182,9 +144,9 @@ public class Position implements Cloneable,Path {
    */
   public String toString() {
     StringBuilder r = new StringBuilder("[");
-    for(int i=0 ; i<depth() ; i++) {
+    for(int i=0 ; i<length() ; i++) {
       r.append(omega[i]);
-      if(i<depth()-1) {
+      if(i<length()-1) {
         r.append(", ");
       }
     }
@@ -192,39 +154,38 @@ public class Position implements Cloneable,Path {
     return r.toString();
   }
 
-  public Path add(Path p){
-    if(p.length()>0) {
-      Path result = this.conc(p.getHead());
-      return result.add(p.getTail());
-    } else {
-      return (Path) clone();
+  /*
+   * implementation of the Path interface
+   */
+
+  public Path add(Path p) {
+    if(p.length()==0) {
+      return (Path)this.clone();
     }
+    int[] ap = p.toIntArray();
+    int[] merge = new int[length()+ap.length];
+    System.arraycopy(omega, 0, merge, 0, length());
+    System.arraycopy(ap, 0, merge, length(), ap.length);
+    return makeFromArrayWithoutCopy(merge);
   }
 
-  public Path sub(Path p){
-    return (make(p).inverse()).add(this);
+  public Path sub(Path p) {
+    return Position.makeFromPath(p).inverse().add(this);
   }
 
-  public Path inverse(){
-    int[] inverse = new int[omega.length];
-    for(int i=0;i<omega.length;i++){
-      inverse[omega.length-(i+1)]=-omega[i];
+  public Path inverse() {
+    int[] inverse = new int[length()];
+    for(int i=0;i<length();i++) {
+      inverse[length()-(i+1)]=-omega[i];
     }
-    return new Position(inverse);
+    return makeFromArrayWithoutCopy(inverse);
   }
 
-  public static Position make(Path p){
-    Path pp = p.getCanonicalPath();
-    int size = pp.length();
-    int[] omega = new int[size];
-    for(int i=0;i<size;i++){
-      omega[i]= pp.getHead();
-      pp = pp.getTail();
-    }
-    return new Position(omega);
-  }
-
-  public int length(){
+  /**
+   * Get the length of the position in the tree
+   * @return length of the path
+   */
+  public int length() {
     return omega.length;
   }
 
@@ -233,75 +194,80 @@ public class Position implements Cloneable,Path {
   }
 
   public Path getTail() {
-    if (length()==0) {
-      return null;
+    if(length()==0) {
+      throw new RuntimeException("Empty list has no tail");
     }
-    int[] tail = new int[omega.length-1];
-    System.arraycopy(omega, 1, tail, 0, tail.length);
-    return new Position(tail);
+    return Position.makeFromSubarray(omega,1,length()-1);
   }
 
-  public Path conc(int i){
+  public Path conc(int i) {
     int[] result = new int[length()+1];
     System.arraycopy(omega,0,result,0,length());
     result[length()]=i;
-    return new Position(result);
+    return makeFromArrayWithoutCopy(result);
+  }
+
+  public Path getCanonicalPath() {
+    int length = length();
+    if(length==0) {
+      return make();
+    }
+    int[] stack = new int[length];
+    int top = -1;
+    for(int i=0 ; i<length ; i++) {
+      if(top>=0 && stack[top] == -omega[i]) {
+        top--;
+      } else {
+        stack[++top] = omega[i];
+      }
+    }
+    return makeFromSubarray(stack,0,top+1);
+  }
+
+  public int[] toIntArray() {
+    int[] array = new int[length()];
+    System.arraycopy(omega, 0, array, 0, length());
+    return array;
   }
 
   public Position up() {
-    int [] result = new int[length()-1];
-    System.arraycopy(omega,0,result,0,length()-1);
-    return new Position(result);
+    return Position.makeFromSubarray(omega,0,length()-1);
   }
 
-  public Position down(int i){
-    int[] result = new int[length()+1];
-    System.arraycopy(omega,0,result,0,length());
-    result[length()]=i;
-    return new Position(result);
+  public Position down(int i) {
+    int[] array = new int[length()+1];
+    System.arraycopy(omega,0,array,0,length());
+    array[length()]=i;
+    return makeFromArrayWithoutCopy(array);
   }
 
-
-  public Path getCanonicalPath(){
-    if(length()==0) return (Path) clone();
-    int[] normalizedTail = ((Position)(getTail().getCanonicalPath())).toArray();
-    if(normalizedTail.length==0 || omega[0]!=-normalizedTail[0]){
-      int[] result = new int[1+normalizedTail.length];
-      result[0]=omega[0];
-      System.arraycopy(normalizedTail,0,result,1,normalizedTail.length);
-      return new Position(result);
-    }
-    else {
-      int[] result = new int[normalizedTail.length-1];
-      System.arraycopy(normalizedTail,1,result,0,normalizedTail.length-1);
-      return new Position(result);
-    }
-  }
-
-  public boolean hasPrefix(Position prefix){
-    int[] prefixTab = prefix.toArray();
-    if(omega.length<prefixTab.length) {
+  public boolean hasPrefix(Position prefix) {
+    int[] prefixTab = prefix.omega;
+    if(length()<prefixTab.length) {
       return false;
     }
-    for(int i=0;i<prefixTab.length;i++){
-      if(prefixTab[i]!=omega[i]) return false;
+    for(int i=0;i<prefixTab.length;i++) {
+      if(prefixTab[i]!=omega[i]) {
+        return false;
+      }
     }
     return true;
   }
 
-  public Position getSuffix(Position prefix){
-    if(! hasPrefix(prefix)) return null;
-    int[] suffixTab = new int[depth()-prefix.depth()];
-    for(int i=0;i<suffixTab.length;i++){
-      suffixTab[i]=omega[i+prefix.depth()];
+  public Position changePrefix(Position oldprefix,Position prefix) {
+    if(!hasPrefix(oldprefix)) {
+      return null;
     }
-    return new Position(suffixTab);
-  }
 
-  public Position changePrefix(Position oldprefix,Position newprefix){
-    if(! hasPrefix(oldprefix)) return null;
-    Position suffix = getSuffix(oldprefix);
-    return new Position(newprefix,suffix);
+    int delta = oldprefix.length();
+    int[] array = new int[this.length()-delta + prefix.length()];
+    for(int i=0;i<prefix.length();i++) {
+      array[i]=prefix.omega[i];
+    }
+    for(int i=0 ; delta+i<this.length() ; i++) {
+      array[i+prefix.length()]=this.omega[delta+i];
+    }
+    return makeFromArrayWithoutCopy(array);
   }
 
   /**
@@ -313,7 +279,7 @@ public class Position implements Cloneable,Path {
    */
   public Strategy getOmega(Strategy v) {
     Strategy res = v;
-    for(int i = depth()-1 ; i>=0 ; i--) {
+    for(int i = length()-1 ; i>=0 ; i--) {
       res = new Omega(omega[i],res);
     }
     return res;
@@ -332,7 +298,7 @@ public class Position implements Cloneable,Path {
   }
 
   private Strategy getOmegaPathAux(Strategy v, int i) {
-    if(i >= depth()-1) {
+    if(i >= length()-1) {
       return v;
     } else {
       return new Sequence(new Omega(omega[i],getOmegaPathAux(v,i+1)),v);
@@ -366,7 +332,7 @@ public class Position implements Cloneable,Path {
    * @return the omega strategy that retrieves the corresponding subterm
    */
   public Strategy getSubterm() {
-    return new AbstractStrategy() {
+    return new AbstractStrategyCombinator() {
       { initSubterm(); }
       public Object visitLight(Object subject, Introspector i) throws VisitFailure {
         final Object[] ref = new Object[1];
@@ -400,7 +366,7 @@ public class Position implements Cloneable,Path {
           s.visit(environment.getRoot(),i);
           environment.setSubject(ref[0]);
           return Environment.SUCCESS;
-        } catch(VisitFailure e) { 
+        } catch(VisitFailure e) {
           return Environment.FAILURE;
         }
       }

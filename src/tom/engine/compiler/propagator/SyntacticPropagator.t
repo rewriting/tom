@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.engine.compiler.*;
 import tom.engine.TomBase;
 import java.util.*;
@@ -45,18 +46,37 @@ public class SyntacticPropagator implements IBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
   
-  // contains variables that were already replaced (for optimizing reasons)
-  private static ArrayList replacedVariables = null; 
+  %typeterm SyntacticPropagator {
+    implement { SyntacticPropagator }
+    is_sort(t) { ($t instanceof SyntacticPropagator) }
+  }
+
+  private Compiler compiler; 
+  private ConstraintPropagator constraintPropagator;
+ 
+  public SyntacticPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {   
-    replacedVariables = new ArrayList(); 
-    return  (Constraint)`TopDown(SyntacticPatternMatching()).visitLight(constraint);
+    return  `TopDownWhenConstraint(SyntacticPatternMatching(this)).visitLight(constraint);
   }	
 
-  %strategy SyntacticPatternMatching() extends `Identity() {
+  %strategy SyntacticPatternMatching(sp:SyntacticPropagator) extends `Identity() {
     visit Constraint {
       /**
        * Decompose
@@ -74,46 +94,50 @@ public class SyntacticPropagator implements IBasePropagator {
        * if the symbol was annotated, annotations are detached:
        *        a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(rappl@RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
+      m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
+            sp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
        
         //System.out.println("m = " + `m);
-        Constraint lastPart = `AndConstraint();
+        List<Constraint> lastPart = new ArrayList<Constraint>();
         ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = Compiler.getFreshVariable(Compiler.getSlotType(`firstName,`slotName));
+            TomTerm freshVar = sp.getCompiler().getFreshVariable(sp.getCompiler().getSlotType(`firstName,`slotName));
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
-            lastPart = `AndConstraint(lastPart*,MatchConstraint(appl,freshVar));              
+            lastPart.add(`MatchConstraint(appl,freshVar));              
           }
         }
-        TomTerm freshSubject = Compiler.getFreshVariable(Compiler.getTermTypeFromTerm(`g));
-        // take each symbol and build the disjunction
+        TomTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
+        // take each symbol and build the disjunction (OrConstraintDisjunction)
         Constraint l = `OrConstraintDisjunction();
         %match(nameList) {
           concTomName(_*,name,_*) -> {
             // the 'and' conjunction for each name
-            Constraint andForName = `AndConstraint();
+            List<Constraint> andForName = new ArrayList<Constraint>();
             // add condition for symbolOf
-            andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject)));
+            andForName.add(`MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject)));
             int counter = 0;          
             // for each slot
             %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 TomTerm freshVar = freshVarList.get(counter);          
-                andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,freshSubject)));
+                andForName.add(`MatchConstraint(freshVar,Subterm(name,slotName,freshSubject)));
                 counter++;
               }
             }// match slots
-            l = `OrConstraintDisjunction(l*,andForName);
+            l = `OrConstraintDisjunction(l*,ASTFactory.makeAndConstraint(andForName));
           }
         }
-        return `AndConstraint(MatchConstraint(freshSubject,g),l*,lastPart*,ConstraintPropagator.performDetach(m));
+        lastPart.add(0,l);
+        lastPart.add(0,`MatchConstraint(freshSubject,g));
+        lastPart.add(sp.getConstraintPropagator().performDetach(`m));
+        return ASTFactory.makeAndConstraint(lastPart);
+        //return `AndConstraint(MatchConstraint(freshSubject,g),l,lastPart*,sp.getConstraintPropagator().performDetach(m));
       }      
     }
   }// end %strategy

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,10 +88,11 @@ public class TomVerifier extends TomGenericPlugin {
     super("TomVerifier");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
     boolean camlsemantics = getOptionBooleanValue("camlSemantics");
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean optimize2 = getOptionBooleanValue("optimize2");
+    //System.out.println("(debug) I'm in the Tom Verifier : TSM"+getStreamManager().toString());
 
     if(optimize2 && isActivated()) {
       getLogger().log(Level.SEVERE, TomMessage.verifierNotCompatibleWithOptimize.getMessage());
@@ -112,7 +113,7 @@ public class TomVerifier extends TomGenericPlugin {
         // Collection derivations = getDerivations(matchingCode);
         //System.out.println("Derivations : " + derivations);
 
-        Map rawConstraints = getRawConstraints(matchingCode);
+        Map<Instr,Expr> rawConstraints = getRawConstraints(matchingCode);
         //System.out.println(rawConstraints);
 
         // reduce constraints
@@ -121,13 +122,12 @@ public class TomVerifier extends TomGenericPlugin {
           verif.booleanReduce(rawConstraints);
         }
 
-        Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
+        Collection<ZSpec> zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
         if(intermediate) {
           Tools.generateOutputFromCollection(getStreamManager().getOutputFileName() + INTERMEDIATE_SUFFIX, zspecSet);
         }
 
         ZenonBackend back = new ZenonBackend(verif);
-        //System.out.println("output: "+back.genZSpecCollection(zspecSet));
         String output = back.genZSpecCollection(zspecSet);
 
         // do not generate a file if there is no proof to do
@@ -162,16 +162,16 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   protected Collection getMatchingCode() {
-        // here the extraction stuff
-        Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
+    // here the extraction stuff
+    Collection matchSet = collectMatch((TomTerm) getWorkingTerm());
 
-        Collection purified = purify(matchSet);
-         //System.out.println("Purified : " + purified);
+    Collection purified = purify(matchSet);
+    //System.out.println("Purified : " + purified);
 
-        // removes all associative patterns
-        filterAssociative(purified);
+    // removes all associative patterns
+    filterAssociative(purified);
 
-        return purified;
+    return purified;
   }
 
   public PlatformOptionList getDeclaredOptionList() {
@@ -190,7 +190,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
   }
 
-  public static Collection collectMatch(TomTerm subject) {
+  public Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
       `TopDown(collectMatch(result)).visitLight(subject);
@@ -228,8 +228,11 @@ public class TomVerifier extends TomGenericPlugin {
       (UnamedBlock|AbstractBlock)(concInstruction(inst)) -> {
         return `inst;
       }
-      (Let|LetRef|LetAssign)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
+      (Let|LetRef)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
         return `body;
+      }
+      Assign[Variable=(UnamedVariable|UnamedVariableStar)[]] -> {
+        return `Nop();
       }
 
       CompiledPattern[AutomataInst=inst] -> {
@@ -240,7 +243,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   private Instruction simplifyIl(Instruction subject) {
     try {
-      subject = (Instruction) `TopDown(ilSimplifier()).visitLight(subject);
+      subject = `TopDown(ilSimplifier()).visitLight(subject);
     } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy simplifyIl failed");
     }
@@ -299,13 +302,13 @@ public class TomVerifier extends TomGenericPlugin {
     return derivations;
   }
 
-  public Map getRawConstraints(Collection subject) {
-    Map rawConstraints = new HashMap();
+  public Map<Instr,Expr> getRawConstraints(Collection subject) {
+    Map<Instr,Expr> rawConstraints = new HashMap<Instr,Expr>();
     Iterator it = subject.iterator();
 
     while (it.hasNext()) {
       Instruction automata = (Instruction) it.next();
-      Map trees = verif.getConstraints(automata);
+      Map<Instr,Expr> trees = verif.getConstraints(automata);
       rawConstraints.putAll(trees);
     }
     return rawConstraints;
@@ -368,7 +371,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
   
   public String constraintToString(TomTerm tomTerm) {
-    %match(TomTerm tomTerm) {
+    %match(tomTerm) {
       TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
         if (`childrens.isEmptyconcTomTerm()) {
           return `name;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2008, INRIA
+ * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,15 @@ package tom.library.utils;
 import java.io.*;
 import tom.library.sl.*;
 import java.util.Stack;
-import java.util.Vector;
+import java.util.List;
 import aterm.pure.PureFactory;
 import att.grappa.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * Provide tools to view terms, with a graphical browser or with GraphViz.
+ */
 public class Viewer {
 
   %include { ../mapping/java/sl.tom }
@@ -44,6 +47,13 @@ public class Viewer {
   %include { ../mapping/java/aterm.tom }
 
   /* -------- dot part --------- */
+  /** 
+   * Give a dot representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toDot(tom.library.sl.Visitable v, Writer w) 
     throws java.io.IOException {
       if ( v instanceof tom.library.sl.Strategy ) {
@@ -68,7 +78,13 @@ public class Viewer {
       }
     }
 
-  public static void toDot(tom.library.sl.Visitable v) {
+ /** 
+  * Give a dot representation of a visitable term on the standard output stream
+  * 
+  * @param v the visitable term to visualize
+  * @throws RuntimeException in case of visit failure
+  */
+ public static void toDot(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
       toDot(v,w);
@@ -81,12 +97,18 @@ public class Viewer {
     implement {Writer}
   }
 
+  /** 
+   * Return a term node from a specified position
+   * 
+   * @param p position of the node to return
+   * @return a string representation of the node at the specified position
+   */
   private static String getNodeFromPos(Position p) {
-    int[] omega = p.toArray();
+    int[] omega = p.toIntArray();
     StringBuilder r = new StringBuilder("p");
-    for(int i=0 ; i<p.depth() ; i++) {
+    for(int i=0 ; i<p.length() ; i++) {
       r.append(omega[i]);
-      if(i<p.depth()-1) {
+      if(i<p.length()-1) {
         r.append("_");
       }
     }
@@ -94,19 +116,31 @@ public class Viewer {
   }
 
   //TODO: adapt to traverse any data-structure using newsl
-  static class Print extends AbstractStrategy {
+  static private class Print extends AbstractStrategyBasic {
 
     protected Writer w;
 
     public Print(Writer w) {
-      initSubterm();
+      super(( new tom.library.sl.Identity() ));
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     } 
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       try {
@@ -128,7 +162,7 @@ public class Viewer {
           String name = term.substring(0,(end==-1)?term.length():end);
           w.write(%[
               @getNodeFromPos(current)@ [label="@name@"]; ]%);
-          if(!current.equals(new Position(new int[]{}))) {
+          if(!current.equals(Position.make())) {
             Position father = current.up();
             w.write(%[
                 @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
@@ -139,6 +173,11 @@ public class Viewer {
     }
   }
 
+  /** 
+   * Give a GUI display to visualize a visitable term
+   * 
+   * @param vv the visitable term to visualize
+   */
   public static void display(Visitable vv) {
     final Visitable v = vv;
     JFrame.setDefaultLookAndFeelDecorated(true);
@@ -169,6 +208,12 @@ public class Viewer {
   }
 
   /* -------- pstree-like part --------- */
+  /** 
+   * Give a pstree-like representation of a visitable term on the standard output stream
+   * 
+   * @param v the visitable term to visualize
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
@@ -178,7 +223,13 @@ public class Viewer {
     } catch(java.io.IOException e) {}
   }
 
-
+  /** 
+   * Give a pstree-like representation of a visitable term on the writer stream
+   * 
+   * @param v the visitable term to visualize
+   * @param w the writer stream
+   * @throws RuntimeException in case of visit failure
+   */
   public static void toTree(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
       aterm.ATermFactory atermFactory = new PureFactory();
@@ -189,32 +240,41 @@ public class Viewer {
   private static void writeContext(Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
       for(int i=0; i<deep; i++) {
-        if (context.contains(i))
-          w.write('\u2502');
-        else
+        if (context.contains(i)) {
+          w.write("│");
+        } else {
           w.write(' ');
+        }
       }
     }
 
+  /** 
+   * Return a tree representation of an ATerm, by providing a writer, a context and depth
+   * 
+   * @param term the ATerm to represent as a tree
+   * @param w the writer
+   * @param context the context
+   * @param deep the depth
+   */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
       %match(term) {
         ATermAppl(AFun[name=name],list) -> {
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (`a.getArity() == 0) {  // no child
-            w.write("\u2500"+`name);
+            w.write("─"+`name);
             return;
           } else if (`a.getArity() == 1) {  // only one child
-            w.write('\u2500' + `name + "\u2500\u2500");
+            w.write("─" + `name + "──");
             deep = deep + `name.length() + 3;
             ATermToTree(`list.getFirst(),w,context,deep);
             return;
           } else {
             int ndeep = deep + `name.length() + 3;
-            %match (ATermList `list) {
+            %match (ATermList list) {
               (first,l*,last) -> {
                 // first child
-                w.write('\u2500' + `name + "\u2500\u252C");
+                w.write("─" + `name + "─┬");
                 context.push(ndeep-1); 
                 ATermToTree(`first,w,context,ndeep);
                 context.pop();
@@ -224,7 +284,7 @@ public class Viewer {
                 %match (ATermList l) {
                   (_*,c,_*) -> {
                     writeContext(w,context,ndeep-1);
-                    w.write("\u251C");
+                    w.write("├");
                     context.push(ndeep-1);
                     ATermToTree(`c,w,context,ndeep);
                     context.pop();
@@ -233,7 +293,7 @@ public class Viewer {
                 }
                 // last child
                 writeContext(w,context,ndeep-1);
-                w.write("\u2514");
+                w.write("└");
                 ATermToTree(`last,w,context,ndeep);
               }
             }
@@ -246,6 +306,12 @@ public class Viewer {
   /* -------- strategy part --------- */
   private static int counter = 0;  
 
+  /** 
+   * Replaces characters '.' '$' and '@' by '_' in a string
+   * 
+   * @param s the string to process
+   * @return a string where '.' '$' and '@' by '_' have been replaced
+   */
   static private String clean(String s) {
     s = s.replace('.','_');
     s = s.replace('$','_');
@@ -267,24 +333,36 @@ public class Viewer {
     }
   }
 
-  static class PrintStrategy extends AbstractStrategy {
+  static private class PrintStrategy extends AbstractStrategyBasic {
 
     protected Writer w;
 
     //TODO: adapt with newsl to visit anu data-structures
     public PrintStrategy(Writer w) {
-      initSubterm();
+      super(( new tom.library.sl.Identity() ));
       this.w=w;
     }
 
+    /** 
+     * Visits the subject any in a light way by providing the introspector 
+     *
+     * @param any the subject to visit
+     * @param i the introspector
+     * @throws VisitFailure if visitLight fails
+     */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     }
 
+    /** 
+     * Visit the subject by providing an introspector
+     * 
+     * @param introspector the introspector
+     */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
-      Vector<Object> stack = getEnvironment().getCurrentStack(); 
+      List<Object> stack = getEnvironment().getCurrentStack(); 
       try {
         //test if it is a pointer due to an expanded MuVar
         if (stack.contains(v)) {
@@ -321,4 +399,3 @@ public class Viewer {
   }
 
 }
-

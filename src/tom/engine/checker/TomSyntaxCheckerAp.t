@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,9 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
+ 
+  %typeterm TomSyntaxChecker { implement { TomSyntaxChecker } }
+
   /**
    * Basicaly ignores the anti-symbol
    */
@@ -94,7 +97,7 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
     try {
-      `TopDown(CheckForAnnotations(fileName,decLine,t)).visitLight(t);
+      `TopDown(CheckForAnnotations(fileName,decLine,t,this)).visitLight(t);
     } catch(VisitFailure e) {
       throw new TomRuntimeException("Cannot be there");
     }
@@ -105,11 +108,13 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
    * - if the annotations are on head, allow them
    * - error otherwise 
    */  
-  %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm) extends Identity() {
+  %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm, tsca:TomSyntaxChecker) extends Identity() {
     visit TomTerm {
       t@(TermAppl|Variable|RecordAppl|UnamedVariable)[Constraints=concConstraint(_*,AssignTo[],_*)] -> {
         if(`t != headTerm) {
-          TomChecker.messageError(getClass().getName(),fileName,decLine,
+          /** TomChecker.messageError(getClass().getName(),fileName,decLine,
+              TomMessage.illegalAnnotationInAntiPattern, new Object[]{}); */
+          tsca.messageError(getClass().getName(),fileName,decLine,
               TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
         }	
       }

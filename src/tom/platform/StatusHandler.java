@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -32,20 +32,21 @@ import java.util.logging.*;
 public class StatusHandler extends Handler {
 
   /** Map between a log level and the cardinality of published logrecord */
-  private Map levelStats;
+  private Map<Level,Integer> levelStats;
   /** Map between a log level and the cardinality of published logrecord */
-  private Map inputAlert;
+  private Map<String,RuntimeAlert> inputAlert;
 
   /** Constructor */
+  //public StatusHandler() {
   public StatusHandler() {
-    levelStats = new HashMap();
-    inputAlert = new HashMap();
+    levelStats = new HashMap<Level,Integer>();
+    inputAlert = new HashMap<String,RuntimeAlert>();
   }
 
   /** Clear all previous records */
   public void clear() {
-    levelStats = new HashMap();
-    inputAlert = new HashMap();
+    levelStats.clear();
+    inputAlert.clear();
   }
 
   public void publish(LogRecord record) {
@@ -55,7 +56,7 @@ public class StatusHandler extends Handler {
     if(!levelStats.containsKey(recordLevel)) {
       newStats = new Integer(1);
     } else {
-      Integer oldStats = (Integer)levelStats.get(recordLevel);
+      Integer oldStats = levelStats.get(recordLevel);
       newStats = new Integer(oldStats.intValue()+1);
     }
     levelStats.put(recordLevel, newStats);
@@ -73,7 +74,7 @@ public class StatusHandler extends Handler {
     if(!inputAlert.containsKey(input)) {
       ra = new RuntimeAlert();
     } else {
-      ra = (RuntimeAlert)inputAlert.get(input);
+      ra = inputAlert.get(input);
     }
     ra.add(plr);
     inputAlert.put(input, ra);    
@@ -85,10 +86,9 @@ public class StatusHandler extends Handler {
 
   public String toString() {
     StringBuilder buffy = new StringBuilder("Status handler :\n");
-    Iterator it = levelStats.keySet().iterator();
-    while(it.hasNext()) {
-      Object level = it.next();
-      Object stats = levelStats.get(level);
+    for (Map.Entry<Level,Integer> entry : levelStats.entrySet()) {
+      Object level = entry.getKey();
+      Object stats = entry.getValue();
       buffy.append("\t" + stats + " record(s) of level " + level + "\n");
     }
     return buffy.toString();
@@ -110,7 +110,7 @@ public class StatusHandler extends Handler {
     if(!hasLog(level)) {
       return 0;
     } else {
-      return ((Integer)levelStats.get(level)).intValue();
+      return (levelStats.get(level)).intValue();
     }
   }
 
@@ -123,10 +123,10 @@ public class StatusHandler extends Handler {
   }
 
   public RuntimeAlert getAlertForInput(String filePath) {
-    return (RuntimeAlert)inputAlert.get(filePath);
+    return inputAlert.get(filePath);
   }
   
-  public Map getAlertMap() {
+  public Map<String,RuntimeAlert> getAlertMap() {
     return inputAlert;
   }
 

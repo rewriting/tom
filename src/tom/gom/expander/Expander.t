@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,22 +42,43 @@ import tom.gom.adt.gom.types.*;
 import tom.platform.PlatformLogRecord;
 
 import org.antlr.runtime.*;
+import org.antlr.runtime.tree.*;
+
 import tom.gom.parser.GomLanguageLexer;
 import tom.gom.parser.GomLanguageParser;
-import tom.gom.adt.gom.GomTree;
-import tom.gom.adt.gom.GomAdaptor;
+import tom.gom.adt.gom.GomLanguageGomAdaptor;
 
 public class Expander {
-  private GomStreamManager streamManager;
-
   %include { ../adt/gom/Gom.tom}
 
+  private GomEnvironment gomEnvironment;
+  
   public Expander(GomStreamManager streamManager) {
-    this.streamManager = streamManager;
+    this.gomEnvironment.setStreamManager(streamManager);
   }
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+  public Expander(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public Expander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomStreamManager getStreamManager() {
+    return this.gomEnvironment.getStreamManager();
+  }
+
+  public void setStreamManager(GomStreamManager streamManager) {
+    this.gomEnvironment.setStreamManager(streamManager);
   }
 
   /*
@@ -65,21 +86,19 @@ public class Expander {
    */
   public GomModuleList expand(GomModule module) {
     GomModuleList result = `ConcGomModule(module);
-    Set alreadyParsedModule = new HashSet();
+    Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
     alreadyParsedModule.add(module.getModuleName());
-    Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
+    Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
     getLogger().log(Level.FINER, "GomExpander:moduleToAnalyse {0}",
         new Object[]{moduleToAnalyse});
 
     while (!moduleToAnalyse.isEmpty()) {
-      HashSet newModuleToAnalyse = new HashSet();
-      Iterator it = moduleToAnalyse.iterator();
+      Set<GomModuleName> newModuleToAnalyse = new HashSet<GomModuleName>();
 
-      while(it.hasNext()) {
-        GomModuleName moduleNameName = (GomModuleName)it.next();
+      for (GomModuleName moduleNameName : moduleToAnalyse) {
         String moduleName = moduleNameName.getName();
 
-        if(!environment().isBuiltin(moduleName)) {
+        if(!getGomEnvironment().isBuiltin(moduleName)) {
           if(!alreadyParsedModule.contains(moduleNameName)) {
             GomModule importedModule = parse(moduleName);
             if(importedModule == null) {
@@ -90,19 +109,19 @@ public class Expander {
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
 	  }
         } else {
-          environment().markUsedBuiltin(moduleName); 
+          getGomEnvironment().markUsedBuiltin(moduleName); 
         }
       }
       moduleToAnalyse = newModuleToAnalyse;
     }
-    return result;
+   return result;
   }
 
   /*
    * Compute immediate imported modules where already parsed modules are removed
    */
-  private Set generateModuleToAnalyseSet(GomModule module, Set alreadyParsedModule) {
-    HashSet moduleToAnalyse = new HashSet();
+  private Set<GomModuleName> generateModuleToAnalyseSet(GomModule module, Set<GomModuleName> alreadyParsedModule) {
+    Set<GomModuleName> moduleToAnalyse = new HashSet<GomModuleName>();
     ImportList importedModules = getImportList(module);
     while(!importedModules.isEmptyConcImportedModule()) {
       GomModuleName name = importedModules.getHeadConcImportedModule().getModuleName();
@@ -142,11 +161,10 @@ public class Expander {
     }
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		GomLanguageParser parser = new GomLanguageParser(tokens,streamManager);
-    parser.setTreeAdaptor(new GomAdaptor());
+		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
     try {
-      GomTree tree = (GomTree)parser.module().getTree();
-      result = (GomModule) tree.getTerm();
+      Tree tree = (Tree)parser.module().getTree();
+      result = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
@@ -165,7 +183,7 @@ public class Expander {
     if(f.exists()) {
       return f;
     }
-    return streamManager.findModuleFile(extendedModuleName);
+    return getStreamManager().findModuleFile(extendedModuleName);
   }
 
   /** the class logger instance*/
@@ -175,7 +193,7 @@ public class Expander {
 
   public ImportList getImportList(GomModule module) {
     ImportList imports = `ConcImportedModule();
-    %match(GomModule module) {
+    %match(module) {
       GomModule(_,ConcSection(_*,Imports(importList),_*)) -> {
         imports = `ConcImportedModule(importList*,imports*);
       }

@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
- * Copyright (c) 2000-2008, INRIA
+ *
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles      e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -28,42 +28,44 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
-
+import tom.gom.SymbolTable;
 import java.util.*;
 
 public class GomEnvironment {
 
   %include { ../adt/objects/Objects.tom}
-  /**
-   * GomEnvironment uses the Singleton pattern.
-   * Unique instance of the GomEnvironment
-   */
-  private static GomEnvironment instance;
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;
+  private SymbolTable symbolTable;
+  // this map is filled by the GomTypeExpander
+  private Map<ModuleDecl,ModuleDeclList> importedModules;
+  private Map<String,ClassName> builtinSorts;
+  private Map<String,ClassName> usedBuiltinSorts;
+
   /**
    * A private constructor method to defeat instantiation
    */
-  private GomEnvironment() { 
+  public GomEnvironment() {
+    streamManager = new GomStreamManager();
+    importedModules = new HashMap<ModuleDecl,ModuleDeclList>();
+    builtinSorts = new HashMap<String,ClassName>();
     initBuiltins();
+    usedBuiltinSorts = new HashMap<String,ClassName>();
+    symbolTable = new SymbolTable(this);
   }
 
-  /**
-   * Part of the Singleton pattern, get the instance or create it.
-   * @returns the instance of the GomEnvironment
-   */
-  public static GomEnvironment getInstance() {
-    if(instance == null) {
-      instance = new GomEnvironment();
-    }
-    return instance;
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
   }
 
-  private Map importedModules = new HashMap();
-  // this map is filled by the GomTypeExpander
+  public void initSymbolTable(GomModuleList l) {
+    symbolTable.clear();
+    symbolTable.fill(l);
+  }
+
   public ModuleDeclList getModuleDependency(ModuleDecl module) {
-    ModuleDeclList modulesDecl = (ModuleDeclList) importedModules.get(module);
+    ModuleDeclList modulesDecl = importedModules.get(module);
     return modulesDecl;
   }
   public void addModuleDependency(ModuleDecl module, ModuleDeclList imported) {
@@ -76,8 +78,7 @@ public class GomEnvironment {
     return streamManager;
   }
 
-  private Map builtinSorts = new HashMap();
-  private void initBuiltins() {
+  public void initBuiltins() {
     builtinSorts.put("boolean",`ClassName("","boolean"));
     builtinSorts.put("int",`ClassName("","int"));
     builtinSorts.put("String",`ClassName("","String"));
@@ -88,7 +89,6 @@ public class GomEnvironment {
     builtinSorts.put("ATerm",`ClassName("aterm","ATerm"));
     builtinSorts.put("ATermList",`ClassName("aterm","ATermList"));
   }
-  private Map usedBuiltinSorts = new HashMap();
 
   /**
    * Check if the argument is a builtin module name
@@ -119,12 +119,10 @@ public class GomEnvironment {
     }
   }
 
-  public Map builtinSortClassMap() {
-    Map sortClass = new HashMap();
-    Iterator it = usedBuiltinSorts.keySet().iterator();
-    while(it.hasNext()) {
-      String name = (String) it.next();
-      sortClass.put(`BuiltinSortDecl(name),(ClassName)usedBuiltinSorts.get(name));
+  public Map<SortDecl,ClassName> builtinSortClassMap() {
+    Map<SortDecl,ClassName> sortClass = new HashMap<SortDecl,ClassName>();
+    for (String name : usedBuiltinSorts.keySet()) {
+      sortClass.put(`BuiltinSortDecl(name),usedBuiltinSorts.get(name));
     }
     return sortClass;
   }

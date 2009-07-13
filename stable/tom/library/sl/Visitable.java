@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,18 +35,41 @@ public interface Visitable {
     /**
      * Replaces all children of any visitable at once, and returns this
      * visitable.
+     *
+     * @param children array of children to set up
+     * @return the current Visitable
      */
     public Visitable setChildren(Visitable[] children);
 
     /**
      * Returns the list of (non builtin) Visitable children
+     *
+     * @return an array of Visitable children
      */
     public Visitable[] getChildren();
 
+    /** 
+     * Returns the child at the specified position
+     *
+     * @param i index of the element to return
+     * @return the child at the specified position in the list
+     */
     public Visitable getChildAt(int i); 
 
+    /** 
+     * Replaces a child at the specified position
+     *
+     * @param i index of the element to return
+     * @param child element to set up
+     * @return the current Visitable
+     */
     public Visitable setChildAt(int i, Visitable child); 
 
+    /** 
+     * Returns the number of children of the current Visitable
+     *
+     * @return the number of children
+     */
     public int getChildCount();
 
 }

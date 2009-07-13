@@ -4,18 +4,18 @@ package tom.library.sl;
  * <p>
  * Basic strategy combinator with one argument <code>name</code> 
  * which denotes the name of the mu-variable
- * This basic visitor combinator used to build recursive visitors
+ * This basic argument combinator used to build recursive arguments
  * After the mu-expansion, the private variable <code>instance</code>
  * is a pointer to the strategy to execute
  * <p>
  */
 
-public class MuVar extends AbstractStrategy {
+public class MuVar extends AbstractStrategyCombinator {
   private Strategy instance = null;
   protected String name;
   
   public MuVar(String name) {
-    // make sure the MuVar is seen as a leaf for all visitors
+    // make sure the MuVar is seen as a leaf for all arguments
     initSubterm();
     this.name = name;
   }
@@ -42,7 +42,7 @@ public class MuVar extends AbstractStrategy {
     }
   }
   
-  public final Object visitLight(Object any,Introspector i) throws VisitFailure {
+  public final <T> T visitLight(T any,Introspector i) throws VisitFailure {
     if(instance != null) {
       return instance.visitLight(any,i);
     } else {
@@ -63,15 +63,15 @@ public class MuVar extends AbstractStrategy {
     return instance;
   }
   
-  protected void setInstance(Strategy v) {
+  public void setInstance(Strategy v) {
     this.instance = v;
   }
   
-  protected void setName(String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  protected final boolean isExpanded() {
+  public final boolean isExpanded() {
     return instance != null;
   }
 

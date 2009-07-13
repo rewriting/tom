@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,22 +24,7 @@
 
 package tom.gom.tools.ant;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Vector;
-
-import tom.engine.tools.ant.TomRegexpPatternMapper;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.Reference;
-
-import org.apache.tools.ant.util.SourceFileScanner;
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.taskdefs.Java;
-import org.apache.tools.ant.types.Environment.Variable;
 
 /**
  * Compiles GOM source files. This task can take the following
@@ -57,6 +42,8 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>termpointer</li>
+ * <li>withCongruenceStrategies</li>
+ * <li>fresh</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -115,6 +102,7 @@ public class GomTask extends GomCommonTask {
   public boolean getInlineplus() {
     return inlineplus;
   }
+
   protected void processAdditionalOptions(Java runner) {
     if(optimize == true) {
       javaRunner.createArg().setValue("--optimize");

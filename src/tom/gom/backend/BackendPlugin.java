@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 package tom.gom.backend;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.objects.types.*;
 
@@ -45,10 +47,20 @@ public class BackendPlugin extends GomGenericPlugin {
 
   /** the list of compiled classes */
   private GomClassList classList;
+  private TemplateFactory templateFactory;
 
   /** The constructor*/
   public BackendPlugin() {
     super("GomBackend");
+    templateFactory = new SharedTemplateFactory(getOptionManager(),getGomEnvironment());
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /** the declared options string */
@@ -58,7 +70,8 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
-    "<boolean name='strategies-mapping' altName='sm' description='Generate tom mapping for strategies' value='false'/>" +
+    "<boolean name='withCongruenceStrategies' altName='wcs' description='Include the definition of congruence strategies in the generate file.tom file' value='false'/>" +
+    "<boolean name='withSeparateCongruenceStrategies' altName='wscs' description='Generate the definition of congruence strategies in _file.tom file' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
     "</options>";
@@ -77,11 +90,11 @@ public class BackendPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomClassList) {
       classList = (GomClassList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+      setGomEnvironment((GomEnvironment)arg[1]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomBackend", "[GomClassList,GomStreamManager]",
+          new Object[]{"GomBackend", "[GomClassList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -90,15 +103,15 @@ public class BackendPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
-  public void run() {
+  public void run(Map<String,String> informationTracker) {
     getLogger().log(Level.INFO, "Start compilation");
     // make sure the environment has the correct streamManager
-    environment().setStreamManager(getStreamManager());
+    getGomEnvironment().setStreamManager(getStreamManager());
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
     try {
-      if(tomHome == null) {
+      if (tomHome == null) {
         String xmlConfigFilename = getOptionStringValue("X");
         tomHome = new File(xmlConfigFilename).getParent();
       }
@@ -106,21 +119,29 @@ public class BackendPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-    boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
+    int generateStratMapping = 0;
+    if (getOptionBooleanValue("withCongruenceStrategies")) {
+      generateStratMapping = 1;
+    }
+    if (getOptionBooleanValue("withSeparateCongruenceStrategies")) {
+      generateStratMapping = 2;
+    }
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
     Backend backend =
-      new Backend(TemplateFactory.getFactory(getOptionManager()),
-                  tomHomePath, strategiesMapping, multithread, nosharing,
-                  streamManager.getImportList());
+      new Backend(templateFactory.getFactory(getOptionManager()),
+                  tomHomePath, generateStratMapping, multithread, nosharing,
+                  getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,
           GomMessage.generationIssue.getMessage(),
-          streamManager.getInputFileName());
+          getStreamManager().getInputFileName());
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
+    
   }
 
   /**
@@ -129,6 +150,6 @@ public class BackendPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{getStreamManager()};
+    return new Object[]{getGomEnvironment()};
   }
 }

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -65,18 +65,88 @@ public class Compiler extends TomGenericPlugin {
 
   %typeterm Compiler { implement { Compiler } }
 
-  private static SymbolTable symbolTable = null;
-  private static TomNumberList rootpath = null;
-  // keeps track of the match number to insure distinct variables' 
-  // names for distinct match constructs
-  private static int matchNumber = 0;
-  // keeps track of the subject number to insure distinct variables' 
-  // names when renaming subjects
-  private static int freshSubjectCounter = 0;	
-  private static int freshVarCounter = 0;
   private static final String freshVarPrefix = "_freshVar_";
   private static final String freshBeginPrefix = "_begin_";
   private static final String freshEndPrefix = "_end_";
+
+  private CompilerEnvironment compilerEnvironment;
+
+  public CompilerEnvironment getCompilerEnvironment() {
+    return compilerEnvironment;
+  }
+  
+  private class CompilerEnvironment {
+    
+    /** few attributes */
+    private SymbolTable symbolTable;
+    private TomNumberList rootpath = null;
+    // keeps track of the match number to insure distinct variables' 
+    // names for distinct match constructs
+    private int matchNumber = 0;
+    // keeps track of the subject number to insure distinct variables' 
+    // names when renaming subjects
+    private int freshSubjectCounter = 0;
+    private int freshVarCounter = 0;
+
+    private ConstraintPropagator constraintPropagator; 
+    private ConstraintGenerator constraintGenerator; 
+
+    /** Constructor */
+    public CompilerEnvironment() {
+      super();
+      this.constraintPropagator = new ConstraintPropagator(Compiler.this); 
+      this.constraintGenerator = new ConstraintGenerator(Compiler.this); 
+    }
+
+    /** Accessor methods */
+    public SymbolTable getSymbolTable() {
+      return this.symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+      this.symbolTable = symbolTable;
+    }
+
+    public TomNumberList getRootpath() {
+      return this.rootpath;
+    }
+
+    public void setRootpath(TomNumberList rootpath) {
+      this.rootpath = rootpath;
+    }
+
+    public int getMatchNumber() {
+      return this.matchNumber;
+    }
+
+    public int getFreshSubjectCounter() {
+      return this.freshSubjectCounter;
+    }
+
+    public void setFreshSubjectCounter(int freshSubjectCounter) {
+      this.freshSubjectCounter = freshSubjectCounter;
+    }
+
+    public int getFreshVarCounter() {
+      return this.freshVarCounter;
+    }
+    
+    public void setFreshVarCounter(int freshVarCounter) {
+      this.freshVarCounter = freshVarCounter;
+    }
+   
+    public ConstraintPropagator getConstraintPropagator() {
+      return this.constraintPropagator;
+    }
+
+    public ConstraintGenerator getConstraintGenerator() {
+      return this.constraintGenerator;
+    }
+
+    /** need more routines ? */
+
+  } // class CompilerEnvironment
+
 
   /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
@@ -89,17 +159,19 @@ public class Compiler extends TomGenericPlugin {
   /** Constructor */
   public Compiler() {
     super("Compiler");
+    compilerEnvironment = new CompilerEnvironment();
   }
 
-  public void run() {
-    long startChrono = System.currentTimeMillis();
-    boolean intermediate = getOptionBooleanValue("intermediate");    
+ protected static long startChrono = System.currentTimeMillis();
+  public void run(Map informationTracker) {
+    boolean intermediate = getOptionBooleanValue("intermediate");
+    //System.out.println("(debug) I'm in the Tom compiler : TSM"+getStreamManager().toString());
     try {
-      TomTerm compiledTerm = Compiler.compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
+      TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm) `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      // add the aditional functions needed by the AC operators
+      TomTerm renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
+       // add the aditional functions needed by the AC operators
       renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
@@ -113,31 +185,31 @@ public class Compiler extends TomGenericPlugin {
       e.printStackTrace();
     }
   }
-
+  
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
 
-  public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
-    Compiler.symbolTable = symbolTable;
+  public TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
+    getCompilerEnvironment().setSymbolTable(symbolTable);
     // we use TopDown  and not TopDownIdStopOnSuccess to compile nested-match
-    return (TomTerm) `TopDown(CompileMatch()).visitLight(termToCompile);		
+    return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
-  // looks for a 'Match' instruction:
+   // looks for a 'Match' instruction:
   // 1. transforms each sequence of patterns into a conjuction of MatchConstraint
   // 2. launch PropagationManager
   // 3. launch PreGenerator
   // 4. launch GenerationManager
   // 5. launch PostGenerator  
   // 6. transforms resulted expression into a CompiledMatch
-  %strategy CompileMatch() extends Identity() {
+  %strategy CompileMatch(compiler:Compiler) extends Identity() {
     visit Instruction {			
-      Match(constraintInstructionList, matchOptionList)  -> {        
-        matchNumber++;
-        rootpath = `concTomNumber(MatchNumber(matchNumber));
-        freshSubjectCounter = 0;
-        freshVarCounter = 0;
+      Match(constraintInstructionList, matchOptionList)  -> {
+        compiler.getCompilerEnvironment().matchNumber++;
+        compiler.getCompilerEnvironment().setRootpath(`concTomNumber(MatchNumber(compiler.getCompilerEnvironment().getMatchNumber())));
+        compiler.getCompilerEnvironment().setFreshSubjectCounter(0);
+        compiler.getCompilerEnvironment().setFreshVarCounter(0);
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
         ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
@@ -151,13 +223,15 @@ public class Compiler extends TomGenericPlugin {
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
-              Constraint newConstraint = (Constraint) `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
+              Constraint newConstraint = `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects,compiler)).visitLight(`constraint);
 
-              Constraint propagationResult = ConstraintPropagator.performPropagations(newConstraint);
-              Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
-              Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
+              Constraint propagationResult = compiler.getCompilerEnvironment().getConstraintPropagator().performPropagations(newConstraint);
+              PreGenerator preGenerator = new PreGenerator(compiler.getCompilerEnvironment().getConstraintGenerator());
+              Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
+              Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
-              TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
+              TomNumberList path = compiler.getRootpath();
+              TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             } catch(Exception e) {
@@ -176,14 +250,14 @@ public class Compiler extends TomGenericPlugin {
     }// end visit
   }// end strategy  
 
-  /**
+   /**
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
    * Match(p,s) -> Match(object,s) /\ IsSort(object) /\ Match(freshSubj,Cast(object)) /\ Match(p,freshSubj) 
    * 
    * @param subjectList the list of old subjects
    */
-  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity() {
+  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern, Subject=subject] -> {
         if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(`subject) ) {
@@ -195,21 +269,22 @@ public class Compiler extends TomGenericPlugin {
           TomTerm renamedSubj = (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
           Constraint newConstraint = `constr.setSubject(renamedSubj);
           TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
-          TomTerm freshVar = getUniversalObjectForSubject(freshSubjectType);
+          TomTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
           return `AndConstraint(
               MatchConstraint(freshVar,subject),
               IsSortConstraint(freshSubjectType,freshVar),
               MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
               newConstraint);
         }
-        TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
+        TomNumberList path = compiler.getRootpath();
+        TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + (++(compiler.getCompilerEnvironment().freshSubjectCounter))))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
           (Variable|VariableStar)[AstType=variableType] -> { 
             freshSubjectType = `variableType;
           }          
           sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
-            TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);                      
+            TomSymbol tomSymbol = compiler.getSymbolTable().getSymbolFromName(`tomName);                      
             if(tomSymbol != null) {
               freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
             } else if(`sv.isFunctionCall()) {
@@ -221,7 +296,7 @@ public class Compiler extends TomGenericPlugin {
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(renamedVar);   
-        TomTerm freshVar = getUniversalObjectForSubject(freshSubjectType);
+        TomTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
         return `AndConstraint(
             MatchConstraint(freshVar,subject),
             IsSortConstraint(freshSubjectType,freshVar),
@@ -230,11 +305,12 @@ public class Compiler extends TomGenericPlugin {
       }
     }
   }
-  private static TomTerm getUniversalObjectForSubject(TomType subjectType){    
-    if (symbolTable.isBuiltinType(TomBase.getTomType(subjectType))) {
+
+  private TomTerm getUniversalObjectForSubject(TomType subjectType){    
+    if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {
-      return getFreshVariable(symbolTable.getUniversalType());
+      return getFreshVariable(getSymbolTable().getUniversalType());
     }
   }
 
@@ -249,14 +325,117 @@ public class Compiler extends TomGenericPlugin {
         // if a label is assigned to a pattern (label:pattern ->
         // action) we generate corresponding labeled-block				 
         %match(optionList) {
-          concOption(_*,Label(Name(name)),_*) -> {            
-            return `concInstruction(CompiledPattern(constraint,NamedBlock(name,concInstruction(instruction))), newList*);
+          concOption(_*,Label(Name(name)),_*) -> {
+            // UnamedBlock(concInstruction(...)) to put patterns/actions in a fresh environment
+            return `concInstruction(UnamedBlock(concInstruction(CompiledPattern(constraint,NamedBlock(name,concInstruction(instruction))))), newList*);
           }
         }
-        return `concInstruction(CompiledPattern(constraint,instruction), newList*);
+        // UnamedBlock(concInstruction(...)) to put patterns/actions in a fresh environment
+        return `concInstruction(UnamedBlock(concInstruction(CompiledPattern(constraint,instruction))), newList*);
       }
     }
     return null;
+  }
+
+  /**
+   * helper functions - mostly related to free var generation
+   */
+
+  public TomNumberList getRootpath() {
+    return getCompilerEnvironment().getRootpath();
+  }
+
+  public int getFreshVarCounter() {
+    return getCompilerEnvironment().getFreshVarCounter();
+  }
+
+  public int getFreshSubjectCounter() {
+    return getCompilerEnvironment().getFreshSubjectCounter();
+  }
+
+  public SymbolTable getSymbolTable() {
+    return getCompilerEnvironment().getSymbolTable();
+  }
+
+  // used in generator/SyntacticGenerator.t code
+  public TomType getTermTypeFromName(TomName tomName) {
+    String stringName = ((Name)tomName).getString();
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(stringName);    
+    return tomSymbol.getTypesToType().getCodomain();
+  }
+
+
+  // used in propagator/SyntacticPropagator.t code
+  public TomType getSlotType(TomName tomName, TomName slotName) {
+    String stringName = ((Name)tomName).getString();
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(stringName);
+    return TomBase.getSlotType(tomSymbol,slotName);    
+  } 
+
+  public TomType getTermTypeFromTerm(TomTerm tomTerm) {    
+    return TomBase.getTermType(tomTerm,getCompilerEnvironment().getSymbolTable());    
+  }
+
+  public TomTerm getFreshVariable(TomType type) {
+    return getFreshVariable(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);    
+  }
+
+  public TomTerm getFreshVariable(String name, TomType type) {
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `Variable(concOption(),freshVarName,type,concConstraint());
+  }
+
+  public TomTerm getFreshVariableStar(TomType type) {
+    return getFreshVariableStar(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);
+  }
+
+  public TomTerm getFreshVariableStar(String name, TomType type) {
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  }
+
+  public TomTerm getBeginVariableStar(TomType type) {
+    return getFreshVariableStar(freshBeginPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+  }
+
+  public TomTerm getEndVariableStar(TomType type) {
+    return getFreshVariableStar(freshEndPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+  }
+
+  /*
+   * add a prefix (tom_) to back-quoted variables which comes from the lhs
+   */
+  %strategy findRenameVariable(context:Collection) extends Identity() {
+    visit TomTerm {
+      var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
+        if(context.contains(`astName)) {          
+          return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
+        }
+      }
+    }
+
+    visit Instruction {
+      CompiledPattern(patternList,instruction) -> {
+        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
+        Collection newContext = new HashSet();
+        `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
+        newContext.addAll(context);
+        return `TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
+      }
+    }  
+  }  
+
+  %strategy CollectLHSVars(Collection bag) extends Identity() {
+    visit Constraint {
+      MatchConstraint(p,_) -> {        
+        Map map = TomBase.collectMultiplicity(`p);
+        Collection newContext = new HashSet(map.keySet());
+        bag.addAll(newContext);
+        throw new VisitFailure();// to stop the top-down
+      }
+    }
   }
 
   /******************************************************************************/
@@ -270,17 +449,16 @@ public class Compiler extends TomGenericPlugin {
    * 
    * @param subject the AST of the program
    */
-  private static TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
+  private TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
     // we use the symbol table as all AC the operators were marked as
     // used when the loop was generated
-    SymbolTable symbolTable = Compiler.getSymbolTable();
     TomList l = `concTomTerm();
-    Iterator<String> it = symbolTable.keySymbolIterator();
+    Iterator<String> it = getSymbolTable().keySymbolIterator();
     while(it.hasNext()){
       String op = it.next();
-      TomSymbol opSymbol = symbolTable.getSymbolFromName(op);
+      TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
       if(TomBase.isACOperator(opSymbol)
-          && symbolTable.isUsedSymbolConstructor(op)) {
+          && getSymbolTable().isUsedSymbolConstructor(op)) {
         // gen all
         TomType opType = opSymbol.getTypesToType().getCodomain();        
         // 1. computeLenght
@@ -349,38 +527,43 @@ public class Compiler extends TomGenericPlugin {
    *       return mult;
    *     }
    */
-  private static Declaration getPILforGetMultiplicities(String opNameString, TomType opType) {
-    TomType intType = Compiler.getIntType();
-    SymbolTable symbolTable = Compiler.getSymbolTable();
-    TomType intArrayType = symbolTable.getIntArrayType();
+  private Declaration getPILforGetMultiplicities(String opNameString, TomType opType) {
+    TomType intType = getSymbolTable().getIntType();
+    TomType intArrayType = getSymbolTable().getIntArrayType();
     // the name of the int[] operator
-    TomName intArrayName = `Name(symbolTable.getIntArrayOp());    
+    TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());    
     
     TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
-    TomTerm length = Compiler.getFreshVariable("length",intType);
-    TomTerm mult = Compiler.getFreshVariable("mult",intArrayType);
+    TomTerm length = getFreshVariable("length",intType);
+    TomTerm mult = getFreshVariable("mult",intArrayType);
     TomTerm oldElem = `Variable(concOption(),Name("oldElem"),opType,concConstraint());
     
     TomName opName = `Name(opNameString);
     Instruction ifList = `If(IsFsym(opName,subject),
-        LetRef(oldElem,GetHead(opName,opType,subject),Nop()),        
-        LetAssignArray(mult,ExpressionToTomTerm(Integer(0)),Integer(1), Return(mult)));
+        LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
+        AbstractBlock(concInstruction(
+            AssignArray(mult,ExpressionToTomTerm(Integer(0)),Integer(1)), 
+            Return(mult))));
     
     // the two ifs
     TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());
-    TomTerm counter = `Variable(concOption(),Name("counter"),Compiler.getIntType(),concConstraint());
+    TomTerm counter = `Variable(concOption(),Name("counter"),getSymbolTable().getIntType(),concConstraint());
+    
     Instruction ifAnotherElem = `If(EqualTerm(opType, elem, oldElem),
-        LetAssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
-        LetRef(counter,AddOne(counter),LetRef(oldElem,TomTermToExpression(elem),LetAssignArray(mult, counter, Integer(1),Nop()))));
+        AssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter)))),
+        LetRef(counter,AddOne(counter),LetRef(oldElem,TomTermToExpression(elem),AssignArray(mult, counter, Integer(1)))));
+    
     Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
         If(EqualTerm(opType, subject, oldElem),
-            LetAssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
-            LetRef(counter,AddOne(counter),LetAssignArray(mult,counter,Integer(1),Nop()))),
+            AssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter)))),
+            LetRef(counter,AddOne(counter),AssignArray(mult,counter,Integer(1)))),
       Nop());
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),ifAnotherElem),
-        LetAssign(subject,GetTail(opName,subject),ifEndList))); // subject is the method's argument     
+        AbstractBlock(concInstruction(
+        Assign(subject,GetTail(opName,subject)),
+        ifEndList)))); // subject is the method's argument     
     Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
          
     // var declarations + ifList + counter declaration + the while + return
@@ -425,11 +608,11 @@ public class Compiler extends TomGenericPlugin {
    *  return counter;    
    * }
    */
-  private static Declaration getPILforComputeLength(String opNameString, TomType opType) {    
+  private Declaration getPILforComputeLength(String opNameString, TomType opType) {    
     // all the variables
     TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());    
     TomTerm old = `Variable(concOption(),Name("old"),opType,concConstraint());       
-    TomTerm counter = `Variable(concOption(),Name("counter"),Compiler.getIntType(),concConstraint());
+    TomTerm counter = `Variable(concOption(),Name("counter"),getSymbolTable().getIntType(),concConstraint());
     TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());    
     // test if a new element
     Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,old)), UnamedBlock(concInstruction(
@@ -442,7 +625,11 @@ public class Compiler extends TomGenericPlugin {
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),isNewElem),
-        LetAssign(subject,GetTail(opName,subject),isEndList))); // subject is the method's argument    
+        AbstractBlock(
+          concInstruction(
+            Assign(subject,GetTail(opName,subject)),
+            isEndList))
+        )); // subject is the method's argument    
     Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
     
     // test if subj is consOpName
@@ -456,7 +643,7 @@ public class Compiler extends TomGenericPlugin {
                 Return(counter)))))));
         
     return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName+"_"+opNameString),
-        concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);
+        concTomTerm(subject),getSymbolTable().getIntType(),EmptyType(),functionBody);
   }  
   
   /**
@@ -511,11 +698,11 @@ public class Compiler extends TomGenericPlugin {
    * }    
    * 
    */
-  private static Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
-      
-      TomType intArrayType = symbolTable.getIntArrayType();
-      TomType boolType = symbolTable.getBooleanType();
-      TomType intType = Compiler.getIntType();
+  private Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
+
+      TomType intArrayType = getSymbolTable().getIntArrayType();
+      TomType boolType = getSymbolTable().getBooleanType();
+      TomType intType = getSymbolTable().getIntType();
             
       // the variables      
       TomTerm tempSol = `Variable(concOption(),Name("tempSol"),intArrayType,concConstraint());      
@@ -527,26 +714,27 @@ public class Compiler extends TomGenericPlugin {
       // test if subj is consOpName
       TomName opName = `Name(opNameString);
       Instruction isConsOpName = `If(IsFsym(opName,subject),
-          LetAssign(elem,GetHead(opName,opType,subject),Nop()),
-          LetAssign(elem,TomTermToExpression(subject),
-              LetAssign(subject,TomTermToExpression(BuildEmptyList(opName)),Nop())));
+          Assign(elem,GetHead(opName,opType,subject)),
+          AbstractBlock(concInstruction(
+              Assign(elem,TomTermToExpression(subject)),
+              Assign(subject,TomTermToExpression(BuildEmptyList(opName))))));
       TomTerm tempSolIndex = `Variable(concOption(),Name("tempSolIndex"),intType,concConstraint());
       TomTerm old = `Variable(concOption(),Name("old"),opType,concConstraint());
       Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,old)),
-          LetAssign(tempSolIndex,AddOne(tempSolIndex),
-              LetAssign(old,TomTermToExpression(elem),
-                  LetAssign(elemCounter,Integer(0),Nop()))),
+          AbstractBlock(concInstruction(
+              Assign(tempSolIndex,AddOne(tempSolIndex)),
+              Assign(old,TomTermToExpression(elem)),
+              Assign(elemCounter,Integer(0)))),
           Nop());  
       // the if for the complement
       TomTerm tempSolVal = `Variable(concOption(),Name("tempSolVal"),intType,concConstraint());
       TomTerm alpha = `Variable(concOption(),Name("alpha"),intArrayType,concConstraint()); 
       TomTerm isComplement = `Variable(concOption(),Name("isComplement"),boolType,concConstraint());
-      TomName intArrayName = `Name(symbolTable.getIntArrayOp());
+      TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());
       Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,ExpressionToTomTerm(TrueTL())),
-          LetAssign(tempSolVal,
+          Assign(tempSolVal,
                     Substract(ExpressionToTomTerm(GetElement(intArrayName,intType,alpha,tempSolIndex)),
-                              tempSolVal),
-                    Nop()),
+                              tempSolVal)),
           Nop());
       
       // if (tempSolVal != 0 && elemCounter < tempSolVal)      
@@ -554,8 +742,10 @@ public class Compiler extends TomGenericPlugin {
               LessThan(TomTermToExpression(elemCounter),TomTermToExpression(tempSolVal)));
       TomTerm result = `Variable(concOption(),Name("result"),opType,concConstraint());
       Instruction ifTakeElem = `If(ifCond,
-                                   LetAssign(result,TomTermToExpression(BuildAppendList(opName,result,elem)),
-                                       LetAssign(elemCounter,AddOne(elemCounter),Nop())),Nop());
+          AbstractBlock(concInstruction(
+              Assign(result,TomTermToExpression(BuildAppendList(opName,result,elem))),
+              Assign(elemCounter,AddOne(elemCounter)))),
+          Nop());
       //declaration of tempSolVal      
       Instruction tempSolValBlock = `LetRef(tempSolVal,
               GetElement(intArrayName,intType,tempSol,tempSolIndex),
@@ -563,7 +753,7 @@ public class Compiler extends TomGenericPlugin {
       
       // last if
       Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
-      Instruction lastIf = `If(notEmptySubj,LetAssign(subject,GetTail(opName,subject),Nop()),Nop());
+      Instruction lastIf = `If(notEmptySubj,Assign(subject,GetTail(opName,subject)),Nop());
       // the while
       Instruction whileBlock = `UnamedBlock(concInstruction(
               isConsOpName,isNewElem,tempSolValBlock,lastIf));                  
@@ -579,110 +769,5 @@ public class Compiler extends TomGenericPlugin {
       return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
               concTomTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
   } 
-  
-  /********************************************************************************/
-  
-  /**
-   * helper functions - mostly related to free var generation
-   */
-
-  public static TomNumberList getRootpath() {
-    return rootpath;
-  }
-
-  public static SymbolTable getSymbolTable() {
-    return symbolTable;
-  }
-
-  public static TomType getTermTypeFromName(TomName tomName) {
-    String stringName = ((Name)tomName).getString();
-    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);    
-    return tomSymbol.getTypesToType().getCodomain();
-  }
-
-  public static TomType getSlotType(TomName tomName, TomName slotName) {
-    String stringName = ((Name)tomName).getString();
-    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
-    return TomBase.getSlotType(tomSymbol,slotName);    
-  } 
-
-  // [pem] really useful ?
-  public static TomType getIntType() {
-    return symbolTable.getIntType();
-  }
-
-  // [pem] really useful ?
-  public static TomType getBooleanType() {
-    return symbolTable.getBooleanType();
-  }
-
-  public static TomType getTermTypeFromTerm(TomTerm tomTerm) {    
-    return TomBase.getTermType(tomTerm,symbolTable);    
-  }
-
-  public static TomTerm getFreshVariable(TomType type) {
-    return getFreshVariable(freshVarPrefix, type);    
-  }
-
-  public static TomTerm getFreshVariable(String name, TomType type) {
-    TomNumberList path = getRootpath();
-    name += freshVarCounter++;
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `Variable(concOption(),freshVarName,type,concConstraint());
-  }
-
-  public static TomTerm getFreshVariableStar(TomType type) {
-    return getFreshVariableStar(freshVarPrefix, type);
-  }
-
-  public static TomTerm getFreshVariableStar(String name, TomType type) {
-    TomNumberList path = getRootpath();
-    name += freshVarCounter++;
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `VariableStar(concOption(),freshVarName,type,concConstraint());
-  }
-
-  public static TomTerm getBeginVariableStar(TomType type) {
-    return getFreshVariableStar(freshBeginPrefix,type);
-  }
-
-  public static TomTerm getEndVariableStar(TomType type) {
-    return Compiler.getFreshVariableStar(freshEndPrefix,type);
-  }
-
-  /*
-   * add a prefix (tom_) to back-quoted variables which comes from the lhs
-   */
-  %strategy findRenameVariable(context:Collection) extends Identity() {
-    visit TomTerm {
-      var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
-        if(context.contains(`astName)) {          
-          return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
-        }
-      }
-    }
-
-    visit Instruction {
-      CompiledPattern(patternList,instruction) -> {
-        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
-        Collection newContext = new ArrayList();
-        `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
-        newContext.addAll(context);
-        return (Instruction)`TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
-      }
-    }  
-  }  
-
-  %strategy CollectLHSVars(Collection bag) extends Identity() {
-    visit Constraint {
-      MatchConstraint(p,_) -> {        
-        Map map = TomBase.collectMultiplicity(`p);
-        Collection newContext = new HashSet(map.keySet());
-        bag.addAll(newContext);
-        throw new VisitFailure();// to stop the top-down
-      }
-    }
-  }
-
 
 }

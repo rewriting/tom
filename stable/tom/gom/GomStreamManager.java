@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
- * Copyright (c) 2000-2008, INRIA
+ *
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +43,7 @@ import tom.platform.OptionManager;
 public class GomStreamManager {
 
   /** List of import paths. */
-  private List userImportList;
+  private List<File> userImportList;
 
   /** Absolute path where the file is generated. */
   private File destDirFile;
@@ -52,11 +51,11 @@ public class GomStreamManager {
   /** The input file name (relative path, or -) */
   private String inputFileName;
   private String intermediateName;
-  
+
   /** The input stream */
   private Reader inputReader;
 
-  /** 
+  /**
    * Relative path which corresponds to the package where to generate the java
    * classes (empty by default).
    * */
@@ -65,14 +64,14 @@ public class GomStreamManager {
 
   /** Suffixes */
   private String inputSuffix;
-  
+
   public GomStreamManager() {
     clear();
   }
 
   /** Reinitializes the GomEnvironment instance. */
   public void clear() {
-    userImportList = new ArrayList();
+    userImportList = new ArrayList<File>();
     destDirFile = null;
     inputFileName = "";
     inputReader = null;
@@ -123,10 +122,10 @@ public class GomStreamManager {
    *  - inputFile.getParent
    *  - TOM_HOME/share/gom
    */
-  public List getImportList() {
-    List importList = new ArrayList(getUserImportList().size()+2);
-    for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
-      importList.add(it.next());
+  public List<File> getImportList() {
+    List<File> importList = new ArrayList<File>(getUserImportList().size()+2);
+    for (File file : getUserImportList()) {
+      importList.add(file);
     }
     try {
       File inputParent = getInputParent();
@@ -145,11 +144,11 @@ public class GomStreamManager {
     return importList;
   }
 
-  public List getUserImportList() {
+  public List<File> getUserImportList() {
     return userImportList;
   }
 
-  public void setUserImportList(List list) {
+  public void setUserImportList(List<File> list) {
     userImportList = list;
   }
 

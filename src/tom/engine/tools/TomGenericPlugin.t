@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ package tom.engine.tools;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 
 import tom.engine.Tom;
 import tom.engine.TomBase;
@@ -54,6 +55,9 @@ public abstract class TomGenericPlugin implements Plugin {
   
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
 
+  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
+  public final static String KEY_LAST_READ_LINE = "lastReadLine";
+  
   /** The name of the plugin. */
   private String pluginName;
 
@@ -124,7 +128,7 @@ public abstract class TomGenericPlugin implements Plugin {
    * The run() method is not implemented in TomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract void run();
+  public abstract void run(Map informationTracker);
 
   /**
    * From Plugin interface 
@@ -180,7 +184,7 @@ public abstract class TomGenericPlugin implements Plugin {
   public void setOptionManager(OptionManager optionManager) {
     this.optionManager = optionManager;
   }
-  
+ 
   /**
    * From OptionOwner interface 
    * Returns an empty PlatformOptionList. By default, the plugin is considered

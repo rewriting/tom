@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -38,18 +38,35 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-
 import tom.engine.compiler.*;
+
 /**
  * Array Generator
  */
 public class ArrayGenerator implements IBaseGenerator{
 
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { ../../../library/mapping/java/sl.tom}	
+  %include { ../../../library/mapping/java/sl.tom }	
+  %include { expressionstrategies.tom }	
 
+  private tom.engine.compiler.Compiler compiler;  
+  private ConstraintGenerator constraintGenerator; // only present for "compatibility" : cf. ConstraintGenerator.t and look around ".newInstance(this.getCompiler(),this);" 
+ 
+  public ArrayGenerator(tom.engine.compiler.Compiler myCompiler, ConstraintGenerator myConstraintGenerator) {
+    this.compiler = myCompiler;
+    this.constraintGenerator = myConstraintGenerator; // only present for "compatibility" : cf. ConstraintGenerator.t and look around ".newInstance(this.getCompiler(),this);" 
+  }
+
+  public tom.engine.compiler.Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public ConstraintGenerator getConstraintGenerator() {
+    return this.constraintGenerator;
+  }
+ 
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`TopDown(Generator()).visitLight(expression);		
+    return `TopDownWhenExpression(Generator()).visitLight(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
@@ -87,8 +104,8 @@ public class ArrayGenerator implements IBaseGenerator{
    *   the element itself is returned when it is not an array operator operator
    *   this occurs because the last element of an array may not be an array
    */ 
-  private static Expression genGetElement(TomName opName, TomTerm var, Expression getElem) {
-    TomSymbol tomSymbol = tom.engine.compiler.Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+  private Expression genGetElement(TomName opName, TomTerm var, Expression getElem) {
+    TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {

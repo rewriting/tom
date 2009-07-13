@@ -3,7 +3,7 @@
   /*
    * Gom
    * 
-   * Copyright (c) 2006, INRIA
+   * Copyright (c) 2009, INRIA
    * Nancy, France.
    * 
    * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,7 @@ public interface BlockParserTokenTypes {
 	int ESC = 7;
 	int HEX_DIGIT = 8;
 	int WS = 9;
-	int COMMENT = 10;
-	int SL_COMMENT = 11;
-	int ML_COMMENT = 12;
-	int TARGET = 13;
+	int SL_COMMENT = 10;
+	int ML_COMMENT = 11;
+	int TARGET = 12;
 }

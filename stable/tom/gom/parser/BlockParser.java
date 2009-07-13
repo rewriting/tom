@@ -3,7 +3,7 @@
   /*
    * Gom
    * 
-   * Copyright (c) 2006, INRIA
+   * Copyright (c) 2009, INRIA
    * Nancy, France.
    * 
    * This program is free software; you can redistribute it and/or modify
@@ -150,7 +150,6 @@ public BlockParser(ParserSharedInputState state) {
 		"ESC",
 		"HEX_DIGIT",
 		"WS",
-		"COMMENT",
 		"SL_COMMENT",
 		"ML_COMMENT",
 		"TARGET"

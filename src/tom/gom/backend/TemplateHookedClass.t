@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,12 @@ package tom.gom.backend;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import tom.gom.Gom;
 import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
+import tom.gom.tools.GomEnvironment;
 
 public abstract class TemplateHookedClass extends TemplateClass {
   protected HookList hooks;
@@ -43,8 +45,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
                              OptionManager manager,
                              File tomHomePath,
                              List importList,
-                             TemplateClass mapping) {
-    super(gomClass);
+                             TemplateClass mapping,
+                             GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     this.optionManager = manager;
     this.hooks = gomClass.getHooks();
     this.tomHomePath = tomHomePath;
@@ -52,13 +55,18 @@ public abstract class TemplateHookedClass extends TemplateClass {
     this.mapping = mapping;
   }
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../adt/objects/Objects.tom }
+  %include { boolean.tom }
+
+  public /*synchronized*/ GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
-      ConcHook(_*,BlockHook(code),_*) -> {
+    %match(h) {
+      ConcHook(_*,BlockHook[Code=code],_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -69,7 +77,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
+    %match(h) {
       ConcHook(_*,ImportHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
@@ -81,7 +89,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);   
-    %match(HookList h) {
+    %match(h) {
       ConcHook(_*,InterfaceHook(code),_*) -> {
         res.append(",");
         res.append(CodeGen.generateCode(`code));
@@ -96,20 +104,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
    * necessary (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if (hooks.isEmptyConcHook()) {
-      try {
-        File output = fileToGenerate();
-        // make sure the directory exists
-        output.getParentFile().mkdirs();
-        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-        generate(writer);
-        writer.flush();
-        writer.close();
-      } catch(Exception e) {
-        e.printStackTrace();
-        return 1;
-      }
-    } else { /* We need to call tom to generate the file */
+    if (hooks.containsTomCode()) {
+      /* We need to call Tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
@@ -122,7 +118,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
 
-      ArrayList tomParams = new ArrayList();      
+      ArrayList<String> tomParams = new ArrayList<String>();      
 
       try {
         Iterator it = importList.iterator();
@@ -157,7 +153,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
       tomParams.add("--output");
       tomParams.add(file_path);
-      tomParams.add("-");     
+      tomParams.add("-");
 
       //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
@@ -168,9 +164,10 @@ public abstract class TemplateHookedClass extends TemplateClass {
         StringWriter gen = new StringWriter();
         generate(gen);
         InputStream backupIn = System.in;
-        System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
-        int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-        //      int res = tom.engine.Tom.exec(params);
+        System.setIn(new ByteArrayInputStream(gen.toString().getBytes("UTF-8")));
+        int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
+
+        //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         System.setIn(backupIn);
         if (res != 0 ) {
           getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
@@ -179,6 +176,22 @@ public abstract class TemplateHookedClass extends TemplateClass {
       } catch (IOException e) {
         getLogger().log(Level.SEVERE,
             "Failed generate Tom code: " + e.getMessage());
+      }
+
+
+
+    } else {
+      try {
+        File output = fileToGenerate();
+        // make sure the directory exists
+        output.getParentFile().mkdirs();
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+        generate(writer);
+        writer.flush();
+        writer.close();
+      } catch(Exception e) {
+        e.printStackTrace();
+        return 1;
       }
     }
     return 0;

@@ -12,7 +12,7 @@ Term = tau(Abst:AbsTerm)
 		 | repr(Term:String)
 		 | subterm(Symbol:Symbol,T:Term,Index:int)
 		 | slot(Symbol:Symbol,T:Term,Name:String)
-		 |appSubsT(Subs:SubstitutionList,T:Term)
+		 | appSubsT(Subs:SubstitutionList,T:Term)
 
 Expr = iltrue(Subst:SubstitutionList)
 		 | ilfalse()

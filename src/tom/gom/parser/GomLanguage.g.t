@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2007-2008, INRIA
+ * Copyright (c) 2007-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,22 +25,20 @@ grammar GomLanguage;
 
 options {
   output=AST;
-  ASTLabelType=GomTree;
+  ASTLabelType=Tree;
 }
 
 tokens {
-  %include { gom/GomTokenList.txt }
+  %include { gom/GomLanguageGomTokenList.txt }
 }
 
 @header {
 package tom.gom.parser;
-import tom.gom.adt.gom.GomTree;
 import tom.gom.GomStreamManager;
 }
 
 @lexer::header {
 package tom.gom.parser;
-import tom.gom.adt.gom.GomTree;
 }
 
 @members {
@@ -52,7 +50,7 @@ import tom.gom.adt.gom.GomTree;
 }
 
 module :
-  MODULE modulename (imps=imports)? section
+ MODULE modulename (imps=imports)? section EOF
   -> {imps!=null}? ^(GomModule modulename ^(ConcSection imports section))
   -> ^(GomModule modulename ^(ConcSection section))
   ;
@@ -86,19 +84,12 @@ section :
   ;
 
 adtgrammar :
-  (gr+=sortdef | gr+=syntax)+ -> $gr
+  (gr+=syntax)+ -> $gr
   ;
-
-sortdef :
-  SORTS (type)* -> ^(ConcGrammar ^(Sorts (type)*))
-  ;
-
-type :
-  ID -> ^(GomType ID);
 
 syntax :
-  ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
-  -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr)*)))
+  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)* 
+    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr4)* ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
 production
@@ -108,24 +99,82 @@ String startLine = ""+input.LT(1).getLine();
   ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
   ;
 
+atomdecl : 
+  ATOM atom=ID -> ^(AtomDecl ID[atom])
+  ;
+
 typedecl :
-  typename=ID EQUALS alts=alternatives[typename]
-    -> ^(SortType ^(GomType $typename) $alts)
+    typename=ID EQUALS alts=alternatives[typename]
+      -> ^(SortType ^(GomType ^(ExpressionType) $typename) ^(ConcAtom) $alts)
+  |  ptypename=ID BINDS b=atoms EQUALS palts=pattern_alternatives[ptypename]
+      -> ^(SortType ^(GomType ^(PatternType) $ptypename) $b $palts)
+  ;
+
+atoms : 
+  (atom+=ID)+ -> ^(ConcAtom ($atom)+)
   ;
 
 alternatives[Token typename] :
-  (ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
+  /*(ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
+  -> ^(ConcProduction (opdecl)+)*/
+  /*(((jd1=(JAVADOC)? ALT)?) | ((ALT jd1=(JAVADOC)?)?) | (JAVADOC)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?*/
+  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?
   -> ^(ConcProduction (opdecl)+)
   ;
 
-opdecl[Token type] :
-  ID fieldlist
-  -> ^(Production ID fieldlist ^(GomType ID[type])
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_alternatives[Token typename] :
+  (ALT)? pattern_opdecl[typename] (ALT pattern_opdecl[typename])* (SEMI)?
+  -> ^(ConcProduction (pattern_opdecl)+)
+  ;
+
+opdecl[Token type, Token JAVADOC] :
+ ID fieldlist
+  -> {JAVADOC!=null}? ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+      /*^(Origin ID[""+input.LT(1).getLine()]))*/
+      ^(OptionList ^(Origin ID[""+input.LT(1).getLine()]) ^(Details ID[JAVADOC])))
+  -> ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+      ^(Origin ID[""+input.LT(1).getLine()]))
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_opdecl[Token type] :
+ ID pattern_fieldlist
+  -> ^(Production ID pattern_fieldlist ^(GomType ^(PatternType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 
 fieldlist :
   LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_fieldlist :
+  LPAREN (pattern_field (COMMA pattern_field)* )? RPAREN -> ^(ConcField (pattern_field)*) ;
+
+type:
+  ID -> ^(GomType ^(ExpressionType) ID)
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_type:
+  ID -> ^(GomType ^(PatternType) ID)
+  ;
+
+field:
+    type STAR -> ^(StarredField type ^(None))
+  | LDIPLE pattern_type RDIPLE STAR -> ^(StarredField pattern_type ^(Refresh))
+  | ID COLON type -> ^(NamedField ^(None) ID type)
+  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(Refresh) ID pattern_type)
+  ;
+
+/* Used by Freshgom, as all rules beginning by "pattern" */
+pattern_field:
+    pattern_type STAR -> ^(StarredField pattern_type ^(None))
+  | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
+  | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
+  | NEUTRAL ID COLON type -> ^(NamedField ^(Neutral) ID type)
+  | ID COLON pattern_type -> ^(NamedField ^(None) ID pattern_type)
+  ;
 
 arglist:
   (LPAREN (arg (COMMA arg)* )? RPAREN)? 
@@ -149,20 +198,20 @@ hookScope :
   | OPERATOR -> ^(KindOperator)
   ;
 
-field :
-  type STAR -> ^(StarredField type)
-  | ID COLON type -> ^(NamedField ID type)
-  ;
 
 MODULE   : 'module';
 IMPORTS  : 'imports';
 PUBLIC   : 'public';
 PRIVATE  : 'private';
-SORTS    : 'sorts';
 ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 SORT     : 'sort';
 OPERATOR : 'operator';
+ATOM     : 'atom';
+INNER    : 'inner';
+OUTER    : 'outer';
+NEUTRAL  : 'neutral';
+BINDS    : 'binds';
 
 ARROW    : '->';
 COLON    : ':';
@@ -174,6 +223,8 @@ STAR     : '*';
 EQUALS   : '=';
 ALT      : '|';
 SEMI     : ';;';
+LDIPLE   : '<';
+RDIPLE   : '>';
 
 LBRACE: '{'
   {
@@ -202,7 +253,12 @@ SLCOMMENT :
   ;
 
 MLCOMMENT :
-  '/*' .* '*/' {$channel=HIDDEN;}
+  '/*' ~'*'.* '*/'
+  {$channel=HIDDEN;}
+  ;
+
+JAVADOC :
+  '/**' .* '*/'
   ;
 
 ID : ('a'..'z' | 'A'..'Z')

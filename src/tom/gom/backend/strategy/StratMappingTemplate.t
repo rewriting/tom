@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,13 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
+  int generateStratMapping = 0;
 
   %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(GomClass gomClass) {
-    super(gomClass);
+  public StratMappingTemplate(GomClass gomClass, GomEnvironment gomEnvironment, int generateStratMapping) {
+    super(gomClass,gomEnvironment);
+    this.generateStratMapping = generateStratMapping;
     %match(gomClass) {
       TomMapping[OperatorClasses=ops] -> {
         this.operatorClasses = `ops;
@@ -48,19 +50,30 @@ public class StratMappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
   
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);
   }
 
+  /**
+    * generate mappings for congruence strategies
+    * in a _file.tom
+    */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    %match(GomClassList operatorClasses) {
+    if(generateStratMapping == 1) {
+      writer.write("  %include { sl.tom }");
+    }
+    %match(operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
-            (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.SOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.IsOpTemplate(`op,getGomEnvironment())).generateMapping());
         writer.write(
-            (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
+            (new tom.gom.backend.strategy.MakeOpTemplate(`op,getGomEnvironment())).generateMapping());
       }
       ConcGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,
@@ -68,11 +81,11 @@ public class StratMappingTemplate extends MappingTemplateClass {
           Cons=OperatorClass[ClassName=cons]],
           _*)-> {
         writer.write(%[
-            %op Strategy _@className(`vopName)@(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
-            }
-            ]%);
+  %op Strategy _@className(`vopName)@(sub:Strategy) {
+    is_fsym(t) { false }
+    make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
+  }
+  ]%);
       }
     }
       }

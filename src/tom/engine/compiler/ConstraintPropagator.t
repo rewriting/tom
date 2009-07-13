@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -27,12 +27,15 @@ package tom.engine.compiler;
 
 import java.util.ArrayList;
 
+import java.lang.reflect.*;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.compiler.*;
 import tom.engine.compiler.propagator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.library.sl.*;
@@ -45,33 +48,41 @@ public class ConstraintPropagator {
 
 //------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { ../adt/tomsignature/_TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
   %include { java/util/types/ArrayList.tom}
 //------------------------------------------------------
+
+  private Compiler compiler;
+
+  public ConstraintPropagator(Compiler myCompiler) {
+    this.compiler = myCompiler; 
+  } 
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
   private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator"};
 
-  public static Constraint performPropagations(Constraint constraintToCompile) 
-    throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{
+  public Constraint performPropagations(Constraint constraintToCompile) 
+    throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
     
-    System.out.println(new tom.engine.tools.TomConstraintPrettyPrinter().prettyPrint(constraintToCompile));
     // counts the propagators that didn't change the expression
     int propCounter = 0;
     int propNb = propagatorsNames.length;    	
 
     // cache the propagators
     IBasePropagator[] prop = new IBasePropagator[propNb];
+    Class[] classTab = new Class[]{Class.forName("tom.engine.compiler.Compiler"), Class.forName("tom.engine.compiler.ConstraintPropagator")};
     for(int i=0 ; i < propNb ; i++) {
-      prop[i] = (IBasePropagator)Class.forName(propagatorsPackage + propagatorsNames[i]).newInstance();
+      Class myClass = Class.forName(propagatorsPackage + propagatorsNames[i]);
+      java.lang.reflect.Constructor constructor = myClass.getConstructor(classTab);
+      prop[i] = (IBasePropagator)constructor.newInstance(this.getCompiler(),this);
     }
     
     Constraint result= null;
-    //call for the moment ACPropagator by hand
-    constraintToCompile = new tom.engine.compiler.propagator.ACPropagator().propagate(constraintToCompile);
-    
     mainLoop: while(true) {
       for(int i=0 ; i < propNb ; i++) {
         result = prop[i].propagate(constraintToCompile);
@@ -83,13 +94,9 @@ public class ConstraintPropagator {
         // reinitialize
         constraintToCompile = result;
       }
-    } // end while
+    } // end while    
     return result;
   }
-  
-  
-  //[radu] TODO: looks a little bit too complicated: I think we can treat the both cases
-  // uniformly
   
   /**
    * Detaches the annotations
@@ -100,22 +107,22 @@ public class ConstraintPropagator {
    * This is because the varStars can have at the rhs something that will generate loops,
    * and we don't want to duplicate that to the constraints  
    */
-  public static Constraint performDetach(Constraint subject) {    
+  public Constraint performDetach(Constraint subject) {    
     Constraint result = `AndConstraint(); 
     %match(subject){
       MatchConstraint((RecordAppl|Variable|UnamedVariable)[Constraints=constraints@!concConstraint()],g) -> {
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
             // add constraint to the list
-            result = `AndConstraint(MatchConstraint(var,g),result*);                                                                                                                       
+            result = `AndConstraint(MatchConstraint(var,g),result*);
           }
         }// end match   
       }      
       MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
-        TomTerm freshVariable = Compiler.getFreshVariableStar(`type);
+        TomTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
-            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);                                                                                                                       
+            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
           }
         }// end match   
         result = `AndConstraint(MatchConstraint(freshVariable,g),

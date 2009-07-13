@@ -3,12 +3,8 @@ imports TomSignature TomName int
 abstract syntax
 
 TomTerm =
-
   /**
    * <code>TermAppl</code> application of a symbol to a list of subterms
-   * <code>ListAppl</code> application of a list-symbol to a list of subterms
-   * <code>RecordAppl</code> application of a symbol to a list of pairs (slot,subterm)
-   * <code>XMLAppl</code> application of a xml-symbol to a list of attributes and a list of subterms
    *
    * @param Option a list of options
    * @param NameList a list of head symbol names
@@ -17,17 +13,28 @@ TomTerm =
    * @param Constraints a list of constraints
    */
     | TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
-    | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
-    | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
-
   /**
+   * <code>RecordAppl</code> application of a symbol to a list of pairs (slot,subterm)
+   *
+   * @param Option a list of options
+   * @param NameList a list of head symbol names
+   * @param Args a list of subterms
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
+  /**
+   * <code>XMLAppl</code> application of a xml-symbol to a list of attributes and a list of subterms
+   *
+   * @param Option a list of options
+   * @param NameList a list of head symbol names
+   * @param Args a list of subterms
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
+  /** 
    * <code>Variable</code> a variable
-   * <code>VariableStar</code> a list-variable
-   * <code>UnamedVariable</code> a variable without name
-   * <code>UnamedVariableStar</code> a list-variable without name
-   * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
-   * <code>VariableArrayList</code> a head array that is variable ( starting from begining to end )
-   * <code>TestVar</code> instead of generating an assignment, this generates an equality test
    *
    * @param Option a list of options
    * @param AstName the name of the variable
@@ -35,21 +42,75 @@ TomTerm =
    * @param Constraints a list of constraints
    */
     | Variable(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>VariableStar</code> a list-variable
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>UnamedVariable</code> a variable without name
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>UnamedVariableStar</code> a list-variable without name
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+  /**
+   * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | VariableHeadList(Opname:TomName,Begin:TomTerm,End:TomTerm)
+  /**
+   * <code>VariableHeadArray</code> a head array that is variable ( starting from begining to end )
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | VariableHeadArray(Opname:TomName,Subject:TomTerm,BeginIndex:TomTerm,EndIndex:TomTerm)
+  /**
+   * <code>TestVar</code> instead of generating an assignment, this generates an equality test
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
     | TestVar(Variable:TomTerm)
   /**
    * <code>ListHead</code> represents the head of a list
-   * <code>ListTail</code> the tail of a list
    *
    * @param Opname operator's name
    * @param Codomain the type of the operator
    * @param Variable the list from which to extract the head / tail
    */
 	  | ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
+  /**
+   * <code>ListTail</code> the tail of a list
+   *
+   * @param Opname operator's name
+   * @param Codomain the type of the operator
+   * @param Variable the list from which to extract the head / tail
+   */
   	| ListTail(Opname:TomName,Variable:TomTerm)  		   
 
   /**
@@ -66,11 +127,15 @@ TomTerm =
 
   /**
    * <code>Tom</code> main construct to embed a Tom island
-   * <code>TomInclude</code> like <code>Tom</code>, but corresponds to an include.
    * It will be generated on a single line
    * @param Tomlist a list of TomTerm that correspond to islands or lakes
    */
     | Tom(TomList:TomList)
+  /**
+   * <code>TomInclude</code> like <code>Tom</code>, but corresponds to an include.
+   * It will be generated on a single line
+   * @param Tomlist a list of TomTerm that correspond to islands or lakes
+   */
     | TomInclude(TomList:TomList)
 
     | BackQuoteAppl(Option:OptionList,AstName:TomName,Args:TomList)
@@ -104,12 +169,8 @@ TomTerm =
 
 TomList = concTomTerm(TomTerm*)
 
-  /*
-   * Hooks
-   */
-
-  Ref:make(e) {
-    %match(e) {
-      ExpressionToTomTerm[] -> { return e; }
-    }
+Ref:make(e) {
+  %match(e) {
+    ExpressionToTomTerm[] -> { return e; }
   }
+}

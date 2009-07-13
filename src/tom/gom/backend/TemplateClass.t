@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,15 +29,20 @@ import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
+import java.util.ArrayList;
 
 public abstract class TemplateClass {
   protected GomClass gomClass;
   protected ClassName className;
+  protected GomEnvironment gomEnvironment;
 
-  public TemplateClass(GomClass gomClass) {
+  public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     this.gomClass = gomClass;
     this.className = gomClass.getClassName();
+    this.gomEnvironment = gomEnvironment;
   }
+
+  public abstract GomEnvironment getGomEnvironment();
 
   %include { ../adt/objects/Objects.tom}
 
@@ -48,7 +53,7 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Name=name] -> {
         return `name;
       }
@@ -62,7 +67,7 @@ public abstract class TemplateClass {
   }
 
   public static String fullClassName(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
           return `name;
@@ -80,7 +85,7 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Pkg=pkg] -> {
         return `pkg;
       }
@@ -90,7 +95,7 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "has"+`name;
       }
@@ -100,7 +105,7 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "get"+`name;
       }
@@ -110,7 +115,7 @@ public abstract class TemplateClass {
   }
 
   public String setMethod(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "set"+`name;
       }
@@ -120,7 +125,7 @@ public abstract class TemplateClass {
   }
 
   public String index(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Name=name] -> {
         return "index_"+`name;
       }
@@ -130,7 +135,7 @@ public abstract class TemplateClass {
   }
 
   public String slotDomain(SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
         return fullClassName(`domain);
       }
@@ -144,7 +149,7 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-    %match(ClassName clsName) {
+    %match(clsName) {
       ClassName[Name=name] -> {
         return `name.toLowerCase();
       }
@@ -155,9 +160,9 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(%[@element@.toStringBuilder(@buffer@);
 ]%);
         } else {
@@ -273,9 +278,9 @@ public abstract class TemplateClass {
   }
 
   public void toATermSlotField(StringBuilder res, SlotField slot) {
-    %match(SlotField slot) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           res.append(getMethod(slot));
           res.append("().toATerm()");
         } else {
@@ -319,29 +324,31 @@ public abstract class TemplateClass {
     }
   }
 
-  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
-    %match(SlotField slot) {
+  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl, String atConv) {
+    %match(slot) {
       SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        if(!getGomEnvironment().isBuiltinClass(`domain)) {
           buffer.append(fullClassName(`domain));
           buffer.append(".fromTerm(");
           buffer.append(appl);
+          buffer.append(",");
+          buffer.append(atConv);
           buffer.append(")");
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
+            buffer.append("convertATermToInt(").append(appl).append(", ").append(atConv).append(")");
           } else  if (`domain.equals(`ClassName("","float"))) {
-            buffer.append("(float) ((aterm.ATermReal)").append(appl).append(").getReal()");
+            buffer.append("convertATermToFloat(").append(appl).append(", ").append(atConv).append(")");
           } else  if (`domain.equals(`ClassName("","boolean"))) {
-            buffer.append("(((aterm.ATermInt)").append(appl).append(").getInt()==0?false:true)");
+            buffer.append("convertATermToBoolean(").append(appl).append(", ").append(atConv).append(")");
           } else  if (`domain.equals(`ClassName("","long"))) {
-            buffer.append("((aterm.ATermLong)").append(appl).append(").getLong()");
+            buffer.append("convertATermToLong(").append(appl).append(", ").append(atConv).append(")");
           } else  if (`domain.equals(`ClassName("","double"))) {
-            buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
+            buffer.append("convertATermToDouble(").append(appl).append(", ").append(atConv).append(")");
           } else  if (`domain.equals(`ClassName("","char"))) {
-            buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
+            buffer.append("convertATermToChar(").append(appl).append(", ").append(atConv).append(")");
           } else if (`domain.equals(`ClassName("","String"))) {
-            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(").getAFun().getName()");
+            buffer.append("convertATermToString(").append(appl).append(", ").append(atConv).append(")");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
             buffer.append(appl);
           } else {
@@ -371,7 +378,7 @@ public abstract class TemplateClass {
   }
 
   protected File fileToGenerate() {
-    GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
+    GomStreamManager stream = getGomEnvironment().getStreamManager();
     File output = new File(stream.getDestDir(),fileName());
     return output;
   }
@@ -411,7 +418,7 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      %match(SlotField slot) {
+      %match(slot) {
         SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
           writer.write(`slotName);
           writer.write(":");

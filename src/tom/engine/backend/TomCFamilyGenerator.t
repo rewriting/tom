@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,17 +59,9 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     super(output, optionManager, symbolTable);
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
-    output.write("=");
-    generateExpression(deep,exp,moduleName);
-    output.writeln(";");
-  }
-  
-  protected void buildAssignArrayVar(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, String moduleName) throws IOException {
-    //output.indent(deep);
-    generateArray(deep,var,index,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.writeln(";");
@@ -172,30 +164,16 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType,
                           Expression exp, Instruction body, String moduleName) throws IOException {
-    output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
-    buildAssignVar(deep,var,optionList,exp,moduleName);
-    generateInstruction(deep,body,moduleName);
-    output.writeln(deep,"}");
-  }
-  
-  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomTerm index,
-      Expression exp, Instruction body, String moduleName) throws IOException {    
-    buildAssignArrayVar(deep,var,optionList,index,exp,moduleName);
-    generateInstruction(deep,body,moduleName);    
+    //output.writeln(deep,"{");
+    output.write(deep+1,TomBase.getTLCode(tlType) + " ");
+    buildAssign(deep+1,var,optionList,exp,moduleName);
+    generateInstruction(deep+1,body,moduleName);
+    //output.writeln(deep,"}");
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
-  }
-  
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
-    buildAssignVar(deep, var, list, exp, moduleName);
-    generateInstruction(deep,body, moduleName);
-  }
-
-  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
-    generate(deep,term,moduleName);
   }
 
   protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
@@ -249,7 +227,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(s);
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    %match(TargetLanguage tlCode) {
+    %match(tlCode) {
       TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(0,returnValue, `startLine, `endLine - `startLine);
         return;
@@ -356,24 +334,35 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
-    if(domain==codomain) {
-      return %[((@is_conc@)?@get@:@subject@)]%;
-    }
     return get;
   }
 
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
-    String is_conc = getIsConcList(name,subject,moduleName);
-    String empty = getMakeEmptyList(name,moduleName);
+    return get;
+  }
+
+  private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get = getGetHead(name,tomType,subject,moduleName);
     if(domain==codomain) {
-      return %[((@is_conc@)?@get@:@empty@)]%;
+      String is_conc = getIsConcList(name,subject,moduleName);
+      return %[((@is_conc@)?@get@:@subject@)]%;
     }
     return get;
   }
 
+  private String genDeclGetTailInSlice(String name, TomType domain, TomType codomain, String subject,String moduleName) {
+    String tomType = TomBase.getTomType(codomain);
+    String get= getGetTail(name,tomType,subject,moduleName);
+    if(domain==codomain) {
+      String is_conc = getIsConcList(name,subject,moduleName);
+      String empty = getMakeEmptyList(name,moduleName);
+      return %[((@is_conc@)?@get@:@empty@)]%;
+    }
+    return get;
+  }
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
@@ -449,8 +438,8 @@ s = %[
       /* code to avoid a call to make, and thus to avoid looping during list-matching */
       return begin;
     }
-    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
-                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
+    return @getMakeAddList(name,genDeclGetHeadInSlice(name,eltType,listType,"begin",moduleName),
+                  get_slice+"("+genDeclGetTailInSlice(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
   }
   ]%;
 
@@ -492,7 +481,7 @@ s = %[
       while(!argList.isEmptyconcTomTerm()) {
         TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              %match(TomTerm arg) {
+              %match(arg) {
                 Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
                   s.append(TomBase.getTLCode(`tlType) + " " + `name);
                   break matchBlock;

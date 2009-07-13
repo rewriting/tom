@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,37 +70,36 @@ public class ZenonOutput {
     this.tomiltools = new TomIlTools(verifier);
   }
 
-  public Collection zspecSetFromConstraintMap(Map constraintMap) {
-    Collection resset = new HashSet();
-    Iterator it = constraintMap.entrySet().iterator();
-    while(it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
+  public Collection<ZSpec> zspecSetFromConstraintMap(Map<Instr,Expr> constraintMap) {
+    Collection<ZSpec> resset = new HashSet<ZSpec>();
+    for (Map.Entry<Instr,Expr> entry : constraintMap.entrySet()) {
       ZSpec spec = zspecFromMapEntry(entry);
       resset.add(spec);
     }
     return resset;
   }
 
-  public ZSpec zspecFromMapEntry(Map.Entry entry) {
-    Instr accept = (Instr) entry.getKey();
-    Expr constraint = (Expr) entry.getValue();
+  public ZSpec zspecFromMapEntry(Map.Entry<Instr,Expr> entry) {
+    Instr accept = entry.getKey();
+    Expr constraint = entry.getValue();
 
-    List subjectList = new LinkedList();
+    List<ZTerm> subjectList = new LinkedList<ZTerm>();
     ZExpr pattern = null;
     ZExpr negpattern = null;
 
     // theorem to prove
-    %match(Instr accept) {
+    %match(accept) {
         accept(positive,negative) -> {
         Constraint positivePattern = Constraint.fromTerm(`positive);
         ConstraintList negativePatternList = ConstraintList.fromTerm(`negative);
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
-        Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
-                                                               new HashMap());
+        Map<String,ZTerm> variableMap = ztermVariableMapFromSubstitutionList(
+                                          subsList,
+                                          new HashMap<String,ZTerm>());
         tomiltools.getZTermSubjectListFromConstraint(positivePattern,
-                                                  subjectList,
-                                                  variableMap);
+                                                     subjectList,
+                                                     variableMap);
         pattern = tomiltools.constraintToZExpr(positivePattern,variableMap);
         if (verifier.isCamlSemantics()) {
           negpattern = tomiltools.constraintToZExpr(negativePatternList,variableMap);
@@ -124,15 +123,13 @@ public class ZenonOutput {
     // to TomSignature and Zenon signature
 
     // collects symbols in pattern
-    Collection symbols = tomiltools.collectSymbols(pattern);
+    Collection<String> symbols = tomiltools.collectSymbols(pattern);
     // generates the axioms for this set of symbols
     ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
     // generates axioms for all subterm operations
     ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
 
-    Iterator iter = subjectList.iterator();
-    while(iter.hasNext()) {
-      ZTerm input = (ZTerm)iter.next();
+    for (ZTerm input : subjectList) {
       theorem = `zforall(input,ztype("T"),theorem);
     }
     ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
@@ -141,7 +138,7 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromTerm(Term term) {
-    %match(Term term) {
+    %match(term) {
       tau(absTerm) -> {
         return ztermFromAbsTerm(`absTerm);
       }
@@ -163,7 +160,7 @@ public class ZenonOutput {
   }
 
   ZExpr zexprFromExpr(Expr expr) {
-    %match(Expr expr) {
+    %match(expr) {
       iltrue[] -> { return `ztrue();}
       ilfalse() -> { return `zfalse();}
       tisfsym(absterm,s) -> {
@@ -198,7 +195,7 @@ public class ZenonOutput {
   }
 
   ZSymbol zsymbolFromSymbol(Symbol symb) {
-    %match(Symbol symb) {
+    %match(symb) {
       fsymbol(name) -> {
         return `zsymbol(name);
       }
@@ -207,26 +204,26 @@ public class ZenonOutput {
   }
 
   ZExpr zexprFromSeq(Seq seq) {
-    %match(Seq seq) {
+    %match(seq) {
       seq() -> {
         return `ztrue();
       }
       dedterm(termlist) -> {
-        %match(TermList `termlist) {
+        %match(termlist) {
           concTerm(_*,tl,tr) -> {
             return `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
           }
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList `exprlist) {
+        %match(exprlist) {
           concExpr(_*,t,iltrue[]) -> {
             return zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList `exprlist) {
+        %match(exprlist) {
           concExpr(_*,t,ilfalse()) -> {
             return `znot(zexprFromExpr(t));
           }
@@ -237,7 +234,7 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromAbsTerm(AbsTerm absterm) {
-    %match(AbsTerm absterm) {
+    %match(absterm) {
       absvar(var(name)) -> {
         return `zvar(name);
       }
@@ -251,7 +248,9 @@ public class ZenonOutput {
     return `zvar("Error in ztermFromAbsTerm");
   }
 
-  private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
+  private Map<String,ZTerm> ztermVariableMapFromSubstitutionList(
+                              SubstitutionList sublist,
+                              Map<String,ZTerm> map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
       (undefsubs(),t*)  -> {

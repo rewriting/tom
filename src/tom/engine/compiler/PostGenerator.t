@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -56,14 +56,10 @@ public class PostGenerator {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
- 
-  public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
-    instruction = changeVarDeclarations(instruction);
-    return (Instruction) `TopDown(AddRef()).visitLight(instruction);
-  }
+
   
   %strategy AddRef() extends Identity() {
-    visit Expression { 
+   visit Expression { 
       EqualTerm(type,var@(Variable|VariableStar)[],t) -> {        
         return `EqualTerm(type,Ref(var),t);
       }
@@ -134,8 +130,8 @@ public class PostGenerator {
         }        
       }      
 
-      LetAssign(var,TomTermToExpression(source@(Variable|VariableStar)[]),instruction) -> {        
-        return `LetAssign(var,TomTermToExpression(Ref(source)),instruction);
+      Assign(var,TomTermToExpression(source@(Variable|VariableStar)[])) -> {        
+        return `Assign(var,TomTermToExpression(Ref(source)));
       }
  
     }// end visit
@@ -146,31 +142,68 @@ public class PostGenerator {
    */
   static <T> T changeVarDeclarations(T instr) throws VisitFailure {
     return (T)`TopDown(ChangeVarDeclarations()).visit((Visitable)instr);
-  }  
-  
+  } 
+
+   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
+    // Warning: BottomUp cannot be replaced by TopDown
+    // otherwise, the code with getPostion is not correct
+    //System.out.println("ins1: " + instruction);
+    instruction = `BuiltinBottomUp(ChangeVarDeclarations()).visit(instruction);
+    //System.out.println("ins2: " + instruction);
+    return `TopDown(AddRef()).visitLight(instruction);
+   }
+ 
+  /**
+   * Makes sure that no variable is declared if the same variable was declared above  
+   */
   %strategy ChangeVarDeclarations() extends Identity() {
     visit Instruction {
-      LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {
+      LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+        /*
+         * when there is an identical LetRef between the root and the current LetRef
+         * the current LetRef is replaced by an Assign
+         */
         Visitable root = (Visitable) getEnvironment().getRoot();
-        if(root != getEnvironment().getSubject()) {
+        if(getEnvironment().depth()>0) { // we are not at the root
           try {
-            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 
+            getPosition().getOmegaPath(`CheckLetRefExistence(name)).visit(root); 
           } catch (VisitFailure e) {
-            return `LetAssign(var,source,instruction);
+            return `AbstractBlock(concInstruction(Assign(var,exp),body));
           }
+        } 
+
+        /*
+         * when there is no LetRef before the current LetRef 
+         * if there is no Assign, not LetRef in the body
+         * the current LetRef is replaced by a Let
+         */
+        try {
+          `Not(TopDown(ChoiceId(CheckAssignExistence(name),CheckLetRefExistence(name)))).visitLight(`body);
+        } catch (VisitFailure e) {
+          return `Let(var,exp,body);
         }
       }
     }
   }
 
-  %strategy CheckVarExistence(varName:TomName) extends Identity() {
+  %strategy CheckLetRefExistence(varName:TomName) extends Identity() {
     visit Instruction {
       LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(varName == (`name) ) {
+        if(varName == `name ) {
           throw new VisitFailure();
         }
       }
     }
   }
-  
+
+  %strategy CheckAssignExistence(varName:TomName) extends Identity() {
+    visit Instruction {
+      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(varName == `name ) {
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
 }

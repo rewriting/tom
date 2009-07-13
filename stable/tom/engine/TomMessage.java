@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 package tom.engine;
 
+import tom.platform.BasicFormatter;
 import tom.platform.PlatformMessage;
 import tom.platform.PlatformLogRecord;
 import java.util.logging.Level;
@@ -38,8 +39,11 @@ import java.util.logging.Logger;
 public class TomMessage implements PlatformMessage {
   private final String message;
 
+  private static BasicFormatter formatter;
+
   private TomMessage(String message) {
     this.message = message;
+    this.formatter = new BasicFormatter();
   }
     
   public static final TomMessage loggingInitializationFailure = 
@@ -156,8 +160,6 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
-  public static final TomMessage notSyntacticInOr =
-      new TomMessage("The use of symbols with a theory associated (like lists or arrays) is not fully supported in disjunctions");
     
  
   // checker.TomChecker
@@ -212,6 +214,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("The verification cannot be performed when optimizing code with level>=2");
 
   // verbose messages
+  public static final TomMessage tomExec       =
+      new TomMessage("TOM exec:  {0}");
   public static final TomMessage tomParsingPhase       =
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase=
@@ -248,6 +252,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Exception occurs while dealing with Apigen: ''{0}''");
 
   // Error messages linked to operator and type definitions
+  public static final TomMessage multipleSortDefinitionError=
+      new TomMessage("Multiple definition of Sort ''{0}''");
   public static final TomMessage multipleSymbolDefinitionError=
       new TomMessage("Multiple definition of Symbol ''{0}''");
   public static final TomMessage symbolCodomainError     =
@@ -385,8 +391,14 @@ public class TomMessage implements PlatformMessage {
     return message;
   }
 
+
+  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArgs) {
+    error(logger, fileName, errorLine, msg, new Object[] { msgArgs } );
+  }
+
   public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    logger.log(Level.SEVERE, formatter.format(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine)));
+    //logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
 
   public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArg) {
@@ -394,7 +406,8 @@ public class TomMessage implements PlatformMessage {
   }
 
   public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
+    logger.log(Level.WARNING, formatter.format(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine)));
+    //logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
-  
+
 }

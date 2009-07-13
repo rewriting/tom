@@ -1,10 +1,9 @@
 
-    %op Strategy _Syntactic() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Syntactic)))}
-      
-        make() { new tom.engine.adt.theory.strategy.elementarytheory._Syntactic() }
-    }
-  
+  %op Strategy _Syntactic() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Syntactic)))}
+    
+    make() { new tom.engine.adt.theory.strategy.elementarytheory._Syntactic() }
+  }
   
   %op Strategy When_Syntactic(s:Strategy) {
     make(s) { `Sequence(Is_Syntactic(),s) }
@@ -14,18 +13,17 @@
     make() { new tom.engine.adt.theory.strategy.elementarytheory.Is_Syntactic()}
   }
   
-%op Strategy Make_Syntactic() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic))) }
+  %op Strategy Make_Syntactic() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic))) }
 
-  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic() }
-}
+    make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic() }
+  }
 
-    %op Strategy _Associative() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Associative)))}
-      
-        make() { new tom.engine.adt.theory.strategy.elementarytheory._Associative() }
-    }
-  
+  %op Strategy _Associative() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Associative)))}
+    
+    make() { new tom.engine.adt.theory.strategy.elementarytheory._Associative() }
+  }
   
   %op Strategy When_Associative(s:Strategy) {
     make(s) { `Sequence(Is_Associative(),s) }
@@ -35,18 +33,17 @@
     make() { new tom.engine.adt.theory.strategy.elementarytheory.Is_Associative()}
   }
   
-%op Strategy Make_Associative() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Associative))) }
+  %op Strategy Make_Associative() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Associative))) }
 
-  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Associative() }
-}
+    make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Associative() }
+  }
 
-    %op Strategy _Unitary() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Unitary)))}
-      
-        make() { new tom.engine.adt.theory.strategy.elementarytheory._Unitary() }
-    }
-  
+  %op Strategy _Unitary() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Unitary)))}
+    
+    make() { new tom.engine.adt.theory.strategy.elementarytheory._Unitary() }
+  }
   
   %op Strategy When_Unitary(s:Strategy) {
     make(s) { `Sequence(Is_Unitary(),s) }
@@ -56,18 +53,17 @@
     make() { new tom.engine.adt.theory.strategy.elementarytheory.Is_Unitary()}
   }
   
-%op Strategy Make_Unitary() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary))) }
+  %op Strategy Make_Unitary() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary))) }
 
-  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary() }
-}
+    make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary() }
+  }
 
-    %op Strategy _TrueAU() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._TrueAU)))}
-      
-        make() { new tom.engine.adt.theory.strategy.elementarytheory._TrueAU() }
-    }
-  
+  %op Strategy _TrueAU() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._TrueAU)))}
+    
+    make() { new tom.engine.adt.theory.strategy.elementarytheory._TrueAU() }
+  }
   
   %op Strategy When_TrueAU(s:Strategy) {
     make(s) { `Sequence(Is_TrueAU(),s) }
@@ -77,18 +73,17 @@
     make() { new tom.engine.adt.theory.strategy.elementarytheory.Is_TrueAU()}
   }
   
-%op Strategy Make_TrueAU() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU))) }
+  %op Strategy Make_TrueAU() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU))) }
 
-  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU() }
-}
+    make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_TrueAU() }
+  }
 
-    %op Strategy _EmptyconcElementaryTheory() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory)))}
-      
-        make() { new tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory() }
-    }
-  
+  %op Strategy _EmptyconcElementaryTheory() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory)))}
+    
+    make() { new tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory() }
+  }
   
   %op Strategy When_EmptyconcElementaryTheory(s:Strategy) {
     make(s) { `Sequence(Is_EmptyconcElementaryTheory(),s) }
@@ -98,20 +93,19 @@
     make() { new tom.engine.adt.theory.strategy.theory.Is_EmptyconcElementaryTheory()}
   }
   
-%op Strategy Make_EmptyconcElementaryTheory() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory))) }
+  %op Strategy Make_EmptyconcElementaryTheory() {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory))) }
 
-  make() { new tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory() }
-}
+    make() { new tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory() }
+  }
 
-    %op Strategy _ConsconcElementaryTheory(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory)))}
-      
+  %op Strategy _ConsconcElementaryTheory(arg0:Strategy, arg1:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory)))}
+    
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory($arg0, $arg1) }
-    }
-  
+    make(arg0, arg1) { new tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory($arg0, $arg1) }
+  }
   
   %op Strategy When_ConsconcElementaryTheory(s:Strategy) {
     make(s) { `Sequence(Is_ConsconcElementaryTheory(),s) }
@@ -121,16 +115,16 @@
     make() { new tom.engine.adt.theory.strategy.theory.Is_ConsconcElementaryTheory()}
   }
   
-%op Strategy Make_ConsconcElementaryTheory(_HeadconcElementaryTheory:Strategy, _TailconcElementaryTheory:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory))) }
+  %op Strategy Make_ConsconcElementaryTheory(_HeadconcElementaryTheory:Strategy, _TailconcElementaryTheory:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory))) }
 
   get_slot(_HeadconcElementaryTheory, t) { $t._HeadconcElementaryTheory }
   get_slot(_TailconcElementaryTheory, t) { $t._TailconcElementaryTheory }
-  make( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) { new tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory( $new_HeadconcElementaryTheory,  $new_TailconcElementaryTheory) }
-}
+    make( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) { new tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory( $new_HeadconcElementaryTheory,  $new_TailconcElementaryTheory) }
+  }
 
-            %op Strategy _concElementaryTheory(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_concElementaryTheory"),Choice(_ConsconcElementaryTheory(sub,MuVar("x_concElementaryTheory")),_EmptyconcElementaryTheory())) }
-            }
-            
+  %op Strategy _concElementaryTheory(sub:Strategy) {
+    is_fsym(t) { false }
+    make(sub)  { `mu(MuVar("x_concElementaryTheory"),Choice(_ConsconcElementaryTheory(sub,MuVar("x_concElementaryTheory")),_EmptyconcElementaryTheory())) }
+  }
+  

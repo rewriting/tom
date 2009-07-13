@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -40,11 +40,12 @@ import tom.library.adt.bytecode.types.*;
 
 
 public class BytecodeReader implements ClassVisitor {
-  %include { adt/bytecode/Bytecode.tom }
 
+  %include { ../adt/bytecode/Bytecode.tom }
+
+  private ClassNode ast;
 
   public BytecodeReader(String className){
-    super();
     try {
       ClassAdapter ca = new ClassAdapter(this);
       ClassReader cr = new ClassReader(className);
@@ -54,26 +55,24 @@ public class BytecodeReader implements ClassVisitor {
     }
   }
 
-  private TClass clazz;
-
-  public TClass getTClass() {
-    return clazz;
+  public ClassNode getAst() {
+    return ast;
   }
 
-  public void appendMethod(TMethod method){
-    TMethodList l = clazz.getmethods();
-    clazz = clazz.setmethods(`MethodList(l*, method));
+  public void appendMethod(Method method){
+    MethodList l = ast.getmethods();
+    ast = ast.setmethods(`MethodList(l*, method));
   }
 
-  public void appendField(TField field) {
-    TFieldList l = clazz.getfields();
-    clazz = clazz.setfields(`FieldList(l*, field));
+  public void appendField(Field field) {
+    FieldList l = ast.getfields();
+    ast = ast.setfields(`FieldList(l*, field));
   }
 
-  public void appendInnerClass(TInnerClassInfo info) {
-    TClassInfo i = clazz.getinfo();
-    TInnerClassInfoList l = i.getinnerClasses();
-    clazz = clazz.setinfo(i.setinnerClasses(`InnerClassInfoList(l*, info)));
+  public void appendInnerClass(InnerClassInfo info) {
+    ClassInfo i = ast.getinfo();
+    InnerClassInfoList l = i.getinnerClasses();
+    ast = ast.setinfo(i.setinnerClasses(`InnerClassInfoList(l*, info)));
   }
 
   public void visit(
@@ -83,8 +82,8 @@ public class BytecodeReader implements ClassVisitor {
       String signature,
       String superName,
       String[] interfaces) {
-    TClassInfo info = `ClassInfo(name, Signature(signature), ToolBox.buildTAccess(access), superName, ToolBox.buildTStringList(interfaces), InnerClassInfoList(), EmptyOuterClassInfo());
-    clazz = `Class(info, FieldList(), MethodList());
+    ClassInfo info = `ClassInfo(name, Signature(signature), ToolBox.buildAccess(access), superName, ToolBox.buildStringList(interfaces), InnerClassInfoList(), EmptyOuterClassInfo());
+    ast = `Class(info, FieldList(), MethodList());
   }
 
   public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
@@ -106,7 +105,7 @@ public class BytecodeReader implements ClassVisitor {
       String desc,
       String signature,
       Object value) {
-    TField field = `Field(ToolBox.buildTAccess(access), name, ToolBox.buildTFieldDescriptor(desc), Signature(signature), ToolBox.buildTValue(value));
+    Field field = `Field(ToolBox.buildAccess(access), name, ToolBox.buildFieldDescriptor(desc), Signature(signature), ToolBox.buildValue(value));
     appendField(field);
 
     return null;
@@ -117,7 +116,7 @@ public class BytecodeReader implements ClassVisitor {
       String outerName,
       String innerName,
       int access) {
-    TInnerClassInfo info = `InnerClassInfo(name, outerName, innerName, ToolBox.buildTAccess(access));
+    InnerClassInfo info = `InnerClassInfo(name, outerName, innerName, ToolBox.buildAccess(access));
     appendInnerClass(info);
   }
 
@@ -127,17 +126,19 @@ public class BytecodeReader implements ClassVisitor {
       String desc,
       String signature,
       String[] exceptions) {
-    return new TMethodGenerator(this, ToolBox.buildTAccess(access), name, ToolBox.buildTMethodDescriptor(desc), `Signature(signature), ToolBox.buildTStringList(exceptions));
+    return new MethodGenerator(this, ToolBox.buildAccess(access), name, ToolBox.buildMethodDescriptor(desc), `Signature(signature), ToolBox.buildStringList(exceptions));
   }
 
   public void visitOuterClass(String owner, String name, String desc) {
-    TOuterClassInfo info = `OuterClassInfo(owner, name, ToolBox.buildTMethodDescriptor(desc));
-    TClassInfo i = clazz.getinfo();
-    clazz = clazz.setinfo(i.setouterClass(info));
+    OuterClassInfo info = `OuterClassInfo(owner, name, ToolBox.buildMethodDescriptor(desc));
+    ClassInfo i = ast.getinfo();
+    ast = ast.setinfo(i.setouterClass(info));
   }
 
   public void visitSource(String source, String debug) {
     // do nothing
   }
+
+
 }
 

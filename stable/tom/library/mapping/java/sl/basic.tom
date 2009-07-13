@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -123,7 +123,6 @@
   is_empty(t) {( $t ==null )}
 }
 
-
 %oplist Strategy SequenceId(Strategy*) {
   is_fsym(t) {( ($t instanceof tom.library.sl.SequenceId) )}
   make_empty() {( null )}
@@ -165,4 +164,10 @@
   is_fsym(t) {( $t instanceof tom.library.sl.OmegaU )}
   make(v) {( new tom.library.sl.OmegaU($v) )}
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OmegaU.ARG) )}
+}
+
+%op Strategy Up(s1:Strategy) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.Up) )}
+  make(v) {( new tom.library.sl.Up($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Up.ARG) )}
 }

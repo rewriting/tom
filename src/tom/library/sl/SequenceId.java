@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,22 +33,22 @@ package tom.library.sl;
 /**
  * <code>x.fire(SequenceId (v1,v2)) = x.fire(v1) ; x.fire(v2) if x.fire(v1)!=x</code>
  * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition), if the first
+ * Strategy combinator with two arguments, that applies
+ * these arguments one after the other (sequential composition), if the first
  * one is not the identity.
  */
 
-public class SequenceId   extends AbstractStrategy {
+public class SequenceId   extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public SequenceId(Strategy first, Strategy then) {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
-    Object v = visitors[FIRST].visitLight(subject, introspector);
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
+    T v = arguments[FIRST].visitLight(subject, introspector);
     if(v != subject) {
-      return visitors[THEN].visitLight(v, introspector);
+      return arguments[THEN].visitLight(v, introspector);
     } else {
       return v;
     }
@@ -56,9 +56,9 @@ public class SequenceId   extends AbstractStrategy {
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS && environment.getSubject() != subject) {
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
     return status;
   }

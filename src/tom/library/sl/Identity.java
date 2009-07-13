@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,18 +33,18 @@ package tom.library.sl;
 /**
  * <code>x.accept(Identity) = x</code>
  * <p>
- * Basic visitor combinator without arguments that does nothing.
+ * Strategy combinator without arguments that does nothing.
  * <p>
  * See also <a href="IdentityTest.java">IdentityTest</a>.
  */
 
-public class Identity extends AbstractStrategy {
+public class Identity extends AbstractStrategyCombinator {
   public Identity() {
     initSubterm();
   }
 
-  public Object visitLight(Object x, Introspector introspector) {
-    return x;
+  public <T> T visitLight(T any, Introspector introspector) {
+    return any;
   }
 
   public int visit(Introspector introspector) {

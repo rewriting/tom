@@ -13,4 +13,3 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
 
 TomTypeList = concTomType(TomType*)
-

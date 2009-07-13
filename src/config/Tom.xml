@@ -116,7 +116,10 @@
       <string name="encoding" altName="e"
         description="Specify the character encoding"
         value="UTF-8"
-        attrName="charset"/>
+	attrName="charset"/>
+      <boolean name="multithread" altName="mt"
+        description="Sets the multithread mode"
+        value="false"/>
     </options>
   </optionmanager>
 

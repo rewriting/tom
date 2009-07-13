@@ -1,4 +1,6 @@
 
+%include { boolean.tom }
+
 %include { string.tom }
 
 %include { int.tom }
@@ -6,323 +8,401 @@
 %typeterm Code {
   implement { tom.gom.adt.code.types.Code }
   is_sort(t) { ($t instanceof tom.gom.adt.code.types.Code) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Hook {
   implement { tom.gom.adt.objects.types.Hook }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.Hook) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SlotField {
   implement { tom.gom.adt.objects.types.SlotField }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.SlotField) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SlotFieldList {
   implement { tom.gom.adt.objects.types.SlotFieldList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.SlotFieldList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomClass {
   implement { tom.gom.adt.objects.types.GomClass }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.GomClass) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ClassName {
   implement { tom.gom.adt.objects.types.ClassName }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.ClassName) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomClassList {
   implement { tom.gom.adt.objects.types.GomClassList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.GomClassList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ClassNameList {
   implement { tom.gom.adt.objects.types.ClassNameList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.ClassNameList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm HookList {
   implement { tom.gom.adt.objects.types.HookList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.HookList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Slot {
   implement { tom.gom.adt.gom.types.Slot }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Slot) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ArgList {
   implement { tom.gom.adt.gom.types.ArgList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ArgList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm IdKind {
   implement { tom.gom.adt.gom.types.IdKind }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.IdKind) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomModuleList {
   implement { tom.gom.adt.gom.types.GomModuleList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModuleList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm AtomList {
+  implement { tom.gom.adt.gom.types.AtomList }
+  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.AtomList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GrammarList {
   implement { tom.gom.adt.gom.types.GrammarList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GrammarList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm TypedProduction {
   implement { tom.gom.adt.gom.types.TypedProduction }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.TypedProduction) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SectionList {
   implement { tom.gom.adt.gom.types.SectionList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SectionList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm OperatorDeclList {
   implement { tom.gom.adt.gom.types.OperatorDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.OperatorDeclList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm HookDeclList {
   implement { tom.gom.adt.gom.types.HookDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookDeclList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SortDeclList {
   implement { tom.gom.adt.gom.types.SortDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortDeclList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm OperatorDecl {
   implement { tom.gom.adt.gom.types.OperatorDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.OperatorDecl) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomModule {
   implement { tom.gom.adt.gom.types.GomModule }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModule) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Pair {
   implement { tom.gom.adt.gom.types.Pair }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Pair) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Section {
   implement { tom.gom.adt.gom.types.Section }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Section) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomTypeList {
   implement { tom.gom.adt.gom.types.GomTypeList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomTypeList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm TypeSpec {
+  implement { tom.gom.adt.gom.types.TypeSpec }
+  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.TypeSpec) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ProductionList {
   implement { tom.gom.adt.gom.types.ProductionList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ProductionList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Decl {
   implement { tom.gom.adt.gom.types.Decl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Decl) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ScopeSpecifier {
+  implement { tom.gom.adt.gom.types.ScopeSpecifier }
+  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ScopeSpecifier) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ImportList {
   implement { tom.gom.adt.gom.types.ImportList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ImportList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Sort {
   implement { tom.gom.adt.gom.types.Sort }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Sort) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SortDecl {
   implement { tom.gom.adt.gom.types.SortDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortDecl) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm HookDecl {
   implement { tom.gom.adt.gom.types.HookDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookDecl) }
-  //equals(t1,t2) { $t1.equals($t2) }
-  equals(t1,t2) { ($t1==$t2) }
-}
 
-%typeterm ModuleDeclList {
-  implement { tom.gom.adt.gom.types.ModuleDeclList }
-  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleDeclList) }
-  //equals(t1,t2) { $t1.equals($t2) }
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Module {
   implement { tom.gom.adt.gom.types.Module }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Module) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm ModuleDeclList {
+  implement { tom.gom.adt.gom.types.ModuleDeclList }
+  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleDeclList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm FieldList {
   implement { tom.gom.adt.gom.types.FieldList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.FieldList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Grammar {
   implement { tom.gom.adt.gom.types.Grammar }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Grammar) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SlotList {
   implement { tom.gom.adt.gom.types.SlotList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SlotList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm SortList {
   implement { tom.gom.adt.gom.types.SortList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Future {
+  implement { tom.gom.adt.gom.types.Future }
+  is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Future) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Arg {
   implement { tom.gom.adt.gom.types.Arg }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Arg) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomModuleName {
   implement { tom.gom.adt.gom.types.GomModuleName }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModuleName) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Field {
   implement { tom.gom.adt.gom.types.Field }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Field) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Production {
   implement { tom.gom.adt.gom.types.Production }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Production) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ModuleDecl {
   implement { tom.gom.adt.gom.types.ModuleDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleDecl) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ModuleList {
   implement { tom.gom.adt.gom.types.ModuleList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleList) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm GomType {
   implement { tom.gom.adt.gom.types.GomType }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomType) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm ImportedModule {
   implement { tom.gom.adt.gom.types.ImportedModule }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ImportedModule) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm Option {
   implement { tom.gom.adt.gom.types.Option }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Option) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 
 %typeterm HookKind {
   implement { tom.gom.adt.gom.types.HookKind }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookKind) }
-  //equals(t1,t2) { $t1.equals($t2) }
+
   equals(t1,t2) { ($t1==$t2) }
+
 }
 %op Code Code(prog:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.code.types.code.Code) }
@@ -362,6 +442,12 @@
   make(t0) { tom.gom.adt.code.types.code.FullSortClass.make($t0) }
 }
 
+%op Code ShortSortClass(Sort:SortDecl) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.code.types.code.ShortSortClass) }
+  get_slot(Sort, t) { $t.getSort() }
+  make(t0) { tom.gom.adt.code.types.code.ShortSortClass.make($t0) }
+}
+
 %op Code FullOperatorClass(Operator:OperatorDecl) {
   is_fsym(t) { ($t instanceof tom.gom.adt.code.types.code.FullOperatorClass) }
   get_slot(Operator, t) { $t.getOperator() }
@@ -387,24 +473,27 @@
   make(t0, t1) { tom.gom.adt.code.types.code.ConsCodeList.make($t0, $t1) }
 }
 
-%op Hook MakeHook(HookArguments:SlotFieldList, Code:Code) {
+%op Hook MakeHook(HookArguments:SlotFieldList, Code:Code, HasTomCode:boolean) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hook.MakeHook) }
   get_slot(HookArguments, t) { $t.getHookArguments() }
   get_slot(Code, t) { $t.getCode() }
-  make(t0, t1) { tom.gom.adt.objects.types.hook.MakeHook.make($t0, $t1) }
+  get_slot(HasTomCode, t) { $t.getHasTomCode() }
+  make(t0, t1, t2) { tom.gom.adt.objects.types.hook.MakeHook.make($t0, $t1, $t2) }
 }
 
-%op Hook MakeBeforeHook(HookArguments:SlotFieldList, Code:Code) {
+%op Hook MakeBeforeHook(HookArguments:SlotFieldList, Code:Code, HasTomCode:boolean) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hook.MakeBeforeHook) }
   get_slot(HookArguments, t) { $t.getHookArguments() }
   get_slot(Code, t) { $t.getCode() }
-  make(t0, t1) { tom.gom.adt.objects.types.hook.MakeBeforeHook.make($t0, $t1) }
+  get_slot(HasTomCode, t) { $t.getHasTomCode() }
+  make(t0, t1, t2) { tom.gom.adt.objects.types.hook.MakeBeforeHook.make($t0, $t1, $t2) }
 }
 
-%op Hook BlockHook(Code:Code) {
+%op Hook BlockHook(Code:Code, HasTomCode:boolean) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hook.BlockHook) }
   get_slot(Code, t) { $t.getCode() }
-  make(t0) { tom.gom.adt.objects.types.hook.BlockHook.make($t0) }
+  get_slot(HasTomCode, t) { $t.getHasTomCode() }
+  make(t0, t1) { tom.gom.adt.objects.types.hook.BlockHook.make($t0, $t1) }
 }
 
 %op Hook InterfaceHook(Code:Code) {
@@ -465,7 +554,7 @@
   make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.SortClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
 }
 
-%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, SlotFields:SlotFieldList, Hooks:HookList) {
+%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, SlotFields:SlotFieldList, Hooks:HookList, Comments:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -474,10 +563,11 @@
   get_slot(SortName, t) { $t.getSortName() }
   get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
 }
 
-%op GomClass VariadicOperatorClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, SortName:ClassName, Empty:GomClass, Cons:GomClass, Hooks:HookList) {
+%op GomClass VariadicOperatorClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, SortName:ClassName, Empty:GomClass, Cons:GomClass, Hooks:HookList, Comments:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -486,7 +576,8 @@
   get_slot(Empty, t) { $t.getEmpty() }
   get_slot(Cons, t) { $t.getCons() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
 }
 
 %op GomClass TomMapping(ClassName:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {
@@ -574,6 +665,12 @@
   make() { tom.gom.adt.gom.types.idkind.KindOperator.make() }
 }
 
+%op IdKind KindFutureOperator(ConsOrNil:Future) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.idkind.KindFutureOperator) }
+  get_slot(ConsOrNil, t) { $t.getConsOrNil() }
+  make(t0) { tom.gom.adt.gom.types.idkind.KindFutureOperator.make($t0) }
+}
+
 %op GomModuleList EmptyConcGomModule() {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule) }
   make() { tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule.make() }
@@ -584,6 +681,18 @@
   get_slot(HeadConcGomModule, t) { $t.getHeadConcGomModule() }
   get_slot(TailConcGomModule, t) { $t.getTailConcGomModule() }
   make(t0, t1) { tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make($t0, $t1) }
+}
+
+%op AtomList EmptyConcAtom() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.atomlist.EmptyConcAtom) }
+  make() { tom.gom.adt.gom.types.atomlist.EmptyConcAtom.make() }
+}
+
+%op AtomList ConsConcAtom(HeadConcAtom:String, TailConcAtom:AtomList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.atomlist.ConsConcAtom) }
+  get_slot(HeadConcAtom, t) { $t.getHeadConcAtom() }
+  get_slot(TailConcAtom, t) { $t.getTailConcAtom() }
+  make(t0, t1) { tom.gom.adt.gom.types.atomlist.ConsConcAtom.make($t0, $t1) }
 }
 
 %op GrammarList EmptyConcGrammar() {
@@ -658,12 +767,13 @@
   make(t0, t1) { tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl.make($t0, $t1) }
 }
 
-%op OperatorDecl OperatorDecl(Name:String, Sort:SortDecl, Prod:TypedProduction) {
+%op OperatorDecl OperatorDecl(Name:String, Sort:SortDecl, Prod:TypedProduction, Option:Option) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) }
   get_slot(Name, t) { $t.getName() }
   get_slot(Sort, t) { $t.getSort() }
   get_slot(Prod, t) { $t.getProd() }
-  make(t0, t1, t2) { tom.gom.adt.gom.types.operatordecl.OperatorDecl.make($t0, $t1, $t2) }
+  get_slot(Option, t) { $t.getOption() }
+  make(t0, t1, t2, t3) { tom.gom.adt.gom.types.operatordecl.OperatorDecl.make($t0, $t1, $t2, $t3) }
 }
 
 %op GomModule GomModule(ModuleName:GomModuleName, SectionList:SectionList) {
@@ -704,6 +814,21 @@
   make(t0, t1) { tom.gom.adt.gom.types.gomtypelist.ConsConcGomType.make($t0, $t1) }
 }
 
+%op TypeSpec PatternType() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.typespec.PatternType) }
+  make() { tom.gom.adt.gom.types.typespec.PatternType.make() }
+}
+
+%op TypeSpec ExpressionType() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.typespec.ExpressionType) }
+  make() { tom.gom.adt.gom.types.typespec.ExpressionType.make() }
+}
+
+%op TypeSpec AtomType() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.typespec.AtomType) }
+  make() { tom.gom.adt.gom.types.typespec.AtomType.make() }
+}
+
 %op ProductionList EmptyConcProduction() {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction) }
   make() { tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() }
@@ -732,6 +857,38 @@
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.decl.CutOperator) }
   get_slot(ODecl, t) { $t.getODecl() }
   make(t0) { tom.gom.adt.gom.types.decl.CutOperator.make($t0) }
+}
+
+%op Decl CutFutureOperator(ODecl:OperatorDecl, ConsOrNil:Future) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.decl.CutFutureOperator) }
+  get_slot(ODecl, t) { $t.getODecl() }
+  get_slot(ConsOrNil, t) { $t.getConsOrNil() }
+  make(t0, t1) { tom.gom.adt.gom.types.decl.CutFutureOperator.make($t0, $t1) }
+}
+
+%op ScopeSpecifier None() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.scopespecifier.None) }
+  make() { tom.gom.adt.gom.types.scopespecifier.None.make() }
+}
+
+%op ScopeSpecifier Inner() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.scopespecifier.Inner) }
+  make() { tom.gom.adt.gom.types.scopespecifier.Inner.make() }
+}
+
+%op ScopeSpecifier Outer() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.scopespecifier.Outer) }
+  make() { tom.gom.adt.gom.types.scopespecifier.Outer.make() }
+}
+
+%op ScopeSpecifier Neutral() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.scopespecifier.Neutral) }
+  make() { tom.gom.adt.gom.types.scopespecifier.Neutral.make() }
+}
+
+%op ScopeSpecifier Refresh() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.scopespecifier.Refresh) }
+  make() { tom.gom.adt.gom.types.scopespecifier.Refresh.make() }
 }
 
 %op ImportList EmptyConcImportedModule() {
@@ -766,20 +923,22 @@
   make(t0) { tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl.make($t0) }
 }
 
-%op HookDecl MakeHookDecl(Pointcut:Decl, SlotArgs:SlotList, Code:Code, HookType:HookKind) {
+%op HookDecl MakeHookDecl(Pointcut:Decl, SlotArgs:SlotList, Code:Code, HookType:HookKind, HasTomCode:boolean) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecl.MakeHookDecl) }
   get_slot(Pointcut, t) { $t.getPointcut() }
   get_slot(SlotArgs, t) { $t.getSlotArgs() }
   get_slot(Code, t) { $t.getCode() }
   get_slot(HookType, t) { $t.getHookType() }
-  make(t0, t1, t2, t3) { tom.gom.adt.gom.types.hookdecl.MakeHookDecl.make($t0, $t1, $t2, $t3) }
+  get_slot(HasTomCode, t) { $t.getHasTomCode() }
+  make(t0, t1, t2, t3, t4) { tom.gom.adt.gom.types.hookdecl.MakeHookDecl.make($t0, $t1, $t2, $t3, $t4) }
 }
 
-%op HookDecl BlockHookDecl(Pointcut:Decl, Code:Code) {
+%op HookDecl BlockHookDecl(Pointcut:Decl, Code:Code, HasTomCode:boolean) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecl.BlockHookDecl) }
   get_slot(Pointcut, t) { $t.getPointcut() }
   get_slot(Code, t) { $t.getCode() }
-  make(t0, t1) { tom.gom.adt.gom.types.hookdecl.BlockHookDecl.make($t0, $t1) }
+  get_slot(HasTomCode, t) { $t.getHasTomCode() }
+  make(t0, t1, t2) { tom.gom.adt.gom.types.hookdecl.BlockHookDecl.make($t0, $t1, $t2) }
 }
 
 %op HookDecl InterfaceHookDecl(Pointcut:Decl, Code:Code) {
@@ -803,6 +962,13 @@
   make(t0, t1) { tom.gom.adt.gom.types.hookdecl.MappingHookDecl.make($t0, $t1) }
 }
 
+%op Module Module(MDecl:ModuleDecl, Sorts:SortList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.module.Module) }
+  get_slot(MDecl, t) { $t.getMDecl() }
+  get_slot(Sorts, t) { $t.getSorts() }
+  make(t0, t1) { tom.gom.adt.gom.types.module.Module.make($t0, $t1) }
+}
+
 %op ModuleDeclList EmptyConcModuleDecl() {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl) }
   make() { tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl.make() }
@@ -813,13 +979,6 @@
   get_slot(HeadConcModuleDecl, t) { $t.getHeadConcModuleDecl() }
   get_slot(TailConcModuleDecl, t) { $t.getTailConcModuleDecl() }
   make(t0, t1) { tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl.make($t0, $t1) }
-}
-
-%op Module Module(MDecl:ModuleDecl, Sorts:SortList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.module.Module) }
-  get_slot(MDecl, t) { $t.getMDecl() }
-  get_slot(Sorts, t) { $t.getSorts() }
-  make(t0, t1) { tom.gom.adt.gom.types.module.Module.make($t0, $t1) }
 }
 
 %op FieldList EmptyConcField() {
@@ -870,6 +1029,16 @@
   make(t0, t1) { tom.gom.adt.gom.types.sortlist.ConsConcSort.make($t0, $t1) }
 }
 
+%op Future FutureNil() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.future.FutureNil) }
+  make() { tom.gom.adt.gom.types.future.FutureNil.make() }
+}
+
+%op Future FutureCons() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.future.FutureCons) }
+  make() { tom.gom.adt.gom.types.future.FutureCons.make() }
+}
+
 %op Arg Arg(Name:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.arg.Arg) }
   get_slot(Name, t) { $t.getName() }
@@ -882,17 +1051,19 @@
   make(t0) { tom.gom.adt.gom.types.gommodulename.GomModuleName.make($t0) }
 }
 
-%op Field StarredField(FieldType:GomType) {
+%op Field StarredField(FieldType:GomType, Specifier:ScopeSpecifier) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.field.StarredField) }
   get_slot(FieldType, t) { $t.getFieldType() }
-  make(t0) { tom.gom.adt.gom.types.field.StarredField.make($t0) }
+  get_slot(Specifier, t) { $t.getSpecifier() }
+  make(t0, t1) { tom.gom.adt.gom.types.field.StarredField.make($t0, $t1) }
 }
 
-%op Field NamedField(Name:String, FieldType:GomType) {
+%op Field NamedField(Specifier:ScopeSpecifier, Name:String, FieldType:GomType) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.field.NamedField) }
+  get_slot(Specifier, t) { $t.getSpecifier() }
   get_slot(Name, t) { $t.getName() }
   get_slot(FieldType, t) { $t.getFieldType() }
-  make(t0, t1) { tom.gom.adt.gom.types.field.NamedField.make($t0, $t1) }
+  make(t0, t1, t2) { tom.gom.adt.gom.types.field.NamedField.make($t0, $t1, $t2) }
 }
 
 %op Production Production(Name:String, DomainList:FieldList, Codomain:GomType, Option:Option) {
@@ -915,11 +1086,18 @@
   make(t0, t1, t2, t3, t4, t5) { tom.gom.adt.gom.types.production.Hook.make($t0, $t1, $t2, $t3, $t4, $t5) }
 }
 
-%op Production SortType(Type:GomType, ProductionList:ProductionList) {
+%op Production SortType(Type:GomType, Binds:AtomList, ProductionList:ProductionList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.production.SortType) }
   get_slot(Type, t) { $t.getType() }
+  get_slot(Binds, t) { $t.getBinds() }
   get_slot(ProductionList, t) { $t.getProductionList() }
-  make(t0, t1) { tom.gom.adt.gom.types.production.SortType.make($t0, $t1) }
+  make(t0, t1, t2) { tom.gom.adt.gom.types.production.SortType.make($t0, $t1, $t2) }
+}
+
+%op Production AtomDecl(Name:String) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.production.AtomDecl) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { tom.gom.adt.gom.types.production.AtomDecl.make($t0) }
 }
 
 %op ModuleDecl ModuleDecl(ModuleName:GomModuleName, Pkg:String) {
@@ -941,10 +1119,11 @@
   make(t0, t1) { tom.gom.adt.gom.types.modulelist.ConsConcModule.make($t0, $t1) }
 }
 
-%op GomType GomType(Name:String) {
+%op GomType GomType(Specialization:TypeSpec, Name:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gomtype.GomType) }
+  get_slot(Specialization, t) { $t.getSpecialization() }
   get_slot(Name, t) { $t.getName() }
-  make(t0) { tom.gom.adt.gom.types.gomtype.GomType.make($t0) }
+  make(t0, t1) { tom.gom.adt.gom.types.gomtype.GomType.make($t0, $t1) }
 }
 
 %op ImportedModule Import(ModuleName:GomModuleName) {
@@ -969,6 +1148,18 @@
   get_slot(HeadOptionList, t) { $t.getHeadOptionList() }
   get_slot(TailOptionList, t) { $t.getTailOptionList() }
   make(t0, t1) { tom.gom.adt.gom.types.option.ConsOptionList.make($t0, $t1) }
+}
+
+%op Option HasTomCode(Value:boolean) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.option.HasTomCode) }
+  get_slot(Value, t) { $t.getValue() }
+  make(t0) { tom.gom.adt.gom.types.option.HasTomCode.make($t0) }
+}
+
+%op Option Details(Comments:String) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.option.Details) }
+  get_slot(Comments, t) { $t.getComments() }
+  make(t0) { tom.gom.adt.gom.types.option.Details.make($t0) }
 }
 
 %op HookKind HookKind(kind:String) {
@@ -1039,6 +1230,15 @@
   get_head(l) { $l.getHeadConcGomModule() }
   get_tail(l) { $l.getTailConcGomModule() }
   is_empty(l) { $l.isEmptyConcGomModule() }
+}
+
+%oplist AtomList ConcAtom(String*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.atomlist.ConsConcAtom) || ($t instanceof tom.gom.adt.gom.types.atomlist.EmptyConcAtom)) }
+  make_empty() { tom.gom.adt.gom.types.atomlist.EmptyConcAtom.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.atomlist.ConsConcAtom.make($e,$l) }
+  get_head(l) { $l.getHeadConcAtom() }
+  get_tail(l) { $l.getTailConcAtom() }
+  is_empty(l) { $l.isEmptyConcAtom() }
 }
 
 %oplist GrammarList ConcGrammar(Grammar*) {

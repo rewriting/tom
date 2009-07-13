@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,22 +55,50 @@ public class XmlTools {
     x2t = new XMLToTNode();
   }
 
+  /** 
+   * Set up the deleteWhiteSpaceNodes variable
+   *
+   * @param b_d a boolean which allows to define if white space nodes have to be deleted or not*/
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
     x2t.setDeletingWhiteSpaceNodes(b_d);
   }
 
+  /** 
+   * Returns a TNode by providing a Node
+   *
+   * @param node the Node to normalize and convert
+   * @return a TNode obtained from the Node
+   */
   public TNode nodeToTNode(Node node) {
     return x2t.xmlToTNode(node);
   }
-
+ 
+  /** 
+   * Returns an ATerm representation of a NodeList
+   *
+   * @param n the NodeList
+   * @return an ATerm representation of the NodeList
+   */
   public TNodeList nodeListToAterm(NodeList n) {
     return x2t.nodeListToAterm(n);
   }
 
-  public Node convertToNode(String filename) {
+  /** 
+   * Converts XML to Node by providing a file name
+   * 
+   * @param filename the filename
+   * @return the Node representation of the XML file
+   */
+  public Node tttttttttttt(String filename) {
     return x2t.convertToNode(filename);
   }
 
+  /** 
+   * Converts XML to Node by providing an InputStream
+   * 
+   * @param is the InputStream
+   * @return the Node representation of XML
+   */
   public Node convertToNode(InputStream is) {
     return x2t.convertToNode(is);
   }
@@ -78,14 +106,16 @@ public class XmlTools {
   /**
    * Returns all TNodes contained in TNode n
    * @param n root to collect all TNodes in the tree
+   * @return a collection of TNode contained in TNode n
    */
   public Collection getNodes(TNode n) {
     return x2t.getNodes(n);
   }
 
   /**
-   * converts XML to TNode
+   * Converts XML to TNode
    * @param filename input representing XML
+   * @return a TNode representation of XML
    */
   public TNode convertXMLToTNode(String filename) {
     x2t.convert(filename);
@@ -93,8 +123,9 @@ public class XmlTools {
   }
 
   /**
-   * converts XML to TNode
+   * Converts XML to TNode by providing an input stream
    * @param is input representing XML
+   * @return a TNode representation of XML
    */
   public TNode convertXMLToTNode(InputStream is) {
     x2t.convert(is);
@@ -102,8 +133,8 @@ public class XmlTools {
   }
 
   /**
-   * print TNode t in XML format, without any extra character (ie:\n)
-   * @param an TNode to print
+   * Prints TNode t in XML format, without any extra character (ie:\n)
+   * @param t TNode to print
    */
   public void printXMLFromTNode(TNode t) {
     t2x.setWriter(null);
@@ -112,7 +143,9 @@ public class XmlTools {
   }
 
   /**
-   * write TNode in XML format, without any extra character (ie:\n)
+   * Writes TNode in XML format, without any extra character (ie:\n)
+   * @param writer the provided writer
+   * @param t TNode to XML
    * @see TNode
    */
   public void writeXMLFileFromTNode(Writer writer, TNode t) {
@@ -124,6 +157,7 @@ public class XmlTools {
   /**
    * Constructs TNode in XML
    * @param t this parameter can be either a TNode, a TNode list, or #TEXT("...").
+   * @return a string representation of XML
    */
   public String xml(TNode t) {
     return t2x.xml(t);

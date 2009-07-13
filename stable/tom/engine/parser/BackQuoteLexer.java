@@ -3,7 +3,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -121,6 +121,10 @@ tryAgain:
 					mBQ_RPAREN(true);
 					theRetToken=_returnToken;
 				}
+				else if ((LA(1)=='}') && (true)) {
+					mBQ_RBRACE(true);
+					theRetToken=_returnToken;
+				}
 				else if ((LA(1)==',') && (true)) {
 					mBQ_COMMA(true);
 					theRetToken=_returnToken;
@@ -218,6 +222,19 @@ tryAgain:
 		int _saveIndex;
 		
 		match(')');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mBQ_RBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = BQ_RBRACE;
+		int _saveIndex;
+		
+		match("}");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -458,7 +475,7 @@ tryAgain:
 		
 		match("<?");
 		{
-		_loop69:
+		_loop70:
 		do {
 			if ((_tokenSet_4.member(LA(1)))) {
 				{
@@ -466,7 +483,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop69;
+				break _loop70;
 			}
 			
 		} while (true);
@@ -490,10 +507,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched73 = false;
+		boolean synPredMatched74 = false;
 		if (((_tokenSet_2.member(LA(1))) && (_tokenSet_5.member(LA(2))))) {
-			int _m73 = mark();
-			synPredMatched73 = true;
+			int _m74 = mark();
+			synPredMatched74 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -501,12 +518,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched73 = false;
+				synPredMatched74 = false;
 			}
-			rewind(_m73);
+			rewind(_m74);
 inputState.guessing--;
 		}
-		if ( synPredMatched73 ) {
+		if ( synPredMatched74 ) {
 			mBQ_MINUS_ID(false);
 		}
 		else if ((_tokenSet_2.member(LA(1))) && (true)) {
@@ -613,7 +630,7 @@ inputState.guessing--;
 		}
 		}
 		{
-		_loop79:
+		_loop80:
 		do {
 			switch ( LA(1)) {
 			case 'A':  case 'B':  case 'C':  case 'D':
@@ -676,7 +693,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop79;
+				break _loop80;
 			}
 			}
 		} while (true);
@@ -723,18 +740,18 @@ inputState.guessing--;
 		int _saveIndex;
 		
 		{
-		int _cnt84=0;
-		_loop84:
+		int _cnt85=0;
+		_loop85:
 		do {
 			if ((LA(1)=='-')) {
 				mBQ_MINUS(false);
 				mBQ_SIMPLE_ID(false);
 			}
 			else {
-				if ( _cnt84>=1 ) { break _loop84; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt85>=1 ) { break _loop85; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt84++;
+			_cnt85++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -769,17 +786,17 @@ inputState.guessing--;
 		}
 		}
 		{
-		int _cnt88=0;
-		_loop88:
+		int _cnt89=0;
+		_loop89:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mBQ_DIGIT(false);
 			}
 			else {
-				if ( _cnt88>=1 ) { break _loop88; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt89>=1 ) { break _loop89; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt88++;
+			_cnt89++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -796,7 +813,7 @@ inputState.guessing--;
 		
 		match('"');
 		{
-		_loop92:
+		_loop93:
 		do {
 			if ((LA(1)=='\\')) {
 				mBQ_ESC(false);
@@ -807,7 +824,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop92;
+				break _loop93;
 			}
 			
 		} while (true);
@@ -871,17 +888,17 @@ inputState.guessing--;
 		case 'u':
 		{
 			{
-			int _cnt101=0;
-			_loop101:
+			int _cnt102=0;
+			_loop102:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt101>=1 ) { break _loop101; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt102>=1 ) { break _loop102; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt101++;
+				_cnt102++;
 			} while (true);
 			}
 			mBQ_HEX_DIGIT(false);

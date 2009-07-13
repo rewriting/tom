@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,14 +44,46 @@ public class HookCompiler {
   %include { ../adt/objects/Objects.tom}
   %include { ../../library/mapping/java/sl.tom }
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+    %typeterm HookCompiler { implement { tom.gom.compiler.HookCompiler } }
+    
+  // myadd-begin
+  private GomEnvironment gomEnvironment;
+
+  public HookCompiler(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
-  private static Map sortClassNameForSortDecl;
+  /* private GomEnvironment environment() {
+  //  return GomEnvironment.getInstance();
+  }*/
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }
+  // myadd-end
+
+  // Map sortClassNameForSortDecl = environment().builtinSortClassMap();
+  //mymodif
+  // private static Map sortClassNameForSortDecl;
+  private Map sortClassNameForSortDecl;
   HookCompiler(Map sortClassNameForSortDecl) {
     this.sortClassNameForSortDecl = sortClassNameForSortDecl;
   }
+
+  // myadd-begin
+  public Map getSortClassNameForSortDecl() {
+    return sortClassNameForSortDecl;
+  }
+
+  public void setSortClassNameForSortDecl(Map mySortClassNameForSortDecl) {
+    this.sortClassNameForSortDecl = mySortClassNameForSortDecl;
+  }
+  // myadd-end
+
   /**
     * Process the hooks, and attach them to the correct classes.
     */
@@ -67,8 +99,8 @@ public class HookCompiler {
           CutModule(mdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`mdecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachModuleHook(clsName,hook)).visit(classes);
+              classes = `TopDown(AttachModuleHook(clsName,hook,this)).visit(classes);
+                //`TopDown(AttachModuleHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }
@@ -76,8 +108,8 @@ public class HookCompiler {
           CutSort(sdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`sdecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachSortHook(clsName,hook)).visit(classes);
+              classes = `TopDown(AttachSortHook(clsName,hook,this)).visit(classes);
+                //`TopDown(AttachSortHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }
@@ -85,8 +117,23 @@ public class HookCompiler {
           CutOperator(odecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
             try {
-              classes = (GomClassList)
-                `TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
+              classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
+                //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
+            } catch (tom.library.sl.VisitFailure e) {
+              throw new GomRuntimeException("Unexpected strategy failure!");
+            }     
+          }
+          CutFutureOperator(odecl,consornil) -> {
+            ClassName clsName = (ClassName) declToClassName.get(`odecl);
+            String prefix = "";
+            %match(consornil) {
+              FutureNil() -> { prefix = "Empty"; }
+              FutureCons() -> { prefix = "Cons"; }
+            }
+            clsName = clsName.setName(prefix + clsName.getName()); 
+            try {
+              classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
+                //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }     
@@ -97,31 +144,35 @@ public class HookCompiler {
     return classes;
   }
 
-  %strategy AttachModuleHook(cName:ClassName,hook:HookDecl)
+  //%strategy AttachModuleHook(cName:ClassName,hook:HookDecl)
+  %strategy AttachModuleHook(cName:ClassName,hook:HookDecl,hc:HookCompiler)
     extends Identity() {
       visit GomClass {
         obj@AbstractTypeClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
+              //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
     }
 
-  %strategy AttachSortHook(cName:ClassName,hook:HookDecl)
+  //%strategy AttachSortHook(cName:ClassName,hook:HookDecl)
+  %strategy AttachSortHook(cName:ClassName,hook:HookDecl,hc:HookCompiler)
     extends Identity() {
       visit GomClass {
         obj@SortClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
+              //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
     }
 
-  %strategy AttachOperatorHook(cName:ClassName,hook:HookDecl)
+  %strategy AttachOperatorHook(cName:ClassName,hook:HookDecl,hc:HookCompiler)
     extends Identity() {
       visit GomClass {
         obj@VariadicOperatorClass[ClassName=className,Hooks=oldHooks,
@@ -133,13 +184,15 @@ public class HookCompiler {
                   HookList oldConsHooks = `consClass.getHooks();
                   GomClass newCons =
                     `consClass.setHooks(
-                        `ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                        `ConcHook(hc.makeHooksFromHookDecl(hook),oldConsHooks*));
+                        //`ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
                   return `obj.setCons(newCons);
                 } else if (hook.getSlotArgs() == `ConcSlot()) {
                   HookList oldEmptyHooks = `emptyClass.getHooks();
                   GomClass newEmpty =
                     `emptyClass.setHooks(
-                        `ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                        `ConcHook(hc.makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                        //`ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
                   return `obj.setEmpty(newEmpty);
                 }
               } else if (hook.isImportHookDecl()) {
@@ -148,37 +201,43 @@ public class HookCompiler {
                 HookList oldConsHooks = `consClass.getHooks();
                 GomClass newCons =
                   `consClass.setHooks(
-                      `ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                      `ConcHook(hc.makeHooksFromHookDecl(hook),oldConsHooks*));
+                      //`ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
                 HookList oldEmptyHooks = `emptyClass.getHooks();
                 GomClass newEmpty =
                   `emptyClass.setHooks(
-                      `ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                      `ConcHook(hc.makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                      //`ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
                 GomClass newobj = `obj.setEmpty(newEmpty);
                 newobj = newobj.setCons(newCons);
-                return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
+                return `newobj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
+                //return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               } else {                
                 return
-                  `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
+                  `obj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
+                  //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               }
             }
           }
         obj@OperatorClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
+              //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
     }
 
-  private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
+  // private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
+  private Hook makeHooksFromHookDecl(HookDecl hookDecl) {
     %match(hookDecl) {
-      MakeHookDecl[SlotArgs=slotArgs,Code=hookCode] -> {
+      MakeHookDecl[SlotArgs=slotArgs,Code=hookCode,HasTomCode=HasTomCode] -> {
         SlotFieldList newArgs = makeSlotFieldListFromSlotList(`slotArgs);
-        return `MakeHook(newArgs,hookCode);
+        return `MakeHook(newArgs,hookCode,HasTomCode);
       }
-      BlockHookDecl[Code=hookCode] -> {
-        return `BlockHook(hookCode);
+      BlockHookDecl[Code=hookCode,HasTomCode=HasTomCode] -> {
+        return `BlockHook(hookCode,HasTomCode);
       }
       InterfaceHookDecl[Code=hookCode] -> {
         return `InterfaceHook(hookCode);
@@ -194,7 +253,8 @@ public class HookCompiler {
         "Hook declaration " + `hookDecl + " not processed");
   }
 
-  private static SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
+  // private static SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
+  private SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
     SlotFieldList newArgs = `ConcSlotField();
     while(!args.isEmptyConcSlot()) {
       Slot arg = args.getHeadConcSlot();
@@ -202,7 +262,8 @@ public class HookCompiler {
       %match(Slot arg) {
         Slot[Name=slotName,Sort=sortDecl] -> {
           ClassName slotClassName = (ClassName)
-            sortClassNameForSortDecl.get(`sortDecl);
+            // sortClassNameForSortDecl.get(`sortDecl);
+            getSortClassNameForSortDecl().get(`sortDecl);
           newArgs = `ConcSlotField(newArgs*,SlotField(slotName,slotClassName));
         }
       }

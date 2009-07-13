@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -83,7 +83,7 @@ public class PluginFactory implements Plugin {
 
   private PlatformOptionList allDeclaredOptions;
   private PlatformOptionList allRequiredOptions;
-  private Map flagOwners;
+  private Map<String,Plugin> flagOwners;
   private Object[] argToRelay;
   private OptionManager optionManager;
 
@@ -99,25 +99,23 @@ public class PluginFactory implements Plugin {
   public PluginFactory(String name, String xmlFile) {
     allDeclaredOptions = `concPlatformOption();
     allRequiredOptions = `concPlatformOption();
-    flagOwners = new HashMap();
+    flagOwners = new HashMap<String,Plugin>();
 
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
 
-    List classPaths = new ArrayList();
-    List plugins = new ArrayList();
+    List<String> classPaths = new ArrayList<String>();
+    List<Plugin> plugins = new ArrayList<Plugin>();
 
     fillClassPathsList(classPaths, xmlFile);
 
     // creates an instance of each plugin
-    Iterator it = classPaths.iterator();
-    while( it.hasNext() ) {
+    for (String path : classPaths) {
       Object instance;
-      String path = (String)it.next();
       try {
         instance = Class.forName(path).newInstance();
         if(instance instanceof Plugin) {
-          plugins.add(instance);
+          plugins.add((Plugin)instance);
         } else {
           logger.log(Level.SEVERE, "ClassNotAPlugin",
                      new Object[]{pluginName, path});
@@ -131,10 +129,7 @@ public class PluginFactory implements Plugin {
       }
     }
 
-    it = plugins.iterator();
-    while( it.hasNext() ) {
-      Plugin plugin = (Plugin)it.next();
-
+    for (Plugin plugin : plugins) {
       PlatformOptionList declaredList = plugin.getDeclaredOptionList();
       allDeclaredOptions = `concPlatformOption(allDeclaredOptions*, declaredList*);
       String flagName = declaredList.getHeadconcPlatformOption().getName();
@@ -162,20 +157,25 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public void run() {
+  public boolean isGomPlugin() {
+    return false;
+  }
+
+  /**
+   * From Plugin interface
+   */
+  public void run(Map<String,String> informationTracker) {
     Plugin activatedPlugin = null;
-    Iterator it = flagOwners.keySet().iterator();
-    while(it.hasNext()) {
-      String flagName = (String)it.next();
+    for (String flagName : flagOwners.keySet()) {
       if( ((Boolean)getOM().getOptionValue(flagName)).booleanValue() ) {
-        activatedPlugin = (Plugin)flagOwners.get(flagName);
+        activatedPlugin = flagOwners.get(flagName);
       }
     }
-    try{
+    try {
       activatedPlugin.setArgs(argToRelay);
-      activatedPlugin.run();
+      activatedPlugin.run(informationTracker);
       argToRelay = activatedPlugin.getArgs();
-    } catch(NullPointerException npe) {
+    } catch (NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");
       // TODO: when error management has changed, change this
     }
@@ -199,15 +199,15 @@ public class PluginFactory implements Plugin {
    * From OptionOwner interface inherited from Plugin interface
    */
   public PlatformOptionList getRequiredOptionList() {
-    Iterator it = flagOwners.keySet().iterator();
+    Iterator<String> it = flagOwners.keySet().iterator();
     while(it.hasNext()) { // for all plugins
-      String flagName = (String)it.next();
+      String flagName = it.next();
       if(((Boolean)getOM().getOptionValue(flagName)).booleanValue()) {
         // if this plugin is activated
         it = flagOwners.keySet().iterator();
 
         while( it.hasNext() ) {
-          String name = (String)it.next();
+          String name = it.next();
           if( !name.equals(flagName) ) // require that the other aren't
             allRequiredOptions = `concPlatformOption(PluginOption(name, "", "", BooleanValue(False()),""), allRequiredOptions*);
         }
@@ -225,36 +225,32 @@ public class PluginFactory implements Plugin {
 
     if(optionValue.equals(Boolean.TRUE)) {
       // no more than 1 plugin can be activated at a time
-      if( flagOwners.keySet().contains(optionName) ) {
+      if(flagOwners.keySet().contains(optionName) ) {
         // if the flag just set is an activation flag...
-        Iterator it = flagOwners.keySet().iterator();
-        while( it.hasNext() ) {
-          String flagName = (String)it.next();
+        for (String flagName : flagOwners.keySet()) {
           if( !flagName.equals(optionName) ) {
-            getOM().setOptionValue(flagName, Boolean.FALSE);
             // ...desactivate the other flags
-            //System.out.println(flagName + " desactivated");
+            getOM().setOptionValue(flagName, Boolean.FALSE);
           }
         }
-        //System.out.println(optionName + " activated");
       }
     }
   }
 
-  private void fillClassPathsList(List classPaths, String xmlFile) {
+  private void fillClassPathsList(List<String> classPaths, String xmlFile) {
     XmlTools xtools = new XmlTools();
     TNode docNode = ( xtools.convertXMLToTNode(xmlFile) ).getDocElem();
 
-    %match(TNode docNode) {
+    %match(docNode) {
       fact@<factory></factory> -> {
 
-        %match(TNode fact) {
+        %match(fact) {
           ElementNode[ChildList=cl] -> {
             while(!(`cl.isEmptyconcTNode())) {
               TNode pluginNode = `cl.getHeadconcTNode();
 
-              %match(TNode pluginNode) {
-                <plugin [classpath = cp] /> -> { classPaths.add(`cp);/*System.out.println(cp);*/ }
+              %match(pluginNode) {
+                <plugin [classpath = cp] /> -> { classPaths.add(`cp); }
               }
               `cl = `cl.getTailconcTNode();
             }

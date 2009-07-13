@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,13 @@ package tom.library.sl;
 /**
  * <code>OmegaU(v)</code>
  * <p>
- * Basic visitor combinator which applies Omega(i,v) with
+ * Strategy combinator which applies Omega(i,v) with
  * i in [1..arity] with a uniform probability
  * i.e. with probability 1/getChildCount
  * <p>
 */
 
-public class OmegaU extends AbstractStrategy {
+public class OmegaU extends AbstractStrategyCombinator {
   public final static int ARG = 0;
   private static java.util.Random random = null;
 
@@ -50,13 +50,13 @@ public class OmegaU extends AbstractStrategy {
     }
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int arity = introspector.getChildCount(any);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visitLight(any,introspector);
+      return arguments[ARG].visitLight(any,introspector);
     } else {
-      return new Omega(selectedSubterm+1,visitors[ARG]).visitLight(any,introspector);
+      return new Omega(selectedSubterm+1,arguments[ARG]).visitLight(any,introspector);
     }
   }
 
@@ -65,10 +65,10 @@ public class OmegaU extends AbstractStrategy {
     int arity = introspector.getChildCount(subject);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visit(introspector);
+      return arguments[ARG].visit(introspector);
     } else {
       environment.down(selectedSubterm+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       environment.up();
       return status;
     }

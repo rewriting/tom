@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ package tom.engine.checker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -80,7 +81,8 @@ public class TomTypeChecker extends TomChecker {
     super("TomTypeChecker");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
+    //System.out.println("(debug) I'm in the Tom TypeChecker : TSM"+getStreamManager().toString());
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();
@@ -144,8 +146,8 @@ public class TomTypeChecker extends TomChecker {
     visit TomTerm {
       app@TermAppl[] -> {
         if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
-          ttc.messageError(findOriginTrackingFileName(`app.getOption()),
-              findOriginTrackingLine(`app.getOption()),
+          ttc.messageError(ttc.findOriginTrackingFileName(`app.getOption()),
+              ttc.findOriginTrackingLine(`app.getOption()),
               TomMessage.unknownVariableInWhen,
               new Object[]{ttc.getName(`app)});
         }
@@ -225,8 +227,8 @@ public class TomTypeChecker extends TomChecker {
     visit TomTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
         if(!`listName.equals(`rootName)) {
-          ttc.messageError(findOriginTrackingFileName(`options),
-              findOriginTrackingLine(`options),
+          ttc.messageError(ttc.findOriginTrackingFileName(`options),
+              ttc.findOriginTrackingLine(`options),
               TomMessage.incoherentVariableStar,
               new Object[]{ (`variableName),(`rootName),(`listName) });
         }

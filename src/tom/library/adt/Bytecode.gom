@@ -2,56 +2,61 @@ module Bytecode
 imports int long float double String
 abstract syntax
 
-TintList = intList(int*)
-TStringList = StringList(String*)
+ClassNode = Class(info:ClassInfo, fields:FieldList, methods:MethodList)
 
-TSignature = Signature(sig:String)
-           | EmptySignature()
-Signature:make(sig) {
-  if(sig == null)
-    return `EmptySignature();
-}
+ClassInfo = ClassInfo(name:String, signature:Signature, access:AccessList, superName:String, interfaces:StringList, innerClasses:InnerClassInfoList, outerClass:OuterClassInfo)
 
-TClass = Class(info:TClassInfo, fields:TFieldList, methods:TMethodList)
-TClassInfo = ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo)
+InnerClassInfo = InnerClassInfo(name:String, outerName:String, innerName:String, access:AccessList)
 
-TInnerClassInfo = InnerClassInfo(name:String, outerName:String, innerName:String, access:TAccessList)
-TInnerClassInfoList = InnerClassInfoList(TInnerClassInfo*)
-TOuterClassInfo = OuterClassInfo(owner:String, name:String, desc:TMethodDescriptor)
+InnerClassInfoList = InnerClassInfoList(InnerClassInfo*)
+
+OuterClassInfo = OuterClassInfo(owner:String, name:String, desc:MethodDescriptor)
                 | EmptyOuterClassInfo()
 
-TLocalVariable = LocalVariable(name:String, typeDesc:String, signature:TSignature, start:TLabel, end:TLabel, index:int)
-TLocalVariableList = LocalVariableList(TLocalVariable*)
+LocalVariable = LocalVariable(name:String, typeDesc:String, signature:Signature, start:LabelNode, end:LabelNode, index:int)
 
-THandler = CatchHandler(handler:TLabel, type:String)
-         | FinallyHandler(handler:TLabel)
+LocalVariableList = LocalVariableList(LocalVariable*)
+
+Handler = CatchHandler(handler:LabelNode, type:String)
+         | FinallyHandler(handler:LabelNode)
+
 CatchHandler:make(handler, type) {
-  if(type == null)
+  if(type == null) {
     return `FinallyHandler(handler);
+  }
 }
 
-TTryCatchBlock = TryCatchBlock(start:TLabel, end:TLabel, handler:THandler)
-TTryCatchBlockList = TryCatchBlockList(TTryCatchBlock*)
+TryCatchBlock = TryCatchBlock(start:LabelNode, end:LabelNode, handler:Handler)
 
-TField = Field(access:TAccessList, name:String, desc:TFieldDescriptor, signature:TSignature, value:TValue)
-TFieldList = FieldList(TField*)
+TryCatchBlockList = TryCatchBlockList(TryCatchBlock*)
+
+Field = Field(access:AccessList, name:String, desc:FieldDescriptor, signature:Signature, value:Value)
+
+FieldList = FieldList(Field*)
+
 Field:make(access, name, desc, signature, value) {
-  if(value == null)
+  if(value == null) {
     return `Field(access, name, desc, signature, EmptyValue());
+  }
 }
 
-TMethod = Method(info:TMethodInfo, code:TMethodCode)
-TMethodList = MethodList(TMethod*)
-TMethodInfo = MethodInfo(owner:String, access:TAccessList, name:String, desc:TMethodDescriptor, signature:TSignature, exceptions:TStringList)
-TMethodCode = MethodCode(instructions:TInstructionList, localVariables:TLocalVariableList, tryCatchBlocks:TTryCatchBlockList)
+Method = Method(info:MethodInfo, code:MethodCode)
+
+MethodList = MethodList(Method*)
+
+MethodInfo = MethodInfo(owner:String, access:AccessList, name:String, desc:MethodDescriptor, signature:Signature, exceptions:StringList)
+
+MethodCode = MethodCode(instructions:InstructionList, localVariables:LocalVariableList, tryCatchBlocks:TryCatchBlockList)
             | EmptyCode()
+
 MethodCode:make(instructions, localVariables, tryCatchBlocks) {
-  if(instructions == null && localVariables == null && tryCatchBlocks == null)
+  if(instructions == null && localVariables == null && tryCatchBlocks == null) {
     return `EmptyCode();
+  }
 }
 
-TFieldDescriptor = ObjectType(className:String)
-                 | ArrayType(arrayType:TFieldDescriptor)
+FieldDescriptor = ObjectType(className:String)
+                 | ArrayType(arrayype:FieldDescriptor)
                  | B()
                  | C()
                  | D()
@@ -60,23 +65,29 @@ TFieldDescriptor = ObjectType(className:String)
                  | J()
                  | S()
                  | Z()
-TFieldDescriptorList = FieldDescriptorList(TFieldDescriptor*)
-TMethodDescriptor = MethodDescriptor(parameters:TFieldDescriptorList, return:TReturnDescriptor)
-TReturnDescriptor = ReturnDescriptor(type:TFieldDescriptor)
+
+FieldDescriptorList = FieldDescriptorList(FieldDescriptor*)
+
+MethodDescriptor = MethodDescriptor(parameters:FieldDescriptorList, return:ReturnDescriptor)
+
+ReturnDescriptor = ReturnDescriptor(type:FieldDescriptor)
                   | Void()
 
-TLabel = Label(id:int)
-TLabelList = LabelList(TLabel*)
+LabelNode = LabelNode(id:int)
+       | Ref(inst:Instruction)
 
-TValue = StringValue(s:String)
+LabelNodeList = LabelNodeList(LabelNode*)
+
+Value = StringValue(s:String)
        | IntValue(i:int)
        | LongValue(l:long)
        | FloatValue(f:float)
        | DoubleValue(d:double)
        | EmptyValue()
 
-TAccessList = AccessList(TAccess*)
-TAccess = ABSTRACT()
+AccessList = AccessList(Access*)
+
+Access = ABSTRACT()
         | ANNOTATION()
         | BRIDGE()
         | DEPRECATED()
@@ -96,20 +107,20 @@ TAccess = ABSTRACT()
         | VARARGS()
         | VOLATILE()
 
-TType = ARRAY()
-      | BOOLEAN()
-      | BYTE()
-      | CHAR()
-      | DOUBLE()
-      | FLOAT()
-      | INT()
-      | LONG()
-      | OBJECT()
-      | SHORT()
-      | VOID()
+TypeNode = ARRAY()
+         | BOOLEAN()
+         | BYTE()
+         | CHAR()
+         | DOUBLE()
+         | FLOAT()
+         | INT()
+         | LONG()
+         | OBJECT()
+         | SHORT()
+         | VOID()
 
-TInstructionList = InstructionList(TInstruction*)
-TInstruction = Anchor(label:TLabel)
+InstructionList = InstructionList(Instruction*)
+Instruction = Anchor(label:LabelNode)
              | Nop()
              | Aconst_null()
              | Iconst_m1()
@@ -128,34 +139,12 @@ TInstruction = Anchor(label:TLabel)
              | Dconst_1()
              | Bipush(operand:int)
              | Sipush(operand:int)
-             | Ldc(cst:TValue)
-/*             | Ldc_w(cst:TValue)
-             | Ldc2_w(cst:TValue)*/
+             | Ldc(cst:Value)
              | Iload(var:int)
              | Lload(var:int)
              | Fload(var:int)
              | Dload(var:int)
              | Aload(var:int)
-/*             | Iload_0()
-             | Iload_1()
-             | Iload_2()
-             | Iload_3()
-             | Lload_0()
-             | Lload_1()
-             | Lload_2()
-             | Lload_3()
-             | Fload_0()
-             | Fload_1()
-             | Fload_2()
-             | Fload_3()
-             | Dload_0()
-             | Dload_1()
-             | Dload_2()
-             | Dload_3()
-             | Aload_0()
-             | Aload_1()
-             | Aload_2()
-             | Aload_3()*/
              | Iaload()
              | Laload()
              | Faload()
@@ -169,26 +158,6 @@ TInstruction = Anchor(label:TLabel)
              | Fstore(var:int)
              | Dstore(var:int)
              | Astore(var:int)
-/*             | Istore_0()
-             | Istore_1()
-             | Istore_2()
-             | Istore_3()
-             | Lstore_0()
-             | Lstore_1()
-             | Lstore_2()
-             | Lstore_3()
-             | Fstore_0()
-             | Fstore_1()
-             | Fstore_2()
-             | Fstore_3()
-             | Dstore_0()
-             | Dstore_1()
-             | Dstore_2()
-             | Dstore_3()
-             | Astore_0()
-             | Astore_1()
-             | Astore_2()
-             | Astore_3()*/
              | Iastore()
              | Lastore()
              | Fastore()
@@ -263,39 +232,39 @@ TInstruction = Anchor(label:TLabel)
              | Fcmpg()
              | Dcmpl()
              | Dcmpg()
-             | Ifeq(label:TLabel)
-             | Ifne(label:TLabel)
-             | Iflt(label:TLabel)
-             | Ifge(label:TLabel)
-             | Ifgt(label:TLabel)
-             | Ifle(label:TLabel)
-             | If_icmpeq(label:TLabel)
-             | If_icmpne(label:TLabel)
-             | If_icmplt(label:TLabel)
-             | If_icmpge(label:TLabel)
-             | If_icmpgt(label:TLabel)
-             | If_icmple(label:TLabel)
-             | If_acmpeq(label:TLabel)
-             | If_acmpne(label:TLabel)
-             | Goto(label:TLabel)
-             | Jsr(label:TLabel)
+             | Ifeq(label:LabelNode)
+             | Ifne(label:LabelNode)
+             | Iflt(label:LabelNode)
+             | Ifge(label:LabelNode)
+             | Ifgt(label:LabelNode)
+             | Ifle(label:LabelNode)
+             | If_icmpeq(label:LabelNode)
+             | If_icmpne(label:LabelNode)
+             | If_icmplt(label:LabelNode)
+             | If_icmpge(label:LabelNode)
+             | If_icmpgt(label:LabelNode)
+             | If_icmple(label:LabelNode)
+             | If_acmpeq(label:LabelNode)
+             | If_acmpne(label:LabelNode)
+             | Goto(label:LabelNode)
+             | Jsr(label:LabelNode)
              | Ret(var:int)
-             | Tableswitch(min:int, max:int, dflt:TLabel, labels:TLabelList)
-             | Lookupswitch(dflt:TLabel, keys:TintList, labels:TLabelList)
+             | Tableswitch(min:int, max:int, dflt:LabelNode, labels:LabelNodeList)
+             | Lookupswitch(dflt:LabelNode, keys:IntList, labels:LabelNodeList)
              | Ireturn()
              | Lreturn()
              | Freturn()
              | Dreturn()
              | Areturn()
              | Return()
-             | Getstatic(owner:String, name:String, fieldDesc:TFieldDescriptor)
-             | Putstatic(owner:String, name:String, fieldDesc:TFieldDescriptor)
-             | Getfield(owner:String, name:String, fieldDesc:TFieldDescriptor)
-             | Putfield(owner:String, name:String, fieldDesc:TFieldDescriptor)
-             | Invokevirtual(owner:String, name:String, methodDesc:TMethodDescriptor)
-             | Invokespecial(owner:String, name:String, methodDesc:TMethodDescriptor)
-             | Invokestatic(owner:String, name:String, methodDesc:TMethodDescriptor)
-             | Invokeinterface(owner:String, name:String, methodDesc:TMethodDescriptor)
+             | Getstatic(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Putstatic(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Getfield(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Putfield(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Invokevirtual(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokespecial(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokestatic(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokeinterface(owner:String, name:String, methodDesc:MethodDescriptor)
              | New(typeDesc:String)
              | Newarray(operand:int)
              | Anewarray(typeDesc:String)
@@ -306,13 +275,44 @@ TInstruction = Anchor(label:TLabel)
              | Monitorenter()
              | Monitorexit()
              | Multianewarray(typeDesc:String, dims:int)
-             | Ifnull(label:TLabel)
-             | Ifnonnull(label:TLabel)
-//             | Goto_w(label:TLabel)
-//             | Jsr_w(label:TLabel)
-//             | Wide()
-//             | Breakpoint()
-//             | Impdep1()
-//             | Impdep2()
-//             | Xxxunusedxxx1()
+             | Ifnull(label:LabelNode)
+             | Ifnonnull(label:LabelNode)
 
+sort Method : block() {
+
+  %include{ sl.tom }
+
+  public Method getCfg() {
+    try {
+      return (Method) `TopDown(toCfg()).visitLight(this).expand();
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new RuntimeException("Unexpected failure during cfg transformation");
+    }
+  }
+
+  %strategy toCfg() extends Identity() {
+    visit InstructionList {
+      ConsInstructionList(Anchor(LabelNode(id)), InstructionList(i,tail*)) -> { return `InstructionList(LabInstruction("l"+id,i),tail*); }
+    }
+    visit Instruction {
+      Anchor(LabelNode(id)) -> { return `LabInstruction("l"+id,Nop()); }
+    }
+    visit LabelNode {
+      LabelNode(id) -> { return `Ref(RefInstruction("l"+id)); }
+    } 
+  }
+
+}
+
+IntList = IntList(int*)
+
+StringList = StringList(String*)
+
+Signature = Signature(sig:String)
+           | EmptySignature()
+
+Signature:make(sig) {
+  if(sig == null) {
+    return `EmptySignature();
+  }
+}

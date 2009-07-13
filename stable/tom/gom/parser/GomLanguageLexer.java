@@ -1,7 +1,6 @@
-// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2008-04-09 12:05:28
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-07-07 16:34:46
 
 package tom.gom.parser;
-import tom.gom.adt.gom.GomTree;
 
 
 import org.antlr.runtime.*;
@@ -10,477 +9,671 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GomLanguageLexer extends Lexer {
-    public static final int COMMA=96;
-    public static final int GomType=5;
-    public static final int Sort=6;
-    public static final int CutSort=8;
-    public static final int ImportHook=10;
-    public static final int Slots=13;
-    public static final int KindSort=16;
-    public static final int ABSTRACT=89;
-    public static final int InterfaceHookDecl=19;
-    public static final int KindModule=20;
-    public static final int ConcModuleDecl=24;
-    public static final int ConcField=26;
-    public static final int DOT=85;
-    public static final int SORTS=88;
-    public static final int PRIVATE=103;
-    public static final int FullOperatorClass=28;
-    public static final int Compare=30;
-    public static final int SLCOMMENT=106;
-    public static final int HookKind=31;
-    public static final int Slot=32;
-    public static final int CutOperator=33;
-    public static final int SlotField=34;
-    public static final int ConcGrammar=35;
-    public static final int ConcSlot=38;
-    public static final int MODULE=83;
-    public static final int ConcClassName=39;
-    public static final int RPAREN=97;
-    public static final int MappingHook=41;
-    public static final int ConcProduction=42;
-    public static final int BlockHookDecl=43;
-    public static final int SortClass=44;
-    public static final int MappingHookDecl=46;
-    public static final int ConcGomClass=45;
-    public static final int ConcImportedModule=48;
-    public static final int Production=50;
-    public static final int ConcArg=49;
-    public static final int IsEmpty=53;
-    public static final int Import=54;
-    public static final int InterfaceHook=56;
-    public static final int ConcHookDecl=55;
-    public static final int WS=105;
-    public static final int Imports=58;
-    public static final int Code=60;
-    public static final int TomMapping=61;
-    public static final int SORT=100;
-    public static final int ConcGomType=62;
-    public static final int CodeList=63;
-    public static final int SEMI=94;
-    public static final int EQUALS=92;
-    public static final int AbstractTypeClass=65;
-    public static final int BuiltinSortDecl=72;
-    public static final int COLON=98;
-    public static final int SYNTAX=90;
-    public static final int VariadicOperatorClass=77;
-    public static final int OptionList=78;
-    public static final int ClassName=81;
-    public static final int ConcSortDecl=82;
+    public static final int COMMA=115;
+    public static final int GomType=6;
+    public static final int Sort=7;
+    public static final int CutSort=9;
+    public static final int ImportHook=11;
+    public static final int BINDS=110;
+    public static final int Slots=14;
+    public static final int ABSTRACT=105;
+    public static final int KindSort=17;
+    public static final int CutFutureOperator=18;
+    public static final int ShortSortClass=19;
+    public static final int InterfaceHookDecl=22;
+    public static final int KindModule=23;
+    public static final int ConcModuleDecl=27;
+    public static final int ConcField=28;
+    public static final int DOT=102;
+    public static final int LDIPLE=118;
+    public static final int FullOperatorClass=32;
+    public static final int PRIVATE=127;
+    public static final int Compare=33;
+    public static final int SLCOMMENT=130;
+    public static final int HookKind=34;
+    public static final int Slot=35;
+    public static final int AtomType=36;
+    public static final int CutOperator=37;
+    public static final int SlotField=38;
+    public static final int ConcGrammar=39;
+    public static final int ConcSlot=42;
+    public static final int MODULE=100;
+    public static final int ConcClassName=43;
+    public static final int RPAREN=116;
+    public static final int PatternType=44;
+    public static final int MappingHook=47;
+    public static final int BlockHookDecl=49;
+    public static final int ConcProduction=48;
+    public static final int ATOM=108;
+    public static final int SortClass=50;
+    public static final int NEUTRAL=123;
+    public static final int ConcGomClass=53;
+    public static final int MappingHookDecl=52;
+    public static final int ConcImportedModule=55;
+    public static final int ConcArg=56;
+    public static final int Production=57;
+    public static final int None=60;
+    public static final int IsEmpty=62;
+    public static final int Import=63;
+    public static final int ConcHookDecl=64;
+    public static final int InterfaceHook=65;
+    public static final int FutureNil=66;
+    public static final int WS=129;
+    public static final int Outer=67;
+    public static final int Details=69;
+    public static final int Imports=71;
+    public static final int Code=74;
+    public static final int TomMapping=75;
+    public static final int SORT=125;
+    public static final int ConcGomType=76;
+    public static final int CodeList=77;
+    public static final int SEMI=113;
+    public static final int EQUALS=109;
+    public static final int AbstractTypeClass=79;
+    public static final int BuiltinSortDecl=87;
+    public static final int COLON=120;
+    public static final int SYNTAX=106;
+    public static final int VariadicOperatorClass=92;
+    public static final int OptionList=94;
+    public static final int ClassName=97;
+    public static final int ConcSortDecl=98;
     public static final int Grammar=4;
-    public static final int PUBLIC=87;
-    public static final int ConcSlotField=7;
-    public static final int ImportHookDecl=9;
-    public static final int FullSortClass=11;
-    public static final int ARROW=91;
-    public static final int MakeBeforeHook=12;
-    public static final int OperatorClass=14;
-    public static final int SortType=15;
-    public static final int Origin=17;
-    public static final int ConcOperator=18;
-    public static final int Arg=22;
-    public static final int ConcHook=21;
-    public static final int ModHookPair=23;
-    public static final int ConcModule=25;
-    public static final int ConcGomModule=27;
-    public static final int LBRACE=99;
-    public static final int RBRACE=104;
-    public static final int Module=29;
-    public static final int MLCOMMENT=107;
-    public static final int ALT=93;
-    public static final int ModuleDecl=36;
-    public static final int Variadic=37;
-    public static final int Cons=40;
-    public static final int LPAREN=95;
-    public static final int IMPORTS=86;
-    public static final int OPERATOR=101;
-    public static final int ID=84;
-    public static final int ConcSort=47;
-    public static final int IsCons=51;
-    public static final int SortDecl=52;
-    public static final int Hook=57;
-    public static final int Public=59;
-    public static final int MakeHookDecl=64;
-    public static final int NamedField=66;
-    public static final int CutModule=67;
-    public static final int MakeHook=69;
-    public static final int GomModule=68;
-    public static final int Empty=70;
+    public static final int ExpressionType=5;
+    public static final int PUBLIC=104;
+    public static final int ConcSlotField=8;
+    public static final int ImportHookDecl=10;
+    public static final int ARROW=107;
+    public static final int FullSortClass=12;
+    public static final int MakeBeforeHook=13;
+    public static final int OperatorClass=15;
+    public static final int SortType=16;
+    public static final int INNER=121;
+    public static final int JAVADOC=111;
+    public static final int Origin=20;
+    public static final int ConcOperator=21;
+    public static final int Arg=25;
+    public static final int ConcHook=24;
+    public static final int ModHookPair=26;
+    public static final int ConcModule=29;
+    public static final int ConcGomModule=30;
+    public static final int LBRACE=124;
+    public static final int RBRACE=128;
+    public static final int Module=31;
+    public static final int MLCOMMENT=131;
+    public static final int ALT=112;
+    public static final int ModuleDecl=40;
+    public static final int Variadic=41;
+    public static final int Cons=45;
+    public static final int KindFutureOperator=46;
+    public static final int LPAREN=114;
+    public static final int IMPORTS=103;
+    public static final int RDIPLE=119;
+    public static final int OPERATOR=126;
+    public static final int HasTomCode=51;
+    public static final int OUTER=122;
+    public static final int ID=101;
+    public static final int ConcSort=54;
+    public static final int FutureCons=58;
+    public static final int IsCons=59;
+    public static final int SortDecl=61;
+    public static final int AtomDecl=68;
+    public static final int Hook=70;
+    public static final int Public=72;
+    public static final int ConcAtom=73;
+    public static final int MakeHookDecl=78;
+    public static final int NamedField=80;
+    public static final int CutModule=81;
+    public static final int MakeHook=83;
+    public static final int GomModule=82;
+    public static final int Inner=84;
+    public static final int Empty=85;
     public static final int EOF=-1;
-    public static final int GomModuleName=71;
-    public static final int Tokens=108;
-    public static final int StarredField=75;
-    public static final int BlockHook=74;
-    public static final int KindOperator=73;
-    public static final int ConcSection=76;
-    public static final int STAR=102;
-    public static final int Sorts=79;
-    public static final int OperatorDecl=80;
+    public static final int GomModuleName=86;
+    public static final int StarredField=90;
+    public static final int BlockHook=89;
+    public static final int KindOperator=88;
+    public static final int ConcSection=91;
+    public static final int STAR=117;
+    public static final int Neutral=93;
+    public static final int Sorts=95;
+    public static final int OperatorDecl=96;
+    public static final int Refresh=99;
+
+    // delegates
+    // delegators
+
     public GomLanguageLexer() {;} 
     public GomLanguageLexer(CharStream input) {
-        super(input);
+        this(input, new RecognizerSharedState());
+    }
+    public GomLanguageLexer(CharStream input, RecognizerSharedState state) {
+        super(input,state);
+
     }
     public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g"; }
 
-    // $ANTLR start MODULE
+    // $ANTLR start "MODULE"
     public final void mMODULE() throws RecognitionException {
         try {
             int _type = MODULE;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:157:12: ( 'module' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:157:12: 'module'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:10: ( 'module' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:12: 'module'
             {
             match("module"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end MODULE
+    // $ANTLR end "MODULE"
 
-    // $ANTLR start IMPORTS
+    // $ANTLR start "IMPORTS"
     public final void mIMPORTS() throws RecognitionException {
         try {
             int _type = IMPORTS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:158:12: ( 'imports' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:158:12: 'imports'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:10: ( 'imports' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:12: 'imports'
             {
             match("imports"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end IMPORTS
+    // $ANTLR end "IMPORTS"
 
-    // $ANTLR start PUBLIC
+    // $ANTLR start "PUBLIC"
     public final void mPUBLIC() throws RecognitionException {
         try {
             int _type = PUBLIC;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:159:12: ( 'public' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:159:12: 'public'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:10: ( 'public' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:12: 'public'
             {
             match("public"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end PUBLIC
+    // $ANTLR end "PUBLIC"
 
-    // $ANTLR start PRIVATE
+    // $ANTLR start "PRIVATE"
     public final void mPRIVATE() throws RecognitionException {
         try {
             int _type = PRIVATE;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:160:12: ( 'private' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:160:12: 'private'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:10: ( 'private' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:12: 'private'
             {
             match("private"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end PRIVATE
+    // $ANTLR end "PRIVATE"
 
-    // $ANTLR start SORTS
-    public final void mSORTS() throws RecognitionException {
-        try {
-            int _type = SORTS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:12: ( 'sorts' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:12: 'sorts'
-            {
-            match("sorts"); 
-
-
-            }
-
-            this.type = _type;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end SORTS
-
-    // $ANTLR start ABSTRACT
+    // $ANTLR start "ABSTRACT"
     public final void mABSTRACT() throws RecognitionException {
         try {
             int _type = ABSTRACT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:162:12: ( 'abstract' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:162:12: 'abstract'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:10: ( 'abstract' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:12: 'abstract'
             {
             match("abstract"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ABSTRACT
+    // $ANTLR end "ABSTRACT"
 
-    // $ANTLR start SYNTAX
+    // $ANTLR start "SYNTAX"
     public final void mSYNTAX() throws RecognitionException {
         try {
             int _type = SYNTAX;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:163:12: ( 'syntax' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:163:12: 'syntax'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:10: ( 'syntax' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:12: 'syntax'
             {
             match("syntax"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end SYNTAX
+    // $ANTLR end "SYNTAX"
 
-    // $ANTLR start SORT
+    // $ANTLR start "SORT"
     public final void mSORT() throws RecognitionException {
         try {
             int _type = SORT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:164:12: ( 'sort' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:164:12: 'sort'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:10: ( 'sort' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:12: 'sort'
             {
             match("sort"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end SORT
+    // $ANTLR end "SORT"
 
-    // $ANTLR start OPERATOR
+    // $ANTLR start "OPERATOR"
     public final void mOPERATOR() throws RecognitionException {
         try {
             int _type = OPERATOR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:12: ( 'operator' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:12: 'operator'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:10: ( 'operator' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:12: 'operator'
             {
             match("operator"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end OPERATOR
+    // $ANTLR end "OPERATOR"
 
-    // $ANTLR start ARROW
+    // $ANTLR start "ATOM"
+    public final void mATOM() throws RecognitionException {
+        try {
+            int _type = ATOM;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:10: ( 'atom' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:12: 'atom'
+            {
+            match("atom"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "ATOM"
+
+    // $ANTLR start "INNER"
+    public final void mINNER() throws RecognitionException {
+        try {
+            int _type = INNER;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:10: ( 'inner' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:12: 'inner'
+            {
+            match("inner"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "INNER"
+
+    // $ANTLR start "OUTER"
+    public final void mOUTER() throws RecognitionException {
+        try {
+            int _type = OUTER;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:10: ( 'outer' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:12: 'outer'
+            {
+            match("outer"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "OUTER"
+
+    // $ANTLR start "NEUTRAL"
+    public final void mNEUTRAL() throws RecognitionException {
+        try {
+            int _type = NEUTRAL;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:10: ( 'neutral' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:12: 'neutral'
+            {
+            match("neutral"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "NEUTRAL"
+
+    // $ANTLR start "BINDS"
+    public final void mBINDS() throws RecognitionException {
+        try {
+            int _type = BINDS;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:10: ( 'binds' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:12: 'binds'
+            {
+            match("binds"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "BINDS"
+
+    // $ANTLR start "ARROW"
     public final void mARROW() throws RecognitionException {
         try {
             int _type = ARROW;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:167:12: ( '->' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:167:12: '->'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:10: ( '->' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:12: '->'
             {
             match("->"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ARROW
+    // $ANTLR end "ARROW"
 
-    // $ANTLR start COLON
+    // $ANTLR start "COLON"
     public final void mCOLON() throws RecognitionException {
         try {
             int _type = COLON;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:168:12: ( ':' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:168:12: ':'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:10: ( ':' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:12: ':'
             {
             match(':'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end COLON
+    // $ANTLR end "COLON"
 
-    // $ANTLR start COMMA
+    // $ANTLR start "COMMA"
     public final void mCOMMA() throws RecognitionException {
         try {
             int _type = COMMA;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:12: ( ',' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:169:12: ','
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:10: ( ',' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:12: ','
             {
             match(','); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end COMMA
+    // $ANTLR end "COMMA"
 
-    // $ANTLR start DOT
+    // $ANTLR start "DOT"
     public final void mDOT() throws RecognitionException {
         try {
             int _type = DOT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:170:12: ( '.' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:170:12: '.'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:10: ( '.' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:12: '.'
             {
             match('.'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end DOT
+    // $ANTLR end "DOT"
 
-    // $ANTLR start LPAREN
+    // $ANTLR start "LPAREN"
     public final void mLPAREN() throws RecognitionException {
         try {
             int _type = LPAREN;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:171:12: ( '(' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:171:12: '('
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:10: ( '(' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:12: '('
             {
             match('('); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end LPAREN
+    // $ANTLR end "LPAREN"
 
-    // $ANTLR start RPAREN
+    // $ANTLR start "RPAREN"
     public final void mRPAREN() throws RecognitionException {
         try {
             int _type = RPAREN;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:172:12: ( ')' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:172:12: ')'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:10: ( ')' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:12: ')'
             {
             match(')'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RPAREN
+    // $ANTLR end "RPAREN"
 
-    // $ANTLR start STAR
+    // $ANTLR start "STAR"
     public final void mSTAR() throws RecognitionException {
         try {
             int _type = STAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:12: ( '*' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:12: '*'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:10: ( '*' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:12: '*'
             {
             match('*'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end STAR
+    // $ANTLR end "STAR"
 
-    // $ANTLR start EQUALS
+    // $ANTLR start "EQUALS"
     public final void mEQUALS() throws RecognitionException {
         try {
             int _type = EQUALS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:174:12: ( '=' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:174:12: '='
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:10: ( '=' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:12: '='
             {
             match('='); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end EQUALS
+    // $ANTLR end "EQUALS"
 
-    // $ANTLR start ALT
+    // $ANTLR start "ALT"
     public final void mALT() throws RecognitionException {
         try {
             int _type = ALT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:175:12: ( '|' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:175:12: '|'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:10: ( '|' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:12: '|'
             {
             match('|'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ALT
+    // $ANTLR end "ALT"
 
-    // $ANTLR start SEMI
+    // $ANTLR start "SEMI"
     public final void mSEMI() throws RecognitionException {
         try {
             int _type = SEMI;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:12: ( ';;' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:12: ';;'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:10: ( ';;' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:12: ';;'
             {
             match(";;"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end SEMI
+    // $ANTLR end "SEMI"
 
-    // $ANTLR start LBRACE
+    // $ANTLR start "LDIPLE"
+    public final void mLDIPLE() throws RecognitionException {
+        try {
+            int _type = LDIPLE;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:10: ( '<' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:12: '<'
+            {
+            match('<'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "LDIPLE"
+
+    // $ANTLR start "RDIPLE"
+    public final void mRDIPLE() throws RecognitionException {
+        try {
+            int _type = RDIPLE;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:10: ( '>' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:12: '>'
+            {
+            match('>'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "RDIPLE"
+
+    // $ANTLR start "LBRACE"
     public final void mLBRACE() throws RecognitionException {
         try {
             int _type = LBRACE;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:178:9: ( '{' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:178:9: '{'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:229:7: ( '{' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:229:9: '{'
             {
             match('{'); 
 
@@ -492,39 +685,43 @@ public class GomLanguageLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end LBRACE
+    // $ANTLR end "LBRACE"
 
-    // $ANTLR start RBRACE
+    // $ANTLR start "RBRACE"
     public final void mRBRACE() throws RecognitionException {
         try {
             int _type = RBRACE;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:187:9: ( '}' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:187:9: '}'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:7: ( '}' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:9: '}'
             {
             match('}'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RBRACE
+    // $ANTLR end "RBRACE"
 
-    // $ANTLR start WS
+    // $ANTLR start "WS"
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:6: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:4: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             int alt2=3;
             switch ( input.LA(1) ) {
             case ' ':
@@ -545,30 +742,30 @@ public class GomLanguageLexer extends Lexer {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("189:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )", 2, 0, input);
+                    new NoViableAltException("", 2, 0, input);
 
                 throw nvae;
             }
 
             switch (alt2) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:8: ' '
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:8: ' '
                     {
                     match(' '); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:190:10: '\\t'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:10: '\\t'
                     {
                     match('\t'); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: ( '\\r\\n' | '\\n' | '\\r' )
                     {
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: ( '\\r\\n' | '\\n' | '\\r' )
                     int alt1=3;
                     int LA1_0 = input.LA(1);
 
@@ -586,13 +783,13 @@ public class GomLanguageLexer extends Lexer {
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("191:10: ( '\\r\\n' | '\\n' | '\\r' )", 1, 0, input);
+                            new NoViableAltException("", 1, 0, input);
 
                         throw nvae;
                     }
                     switch (alt1) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:12: '\\r\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:12: '\\r\\n'
                             {
                             match("\r\n"); 
 
@@ -600,14 +797,14 @@ public class GomLanguageLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:192:14: '\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:14: '\\n'
                             {
                             match('\n'); 
 
                             }
                             break;
                         case 3 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:193:14: '\\r'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:244:14: '\\r'
                             {
                             match('\r'); 
 
@@ -622,50 +819,51 @@ public class GomLanguageLexer extends Lexer {
 
             }
 
-            channel=HIDDEN;
+            _channel=HIDDEN;
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end WS
+    // $ANTLR end "WS"
 
-    // $ANTLR start SLCOMMENT
+    // $ANTLR start "SLCOMMENT"
     public final void mSLCOMMENT() throws RecognitionException {
         try {
             int _type = SLCOMMENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:3: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:250:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:8: (~ ( '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:8: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
                 int LA3_0 = input.LA(1);
 
-                if ( ((LA3_0>='\u0000' && LA3_0<='\t')||(LA3_0>='\u000B' && LA3_0<='\f')||(LA3_0>='\u000E' && LA3_0<='\uFFFE')) ) {
+                if ( ((LA3_0>='\u0000' && LA3_0<='\t')||(LA3_0>='\u000B' && LA3_0<='\f')||(LA3_0>='\u000E' && LA3_0<='\uFFFF')) ) {
                     alt3=1;
                 }
 
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:9: ~ ( '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:9: ~ ( '\\n' | '\\r' )
             	    {
-            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
+            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -676,7 +874,7 @@ public class GomLanguageLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:24: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:24: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -688,17 +886,17 @@ public class GomLanguageLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:25: '\\n'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:25: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:30: '\\r' ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:30: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:34: ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:34: ( '\\n' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -707,7 +905,7 @@ public class GomLanguageLexer extends Lexer {
                     }
                     switch (alt4) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:35: '\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:35: '\\n'
                             {
                             match('\n'); 
 
@@ -722,27 +920,38 @@ public class GomLanguageLexer extends Lexer {
 
             }
 
-            channel=HIDDEN;
+            _channel=HIDDEN;
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end SLCOMMENT
+    // $ANTLR end "SLCOMMENT"
 
-    // $ANTLR start MLCOMMENT
+    // $ANTLR start "MLCOMMENT"
     public final void mMLCOMMENT() throws RecognitionException {
         try {
             int _type = MLCOMMENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:3: ( '/*' ( . )* '*/' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:3: '/*' ( . )* '*/'
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:255:11: ( '/*' ~ '*' ( . )* '*/' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:3: '/*' ~ '*' ( . )* '*/'
             {
             match("/*"); 
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:8: ( . )*
+            if ( (input.LA(1)>='\u0000' && input.LA(1)<=')')||(input.LA(1)>='+' && input.LA(1)<='\uFFFF') ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:12: ( . )*
             loop6:
             do {
                 int alt6=2;
@@ -754,20 +963,20 @@ public class GomLanguageLexer extends Lexer {
                     if ( (LA6_1=='/') ) {
                         alt6=2;
                     }
-                    else if ( ((LA6_1>='\u0000' && LA6_1<='.')||(LA6_1>='0' && LA6_1<='\uFFFE')) ) {
+                    else if ( ((LA6_1>='\u0000' && LA6_1<='.')||(LA6_1>='0' && LA6_1<='\uFFFF')) ) {
                         alt6=1;
                     }
 
 
                 }
-                else if ( ((LA6_0>='\u0000' && LA6_0<=')')||(LA6_0>='+' && LA6_0<='\uFFFE')) ) {
+                else if ( ((LA6_0>='\u0000' && LA6_0<=')')||(LA6_0>='+' && LA6_0<='\uFFFF')) ) {
                     alt6=1;
                 }
 
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:8: .
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:12: .
             	    {
             	    matchAny(); 
 
@@ -781,59 +990,56 @@ public class GomLanguageLexer extends Lexer {
 
             match("*/"); 
 
-            channel=HIDDEN;
+            _channel=HIDDEN;
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end MLCOMMENT
+    // $ANTLR end "MLCOMMENT"
 
-    // $ANTLR start ID
-    public final void mID() throws RecognitionException {
+    // $ANTLR start "JAVADOC"
+    public final void mJAVADOC() throws RecognitionException {
         try {
-            int _type = ID;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:6: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            int _type = JAVADOC;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:260:9: ( '/**' ( . )* '*/' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:3: '/**' ( . )* '*/'
             {
-            if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
-                input.consume();
+            match("/**"); 
 
-            }
-            else {
-                MismatchedSetException mse =
-                    new MismatchedSetException(null,input);
-                recover(mse);    throw mse;
-            }
-
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: ( . )*
             loop7:
             do {
                 int alt7=2;
                 int LA7_0 = input.LA(1);
 
-                if ( (LA7_0=='-'||(LA7_0>='0' && LA7_0<='9')||(LA7_0>='A' && LA7_0<='Z')||LA7_0=='_'||(LA7_0>='a' && LA7_0<='z')) ) {
+                if ( (LA7_0=='*') ) {
+                    int LA7_1 = input.LA(2);
+
+                    if ( (LA7_1=='/') ) {
+                        alt7=2;
+                    }
+                    else if ( ((LA7_1>='\u0000' && LA7_1<='.')||(LA7_1>='0' && LA7_1<='\uFFFF')) ) {
+                        alt7=1;
+                    }
+
+
+                }
+                else if ( ((LA7_0>='\u0000' && LA7_0<=')')||(LA7_0>='+' && LA7_0<='\uFFFF')) ) {
                     alt7=1;
                 }
 
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: .
             	    {
-            	    if ( input.LA(1)=='-'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
-            	        input.consume();
-
-            	    }
-            	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
-
+            	    matchAny(); 
 
             	    }
             	    break;
@@ -843,583 +1049,85 @@ public class GomLanguageLexer extends Lexer {
                 }
             } while (true);
 
+            match("*/"); 
+
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ID
+    // $ANTLR end "JAVADOC"
+
+    // $ANTLR start "ID"
+    public final void mID() throws RecognitionException {
+        try {
+            int _type = ID;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:264:4: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:264:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            {
+            if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            loop8:
+            do {
+                int alt8=2;
+                int LA8_0 = input.LA(1);
+
+                if ( (LA8_0=='-'||(LA8_0>='0' && LA8_0<='9')||(LA8_0>='A' && LA8_0<='Z')||LA8_0=='_'||(LA8_0>='a' && LA8_0<='z')) ) {
+                    alt8=1;
+                }
+
+
+                switch (alt8) {
+            	case 1 :
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:
+            	    {
+            	    if ( input.LA(1)=='-'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            	        input.consume();
+
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop8;
+                }
+            } while (true);
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "ID"
 
     public void mTokens() throws RecognitionException {
-        // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:10: ( MODULE | IMPORTS | PUBLIC | PRIVATE | SORTS | ABSTRACT | SYNTAX | SORT | OPERATOR | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | ID )
-        int alt8=25;
-        switch ( input.LA(1) ) {
-        case 'm':
-            {
-            int LA8_1 = input.LA(2);
-
-            if ( (LA8_1=='o') ) {
-                int LA8_22 = input.LA(3);
-
-                if ( (LA8_22=='d') ) {
-                    int LA8_32 = input.LA(4);
-
-                    if ( (LA8_32=='u') ) {
-                        int LA8_40 = input.LA(5);
-
-                        if ( (LA8_40=='l') ) {
-                            int LA8_48 = input.LA(6);
-
-                            if ( (LA8_48=='e') ) {
-                                int LA8_57 = input.LA(7);
-
-                                if ( (LA8_57=='-'||(LA8_57>='0' && LA8_57<='9')||(LA8_57>='A' && LA8_57<='Z')||LA8_57=='_'||(LA8_57>='a' && LA8_57<='z')) ) {
-                                    alt8=25;
-                                }
-                                else {
-                                    alt8=1;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-            }
-            else {
-                alt8=25;}
-            }
-            break;
-        case 'i':
-            {
-            int LA8_2 = input.LA(2);
-
-            if ( (LA8_2=='m') ) {
-                int LA8_23 = input.LA(3);
-
-                if ( (LA8_23=='p') ) {
-                    int LA8_33 = input.LA(4);
-
-                    if ( (LA8_33=='o') ) {
-                        int LA8_41 = input.LA(5);
-
-                        if ( (LA8_41=='r') ) {
-                            int LA8_49 = input.LA(6);
-
-                            if ( (LA8_49=='t') ) {
-                                int LA8_58 = input.LA(7);
-
-                                if ( (LA8_58=='s') ) {
-                                    int LA8_66 = input.LA(8);
-
-                                    if ( (LA8_66=='-'||(LA8_66>='0' && LA8_66<='9')||(LA8_66>='A' && LA8_66<='Z')||LA8_66=='_'||(LA8_66>='a' && LA8_66<='z')) ) {
-                                        alt8=25;
-                                    }
-                                    else {
-                                        alt8=2;}
-                                }
-                                else {
-                                    alt8=25;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-            }
-            else {
-                alt8=25;}
-            }
-            break;
-        case 'p':
-            {
-            switch ( input.LA(2) ) {
-            case 'r':
-                {
-                int LA8_24 = input.LA(3);
-
-                if ( (LA8_24=='i') ) {
-                    int LA8_34 = input.LA(4);
-
-                    if ( (LA8_34=='v') ) {
-                        int LA8_42 = input.LA(5);
-
-                        if ( (LA8_42=='a') ) {
-                            int LA8_50 = input.LA(6);
-
-                            if ( (LA8_50=='t') ) {
-                                int LA8_59 = input.LA(7);
-
-                                if ( (LA8_59=='e') ) {
-                                    int LA8_67 = input.LA(8);
-
-                                    if ( (LA8_67=='-'||(LA8_67>='0' && LA8_67<='9')||(LA8_67>='A' && LA8_67<='Z')||LA8_67=='_'||(LA8_67>='a' && LA8_67<='z')) ) {
-                                        alt8=25;
-                                    }
-                                    else {
-                                        alt8=4;}
-                                }
-                                else {
-                                    alt8=25;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-                }
-                break;
-            case 'u':
-                {
-                int LA8_25 = input.LA(3);
-
-                if ( (LA8_25=='b') ) {
-                    int LA8_35 = input.LA(4);
-
-                    if ( (LA8_35=='l') ) {
-                        int LA8_43 = input.LA(5);
-
-                        if ( (LA8_43=='i') ) {
-                            int LA8_51 = input.LA(6);
-
-                            if ( (LA8_51=='c') ) {
-                                int LA8_60 = input.LA(7);
-
-                                if ( (LA8_60=='-'||(LA8_60>='0' && LA8_60<='9')||(LA8_60>='A' && LA8_60<='Z')||LA8_60=='_'||(LA8_60>='a' && LA8_60<='z')) ) {
-                                    alt8=25;
-                                }
-                                else {
-                                    alt8=3;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-                }
-                break;
-            default:
-                alt8=25;}
-
-            }
-            break;
-        case 's':
-            {
-            switch ( input.LA(2) ) {
-            case 'y':
-                {
-                int LA8_26 = input.LA(3);
-
-                if ( (LA8_26=='n') ) {
-                    int LA8_36 = input.LA(4);
-
-                    if ( (LA8_36=='t') ) {
-                        int LA8_44 = input.LA(5);
-
-                        if ( (LA8_44=='a') ) {
-                            int LA8_52 = input.LA(6);
-
-                            if ( (LA8_52=='x') ) {
-                                int LA8_61 = input.LA(7);
-
-                                if ( (LA8_61=='-'||(LA8_61>='0' && LA8_61<='9')||(LA8_61>='A' && LA8_61<='Z')||LA8_61=='_'||(LA8_61>='a' && LA8_61<='z')) ) {
-                                    alt8=25;
-                                }
-                                else {
-                                    alt8=7;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-                }
-                break;
-            case 'o':
-                {
-                int LA8_27 = input.LA(3);
-
-                if ( (LA8_27=='r') ) {
-                    int LA8_37 = input.LA(4);
-
-                    if ( (LA8_37=='t') ) {
-                        switch ( input.LA(5) ) {
-                        case 's':
-                            {
-                            int LA8_53 = input.LA(6);
-
-                            if ( (LA8_53=='-'||(LA8_53>='0' && LA8_53<='9')||(LA8_53>='A' && LA8_53<='Z')||LA8_53=='_'||(LA8_53>='a' && LA8_53<='z')) ) {
-                                alt8=25;
-                            }
-                            else {
-                                alt8=5;}
-                            }
-                            break;
-                        case '-':
-                        case '0':
-                        case '1':
-                        case '2':
-                        case '3':
-                        case '4':
-                        case '5':
-                        case '6':
-                        case '7':
-                        case '8':
-                        case '9':
-                        case 'A':
-                        case 'B':
-                        case 'C':
-                        case 'D':
-                        case 'E':
-                        case 'F':
-                        case 'G':
-                        case 'H':
-                        case 'I':
-                        case 'J':
-                        case 'K':
-                        case 'L':
-                        case 'M':
-                        case 'N':
-                        case 'O':
-                        case 'P':
-                        case 'Q':
-                        case 'R':
-                        case 'S':
-                        case 'T':
-                        case 'U':
-                        case 'V':
-                        case 'W':
-                        case 'X':
-                        case 'Y':
-                        case 'Z':
-                        case '_':
-                        case 'a':
-                        case 'b':
-                        case 'c':
-                        case 'd':
-                        case 'e':
-                        case 'f':
-                        case 'g':
-                        case 'h':
-                        case 'i':
-                        case 'j':
-                        case 'k':
-                        case 'l':
-                        case 'm':
-                        case 'n':
-                        case 'o':
-                        case 'p':
-                        case 'q':
-                        case 'r':
-                        case 't':
-                        case 'u':
-                        case 'v':
-                        case 'w':
-                        case 'x':
-                        case 'y':
-                        case 'z':
-                            {
-                            alt8=25;
-                            }
-                            break;
-                        default:
-                            alt8=8;}
-
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-                }
-                break;
-            default:
-                alt8=25;}
-
-            }
-            break;
-        case 'a':
-            {
-            int LA8_5 = input.LA(2);
-
-            if ( (LA8_5=='b') ) {
-                int LA8_28 = input.LA(3);
-
-                if ( (LA8_28=='s') ) {
-                    int LA8_38 = input.LA(4);
-
-                    if ( (LA8_38=='t') ) {
-                        int LA8_46 = input.LA(5);
-
-                        if ( (LA8_46=='r') ) {
-                            int LA8_55 = input.LA(6);
-
-                            if ( (LA8_55=='a') ) {
-                                int LA8_63 = input.LA(7);
-
-                                if ( (LA8_63=='c') ) {
-                                    int LA8_70 = input.LA(8);
-
-                                    if ( (LA8_70=='t') ) {
-                                        int LA8_74 = input.LA(9);
-
-                                        if ( (LA8_74=='-'||(LA8_74>='0' && LA8_74<='9')||(LA8_74>='A' && LA8_74<='Z')||LA8_74=='_'||(LA8_74>='a' && LA8_74<='z')) ) {
-                                            alt8=25;
-                                        }
-                                        else {
-                                            alt8=6;}
-                                    }
-                                    else {
-                                        alt8=25;}
-                                }
-                                else {
-                                    alt8=25;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-            }
-            else {
-                alt8=25;}
-            }
-            break;
-        case 'o':
-            {
-            int LA8_6 = input.LA(2);
-
-            if ( (LA8_6=='p') ) {
-                int LA8_29 = input.LA(3);
-
-                if ( (LA8_29=='e') ) {
-                    int LA8_39 = input.LA(4);
-
-                    if ( (LA8_39=='r') ) {
-                        int LA8_47 = input.LA(5);
-
-                        if ( (LA8_47=='a') ) {
-                            int LA8_56 = input.LA(6);
-
-                            if ( (LA8_56=='t') ) {
-                                int LA8_64 = input.LA(7);
-
-                                if ( (LA8_64=='o') ) {
-                                    int LA8_71 = input.LA(8);
-
-                                    if ( (LA8_71=='r') ) {
-                                        int LA8_75 = input.LA(9);
-
-                                        if ( (LA8_75=='-'||(LA8_75>='0' && LA8_75<='9')||(LA8_75>='A' && LA8_75<='Z')||LA8_75=='_'||(LA8_75>='a' && LA8_75<='z')) ) {
-                                            alt8=25;
-                                        }
-                                        else {
-                                            alt8=9;}
-                                    }
-                                    else {
-                                        alt8=25;}
-                                }
-                                else {
-                                    alt8=25;}
-                            }
-                            else {
-                                alt8=25;}
-                        }
-                        else {
-                            alt8=25;}
-                    }
-                    else {
-                        alt8=25;}
-                }
-                else {
-                    alt8=25;}
-            }
-            else {
-                alt8=25;}
-            }
-            break;
-        case '-':
-            {
-            alt8=10;
-            }
-            break;
-        case ':':
-            {
-            alt8=11;
-            }
-            break;
-        case ',':
-            {
-            alt8=12;
-            }
-            break;
-        case '.':
-            {
-            alt8=13;
-            }
-            break;
-        case '(':
-            {
-            alt8=14;
-            }
-            break;
-        case ')':
-            {
-            alt8=15;
-            }
-            break;
-        case '*':
-            {
-            alt8=16;
-            }
-            break;
-        case '=':
-            {
-            alt8=17;
-            }
-            break;
-        case '|':
-            {
-            alt8=18;
-            }
-            break;
-        case ';':
-            {
-            alt8=19;
-            }
-            break;
-        case '{':
-            {
-            alt8=20;
-            }
-            break;
-        case '}':
-            {
-            alt8=21;
-            }
-            break;
-        case '\t':
-        case '\n':
-        case '\r':
-        case ' ':
-            {
-            alt8=22;
-            }
-            break;
-        case '/':
-            {
-            int LA8_20 = input.LA(2);
-
-            if ( (LA8_20=='/') ) {
-                alt8=23;
-            }
-            else if ( (LA8_20=='*') ) {
-                alt8=24;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("1:1: Tokens : ( MODULE | IMPORTS | PUBLIC | PRIVATE | SORTS | ABSTRACT | SYNTAX | SORT | OPERATOR | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | ID );", 8, 20, input);
-
-                throw nvae;
-            }
-            }
-            break;
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-        case 'G':
-        case 'H':
-        case 'I':
-        case 'J':
-        case 'K':
-        case 'L':
-        case 'M':
-        case 'N':
-        case 'O':
-        case 'P':
-        case 'Q':
-        case 'R':
-        case 'S':
-        case 'T':
-        case 'U':
-        case 'V':
-        case 'W':
-        case 'X':
-        case 'Y':
-        case 'Z':
-        case 'b':
-        case 'c':
-        case 'd':
-        case 'e':
-        case 'f':
-        case 'g':
-        case 'h':
-        case 'j':
-        case 'k':
-        case 'l':
-        case 'n':
-        case 'q':
-        case 'r':
-        case 't':
-        case 'u':
-        case 'v':
-        case 'w':
-        case 'x':
-        case 'y':
-        case 'z':
-            {
-            alt8=25;
-            }
-            break;
-        default:
-            NoViableAltException nvae =
-                new NoViableAltException("1:1: Tokens : ( MODULE | IMPORTS | PUBLIC | PRIVATE | SORTS | ABSTRACT | SYNTAX | SORT | OPERATOR | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | ID );", 8, 0, input);
-
-            throw nvae;
-        }
-
-        switch (alt8) {
+        // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:8: ( MODULE | IMPORTS | PUBLIC | PRIVATE | ABSTRACT | SYNTAX | SORT | OPERATOR | ATOM | INNER | OUTER | NEUTRAL | BINDS | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LDIPLE | RDIPLE | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | JAVADOC | ID )
+        int alt9=32;
+        alt9 = dfa9.predict(input);
+        switch (alt9) {
             case 1 :
                 // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:10: MODULE
                 {
@@ -1449,147 +1157,196 @@ public class GomLanguageLexer extends Lexer {
                 }
                 break;
             case 5 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:40: SORTS
-                {
-                mSORTS(); 
-
-                }
-                break;
-            case 6 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:46: ABSTRACT
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:40: ABSTRACT
                 {
                 mABSTRACT(); 
 
                 }
                 break;
-            case 7 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:55: SYNTAX
+            case 6 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:49: SYNTAX
                 {
                 mSYNTAX(); 
 
                 }
                 break;
-            case 8 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:62: SORT
+            case 7 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:56: SORT
                 {
                 mSORT(); 
 
                 }
                 break;
-            case 9 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:67: OPERATOR
+            case 8 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:61: OPERATOR
                 {
                 mOPERATOR(); 
 
                 }
                 break;
+            case 9 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:70: ATOM
+                {
+                mATOM(); 
+
+                }
+                break;
             case 10 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:76: ARROW
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:75: INNER
+                {
+                mINNER(); 
+
+                }
+                break;
+            case 11 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:81: OUTER
+                {
+                mOUTER(); 
+
+                }
+                break;
+            case 12 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:87: NEUTRAL
+                {
+                mNEUTRAL(); 
+
+                }
+                break;
+            case 13 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:95: BINDS
+                {
+                mBINDS(); 
+
+                }
+                break;
+            case 14 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:101: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
-            case 11 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:82: COLON
+            case 15 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:107: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
-            case 12 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:88: COMMA
+            case 16 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:113: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
-            case 13 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:94: DOT
+            case 17 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:119: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
-            case 14 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:98: LPAREN
+            case 18 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:123: LPAREN
                 {
                 mLPAREN(); 
 
                 }
                 break;
-            case 15 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:105: RPAREN
+            case 19 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:130: RPAREN
                 {
                 mRPAREN(); 
 
                 }
                 break;
-            case 16 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:112: STAR
+            case 20 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:137: STAR
                 {
                 mSTAR(); 
 
                 }
                 break;
-            case 17 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:117: EQUALS
+            case 21 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:142: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
-            case 18 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:124: ALT
+            case 22 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:149: ALT
                 {
                 mALT(); 
 
                 }
                 break;
-            case 19 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:128: SEMI
+            case 23 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:153: SEMI
                 {
                 mSEMI(); 
 
                 }
                 break;
-            case 20 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:133: LBRACE
+            case 24 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:158: LDIPLE
+                {
+                mLDIPLE(); 
+
+                }
+                break;
+            case 25 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:165: RDIPLE
+                {
+                mRDIPLE(); 
+
+                }
+                break;
+            case 26 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:172: LBRACE
                 {
                 mLBRACE(); 
 
                 }
                 break;
-            case 21 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:140: RBRACE
+            case 27 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:179: RBRACE
                 {
                 mRBRACE(); 
 
                 }
                 break;
-            case 22 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:147: WS
+            case 28 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:186: WS
                 {
                 mWS(); 
 
                 }
                 break;
-            case 23 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:150: SLCOMMENT
+            case 29 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:189: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 
                 }
                 break;
-            case 24 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:160: MLCOMMENT
+            case 30 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:199: MLCOMMENT
                 {
                 mMLCOMMENT(); 
 
                 }
                 break;
-            case 25 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:170: ID
+            case 31 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:209: JAVADOC
+                {
+                mJAVADOC(); 
+
+                }
+                break;
+            case 32 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:217: ID
                 {
                 mID(); 
 
@@ -1601,6 +1358,209 @@ public class GomLanguageLexer extends Lexer {
     }
 
 
+    protected DFA9 dfa9 = new DFA9(this);
+    static final String DFA9_eotS =
+        "\1\uffff\10\31\21\uffff\15\31\2\uffff\15\31\2\uffff\6\31\1\113\1"+
+        "\31\1\115\6\31\1\124\3\31\1\uffff\1\31\1\uffff\1\31\1\132\1\31\1"+
+        "\134\1\135\1\31\1\uffff\1\137\2\31\1\142\1\31\1\uffff\1\31\2\uffff"+
+        "\1\145\1\uffff\1\146\1\31\1\uffff\1\31\1\151\2\uffff\1\152\1\153"+
+        "\3\uffff";
+    static final String DFA9_eofS =
+        "\154\uffff";
+    static final String DFA9_minS =
+        "\1\11\1\157\1\155\1\162\1\142\1\157\1\160\1\145\1\151\17\uffff\1"+
+        "\52\1\uffff\1\144\1\160\1\156\1\142\1\151\1\163\1\157\1\156\1\162"+
+        "\1\145\1\164\1\165\1\156\1\uffff\1\0\1\165\1\157\1\145\1\154\1\166"+
+        "\1\164\1\155\2\164\1\162\1\145\1\164\1\144\2\uffff\1\154\2\162\1"+
+        "\151\1\141\1\162\1\55\1\141\1\55\1\141\2\162\1\163\1\145\1\164\1"+
+        "\55\1\143\1\164\1\141\1\uffff\1\170\1\uffff\1\164\1\55\1\141\2\55"+
+        "\1\163\1\uffff\1\55\1\145\1\143\1\55\1\157\1\uffff\1\154\2\uffff"+
+        "\1\55\1\uffff\1\55\1\164\1\uffff\1\162\1\55\2\uffff\2\55\3\uffff";
+    static final String DFA9_maxS =
+        "\1\175\1\157\1\156\1\165\1\164\1\171\1\165\1\145\1\151\17\uffff"+
+        "\1\57\1\uffff\1\144\1\160\1\156\1\142\1\151\1\163\1\157\1\156\1"+
+        "\162\1\145\1\164\1\165\1\156\1\uffff\1\uffff\1\165\1\157\1\145\1"+
+        "\154\1\166\1\164\1\155\2\164\1\162\1\145\1\164\1\144\2\uffff\1\154"+
+        "\2\162\1\151\1\141\1\162\1\172\1\141\1\172\1\141\2\162\1\163\1\145"+
+        "\1\164\1\172\1\143\1\164\1\141\1\uffff\1\170\1\uffff\1\164\1\172"+
+        "\1\141\2\172\1\163\1\uffff\1\172\1\145\1\143\1\172\1\157\1\uffff"+
+        "\1\154\2\uffff\1\172\1\uffff\1\172\1\164\1\uffff\1\162\1\172\2\uffff"+
+        "\2\172\3\uffff";
+    static final String DFA9_acceptS =
+        "\11\uffff\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30"+
+        "\1\31\1\32\1\33\1\34\1\uffff\1\40\15\uffff\1\35\16\uffff\1\36\1"+
+        "\37\23\uffff\1\11\1\uffff\1\7\6\uffff\1\12\5\uffff\1\13\1\uffff"+
+        "\1\15\1\1\1\uffff\1\3\2\uffff\1\6\2\uffff\1\2\1\4\2\uffff\1\14\1"+
+        "\5\1\10";
+    static final String DFA9_specialS =
+        "\50\uffff\1\0\103\uffff}>";
+    static final String[] DFA9_transitionS = {
+            "\2\27\2\uffff\1\27\22\uffff\1\27\7\uffff\1\15\1\16\1\17\1\uffff"+
+            "\1\13\1\11\1\14\1\30\12\uffff\1\12\1\22\1\23\1\20\1\24\2\uffff"+
+            "\32\31\6\uffff\1\4\1\10\6\31\1\2\3\31\1\1\1\7\1\6\1\3\2\31\1"+
+            "\5\7\31\1\25\1\21\1\26",
+            "\1\32",
+            "\1\33\1\34",
+            "\1\36\2\uffff\1\35",
+            "\1\37\21\uffff\1\40",
+            "\1\42\11\uffff\1\41",
+            "\1\43\4\uffff\1\44",
+            "\1\45",
+            "\1\46",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\50\4\uffff\1\47",
+            "",
+            "\1\51",
+            "\1\52",
+            "\1\53",
+            "\1\54",
+            "\1\55",
+            "\1\56",
+            "\1\57",
+            "\1\60",
+            "\1\61",
+            "\1\62",
+            "\1\63",
+            "\1\64",
+            "\1\65",
+            "",
+            "\52\66\1\67\uffd5\66",
+            "\1\70",
+            "\1\71",
+            "\1\72",
+            "\1\73",
+            "\1\74",
+            "\1\75",
+            "\1\76",
+            "\1\77",
+            "\1\100",
+            "\1\101",
+            "\1\102",
+            "\1\103",
+            "\1\104",
+            "",
+            "",
+            "\1\105",
+            "\1\106",
+            "\1\107",
+            "\1\110",
+            "\1\111",
+            "\1\112",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\114",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\116",
+            "\1\117",
+            "\1\120",
+            "\1\121",
+            "\1\122",
+            "\1\123",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\125",
+            "\1\126",
+            "\1\127",
+            "",
+            "\1\130",
+            "",
+            "\1\131",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\133",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\136",
+            "",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\140",
+            "\1\141",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\143",
+            "",
+            "\1\144",
+            "",
+            "",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\147",
+            "",
+            "\1\150",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "",
+            "",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "\1\31\2\uffff\12\31\7\uffff\32\31\4\uffff\1\31\1\uffff\32\31",
+            "",
+            "",
+            ""
+    };
+
+    static final short[] DFA9_eot = DFA.unpackEncodedString(DFA9_eotS);
+    static final short[] DFA9_eof = DFA.unpackEncodedString(DFA9_eofS);
+    static final char[] DFA9_min = DFA.unpackEncodedStringToUnsignedChars(DFA9_minS);
+    static final char[] DFA9_max = DFA.unpackEncodedStringToUnsignedChars(DFA9_maxS);
+    static final short[] DFA9_accept = DFA.unpackEncodedString(DFA9_acceptS);
+    static final short[] DFA9_special = DFA.unpackEncodedString(DFA9_specialS);
+    static final short[][] DFA9_transition;
+
+    static {
+        int numStates = DFA9_transitionS.length;
+        DFA9_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA9_transition[i] = DFA.unpackEncodedString(DFA9_transitionS[i]);
+        }
+    }
+
+    class DFA9 extends DFA {
+
+        public DFA9(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 9;
+            this.eot = DFA9_eot;
+            this.eof = DFA9_eof;
+            this.min = DFA9_min;
+            this.max = DFA9_max;
+            this.accept = DFA9_accept;
+            this.special = DFA9_special;
+            this.transition = DFA9_transition;
+        }
+        public String getDescription() {
+            return "1:1: Tokens : ( MODULE | IMPORTS | PUBLIC | PRIVATE | ABSTRACT | SYNTAX | SORT | OPERATOR | ATOM | INNER | OUTER | NEUTRAL | BINDS | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LDIPLE | RDIPLE | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | JAVADOC | ID );";
+        }
+        public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
+            IntStream input = _input;
+        	int _s = s;
+            switch ( s ) {
+                    case 0 : 
+                        int LA9_40 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA9_40>='\u0000' && LA9_40<=')')||(LA9_40>='+' && LA9_40<='\uFFFF')) ) {s = 54;}
+
+                        else if ( (LA9_40=='*') ) {s = 55;}
+
+                        if ( s>=0 ) return s;
+                        break;
+            }
+            NoViableAltException nvae =
+                new NoViableAltException(getDescription(), 9, _s, input);
+            error(nvae);
+            throw nvae;
+        }
+    }
  
 
 }

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@ package tom.gom.expander;
 
 import java.io.File;
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
@@ -33,11 +34,8 @@ import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
-/**
- * The responsability of the GraphExpander plugin is to
- * produce an abstract view of the Gom input with type information
- */
 public class GraphExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.referenced";
@@ -53,9 +51,18 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   private HookDeclList hookList;
   private ModuleList referencedModuleList;
   private HookDeclList referencedHookList;
-  /** The constructor*/
+
+  /** The constructor */
   public GraphExpanderPlugin() {
     super("GraphExpander");
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -66,11 +73,11 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
     if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
       typedModuleList = (ModuleList) arg[0];
       hookList = (HookDeclList) arg[1];
-      setStreamManager((GomStreamManager)arg[2]);
+      setGomEnvironment((GomEnvironment)arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GraphExpander", "[ModuleList,GomStreamManager]",
+          new Object[]{"GraphExpander", "[ModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -79,18 +86,18 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the initial ModuleList
    */
-  public void run() {
+  public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
       getLogger().log(Level.INFO, "Extend the signature");
-      GraphExpander expander = new GraphExpander(streamManager,getOptionBooleanValue("termgraph"));
+      GraphExpander expander = new GraphExpander(getOptionBooleanValue("termgraph"),getGomEnvironment());
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
       referencedHookList = mpair.getHookDecls();
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE,
             GomMessage.expansionIssue.getMessage(),
-            streamManager.getInputFileName());
+            getStreamManager().getInputFileName());
       } else {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
         getLogger().log(Level.INFO, "Signature extension succeeds");
@@ -104,6 +111,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       referencedModuleList = typedModuleList;
       referencedHookList = hookList;
     }
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**
@@ -112,6 +120,6 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{referencedModuleList, referencedHookList, getStreamManager()};
+    return new Object[]{referencedModuleList, referencedHookList, getGomEnvironment()};
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ import tom.library.adt.bytecode.types.*;
  * This class generates a control flow graph for each method of a class.
  */
 public class CFGViewer {
-  %include { adt/bytecode/Bytecode.tom }
+  
   %include { ../mapping/java/bytecode/cfg.tom }
 
   %typeterm Writer { 
@@ -58,29 +58,29 @@ public class CFGViewer {
   }
 
   /**
-   * Returns the dot node id of the given TInstructionList.
+   * Returns the dot node id of the given InstructionList.
    * @param ins the instruction.
    * @return the id.
    */
-  private static String getDotId(TInstructionList ins) {
+  private static String getDotId(InstructionList ins) {
     return ("insid" + ins.hashCode()).replace('-', 'm');
   }
 
   /**
-   * Returns the dot node id of the given TTryCatchBlock.
+   * Returns the dot node id of the given TryCatchBlock.
    * @param bl the try/catch block.
    * @return the id.
    */
-  private static String getDotId(TTryCatchBlock bl) {
+  private static String getDotId(TryCatchBlock bl) {
     return ("blockid" + bl.hashCode()).replace('-', 'm');
   }
 
   /**
-   * Returns the dot node id of the given TLocalVariable.
+   * Returns the dot node id of the given LocalVariable.
    * @param the local variable.
    * @return the id.
    */
-  private static String getDotId(TLocalVariable var) {
+  private static String getDotId(LocalVariable var) {
     return ("varid" + var.hashCode()).replace('-', 'm');
   }
 
@@ -99,7 +99,7 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    */
   %strategy PrintDotNode(out:Writer) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       c@ConsInstructionList(ins, _) -> {
         String id = getDotId(`c);
         printDotInstruction(`ins, id, out);
@@ -113,9 +113,9 @@ public class CFGViewer {
    * @param id the id of the dot node.
    * @param out the writer to be used for the dot output.
    */
-  private static void printDotInstruction(TInstruction ins, String id, Writer out) {
+  private static void printDotInstruction(Instruction ins, String id, Writer out) {
     try {
-      %match(TInstruction ins) {
+      %match(ins) {
 
         (Bipush|Sipush|Newarray)(operand) -> {
           out.write(%[
@@ -164,12 +164,12 @@ public class CFGViewer {
         Lookupswitch[keys=keys] -> {
           out.write(%[
               @id@ [label="@ins.symbolName()@\nkeys : ]%);
-              TintList keys = `keys;
-              %match(TintList keys) {
-                intList(_*, x, _*, _) -> {
+              IntList keys = `keys;
+              %match(keys) {
+                IntList(_*, x, _*, _) -> {
                   out.write(%[@Integer.toString(`x)@, ]%);
                 }
-                intList(_*, x) -> {
+                IntList(_*, x) -> {
                   out.write(Integer.toString(`x));
                 }
               }
@@ -214,7 +214,7 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    */
   %strategy PrintDotLink(out:Writer, parent:InsWrapper) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       c@ConsInstructionList[] -> {
         try {
           out.write(%[@getDotId(parent.ins)@ -> @getDotId(`c)@;
@@ -233,18 +233,18 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    * @param inst the global list of instructions.
    */
-  private static void printTryCatchBlocks(TTryCatchBlockList list, Map labelMap, Writer out,TInstructionList inst) throws VisitFailure{
-    %match(TTryCatchBlockList list) {
+  private static void printTryCatchBlocks(TryCatchBlockList list, Map labelMap, Writer out,InstructionList inst) throws VisitFailure{
+    %match(list) {
       TryCatchBlockList(_*, x, _*) -> {
         try {
-          TTryCatchBlock block = `x;
-          THandler handler = block.gethandler();
+          TryCatchBlock block = `x;
+          Handler handler = block.gethandler();
           String id = getDotId(block);
 
-          %match(THandler handler) {
+          %match(handler) {
             CatchHandler(h, t) -> {
               Position labelPosition = (Position) labelMap.get(`h);
-              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().visit(inst);
+              InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
               out.write(%[
                   @id@ [label="Catch\ntype : @`t@" shape=box];
                   @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
@@ -253,7 +253,7 @@ public class CFGViewer {
 
             FinallyHandler(h) -> {
               Position labelPosition = (Position) labelMap.get(`h);
-              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().visit(inst);
+              InstructionList labelInst = (InstructionList) labelPosition.getSubterm().visit(inst);
               out.write(%[
                   @id@ [label="Finally" shape=box];
                   @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
@@ -262,9 +262,9 @@ public class CFGViewer {
           }
 
           Position startPosition = (Position) labelMap.get(block.getstart());
-          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().visit(inst);
+          InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
           Position endPosition = (Position) labelMap.get(block.getend());
-          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().visit(inst);
+          InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
           out.write(%[
               @id@ -> @getDotId(startInst)@ [label="start" style=dotted];
               @id@ -> @getDotId(lastInst)@ [label="end" style=dotted];
@@ -283,16 +283,16 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    * @param inst the global list of instructions.
    */
-  private static void printLocalVariables(TLocalVariableList list, Map labelMap, Writer out, TInstructionList inst) throws VisitFailure {
-    %match(TLocalVariableList list) {
+  private static void printLocalVariables(LocalVariableList list, Map labelMap, Writer out, InstructionList inst) throws VisitFailure {
+    %match(list) {
       LocalVariableList(_*, x, _*) -> {
         try {
-          TLocalVariable var = `x;
+          LocalVariable var = `x;
           String id = getDotId(var);
           Position startPosition = (Position) labelMap.get(var.getstart());
-          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().visit(inst);
+          InstructionList startInst = (InstructionList) startPosition.getSubterm().visit(inst);
           Position endPosition = (Position) labelMap.get(var.getend());
-          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().visit(inst);
+          InstructionList lastInst = (InstructionList) endPosition.getSubterm().visit(inst);
 
           out.write(%[
               @id@ [label="var : @var.getname()@\ndescriptor : @var.gettypeDesc()@\nindex : @Integer.toString(var.getindex())@" shape=box];
@@ -309,7 +309,7 @@ public class CFGViewer {
   /**
    * Used to pass the stored instruction as a strategy parameter.
    */
-  private static class InsWrapper { public TInstructionList ins; }
+  private static class InsWrapper { public InstructionList ins; }
   %typeterm InsWrapper { 
     implement { InsWrapper }
     is_sort(t) { ($t instanceof InsWrapper) }
@@ -320,22 +320,22 @@ public class CFGViewer {
    * @param ins the instruction wrapper.
    */
   %strategy Assign(ins:InsWrapper) extends Identity() {
-    visit TInstructionList {
+    visit InstructionList {
       c@_ -> { ins.ins = `c; }
     }
   }
 
   /**
    * Generates a control flow graph for each method of the given class.
-   * @param clazz the gom-term subject representing the class.
+   * @param ast the gom-term subject representing the class.
    */
-  public static void classToDot(TClass clazz) throws VisitFailure {
+  public static void classToDot(ClassNode ast) throws VisitFailure {
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-    TMethodList methods = clazz.getmethods();
-    %match(TMethodList methods) {
+    MethodList methods = ast.getmethods();
+    %match(methods) {
       MethodList(_*, x, _*) -> {
         try {
-          TMethodInfo info = `x.getinfo();
+          MethodInfo info = `x.getinfo();
           w.write(%[digraph @info.getname()@ {
               ]%);
 
@@ -343,7 +343,7 @@ public class CFGViewer {
           w.write(%[method [label="method : @info.getname()@\ndescriptor : @ToolBox.buildDescriptor(info.getdesc())@" shape=box];
               ]%);
           if(!`x.getcode().isEmptyCode()) {
-            TInstructionList ins = `x.getcode().getinstructions();
+            InstructionList ins = `x.getcode().getinstructions();
             if(!ins.isEmptyInstructionList()) {
               w.write(%[method -> @getDotId(ins)@
                   ]%);
@@ -387,25 +387,26 @@ public class CFGViewer {
     }
   }
 
-
   /**
    * Generates the dot control flow graphs for each method of the specified class.
    * Usage : java bytecode.CFGViewer <class name>
    * Ex: java bytecode.CFGViewer bytecode.Subject
    * @param args args[0] : the class name
    */
-    public static void main(String[] args) {
-      if(args.length <= 0) {
-        System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer bytecode.Subject");
-        return;
-      }
-      BytecodeReader cg = new BytecodeReader(args[0]);
-      TClass c = cg.getTClass();
-      try {
-      classToDot(c);
-      } catch (VisitFailure e) {
-        System.out.println("Unexpected failure in strategies");
-      }
-    }
-  }
+   public static void main(String[] args) {
+     if(args.length <= 0) {
+       System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer MyClass");
+       return;
+     }
+     BytecodeReader cg = new BytecodeReader(args[0]);
+     ClassNode c = cg.getAst();
+     try {
+       classToDot(c);
+     } catch (VisitFailure e) {
+       System.out.println("Unexpected failure in strategies");
+     }
+   }
+
+}
+
 

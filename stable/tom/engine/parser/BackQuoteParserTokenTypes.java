@@ -3,7 +3,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -52,12 +52,13 @@ public interface BackQuoteParserTokenTypes {
 	int XML_TEXT = 23;
 	int XML_COMMENT = 24;
 	int XML_PROC = 25;
-	int XML_SKIP = 26;
-	int BQ_SIMPLE_ID = 27;
-	int BQ_MINUS_ID = 28;
-	int BQ_MINUS_ID_PART = 29;
-	int BQ_DIGIT = 30;
-	int BQ_UNDERSCORE = 31;
-	int BQ_ESC = 32;
-	int BQ_HEX_DIGIT = 33;
+	int BQ_RBRACE = 26;
+	int XML_SKIP = 27;
+	int BQ_SIMPLE_ID = 28;
+	int BQ_MINUS_ID = 29;
+	int BQ_MINUS_ID_PART = 30;
+	int BQ_DIGIT = 31;
+	int BQ_UNDERSCORE = 32;
+	int BQ_ESC = 33;
+	int BQ_HEX_DIGIT = 34;
 }

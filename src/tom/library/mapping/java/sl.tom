@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,11 @@
  * StrategyLanguage Library
  */
 
-%typeterm Strategy {
-  implement { tom.library.sl.Strategy }
-  is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
-  equals(t1,t2) { ($t1.equals($t2)) }
-}
+%include { Strategy.tom }
+%include { Position.tom }
 
 %include { sl/basic.tom }
+%include { sl/builtin.tom }
 %include { sl/graph.tom }
 %include { sl/composed.tom }
 

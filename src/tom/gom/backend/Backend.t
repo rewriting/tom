@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
@@ -42,51 +43,59 @@ public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
-  private boolean strategySupport = true;
+  private int generateStratMapping = 0;
   private boolean multithread = false;
   private boolean maximalsharing = true;
+  private GomEnvironment gomEnvironment;
 
   %include { ../adt/objects/Objects.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   Backend(TemplateFactory templatefactory,
           File tomHomePath,
-          boolean strategySupport,
+          int generateStratMapping,
           boolean multithread,
           boolean nosharing,
-          List importList) {
+          List importList,
+          GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
-    this.strategySupport = strategySupport;
+    this.generateStratMapping = generateStratMapping;
     this.multithread = multithread;
     this.maximalsharing = ! nosharing;
     this.importList = importList;
+    this.gomEnvironment = gomEnvironment;
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
   }
 
   public int generate(GomClassList classList) {
     int errno = 0;
-    Set mappingSet = new HashSet();
-    Map generators =
-      new HashMap();
+    Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
+    Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
-    %match(GomClassList classList) {
+    %match(classList) {
       ConcGomClass(_*,
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
-        ClassName smappingclass = `ClassName(pkg,"_"+name);
-        GomClass nGomClass =
-          `gomclass.setClassName(smappingclass);
-        TemplateClass stratMapping =
-          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
-        generators.put(smappingclass,stratMapping);
-
-        TemplateClass mapping = null;
-        if(strategySupport) {
-          mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,stratMapping);
+        MappingTemplateClass mapping = null;
+        if(generateStratMapping>0) { // generate congruence strategies
+          ClassName smappingclass = `ClassName(pkg,"_"+name);
+          GomClass nGomClass = `gomclass.setClassName(smappingclass);
+          TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
+          if(generateStratMapping==1) {
+            // classical mode: generate extra-mapping in file.tom
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
+          } else {
+            // expert mode: generate extra-mapping in _file.tom
+            generators.put(smappingclass,stratMapping);
+            mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
+          }
         } else {
-          mapping =
-            templatefactory.makeTomMappingTemplate(`gomclass,null);
+          // do not generate congruence strategies
+          mapping = templatefactory.makeTomMappingTemplate(`gomclass,null,getGomEnvironment());
         }
         mappingSet.add(mapping);
         generators.put(`className,mapping);
@@ -99,25 +108,23 @@ public class Backend {
       errno += generateClass(gomclass,generators);
     }
     /* The mappings may need to access generators */
-    Iterator it = mappingSet.iterator();
+    Iterator<MappingTemplateClass> it = mappingSet.iterator();
     while (it.hasNext()) {
-      ((MappingTemplateClass)it.next()).addTemplates(generators);
-    }
-    it = generators.keySet().iterator();
-    while (it.hasNext()) {
-      ((TemplateClass)generators.get(it.next())).generateFile();
+      it.next().addTemplates(generators);
     }
 
+    Iterator<ClassName> itc = generators.keySet().iterator();
+    while (itc.hasNext()) {
+      generators.get(itc.next()).generateFile();
+    }
     return 1;
   }
 
   /*
    * Create template classes for the different classes to generate
    */
-  public int generateClass(
-      GomClass gomclass,
-      Map generators) {
-    %match(GomClass gomclass) {
+  public int generateClass(GomClass gomclass, Map<ClassName,TemplateClass> generators) {
+    %match(gomclass) {
       TomMapping[ClassName=className] -> {
         /* It was processed by the caller: check it is already in generators */
         if (!generators.containsKey(`className)) {
@@ -133,7 +140,8 @@ public class Backend {
               importList,
               gomclass,
               (TemplateClass)generators.get(`mapping),
-              maximalsharing);
+              maximalsharing,
+              getGomEnvironment());
         generators.put(`className,abstracttype);
         return 1;
       }
@@ -144,7 +152,8 @@ public class Backend {
               importList,
               gomclass,
               (TemplateClass)generators.get(`mapping),
-              maximalsharing);
+              maximalsharing,
+              getGomEnvironment());
         generators.put(`className,sort);
         return 1;
       }
@@ -155,20 +164,19 @@ public class Backend {
             gomclass,
             (TemplateClass)generators.get(`mapping),
             multithread,
-            maximalsharing);
+            maximalsharing,
+            getGomEnvironment());
         generators.put(`className,operator);
+        if(generateStratMapping>0) {
+          TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(gomclass,getGomEnvironment());
+          sOpStrat.generateFile();
 
-        TemplateClass sOpStrat =
-          new tom.gom.backend.strategy.SOpTemplate(gomclass);
-        sOpStrat.generateFile();
+          TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(gomclass,getGomEnvironment());
+          isOpStrat.generateFile();
 
-        TemplateClass isOpStrat =
-          new tom.gom.backend.strategy.IsOpTemplate(gomclass);
-        isOpStrat.generateFile();
-
-
-        TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
-        makeOpStrat.generateFile();
+          TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass,getGomEnvironment());
+          makeOpStrat.generateFile();
+        }
        return 1;
       }
       VariadicOperatorClass[ClassName=className,
@@ -180,7 +188,8 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(`mapping));
+              (TemplateClass)generators.get(`mapping),
+              getGomEnvironment());
         generators.put(`className,operator);
         /* Generate files for cons and empty */
         int ret = 1;

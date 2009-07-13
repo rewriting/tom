@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -34,50 +34,84 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+import tom.engine.tools.*;
 import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
-import java.util.ArrayList;
+import java.util.*;
 import tom.engine.compiler.Compiler;
 
 /**
- * Variadic propagator
+ * Syntactic propagator
  */
 public class VariadicPropagator implements IBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { ../../../library/mapping/java/sl.tom}
+  %include { ../../../library/mapping/java/sl.tom }
+  %include { constraintstrategies.tom }	
 //--------------------------------------------------------
 
+  %typeterm VariadicPropagator {
+    implement { VariadicPropagator }
+    is_sort(t) { ($t instanceof VariadicPropagator) }
+  }
+
+  %typeterm GeneralPurposePropagator {
+    implement { GeneralPurposePropagator }
+    is_sort(t) { ($t instanceof GeneralPurposePropagator) }
+  }
+
+  private Compiler compiler;  
+  private GeneralPurposePropagator generalPurposePropagator; 
+  private ConstraintPropagator constraintPropagator; 
+ 
+  public VariadicPropagator(Compiler myCompiler, ConstraintPropagator myConstraintPropagator) {
+    this.compiler = myCompiler;
+    this.constraintPropagator = myConstraintPropagator;
+    this.generalPurposePropagator = new GeneralPurposePropagator(this.compiler, this.constraintPropagator);
+  }
+
+  public Compiler getCompiler() {
+    return this.compiler;
+  }
+ 
+  public GeneralPurposePropagator getGeneralPurposePropagator() {
+    return this.generalPurposePropagator;
+  }
+ 
+  public ConstraintPropagator getConstraintPropagator() {
+    return this.constraintPropagator;
+  }
+ 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(VariadicPatternMatching()).visitLight(constraint);		
+    Constraint res =  `TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
+    return res;
   }	
 
-  %strategy VariadicPatternMatching() extends `Identity() {
+  %strategy VariadicPatternMatching(vp:VariadicPropagator) extends Identity() {
     visit Constraint {      
       /**
        * Detach sublists
        * 
-       * Make sure that the sublists in a list are replaced by star variables - this is only happening 
-       * when the lists and the sublists have the same name
+       * Make sure that the sublists in a list are replaced by star variables
+       * this is only happening when the lists and the sublists have the same name
        * 
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
-        // if this is not a list or if this is an AC operator, nothing to do
-        if(!TomBase.isListOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName)) || TomBase.isACOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName))) { return `m; }
-        Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
-        if (detachedConstr != `m) { return detachedConstr; }
+        // if this is not a list, nothing to do
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
+        if(!TomBase.isListOperator(symb)) {
+          return `m; 
+        }
+        Constraint detachedConstr = vp.getGeneralPurposePropagator().detachSublists(`m);
+        if(detachedConstr != `m) {
+          return detachedConstr; 
+        }
       }
       
       /**    
-       * 
-       * [pem] I need some explanations to deeply understand the rules
-       *    //TODO    	
-       *  
        * conc(t1,X*,t2,Y*) = g -> fresh_var = g /\ conc=SymbolOf(fresh_var)  
        * /\ NotEmpty(fresh_Var)  /\ t1=ListHead(fresh_var) /\ fresh_var1 = ListTail(fresh_var) 
        * /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\ X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
@@ -89,57 +123,59 @@ public class VariadicPropagator implements IBasePropagator {
        *        a@...b@conc(...) << t -> conc(...) << t /\ a << t /\ ... /\ b << t   
        */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
-        // if this is not a list or if this is an AC operator, nothing to do
-     if(!TomBase.isListOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName)) || TomBase.isACOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName))) { return `m; }        
+        // if this is not a list, nothing to do
+        TomSymbol symb = vp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
+        if(!TomBase.isListOperator(symb)) {
+          return `m;
+        }        
         // declare fresh variable
-        TomType listType = Compiler.getTermTypeFromTerm(`t);
-        TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
+        TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
+        TomTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
-        Constraint l = `AndConstraint();        
-mSlots:  %match(slots) {
+        List<Constraint> l = new ArrayList<Constraint>();
+        %match(slots) {
           concSlot() -> {
-            l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
+            l.add(`EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            TomTerm newFreshVarList = Compiler.getFreshVariableStar(listType);            
-      mAppl:%match(appl) {
+            TomTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
+mAppl:      %match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
                 // if it is the last element               
                 if(`X.length() == 0) {
                   // we should only assign it, without generating a loop
-                  l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
+                  l.add(`MatchConstraint(appl,freshVariable));
                 } else {
-                  TomTerm beginSublist = Compiler.getBeginVariableStar(listType);
-                  TomTerm endSublist = Compiler.getEndVariableStar(listType);              
-                  l = `AndConstraint(l*,
-                      MatchConstraint(beginSublist,freshVariable),
-                      MatchConstraint(endSublist,freshVariable),             
-                      MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
-                      MatchConstraint(newFreshVarList,endSublist));
+                  TomTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
+                  TomTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
+                  l.add(`MatchConstraint(beginSublist,freshVariable));
+                  l.add(`MatchConstraint(endSublist,freshVariable));
+                  l.add(`MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)));
+                  l.add(`MatchConstraint(newFreshVarList,endSublist));
                 }
                 break mAppl;
               }
               _ -> {
-                l = `AndConstraint(l*,                      
-                    Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,Compiler.getTermTypeFromTerm(appl),freshVariable)),
-                    MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
+                l.add(`Negate(EmptyListConstraint(name,freshVariable)));
+                l.add(`MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)));
+                l.add(`MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
-                if (`X.length() == 0) {                  
-                  l = `AndConstraint(l*, EmptyListConstraint(name,newFreshVarList));
+                if(`X.length() == 0) {                  
+                  l.add(`EmptyListConstraint(name,newFreshVarList));
                 }
               }
             }// end match
             freshVariable = newFreshVarList;
-          }          
+          }
         }// end match
         // fresh var declaration + add head equality condition + detached constraints
-        l = `AndConstraint(freshVarDeclaration, isSymbolConstr, ConstraintPropagator.performDetach(m),l*);
-        return l;
+        l.add(0,vp.getConstraintPropagator().performDetach(`m));
+        l.add(0,isSymbolConstr);
+        l.add(0,freshVarDeclaration);
+        return ASTFactory.makeAndConstraint(l);
+        //return `AndConstraint(freshVarDeclaration, isSymbolConstr, vp.getConstraintPropagator().performDetach(m),l*);
       }					
     }
   }// end %strategy

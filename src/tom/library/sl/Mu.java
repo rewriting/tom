@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ import java.util.HashSet;
  * Visiting such a combinator fire the mu-expansion which instantiate
  * the MuVar variables and removed the Mu combinator
  **/ 
-public class Mu extends AbstractStrategy {
+public class Mu extends AbstractStrategyCombinator {
   public final static int VAR = 0;
   public final static int V = 1;
 
@@ -49,12 +49,12 @@ public class Mu extends AbstractStrategy {
     initSubterm(var, v);
   }
 
-  public final Object visitLight(Object any, Introspector i) throws VisitFailure {
+  public final <T> T visitLight(T any, Introspector i) throws VisitFailure {
     if(!expanded) { 
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visitLight(any,i);
+    return arguments[V].visitLight(any,i);
   }
 
   public int visit(Introspector i) {
@@ -62,15 +62,15 @@ public class Mu extends AbstractStrategy {
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visit(i);
+    return arguments[V].visit(i);
   }
 
   private boolean isExpanded() {
-    return ((MuVar)visitors[VAR]).isExpanded();
+    return ((MuVar)arguments[VAR]).isExpanded();
   }
 
   public static void expand(Strategy s) {
-    expand(s,null,0,new HashSet(),new LinkedList());
+    expand(s,null,0,new HashSet<Strategy>(),new LinkedList<Mu>());
   }
 
   /**
@@ -79,7 +79,7 @@ public class Mu extends AbstractStrategy {
    * @param childNumber the n-th subterm of parent
    * @param set of already visited parent
    */
-  private static void expand(Strategy any, Strategy parent, int childNumber, HashSet set, LinkedList stack) {
+  private static void expand(Strategy any, Strategy parent, int childNumber, HashSet<Strategy> set, LinkedList<Mu> stack) {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -88,10 +88,11 @@ public class Mu extends AbstractStrategy {
     }
 
     if(any instanceof Mu) {
+      Mu anyMu = (Mu) any;
       MuVar var = (MuVar) any.getChildAt(VAR);
       Strategy v = (Strategy) any.getChildAt(V);
-      stack.addFirst(any);
-      expand(v,(Mu)any,0,set,stack);
+      stack.addFirst(anyMu);
+      expand(v,anyMu,0,set,stack);
       expand(var,null,0,set,stack);
       stack.removeFirst();
       return;
@@ -100,10 +101,8 @@ public class Mu extends AbstractStrategy {
         String n = ((MuVar)any).getName();
         MuVar muvar = (MuVar) any;
         if(!muvar.isExpanded()) {
-          Iterator it = stack.iterator();
-          while(it.hasNext()) {
-            Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(n)) {
+          for (Mu m : stack) {
+            if(((MuVar)m.arguments[Mu.VAR]).getName().equals(n)) {
               //System.out.println("MuVar: setInstance " + n );
               muvar.setInstance(m);
               if(parent!=null) {
@@ -113,8 +112,8 @@ public class Mu extends AbstractStrategy {
                  */
                 //System.out.println("parent: " + parent);
                 //System.out.println("childNumber: " + childNumber);
-                //System.out.println("V: " + m.visitors[Mu.V]);
-                parent.setChildAt(childNumber,m.visitors[Mu.V]);
+                //System.out.println("V: " + m.arguments[Mu.V]);
+                parent.setChildAt(childNumber,m.arguments[Mu.V]);
               } else {
                 //System.out.println("strange: " + muvar);
               }

@@ -58,6 +58,12 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
            /**
+            * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
+            * @param Pattern the f(x,y)
+            * @param Subject the subject to match 
+            */
+           | ACMatchLoop(Pattern:TomTerm,Subject:TomTerm)
+           /**
 		   * <code>WhileExpression</code> a do while loop
 		   *
 		   * @param LoopCondition the loop condition
@@ -65,13 +71,6 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   */
            | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
            | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
-           /**
-           * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
-           *
-		   * @param Pattern the f(x,y)
-		   * @param Subject the subject to match 
-           */
-           | ACMatchLoop(Pattern:TomTerm,Subject:TomTerm)
            /*
 		   * check that source is of sort astType, and then execute inst
 		   */
@@ -81,11 +80,8 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
         * similar to ITL, but preprocessed to perform macro-expansion
         */
            | Code(Code:String)
-          
-           
 
-TomTermToExpression:make(t) {
-	%match(t) {
-		ExpressionToTomTerm(expr) -> { return `expr; }
-	}	
+module TomExpression:rules() {
+  TomTermToExpression(ExpressionToTomTerm(t)) -> t
+  ExpressionToTomTerm(TomTermToExpression(t)) -> t
 }

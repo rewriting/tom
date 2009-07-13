@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 import tom.library.adt.tnode.*;
+import tom.gom.tools.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.
@@ -39,13 +40,14 @@ import tom.library.adt.tnode.*;
  * error management.
  *
  */
-public class PluginPlatform extends PluginPlatformBase {
+//public class PluginPlatform extends PluginPlatformBase {
+public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
   /** Used to analyse xml configuration file */
   %include{ adt/tnode/TNode.tom }
 
   /** The List of reference to plugins. */
-  private List pluginsList;
+  private List<Plugin> pluginsList;
 
   /** The status handler */
   private StatusHandler statusHandler;
@@ -54,14 +56,20 @@ public class PluginPlatform extends PluginPlatformBase {
   private TestHandler testHandler;
 
   /** List of input arg */
-  private List inputToCompileList;
+  private List<String> inputToCompileList;
 
   /** List of generated object cleared before each run */
-  private List lastGeneratedObjects;
+  private List<Object> lastGeneratedObjects;
 
   /** Radical of the logger */
   private String loggerRadical;
-  
+
+  /** informationTracker */
+  private Map<String,String> informationTracker;
+
+  /** Result of the run() method which is collected with all the run() results */
+  private int runResult;
+
   /**
    * The current file name to process - this is used in the status handler 
    * in order to have the file name when it was not passed at logging 
@@ -71,52 +79,67 @@ public class PluginPlatform extends PluginPlatformBase {
   private static String currentFileName = null; 
 
   /** Class Pluginplatform constructor */
-  public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
+  //public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
+  //public PluginPlatform(List<Plugin> pluginsList, String loggerRadical, List<String> inputToCompileList, Map<,String> informationTracker) {
+  public PluginPlatform(List<Plugin> pluginsList, String loggerRadical, List<String> inputToCompileList) {
     super(loggerRadical);  
     statusHandler = new StatusHandler();
+ 
     this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    pluginsList = confManager.getPluginsList();
-    inputToCompileList = confManager.getOptionManager().getInputToCompileList();
+    //pluginsList = confManager.getPluginsList();
+    this.pluginsList = pluginsList;
+    this.inputToCompileList = inputToCompileList;
+    //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
+    this.informationTracker = new HashMap<String,String>();
+    runResult = 0; //init
   }
+
+  public PluginPlatform(List<Plugin> pluginsList, String loggerRadical, List<String> inputToCompileList, Map<String,String> informationTracker) {
+    super(loggerRadical);  
+    statusHandler = new StatusHandler();
+ 
+    this.loggerRadical = loggerRadical;
+    Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
+    //pluginsList = confManager.getPluginsList();
+    this.pluginsList = pluginsList;
+    this.inputToCompileList = inputToCompileList;
+    //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
+    this.informationTracker = informationTracker;
+    runResult = 0; //init
+  }
+
+//modifier les commentaires
 
   /**
    * The main method which runs the PluginPlatform.
-   *
-   * @return an error code :
-   * <ul>
-   * <li>0 if no error was encountered</li>
-   * <li>1 if something went wrong</li>
-   * </ul>
    */
-  public int run() {
+  public void run() {
     try {
       boolean globalSuccess = true;
       int globalNbOfErrors = 0;
       int globalNbOfWarnings = 0;
+      //increase a global counter at the beginning of each run()
+      ///PluginPlatformFactory.getInstance().increaseThreadsCounter();
       // intialize run instances
-      lastGeneratedObjects = new ArrayList();
+      lastGeneratedObjects = new ArrayList<Object>();
       // for each input we call the sequence of plug-ins
       for(int i=0; i < inputToCompileList.size(); i++) {
-        Object input = inputToCompileList.get(i);
+        String input = inputToCompileList.get(i);
         Object[] pluginArg = new Object[]{ input };
-        Object initArgument = input;
+        String initArgument = input;
         boolean success = true;
         statusHandler.clear();
-
         if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
-        if(input instanceof String) {
-          String inputString = (String)input;
-          testHandler = new TestHandler(inputString);
-          if(!testHandler.hasError()) {
-            Logger.getLogger(loggerRadical).addHandler(this.testHandler);
-          }
+        testHandler = new TestHandler(input);
+        if(!testHandler.hasError()) {
+          Logger.getLogger(loggerRadical).addHandler(this.testHandler);
         }
 
         getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
         
         // runs the plugins
-        Iterator it = pluginsList.iterator();
+        Iterator<Plugin> it = pluginsList.iterator();
         while(it.hasNext()) {
           /*
            * very strangely, the object pointed by statusHandler changes, and therefore 
@@ -130,21 +153,22 @@ public class PluginPlatform extends PluginPlatformBase {
               break;
             }
           }
-          if (!foundHdl){
+          if (!foundHdl) {
             Logger.getLogger(loggerRadical).addHandler(this.statusHandler);  
           }
-          Plugin plugin = (Plugin)it.next();
-          currentFileName = (String)input;
+          Plugin plugin = it.next();
+          currentFileName = input;
           plugin.setArgs(pluginArg);
           if(statusHandler.hasError()) {
             getLogger().log(Level.INFO, PluginPlatformMessage.settingArgError.getMessage());
-            success = false;
+            success = false;`
             globalSuccess = false;
             globalNbOfErrors += statusHandler.nbOfErrors();
             globalNbOfWarnings += statusHandler.nbOfWarnings();
             break;
           }
-          plugin.run();
+          plugin.run(informationTracker);
+          
           if(statusHandler.hasError()) {
             getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
                 new Object[]{plugin.getClass().getName(), initArgument});
@@ -156,7 +180,6 @@ public class PluginPlatform extends PluginPlatformBase {
           }
           pluginArg = plugin.getArgs();
         }
-
         if(success) {
           // save the first element of last plugin getArg response
           // this shall correspond to a generated file name
@@ -164,21 +187,32 @@ public class PluginPlatform extends PluginPlatformBase {
           globalNbOfWarnings += statusHandler.nbOfWarnings();
         }
       }
-
       if(!globalSuccess) {
-        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),
-            new Integer(globalNbOfErrors));
-        return 1;
-      } else if(globalNbOfWarnings>0) {
+        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),new Integer(globalNbOfErrors));
+        //return 1;
+        this.runResult = 1;
+        ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();
+      } /*else if(globalNbOfWarnings>0) {
         getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
             new Integer(globalNbOfWarnings));
-        return 0;
+        //return 0;
+        this.runResult = 0;
+        PluginPlatformFactory.getInstance().decreaseThreadsCounter();
+        System.out.println("end run PluginPlatform succeeded");
+      }*/ 
+      else {
+        if (globalNbOfWarnings>0) {
+          getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),new Integer(globalNbOfWarnings));
+        }
+        this.runResult = 0;
+        ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();
       }
     } catch(PlatformException e) {
       getLogger().log(Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
-      return 1;
+      //return 1;
+      this.runResult = 1;
     }
-    return 0;
+    //return 0;
   }
 
   /**
@@ -198,7 +232,7 @@ public class PluginPlatform extends PluginPlatformBase {
   }
 
   /** return the list of last generated objects */
-  public List getLastGeneratedObjects() {
+  public List<Object> getLastGeneratedObjects() {
     return lastGeneratedObjects;
   }
 
@@ -211,7 +245,11 @@ public class PluginPlatform extends PluginPlatformBase {
     return Logger.getLogger(getClass().getName());
   }
 
-  public static String getCurrentFileName(){
+  public static String getCurrentFileName() {
     return currentFileName;
+  }
+
+  public int getRunResult() {
+    return this.runResult;
   }
 }

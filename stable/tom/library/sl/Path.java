@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@ package tom.library.sl;
 
 /**
  * Represent a path between two locations in a term.
- * The implementations of this class must define several algebraic operations                                      
- * on these paths (i.e. addition, subtraction, inverse).                                                          
- */                                                                                                               
+ * The implementations of this class must define several algebraic operations
+ * on these paths (i.e. addition, subtraction, inverse).
+ */
 
 public interface Path {
 
@@ -55,7 +55,7 @@ public interface Path {
    * Computes the path from the target of this to the target of the parameter p.
    * The subtraction of two paths must respect the following equation:
    * <p>
-   * <code>t1.sub(t2) = t2.inv().add(t1),</code> 
+   * <code>t1.sub(t2) = t2.inverse().add(t1),</code> 
    * @return the path corresponding to the subtraction of this and the parameter p.
    * @param p the path to subtract. 
    */
@@ -65,9 +65,9 @@ public interface Path {
    * Computes the path from the target of this to the source of this.
    * The inverse operation  must respect the following equations:
    * <p>
-    * <code>t.inv() = t.getTail().inv().add(-t.getHead()) if t1.length()>0,</code> 
+    * <code>t.inverse() = t.getTail().inverse().add(-t.getHead()) if t.length()>0,</code> 
    * <p>
-   * <code>t.inv() = t</code> otherwise 
+   * <code>t.inverse() = t</code> otherwise 
    * @return the path corresponding to the inverse path of this.
    */
   public Path inverse();
@@ -103,10 +103,14 @@ public interface Path {
   public Path getTail();
 
   /**
-   * Add the move i to the begining of the current path
+   * Add the move i to the end of the current path
    * @param i the move to insert.
    * @return the path corresponding to the insersion of i into this.
    */
   public Path conc(int i);
 
+  /**
+   * @return an array containing all of the elements in this path in proper sequence (from first to last element).
+   */
+  public int[] toIntArray();
 }

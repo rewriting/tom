@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
- * Copyright (c) 2000-2008, INRIA
+ *
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles      Antoine.Reilles@loria.fr
  *
  **/
@@ -25,10 +25,12 @@
 package tom.gom.starter;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
+import tom.gom.tools.GomEnvironment;
 
 
 /**
@@ -41,9 +43,17 @@ public class Starter extends GomGenericPlugin {
   private Object[] argToRelay;
   /** Saved information during setArgs */
   private String fileName;
-  
+
   public Starter() {
     super("GomStarter");
+  }
+
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -65,11 +75,11 @@ public class Starter extends GomGenericPlugin {
    * inherited from plugin interface
    * Create the GomStreamManager as input for next plugin
    */
-  public void run() {
-    GomStreamManager newStreamManager = new GomStreamManager();
-    newStreamManager.initializeFromOptionManager(getOptionManager());
-    newStreamManager.prepareForInputFile(fileName);
-    argToRelay = new Object[]{ newStreamManager };
+  public void run(Map<String,String> informationTracker) {
+    getStreamManager().initializeFromOptionManager(getOptionManager());
+    getStreamManager().prepareForInputFile(fileName);
+    argToRelay = new Object[]{ getGomEnvironment() };
+    informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
   /**

@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,8 @@ import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
 
 public class TomCSharpGenerator extends TomCFamilyGenerator {
+  
+  protected String stratmodifier = "";
 
   public TomCSharpGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
@@ -55,13 +57,14 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     /* Even if this field is not used here, we /must/ initialize it correctly,
      * as it is used by ImperativeGenerator */
     if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
-      this.modifier += "protected " ;
+      this.stratmodifier += "protected " ;
     } else {
-      this.modifier += "private " ;
+      this.stratmodifier += "private " ;
     }
 
     if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
       this.modifier += "static " ;
+      this.stratmodifier += "static " ;
     }
   }
 
@@ -105,9 +108,9 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
   protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
-    ArrayList names = new ArrayList();
-    ArrayList types = new ArrayList();
-    ArrayList stratChild = new ArrayList(); // child of type Strategy.
+    ArrayList<String> names = new ArrayList<String>();
+    ArrayList<String> types = new ArrayList<String>();
+    ArrayList<Integer> stratChild = new ArrayList<Integer>(); // child of type Strategy.
 
     //initialize arrayList with argument names
     int index = 0;
@@ -118,7 +121,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      %match(TomType type) {
+      %match(type) {
         Type(ASTTomType("Strategy"), _) -> {
           stratChild.add(Integer.valueOf(index));
         }
@@ -127,7 +130,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 	    tomTypes = tomTypes.getTailconcTomType();
 	    index++;
     }
-    output.write(deep, /*modifier +*/ "class " + tomName);
+    output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
 			TomTypeAlone(code) -> {
@@ -158,7 +161,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 
     //here index represents the parameter number
     for (int i = 0 ; i < args ; i++) {
-	    String param = (String)names.get(i);
+	    String param = names.get(i);
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
@@ -176,7 +179,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "stratChilds[i]=getChildAt(i);}");
     //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  int j = (stratChild.get(i)).intValue();
     //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
     //}
     output.write(deep, "return stratChilds;}");
@@ -185,7 +188,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "setChildAt(i,children[i]);}");
     //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  int j = (stratChild.get(i)).intValue();
     //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
     //}
     output.write(deep, "return this;}");
@@ -197,7 +200,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.getChildAt(0);");
     for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
+      int j = (stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
     }
     output.write(deep, "default: throw new IndexOutOfRangeException();");
@@ -208,7 +211,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return base.setChildAt(0, child);");
     for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
+      int j = (stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
     }
     output.write(deep, "default: throw new IndexOutOfRangeException();");
@@ -232,7 +235,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
-        %match(TomTerm localVar) {
+        %match(localVar) {
           v@Variable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
             generate(deep,`v,moduleName);

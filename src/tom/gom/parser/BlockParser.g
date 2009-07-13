@@ -2,7 +2,7 @@ header {
   /*
    * Gom
    * 
-   * Copyright (c) 2006, INRIA
+   * Copyright (c) 2009, INRIA
    * Nancy, France.
    * 
    * This program is free software; you can redistribute it and/or modify
@@ -188,11 +188,11 @@ WS  : ( ' '
     ;
 
 // comments
-COMMENT 
-:
-( SL_COMMENT | ML_COMMENT )
-{ $setType(Token.SKIP);}
-;
+//COMMENT 
+//:
+//( SL_COMMENT | ML_COMMENT )
+//{ $setType(Token.SKIP);}
+//;
 
 protected
 SL_COMMENT 
@@ -210,6 +210,7 @@ SL_COMMENT
 {
   target.append($getText);
   newline(); 
+  $setType(Token.SKIP);
 }
 ;
 
@@ -231,7 +232,9 @@ ML_COMMENT
  | ~('\n'|'\r')
  )*
 "*/"
-{target.append($getText);}
+{target.append($getText);
+ //$setType(Token.SKIP);
+}
 ;
 
 // the rule for the filter: just append the text to the buffer

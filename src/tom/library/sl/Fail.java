@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,13 @@ package tom.library.sl;
 /**
  * <code>x.accept(Fail)</code> always raises a VisitFailure exception.
  * <p>
- * Basic visitor combinator without arguments, that always fails.
+ * Strategy combinator without arguments, that always fails.
  * <p>
  * Test case documentation:
  * <a href="FailTest.java">FailTest</a>
  */
 
-public class Fail extends AbstractStrategy {
+public class Fail extends AbstractStrategyCombinator {
   private String message;
 
   /**
@@ -57,7 +57,7 @@ public class Fail extends AbstractStrategy {
     this.message = message;
   }
 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     throw new VisitFailure(message);
   }
 

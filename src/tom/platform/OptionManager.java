@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public interface OptionManager {
    * in the list of argument. The computation is done during initialization
    * It has to convert them in the expected format for the first plugin
    */
-  public List getInputToCompileList(); 
+  public List<String> getInputToCompileList(); 
 
   /**
    * Set the option 'name' to the corresponding value 

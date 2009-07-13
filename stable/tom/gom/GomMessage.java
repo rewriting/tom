@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -149,7 +149,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage unknownSort =
     new GomMessage("Sort {0} not found: missing include ?");
   public static final GomMessage slotIncompatibleTypes =
-    new GomMessage("Incompatible types for slot {0}: {1}, {2}. Two slots with the same name in the same sort should have same type");
+    new GomMessage("Incompatible slot types in sort {0}: slot {1} has sort {2} and {3}. Two slots with the same name in the same sort should have same type");
 
   // RuleExpander
   public static final GomMessage variadicRuleStartingWithStar =
@@ -163,10 +163,33 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Problems encountered in code generation for module {0}");
   public static final GomMessage tomFailure =
     new GomMessage("An error occured running Tom when generating {0}");
+  public static final GomMessage gomChoiceWarning =
+    new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
 
   public String toString() {
     return message;
   }
+
+  // SymbolTable
+  public static final GomMessage nonExhaustiveMatch =
+    new GomMessage("Non exhaustive match");
+  public static final GomMessage nonExhaustivePattern =
+    new GomMessage("Non exhaustive pattern");
+  public static final GomMessage shouldNeverHappen =
+    new GomMessage("Should never happen ({0}:{1}})");
+  public static final GomMessage nonVariadicOperator =
+    new GomMessage("Non variadic operator");
+  public static final GomMessage cannotAccessToChildConstructor =
+    new GomMessage("Cannot access to the {0}ith child of the constuctor {1}");
+  public static final GomMessage undeclaredSortException =
+    new GomMessage("The sort {0} is not declared");
+  public static final GomMessage undeclaredConstructorException =
+    new GomMessage("The constructor {0} is not declared");
+  public static final GomMessage sortException =
+    new GomMessage("Sort exception : {0}");
+  public static final GomMessage constructorName =
+    new GomMessage("Constructor exception : {0}");
+
 
   // Message level
   public static final int GOM_INFO = 0;

@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -76,13 +76,16 @@ public class OptionParser {
   /**
    * An XMLTools for doing the stuff
    */
-  private static XmlTools xtools = new XmlTools();
+    // non static XmlTools
+  //private static XmlTools xtools = new XmlTools();
   
   /**
    * @return a PlatformOptionList extracted from the a String
    */
   public static PlatformOptionList xmlToOptionList(String xmlString) {
     InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
+    // non static XmlTools
+    XmlTools xtools = new XmlTools();
     TNode node = xtools.convertXMLToTNode(stream);
     return xmlNodeToOptionList(node.getDocElem());
   }
@@ -92,9 +95,9 @@ public class OptionParser {
    */
   public static PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `concPlatformOption();
-    %match(TNode optionsNode) {
+    %match(optionsNode) {
       <options>(_*,option,_*)</options> -> {
-        %match(TNode option) {
+        %match(option) {
           <boolean [name = n, altName = an, description = d, value = v] /> -> { 
             PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
             list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 

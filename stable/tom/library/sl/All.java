@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,12 @@
 package tom.library.sl;
 /**
  * <p>
- * Basic strategy combinator with one strategy argument <code>s</code>, that
+ * Strategy combinator with one strategy argument <code>s</code>, that
  * applies this strategy <code>s</code> to all children. If there exists one
  * child for which the strategy <code>s</code> fails, <code>All(s)</code>
  * fails. Applying <code>All</code> combinator to a constant always                                    
- * succeeds and behaves like the <code>Identity()</code> strategy.                                                  * <p>                                                 
+ * succeeds and behaves like the <code>Identity()</code> strategy.
+ * <p>                                                 
  * <code>All(s)[f(t1,...,tn)]=f(t1',...,tn')</code> if <code>s[t1]=t1', ..., s[tn]=tn'</code>
  * <p>
  fails if there exists <code>i</code> such that <code>s[ti]</code> fails.
@@ -47,7 +48,7 @@ package tom.library.sl;
  * If you are interested in a sequential behaviour, {@link tom.library.sl.AllSeq}
  */       
 
-public class All extends AbstractStrategy {
+public class All extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public All(Strategy v) {
@@ -55,44 +56,52 @@ public class All extends AbstractStrategy {
   }
 
   /** 
-   *  Visits the subject any without managing any environment
+   * Visit the subject any without managing any environment
+   *
+   * @param any the subject to visit
+   * @param introspector the introspector
+   * @return a Visitable
+   * @throws VisitFailure if visitLight fails
    */ 
-  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
-    int childCount = m.getChildCount(any);
-    Object result = any;
+  public final <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     Object[] childs = null;
+    int childCount = introspector.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
-      Object oldChild = m.getChildAt(any,i);
-      Object newChild = visitors[ARG].visitLight(oldChild,m);
+      Object oldChild = introspector.getChildAt(any,i);
+      Object newChild = arguments[ARG].visitLight(oldChild,introspector);
       if(childs != null) {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = m.getChildren(any);
+        childs = introspector.getChildren(any);
         childs[i] = newChild;
       }
     }
-    if(childs!=null) {
-      result = m.setChildren(any,childs);
+    if(childs==null) {
+      return any;
+    } else {
+      return introspector.setChildren(any,childs);
     }
-    return result;
   }
 
   /**
-   *  Visits the current subject (found in the environment)
-   *  and place its result in the environment.
-   *  Sets the environment flag to Environment.FAILURE in case of failure
+   * Visit the current subject (found in the environment)
+   * and place its result in the environment.
+   * Sets the environment flag to Environment.FAILURE in case of failure
+   *
+   * @param introspector the introspector
+   * @return 0 if success
    */
-  public int visit(Introspector m) {
-    environment.setIntrospector(m);
+  public int visit(Introspector introspector) {
+    environment.setIntrospector(introspector);
     Object any = environment.getSubject();
-    int childCount = m.getChildCount(any);
+    int childCount = introspector.getChildCount(any);
     Object[] childs = null;
 
     for(int i = 0; i < childCount; i++) {
-      Object oldChild = m.getChildAt(any,i);
+      Object oldChild = introspector.getChildAt(any,i);
       environment.down(i+1);
-      int status = visitors[ARG].visit(m);
+      int status = arguments[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.upLocal();
         return status;
@@ -102,14 +111,15 @@ public class All extends AbstractStrategy {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = m.getChildren(any);
+        childs = introspector.getChildren(any);
         childs[i] = newChild;
       } 
       environment.upLocal();
     }
     if(childs!=null) {
-      environment.setSubject(m.setChildren(any,childs));
+      environment.setSubject(introspector.setChildren(any,childs));
     }
     return Environment.SUCCESS;
   }
+
 }

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,16 +34,16 @@ package tom.library.sl;
  * <code>Not(v)</code> succeeds if and only if <code>v</code> fails.
  */
 
-public class Not extends AbstractStrategy {
+public class Not extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public Not(Strategy v) {
     initSubterm(v);
   }
 
-  public Object visitLight(Object x, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T x, Introspector introspector) throws VisitFailure {
     try {
-      visitors[ARG].visitLight(x, introspector);
+      arguments[ARG].visitLight(x, introspector);
     } catch (VisitFailure f) {
       return x;
     }
@@ -53,7 +53,7 @@ public class Not extends AbstractStrategy {
   public int visit(Introspector introspector) {
     /* save the current subject */
     Object subject = environment.getSubject();
-    int status = visitors[ARG].visit(introspector);
+    int status = arguments[ARG].visit(introspector);
     /* restore the subject */
     /* we are just interested in the status */
     environment.setSubject(subject);

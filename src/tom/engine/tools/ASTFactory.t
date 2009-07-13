@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,27 +51,11 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList makeList(Collection c) {
-    Object array[] = c.toArray();
+  public static TomList makeList(Collection<TomTerm> c) {
+    TomTerm array[] = c.toArray(new TomTerm[0]);
     TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
-      Object elt = array[i];
-      TomTerm term;
-      if(elt instanceof TargetLanguage) {
-        term = `TargetLanguageToTomTerm((TargetLanguage)elt);
-      } else if(elt instanceof TomType) {
-        term = `TomTypeToTomTerm((TomType)elt);
-      } else if(elt instanceof Declaration) {
-        term = `DeclarationToTomTerm((Declaration)elt);
-      } else if(elt instanceof Expression) {
-        term = `ExpressionToTomTerm((Expression)elt);
-      } else if(elt instanceof TomName) {
-        term = `TomNameToTomTerm((TomName)elt);
-      } else if(elt instanceof Instruction) {
-        term = `InstructionToTomTerm((Instruction)elt);
-      } else {
-        term = (TomTerm)elt;
-      }
+      TomTerm term = array[i];
       list = `concTomTerm(term,list*);
     }
     return list;
@@ -119,65 +103,66 @@ public class ASTFactory {
     return list;
   }
 
-  public static ConstraintList makeConstraintList(List argumentList) {
+  public static ConstraintList makeConstraintList(List<Constraint> argumentList) {
     ConstraintList list = `concConstraint();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      Constraint term;
-      term = (Constraint)elt;
-      list = `concConstraint(term,list*);
+      list = `concConstraint(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static ConstraintInstructionList makeConstraintInstructionList(List argumentList) {
+  public static ConstraintInstructionList makeConstraintInstructionList(List<ConstraintInstruction> argumentList) {
     ConstraintInstructionList list = `concConstraintInstruction();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      ConstraintInstruction term;
-      term = (ConstraintInstruction)elt;
-      list = `concConstraintInstruction(term,list*);
+      list = `concConstraintInstruction(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static TomNameList makeNameList(List argumentList) {
+  public static Constraint makeAndConstraint(List<Constraint> argumentList) {
+    Constraint list = `AndConstraint();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `AndConstraint(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static Constraint makeOrConstraint(List<Constraint> argumentList) {
+    Constraint list = `OrConstraint();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      list = `OrConstraint(argumentList.get(i),list*);
+    }
+    return list;
+  }
+
+  public static TomNameList makeNameList(List<TomName> argumentList) {
     TomNameList list = `concTomName();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      TomName term = (TomName) elt;
-      list = `concTomName(term,list*);
+      list = `concTomName(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static SlotList makeSlotList(List argumentList) {
+  public static SlotList makeSlotList(List<Slot> argumentList) {
     SlotList list = `concSlot();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      Slot term = (Slot) elt;
-      list = `concSlot(term,list*);
+      list = `concSlot(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static PairNameDeclList makePairNameDeclList(List argumentList) {
+  public static PairNameDeclList makePairNameDeclList(List<PairNameDecl> argumentList) {
     PairNameDeclList list = `concPairNameDecl();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      PairNameDecl term = (PairNameDecl) elt;
-      list = `concPairNameDecl(term,list*);
+      list = `concPairNameDecl(argumentList.get(i),list*);
     }
     return list;
   }
 
-  public static TomVisitList makeTomVisitList(List argumentList) {
+  public static TomVisitList makeTomVisitList(List<TomVisit> argumentList) {
     TomVisitList list = `concTomVisit();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      TomVisit term;
-      term = (TomVisit)elt;
-      list = `concTomVisit(term,list*);
+      list = `concTomVisit(argumentList.get(i),list*);
     }
     return list;
   }
@@ -274,6 +259,7 @@ public class ASTFactory {
                              String value, List optionList) {
     String sort = "char";
     makeSortSymbol(symbolTable, sort, value, optionList);
+    //System.out.println("makeCharSymbol: -" + value + "-"); 
   }
     /*
      * create a double symbol
@@ -338,7 +324,7 @@ public class ASTFactory {
   }
 
   public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
-    %match(TomList list) {
+    %match(list) {
       concTomTerm() -> { return `concTomTerm();}
       concTomTerm(head,tail*) -> {
         TomList tl = metaEncodeTermList(symbolTable,`tail);
@@ -355,7 +341,7 @@ public class ASTFactory {
        * Appl(...,Name("\"string\""),...)
        */
     TomNameList newNameList = `concTomName();
-    %match(TomTerm term) {
+    %match(term) {
       RecordAppl[NameList=(_*,Name(name),_*)] -> {
         newNameList = `concTomName(newNameList*,Name(encodeXMLString(symbolTable,name)));
       }
@@ -372,7 +358,7 @@ public class ASTFactory {
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
       //System.out.println("metaEncode: " + term);
-    %match(TomTerm term) {
+    %match(term) {
       RecordAppl[NameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
@@ -393,7 +379,7 @@ public class ASTFactory {
   public static boolean isExplicitTermList(List childs) {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.get(0);
-      %match(TomTerm term) {
+      %match(term) {
         (RecordAppl|TermAppl)[NameList=(Name(""))] -> {
           return true;
         }
@@ -402,9 +388,9 @@ public class ASTFactory {
     return false;
   }
 
-  public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
-    LinkedList list = new LinkedList();
-    %match(TomTerm term) {
+  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+    LinkedList<TomTerm> list = new LinkedList<TomTerm>();
+    %match(term) {
       RecordAppl[NameList=(Name("")),Slots=args] -> {
         while(!`args.isEmptyconcSlot()) {
           list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcSlot().getAppl()));
@@ -430,7 +416,7 @@ public class ASTFactory {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
-    %match(TomList args) {
+    %match(args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
       }
@@ -505,7 +491,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList)[],tail*) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList|BuildConsList)[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }
@@ -528,7 +514,7 @@ public class ASTFactory {
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
 
-    %match(TomList args) {
+    %match(args) {
       concTomTerm() -> {
         return `BuildEmptyArray(name,ExpressionToTomTerm(Integer(size)));
       }

@@ -40,8 +40,11 @@ public class ACTest {
       int[] titi = `concInt(1,2,3);
       Nat t = `f(a(),a(),b(),b(),b()); 
       %match(t) {
-          f(x,y) -> { 
-              System.out.println("x=" + `x + " y=" + `y);
+          f(b(),T1*,T2*) -> { 
+              System.out.println("T1=" + `T1 + " T2=" + `T2);
+          }
+          f(T1*,T2*) -> { 
+              System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
       } 
   } 

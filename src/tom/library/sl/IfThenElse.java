@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  **/
 package tom.library.sl;
 
-public class IfThenElse extends AbstractStrategy {
+public class IfThenElse extends AbstractStrategyCombinator {
 
   public final static int CONDITION = 0;
   public final static int TRUE_CASE = 1;
@@ -45,34 +45,34 @@ public class IfThenElse extends AbstractStrategy {
   }
 
 
-  public Object visitLight(Object x, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T x, Introspector introspector) throws VisitFailure {
     boolean success;
-    Object result;
+    T result;
     try {
-      visitors[CONDITION].visitLight(x, introspector);
+      arguments[CONDITION].visitLight(x, introspector);
       success = true;
     } catch (VisitFailure vf) {
       success = false;
     }
     if (success) {
-      result = visitors[TRUE_CASE].visitLight(x, introspector);
+      result = arguments[TRUE_CASE].visitLight(x, introspector);
     } else {
-      result = visitors[FALSE_CASE].visitLight(x, introspector);
+      result = arguments[FALSE_CASE].visitLight(x, introspector);
     }
     return result;
   }
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[CONDITION].visit(introspector);
+    int status = arguments[CONDITION].visit(introspector);
     /* reset modifications from CONDITION */
     /* we are just interested in the status */
     environment.setSubject(subject);
     if(status == Environment.SUCCESS) {
-      return visitors[TRUE_CASE].visit(introspector);
+      return arguments[TRUE_CASE].visit(introspector);
     } else {
       //setStatus(Environment.SUCCESS);
-      return visitors[FALSE_CASE].visit(introspector);
+      return arguments[FALSE_CASE].visit(introspector);
     }
   }
 }

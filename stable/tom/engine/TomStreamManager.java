@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -60,7 +59,7 @@ public class TomStreamManager {
   private SymbolTable symbolTable;
 
   /** List of import paths. */
-  private List userImportList;
+  private List<File> userImportList;
 
   /** Absolute path where file are generated. */ 
   private File destDir;
@@ -86,11 +85,11 @@ public class TomStreamManager {
 	private String importLanguageSubdir;
 
   /** list of non managed imported file */
-  private Collection importsToDiscard;
+  private Collection<String> importsToDiscard;
   
   public TomStreamManager(){
     symbolTable = new SymbolTable();
-    importsToDiscard = new HashSet();
+    importsToDiscard = new HashSet<String>();
     //importsToDiscard.add("boolean.tom");
     importsToDiscard.add("string.tom");
     importsToDiscard.add("int.tom");
@@ -115,7 +114,7 @@ public class TomStreamManager {
   }
 
   public void initializeFromOptionManager(OptionManager optionManager) {
-    List localUserImportList = new ArrayList();
+    List<File> localUserImportList = new ArrayList<File>();
     String localDestDir = null;
     
     symbolTable.init(optionManager);
@@ -222,11 +221,11 @@ public class TomStreamManager {
     outputSuffix = string;
   }
 
-  public void setUserImportList(List list) {
+  public void setUserImportList(List<File> list) {
     userImportList = list;
   }
 
-  public List getUserImportList() {
+  public List<File> getUserImportList() {
     return userImportList;
   }
 
@@ -238,10 +237,10 @@ public class TomStreamManager {
    *  - TOM_HOME/share/tom
    *  - TOM_HOME/share/tom/importLanguageSubdir (i.e [java|c|caml])
    */
-  public List getImportList() {
-    List importList = new ArrayList(getUserImportList().size()+3);
-    for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
-      importList.add(it.next());
+  public List<File> getImportList() {
+    List<File> importList = new ArrayList<File>(getUserImportList().size()+3);
+    for (File file : getUserImportList()) {
+      importList.add(file);
     }
     try {
       File destAndPackage = new File(getDestDir(),getPackagePath());
@@ -405,7 +404,7 @@ public class TomStreamManager {
     // Look for importList
     for(int i=0 ; i<getImportList().size() ; i++) {
       //System.out.println("look in: '" + getImportList().get(i) + "'");
-      file = new File((File)getImportList().get(i),fileName);
+      file = new File(getImportList().get(i),fileName);
       if(file.exists()) {
         //System.out.println("found!"); 
         return file;

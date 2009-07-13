@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,8 @@ import java.text.MessageFormat;
 import tom.platform.PlatformMessage;
 
 public class TomException extends Exception {
+
+  private static final long serialVersionUID = 1L;
 
   protected PlatformMessage msg=null;
   protected Object[] detail;

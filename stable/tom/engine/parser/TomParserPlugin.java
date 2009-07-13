@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -35,10 +35,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.Iterator;
 
+import tom.engine.Tom;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
@@ -87,16 +89,16 @@ public class TomParserPlugin extends TomGenericPlugin {
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
-    HashSet includedFiles = new HashSet();
-    HashSet alreadyParsedFiles = new HashSet();
+    HashSet<String> includedFiles = new HashSet<String>();
+    HashSet<String> alreadyParsedFiles = new HashSet<String>();
     return newParser(reader,fileName,
                      includedFiles,alreadyParsedFiles,
                      optionManager, tomStreamManager);
   }
   
   protected static HostParser newParser(Reader reader,String fileName,
-                                        HashSet includedFiles,
-                                        HashSet alreadyParsedFiles,
+                                        HashSet<String> includedFiles,
+                                        HashSet<String> alreadyParsedFiles,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
@@ -115,7 +117,9 @@ public class TomParserPlugin extends TomGenericPlugin {
     selector.select("targetlexer");
     // create the parser for target mode
     // also create tom parser and backquote parser
-    return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles, optionManager, tomStreamManager);
+    return new HostParser(selector, fileName,
+        includedFiles, alreadyParsedFiles,
+        optionManager, tomStreamManager);
   }
 
   /**
@@ -138,15 +142,15 @@ public class TomParserPlugin extends TomGenericPlugin {
    * inherited from plugin interface
    * Parse the input ans set the "Working" TomTerm to be compiled.
    */
-  public void run() {
+  public synchronized void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
+    //System.out.println("(debug) I'm in the Tom parserPlugin : TSM"+getStreamManager().toString());
     try {
       // looking for java package
       if(java && (!currentFileName.equals("-"))) {
-
         /* Do not exhaust the stream !! */
         TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
         String packageName = "";
@@ -155,7 +159,6 @@ public class TomParserPlugin extends TomGenericPlugin {
         } catch (TokenStreamException tse) {
           /* no package was found: ignore */
         }
- 
         // Update streamManager to take into account package information
         getStreamManager().setPackagePath(packageName);
       }
@@ -163,7 +166,6 @@ public class TomParserPlugin extends TomGenericPlugin {
       parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
-
       /*
        * we update codomains which are constrained by a symbolName
        * (come from the %strategy operator)
@@ -175,7 +177,6 @@ public class TomParserPlugin extends TomGenericPlugin {
         TomSymbol tomSymbol = getSymbolFromName(tomName);
         tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
       }
-
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );

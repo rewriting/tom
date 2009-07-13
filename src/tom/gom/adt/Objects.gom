@@ -1,5 +1,5 @@
 module Objects
-imports String Code Gom
+imports String Code Gom boolean
 
 abstract syntax
 
@@ -20,14 +20,16 @@ GomClass = AbstractTypeClass(ClassName:ClassName,
                          Mapping:ClassName,
                          SortName:ClassName,
                          SlotFields:SlotFieldList,
-                         Hooks:HookList)
+                         Hooks:HookList,
+                         Comments:String)
          | VariadicOperatorClass(ClassName:ClassName,
                                  AbstractType:ClassName,
                                  Mapping:ClassName,
                                  SortName:ClassName,
                                  Empty:GomClass,
                                  Cons:GomClass,
-                                 Hooks:HookList)
+                                 Hooks:HookList,
+                                 Comments:String)
          | TomMapping(ClassName:ClassName,SortClasses:GomClassList,OperatorClasses:GomClassList)
 
 GomClassList = ConcGomClass(GomClass*)
@@ -38,10 +40,22 @@ ClassNameList = ConcClassName(ClassName*)
 SlotField = SlotField(Name:String,Domain:ClassName)
 SlotFieldList = ConcSlotField(SlotField*)
 
-Hook = MakeHook(HookArguments:SlotFieldList,Code:Code)
-     | MakeBeforeHook(HookArguments:SlotFieldList,Code:Code)
-     | BlockHook(Code:Code)
+Hook = MakeHook(HookArguments:SlotFieldList,Code:Code,HasTomCode:boolean)
+     | MakeBeforeHook(HookArguments:SlotFieldList,Code:Code,HasTomCode:boolean)
+     | BlockHook(Code:Code,HasTomCode:boolean)
      | InterfaceHook(Code:Code)
      | ImportHook(Code:Code)
      | MappingHook(Code:Code)
 HookList = ConcHook(Hook*)
+
+sort HookList:block() {
+  public boolean containsTomCode() {
+    boolean containsTomCode = false;
+    %match(this) {
+      ConcHook(_*,(MakeHook|MakeBeforeHook|BlockHook)[HasTomCode=HasTomCode],_*) && true() << HasTomCode -> {
+        containsTomCode = true;
+      }
+    }
+    return containsTomCode;
+  }
+}

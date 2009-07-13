@@ -157,8 +157,8 @@ public class TomConstraintPrettyPrinter {
         return prettyPrint(`name);
       }
 
-      RecordAppl(_,nameList,slots,_) ->{
-        return prettyPrint(`nameList)+"("+prettyPrint(`slots)+")"; 
+      RecordAppl(_,nameList,_,_) ->{
+        return prettyPrint(`nameList); 
       }
 
       ListHead[Variable=Variable] -> {
@@ -259,20 +259,6 @@ public class TomConstraintPrettyPrinter {
         return "end"+`number;
       }
     }
-    
-    %match(subject) {
-      PairSlotAppl(Name,Appl) -> {
-        return prettyPrint(`Appl);
-      }
-    }
-
-    String s = "";
-    %match(subject) {
-      concSlot(_*, t, _*) -> {
-        s += prettyPrint(`t)+",";
-      }
-    }
-    if (! s.equals("")) return s.substring(0,s.length()-1);
 
     return subject.toString();
   }

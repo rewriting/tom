@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,6 @@ import tom.platform.ConfigurationManager;
 import tom.platform.OptionManager;
 import tom.platform.OptionOwner;
 import tom.platform.adt.platformoption.types.*;
-import aterm.ATerm;
-import aterm.ATermAppl;
-import aterm.ATermList;
 
 public class GomOptionManager implements OptionManager, OptionOwner {
 
@@ -49,26 +46,26 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   private PlatformOptionList globalOptions;
 
   /**  map the name of an option to the plugin which defines this option */
-  private Map mapNameToOptionOwner;
+  private Map<String,OptionOwner> mapNameToOptionOwner;
 
   /** map the name of an option to the option itself */
-  private Map mapNameToOption;
+  private Map<String,PlatformOption> mapNameToOption;
 
   /** map a shortname of an option to its full name */
-  private Map mapShortNameToName;
+  private Map<String,String> mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
-  private List inputFileList;
+  private List<String> inputFileList;
 
   /**
    * Basic Constructor
    * @return a configurationManager that needs to be initialized
    */
   public GomOptionManager() {
-    mapNameToOptionOwner = new HashMap();
-    mapNameToOption = new HashMap();
-    mapShortNameToName = new HashMap();
-    inputFileList = new ArrayList();
+    mapNameToOptionOwner = new HashMap<String,OptionOwner>();
+    mapNameToOption = new HashMap<String,PlatformOption>();
+    mapShortNameToName = new HashMap<String,String>();
+    inputFileList = new ArrayList<String>();
     globalOptions = `concPlatformOption();
   }
 
@@ -84,8 +81,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public int initialize(
       ConfigurationManager confManager,
       String[] commandLine) {
-    List pluginList = confManager.getPluginsList();
-    List optionOwnerList = new ArrayList(pluginList);
+    List<tom.platform.Plugin> pluginList = confManager.getPluginsList();
+    List<OptionOwner> optionOwnerList = new ArrayList<OptionOwner>(pluginList);
     optionOwnerList.add(this);
     collectOptions(optionOwnerList, pluginList);
     this.inputFileList = processArguments(commandLine);
@@ -103,7 +100,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   /** Accessor Method */
-  public List getInputToCompileList() {
+  public List<String> getInputToCompileList() {
     return inputFileList;
   }
 
@@ -166,7 +163,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
-      %match(PlatformOption option) {
+      %match(option) {
         PluginOption[Value=BooleanValue(True())]  -> { return Boolean.valueOf(true); }
         PluginOption[Value=BooleanValue(False())] -> { return Boolean.valueOf(false); }
         PluginOption[Value=IntegerValue(value)]   -> { return new Integer(`value); }
@@ -202,15 +199,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   /**
    * collects the options/services provided by each plugin
    */
-  private void collectOptions(List optionOwnerList, List plugins) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner owner = (OptionOwner)owners.next();
+  private void collectOptions(List<OptionOwner> optionOwnerList, List plugins) {
+    for (OptionOwner owner : optionOwnerList) {
       PlatformOptionList list = owner.getDeclaredOptionList();
-      owner.setOptionManager((OptionManager)this);
+      owner.setOptionManager(this);
       while(!list.isEmptyconcPlatformOption()) {
         PlatformOption option = list.getHeadconcPlatformOption();
-        %match(PlatformOption option) {
+        %match(option) {
           PluginOption[Name=name, AltName=altName] -> {
             setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
@@ -241,13 +236,13 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   private String getCanonicalName(String name) {
     if(mapShortNameToName.containsKey(name)) {
-      return (String)mapShortNameToName.get(name);
+      return mapShortNameToName.get(name);
     }
     return name;
   }
 
   private PlatformOption getOptionFromName(String name) {
-    PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
+    PlatformOption option = mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
@@ -255,11 +250,11 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
-    return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
+    return mapNameToOption.put(getCanonicalName(name),option);
   }
 
   private OptionOwner getOptionOwnerFromName(String name) {
-    OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
+    OptionOwner plugin = mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
       getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
@@ -288,11 +283,11 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     String beginning = "usage: gom [options] file [... file_n]"
       + "\noptions:\n";
     StringBuilder buffer = new StringBuilder(beginning);
-    TreeMap treeMap = new TreeMap(mapNameToOption);
-    Iterator it = treeMap.values().iterator();
-    while(it.hasNext()) {
-      PlatformOption h = (PlatformOption)it.next();
-      %match(PlatformOption h) {
+    TreeMap<String,PlatformOption> treeMap =
+      new TreeMap<String,PlatformOption>(mapNameToOption);
+    for (Map.Entry<String,PlatformOption> entry : treeMap.entrySet()) {
+      PlatformOption h = entry.getValue();
+      %match(h) {
         PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
@@ -314,8 +309,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * Self-explanatory. Displays the current version of the Gom compiler.
    */
   public void displayVersion() {
-    System.out.println("Gom " + Gom.VERSION + "\n\n"
-                       + "Copyright (c) 2000-2008, INRIA, Nancy, France.\n");
+    System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
+                       + "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
   }
 
   /**
@@ -325,7 +320,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
-    %match(PlatformOptionList requiredOptions) {
+    %match(requiredOptions) {
       concPlatformOption() -> {
         return true;
       }
@@ -365,8 +360,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList
    * @return an array containing the name of the input files
    */
-  private List processArguments(String[] argumentList) {
-    List inputFiles = new ArrayList();
+  private List<String> processArguments(String[] argumentList) {
+    List<String> inputFiles = new ArrayList<String>();
     StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
@@ -422,7 +417,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             displayHelp();
             return null;
           } else {
-            %match(PlatformOption option) {
+            %match(option) {
               PluginOption[Value=BooleanValue[]] -> {
                 setOptionValue(argument, Boolean.TRUE);
               }

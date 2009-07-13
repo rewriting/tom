@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2007-2008, INRIA
+ * Copyright (c) 2007-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -74,19 +74,18 @@ OctalESC
   |   '\\' ('0'..'7')
   ;
 
-COMMENT : (SL_COMMENT | ML_COMMENT)
-  ;
+//COMMENT : (SL_COMMENT | ML_COMMENT)
+//  ;
 
-fragment
+//fragment
 SL_COMMENT :
-  '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-  {$channel=HIDDEN;}
+  '//' (~('\n'|'\r'))* '\r'? '\n' {$channel=HIDDEN;}
   ;
 
-fragment
+//fragment
 ML_COMMENT
-  : '/*' .* '*/' {$channel=HIDDEN;}
+  : '/*' ( options {greedy=false;} : . )* '*/' //{$channel=HIDDEN;}
   ;
 
 // the rule for the filter: just append the text to the buffer
-TARGET : ( text=~('/'|'{'|'}'|'"') )+ ;
+TARGET : ( text=~('{'|'}'|'"') )+ ;

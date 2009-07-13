@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,7 +28,7 @@
 
 package tom.library.sl;
 
-public class DeRef extends AbstractStrategy {
+public class DeRef extends AbstractStrategyCombinator {
   public final static int ARG = 0;
   // is it an absolute or a relative reference
   private boolean relative = false;
@@ -60,7 +60,7 @@ public class DeRef extends AbstractStrategy {
   public boolean isRelative() { return relative; }
   public boolean isStrict() { return strict; }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     throw new RuntimeException("The strategy operator DeRef can be used only with the methods visit() and fire()");
   }
 
@@ -71,7 +71,7 @@ public class DeRef extends AbstractStrategy {
       if(strict) {
         // does nothing when it is not a Ref
       } else {
-        return visitors[ARG].visit(introspector);
+        return arguments[ARG].visit(introspector);
       }
     }
     return Environment.SUCCESS;
@@ -81,7 +81,7 @@ public class DeRef extends AbstractStrategy {
     if(relative) {
       Position current = environment.getPosition();
       environment.followPath(path);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.followPath(current.sub(environment.getPosition()));
         return;

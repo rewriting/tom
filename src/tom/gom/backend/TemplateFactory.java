@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,25 +26,30 @@ package tom.gom.backend;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 import tom.platform.OptionManager;
+import tom.gom.tools.GomEnvironment;
 
 public abstract class TemplateFactory {
 
-  public static TemplateFactory getFactory(OptionManager manager) {
+  protected GomEnvironment gomEnvironment;
+
+  public GomEnvironment getGomEnvironment() {
+    return gomEnvironment;
+  }
+
+  public TemplateFactory getFactory(OptionManager manager) {
     String mode = (String) manager.getOptionValue("generator");
     if (mode.equals("shared")) {
-      return new SharedTemplateFactory(manager);
+      return new SharedTemplateFactory(manager,getGomEnvironment());
     } else {
       throw new GomRuntimeException("Output mode "+mode+" not supported");
     }
   }
 
-  public abstract MappingTemplateClass makeTomMappingTemplate(
-      GomClass gomClass,
-      TemplateClass strategyMapping);
-  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing);
-  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing);
-  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing);
-  public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
+  public abstract MappingTemplateClass makeTomMappingTemplate(GomClass gomClass,TemplateClass strategyMapping, GomEnvironment gomEnvironment);
+  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment);
+  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharingi, GomEnvironment gomEnvironment);
+  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharingi, GomEnvironment gomEnvironment);
+  public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, GomEnvironment gomEnvironment);
 }
 
 class SharedTemplateFactory extends TemplateFactory {
@@ -53,23 +58,28 @@ class SharedTemplateFactory extends TemplateFactory {
   SharedTemplateFactory(OptionManager manager) {
     this.manager = manager;
   }
+  SharedTemplateFactory(OptionManager manager, GomEnvironment gomEnvironment) {
+    this.manager = manager;
+    this.gomEnvironment = gomEnvironment;
+  }
 
   public MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
-      TemplateClass strategyMapping) {
-    return
-      new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping);
+      TemplateClass strategyMapping,
+      GomEnvironment gomEnvironment) {
+    return new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping,gomEnvironment);
   }
-  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing) {
-    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping,maximalsharing);
+
+  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment) {
+    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping, maximalsharing, gomEnvironment);
   }
-  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing) {
-    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, maximalsharing, importList, gomClass,mapping);
+  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing, GomEnvironment gomEnvironment) {
+    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, maximalsharing, importList, gomClass, mapping, gomEnvironment);
   }
-  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing) {
-    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread,maximalsharing);
+  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing, GomEnvironment gomEnvironment) {
+    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread,maximalsharing,gomEnvironment);
   }
-  public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass,mapping);
+  public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, GomEnvironment gomEnvironment) {
+    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass, mapping, gomEnvironment);
   }
 }

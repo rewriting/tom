@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,8 +49,6 @@ public class SymbolTable {
   %include { ../adt/tomsignature/TomSignature.tom }
 
   private final static String TYPE_INT       = "int";
-  private final static String TYPE_INT_ARRAY = "intarray";
-  private final static String INT_ARRAY_OP   = "concInt";
   private final static String TYPE_LONG      = "long";
   private final static String TYPE_FLOAT     = "float";
   private final static String TYPE_CHAR      = "char";
@@ -59,6 +57,8 @@ public class SymbolTable {
   private final static String TYPE_BOOLEAN   = "boolean";
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
+  private final static String TYPE_INT_ARRAY = "intarray";
+  private final static String INT_ARRAY_OP   = "concInt";
 
   public final static TomType TYPE_UNKNOWN   = `TomTypeAlone("unknown type");
 
@@ -206,7 +206,7 @@ public class SymbolTable {
   public TomType getIntType() {
     return `ASTFactory.makeType(TYPE_INT,"int");
   }
-  
+
   public TomType getIntArrayType() {
     return `ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
   }
@@ -286,7 +286,7 @@ public class SymbolTable {
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
   }
-  
+
   public boolean isIntArrayType(String type) {
     return type.equals(TYPE_INT_ARRAY);
   }
@@ -408,9 +408,8 @@ public class SymbolTable {
   }
 
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
-    %match(TomSymbol symbol) {
+    %match(symbol) {
       Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
-        //System.out.println("update codomain: " + `name);
         //System.out.println("depend from : " + `opName);
         TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
         //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
@@ -418,7 +417,7 @@ public class SymbolTable {
         TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
         //System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
         OptionList newOptions = `options;
-        %match(OptionList options) {
+        %match(options) {
           concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
             Declaration newMake = `m.setAstType(codomain);
             //System.out.println("newMake: " + newMake);
@@ -433,10 +432,6 @@ public class SymbolTable {
     }
     return symbol;
   }
-  
-  public String getIntArrayOp() {
-    return INT_ARRAY_OP;
-  }
 
   /*
    * Inlining
@@ -445,20 +440,20 @@ public class SymbolTable {
   /** associate an inliner to a name */
   private Map<String,String> mapInliner = null;
 
-  private static String prefixIsFsym = "is_fsym_";
-  private static String prefixGetSlot = "get_slot_";
-  private static String prefixGetHead = "get_head_";
-  private static String prefixGetTail = "get_tail_";
-  private static String prefixGetElementArray = "get_element_array_";
-  private static String prefixGetSizeArray = "get_size_array_";
-  private static String prefixIsEmptyList = "is_empty_list_";
-  private static String prefixIsSort = "is_sort_";
-  private static String prefixMake = "make_";
-  private static String prefixMakeEmptyArray = "make_empty_array_";
-  private static String prefixMakeEmptyList = "make_empty_list_";
-  private static String prefixMakeAddArray = "make_append_";
-  private static String prefixMakeAddList = "make_insert_";
-  private static String prefixEqualTerm = "equal_";
+  private final static String prefixIsFsym = "is_fsym_";
+  private final static String prefixGetSlot = "get_slot_";
+  private final static String prefixGetHead = "get_head_";
+  private final static String prefixGetTail = "get_tail_";
+  private final static String prefixGetElementArray = "get_element_array_";
+  private final static String prefixGetSizeArray = "get_size_array_";
+  private final static String prefixIsEmptyList = "is_empty_list_";
+  private final static String prefixIsSort = "is_sort_";
+  private final static String prefixMake = "make_";
+  private final static String prefixMakeEmptyArray = "make_empty_array_";
+  private final static String prefixMakeEmptyList = "make_empty_list_";
+  private final static String prefixMakeAddArray = "make_append_";
+  private final static String prefixMakeAddList = "make_insert_";
+  private final static String prefixEqualTerm = "equal_";
 
   private void putInliner(String prefix, String opname, String code) {
     mapInliner.put(prefix+opname,code);
@@ -575,5 +570,8 @@ public class SymbolTable {
      public String getslot;
      }
    */
+  public String getIntArrayOp() {
+    return INT_ARRAY_OP;
+  }
 
 }

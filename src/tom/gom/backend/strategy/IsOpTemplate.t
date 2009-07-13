@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,8 @@ public class IsOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public IsOpTemplate(GomClass gomClass) {
-    super(gomClass);
+  public IsOpTemplate(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
     ClassName clsName = this.className;
     %match(clsName) {
       ClassName(pkg,name) -> {
@@ -62,31 +62,35 @@ public class IsOpTemplate extends TemplateClass {
         "Wrong argument for IsOpTemplate: " + gomClass);
   }
 
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;
 
-public class @className()@ extends tom.library.sl.AbstractStrategy {
+public class @className()@ extends tom.library.sl.AbstractStrategyCombinator {
   private static final String msg = "Not an @className(operator)@";
 
   public @className()@() {
     initSubterm();
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  @@SuppressWarnings("unchecked")
+  public <T extends tom.library.sl.Visitable> T visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (T) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
-    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visit(T any) throws tom.library.sl.VisitFailure{
+    return visit(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  public <T extends tom.library.sl.Visitable> T visitLight(T any) throws tom.library.sl.VisitFailure {
+    return visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
-
-  public Object visitLight(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+  public <T> T visitLight(T any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
      return any;
     } else {
@@ -105,7 +109,6 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
 }
 ]%);
 }
-
 
 public String generateMapping() {
 

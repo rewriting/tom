@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ public class KernelTyper {
    */
   protected TomTerm propagateVariablesTypes(TomTerm subject){
     try{
-      return (TomTerm)`TopDown(ProcessRhsForVarTypePropagation()).visitLight(subject);  
+      return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(subject);  
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("propagateVariablesTypes: failure on " + subject);
     }
@@ -109,7 +109,7 @@ public class KernelTyper {
       ConstraintInstruction(constr,action,option) -> {
         HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
         `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
-        Constraint c = (Constraint)`TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
+        Constraint c = `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
         return `ConstraintInstruction(c,action,option);
       }
     }
@@ -285,7 +285,7 @@ public class KernelTyper {
       concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
-          Constraint newConstraint = (Constraint)`TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
+          Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeList(lhsVariable);
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
           newAction = (Instruction) typeVariable(`EmptyType(),`newAction);
@@ -454,7 +454,7 @@ matchL:  %match(subject,s){
         concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
-          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb) || TomBase.isACOperator(`symb)) {
+          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
             /*
              * todo:
              * when the symbol is an associative operator,

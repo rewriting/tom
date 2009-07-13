@@ -1,0 +1,70 @@
+%op Strategy TopDownWhenConstraint(s:Strategy) {
+  make(v) {( makeTopDownWhenConstraint($v) )}
+}
+
+private static Strategy makeTopDownWhenConstraint(Strategy s) {
+  return `mu(MuVar("_x"),WhenConstraint(Sequence(s,All(MuVar("_x"))))); 
+}
+
+public static class WhenConstraint extends tom.library.sl.AbstractStrategyBasic {
+
+  private  tom.library.sl.Strategy  s;
+  
+  public WhenConstraint( tom.library.sl.Strategy  s) {
+    super(( new tom.library.sl.Identity() ));
+    this.s=s;
+  }
+  
+  public  tom.library.sl.Strategy  gets() {
+    return s;
+  }
+
+  public tom.library.sl.Visitable[] getChildren() {
+    tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];
+    stratChilds[0] = super.getChildAt(0);
+    stratChilds[1] = gets();
+    return stratChilds;
+  }
+
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+    super.setChildAt(0, children[0]);
+    s = ( tom.library.sl.Strategy ) children[1];
+    return this;
+  }
+
+  public int getChildCount() {
+    return 2;
+  }
+
+  public tom.library.sl.Visitable getChildAt(int index) {
+    switch (index) {
+      case 0: return super.getChildAt(0);
+      case 1: return gets();
+      default: throw new IndexOutOfBoundsException();
+
+    }
+  }
+
+  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
+    switch (index) {
+      case 0: return super.setChildAt(0, child);
+      case 1: s = ( tom.library.sl.Strategy )child;
+              return this;
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
+    if ( (v instanceof tom.engine.adt.tomconstraint.types.Constraint) ) {
+      return s.visitLight(v,introspector);
+    }
+    return any.visitLight(v,introspector);
+  }
+
+}
+
+%op Strategy WhenConstraint(s:Strategy) {
+  make(v) {( makeWhenConstraint($v) )}
+}
+
+private static  tom.library.sl.Strategy  makeWhenConstraint( tom.library.sl.Strategy  t0) { return new WhenConstraint(t0);}    

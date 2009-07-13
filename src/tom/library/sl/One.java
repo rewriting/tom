@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ package tom.library.sl;
  * <p>
  */       
 
-public class One extends AbstractStrategy {
+public class One extends AbstractStrategyCombinator {
   public final static int ARG = 0;
 
   public One(Strategy v) {
@@ -57,11 +57,12 @@ public class One extends AbstractStrategy {
   /** Method herited from the apply() method of mutraveler library
    * @deprecated use fire() instead
    */ 
-  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+  @Deprecated
+  public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int childCount = introspector.getChildCount(any);
     for(int i = 0; i < childCount; i++) {
       try {
-        Object newChild = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);
+        Object newChild = arguments[ARG].visitLight(introspector.getChildAt(any,i),introspector);
         return introspector.setChildAt(any,i,newChild);
       } catch(VisitFailure f) { }
     }
@@ -77,7 +78,7 @@ public class One extends AbstractStrategy {
     int childCount = introspector.getChildCount(environment.getSubject());
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      int status = visitors[ARG].visit(introspector);
+      int status = arguments[ARG].visit(introspector);
       if(status == Environment.SUCCESS) {
         environment.up();
         return Environment.SUCCESS;

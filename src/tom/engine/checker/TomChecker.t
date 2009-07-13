@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
-  protected static Option currentTomStructureOrgTrack;
+  protected Option currentTomStructureOrgTrack;
     
   public TomChecker(String name) {
     super(name);
@@ -78,9 +78,9 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void reinit() {
     currentTomStructureOrgTrack = null;
   }
- 
+
   public int getClass(TomTerm term) {
-    %match(TomTerm term) {
+    %match(term) {
       TermAppl[NameList=(Name(""))] -> { return UNAMED_APPL;}
       TermAppl[NameList=(Name(_))] -> { return TERM_APPL;}
       TermAppl[NameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
@@ -95,9 +95,9 @@ abstract public class TomChecker extends TomGenericPlugin {
     throw new TomRuntimeException("Invalid Term");
   }
   
-  public static String getName(TomTerm term) {
+  public String getName(TomTerm term) {
     String dijunctionName = "";
-    %match(TomTerm term) {
+    %match(term) {
       TermAppl[NameList=(Name(name))] -> { return `name;}
       TermAppl[NameList=nameList] -> {
         String head;
@@ -148,15 +148,15 @@ abstract public class TomChecker extends TomGenericPlugin {
     return TomBase.getTomType(type);
   }
   
-  protected static String findOriginTrackingFileName(OptionList optionList) {
-    %match(OptionList optionList) {
+  protected String findOriginTrackingFileName(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
     }
     return "unknown filename";
   }
 
-  protected static int findOriginTrackingLine(OptionList optionList) {
-    %match(OptionList optionList) {
+  protected int findOriginTrackingLine(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
     }
     return -1;
@@ -175,19 +175,23 @@ abstract public class TomChecker extends TomGenericPlugin {
    * Message Functions
    */
   protected void messageError(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    TomMessage.error(getLogger(),fileName,errorLine,msg,msgArgs);
+    //getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
   protected void messageWarning(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine));
+    TomMessage.warning(getLogger(),fileName,errorLine,msg,msgArgs);
+    //getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine));
   }
   
   public static void messageError(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    Logger.getLogger(className).log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+    TomMessage.error(Logger.getLogger(className),fileName,errorLine,msg,msgArgs);
+    //Logger.getLogger(className).log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
   public static void messageWarning(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
-    Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
+    TomMessage.warning(Logger.getLogger(className),fileName,errorLine,msg,msgArgs);
+    //Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
   
 }  //Class TomChecker

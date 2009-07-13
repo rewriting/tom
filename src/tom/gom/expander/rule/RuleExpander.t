@@ -2,7 +2,7 @@
  *
  * GOM
  *
- * Copyright (c) 2007-2008, INRIA
+ * Copyright (c) 2007-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,7 @@ package tom.gom.expander.rule;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.tree.Tree;
-import tom.gom.adt.rule.RuleTree;
-import tom.gom.adt.rule.RuleAdaptor;
+import tom.gom.adt.rule.RuleRuleAdaptor;
 import java.util.logging.Level;
 import java.util.Map;
 import java.util.HashMap;
@@ -56,11 +55,10 @@ public class RuleExpander {
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
-    parser.setTreeAdaptor(new RuleAdaptor());
     RuleList rulelist = `RuleList();
     try {
-      RuleTree ast = (RuleTree) parser.ruleset().getTree();
-      rulelist = (RuleList) ast.getTerm();
+      Tree ast = (Tree) parser.ruleset().getTree();
+      rulelist = (RuleList) RuleRuleAdaptor.getTerm(ast);
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
@@ -72,12 +70,13 @@ public class RuleExpander {
   protected HookDeclList expand(RuleList rulelist) {
     HookDeclList hookList = `ConcHookDecl();
     /* collect all rules for a given symbol */
-    Map rulesForOperator = new HashMap();
+    Map<OperatorDecl,RuleList> rulesForOperator =
+      new HashMap<OperatorDecl,RuleList>();
     %match(rulelist) {
       RuleList(_*,rl@(Rule|ConditionalRule)[lhs=Appl[symbol=symbol]],_*) -> {
         OperatorDecl decl = getOperatorDecl(`symbol);
-        if(null!=decl) {
-          RuleList rules = (RuleList) rulesForOperator.get(decl);
+        if (null != decl) {
+          RuleList rules = rulesForOperator.get(decl);
           if (null == rules) {
             rulesForOperator.put(decl,`RuleList(rl));
           } else {
@@ -90,23 +89,21 @@ public class RuleExpander {
       }
     }
     /* Generate a construction hook for each constructor */
-    Iterator it = rulesForOperator.keySet().iterator();
-    while (it.hasNext()) {
-      OperatorDecl opDecl = (OperatorDecl) it.next();
+    for (OperatorDecl opDecl : rulesForOperator.keySet()) {
       TypedProduction prod = opDecl.getProd();
       %match(prod) {
         /* Syntactic operator */
         Slots[Slots=slotList] -> {
           SlotList args = opArgs(`slotList,1);
           String hookCode =
-            generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
+            generateHookCode(args, rulesForOperator.get(opDecl));
           hookList =
             `ConcHookDecl(hookList*,
-                MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
+                MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules"),true()));
         }
         /* Variadic operator */
         Variadic[Sort=sort] -> {
-          RuleList rules = (RuleList) rulesForOperator.get(opDecl);
+          RuleList rules = rulesForOperator.get(opDecl);
           /* Handle rules for empty: there should be at least one */
           int count = 0;
           RuleList nonEmptyRules = rules;
@@ -120,7 +117,7 @@ public class RuleExpander {
                 generateHookCode(`ConcSlot(),`RuleList(rule));
               hookList =
                 `ConcHookDecl(hookList*,
-                    MakeHookDecl(CutOperator(opDecl),ConcSlot(),Code(hookCode),HookKind("rules")));
+                    MakeHookDecl(CutOperator(opDecl),ConcSlot(),Code(hookCode),HookKind("rules"),true()));
             }
           }
           if (count>1) {
@@ -134,7 +131,7 @@ public class RuleExpander {
               generateVariadicHookCode(args, nonEmptyRules);
             hookList =
               `ConcHookDecl(hookList*,
-                  MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
+                  MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules"),true()));
           }
         }
       }

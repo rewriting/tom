@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,25 +35,25 @@ package tom.library.sl;
  * <p>
  * <code>fails</code> otherwise
  * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition).
+ * Strategy combinator with two arguments, that applies
+ * these arguments one after the other (sequential composition).
  */
 
-public class Sequence extends AbstractStrategy {
+public class Sequence extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public Sequence(Strategy first, Strategy then) {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object visitable, Introspector introspector) throws VisitFailure {
-    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable,introspector),introspector);
+  public <T> T visitLight(T visitable, Introspector introspector) throws VisitFailure {
+    return arguments[THEN].visitLight(arguments[FIRST].visitLight(visitable,introspector),introspector);
   }
 
   public int visit(Introspector introspector) {
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS) {
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
     return status;
   }

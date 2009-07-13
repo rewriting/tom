@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.6"/>
+  <property name="stable.version" value="2.8alpha"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -32,7 +32,6 @@
   <!-- some used directory location for stable -->
   <property name="stable.src"     location="stable"/>
   <property name="stable.gen"     location="${stable.src}/gen"/>
-  <property name="stable.adt"     location="${stable.src}/tom/engine/adt"/>
   <property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
   <property name="stable.build"   location="${stable.src}/build"/>
   <property name="stable.dist"    location="${stable.src}/dist"/>
@@ -48,6 +47,7 @@
   <property name="src.build"      location="${src.src}/build"/>
   <property name="src.dist"       location="${src.src}/dist"/>
   <property name="src.doc"        location="${src.src}/doc"/>
+  <property name="src.doc.adt"    location="${src.src}/doc/adt"/>
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
@@ -84,6 +84,8 @@
   <property name="nowarnings"     value="false" />
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
+
+  <property name="multithread"    value="false"/>
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
@@ -132,6 +134,7 @@
              memoryMaximumSize= "@{memoryMaximumSize}"
              nowarn= "@{nowarn}">
         <srcelements/>
+        <!-- compilerarg value="-Xlint"/ -->
       </javac>
     </sequential>
   </macrodef>
@@ -197,7 +200,7 @@
   </target>
 
   <!-- define task for running tom.src -->
-  <target name="init.task.src" depends="src.dist">
+  <target name="init.task.src"> <!-- depends="src.dist"-->
     <path id="tomsrc.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${src.dist.lib}">
@@ -221,6 +224,7 @@
   property
   -->
   <target name="-withstable" unless="withsource">
+    <antcall target="init.task.stable"/> 
     <presetdef name="tomcompile">
       <tom config="${stable.configfile}">
         <classpath refid="tom.classpath"/>
@@ -239,6 +243,7 @@
   </target>
 
   <target name="-withsrc" if="withsource">
+    <antcall target="init.task.src"/> 
     <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}">
         <classpath refid="tomsrc.classpath"/>
@@ -263,6 +268,7 @@
     <tomcompile fork="no"
          srcdir="${src.src}"
          destdir="${gen.destination}"
+         multithread="${multithread}"
          options="--optimize --inlineplus">
       <include name="tom/engine/**/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
@@ -279,29 +285,29 @@
     <!-- Specific stuff for parser generation -->
     <tomcompile fork="no"
       srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/TomLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/TomLanguage.g.t"/>
     </tomcompile>
 
     <tomcompile srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/HostLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/HostLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
-	    options="-I ${src.gen}/tom/engine/adt">
-      <include name="**/BackQuoteLanguage.g.t"/>
+      outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
+      import="${src.gen}/tom/engine/adt">
+      <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
-      options="-I ${src.gen}/tom/gom/adt">
+      import="${src.gen}/tom/gom/adt">
       <include name="tom/gom/expander/rule/Rule.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/gom/parser/GomLanguage.g"
-      options="-I ${src.gen}/tom/gom/adt">
+      import="${src.gen}/tom/gom/adt">
       <include name="tom/gom/parser/GomLanguage.g.t"/>
     </tomcompile>
   </target>
@@ -328,6 +334,10 @@
           if="gen.destination">
     <mkdir dir="${gen.destination}/tom/engine/parser"/>
 
+    <taskdef name="antlr"
+             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
+      <classpath refid="stable.classpath"/>
+    </taskdef>
     <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
            outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
@@ -386,47 +396,66 @@
   <!-- compile adt's -->
   <target name="buildadt" depends="-withstable,-withsrc">
     <gomcompile fork="no"
-                srcdir="${src.src}"
-                package="tom.library.adt"
-                destdir="${src.gen}">
+      multithread="false"
+      srcdir="${src.src}"
+      package="tom.library.adt"
+      destdir="${src.gen}">
       <include name="tom/library/adt/*.gom"/>
+      <exclude name="tom/library/adt/Bytecode.gom"/>
     </gomcompile>
-
     <gomcompile fork="no"
-                srcdir="${src.src}"
-                package="tom.platform.adt"
-                destdir="${src.gen}">
+      multithread="false"
+      termgraph="on"
+      srcdir="${src.src}"
+      package="tom.library.adt"
+      destdir="${src.gen}">
+      <include name="tom/library/adt/Bytecode.gom"/>
+    </gomcompile>
+    <gomcompile fork="no"
+      multithread="false"
+      srcdir="${src.src}"
+      package="tom.platform.adt"
+      destdir="${src.gen}">
       <include name="tom/platform/adt/*.gom"/>
     </gomcompile>
     <uptodate property="gomcompile.required"
-	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
-	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.gom"/>
+      targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
+      <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.gom"/>
     </uptodate>
     <antcall target="touchgom"/>
 
+    <!--
+      options="-withSeparateCongruenceStrategies"
+      -->
+
     <gomcompile srcdir="${src.src}"
-                package="tom.engine.adt"
-                destdir="${src.gen}">
-	 <include name="tom/engine/adt/TomSignature.gom"/>
+      multithread="false"
+      withSeparateCongruenceStrategies="true"
+      package="tom.engine.adt"
+      destdir="${src.gen}">
+      <include name="tom/engine/adt/TomSignature.gom"/>
     </gomcompile>
 
     <gomcompile srcdir="${src.src}"
-                package="tom.engine.adt"
-                destdir="${src.gen}">
-	 <include name="tom/engine/adt/Il.gom"/>
+      multithread="false"
+      package="tom.engine.adt"
+      destdir="${src.gen}">
+      <include name="tom/engine/adt/Il.gom"/>
     </gomcompile>
 
     <gomcompile srcdir="${src.src}"
-                package="tom.engine.adt"
-                destdir="${src.gen}">
-	 <include name="tom/engine/adt/Zenon.gom"/>
+      multithread="false"
+      package="tom.engine.adt"
+      destdir="${src.gen}">
+      <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
-                package="tom.gom.adt"
-                destdir="${src.gen}">
-     <include name="tom/gom/adt/*.gom"/>
+      multithread="false"
+      package="tom.gom.adt"
+      destdir="${src.gen}">
+      <include name="tom/gom/adt/*.gom"/>
     </gomcompile>
     <gomantlradaptercompile srcdir="${src.src}"
       package="tom.gom.adt"
@@ -456,9 +485,9 @@
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
-	  tofile="${src.gen}/tom/engine/Tom.java"/>
+      tofile="${src.gen}/tom/engine/Tom.java"/>
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
-	    <include name="tom/engine/Tom.java"/>
+      <include name="tom/engine/Tom.java"/>
     </replace>
     <tomjavac destdir="${src.build}" fork="yes">
       <src path="${src.src}"/>
@@ -469,11 +498,11 @@
   </target>
 
   <target name="build.stable" description="compile the TOM stable sources"
-          depends="prepare.stable">
+    depends="prepare.stable">
     <copy file="${stable.src}/tom/engine/Tom.java.in"
-	    tofile="${stable.gen}/tom/engine/Tom.java"/>
+      tofile="${stable.gen}/tom/engine/Tom.java"/>
     <replace dir="${stable.gen}" token="@TOM_VERSION@" value="${stable.version}">
-	    <include name="tom/engine/Tom.java"/>
+      <include name="tom/engine/Tom.java"/>
     </replace>
     <!-- Compile the java code from ${stable} into ${build} -->
     <tomjavac destdir="${stable.build}" fork="yes">
@@ -487,7 +516,7 @@
   <target name="dist.examples">
     <ant dir="${examples}" target="dist.examples">
       <property name="version" value="${stable.version}"/>
-       <property name="tom.home" value="${stable.dist}"/>
+      <property name="tom.home" value="${stable.dist}"/>
     </ant>
   </target>
 
@@ -502,9 +531,10 @@
   </target>
 
   <target name="stable" description="build and install the boot" depends="stable.dist"/>
+
   <target name="stable.dist"
-          description="Prepare a distribution ready stable package"
-          depends="clean.stable.dist, prepare.stable.dist, build.stable">
+    description="Prepare a distribution ready stable package"
+    depends="clean.stable.dist, prepare.stable.dist, build.stable">
     <antcall target="dist.common">
       <param name="dest" value="${stable.dist}"/>
     </antcall>
@@ -521,24 +551,34 @@
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
+    <copy tofile="${stable.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
+    <copy tofile="${stable.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <replace file="${stable.dist.bin}/tom-server">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
     <replace file="${stable.dist.bin}/tom">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <replace file="${stable.dist.bin}/gom">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <copy tofile="${stable.dist.bin}/gomantlradaptor" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/gomantlradaptor">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
@@ -555,37 +595,24 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/runtime/sl.jar" update="yes">
-      <fileset dir="${stable.build}" includes="tom/library/sl/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.dist.lib}/runtime/tom-library.jar"
-         update="yes">
-      <fileset dir="${stable.build}"
-               includes="tom/library/**/*.class"
-               excludes="tom/library/sl/**/*.class"/>
+    <jar jarfile="${stable.dist.lib}/runtime/tom-runtime.jar" update="yes">
+      <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
-         update="yes">
+      update="yes">
       <fileset dir="${stable.build}" includes="tom/platform/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/platform/**/*.properties"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/tom.jar"
-         update="yes">
-	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class,tom/engine/**/**/*.class"/>
-	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
+      update="yes">
+      <fileset dir="${stable.build}" includes="tom/engine/**/*.class,tom/engine/**/**/*.class"/>
+      <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/gom.jar"
-         update="yes">
-	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
-	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
+      update="yes">
+      <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
+      <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
-
-    <copy todir="${stable.dist.lib}/tom">
-      <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
-      <fileset dir="${stable.src}/tom/library/adt" includes="*.jar"/>
-      <fileset dir="${stable.src}/tom/platform/adt" includes="*.jar"/>
-      <fileset dir="${stable.src}/tom/gom/adt" includes="*.jar"/>
-    </copy>
 
     <!-- tom share -->
     <copy todir="${stable.dist.share}/tom">
@@ -610,6 +637,31 @@
       </fileset>
     </copy>
 
+    <!-- prepare tom-jar tar file -->
+    <tar tarfile="${dist}/tom-jar-${stable.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="755">
+        <include name="bin/*"/>
+        <exclude name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
+        <include name="**"/>
+        <exclude name="bin/*"/>
+        <exclude name="lib/*-full.jar"/>
+      </tarfileset>
+    </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+    <zip destfile="${stable.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
+    </zip>
+
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
       <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="755">
@@ -622,13 +674,18 @@
       <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
         <include name="**"/>
         <exclude name="bin/*"/>
+        <exclude name="lib/tom/*"/>
+        <exclude name="lib/runtime/*"/>
+        <exclude name="lib/tools/*"/>
       </tarfileset>
     </tar>
+
+
   </target>
 
   <target name="src.dist"
-          description="Prepare a distribution ready source package"
-          depends="clean.src.dist, src, prepare.src.dist">
+    description="Prepare a distribution ready source package"
+    depends="clean.src.dist, src, prepare.src.dist">
     <antcall target="dist.common">
       <param name="dest" value="${src.dist}"/>
     </antcall>
@@ -642,38 +699,52 @@
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
+    <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
+    <copy tofile="${src.dist.bin}/tom-server" file="${utils}/tom-server/script.in"/>
+    <copy tofile="${src.dist.bin}/tom-client" file="${utils}/tom-server/tom-client.py"/>
+    <replace file="${src.dist.bin}/tom-server">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
     <replace file="${src.dist.bin}/tom">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+    </replace>
+    <replace file="${src.dist.bin}/tom">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <replace file="${src.dist.bin}/tom.src">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <copy tofile="${src.dist.bin}/gom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gom">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <replace file="${src.dist.bin}/gom.src">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <copy tofile="${src.dist.bin}/gomantlradaptor" file="${utils}/script.in"/>
     <replace file="${src.dist.bin}/gomantlradaptor">
-	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
-	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
-	    <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+      <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
+      <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
@@ -684,21 +755,18 @@
 
     <!-- some libraries -->
     <copy todir="${src.dist.lib}">
-	    <!-- we also copy the junit jar which is not really needed
-	    by tom, but is needed by the applications -->
+      <!-- we also copy the junit jar which is not really needed
+      by tom, but is needed by the applications -->
       <fileset dir="${src.lib}">
         <include name="**/*.jar"/>
       </fileset>
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/runtime/sl-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/sl/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/runtime/tom-library-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/runtime/tom-runtime.jar">
       <fileset dir="${src.build}"
-               includes="tom/library/**/*.class"
-               excludes="tom/library/**/adt/**/*.class"/>
+        includes="tom/library/**/*.class"
+        excludes="tom/library/**/adt/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/runtime/TNode-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
@@ -708,7 +776,7 @@
     </jar>
 
     <jar jarfile="${src.dist.lib}/tom/TomSignature-${src.version}.jar">
-	    <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
+      <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/tom/PlatformOption-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
@@ -718,21 +786,21 @@
     </jar>
     <jar jarfile="${src.dist.lib}/tom/plugin-platform-${src.version}.jar">
       <fileset dir="${src.build}"
-               includes="tom/platform/**/*.class"
-               excludes="tom/platform/**/adt/**/*.class"/>
+        includes="tom/platform/**/*.class"
+        excludes="tom/platform/**/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/platform/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/tom/tom-${src.version}.jar">
       <fileset dir="${src.build}"
-	      includes="tom/engine/**/*.class,tom/engine/**/**/*.class"
-	      excludes="tom/engine/adt/**/*.class"/>
+        includes="tom/engine/**/*.class,tom/engine/**/**/*.class"
+        excludes="tom/engine/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/engine/**/*.properties"/>
     </jar>
     <!-- gom jar (follow tom's version)-->
     <jar jarfile="${src.dist.lib}/tom/gom-${src.version}.jar">
       <fileset dir="${src.build}"
-	      includes="tom/gom/**/*.class"
-	      excludes="tom/gom/adt/**/*.class"/>
+        includes="tom/gom/**/*.class"
+        excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/tom/GomADT-${src.version}.jar">
@@ -747,7 +815,7 @@
         <include name="c/**/*.tom"/>
         <include name="caml/**/*.tom"/>
         <include name="java/**/*.tom"/>
-    </fileset>
+      </fileset>
     </copy>
     <copy todir="${src.dist.share}">
       <fileset dir="${share}">
@@ -762,6 +830,32 @@
       </fileset>
     </copy>
 
+    <!-- prepare tom-jar tar file -->
+    <tar tarfile="${dist}/tom-jar-${src.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="755">
+        <include name="bin/*"/>
+        <exclude name="bin/*.bat"/>
+        <exclude name="bin/tom.src"/>
+      </tarfileset>
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+        <include name="bin/*.bat"/>
+      </tarfileset>
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
+        <include name="**"/>
+        <exclude name="bin/*"/>
+        <exclude name="lib/*-full.jar"/>
+      </tarfileset>
+    </tar>
+
+    <!-- generate a single runtime jar -->
+    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
+      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
+    </zip>
+    <zip destfile="${src.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
+    </zip>
+
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
       <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="755">
@@ -775,13 +869,18 @@
       <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
+        <exclude name="lib/tom/*"/>
+        <exclude name="lib/runtime/*"/>
+        <exclude name="lib/tools/*"/>
       </tarfileset>
     </tar>
+
+
   </target>
 
   <target name="dist.all"
-          description="Prepare stable and devel distributions"
-          depends="clean.dist, stable.dist, src.dist, dist.examples"/>
+    description="Prepare stable and devel distributions"
+    depends="clean.dist, stable.dist, src.dist, dist.examples"/>
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
@@ -790,8 +889,8 @@
   </target>
 
   <target name="clean.src"
-          description="Purges the generated devel files"
-          depends="clean.bootstrap">
+    description="Purges the generated devel files"
+    depends="clean.bootstrap">
     <delete dir="${src.gen}"/>
     <delete dir="${src.build}"/>
     <delete>
@@ -807,19 +906,19 @@
   </target>
 
   <target name="clean.test" description="Cleans acceptance tests directory">
-     <ant dir="${test}" target="clean">
-       <property name="tom.home" value="${stable.dist}"/>
-       <property name="tom.common.path" location="${stable.lib}"/>
-     </ant>
+    <ant dir="${test}" target="clean">
+      <property name="tom.home" value="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
   </target>
 
   <target name="clean.all" description="Cleans everything (stable, src, test, doc, dist)"
-          depends="clean, clean.dist">
+    depends="clean, clean.dist">
   </target>
 
   <target name="clean" description="Cleans everything in the project"
-          depends="clean.stable, clean.src, clean.test, clean.doc">
-          <!--<ant dir="${examples}" target="clean"/>-->
+    depends="clean.stable, clean.src, clean.test, clean.doc">
+    <!--<ant dir="${examples}" target="clean"/>-->
   </target>
 
   <target name="clean.dist" description="Mr proper" depends="clean.examples, clean.src.dist, clean.stable.dist">
@@ -827,7 +926,7 @@
   </target>
 
   <target name="clean.examples" description="Clean the examples">
-		<!-- <ant dir="${examples}" target="clean.dist"/> -->
+    <!-- <ant dir="${examples}" target="clean.dist"/> -->
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
   </target>
@@ -840,72 +939,91 @@
     <delete dir="${stable.dist}"/>
   </target>
 
-  <target name="test" description="Compile and run acceptance tests"
-          depends="src.dist">
-     <ant dir="${test}" target="build">
-       <property name="tom.home" value="${src.dist}"/>
-       <property name="optimize" value="off"/>
-       <property name="optimize2" value="off"/>
-       <property name="inline" value="off"/>
-       <property name="inlineplus" value="off"/>
-     </ant>
+  <target name="cruisecontrol-stable" description="Compile and run acceptance tests">
+    <antcall target="stable.dist"/>
+    <antcall target="clean.test"/>
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${stable.dist}"/>
+      <property name="test.xmlreport" value="on"/>
+    </ant>
   </target>
 
-  <target name="test.opt" description="Compile and run acceptance tests with optimizer"
-          depends="src.dist">
-     <ant dir="${test}" target="build">
-       <property name="tom.home" value="${src.dist}"/>
-       <property name="optimize" value="on"/>
-       <property name="optimize2" value="on"/>
-       <property name="inlineplus" value="on"/>
-     </ant>
+  <target name="cruisecontrol-src" description="Compile and run acceptance tests"
+    depends="stable">
+    <antcall target="src.dist"/>
+    <antcall target="clean.test"/>
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="test.xmlreport" value="on"/>
+    </ant>
+  </target>
+
+  <target name="test" depends="src.dist"
+    description="Compile acceptance tests">
+    <ant dir="${test}" target="build">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="off"/>
+      <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
+    </ant>
+  </target>
+
+  <target name="test.opt" depends="src.dist"
+    description="Compile acceptance tests with optimizer">
+    <ant dir="${test}" target="build">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+    </ant>
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
-          depends="stable.dist">
-     <ant dir="${test}" target="build">
-       <property name="tom.home" value="${stable.dist}"/>
-     </ant>
+    depends="stable.dist">
+    <ant dir="${test}" target="build">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
   </target>
 
   <target name="stable.junit"
-          description="Runs junit acceptance tests compiled with stable"
-          depends="clean.test, test.stable">
-     <ant dir="${test}" target="junit">
-       <property name="tom.home" value="${stable.dist}"/>
-     </ant>
+    description="Runs junit acceptance tests compiled with stable"
+    depends="clean.test, test.stable">
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
   </target>
 
   <target name="src.junit" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests"
-          depends="clean.test, test">
-     <ant dir="${test}" target="junit">
-       <property name="tom.home" value="${src.dist}"/>
-     </ant>
+    depends="clean.test, test">
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${src.dist}"/>
+    </ant>
   </target>
 
   <target name="src.junit.opt" depends="junit.opt"/>
   <target name="junit.opt"
-          description="Runs junit acceptance tests with optimization"
-          depends="clean.test, test.opt">
-     <ant dir="${test}" target="junit">
-       <property name="tom.home" value="${src.dist}"/>
-       <property name="optimize" value="on"/>
-       <property name="optimize2" value="on"/>
-       <property name="inlineplus" value="on"/>
-     </ant>
+    description="Runs junit acceptance tests with optimization"
+    depends="clean.test, test.opt">
+    <ant dir="${test}" target="junit">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+    </ant>
   </target>
 
   <target name="all" description="cleans, build, test all"
-          depends="stable.all, src.all">
+    depends="stable.all, src.all">
     <!--<exec dir="${basedir}"
-	  failonerror="yes"
-	  executable="ant">
+      failonerror="yes"
+      executable="ant">
       <arg line="src.all"/>
     </exec>
     <exec dir="${basedir}"
-	  failonerror="yes"
-	  executable="ant">
+      failonerror="yes"
+      executable="ant">
       <arg line="stable.all"/>
     </exec>-->
   </target>
@@ -947,9 +1065,9 @@
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
     <antcall target="src.junit"/>  	
-  	<echo>Runs junit acceptance tests with optimization</echo>
-  	<antcall target="src.junit.opt"/>
-  	
+    <echo>Runs junit acceptance tests with optimization</echo>
+    <antcall target="src.junit.opt"/>
+
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
@@ -979,8 +1097,8 @@
   </target>
 
   <target name="examples.stable"
-          description="Build and test examples with jtom-stable"
-          depends="stable.dist">
+    description="Build and test examples with jtom-stable"
+    depends="stable.dist">
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
@@ -991,12 +1109,41 @@
     </ant>
   </target>
 
+  <target name="cruisecontrol-examples-stable"
+    description="Build and test examples with tom-stable"
+    depends="stable.dist">
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
+    <ant dir="${examples}" target="junit">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+      <property name="test.xmlreport" value="on"/>
+    </ant>
+  </target>
+
+  <target name="cruisecontrol-examples-src"
+    description="Build and test examples with tom-src"
+    depends="stable.dist">
+    <antcall target="src.dist"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+    </ant>
+    <ant dir="${examples}" target="junit">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+      <property name="test.xmlreport" value="on"/>
+    </ant>
+  </target>
+
   <target name="examples"
-          description="Build and test examples with jtom-source"
-          depends="examples.src"/>
+    description="Build and test examples with jtom-source"
+    depends="examples.src"/>
 
   <target name="examples.src"
-          depends="src.dist">
+    depends="src.dist">
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
     </ant>
@@ -1010,7 +1157,7 @@
   </target>
 
   <target name="applications.src"
-          depends="src.dist">
+    depends="src.dist">
     <ant dir="${applications}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
     </ant>
@@ -1022,29 +1169,29 @@
 
   <target name="fixcrlf">
     <fixcrlf srcdir="${basedir}"
-             eol="unix"
-             eof="remove"
-             includes="**/build.xml"/>
+      eol="unix"
+      eof="remove"
+      includes="**/build.xml"/>
     <fixcrlf srcdir="${basedir}"
-             eol="unix"
-             eof="remove"
-             includes="**/*.properties"/>
+      eol="unix"
+      eof="remove"
+      includes="**/*.properties"/>
     <fixcrlf srcdir="${src.src}"
-             tab="remove"
-             tablength="2"
-             eol="unix"
-             javafiles="yes"
-             includes="**/*.java"/>
+      tab="remove"
+      tablength="2"
+      eol="unix"
+      javafiles="yes"
+      includes="**/*.java"/>
     <fixcrlf srcdir="${src.src}"
-             tab="remove"
-             tablength="2"
-             eol="unix"
-             javafiles="yes"
-             includes="**/*.t"/>
+      tab="remove"
+      tablength="2"
+      eol="unix"
+      javafiles="yes"
+      includes="**/*.t"/>
   </target>
 
   <target name="bootstrap" description="Bootstrap source"
-          depends="bootcheck" if="bootstrap.ok">
+    depends="src.dist, bootcheck" if="bootstrap.ok">
     <echo message="### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###"/>
   </target>
 
@@ -1053,8 +1200,9 @@
     <concat destfile="${src.src}/bootcheck/version1">
       <fileset dir="${bootstrap.dir}/build">
         <include name="**/*.class"/>
-	<exclude name="tom/engine/parser/*.class"/>
-	<exclude name="tom/gom/parser/*.class"/>
+        <exclude name="tom/engine/Tom.class"/>
+        <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${bootstrap.dir}/build">
@@ -1070,9 +1218,9 @@
     <concat destfile="${src.src}/bootcheck/version2">
       <fileset dir="${src.build}">
         <include name="**/*.class"/>
-	<exclude name="tom/engine/parser/*.class"/>
-	<exclude name="tom/engine/Tom.class"/>
-	<exclude name="tom/gom/parser/*.class"/>
+        <exclude name="tom/engine/Tom.class"/>
+        <exclude name="tom/engine/parser/*.class"/>
+        <exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
@@ -1087,12 +1235,12 @@
     </concat>
     <condition property="bootstrap.ok" value="true">
       <filesmatch file1="${src.src}/bootcheck/version1"
-                  file2="${src.src}/bootcheck/version2"/>
+        file2="${src.src}/bootcheck/version2"/>
     </condition>
     <!--<delete dir="${src.src}/bootcheck"/>-->
   </target>
 
-  <target name="performbootstrap" depends="src">
+  <target name="performbootstrap" depends="src.dist">
     <echo> CALLING BOOTSTEP 1 ...</echo>
     <!-- compile src with tomsrc -->
     <mkdir dir="${bootstrap.dir}"/>
@@ -1104,7 +1252,7 @@
     <mkdir dir="${src.build}"/>
     <move todir="${src.build}">
       <fileset dir="${bootstrap.dir}/build">
-      <include name="**/*.class"/></fileset>
+        <include name="**/*.class"/></fileset>
     </move>
 
     <!-- compile again src with tomsrc -->
@@ -1115,7 +1263,6 @@
       <param name="destination" value="${bootstrap.dir}"/>
     </antcall>
   </target>
-
 
   <!-- compile tom files in src.src with tom.src -->
   <target name="bootstep" depends="init.task.src" if="destination">
@@ -1131,6 +1278,7 @@
     </antcall>
     <copy todir="${destination}/gen">
       <fileset dir="${src.gen}">
+        <include name="**/Tom.java"/>
         <include name="**/adt/**/*"/>
       </fileset>
     </copy>
@@ -1159,23 +1307,17 @@
   </target>
 
   <target name="bootinstall"
-    description="Install src tree into stable tree"
-    depends="bootstrap"
-    if="bootstrap.ok">
-    <antcall target="manual.bootinstall"/>
-  </target>
-
-  <target name="manual.bootinstall"
     description="Install src tree into stable tree">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
-        <include name="**/*.java.in"/>
-        <include name="**/*.java"/>
-        <include name="**/*.properties"/>
-        <include name="lib/*.jar"/>
-        <include name="lib/*.xml"/>
+        <include name="tom/**/*.java.in"/>
+        <include name="tom/**/*.java"/>
+        <include name="tom/**/*.properties"/>
+        <include name="lib/**/*.jar"/>
+        <include name="lib/**/*.xml"/>
         <exclude name="**/Tom.java"/>
         <exclude name="**/adt/**/*.java"/>
+        <exclude name="**/bootcheck/**/*"/>
         <exclude name="**/bootstrap/**/*"/>
         <exclude name="**/gen/**/*"/>
       </fileset>
@@ -1191,11 +1333,6 @@
     <copy todir="${stable.config}" overwrite="true">
       <fileset dir="${src.config}" includes="*.xml"/>
     </copy>
-
-    <mkdir dir="${stable.src}/tom/engine/adt"/>
-    <mkdir dir="${stable.src}/tom/library/adt"/>
-    <mkdir dir="${stable.src}/tom/platform/adt"/>
-    <mkdir dir="${stable.src}/tom/gom/adt"/>
 
     <jar jarfile="${stable.lib}/tom/TomSignature.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
@@ -1219,8 +1356,8 @@
   </target>
 
   <target name="bundle.src"
-          description="Prepare bundle (src) for eclipse"
-          depends="src.dist">
+    description="Prepare bundle (src) for eclipse"
+    depends="src.dist">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${src.dist.lib}">
@@ -1233,38 +1370,38 @@
   </target>
 
   <target name="prepare.plugin.src"
-          description="prepare the workspace to build tom eclipse plugin"
-          depends="bundle.src"
-          if="plugin.workspace.dir">
-     <!-- copy bundle -->
-     <copy file="${aircubebundlesrc}"
-           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
-     <!-- copy config file -->
-     <copy file="${src.configfile}"
-           todir="${plugin.workspace.dir}/jtom-eclipse"/>
-     <!-- copy mappings -->
-     <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
-       <fileset dir="${src.dist.share}/tom/">
-         <include name="**/*.tom"/>
-       </fileset>
-     </copy>
+    description="prepare the workspace to build tom eclipse plugin"
+    depends="bundle.src"
+    if="plugin.workspace.dir">
+    <!-- copy bundle -->
+    <copy file="${aircubebundlesrc}"
+      tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
+    <!-- copy config file -->
+    <copy file="${src.configfile}"
+      todir="${plugin.workspace.dir}/jtom-eclipse"/>
+    <!-- copy mappings -->
+    <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
+      <fileset dir="${src.dist.share}/tom/">
+        <include name="**/*.tom"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="prepare.plugin.stable"
-          depends="bundle.stable"
-          if="plugin.workspace.dir">
-     <!-- copy bundle -->
-     <copy file="${aircubebundlestable}"
-           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
-     <!-- copy config file -->
-     <copy file="${stable.configfile}"
-           todir="${plugin.workspace.dir}/jtom-eclipse"/>
-     <!-- copy mappings -->
-     <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
-       <fileset dir="${stable.dist.share}/tom/">
-         <include name="**/*.tom"/>
-       </fileset>
-     </copy>
+    depends="bundle.stable"
+    if="plugin.workspace.dir">
+    <!-- copy bundle -->
+    <copy file="${aircubebundlestable}"
+      tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
+    <!-- copy config file -->
+    <copy file="${stable.configfile}"
+      todir="${plugin.workspace.dir}/jtom-eclipse"/>
+    <!-- copy mappings -->
+    <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
+      <fileset dir="${stable.dist.share}/tom/">
+        <include name="**/*.tom"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="bundle.stable"
@@ -1284,8 +1421,8 @@
   <target name="stable.doc" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>
     <javadoc destdir="${stable.doc}"
-             windowtitle="TOM documentation"
-             breakiterator="yes">
+      windowtitle="TOM documentation"
+      breakiterator="yes">
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/library/sl/**/*.java"/>
@@ -1294,48 +1431,70 @@
   </target>
 
   <target name="src.doc"
-          description="Build javadoc for src"
-          depends="src">
+    description="Build javadoc for src"
+    depends="src">
     <mkdir dir="${src.doc}"/>
     <javadoc destdir="${src.doc}"
-             windowtitle="TOM documentation"
-             breakiterator="yes">
+      windowtitle="TOM documentation"
+      breakiterator="yes">
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
         <include name="tom/library/sl/**/*.java"/>
         <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/library/sl/**/*.java"/>
         <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/utils/**/*.java"/>
         <include name="tom/library/xml/**/*.java"/>
         <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
+      <link href="http://tom.loria.fr/adt/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <!-- adt javadoc -->
+  <target name="src.doc.adt"
+    description="Build adt javadoc for src"
+    depends="src">
+    <mkdir dir="${src.doc.adt}"/>
+    <javadoc destdir="${src.doc.adt}"
+      windowtitle="TOM adt documentation"
+      breakiterator="yes">
+      <classpath refid="src.classpath"/>
+      <fileset dir="${src.gen}">
+        <include name="tom/library/adt/**/*.java"/>
+      </fileset>
+      <link href="http://tom.loria.fr/api/" />
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
     </javadoc>
   </target>
 
   <target name="src.www"
-          description="Upload javadoc for src"
-          depends="src.doc">
-        <exec executable="rsync">
-          <arg value="-r"/>
-          <arg value='--exclude'/>
-          <arg value='"CVS/"'/>
-          <arg value='--exclude'/>
-          <arg value='".DS_Store"'/>
-          <arg value='--exclude'/>
-          <arg value='".cvsignore"'/>
-          <arg value="${src.doc}/"/>
-          <arg value='loria:/local/tom/htdocs/soft/unstable/javadoc/'/>
-        </exec>
-        <exec executable="ssh">
-          <arg value='-4'/>
-          <arg value="loria"/>
-          <arg value="find /local/tom/htdocs/soft/unstable/javadoc -user $${USER} | xargs chmod -f g+rw "/>
-        </exec>
+    description="Upload javadoc for src"
+    depends="src.doc">
+    <exec executable="rsync">
+      <arg value="-r"/>
+      <arg value='--exclude'/>
+      <arg value='"CVS/"'/>
+      <arg value='--exclude'/>
+      <arg value='".DS_Store"'/>
+      <arg value='--exclude'/>
+      <arg value='".cvsignore"'/>
+      <arg value="${src.doc}/"/>
+      <arg value='loria:/local/tom/htdocs/soft/unstable/javadoc/'/>
+    </exec>
+    <exec executable="ssh">
+      <arg value='-4'/>
+      <arg value="loria"/>
+      <arg value="find /local/tom/htdocs/soft/unstable/javadoc -user $${USER} | xargs chmod -f g+rw "/>
+    </exec>
   </target>
 
   <target name="clean.doc">
@@ -1344,7 +1503,7 @@
   </target>
 
   <target name="source.distribution"
-          description="Creates a  ready to distribute tom-sources.tgz ">
+    description="Creates a  ready to distribute tom-sources.tgz ">
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/checkout"/>
     <exec dir="${dist}/checkout" executable="svn">
@@ -1364,8 +1523,6 @@
         <exclude name="**/*.exe"/>
         <exclude name="**/*-tom"/>
         <exclude name="**/.svn/**"/>
-        <!-- XXX: Exclude the rss example for 2.5, remove ir lated -->
-        <exclude name="examples/xml/rss/**"/>
         <exclude name="applications/**"/>
       </tarfileset>
     </tar>
@@ -1374,12 +1531,12 @@
 
   <target name="init.task.findbugs">
     <fail unless="findbugs.home">
-Please define "findbugs.home"
-To use findbugs, you should install it on your machine.
-Download it from http://findbugs.sourceforge.net/
-Then define the "findbugs.home" property, giving it the path
-to the findbugs installation, e.g.
-findbugs.home=/home/login/soft/findbugs-1.1.1/
+      Please define "findbugs.home"
+      To use findbugs, you should install it on your machine.
+      Download it from http://findbugs.sourceforge.net/
+      Then define the "findbugs.home" property, giving it the path
+      to the findbugs installation, e.g.
+      findbugs.home=/home/login/soft/findbugs-1.1.1/
     </fail>
     <path id="tom.findbugs">
       <fileset dir="${findbugs.home}/lib/">
@@ -1388,23 +1545,23 @@ findbugs.home=/home/login/soft/findbugs-1.1.1/
     </path>
 
     <taskdef name="findbugs"
-             classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
-             classpathref="tom.findbugs"/>
+      classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+      classpathref="tom.findbugs"/>
   </target>
 
   <target name="init.task.clover">
     <available property="clover.present"
-               classname="com.cenqua.clover.CloverInstr"
-               classpathref="external.classpath"/>
+      classname="com.cenqua.clover.CloverInstr"
+      classpathref="external.classpath"/>
     <fail unless="clover.present">
-Please install clover.
-To use clover, you should install it on your machine.
-Download it from http://www.cenqua.com/clover/
-Then copy clover.jar and clover.licence to
-${user.home}/.ant/lib
+      Please install clover.
+      To use clover, you should install it on your machine.
+      Download it from http://www.cenqua.com/clover/
+      Then copy clover.jar and clover.licence to
+      ${user.home}/.ant/lib
     </fail>
     <taskdef resource="clovertasks"
-             classpathref="external.classpath"/>
+      classpathref="external.classpath"/>
 
     <typedef resource="clovertypes"/> 
   </target>
@@ -1444,17 +1601,16 @@ ${user.home}/.ant/lib
       <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/tom-library-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/sl-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
     </findbugs>
   </target>
 
   <!-- <target name="tags">
-<exec>
-find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
--name "*.java" \) | xargs etags - -language=java
-</exec>
-</target>
+    <exec>
+      find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
+      -name "*.java" \) | xargs etags - -language=java
+    </exec>
+  </target>
   -->
 
 </project>

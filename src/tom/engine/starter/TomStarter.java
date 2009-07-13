@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 package tom.engine.starter;
 
 import java.util.logging.Level;
+import java.util.Map;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
@@ -54,11 +55,10 @@ public class TomStarter extends TomGenericPlugin {
    */
   public void setArgs(Object[] arg) {
     if (arg[0] instanceof String) {
-      fileName = (String)arg[0];  
+      fileName = (String)arg[0];
     } else {
       getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
-                      new Object[]{"VasStarter", "[String]",
-                                   getArgumentArrayString(arg)});
+                      new Object[]{"TomStarter", "[String]", getArgumentArrayString(arg)});
     }
   }
 
@@ -66,10 +66,11 @@ public class TomStarter extends TomGenericPlugin {
    * inherited from plugin interface
    * Create the VasStreamManager as input for next plugin
    */
-  public void run() {
+  public void run(Map informationTracker) {
     TomStreamManager localStreamManager = new TomStreamManager();
     localStreamManager.initializeFromOptionManager(getOptionManager());
     localStreamManager.prepareForInputFile(fileName);
+    //System.out.println("(debug) I'm in the Tom Starter : file / TSM"+fileName+" / "+localStreamManager.toString());
     argToRelay = new Object[]{localStreamManager};
   }
   

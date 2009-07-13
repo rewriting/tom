@@ -1,6 +1,6 @@
 /*
 *
-* Copyright (c) 2000-2008, INRIA
+* Copyright (c) 2000-2009, INRIA
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ public class VisitableIntrospector implements Introspector {
       return ((Visitable)o).setChildren((Visitable[])children); 
   }
 
-  public Object[] getChildren(Object o){
+  public Object[] getChildren(Object o) {
       return ((Visitable)o).getChildren();
   }
 

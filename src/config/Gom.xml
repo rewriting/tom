@@ -52,6 +52,8 @@
       class='tom.gom.parser.GomParserPlugin'/>
     <plugin name='Expander'
       class='tom.gom.expander.ExpanderPlugin'/>
+    <plugin name='FreshExpander'
+      class='tom.gom.expander.FreshExpanderPlugin'/>
     <plugin name='TypeExpander'
       class='tom.gom.expander.TypeExpanderPlugin'/>
     <plugin name='GraphExpander'
@@ -78,6 +80,10 @@
       <boolean name='termpointer' 
         altName='tp' 
         description='Extend the signature for term pointers' 
+        value='false'/> 
+      <boolean name='fresh' 
+        altName='f'
+        description='Extend the signature to deal with terms with binders' 
         value='false'/> 
       <boolean name='termgraph' 
         altName='tg'

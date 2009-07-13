@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 import tom.platform.ConfigurationManager;
 import tom.platform.OptionManager;
 import tom.platform.OptionOwner;
+import tom.platform.Plugin;
 import tom.platform.adt.platformoption.types.PlatformBoolean;
 import tom.platform.adt.platformoption.types.PlatformOption;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -57,16 +58,16 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private PlatformOptionList globalOptions;
 
   /**  map the name of an option to the plugin which defines this option */
-  private Map mapNameToOwner;
+  private Map<String,OptionOwner> mapNameToOwner;
 
   /** map the name of an option to the option itself */
-  private Map mapNameToOption;
+  private Map<String,PlatformOption> mapNameToOption;
 
   /** map a shortname of an option to its full name */
-  private Map mapShortNameToName;
+  private Map<String,String> mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
-  private List inputFileList; 
+  private List<String> inputFileList; 
   
   private static Logger logger = Logger.getLogger("tom.engine.TomOptionManager");
   /**
@@ -74,10 +75,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * constructing a configurationManager that needs to be initialized
    */
   public TomOptionManager() {
-    mapNameToOwner = new HashMap();
-    mapNameToOption = new HashMap();
-    mapShortNameToName = new HashMap();
-    inputFileList = new ArrayList();
+    mapNameToOwner = new HashMap<String,OptionOwner>();
+    mapNameToOption = new HashMap<String,PlatformOption>();
+    mapShortNameToName = new HashMap<String,String>();
+    inputFileList = new ArrayList<String>();
     globalOptions = `concPlatformOption();
   }
 
@@ -93,8 +94,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * </ul>
    */
   public int initialize(ConfigurationManager confManager, String[] commandLine) {
-    List pluginList = confManager.getPluginsList();
-    List optionOwnerList = new ArrayList(pluginList);
+    List<Plugin> pluginList = confManager.getPluginsList();
+    List<OptionOwner> optionOwnerList = new ArrayList<OptionOwner>(pluginList);
     optionOwnerList.add(this);
     collectOptions(optionOwnerList, pluginList);
     this.inputFileList = processArguments(commandLine);
@@ -119,7 +120,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * @return the input files list
    */
-  public List getInputToCompileList() {
+  public List<String> getInputToCompileList() {
     return inputFileList;
   }
 
@@ -176,7 +177,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-    %match(PlatformOption option) {
+    %match(option) {
       PluginOption[Value=BooleanValue(True())]  -> {
         return Boolean.valueOf(true);
       }
@@ -233,15 +234,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * collects and initializes the options/services provided by each plugin
    */
-  private void collectOptions(List optionOwnerList, List plugins) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner owner = (OptionOwner)owners.next();
+  private void collectOptions(List<OptionOwner> optionOwnerList, List plugins) {
+    for (OptionOwner owner : optionOwnerList) {
       PlatformOptionList list = owner.getDeclaredOptionList();
       owner.setOptionManager((OptionManager)this);
       while(!list.isEmptyconcPlatformOption()) {
         PlatformOption option = list.getHeadconcPlatformOption();
-        %match(PlatformOption option) {
+        %match(option) {
           PluginOption[Name=name, AltName=altName] -> {
             setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
@@ -260,10 +259,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param optionownerlist the list of option owners to check
    * @return 0 if there is no unfulfilled need, 1 otherwise
    */
-  private int checkAllOptionsDepedencies(List optionOwnerList) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner plugin = (OptionOwner)owners.next();
+  private int checkAllOptionsDepedencies(List<OptionOwner> optionOwnerList) {
+    for (OptionOwner plugin : optionOwnerList) {
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
         getLogger().log(Level.SEVERE, TomMessage.prerequisitesIssue.getMessage(),
                         plugin.getClass().getName());
@@ -275,13 +272,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
   private String getCanonicalName(String name) {
     if(mapShortNameToName.containsKey(name)) {
-      return (String)mapShortNameToName.get(name);
+      return mapShortNameToName.get(name);
     }
     return name;
   }
 
   private PlatformOption getOptionFromName(String name) {
-    PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
+    PlatformOption option = mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
       //throw new RuntimeException();
@@ -290,11 +287,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   private PlatformOption setOptionFromName(String name, PlatformOption option) {    
-    return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
+    return mapNameToOption.put(getCanonicalName(name),option);
   }
 
   private OptionOwner getOptionOwnerFromName(String name) {
-    OptionOwner plugin = (OptionOwner)mapNameToOwner.get(getCanonicalName(name));
+    OptionOwner plugin = mapNameToOwner.get(getCanonicalName(name));
     if(plugin == null) {
       getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
@@ -324,11 +321,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     String beginning = "usage: tom [options] input[.t] [... input[.t]]"
       + "\noptions:\n";
     StringBuilder buffer = new StringBuilder(beginning);
-    TreeMap treeMap = new TreeMap(mapNameToOption);
-    Iterator it = treeMap.values().iterator();
-    while(it.hasNext()) {
-      PlatformOption h = (PlatformOption)it.next();
-      %match(PlatformOption h) {
+    TreeMap<String,PlatformOption> treeMap = new TreeMap<String,PlatformOption>(mapNameToOption);
+    for (PlatformOption h : treeMap.values()) {
+      %match(h) {
         PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
@@ -350,7 +345,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public static void displayVersion() {
     System.out.println("\njtom " + Tom.VERSION + "\n" +
-                       "Copyright (c) 2000-2008, INRIA, Nancy, France.\n");
+                       "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
   }
 
   /**
@@ -361,7 +356,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
-    %match(PlatformOptionList requiredOptions) {
+    %match(requiredOptions) {
       concPlatformOption() -> {
         return true;
       }
@@ -393,8 +388,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList
    * @return an array containing the name of the input files
    */
-  private List processArguments(String[] argumentList) {
-    List fileList = new ArrayList();
+  private List<String> processArguments(String[] argumentList) {
+    List<String> fileList = new ArrayList<String>();
     StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
@@ -420,6 +415,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("version") || argument.equals("V")) {
             TomOptionManager.displayVersion();
+            return null;
           }
           if(argument.equals("X")) {
             // just skip it, along with its argument
@@ -454,16 +450,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             displayHelp();
             return null;
           } else {
-            %match(PlatformOption option) {
+            %match(option) {
               PluginOption[Value=BooleanValue[]] -> {
                 // this is a boolean flag: we set to TRUE
                 // and no the opposite since -O2 implies -p=true
                 setOptionValue(argument, Boolean.TRUE);
-                //if(((Boolean)getOptionValue(argument)).booleanValue()) {
-                //  setOptionValue(argument, Boolean.FALSE);
-                //} else {
-                //  setOptionValue(argument, Boolean.TRUE);
-                //}
               }
 
               PluginOption[Value=IntegerValue[]] -> {

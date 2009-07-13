@@ -20,19 +20,19 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | Strategy(SName:TomName,ExtendsTerm:TomTerm,VisitList:TomVisitList,OrgTrack:Option)
             | FunctionDef(AstName:TomName,ArgumentList:TomList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
             | MethodDef(AstName:TomName,ArgumentList:TomList,Codomain:TomType,ThrowsType:TomType,Instruction:Instruction)
-/*
-super is the parameter given to the function super. For Instance: super(`Identity());
-*/
+            /*
+            super is the parameter given to the function super. For Instance: super(`Identity());
+            */
             | Class(AstName:TomName,ExtendsType:TomType,SuperTerm:TomTerm,Declaration:Declaration)
             | IntrospectorClass(AstName:TomName,Declaration:Declaration)
             | SymbolDecl(AstName:TomName)
             | ListSymbolDecl(AstName:TomName)
+            | ArraySymbolDecl(AstName:TomName)
+            | EmptyDeclaration()
+            | AbstractDecl(DeclList:DeclarationList)
             /**             
             * An AC symbol
             */
             | ACSymbolDecl(AstName:TomName)
-            | ArraySymbolDecl(AstName:TomName)
-            | EmptyDeclaration()
-            | AbstractDecl(DeclList:DeclarationList)
 
 DeclarationList = concDeclaration(Declaration*)

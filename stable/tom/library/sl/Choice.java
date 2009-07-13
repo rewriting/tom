@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,38 +35,38 @@ package tom.library.sl;
  * <p>
  * <code>Choice(v1,v2) = v2</code>    if v1 fails
  * <p>
- * Visitor combinator with two visitor arguments, that tries to
- * apply the first visitor and if it fails tries the other
+ * Visitor combinator with two arguments, that tries to
+ * apply the first argument and if it fails tries the other
  * (left-biased choice).
  * <p>
  * Note that any side-effects of v1 are not undone when it fails.
  */
 
-public class Choice extends AbstractStrategy {
+public class Choice extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public Choice(Strategy first, Strategy then) {
     initSubterm(first,then);
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     try {
-      return visitors[FIRST].visitLight(subject, introspector);
+      return arguments[FIRST].visitLight(subject, introspector);
     } catch (VisitFailure f) {
-      return visitors[THEN].visitLight(subject, introspector);
+      return arguments[THEN].visitLight(subject, introspector);
     }
   }
 
   public int visit(Introspector introspector) {
     Object subject = environment.getSubject();
-    int status = visitors[FIRST].visit(introspector);
+    int status = arguments[FIRST].visit(introspector);
     if(status == Environment.SUCCESS) {
       return status;
     } else {
       //setStatus(Environment.SUCCESS);
       /* reset the modifications from FIRST */
       environment.setSubject(subject);
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
   }
 }

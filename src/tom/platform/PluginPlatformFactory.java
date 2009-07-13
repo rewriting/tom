@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -48,8 +48,43 @@ public class PluginPlatformFactory {
   /** the singleton instance*/
   private static PluginPlatformFactory instance = new PluginPlatformFactory();
 
+/////////////////  
+  /** the PluginPlatformTracker */
+  private static Map<Long,PluginPlatform> pluginPlatformTracker;
+
+  public static Map<Long,PluginPlatform> getPluginPlatformTracker() {
+    return pluginPlatformTracker;
+  }
+
+  public static PluginPlatform getPluginPlatform(Long pluginPlatformID) {
+    return pluginPlatformTracker.get(pluginPlatformID);
+  }
+
+  public static PluginPlatform putPluginPlatform(Long pluginPlatformID, PluginPlatform pluginPlatform) {
+    return pluginPlatformTracker.put(pluginPlatformID,pluginPlatform);
+  }
+
+/* 
+ private static int threadsCounter = 0;
+
+ public synchronized static void increaseThreadsCounter() {
+    threadsCounter++;
+  }
+
+  public synchronized static void decreaseThreadsCounter() {
+    threadsCounter--;
+  }
+
+  public synchronized static int getThreadsCounter() {
+    return threadsCounter;
+  }
+*/
+///////////////////
+
+
   /** protection again instanciation */
   private PluginPlatformFactory() {
+    pluginPlatformTracker = new HashMap<Long,PluginPlatform>();
     String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
     if (loggingConfigFile == null) { // default > no custom file is used
       // create a config equivalent to defaultlogging.properties file
@@ -77,7 +112,8 @@ public class PluginPlatformFactory {
    * argument shall contain a sequence of string -X and configFileName
    * to be able to create the PluginPlatform.
    */
-  public PluginPlatform create(String[] commandLine, String logRadical) {    
+  //public PluginPlatform create(String[] commandLine, String logRadical) {    
+  public PluginPlatform create(String[] commandLine, String logRadical,List<String> inputToCompileList) {    
     String confFileName = extractConfigFileName(commandLine);
     if(confFileName == null) {
       return null;
@@ -86,7 +122,24 @@ public class PluginPlatformFactory {
     if(confManager.initialize(commandLine) == 1) {
       return null;
     }
-    return new PluginPlatform(confManager,logRadical);
+    return new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList);
+    //return new PluginPlatform(confManager,logRadical);
+  }
+
+  //second PluginPlatform create() method : used if it is launched by Gom
+  public PluginPlatform create(String[] commandLine,
+                               String logRadical,
+                               List<String> inputToCompileList,
+                               Map<String,String> informationTracker) {    
+    String confFileName = extractConfigFileName(commandLine);
+    if(confFileName == null) {
+      return null;
+    }
+    ConfigurationManager confManager = new ConfigurationManager(confFileName);
+    if(confManager.initialize(commandLine) == 1) {
+      return null;
+    }
+    return new PluginPlatform(confManager.getPluginsList(),logRadical,inputToCompileList,informationTracker);
   }
 
   /**
@@ -98,13 +151,13 @@ public class PluginPlatformFactory {
    * @param commandLine the command line
    * @return a String containing the path to the configuration file to be used
    */
-  private static String extractConfigFileName(String[] commandLine) {
+  public static String extractConfigFileName(String[] commandLine) {
     String xmlConfigurationFile = null;
     int i=0;
-    List commandList = new ArrayList();
+    List<String> commandList = new ArrayList<String>();
     try {
-      for(;i< commandLine.length;i++) {
-        if(commandLine[i].equals("-X")) {
+      for (; i < commandLine.length; i++) {
+        if (commandLine[i].equals("-X")) {
           xmlConfigurationFile = commandLine[++i];
         } else {
           commandList.add(commandLine[i]);
@@ -122,7 +175,7 @@ public class PluginPlatformFactory {
       //System.out.println("xmlConfigFile = " + file.getPath());
       if(file.exists()) { 
         // side effect on the commandLine since config information is no more needed
-        commandLine = (String[])commandList.toArray(new String[]{});
+        commandLine = commandList.toArray(new String[0]);
         return xmlConfigurationFile;
       }
     } catch(Exception e) {}

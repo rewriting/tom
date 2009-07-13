@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
- * Copyright (c) 2000-2008, INRIA
+ *
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -67,7 +67,11 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
-  %include{ ../../library/mapping/java/util/HashSet.tom }
+  %typeterm TomNameHashSet {
+    implement      { java.util.HashSet<TomName> }
+    is_sort(t)      { $t instanceof java.util.HashSet }
+    equals(l1,l2)  { $l1.equals($l2) }
+  }
 
   %typeterm TomOptimizer { implement { TomOptimizer } }
 
@@ -75,54 +79,63 @@ public class TomOptimizer extends TomGenericPlugin {
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   /** the declared options string*/
-  private static final String DECLARED_OPTIONS = 
-    "<options>" + 
-    "<boolean name='optimize' altName='O' description='Optimized generated code' value='false'/>" +
-    "<boolean name='optimize2' altName='O2' description='Optimized generated code' value='false'/>" +
+  private static final String DECLARED_OPTIONS =
+    "<options>" +
+    "<boolean name='optimize' altName='O' description='Optimize generated code: perform inlining' value='true'/>" +
+    "<boolean name='optimize2' altName='O2' description='Optimize generated code: discrimination tree' value='false'/>" +
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
     "</options>";
 
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(TomOptimizer.DECLARED_OPTIONS);
+  }
+
   public void optionChanged(String optionName, Object optionValue) {
-    if(optionName.equals("optimize2") && ((Boolean)optionValue).booleanValue() ) { 
-      setOptionValue("pretty", Boolean.TRUE);        
+    if(optionName.equals("optimize2") && ((Boolean)optionValue).booleanValue() ) {
+      setOptionValue("pretty", Boolean.TRUE);
     }
   }
 
   // this static field is necessary for %strategy instructions that generate static code
   private static PILFactory factory = new PILFactory();
   private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
+  private static void info(TomMessage msg, int value, String name) {
+    logger.log( Level.INFO, msg.getMessage(), new Object[]{ Integer.valueOf(value), name });
+  }
 
   /** Constructor */
   public TomOptimizer() {
     super("TomOptimizer");
   }
 
-  public void run() {
+  public void run(Map informationTracker) {
+    //System.out.println("(debug) I'm in the Tom optimizer : TSM"+getStreamManager().toString());
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
-      // Initialize strategies
-
-      Strategy optStrategy2 = `Sequence(
-          InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
-          InnermostId(
-            ChoiceId(
-              Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
-              SequenceId(InterBlock(this),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
-            )
-          );
-
+      /* Initialize strategies */
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
+        if(getOptionBooleanValue("optimize2")) {
+          Strategy optStrategy2 = `Sequence(
+              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
+              InnermostId(ChoiceId(
+                  Sequence(BuiltinRepeatId(IfSwapping(this)), 
+                           BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+                  SequenceId(InterBlock(this),
+                             OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten()))))
+                )
+              );
+          renamedTerm = optStrategy2.visitLight(renamedTerm);
+          renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint())).visit(renamedTerm);
+          renamedTerm = optStrategy2.visitLight(renamedTerm);
+//System.out.println("opt renamedTerm = " + renamedTerm);
+        } else if(getOptionBooleanValue("optimize")) {
+          Strategy optStrategy = `Sequence(
+                InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
+                BuiltinBottomUp(Inline(TrueConstraint())));
 
-        if(getOptionBooleanValue("optimize2")) {          
-          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
-          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-        } else {
-          if(getOptionBooleanValue("optimize")) {
-            renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
-          }
+          renamedTerm = optStrategy.visit(renamedTerm);
         }
         setWorkingTerm(renamedTerm);
 
@@ -134,10 +147,10 @@ public class TomOptimizer extends TomGenericPlugin {
             new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
 
         e.printStackTrace();
-        return;
+         return;
       }
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX, 
+        Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX,
             (TomTerm)getWorkingTerm() );
       }
     } else {
@@ -147,278 +160,22 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("prettyPIL")) {
       System.out.println(factory.prettyPrintCompiledMatch(factory.remove((TomTerm)getWorkingTerm())));
     }
-
   }
 
-  public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomOptimizer.DECLARED_OPTIONS);
-  }
-
+  private final static String PREFIX = "tom_";
   private static String extractRealName(String name) {
-    if(name.startsWith("tom_")) {
-      return name.substring(4);
+    if(name.startsWith(PREFIX)) {
+      return name.substring(PREFIX.length());
     }
     return name;
   }
 
-  /* strategies for LetRef inlining */
-  // comp = special( comp, basecase(comp,fail()) )
-  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariableLetRef) { 
-    make(variableName, info) { (
-      `Try(
-          mu(MuVar("comp"),
-            computeOccurencesLetRefSpecialCase( MuVar("comp"),
-              computeOccurencesLetRefBaseCase( All(MuVar("comp")), 
-                variableName,
-                info
-                ),
-              variableName,
-              info
-              )
-            ))
-      ) }
-  }
-
-  %typeterm InfoVariableLetRef { implement{ InfoVariableLetRef } }
-
-  private static class InfoVariableLetRef {
-
-    public tom.library.sl.Position lastRead;
-    public Expression lastAssignment;
-    public tom.library.sl.Position lastAssignmentPosition;
-    public HashSet<TomName> lastAssignmentVariables= new HashSet();
-    public int readCount=0;
-
-    public void setlastvalue(Expression newassignment,tom.library.sl.Position newassignmentpos) {
-      lastAssignment=newassignment;
-      lastAssignmentPosition=newassignmentpos;
-      lastAssignmentVariables.clear();
-      try {
-        `TopDownCollect(findRefVariable(lastAssignmentVariables)).visitLight(newassignment);
-      } catch(tom.library.sl.VisitFailure e) {
-        logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
-      }
-    }
-
-    public InfoVariableLetRef() {}
-
-    public InfoVariableLetRef(Expression lastAssignment, tom.library.sl.Position lastAssignmentPosition) {
-      setlastvalue(lastAssignment,lastAssignmentPosition);
-    } 
-
-  }
-
-  %strategy findRefVariable(set: HashSet) extends Identity() {
+  %strategy Inline(context:Constraint) extends Identity() {
     visit TomTerm {
-      Ref((Variable|VariableStar)[AstName=name]) -> {
-        set.add(`name);
-        //stop to visit this branch (like "return false" with traversal) 
-        throw new tom.library.sl.VisitFailure();
-      }
-    }
-  }
-
-  //case where failure is used to cut branches
-  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends defaultCase {
-    visit Instruction {
-      TypedAction[] -> {
-        /* recursive call of the current strategy on the first child */
-        Environment current = getEnvironment();
-        current.down(1);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
-      }
-
-      LetAssign(Variable[AstName=varname],src,_) -> {
-        if(`varname.equals(variableName)) {
-          info.setlastvalue(`src,getEnvironment().getPosition());
-        } else {
-          if(info.lastAssignmentVariables.contains(`varname)) {
-            info.lastAssignment = null;
-            info.lastAssignmentPosition = null;
-            info.lastAssignmentVariables.clear();
-          }
-        }
-        /* recursive call of the current strategy on src */
-        Environment current = getEnvironment();
-        current.down(2);
-        goOnCase.visit(current);
-        current.up();
-        /* recursive call of the current strategy on inst */
-        current.down(3);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
-      }
-      // same code as for LetAssign with only one recursive call
-      Assign(Variable[AstName=varname],src) -> {
-        if(`varname.equals(variableName)) {
-          info.setlastvalue(`src,getEnvironment().getPosition());
-        } else {
-          if(info.lastAssignmentVariables.contains(`varname)) {
-            info.lastAssignment = null;
-            info.lastAssignmentPosition = null;
-            info.lastAssignmentVariables.clear();
-          }
-        }
-        /* recursive call of the current strategy on src */
-        Environment current = getEnvironment();
-        current.down(2);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
-      }
-
-    }
-  }
-
-  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends defaultCase {
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> { 
-        if(variableName == `name) {
-          info.readCount++;
-          info.lastRead=getEnvironment().getPosition(); 
-          if (info.readCount==2) { throw new VisitFailure(); }
-        }  
-      } 
-    } 
-  }
-
-  /* strategies for Let inlining */
-  // comp = special1(special2(all(comp),base(all(comp),fail())),fail())
-  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariableLet) { 
-    make(variableName, info) { (
-      `Try(
-          mu(MuVar("comp"),
-            computeOccurencesLetSpecialCase1( computeOccurencesLetSpecialCase2( MuVar("comp"),
-                computeOccurencesLetBaseCase( All(MuVar("comp")),
-                  variableName,
-                  info
-                  ),
-                variableName, 
-                info
-                ),
-              info
-              )
-            )) )
-    }
-  }
-
-  %typeterm InfoVariableLet {
-    implement{ InfoVariableLet }
-  }
-
-  private static class InfoVariableLet {
-
-    public tom.library.sl.Position lastRead;
-    public HashSet<TomName> assignmentVariables= new HashSet();
-    public int readCount=0;
-    public boolean modifiedAssignmentVariables=false;
-
-    public void setlastvalue(Expression newassignment) {
-      assignmentVariables.clear();
-      try {
-        `TopDownCollect(findRefVariable(assignmentVariables)).visitLight(newassignment);
-      } catch(tom.library.sl.VisitFailure e) {
-        logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
-      }
-    }
-
-    public InfoVariableLet(Expression assignment) { setlastvalue(assignment); } 
-
-    public InfoVariableLet() {}
-
-  }
-
-  %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends defaultCase {
-    visit Instruction {
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
-        if(info.assignmentVariables.contains(`varname)) {
-          info.modifiedAssignmentVariables=true;
-          throw new tom.library.sl.VisitFailure();
-        }
-      }
-    }
-  } 
-
-  %strategy computeOccurencesLetSpecialCase2(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariableLet) extends cutCase {
-    visit Instruction {
-      TypedAction[] -> {
-        /* recursive call of the current strategy on the first child */
-        Environment current = getEnvironment();
-        current.down(1);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
-      }
-
-      // should not happen
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
-        if (variableName.equals(`varname)) {
-          logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
-        }
-      }
-    }
-  }
-
-  %strategy computeOccurencesLetBaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariableLet) extends defaultCase {
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> { 
-        if(variableName == `name) {
-          info.readCount++;
-          info.lastRead = getEnvironment().getPosition(); 
-          if (info.readCount==2) { throw new VisitFailure(); }
-        } 
-      } 
-    } 
-  }
-
-  /* 
-   * rename variable1 into variable2
-   */
-  %op Strategy renameVariable(variable1: TomName, variable2: TomName){
-    make(variable1,variable2) { (`TopDown(renameVariableOnce(variable1,variable2)) )}
-  }
-
-  %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
-    visit TomTerm{
-      var@(Variable|VariableStar)[AstName=astName] -> {
-        if(variable1 == `astName) {
-          return `var.setAstName(variable2);
-        }
-      }
-    } // end match
-  }
-
-  %op Strategy CleanAssign(varname: TomName){
-    make(varname) { (`TopDown(CleanAssignOnce(varname))) }
-  }
-
-  %strategy CleanAssignOnce(varname:TomName) extends `Identity() {
-    visit Instruction {
-      LetAssign((Variable|VariableStar)[AstName=name],_,body) -> {
-        if (`name.equals(varname)) { return `body; }
-      }
-    }
-  }
-
-  private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
-    return factory.remove(term1)==factory.remove(term2);
-  }
-
-  %strategy Inline(context:Constraint) extends `Identity() {
-    visit TomTerm {
-      ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
-
       /* optimize the insertion of a slice into a list */
       BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
         return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
       }
-    }
-
-    visit Expression {
-      TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
     }
 
     visit Instruction {
@@ -427,107 +184,95 @@ public class TomOptimizer extends TomGenericPlugin {
         //System.out.println("found context = " + context);
         return `t;
       }
-      /*
-       * 
-       * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
-       * x should not appear in exp
-       */
-      LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
-        /*
-         * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
-         * is not correctly handled 
-         * we must check that X notin exp
-         */
-        String varName = "";
-        %match(name) { Name(tomName) -> { varName = `extractRealName(tomName); } }
 
-        //`findOccurencesUpTo(name,list,2).visitLight(`body);
-        InfoVariableLetRef info = new InfoVariableLetRef(`exp,getEnvironment().getPosition());
-        `computeOccurencesLetRef(name,info).visit(`body);
-        int mult = info.readCount;
-        tom.library.sl.Position readPos = info.lastRead;
-        TomTerm value = `ExpressionToTomTerm(info.lastAssignment);
-        // 0 -> unused variable
-        // suppress the letref and all the corresponding letassigns in the body
-        if(mult == 0) {
-          // why this test?
+      /*
+       *
+       * Let x<-variable in body ==> inline
+       * If exp does no depend from values which are modified between Let x<-exp and the use of x in the body
+       * Let x<-exp in body where x is used 0 times ==> eliminate
+       * Let x<-exp in body where x is used 1 times ==> inline
+       */
+      Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+        return `body;
+      }
+
+      /* only for generated variables */
+      /* Let x <- y in body where y is a variable ==> inline */
+      /* Let x <- (T) y in body where y is a variable ==> inline */
+      Let((Variable|VariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
+        (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
+         Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
+          return `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
+      }
+
+      Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+        String varName = ""; // real name of the variable (i.e. without the tom_ prefix)
+        %match(name) {
+          Name(tomName) -> { varName = `extractRealName(tomName); }
+        }
+
+        // count the occurence of name
+        InfoVariable infoBody = new InfoVariable();
+        infoBody.setAssignment(`exp,getPosition());
+        getEnvironment().down(3); // 3 = body
+        `computeOccurencesLet(name,infoBody).visit(getEnvironment());
+        getEnvironment().up();
+
+        int mult = infoBody.readCount;
+        if(mult == 0) { // name is not used
+          // suppress the Let
           if(varName.length() > 0) {
+            // varName is not empty when the variable is a user defined variable (with a name)
+            // and not a variable generated by the compiler itself
             // TODO: check variable occurence in TypedAction
-            info = new InfoVariableLetRef();
-            `computeOccurencesLetRef(name,info).visit(`context);
-            if(info.readCount<=1 && !varName.startsWith("_")) {
+            InfoVariable infoContext = new InfoVariable();
+            `computeOccurencesLet(name,infoContext).visit(`context);
+            if(infoContext.readCount<=1 && !varName.startsWith("_")) {
+              // variables introduced by renaming starts with a '_'
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,varName);
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.remove,mult,varName);
             }
           }
-          //remove all the unused letassign in the letref body
-          return (Instruction) `CleanAssign(name).visitLight(`body);
+          return `body;
         } else if(mult == 1) {
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
-          if(info.lastAssignment!=null) {
-            //test if the last assignment is not in a conditional sub-block
-            //relatively to the variable use
-            tom.library.sl.Position src = info.lastRead;
-            tom.library.sl.Position dest = info.lastAssignmentPosition;
-            // find the positive part of src-dest
-            tom.library.sl.Position positivePart = (tom.library.sl.Position) dest.sub(src).getCanonicalPath();
-            while(positivePart.length()>0 && positivePart.getHead()<0) {
-              positivePart = (tom.library.sl.Position) positivePart.getTail();
+          if(!infoBody.modifiedAssignmentVariables) {
+            if(varName.length() > 0) {
+              info(TomMessage.inline,mult,varName);
             }
-            // find the common ancestor of src and dest
-            tom.library.sl.Position commonAncestor = (tom.library.sl.Position) dest.add(positivePart.inverse()).getCanonicalPath();
-            try {
-              //this strategy fails if  from common ancestor and along the path positivePart 
-              //there is an instruction If, WhileDo or DoWhile
-              commonAncestor.getOmega(positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo())))).visit(`body);
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.inline.getMessage(),
-                    new Object[]{ Integer.valueOf(mult), varName });
-              }
-              //System.out.println("replace1: " + `var + "\nby: " + `exp);
-              return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
-            }catch(VisitFailure e) {
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.noInline.getMessage(),
-                    new Object[]{ Integer.valueOf(mult), varName });
-              }
-            }
+            Position current = getPosition();
+            getEnvironment().goToPosition(infoBody.usePosition);
+            getEnvironment().setSubject(`ExpressionToTomTerm(exp));
+            getEnvironment().goToPosition(current);
+            Instruction newlet = (Instruction) getEnvironment().getSubject();
+            // return only the body
+            return (Instruction) newlet.getChildAt(2);
           } else {
             if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.noInline,mult,varName);
             }
           }
         } else {
-          /* do nothing: traversal() */
+          /* do nothing */
           if(varName.length() > 0) {
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ Integer.valueOf(mult), varName });
+            info(TomMessage.doNothing,mult,varName);
           }
         }
       }
 
       /*
-       * 
-       * Let x<-exp in body where x is used 0 or 1 ==> eliminate
+       * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      Let(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
-         * is not correctly handled 
+         * is not correctly handled
          * we must check that X notin exp
          */
         String varName = "";
@@ -535,122 +280,384 @@ public class TomOptimizer extends TomGenericPlugin {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
-        //`findOccurencesUpTo(name,list,2).visitLight(`body);
-        InfoVariableLet info = new InfoVariableLet(`exp);
-        `computeOccurencesLet(name,info).visit(`body);
+        InfoVariable info = new InfoVariable();
+        info.setAssignment(`exp,getPosition());
+        getEnvironment().down(3);
+        //computeOccurencesLetRef on the body
+        `computeOccurencesLetRef(name,info).visit(getEnvironment());
+        getEnvironment().up();
         int mult = info.readCount;
-        tom.library.sl.Position readPos = info.lastRead;
+        Position readPos = info.usePosition;
+        TomTerm value = `ExpressionToTomTerm(info.assignment);
+
+        //System.out.println(`name + " --> " + mult);
         // 0 -> unused variable
         // suppress the letref and all the corresponding letassigns in the body
         if(mult == 0) {
           // why this test?
           if(varName.length() > 0) {
             // TODO: check variable occurence in TypedAction
-            info = new InfoVariableLet();
-            `computeOccurencesLet(name,info).visit(`context);
+            info = new InfoVariable();
+            `computeOccurencesLetRef(name,info).visit(`context);
             if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,varName);
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.remove,mult,varName);
             }
           }
-          //remove all the unused letassign in the letref body
-          return `body;
+          return `CleanAssign(name).visitLight(`body);
         } else if(mult == 1) {
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
-          //modified between the last assignment and the read
-          if(! info.modifiedAssignmentVariables) {
-            if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+          //modified between the last assignment and the use
+          if(info.assignment!=null) {
+            //test if the last assignment is not in a conditional sub-block
+            //relatively to the variable use
+            Position src = info.usePosition;
+            Position dest = info.assignmentPosition;
+
+            // find the positive part of src-dest
+            Position positivePart = (Position) dest.sub(src).getCanonicalPath();
+            while(positivePart.length()>0 && positivePart.getHead()<0) {
+              positivePart = (Position) positivePart.getTail();
             }
-            return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
+            // find the common ancestor of src and dest
+            Position commonAncestor = (Position) dest.add(positivePart.inverse()).getCanonicalPath();
+            Position current = getPosition();
+            getEnvironment().goToPosition(commonAncestor);
+            try {
+              //this strategy fails if from common ancestor and along the path
+              //positivePart there is an instruction If, WhileDo or DoWhile
+              positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo()))).visit(`getEnvironment());
+              if(varName.length() > 0) {
+                info(TomMessage.inline,mult,varName);
+              }
+              getEnvironment().goToPosition(readPos);
+              getEnvironment().setSubject(value);
+              getEnvironment().goToPosition(current);
+              `CleanAssign(name).visit(getEnvironment());
+              Instruction newletref = (Instruction) getEnvironment().getSubject();
+              // return only the body
+              //System.out.println("inlineletref");
+              return (Instruction) newletref.getChildAt(2);
+            } catch(VisitFailure e) {
+              getEnvironment().goToPosition(current);
+              if(varName.length() > 0) {
+                info(TomMessage.noInline,mult,varName);
+              }
+            }
           } else {
             if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.noInline,mult,varName);
             }
           }
         } else {
           /* do nothing: traversal() */
           if(varName.length() > 0) {
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ Integer.valueOf(mult), varName });
+            info(TomMessage.doNothing,mult,varName);
           }
         }
       }
 
-      Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-        return `body; 
-      } 
-    } // end match
+    }
   }
 
-  %strategy NopElimAndFlatten() extends `Identity() {
+  %typeterm InfoVariable { implement{ InfoVariable } }
+
+  private static class InfoVariable {
+
+    private HashSet<TomName> assignmentVariables = new HashSet<TomName>();
+    public int readCount=0;
+    public boolean modifiedAssignmentVariables=false; // true when exp depends on a variable which is modified by Assign
+    public Position usePosition; // position where is used the variable
+    /*
+     * for LetRef
+     */
+    private Position assignmentPosition;
+    private Expression assignment;
+
+    public InfoVariable() {}
+
+    public void setAssignment(Expression newAssignment,Position newAssignmentPosition) {
+      assignment = newAssignment;
+      assignmentPosition = newAssignmentPosition;
+      assignmentVariables.clear();
+      try {
+        `TopDownCollect(CollectVariable(assignmentVariables)).visitLight(newAssignment);
+      } catch(VisitFailure e) {
+        logger.log( Level.SEVERE, "Error during collecting variables in "+newAssignment);
+      }
+    }
+
+    public Set getAssignmentVariables() {
+      return assignmentVariables;
+    }
+
+    public void clear() {
+      assignment = null;
+      assignmentPosition = null;
+      assignmentVariables.clear();
+    }
+
+  }
+
+  %strategy CollectVariable(set:TomNameHashSet) extends Identity() {
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {
+        set.add(`name);
+        //stop to visit this branch (like "return false" with traversal)
+        throw new VisitFailure();
+      }
+    }
+  }
+
+  /* strategies for Let inlining (using cps) */
+  // comp = AssignCase(TypedActionCase(comp,BaseCase(all(comp),fail())),fail())
+  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariable) {
+    make(variableName, info) {
+        `Try(
+          mu(MuVar("comp"),
+            computeOccurenceLet_AssignCase(
+              computeOccurenceLet_TypedActionCase( MuVar("comp"),
+                computeOccurenceLet_BaseCase( All(MuVar("comp")), variableName, info),
+                variableName,
+                info
+                ),
+              info
+              )
+            )
+          )
+    }
+  }
+
+  /*
+   * check if a variable appearing in an expression (in Let x <- exp ...)
+   * is modified (by Assign)
+   */
+  %strategy computeOccurenceLet_AssignCase(defaultCase:Strategy,info:InfoVariable) extends defaultCase {
+    visit Instruction {
+      Assign[Variable=Variable[AstName=varname]] -> {
+        if(info.getAssignmentVariables().contains(`varname)) {
+          info.modifiedAssignmentVariables=true;
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
+  %strategy computeOccurenceLet_TypedActionCase(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariable) extends cutCase {
+    visit Instruction {
+      TypedAction[] -> {
+        /* recursive call of the current strategy on the first child */
+        Environment current = getEnvironment();
+        current.down(1);
+        try {
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
+      }
+
+      // should not happen
+      Assign[Variable=Variable[AstName=varname]] -> {
+        if(variableName.equals(`varname)) {
+          logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
+        }
+      }
+    }
+  }
+
+  /*
+   * when variableName is encountered, its position is stored
+   * if it appears more than once, the computation is stopped because there is no possible inlining
+   */
+  %strategy computeOccurenceLet_BaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariable) extends defaultCase {
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {
+        if(variableName == `name) {
+          info.usePosition = getPosition();
+          info.readCount++;
+          if(info.readCount==2) { throw new VisitFailure(); }
+        }
+      }
+    }
+  }
+
+  /* strategies for LetRef inlining (using cps) */
+  // comp = special( comp, Basecase(comp,fail()) )
+  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariable) {
+    make(variableName, info) { (
+        `Try(
+          mu(MuVar("comp"),
+            computeOccurencesLetRef_CutCase( MuVar("comp"),
+              computeOccurencesLetRef_BaseCase( All(MuVar("comp")),
+                variableName,
+                info
+                ),
+              variableName,
+              info
+              )
+            ))
+        ) }
+  }
+
+  //cases where failure is used to cut branches
+  %strategy computeOccurencesLetRef_CutCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
+    visit Instruction {
+      TypedAction[] -> {
+        /* recursive call of the current strategy on the first child */
+        Environment current = getEnvironment();
+        current.down(1);
+        try {
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
+      }
+
+      Assign(Variable[AstName=name],src) -> {
+        if(variableName == `name) {
+          info.setAssignment(`src,getPosition());
+        } else {
+          if(info.getAssignmentVariables().contains(`name)) {
+            info.clear();
+         }
+        }
+        /* recursive call of the current strategy on src */
+        Environment current = getEnvironment();
+        try {
+          current.down(2);
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
+      }
+
+    }
+  }
+
+  %strategy computeOccurencesLetRef_BaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {
+        if(variableName == `name) {
+          info.readCount++;
+          info.usePosition = getPosition();
+          if(info.readCount==2) {
+            throw new VisitFailure();
+          }
+        }
+      }
+    }
+  }
+
+  /*
+   * rename variable1 into variable2
+   */
+  %op Strategy renameVariable(variable1: TomName, variable2: TomName) {
+    make(variable1,variable2) { (`TopDown(renameVariableOnce(variable1,variable2)) ) }
+  }
+
+  %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends Identity() {
+    visit TomTerm {
+      var@(Variable|VariableStar)[AstName=astName] -> {
+        if(variable1 == `astName) {
+          return `var.setAstName(variable2);
+        }
+      }
+    }
+  }
+
+  %strategy replaceVariableByExpression(variable:TomName, exp:Expression) extends Identity() {
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=astName] -> {
+        if(variable == `astName) {
+          return `ExpressionToTomTerm(exp);
+        }
+      }
+    }
+  }
+
+  %op Strategy CleanAssign(varname: TomName) {
+    make(varname) { (`TopDown(CleanAssignOnce(varname))) }
+  }
+
+  %strategy CleanAssignOnce(varname:TomName) extends Identity() {
+    visit Instruction {
+      Assign((Variable|VariableStar)[AstName=name],_) -> {
+        if(`name.equals(varname)) { return `Nop(); }
+      }
+    }
+  }
+
+  private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
+    return factory.remove(term1)==factory.remove(term2);
+  }
+
+  %strategy NopElimAndFlatten() extends Identity() {
     visit Instruction {
 
       AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "flatten");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "flatten");
         return `AbstractBlock(concInstruction(C1*,L1*,C2*));
       }
 
       AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "nop-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "nop-elim");
         return `AbstractBlock(concInstruction(C1*,C2*));
-      }  
+      }
 
       AbstractBlock(concInstruction()) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "abstractblock-elim1");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim1");
         return `Nop();
-      } 
+      }
 
       AbstractBlock(concInstruction(i)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "abstractblock-elim2");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim2");
         return `i;
       }
 
+      If[SuccesInst=Nop(),FailureInst=Nop()] -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "ifnopnop-elim");
+        return `Nop();
+      }
+
       If[Condition=TrueTL(),SuccesInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "iftrue-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iftrue-elim");
         return `i;
       }
 
       If[Condition=FalseTL(),FailureInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "iffalse-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iffalse-elim");
         return `i;
       }
 
-    }      
-
+    }
   }
 
   /*
    * two expressions are incompatible when they cannot be true a the same time
-   */ 
+   */
   private boolean incompatible(Expression c1, Expression c2) {
     try {
-      Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
+      Expression res = `InnermostId(NormExpr(this)).visitLight(`And(c2,c2));
       return res ==`FalseTL();
-    } catch(tom.library.sl.VisitFailure e) {
+    } catch(VisitFailure e) {
       return false;
     }
   }
 
-  %strategy IfSwapping(optimizer:TomOptimizer) extends `Identity() {
+  %strategy IfSwapping(optimizer:TomOptimizer) extends Identity() {
     visit Instruction {
       AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
         String s1 = factory.prettyPrint(factory.remove(`cond1));
@@ -658,69 +665,76 @@ public class TomOptimizer extends TomGenericPlugin {
         if(s1.compareTo(s2) < 0) {
           /* swap two incompatible conditions */
           if(optimizer.incompatible(`cond1,`cond2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"if-swapping"});     
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-swapping");
             return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
-          }
-        }
-      }
-    }
-  }      
-
-  %strategy BlockFusion() extends `Identity() {
-    visit Instruction {
-      AbstractBlock(concInstruction(X1*,
-            Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
-            Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
-            X2*)) -> {
-        /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
-        if(`compare(term1,term2)) {
-          if(`compare(var1,var2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{"block-fusion1"});     
-            return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
-          } else {
-            InfoVariableLet info = new InfoVariableLet();
-            //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
-            `computeOccurencesLet(name1,info).visitLight(`body2);
-            int mult = info.readCount; 
-            if(mult==0){
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{"block-fusion2"});    
-              Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
-              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
-            }
-          }
-        }
-      }
-    }
-  }      
-
-  %strategy IfFusion() extends `Identity() {
-    visit Instruction {
-      AbstractBlock(concInstruction(X1*,
-            If(cond1,success1,failure1),
-            If(cond2,success2,failure2),
-            X2*)) -> {
-        /* Fusion de 2 blocs If gardes par la meme condition */
-        if(`compare(cond1,cond2)) {
-          if(`failure1.isNop() && `failure2.isNop()) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{"if-fusion1"});
-            Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
-            //System.out.println(res);
-
-            return res;
-          } else {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{ "if-fusion2"});
-            return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
           }
         }
       }
     }
   }
 
-  %strategy InterBlock(optimizer:TomOptimizer) extends `Identity(){
+  %strategy BlockFusion() extends Identity() {
+    visit Instruction {
+      block@AbstractBlock(concInstruction(X1*,
+            Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
+            Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
+            X2*)) -> {
+        /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
+        if(`compare(term1,term2)) {
+          if(`compare(var1,var2)) {
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion1");
+            return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*)));
+          } else {
+            InfoVariable info = new InfoVariable();
+            `computeOccurencesLet(name1,info).visit(`body2);
+            int mult = info.readCount;
+            if(mult==0) {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
+              Instruction newBody2 =  `renameVariable(name2,name1).visitLight(`body2);
+              return `(block.setInstList(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*)));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  %strategy IfFusion() extends Identity() {
+    visit Instruction {
+      block@(UnamedBlock|AbstractBlock)(concInstruction(X1*,
+            If(cond1,success1,failure1),
+            If(cond2,success2,failure2),
+            X2*)) -> {
+        Expression c1 = factory.remove(`cond1);
+        Expression c2 = factory.remove(`cond2);
+        //System.out.println("c1 = " + c1);
+        //System.out.println("c2 = " + c2);
+        %match(Expression c1,Expression c2) {
+          c,c -> {
+            /* Merge 2 blocks whose conditions are equals */
+            if(`failure1.isNop() && `failure2.isNop()) {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion1");
+              Instruction res = `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*)));
+              //System.out.println(res);
+
+              return res;
+            } else {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion2");
+              return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*)));
+            }
+          }
+
+          Negation(c),c -> {
+            /* Merge 2 blocks whose conditions are the negation of the other */
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion-not");
+            return `(block.setInstList(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,failure2)),AbstractBlock(concInstruction(failure1,success2))),X2*)));
+          }
+        }
+      }
+    }
+  }
+
+  %strategy InterBlock(optimizer:TomOptimizer) extends Identity() {
     visit Instruction {
       /* interleave two incompatible conditions */
       AbstractBlock(concInstruction(X1*,
@@ -728,48 +742,34 @@ public class TomOptimizer extends TomGenericPlugin {
             If(cond2,suc2,Nop()),
             X2*)) -> {
         if(optimizer.incompatible(`cond1,`cond2)) {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"inter-block"});
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "inter-block");
           return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-        }  
+        }
       }
-    }      
+    }
   }
 
-  %strategy NormExpr(optimizer:TomOptimizer) extends `Identity() {
+  %strategy NormExpr(optimizer:TomOptimizer) extends Identity() {
     visit Expression {
-      Or(_,TrueTL()) -> {
-        return `TrueTL();
-      }
-      Or(TrueTL(),_) -> {
-        return `TrueTL();
-      }
-      Or(t1,FalseTL()) -> {
-        return `t1;
-      }
-      Or(FalseTL(),t1) -> {
-        return `t1;
-      }
-      And(TrueTL(),t1) -> {
-        return `t1;
-      }
-      And(t1,TrueTL()) -> {
-        return `t1;
-      }
-      And(FalseTL(),_) -> {
-        return `FalseTL();
-      }
-      And(TrueTL(),_) -> {
-        return `FalseTL();
-      }
+      Or(_,TrueTL()) -> TrueTL()
+      Or(TrueTL(),_) -> TrueTL()
+      Or(t1,FalseTL()) -> t1
+      Or(FalseTL(),t1) -> t1
+      And(TrueTL(),t1) -> t1
+      And(t1,TrueTL()) -> t1
+      And(FalseTL(),_) -> FalseTL()
+      And(TrueTL(),_) -> FalseTL()
+
       ref@EqualTerm(_,kid1,kid2) -> {
         //System.out.println("kid1 = " + `kid1);
         //System.out.println("kid2 = " + `kid2);
-        if(`compare(kid1,kid2)){
+        if(`compare(kid1,kid2)) {
           return `TrueTL();
         } else {
           return `ref;
         }
       }
+
       ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
         if(`name1==`name2) {
           return `IsFsym(name1,term);
@@ -780,7 +780,6 @@ public class TomOptimizer extends TomGenericPlugin {
          */
         TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
         if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-          //System.out.println("symbol = " + tomSymbol);
           TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
           TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
           if(domain!=codomain) {
@@ -791,7 +790,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
         return `ref;
       }
-    } 
+    }
   }
 
 } // class TomOptimizer

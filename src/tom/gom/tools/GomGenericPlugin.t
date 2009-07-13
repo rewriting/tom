@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
- * Copyright (c) 2000-2008, INRIA
+ *
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
  **/
 
@@ -26,6 +26,7 @@ package tom.gom.tools;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 
 import tom.platform.OptionManager;
 import tom.platform.Plugin;
@@ -40,6 +41,8 @@ public abstract class GomGenericPlugin implements Plugin {
 
   public GomGenericPlugin(String name) {
     pluginName = name;
+    //myadd
+    gomEnvironment = new GomEnvironment();
   }
 
   %include { ../../platform/adt/platformoption/PlatformOption.tom }
@@ -52,9 +55,18 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /** the option manager */
   private OptionManager optionManager;
-  
+
+  public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
+  public final static String KEY_LAST_READ_LINE = "lastReadLine";
+
   /** The streamanager */
-  protected GomStreamManager streamManager;
+  //protected GomStreamManager streamManager;
+
+  /** myadd : GomEnvironment is not yet a Singleton class, therefore it has to be an attribute
+   * => need to modify environment() method => become abstract and defined in extended classes
+   * add get/set methods
+   */
+  protected GomEnvironment gomEnvironment;
 
   /**
    * An accessor method, so that the plugin can see its logger.
@@ -77,20 +89,37 @@ public abstract class GomGenericPlugin implements Plugin {
     return statusHandler;
   }
 
-  protected GomEnvironment environment() {
+  /*
+    protected GomEnvironment environment() {
     return GomEnvironment.getInstance();
+  } */
+
+  // protected abstract GomEnvironment environment();
+
+  // myadd-begin
+  public abstract GomEnvironment getGomEnvironment();
+  public abstract void setGomEnvironment(GomEnvironment gomEnvironment);
+  /*protected GomEnvironment getGomEnvironment() {
+    return gomEnvironment;
   }
 
+  protected void setGomEnvironment(GomEnvironment gomEnvironment) {
+    this.gomEnvironment = gomEnvironment;
+  }*/
+  // myadd-end
+
   public GomStreamManager getStreamManager() {
-    return streamManager;
+    //return streamManager;
+    return gomEnvironment.getStreamManager();
   }
 
   public void setStreamManager(GomStreamManager m) {
-    streamManager = m;
+    //streamManager = m;
+    gomEnvironment.setStreamManager(m);
   }
 
   /**
-   * From Plugin interface 
+   * From Plugin interface
    * @param term the input Object
    */
   public abstract void setArgs(Object[] arg);
@@ -100,7 +129,7 @@ public abstract class GomGenericPlugin implements Plugin {
    * The run() method is not implemented in GomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract void run();
+  public abstract void run(Map<String,String> informationTracker);
 
   /**
    * From Plugin interface
@@ -174,7 +203,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of a boolean option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return a boolean that is the option's value
    */
@@ -184,7 +213,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of an integer option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return an int that is the option's value
    */
@@ -194,7 +223,7 @@ public abstract class GomGenericPlugin implements Plugin {
 
   /**
    * Returns the value of a string option.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return a String that is the option's value
    */

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2008, INRIA
+ * Copyright (c) 2006-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,15 +26,21 @@ package tom.gom.backend;
 import java.util.Map;
 import java.util.HashMap;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.GomEnvironment;
 
 public abstract class MappingTemplateClass extends TemplateClass {
-  public MappingTemplateClass(GomClass gomClass) {
-    super(gomClass);
-    this.templates = new HashMap();
+  
+  public MappingTemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
+    super(gomClass,gomEnvironment);
+    this.templates = new HashMap<ClassName,TemplateClass>();
   }
-  protected Map templates;
+  protected Map<ClassName,TemplateClass> templates;
 
-  public void addTemplates(Map map) {
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
+
+  public void addTemplates(Map<ClassName,TemplateClass> map) {
     this.templates.putAll(map);
   }
 }

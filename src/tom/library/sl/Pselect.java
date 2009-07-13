@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,14 +35,14 @@ package tom.library.sl;
  * <p>
  * <code>Pselect(p,q,v1,v2) = v2</code> with probability 1-(p/q)
  * <p>
- * Visitor combinator with a probability and two visitor arguments, 
- * that select a visitor according to the probability p/q
+ * Visitor combinator with a probability and two arguments, 
+ * that select a argument according to the probability p/q
  * The strategy fails if the selected strategy fails
  * <p>
  * Note that any side-effects of v1 are not undone when it fails.
  */
 
-public class Pselect extends AbstractStrategy {
+public class Pselect extends AbstractStrategyCombinator {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   private int p;
@@ -65,12 +65,12 @@ public class Pselect extends AbstractStrategy {
     return q;
   }
 
-  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+  public <T> T visitLight(T subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(q);
     if(randomInt < p) {
-      return visitors[FIRST].visitLight(subject,introspector);
+      return arguments[FIRST].visitLight(subject,introspector);
     } else {
-      return visitors[THEN].visitLight(subject,introspector);
+      return arguments[THEN].visitLight(subject,introspector);
     }
   }
 
@@ -78,9 +78,9 @@ public class Pselect extends AbstractStrategy {
     int randomInt = random.nextInt(q);
     Object subject = environment.getSubject();
     if(randomInt < p) {
-      return visitors[FIRST].visit(introspector);
+      return arguments[FIRST].visit(introspector);
     } else {
-      return visitors[THEN].visit(introspector);
+      return arguments[THEN].visit(introspector);
     }
   }
 }

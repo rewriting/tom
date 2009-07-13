@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2008, INRIA
+ * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,10 +53,12 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>inlineplus</li>
  * <li>genIntrospector</li>
  * <li>outputfile</li>
+ * <li>import</li>
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>pretty</li>
  * <li>verbose</li>
+ * <li>multithread</li>
  * <li>failonerror</li>
  * <li>nowarn</li>
  * <li>fork</li>
@@ -81,7 +83,9 @@ public class TomTask extends MatchingTask {
   private File configFile = null;
   private String logPropertiesFile;
   private File outputFile;
+  private Path importPath = null;
   private boolean verbose = false;
+  private boolean multithread = false;
   private boolean nowarn = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
@@ -94,6 +98,8 @@ public class TomTask extends MatchingTask {
   private boolean failOnError = true;
   private boolean fork = false;
   private boolean listFiles = false;
+  private boolean cCode = false;
+  private boolean camlCode = false;
   private File[] compileList = new File[0];
 
   private Java javaRunner;
@@ -238,6 +244,26 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * Set the importPath path
+   * @param path the importPath path
+   */
+  public void setImport(Path path) {
+    if (this.importPath == null) {
+      this.importPath = path;
+    } else {
+      this.importPath.append(path);
+    }
+  }
+
+  public void addConfiguredTomincludedir(Path anInner) {
+    if (this.importPath == null) {
+      this.importPath = anInner;
+    } else {
+      this.importPath.append(anInner);
+    }
+  }
+
+  /**
    * If true, list the source files being handed off to the compiler.
    * @param list if true list the source files
    */
@@ -270,6 +296,22 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, asks the compiler to be multithread
+   * @param multithread if true, asks the compiler to compile in parallel
+   */
+  public void setMultithread(boolean multithread) {
+    this.multithread = multithread;
+  }
+
+  /**
+   * Gets the multithread flag.
+   * @return the multithread flag
+   */
+  public boolean getMultithread() {
+    return multithread;
+  }
+
+  /**
    * If true, compiles with optimization enabled.
    * @param optimize if true compile with optimization level-1 enabled
    */
@@ -279,6 +321,36 @@ public class TomTask extends MatchingTask {
 
   public boolean getOptimize() {
     return optimize;
+  }
+
+  /**
+   * If true, generates C code
+   * @param cCode if true generate C code
+   */
+  public void setCcode(boolean cCode) {
+    this.cCode = cCode;
+    if (cCode) {
+      camlCode = false;
+    }
+  }
+
+  public boolean getCcode() {
+    return this.cCode;
+  }
+
+  /**
+   * If true, generates Caml code
+   * @param camlCode if true generate Caml code
+   */
+  public void setCamlcode(boolean camlCode) {
+    this.camlCode = camlCode;
+    if (camlCode) {
+      cCode = false;
+    }
+  }
+
+  public boolean getCamlcode() {
+    return this.camlCode;
   }
 
   /**
@@ -451,7 +523,13 @@ public class TomTask extends MatchingTask {
     } else {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom("*.t");
-      m.setTo("*.java");
+      if (cCode) {
+        m.setTo("*.tom.c");
+      } else if (camlCode) {
+        m.setTo("*.tom.ml");
+      } else {
+        m.setTo("*.java");
+      }
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
@@ -547,11 +625,23 @@ public class TomTask extends MatchingTask {
         javaRunner.createArg().setValue("-o");
         javaRunner.createArg().setFile(outputFile);
       }
+      if(importPath != null) {
+        for (String elem : importPath.list()) {
+          javaRunner.createArg().setValue("--import");
+          javaRunner.createArg().setFile(new File(elem));
+        }
+      }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");
       }
       if(optimize2 == true) {
         javaRunner.createArg().setValue("--optimize2");
+      }
+      if (cCode) {
+        javaRunner.createArg().setValue("--cCode");
+      }
+      if (camlCode) {
+        javaRunner.createArg().setValue("--camlCode");
       }
       if(pretty == true) {
         javaRunner.createArg().setValue("--pretty");
@@ -571,11 +661,11 @@ public class TomTask extends MatchingTask {
       if(verbose == true) {
         javaRunner.createArg().setValue("--verbose");
       }
+      if(multithread == true) {
+        javaRunner.createArg().setValue("--multithread");
+      }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
-        //if(verbose) {
-        //  System.out.println("Compiling " + filename + "...");
-        //}
         javaRunner.createArg().setValue(filename);
       }
 
@@ -596,17 +686,16 @@ public class TomTask extends MatchingTask {
    */
   private String[] split(String str) {
     try {
-      String res[] = new String[0];
       int begin = 0;
       int end = 0;
-      Vector list = new Vector();
+      List<String> list = new ArrayList<String>();
       while(end < str.length()) {
         while(end < str.length() && str.charAt(end) != ' ')
           end++;
         list.add(str.substring(begin, end));
         begin = ++end;
       }
-      return (String[])list.toArray(res);
+      return list.toArray(new String[0]);
     } catch(Exception x) {
       return new String[0];
     }
