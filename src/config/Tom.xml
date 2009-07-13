@@ -51,10 +51,10 @@
       class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="Syntax checker"
       class="tom.engine.checker.TomSyntaxCheckerAp"/>
+    <plugin name="Desugarer"
+      class="tom.engine.checker.TomDesugarer"/>
     <plugin name="Typer"
       class="tom.engine.typer.Typer"/>
-    <plugin name="Type checker"
-      class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"
       class="tom.engine.expander.Expander"/>
     <plugin name="Compiler"
