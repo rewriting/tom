@@ -14,7 +14,7 @@ userargs = map(absolute, sys.argv[1:])
 args = ['--noOutput', '--wall']
 
 s = xmlrpclib.ServerProxy('http://localhost:%d' % PORT)
-t = s.compile(args + userargs)
+t = s.compile(os.getcwd(),args + userargs)
 (out,err) = eval(t)
 
 sys.stdout.write(out)

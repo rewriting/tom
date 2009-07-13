@@ -511,7 +511,6 @@ public abstract class TomAbstractGenerator {
         return;
       }
       OriginTracking[] -> { return; }
-      DefinedSymbol() -> { return; }
 
       t -> {
         System.out.println("Cannot generate code for option: " + `t);

@@ -7,8 +7,35 @@ TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
                | noTL()
 TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Option:OptionList)
-TomSymbol = emptySymbol()
-          | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList)
+TomSymbol = emptySymbol()  
+  /**
+   * <code>Symbol</code> represents a constructor (eg: %op A f(x:B,y:C))
+   *
+   * @param TomName the name of the constructor, eg: f
+   * @param TypesToType rank of the constructor, 
+   * eg: 
+   * TypesToType─┬─concTomType─┬─TomTypeAlone───B
+   *             │             └─TomTypeAlone───C
+   *             └─TomTypeAlone───A
+   * @param PairNameDeclList list of pairs composed of the field's names (eg: x,y) and their associated declaration (eg: get_slot(x,s), get_slot(y,s))
+   * eg: 
+   * ┬─Name───x
+   * └─GetSlotDecl─┬─Name───g
+   *               ├─Name───x
+   *               ├─Variable─┬─concOption───OriginTracking─┬─Name───s
+   *               │          │                             ├
+   *               │          │                             └─Test.t
+   *               │          ├─Name───s
+   *               │          ├─TomTypeAlone───A
+   *               │          └─concConstraint
+   *               ├─Code─── null; 
+   *               └─OriginTracking─┬─Name───get_slot
+   *                                ├
+   *                                └─Test.t
+   *
+   * @param Options a TomOption list, contains the definition of make in particular
+   */
+   | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList)
 TomSymbolTable = Table(EntryList:TomEntryList)
 TomEntry = Entry(StrName:String,AstSymbol:TomSymbol)
 TomStructureTable = StructTable(StructList:TomList)

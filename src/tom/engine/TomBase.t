@@ -394,13 +394,6 @@ public final class TomBase {
     return false;
   }
 
-  public static boolean hasDefinedSymbol(OptionList optionList) {
-    %match(optionList) {
-      concOption(_*,DefinedSymbol(),_*) -> { return true; }
-    }
-    return false;
-  }
-
   public static boolean hasImplicitXMLAttribut(OptionList optionList) {
     %match(optionList) {
       concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
@@ -468,35 +461,6 @@ public final class TomBase {
     }
     throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
   }
-
-  public static boolean isDefinedSymbol(TomSymbol subject) {
-    if(subject==null) {
-      System.out.println("isDefinedSymbol: subject == null");
-      return false;
-    }
-    %match(subject) {
-      Symbol[Option=optionList] -> {
-        return hasDefinedSymbol(`optionList);
-      }
-    }
-    return false;
-  }
-
-  public static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
-    if(symbol==null) {
-      System.out.println("isDefinedSymbol: symbol == null");
-      return false;
-    }
-    %match(symbol) {
-      Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[SlotName=name,SlotDecl=decl],_*)] -> {
-        if(`name==slotName && `decl!=`EmptyDeclaration()) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
 
   /**
    * Return the option containing OriginTracking information
