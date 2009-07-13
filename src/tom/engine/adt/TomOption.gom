@@ -17,5 +17,6 @@ Option =
   | ImplicitXMLAttribut()
   | ImplicitXMLChild()
   | noOption()
+  | DefinedSymbol()
 
 OptionList = concOption(Option*)
