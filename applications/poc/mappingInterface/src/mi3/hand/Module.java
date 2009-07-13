@@ -121,7 +121,7 @@ public class Module {
   public static class concT1_Mapping extends ListMapping<List<T1>, T1> {
     public Class getImplementation() {
       //TODO: cannot discriminate List<T> 
-      return List.class;
+      return java.util.AbstractList.class;
     }
 
     public boolean isInstanceOf(Object subject) {
@@ -159,6 +159,7 @@ public class Module {
    * Not used at present
    */
   // split SL introspectors
+  /*
   public interface Introspector1 {
     public <T> T setChildren(T o, Object[] children);
     public Object[] getChildren(Object o);
@@ -233,4 +234,5 @@ public class Module {
     }
 
   }
+  */
 }

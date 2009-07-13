@@ -4,21 +4,11 @@ import tom.library.sl.*;
 
 public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
 
-  protected mi3.mapping.IMapping mapping;
+  protected mi3.mapping.IListMapping mapping;
 
-  public _StrategyList(mi3.mapping.IMapping mapping,Strategy s) {
+  public _StrategyList(mi3.mapping.IListMapping mapping,Strategy s) {
     this.mapping = mapping;
     initSubterm(s);
-  }
-
-  /** 
-   * Visits the subject any in a light way (without environment)  
-   *
-   * @param any the subject to visit
-   * @throws VisitFailure if visitLight fails
-   */
-  public <T extends Visitable> T visitLight(T any) throws VisitFailure {
-    return visitLight(any,mapping.getIntrospector());
   }
 
   /** 
@@ -30,10 +20,8 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
    * @throws VisitFailure if visitLight fails
    */ 
   public final <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
-    if(mapping instanceof mi3.mapping.IListMapping) {
-      if(mapping.isInstanceOf(any)) {
-        return mapLight((mi3.mapping.IListMapping<T,Object>)mapping, arguments[0], any, introspector);
-      }
+    if(mapping.isInstanceOf(any)) {
+      return mapLight((mi3.mapping.IListMapping<T,Object>)mapping, arguments[0], any, introspector);
     }
     throw new tom.library.sl.VisitFailure();
   }
@@ -48,16 +36,6 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
     }
   }
 
-  /** 
-   * Visits the subject any by providing the environment 
-   *
-   * @param any the subject to visit. 
-   * @throws VisitFailure if visit fails
-   */
-  public <T extends Visitable> T visit(T any) throws VisitFailure {
-    return visit(any,mapping.getIntrospector());
-  }
-
   /**
    * Visit the current subject (found in the environment)
    * and place its result in the environment.
@@ -69,30 +47,34 @@ public class _StrategyList extends tom.library.sl.AbstractStrategyCombinator {
   public int visit(Introspector introspector) {
     environment.setIntrospector(introspector);
     Object any = environment.getSubject();
-    int childCount = introspector.getChildCount(any);
-    Object[] childs = null;
+    if(mapping.isInstanceOf(any)) {
+      int childCount = introspector.getChildCount(any);
+      Object[] childs = null;
 
-    for(int i = 0; i < childCount; i++) {
-      Object oldChild = introspector.getChildAt(any,i);
-      environment.down(i+1);
-      int status = arguments[0].visit(introspector);
-      if(status != Environment.SUCCESS) {
+      for(int i = 0; i < childCount; i++) {
+        Object oldChild = introspector.getChildAt(any,i);
+        environment.down(i+1);
+        int status = arguments[0].visit(introspector);
+        if(status != Environment.SUCCESS) {
+          environment.upLocal();
+          return status;
+        }
+        Object newChild = environment.getSubject();
+        if(childs != null) {
+          childs[i] = newChild;
+        } else if(newChild != oldChild) {
+          // allocate the array, and fill it
+          childs = introspector.getChildren(any);
+          childs[i] = newChild;
+        } 
         environment.upLocal();
-        return status;
       }
-      Object newChild = environment.getSubject();
-      if(childs != null) {
-        childs[i] = newChild;
-      } else if(newChild != oldChild) {
-        // allocate the array, and fill it
-        childs = introspector.getChildren(any);
-        childs[i] = newChild;
-      } 
-      environment.upLocal();
+      if(childs!=null) {
+        environment.setSubject(introspector.setChildren(any,childs));
+      }
+      return Environment.SUCCESS;
     }
-    if(childs!=null) {
-      environment.setSubject(introspector.setChildren(any,childs));
-    }
-    return Environment.SUCCESS;
+    System.out.println("fail");
+    return Environment.FAILURE;
   }
 }

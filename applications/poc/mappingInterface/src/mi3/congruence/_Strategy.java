@@ -12,15 +12,6 @@ public class _Strategy extends tom.library.sl.AbstractStrategyCombinator {
   }
 
   /** 
-   * Visits the subject any in a light way (without environment)  
-   *
-   * @param any the subject to visit
-   * @throws VisitFailure if visitLight fails
-   */
-  public <T extends Visitable> T visitLight(T any) throws VisitFailure {
-    return visitLight(any,mapping.getIntrospector());
-  }
-  /** 
    * Visit the subject any without managing any environment
    *
    * @param any the subject to visit
@@ -51,16 +42,6 @@ public class _Strategy extends tom.library.sl.AbstractStrategyCombinator {
     } else {
       throw new tom.library.sl.VisitFailure();
     }
-  }
-
-  /** 
-   * Visits the subject any by providing the environment 
-   *
-   * @param any the subject to visit. 
-   * @throws VisitFailure if visit fails
-   */
-  public <T extends Visitable> T visit(T any) throws VisitFailure {
-    return visit(any,mapping.getIntrospector());
   }
 
   /**

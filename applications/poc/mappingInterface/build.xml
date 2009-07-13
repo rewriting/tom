@@ -62,6 +62,7 @@
         <test name="mi2.MainGom"/>
         <test name="mi2.MainHand"/>
         <test name="mi3.MainGom"/>
+        <test name="mi3.MainHand"/>
       </junit>
     </target>
 

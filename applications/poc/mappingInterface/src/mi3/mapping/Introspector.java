@@ -1,12 +1,11 @@
 package mi3.mapping;
 
 public class Introspector implements tom.library.sl.Introspector {
-/*
   private static final Introspector instance = new Introspector();
   public static Introspector getInstance() { 
     return instance;
   }
-*/
+
   /**
    * Replace all children of a given object, and return the new object
    * @param o the object whose children are replace
@@ -44,7 +43,9 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public Object getChildAt(Object o, int i)  {
     IMapping m = MappingRegistry.getMappingOf(o);
-    return m.getIntrospector().getChildAt(o, i);
+    Object res =  m.getIntrospector().getChildAt(o, i);
+    //System.out.println("Intro child " + i + ": " + res);
+    return res;
   }
 
   /**
@@ -54,7 +55,9 @@ public class Introspector implements tom.library.sl.Introspector {
    */
   public int getChildCount(Object o)  {
     IMapping m = MappingRegistry.getMappingOf(o);
-    return m.getIntrospector().getChildCount(o);
+    int res = m.getIntrospector().getChildCount(o);
+    //System.out.println("Intro count: " + res);
+    return res;
   }
 
 }
