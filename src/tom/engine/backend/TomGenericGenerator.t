@@ -755,8 +755,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           BuildEmptyArray(Name(name),size) -> {
             String prefix = "tom_empty_array_";
             String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
-            if(instantiateTemplate(deep,template,`concTomTerm(ExpressionToTomTerm(Integer(size))),moduleName) == false) {
-              output.write(prefix + `name + "(" + `size + ")");
+            if(instantiateTemplate(deep,template,`concTomTerm(size),moduleName) == false) {
+              output.write(prefix + `name + "(");
+              generate(deep,`size,moduleName);
+              output.write(")");
             }
             return;
           }
@@ -894,5 +896,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return res;
   }
+
+  protected void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException { 	 
+     generate(deep,var,moduleName); 	 
+     output.write(" - 1"); 	 
+   } 	 
+  	 
+   protected void buildSubstract(int deep, TomTerm var1, TomTerm var2, String moduleName) throws IOException { 	 
+     generate(deep,var1,moduleName); 	 
+     output.write(" - "); 	 
+     generate(deep,var2,moduleName); 	 
+   }
 
 }

@@ -27,6 +27,7 @@ Instruction =
    * @param Source the value to give to the variable
    */
   | Assign(Variable:TomTerm,Source:Expression)
+  | AssignArray(Variable:TomTerm,Index:TomTerm,Source:Expression)
   | Return(Kid1:TomTerm)
   | Nop()
   /*

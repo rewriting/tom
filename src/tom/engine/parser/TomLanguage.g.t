@@ -1730,11 +1730,11 @@ operator returns [Declaration result] throws TomException
         }
     ;
 
-operatorList returns [Declaration result] throws TomException
+    operatorList[boolean isAC] returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
-    List<Option> options = new LinkedList<Option>();
+    List options = new LinkedList();
     Declaration attribute = null;
     String opName = "";
 }
@@ -1752,24 +1752,27 @@ operatorList returns [Declaration result] throws TomException
         LBRACE
         (
             attribute = keywordMakeEmptyList[opName]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         |   attribute = keywordMakeAddList[opName,type.getText(),typeArg.getText()]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         |   attribute = keywordIsFsym[`Name(opName), type.getText()]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         |   attribute = keywordGetHead[`Name(opName), type.getText()]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         |   attribute = keywordGetTail[`Name(opName), type.getText()]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         |   attribute = keywordIsEmpty[`Name(opName), type.getText()]
-            { options.add(`DeclarationToOption(attribute)); }
+            { options.add(attribute); }
         )*
         t:RBRACE
         { 
+            if (isAC) {
+              options.add(`ACSymbol());
+            }
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
             TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
-            result = `ListSymbolDecl(Name(opName));
+            result = isAC ? `ACSymbolDecl(Name(opName)) : `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
             selector().pop(); 
         }

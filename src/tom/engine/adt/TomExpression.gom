@@ -46,11 +46,23 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | IsEmptyList(Opname:TomName,Variable:TomTerm)
            | IsEmptyArray(Opname:TomName,Variable:TomTerm,Index:TomTerm)
            | AddOne(Variable:TomTerm)
+           | SubstractOne(Variable:TomTerm)
+           /**
+            *  <code>Substract(Term1:TomTerm,Term2:TomTerm)</code> performs Term1-Term2
+            *
+            */
+           | Substract(Term1:TomTerm,Term2:TomTerm)
            | GetSize(Opname:TomName,Variable:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Variable:TomTerm,Index:TomTerm)
            | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
+           /**
+            * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
+            * @param Pattern the f(x,y)
+            * @param Subject the subject to match 
+            */
+           | ACMatchLoop(Pattern:TomTerm,Subject:TomTerm)
            /**
 		   * <code>WhileExpression</code> a do while loop
 		   *

@@ -162,7 +162,7 @@ TomTerm =
     | BuildEmptyList(AstName:TomName)
     | BuildConsList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
     | BuildAppendList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-    | BuildEmptyArray(AstName:TomName,Size:int)
+    | BuildEmptyArray(AstName:TomName,Size:TomTerm)
     | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
 

@@ -215,9 +215,33 @@ public final class TomBase {
     return result;
   }
 
+  
   /**
-    * Returns <code>true</code> if the symbol corresponds to a %oplist
-    */
+   * Returns <code>true</code> if the symbol corresponds to a %oplist
+   */
+  public static boolean isACOperator(TomSymbol symbol) {
+    if(symbol==null) {
+      return false;
+    }
+    %match(TomSymbol symbol) {
+      Symbol[Option=l] -> {
+        %match(l){
+          concOption(_*,ACSymbol[],_*) -> { return true; }
+        }
+        return false;
+      }
+    }
+    throw new TomRuntimeException("isACOperator -- strange case: '" + symbol + "'");
+  }
+
+
+
+
+
+
+  /**
+   * Returns <code>true</code> if the symbol corresponds to a %oplist
+   */
   public static boolean isListOperator(TomSymbol symbol) {
     if(symbol==null) {
       return false;
@@ -240,8 +264,8 @@ public final class TomBase {
   }
 
   /**
-    * Returns <code>true</code> if the symbol corresponds to a %oparray
-    */
+   * Returns <code>true</code> if the symbol corresponds to a %oparray
+   */
   public static boolean isArrayOperator(TomSymbol symbol) {
     if(symbol==null) {
       return false;
@@ -262,24 +286,24 @@ public final class TomBase {
     }
     throw new TomRuntimeException("isArrayOperator -- strange case: '" + symbol + "'");
   }
-  
+
   /**
-    * Returns <code>true</code> if the symbol corresponds to a %op
-    */
+   * Returns <code>true</code> if the symbol corresponds to a %op
+   */
   public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
 
   // ------------------------------------------------------------
   /**
-    * Collects the variables athat appears in a term
-    * @param collection the bag which collect the results
-    * @param subject the term to traverse
-    */
+   * Collects the variables athat appears in a term
+   * @param collection the bag which collect the results
+   * @param subject the term to traverse
+   */
   public static void collectVariable(Collection<TomTerm> collection, tom.library.sl.Visitable subject) {
     try {
       //TODO: replace TopDownCollect by continuations
-    `TopDownCollect(collectVariable(collection)).visitLight(`subject);
+      `TopDownCollect(collectVariable(collection)).visitLight(`subject);
     } catch(VisitFailure e) { }
   }
 
@@ -316,8 +340,8 @@ public final class TomBase {
   }
 
   /**
-    * Returns a Map which associates an interger to each variable name
-    */
+   * Returns a Map which associates an interger to each variable name
+   */
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     Collection<TomTerm> variableList = new HashSet<TomTerm>();
@@ -349,7 +373,7 @@ public final class TomBase {
     }
     return false;
   }
- 
+
   public static Theory getTheory(TomTerm term) {
     %match(term) {
       RecordAppl[Option=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
@@ -379,7 +403,7 @@ public final class TomBase {
     }
     return false;
   }
-  
+
   public static String getModuleName(OptionList optionList) {
     %match(optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
@@ -390,6 +414,13 @@ public final class TomBase {
   public static boolean hasConstant(OptionList optionList) {
     %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
+    }
+    return false;
+  }
+
+  public static boolean hasDefinedSymbol(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,DefinedSymbol(),_*) -> { return true; }
     }
     return false;
   }
@@ -462,6 +493,35 @@ public final class TomBase {
     throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
   }
 
+  public static boolean isDefinedSymbol(TomSymbol subject) {
+    if(subject==null) {
+      System.out.println("isDefinedSymbol: subject == null");
+      return false;
+    }
+    %match(subject) {
+      Symbol[Option=optionList] -> {
+        return hasDefinedSymbol(`optionList);
+      }
+    }
+    return false;
+  }
+
+  public static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
+    if(symbol==null) {
+      System.out.println("isDefinedSymbol: symbol == null");
+      return false;
+    }
+    %match(symbol) {
+      Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[SlotName=name,SlotDecl=decl],_*)] -> {
+        if(`name==slotName && `decl!=`EmptyDeclaration()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
   /**
    * Return the option containing OriginTracking information
    */
@@ -487,9 +547,9 @@ public final class TomBase {
   }
 
   public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-    
+
     if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
-    
+
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
     TomSymbolList filteredList = `concTomSymbol();
     // Not necessary since checker ensure the uniqueness of the symbol
@@ -531,10 +591,10 @@ public final class TomBase {
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
 
       ExpressionToTomTerm(expr) -> { return getTermType(`expr,symbolTable); }
-      
+
       ListHead[Codomain=type] -> { return `type; }
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
-      
+
       Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
@@ -544,7 +604,7 @@ public final class TomBase {
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
   }
-  
+
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
     %match(t) {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {

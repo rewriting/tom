@@ -56,16 +56,24 @@ public class PostGenerator {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
- 
-  public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
+
+  /**
+   * Makes sure that no variable is declared if the same variable was declared above  
+   */
+  static <T> T changeVarDeclarations(T instr) throws VisitFailure {
+    return (T)`TopDown(ChangeVarDeclarations()).visit((Visitable)instr);
+  } 
+
+   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
     // Warning: BottomUp cannot be replaced by TopDown
     // otherwise, the code with getPostion is not correct
     //System.out.println("ins1: " + instruction);
     instruction = `BuiltinBottomUp(ChangeVarDeclarations()).visit(instruction);
     //System.out.println("ins2: " + instruction);
+    //return `TopDown(AddRef()).visitLight(instruction);
     return instruction;
-  }
-  
+   }
+ 
   /**
    * Makes sure that no variable is declared if the same variable was declared above  
    */

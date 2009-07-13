@@ -673,26 +673,32 @@ operator [List<TomTerm> list] throws TomException
         }
     ;
 
-operatorList [List<TomTerm> list] throws TomException
+operatorList [List list] throws TomException
 {
     TargetLanguage code = null;
+    boolean isAC = false;
+    int line = 0;
+    int column = 0;
 }
     :
-        t:OPERATORLIST
+        (
+            t1:OPERATORLIST { line=t1.getLine();column=t1.getColumn(); } 
+            | t2:ACOPERATOR { line=t2.getLine();column=t2.getColumn();isAC = true; }
+        )    
         {
             String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
                     TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn()));
+                    TextPosition(line,column));
                 list.add(`TargetLanguageToTomTerm(code));
             }
 
-            Declaration operatorListDecl = tomparser.operatorList();
-            list.add(`DeclarationToTomTerm(operatorListDecl));
+            Declaration operatorListDecl = tomparser.operatorList(isAC);
+            list.add(operatorListDecl);
         }
-    ;
+;
 
 operatorArray [List<TomTerm> list] throws TomException
 {
@@ -893,6 +899,10 @@ TYPETERM
     ;
 OPERATORLIST
     : "%oplist"   {
+            selector().push("tomlexer");}
+    ;
+ACOPERATOR
+    : "%opac"   {
             selector().push("tomlexer");}
     ;
 OPERATORARRAY
