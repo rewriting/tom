@@ -52,7 +52,7 @@
     <plugin name="Syntax checker"
       class="tom.engine.checker.TomSyntaxCheckerAp"/>
     <plugin name="Desugarer"
-      class="tom.engine.checker.TomDesugarer"/>
+      class="tom.engine.desugarer.Desugarer"/>
     <plugin name="Typer"
       class="tom.engine.typer.Typer"/>
     <plugin name="Expander"
