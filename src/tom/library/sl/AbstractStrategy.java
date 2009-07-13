@@ -109,7 +109,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @throws VisitFailure if visit fails
    */
   @SuppressWarnings("unchecked")
-  public <T> T visit(T any, Introspector i) throws VisitFailure{
+  public <T> T visit(T any, Introspector i) throws VisitFailure {
     init();
     setRoot(any);
     int status = visit(i);

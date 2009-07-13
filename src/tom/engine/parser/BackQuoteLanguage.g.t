@@ -165,7 +165,7 @@ options{
     }
     
     // built a sorted TomList from a LinkedList
-    private TomList buildAttributeList(LinkedList list){
+    private TomList buildAttributeList(LinkedList list) {
       return sortAttributeList(ASTFactory.makeList(list));
     }
     
@@ -205,12 +205,22 @@ mainBqTerm [TomList context] returns [TomTerm result]
         | id:BQ_ID
           (
            // `X*
-           {LA(1) == BQ_STAR}? BQ_STAR
+           {LA(1) == BQ_STAR}? BQ_STAR 
            {   
              String name = id.getText();
              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
              result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
            }
+           // `X*{type}
+           /*
+           | {LA(1) == BQ_STAR && LA(2) == BQ_LBRACE}? BQ_STAR BQ_LBRACE type1:BQ_ID BQ_RBRACE
+
+           {   
+             String name = id.getText();
+             OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), currentFile()));
+             result = `VariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
+           }
+           */
            | {LA(1) == BQ_RBRACE}?
            {
            // generate an ERROR when a '}' is encoutered
@@ -223,8 +233,15 @@ mainBqTerm [TomList context] returns [TomTerm result]
                  {   
                    result = buildBqAppl(id,blockList,term,true);
                  }
+                 // `X{type}
+                 | {LA(1) == BQ_LBRACE}? BQ_LBRACE type:BQ_ID BQ_RBRACE
+                {   
+                   String name = id.getText();
+                   OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
+                   result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+                }
                  // `x
-                |   t = targetCode
+                |   t = targetCode 
                  {
                    //System.out.println("targetCode = " + t);
                    addTargetCode(t);
@@ -563,6 +580,7 @@ tokens {
 
 BQ_LPAREN      :    '('   ;
 BQ_RPAREN      :    ')'   ;
+BQ_LBRACE      :    "{"   ;
 BQ_RBRACE      :    "}"   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;

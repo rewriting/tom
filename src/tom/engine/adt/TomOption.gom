@@ -11,6 +11,7 @@ Option =
   | OriginalText(AstName:TomName)
   | Constant()
   | MatchingTheory(Theory:Theory)
+  | TypeForVariable(String:String)
   | Label(AstName:TomName)
   | Debug(AstName:TomName)
   | ModuleName(String:String)

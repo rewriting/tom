@@ -45,8 +45,11 @@ public class Rewrite1 {
     Strategy rule = `RewriteSystem(subject);
     Strategy ruleId = `RewriteSystemId();
 
+
+
     try {
       System.out.println("subject       = " + subject);
+      System.out.println("fire  = " + `Repeat(rule).visit(subject));
       System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
       System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).visit(subject));
       System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
