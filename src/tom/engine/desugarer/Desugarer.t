@@ -23,7 +23,7 @@
  *
  **/
 
-package tom.engine.typer;
+package tom.engine.desugarer;
 
 import java.util.Map;
 import java.util.logging.Level;
