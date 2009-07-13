@@ -43,5 +43,24 @@ public class Peano1 {
     return null;
   }
 
-}
+  static Nat fib(Nat t) {    
+    %match(t) {   
+      zero()      -> { return `suc(zero()); }   
+      suc(zero()) -> { return `suc(zero()); }   
+      suc(suc(x)) -> { return `plus(fib(x),fib(suc(x))); }    
+    }   
+    return null;    
+  }   
 
+  public final static void main(String[] args) {    
+    int n = 10;   
+    Nat N = `zero();    
+    for(int i=0 ; i<n ; i++) {    
+      N = `suc(N);    
+    }   
+
+    Nat res = fib(N);   
+    System.out.println("fib(" + n + ") =  " + res);   
+  }   
+
+}
