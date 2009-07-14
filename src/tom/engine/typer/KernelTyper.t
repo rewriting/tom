@@ -146,7 +146,7 @@ public class KernelTyper {
    * Variable and TermAppl are typed in the TomTerm case
    */
 
-  protected tom.library.sl.Visitable typeVariable(TomType contextType, tom.library.sl.Visitable subject) {
+  public tom.library.sl.Visitable typeVariable(TomType contextType, tom.library.sl.Visitable subject) {
     if(contextType == null) {
       throw new TomRuntimeException("typeVariable: null contextType");
     }
