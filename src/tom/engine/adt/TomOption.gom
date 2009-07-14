@@ -18,6 +18,8 @@ Option =
   | ImplicitXMLChild()
   | ACSymbol()
   | noOption()
+// TODO : remove
+  | DefinedSymbol()
   | TypeForVariable(String:String)
 
 OptionList = concOption(Option*)
