@@ -176,6 +176,14 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
 
+  protected void buildAssignArray(int deep, TomTerm var, OptionList optionList, TomTerm index,
+      Expression exp, String moduleName) throws IOException {    
+    generateArray(deep,var,index,moduleName);
+    output.write("=");
+    generateExpression(deep,exp,moduleName);
+    output.writeln(";");
+  }
+
   protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
     output.write(deep,"return ");
     generate(deep,exp,moduleName);

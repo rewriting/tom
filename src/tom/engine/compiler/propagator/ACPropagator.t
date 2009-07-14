@@ -124,6 +124,7 @@ public class ACPropagator implements IBasePropagator {
                     concConstraint()),subject);
             Constraint c2 = decompose(`MatchConstraint(RecordAppl(option,
                     concTomName(Name(tomName)),tail,concConstraint()),X1));
+            System.out.println(tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(`AndConstraint(c1, c2)));
             return `AndConstraint(c1, c2);
           }
           concSlot() -> {

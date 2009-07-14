@@ -326,6 +326,16 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
+      SubstractOne(exp) -> {
+        buildSubstractOne(deep, `exp, moduleName);
+        return;
+      }
+
+      Substract(exp1,exp2) -> {
+        buildSubstract(deep, `exp1, `exp2, moduleName);
+        return;
+      }
+
       GetSize(opNameAST,exp) -> {
         buildExpGetSize(deep,`opNameAST,getTermType(`exp), `exp, moduleName);
         return;
@@ -363,6 +373,37 @@ public abstract class TomAbstractGenerator {
     }
   }
 
+  /**
+   * generates var[index] 
+   */
+  protected void generateArray(int deep, TomTerm subject, TomTerm index, String moduleName) throws IOException {
+    %match(TomTerm subject) {
+      Variable[AstName=PositionName(l)] -> {        
+        output.write("tom" + TomBase.tomNumberListToString(`l));        
+      }
+      Variable[AstName=Name(name)] -> {
+        output.write(`name);        
+      }
+    }
+    %match(TomTerm index) {
+      Variable[AstName=PositionName(l)] -> {
+        output.write("[");
+        output.write("tom" + TomBase.tomNumberListToString(`l));
+        output.write("]");        
+      }
+      Variable[AstName=Name(name)] -> {
+        output.write("[");
+        output.write(`name);
+        output.write("]");
+      }
+      ExpressionToTomTerm(Integer(x)) -> {
+        output.write("[");
+        output.write(`x);
+        output.write("]");  
+      }
+    }    
+  } 
+
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
     %match(subject) {
 
@@ -393,6 +434,11 @@ public abstract class TomAbstractGenerator {
       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
         return;
       }
+
+      AssignArray(var@Variable[Option=list],index,exp) -> {
+        `buildAssignArray(deep, var, list, index, exp, moduleName);
+        return;
+      }  
 
       (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         `generateInstruction(deep, body, moduleName);
@@ -548,7 +594,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      
+
       IntrospectorClass(Name(tomName),declaration) -> {
         `buildIntrospectorClass(deep, tomName, declaration, moduleName);
         return;
@@ -561,7 +607,7 @@ public abstract class TomAbstractGenerator {
 
       ArraySymbolDecl(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclArray(tomName, moduleName);
         }
@@ -570,7 +616,7 @@ public abstract class TomAbstractGenerator {
 
       (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclList(tomName, moduleName);
         }
@@ -587,7 +633,7 @@ public abstract class TomAbstractGenerator {
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
+          Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildIsFsymDecl(deep, tomName, varname, tlType, code, moduleName);
         }
@@ -595,16 +641,16 @@ public abstract class TomAbstractGenerator {
       }
 
       GetSlotDecl[AstName=Name(tomName),
-                  SlotName=slotName,
-                  Variable=Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]],
-                  Expr=code] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildGetSlotDecl(deep, tomName, name, tlType, code, slotName, moduleName);
+        SlotName=slotName,
+        Variable=Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]],
+        Expr=code] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            `buildGetSlotDecl(deep, tomName, name, tlType, code, slotName, moduleName);
+          }
+          return;
         }
-        return;
-      }
 
-      EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(type1,_)],
+     EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(type1,_)],
                      Variable[AstName=Name(name2), AstType=Type(type2,_)],
                      code, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type1)) {
@@ -612,7 +658,7 @@ public abstract class TomAbstractGenerator {
         }
         return;
       }
-      
+
       IsSortDecl(Variable[AstName=Name(varName), AstType=Type(type,_)], expr, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildIsSortDecl(deep, varName, type, expr, moduleName);
@@ -621,80 +667,80 @@ public abstract class TomAbstractGenerator {
       }
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
-                  Codomain=Type[TlType=codomain],
-                  Variable=Variable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
-                  Expr=expr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, expr, moduleName);
+        Codomain=Type[TlType=codomain],
+        Variable=Variable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
+        Expr=expr] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, expr, moduleName);
+          }
+          return;
         }
-        return;
-      }
 
       GetTailDecl[Opname=opNameAST@Name(opname),
-                  Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
-                  Expr=expr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetTailDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
+        Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Expr=expr] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            `buildGetTailDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
+          }
+          return;
         }
-        return;
-      }
 
       IsEmptyDecl[Opname=opNameAST@Name(opname),
-                  Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
-                  Expr=expr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
+        Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Expr=expr] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
+          }
+          return;
         }
-        return;
-      }
 
       MakeEmptyList(Name(opname), instr, _) -> {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-        || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `genDeclMake("tom_empty_list_", opname, returnType, concTomTerm(), instr, moduleName);
         }
         return;
       }
 
       MakeAddList(Name(opname),
-                  elt@Variable[AstType=Type[TlType=TLType[]]],
-                  list@Variable[AstType=fullListType@Type[TlType=TLType[]]],
-                  instr, _) -> {
+          elt@Variable[AstType=Type[TlType=TLType[]]],
+          list@Variable[AstType=fullListType@Type[TlType=TLType[]]],
+          instr, _) -> {
         TomType returnType = `fullListType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `genDeclMake("tom_cons_list_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
         }
         return;
       }
 
       GetElementDecl[Opname=opNameAST@Name(opname),
-                     Variable=Variable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
-                     Index=Variable[AstName=Name(name2)],
-                     Expr=code] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, code, moduleName);
+        Variable=Variable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
+        Index=Variable[AstName=Name(name2)],
+        Expr=code] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, code, moduleName);
+          }
+          return;
         }
-        return;
-      }
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
-	Variable=Variable[AstName=Name(name),
-	AstType=Type(type,tlType@TLType[])],
-	Expr=code] -> {
-	  if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-	    `buildGetSizeDecl(deep, opNameAST, name, type, tlType, code, moduleName);
-	  }
-	  return;
-	}
+        Variable=Variable[AstName=Name(name),
+        AstType=Type(type,tlType@TLType[])],
+        Expr=code] -> {
+          if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+            `buildGetSizeDecl(deep, opNameAST, name, type, tlType, code, moduleName);
+          }
+          return;
+        }
 
       MakeEmptyArray(Name(opname),
-                     Variable[Option=option,AstName=name,Constraints=constraints],
-                     instr, _) -> {
+          Variable[Option=option,AstName=name,Constraints=constraints],
+          instr, _) -> {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable(moduleName).getIntType(), constraints);
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
@@ -704,9 +750,9 @@ public abstract class TomAbstractGenerator {
       }
 
       MakeAddArray(Name(opname),
-                   elt@Variable[AstType=Type[TlType=TLType[]]],
-                   list@Variable[AstType=fullArrayType@Type[TlType=TLType[]]],
-                   instr, _) -> {
+          elt@Variable[AstType=Type[TlType=TLType[]]],
+          list@Variable[AstType=fullArrayType@Type[TlType=TLType[]]],
+          instr, _) -> {
         TomType returnType = `fullArrayType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
           `genDeclMake("tom_cons_array_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
@@ -741,66 +787,66 @@ public abstract class TomAbstractGenerator {
 
   public void generateList(int deep, TomList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmptyconcTomTerm()) {
-      generate(deep, subject.getHeadconcTomTerm(), moduleName);
-      subject = subject.getTailconcTomTerm();
+      while(!subject.isEmptyconcTomTerm()) {
+        generate(deep, subject.getHeadconcTomTerm(), moduleName);
+        subject = subject.getTailconcTomTerm();
+      }
     }
-  }
 
   public void generateOptionList(int deep, OptionList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmptyconcOption()) {
-      generateOption(deep,subject.getHeadconcOption(), moduleName);
-      subject = subject.getTailconcOption();
+      while(!subject.isEmptyconcOption()) {
+        generateOption(deep,subject.getHeadconcOption(), moduleName);
+        subject = subject.getTailconcOption();
+      }
     }
-  }
 
   public void generateInstructionList(int deep, InstructionList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmptyconcInstruction()) {
-      generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
-      subject = subject.getTailconcInstruction();
+      while(!subject.isEmptyconcInstruction()) {
+        generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
+        subject = subject.getTailconcInstruction();
+      }
+      if(prettyMode) {
+        output.writeln();
+      }
     }
-    if(prettyMode) {
-      output.writeln();
-    }
-  }
 
   public void generateDeclarationList(int deep, DeclarationList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmptyconcDeclaration()) {
-      generateDeclaration(deep,subject.getHeadconcDeclaration(), moduleName);
-      subject = subject.getTailconcDeclaration();
+      while(!subject.isEmptyconcDeclaration()) {
+        generateDeclaration(deep,subject.getHeadconcDeclaration(), moduleName);
+        subject = subject.getTailconcDeclaration();
+      }
     }
-  }
 
   public void generatePairNameDeclList(int deep, PairNameDeclList pairNameDeclList, String moduleName)
     throws IOException {
-    while ( !pairNameDeclList.isEmptyconcPairNameDecl() ) {
-      generateDeclaration(deep, pairNameDeclList.getHeadconcPairNameDecl().getSlotDecl(), moduleName);
-      pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+      while ( !pairNameDeclList.isEmptyconcPairNameDecl() ) {
+        generateDeclaration(deep, pairNameDeclList.getHeadconcPairNameDecl().getSlotDecl(), moduleName);
+        pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+      }
     }
-  }
 
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
 
   protected abstract void genDecl(String returnType,
-                                  String declName,
-                                  String suffix,
-                                  String args[],
-                                  TargetLanguage tlCode,
-                                  String moduleName) throws IOException;
+      String declName,
+      String suffix,
+      String args[],
+      TargetLanguage tlCode,
+      String moduleName) throws IOException;
 
   protected abstract void genDeclInstr(String returnType,
-                                       String declName,
-                                       String suffix,
-                                       String args[],
-                                       Instruction instr,
-                                       int deep,
-                                       String moduleName) throws IOException;
+      String declName,
+      String suffix,
+      String args[],
+      Instruction instr,
+      int deep,
+      String moduleName) throws IOException;
 
   protected abstract void genDeclMake(String prefix, String funName, TomType returnType,
-                                      TomList argList, Instruction instr, String moduleName) throws IOException;
+      TomList argList, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
 
@@ -859,6 +905,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException;
   protected abstract void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildAssignArray(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, String moduleName) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
@@ -868,6 +915,8 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
   protected abstract void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildSubstract(int deep, TomTerm var1, TomTerm var2, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,

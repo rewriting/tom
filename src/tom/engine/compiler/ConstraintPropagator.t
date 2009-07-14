@@ -83,6 +83,7 @@ public class ConstraintPropagator {
     }
     
     Constraint result= null;
+    constraintToCompile = new ACPropagator(this.getCompiler(),this).propagate(constraintToCompile);
     mainLoop: while(true) {
       for(int i=0 ; i < propNb ; i++) {
         result = prop[i].propagate(constraintToCompile);

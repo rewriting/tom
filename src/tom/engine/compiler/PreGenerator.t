@@ -381,7 +381,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
       OrConstraintDisjunction(m,X*) -> {
         return `OrExpressionDisjunction(constraintsToExpressions(m), constraintsToExpressions(X*));
       }
-      m@(MatchConstraint|NumericConstraint)[] -> {
+      m@(MatchConstraint|NumericConstraint|ACMatchConstraint)[] -> {
         return `ConstraintToExpression(m);
       }
       AntiMatchConstraint(constr) -> {

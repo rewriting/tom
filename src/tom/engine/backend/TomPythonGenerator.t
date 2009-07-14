@@ -400,4 +400,19 @@ matchBlock: {
     s.append("\n # end def " + declName + "_" + suffix + "\n");
     output.write(s);
   }
+
+  protected void buildAssignArray(int deep, TomTerm var, OptionList optionList, TomTerm index, 
+      Expression exp, String moduleName) throws IOException {
+    buildAssignArrayVar(deep,var,optionList, index, exp, moduleName);
+  }
+
+  protected void buildAssignArrayVar(int deep, TomTerm var, OptionList list, TomTerm index, 
+      Expression exp, String moduleName) throws IOException {    
+    //output.indent(deep);
+    generateArray(deep,var,index,moduleName);
+    output.write("=");
+    generateExpression(deep,exp,moduleName);
+    output.write(";\n");
+  } 
+
 }

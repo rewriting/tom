@@ -67,6 +67,7 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
+  
   %typeterm TomNameHashSet {
     implement      { java.util.HashSet<TomName> }
     is_sort(t)      { $t instanceof java.util.HashSet }
@@ -115,25 +116,25 @@ public class TomOptimizer extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
-        TomTerm renamedTerm = (TomTerm)getWorkingTerm();
+       TomTerm renamedTerm = (TomTerm)getWorkingTerm();
         if(getOptionBooleanValue("optimize2")) {
           Strategy optStrategy2 = `Sequence(
               InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
               InnermostId(ChoiceId(
                   Sequence(BuiltinRepeatId(IfSwapping(this)), 
-                           BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+                    BuiltinRepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
                   SequenceId(InterBlock(this),
-                             OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten()))))
+                    OnceTopDownId(BuiltinRepeatId(NopElimAndFlatten()))))
                 )
               );
           renamedTerm = optStrategy2.visitLight(renamedTerm);
           renamedTerm = `BuiltinBottomUp(Inline(TrueConstraint())).visit(renamedTerm);
           renamedTerm = optStrategy2.visitLight(renamedTerm);
-//System.out.println("opt renamedTerm = " + renamedTerm);
+          //System.out.println("opt renamedTerm = " + renamedTerm);
         } else if(getOptionBooleanValue("optimize")) {
           Strategy optStrategy = `Sequence(
-                InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
-                BuiltinBottomUp(Inline(TrueConstraint())));
+              InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
+              BuiltinBottomUp(Inline(TrueConstraint())));
 
           renamedTerm = optStrategy.visit(renamedTerm);
         }
@@ -288,7 +289,6 @@ public class TomOptimizer extends TomGenericPlugin {
         getEnvironment().up();
         int mult = info.readCount;
         Position readPos = info.usePosition;
-        TomTerm value = `ExpressionToTomTerm(info.assignment);
 
         //System.out.println(`name + " --> " + mult);
         // 0 -> unused variable
@@ -335,6 +335,7 @@ public class TomOptimizer extends TomGenericPlugin {
                 info(TomMessage.inline,mult,varName);
               }
               getEnvironment().goToPosition(readPos);
+              TomTerm value = `ExpressionToTomTerm(info.assignment);
               getEnvironment().setSubject(value);
               getEnvironment().goToPosition(current);
               `CleanAssign(name).visit(getEnvironment());
@@ -434,11 +435,11 @@ public class TomOptimizer extends TomGenericPlugin {
 
   /*
    * check if a variable appearing in an expression (in Let x <- exp ...)
-   * is modified (by Assign)
+   * is modified (by applying Assign on the variables contained in exp)
    */
   %strategy computeOccurenceLet_AssignCase(defaultCase:Strategy,info:InfoVariable) extends defaultCase {
     visit Instruction {
-      Assign[Variable=Variable[AstName=varname]] -> {
+      (Assign|AssignArray)[Variable=Variable[AstName=varname]] -> {
         if(info.getAssignmentVariables().contains(`varname)) {
           info.modifiedAssignmentVariables=true;
           throw new VisitFailure();
@@ -464,7 +465,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       // should not happen
-      Assign[Variable=Variable[AstName=varname]] -> {
+      (Assign|AssignArray)[Variable=Variable[AstName=varname]] -> {
         if(variableName.equals(`varname)) {
           logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
         }
@@ -523,7 +524,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
       }
 
-      Assign(Variable[AstName=name],src) -> {
+      (Assign|AssignArray)[Variable=Variable[AstName=name],Source=src] -> {
         if(variableName == `name) {
           info.setAssignment(`src,getPosition());
         } else {
@@ -594,7 +595,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy CleanAssignOnce(varname:TomName) extends Identity() {
     visit Instruction {
-      Assign((Variable|VariableStar)[AstName=name],_) -> {
+      (Assign|AssignArray)[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(`name.equals(varname)) { return `Nop(); }
       }
     }

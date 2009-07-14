@@ -119,7 +119,7 @@ public class PostGenerator {
 
   %strategy CheckAssignExistence(varName:TomName) extends Identity() {
     visit Instruction {
-      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+      (Assign|AssignArray)[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(varName == `name ) {
           throw new VisitFailure();
         }
