@@ -105,23 +105,52 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
+    return getMethod(slot,false);
+  }
+
+  public String setMethod(SlotField slot) {
+    return setMethod(slot,false);
+  }
+
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
+  public String getMethod(SlotField slot,boolean jmi) {
     %match(slot) {
       SlotField[Name=name] -> {
-        return "get"+`name;
+        if(jmi) {
+          return "get"+jmize(`name);
+        } else {
+          return "get"+`name;
+        }
       }
     }
     throw new GomRuntimeException(
         "TemplateClass:getMethod got a strange SlotField "+slot);
   }
 
-  public String setMethod(SlotField slot) {
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
+  public String setMethod(SlotField slot,boolean jmi) {
     %match(slot) {
       SlotField[Name=name] -> {
-        return "set"+`name;
+        if(jmi) {
+          return "set"+jmize(`name);
+        } else {
+          return "set"+`name;
+        }
       }
     }
     throw new GomRuntimeException(
         "TemplateClass:setMethod got a strange SlotField "+slot);
+  }
+
+  private String jmize(String name) {
+    //TODO
+    return org.apache.commons.lang.StringUtils.capitalize(name);
   }
 
   public String index(SlotField slot) {

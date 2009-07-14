@@ -115,10 +115,12 @@ atoms :
   ;
 
 alternatives[Token typename] :
-  /*(ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
-  -> ^(ConcProduction (opdecl)+)*/
-  /*(((jd1=(JAVADOC)? ALT)?) | ((ALT jd1=(JAVADOC)?)?) | (JAVADOC)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?*/
-  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?) opdecl[typename,jd1] (((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT) opdecl[typename,jd2])* (SEMI)?
+  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?) 
+  opdecl[typename,jd1] 
+  (
+   ((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT {jd2=null;}) 
+   opdecl[typename,jd2] 
+  )* (SEMI)?
   -> ^(ConcProduction (opdecl)+)
   ;
 
@@ -131,7 +133,6 @@ pattern_alternatives[Token typename] :
 opdecl[Token type, Token JAVADOC] :
  ID fieldlist
   -> {JAVADOC!=null}? ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
-      /*^(Origin ID[""+input.LT(1).getLine()]))*/
       ^(OptionList ^(Origin ID[""+input.LT(1).getLine()]) ^(Details ID[JAVADOC])))
   -> ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))

@@ -46,6 +46,7 @@ public class Backend {
   private int generateStratMapping = 0;
   private boolean multithread = false;
   private boolean maximalsharing = true;
+  private boolean jmicompatible = false;
   private GomEnvironment gomEnvironment;
 
   %include { ../adt/objects/Objects.tom }
@@ -56,13 +57,15 @@ public class Backend {
           int generateStratMapping,
           boolean multithread,
           boolean nosharing,
+          boolean jmicompatible,
           List importList,
           GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.generateStratMapping = generateStratMapping;
     this.multithread = multithread;
-    this.maximalsharing = ! nosharing;
+    this.maximalsharing = !nosharing;
+    this.jmicompatible = jmicompatible;
     this.importList = importList;
     this.gomEnvironment = gomEnvironment;
   }
@@ -165,6 +168,7 @@ public class Backend {
             (TemplateClass)generators.get(`mapping),
             multithread,
             maximalsharing,
+            jmicompatible,
             getGomEnvironment());
         generators.put(`className,operator);
         if(generateStratMapping>0) {

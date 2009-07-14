@@ -260,6 +260,10 @@ public class Typer extends TomGenericPlugin {
      */
     %strategy updateCodomain(typer:Typer) extends `Identity() {
       visit Declaration {
+        GetHeadDecl[] -> {
+            throw new TomRuntimeException("updateCodomain");
+        }
+
         decl@GetHeadDecl[Opname=Name(opName)] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
@@ -290,7 +294,7 @@ public class Typer extends TomGenericPlugin {
     }
 
     /*
-     * replace 'abc' by conc('a','b','c')
+     * replace conc('abc') by conc('a','b','c')
      */
     %strategy typeString(typer:Typer) extends `Identity() {
       visit TomTerm {

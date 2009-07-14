@@ -43,6 +43,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   String comments;
   boolean multithread;
   boolean maximalsharing;
+  boolean jmicompatible;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -53,10 +54,12 @@ public class OperatorTemplate extends TemplateHookedClass {
                           TemplateClass mapping,
                           boolean multithread,
                           boolean maximalsharing,
+                          boolean jmicompatible,
                           GomEnvironment gomEnvironment) {
     super(gomClass,manager,tomHomePath,importList,mapping,gomEnvironment);
     this.multithread = multithread;
     this.maximalsharing = maximalsharing;
+    this.jmicompatible = jmicompatible;
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
@@ -767,19 +770,37 @@ writer.write(%[
    * @@return the attribute @slotDomain(head)@ which just has been set
    */]%);
       if (maximalsharing) {
-      writer.write(%[
+        writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
   }
   ]%);
       } else {
-      writer.write(%[
+        writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     @fieldName(head.getName())@ = set_arg; 
     return this;
   }]%);
+      }
+
+      if(jmicompatible) {
+        // generate getters and setters where slot-names are normalized
+        if(!getMethod(head,true).equals(getMethod(head))) {
+      writer.write(%[
+  public @slotDomain(head)@ @getMethod(head,true)@() {
+    return @getMethod(head)@();
+  }
+  ]%);
+        }
+        if(!setMethod(head,true).equals(setMethod(head))) {
+      writer.write(%[
+  public @fullClassName(sortName)@ @setMethod(head,true)@(@slotDomain(head)@ set_arg) {
+    return @setMethod(head)@(set_arg);
+  }
+  ]%);
+        }
       }
     }
   }
