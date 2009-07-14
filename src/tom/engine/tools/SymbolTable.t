@@ -60,6 +60,8 @@ public class SymbolTable {
   private final static String TYPE_BOOLEAN   = "boolean";
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
+  private final static String TYPE_INT_ARRAY = "intarray";
+  private final static String INT_ARRAY_OP   = "concInt";
 
   public final static TomType TYPE_UNKNOWN   = `TomTypeAlone("unknown type");
 
@@ -232,6 +234,10 @@ public class SymbolTable {
     return `ASTFactory.makeType(TYPE_INT,"int");
   }
 
+  public TomType getIntArrayType() {
+    return `ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
+  }
+
   public TomType getLongType() {
     return `ASTFactory.makeType(TYPE_LONG,"long");
   }
@@ -306,6 +312,10 @@ public class SymbolTable {
 
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
+  }
+
+  public boolean isIntArrayType(String type) {
+    return type.equals(TYPE_INT_ARRAY);
   }
 
   public boolean isLongType(String type) {
@@ -587,5 +597,8 @@ public class SymbolTable {
      public String getslot;
      }
    */
+  public String getIntArrayOp() {
+    return INT_ARRAY_OP;
+  }
 
 }

@@ -52,12 +52,28 @@ public class ASTFactory {
   private ASTFactory() {}
 
   public static TomList makeList(Collection<TomTerm> c) {
-    TomTerm array[] = c.toArray(new TomTerm[0]);
+    Object array[] = c.toArray();  
     TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
-      TomTerm term = array[i];
+     Object elt = array[i];    
+     TomTerm term; 
+     if(elt instanceof TargetLanguage) { 	 
+        term = `TargetLanguageToTomTerm((TargetLanguage)elt); 	 
+      } else if(elt instanceof TomType) { 	 
+        term = `TomTypeToTomTerm((TomType)elt); 	 
+      } else if(elt instanceof Declaration) { 	 
+        term = `DeclarationToTomTerm((Declaration)elt); 	 
+      } else if(elt instanceof Expression) { 	 
+        term = `ExpressionToTomTerm((Expression)elt); 	 
+      } else if(elt instanceof TomName) { 	 
+        term = `TomNameToTomTerm((TomName)elt); 	 
+      } else if(elt instanceof Instruction) { 	 
+        term = `InstructionToTomTerm((Instruction)elt); 	 
+      } else { 	 
+        term = (TomTerm)elt; 	 
+      } 	 
       list = `concTomTerm(term,list*);
-    }
+    } 	     
     return list;
   }
 
@@ -499,7 +515,7 @@ public class ASTFactory {
 
     %match(args) {
       concTomTerm() -> {
-        return `BuildEmptyArray(name,size);
+        return `BuildEmptyArray(name,ExpressionToTomTerm(Integer(size)));
       }
 
       concTomTerm(head@VariableStar[],tail*) -> {
