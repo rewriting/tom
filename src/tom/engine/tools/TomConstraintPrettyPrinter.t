@@ -51,9 +51,8 @@ public class TomConstraintPrettyPrinter {
 
   %include{ ../adt/tomconstraint/TomConstraint.tom }
 
-  public TomConstraintPrettyPrinter() { }
 
-  public String prettyPrint(tom.library.sl.Visitable subject) {
+  public static String prettyPrint(tom.library.sl.Visitable subject) {
     
     %match(subject) {
 
@@ -95,6 +94,10 @@ public class TomConstraintPrettyPrinter {
 
       MatchConstraint(Pattern, Subject)-> {
         return prettyPrint(`Pattern)+" << "+prettyPrint(`Subject);
+      }
+
+      ACMatchConstraint(Pattern, Subject)-> {
+        return prettyPrint(`Pattern)+" <<_ac "+prettyPrint(`Subject);
       }
 
       AntiMatchConstraint(Constraint)-> {
@@ -157,8 +160,8 @@ public class TomConstraintPrettyPrinter {
         return prettyPrint(`name);
       }
 
-      RecordAppl(_,nameList,_,_) ->{
-        return prettyPrint(`nameList); 
+      RecordAppl[NameList=nameList,Slots=slots] ->{
+        return prettyPrint(`nameList)+"("+prettyPrint(`slots)+")"; 
       }
 
       ListHead[Variable=Variable] -> {
@@ -259,6 +262,20 @@ public class TomConstraintPrettyPrinter {
         return "end"+`number;
       }
     }
+
+    %match(subject) {
+      PairSlotAppl(_,Appl) -> {
+        return prettyPrint(`Appl);
+      }
+    }
+
+    String s = "";
+    %match(subject) {
+      concSlot(_*, t, _*) -> {
+        s += prettyPrint(`t)+",";
+      }
+    }
+    if (! s.equals("")) return s.substring(0,s.length()-1);
 
     return subject.toString();
   }
