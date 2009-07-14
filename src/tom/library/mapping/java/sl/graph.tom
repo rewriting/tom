@@ -77,22 +77,22 @@
 }
 
 %op Strategy AFCtl(s:Strategy) {
-  make(s) {`AU(Identity(),s) }
+  make(s) {`AUCtl(Identity(),s) }
 }
 
-%op Strategy AG(s:Strategy) {
+%op Strategy AGCtl(s:Strategy) {
   make(s) {`TopDown(s) }
 }
 
 
-%op Strategy EF(s:Strategy) {
-  make(s) {`EU(Identity(),s) }
+%op Strategy EFCtl(s:Strategy) {
+  make(s) {`EUCtl(Identity(),s) }
 }
 
-%op Strategy AX(s:Strategy) {
+%op Strategy AXCtl(s:Strategy) {
   make(s) {( `All(s) )}
 }
 
-%op Strategy EX(s:Strategy) {
+%op Strategy EXCtl(s:Strategy) {
   make(s) {(`One(s) )}
 }
