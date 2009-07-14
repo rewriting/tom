@@ -64,7 +64,7 @@ public class ConstraintPropagator {
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
-  private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator"};
+  private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator","ACPropagator"};
 
   public Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{
@@ -83,7 +83,7 @@ public class ConstraintPropagator {
     }
     
     Constraint result= null;
-    constraintToCompile = new ACPropagator(this.getCompiler(),this).propagate(constraintToCompile);
+    //constraintToCompile = new ACPropagator(this.getCompiler(),this).propagate(constraintToCompile);
     mainLoop: while(true) {
       for(int i=0 ; i < propNb ; i++) {
         result = prop[i].propagate(constraintToCompile);

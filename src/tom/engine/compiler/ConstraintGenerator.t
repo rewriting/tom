@@ -459,7 +459,7 @@ public class ConstraintGenerator {
         GreaterThan(
           TomTermToExpression(position),
           zero),
-        GreaterOrEqualThan(
+        GreaterThan(
           GetElement(intArrayName,intType,tempSol,position),
           GetElement(intArrayName,intType,alpha,position))
         );
@@ -511,6 +511,8 @@ public class ConstraintGenerator {
 
     // make sure the additional functions are generated
     symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
+    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+    symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
 
     return instruction;
   }

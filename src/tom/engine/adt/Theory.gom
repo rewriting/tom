@@ -4,6 +4,7 @@ ElementaryTheory =
   | Syntactic()
   | Associative()
   | Unitary()
-  | TrueAU()
+  | AC()
+  | AU()
 
 Theory = concElementaryTheory(ElementaryTheory*)

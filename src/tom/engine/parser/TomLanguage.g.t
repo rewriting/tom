@@ -791,7 +791,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 
         | // for a single constant: i.e. a variable
           // ambiguous with the next rule so:
-          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}? 
           name = headSymbol[optionList] 
           {            
             result = `Variable(ASTFactory.makeOptionList(optionList),name,
@@ -801,7 +801,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 
         | // for a disjuntion of constants: 1, 3.14, "foo", or (1|2|3) for instance
           // ambiguous with the next rule so:
-          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}? 
           nameList = headConstantList[optionList] 
           {
             optionList.add(`Constant());
@@ -815,17 +815,26 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 
         | // f(...) or f[...] or !f(...) or !f[...]
           name = headSymbol[optionList] 
-      (qm:QMARK)?
-          { 
-        if(qm!=null) {
-              //name = `Name(name.getString() + "__qm__"); 
+
+      (
+      st:QQMARK { 
+        if(st!=null) {
               name = `Name(name.getString()); 
-              optionList.add(`MatchingTheory(concElementaryTheory(TrueAU())));
-            }
-        nameList = `concTomName(nameList*,name);
-          }
+              optionList.add(`MatchingTheory(concElementaryTheory(AC())));
+        }
+      }
+      |
+       qm:QMARK { 
+        if(qm!=null) {
+              name = `Name(name.getString()); 
+              optionList.add(`MatchingTheory(concElementaryTheory(AU())));
+        }
+       }
+      )?
+
           implicit = args[list,secondOptionList]
           {
+            nameList = `concTomName(nameList*,name);
             if(implicit) {
               result = `RecordAppl(
                   ASTFactory.makeOptionList(optionList),
@@ -1733,7 +1742,7 @@ operator returns [Declaration result] throws TomException
         }
     ;
 
-    operatorList[boolean isAC] returns [Declaration result] throws TomException
+    operatorList returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
@@ -1742,9 +1751,9 @@ operator returns [Declaration result] throws TomException
     String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID (qm:QMARK)?
+        type:ALL_ID name:ALL_ID 
         {
-	  opName = name.getText(); // + ((qm!=null)?"__qm__":"");
+	  opName = name.getText();
 	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
 	  options.add(ot);
         }
@@ -1769,13 +1778,10 @@ operator returns [Declaration result] throws TomException
         )*
         t:RBRACE
         { 
-            if (isAC) {
-              options.add(`ACSymbol());
-            }
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
             TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyType()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
-            result = isAC ? `ACSymbolDecl(Name(opName)) : `ListSymbolDecl(Name(opName));
+            result = `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
             selector().pop(); 
         }
@@ -1790,9 +1796,9 @@ operatorArray returns [Declaration result] throws TomException
     String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID (qm:QMARK)?
+        type:ALL_ID name:ALL_ID
         {
-	  opName = name.getText(); // + ((qm!=null)?"__qm__":"");
+	  opName = name.getText();
 	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
 	  options.add(ot);
         }
@@ -2382,6 +2388,7 @@ EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
 QMARK       :   '?' ;
+QQMARK      :   "??" ;
 UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ; 
 BACKQUOTE   :   "`" ;
 

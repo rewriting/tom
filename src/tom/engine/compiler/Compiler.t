@@ -62,6 +62,7 @@ public class Compiler extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/ArrayList.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/types/HashSet.tom}
 
   %typeterm Compiler { implement { Compiler } }
 
@@ -165,7 +166,6 @@ public class Compiler extends TomGenericPlugin {
  protected static long startChrono = System.currentTimeMillis();
   public void run(Map informationTracker) {
     boolean intermediate = getOptionBooleanValue("intermediate");
-    //System.out.println("(debug) I'm in the Tom compiler : TSM"+getStreamManager().toString());
     try {
       TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
@@ -192,7 +192,7 @@ public class Compiler extends TomGenericPlugin {
 
   public TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     getCompilerEnvironment().setSymbolTable(symbolTable);
-    // we use TopDown  and not TopDownIdStopOnSuccess to compile nested-match
+    // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
     return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
@@ -452,16 +452,16 @@ public class Compiler extends TomGenericPlugin {
   private TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
     // we use the symbol table as all AC the operators were marked as
     // used when the loop was generated
+    HashSet<String> bag = new HashSet<String>();
+    `TopDown(CollectACSymbols(bag)).visitLight(subject);
+
     TomList l = `concTomTerm();
-    Iterator<String> it = getSymbolTable().keySymbolIterator();
-    while(it.hasNext()){
-      String op = it.next();
+    for(String op:bag) {
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
-      if(TomBase.isACOperator(opSymbol)
-          && getSymbolTable().isUsedSymbolConstructor(op)) {
+      if(getSymbolTable().isUsedSymbolConstructor(op)) {
         // gen all
         TomType opType = opSymbol.getTypesToType().getCodomain();        
-        // 1. computeLenght
+        // 1. computeLength
         l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
         // 2. getMultiplicities
         l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
@@ -471,10 +471,18 @@ public class Compiler extends TomGenericPlugin {
     }
     // make sure the variables are correctly defined
     l = PostGenerator.changeVarDeclarations(`l);
-    subject = (TomTerm)`OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
+    subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
     return subject;
   }
   
+  %strategy CollectACSymbols(HashSet bag) extends Identity() {
+    visit TomTerm {
+      RecordAppl[NameList=(Name(headName),_*),Option=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
+        bag.add(`headName);
+      }
+    }
+  }
+
   %strategy InsertDeclarations(TomList l) extends Identity() {
     visit TomList {
       concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {        

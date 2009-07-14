@@ -93,11 +93,11 @@ public class TomConstraintPrettyPrinter {
       }
 
       MatchConstraint(Pattern, Subject)-> {
-        return prettyPrint(`Pattern)+" << "+prettyPrint(`Subject);
-      }
-
-      ACMatchConstraint(Pattern, Subject)-> {
-        return prettyPrint(`Pattern)+" <<_ac "+prettyPrint(`Subject);
+        if(TomBase.hasTheory(`Pattern,`AC())) {
+          return prettyPrint(`Pattern)+" <<_AC "+prettyPrint(`Subject);
+        } else {
+          return prettyPrint(`Pattern)+" << "+prettyPrint(`Subject);
+        }
       }
 
       AntiMatchConstraint(Constraint)-> {

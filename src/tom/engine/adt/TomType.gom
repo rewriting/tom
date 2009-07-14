@@ -2,11 +2,17 @@ module TomType
 imports TomSignature
 abstract syntax
 
-TomType = Type(TomType:String,TlType:TomType)
+TomType =
+        /**
+         * Type
+         * @param TomType the name of the Tom sort name
+         * @param TlType either TLType(String) or EmptyType()
+         */
+         | Type(TomType:String,TlType:TomType)
         /**
          * Codomain is used by SymbolTable and TomParserPlugin
 	 *          define a type as the same type as another symbol
-         * @param AstName then name of the symbol we want to mimic  
+         * @param AstName the name of the symbol we want to mimic  
          */
         | Codomain(AstName:String)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)

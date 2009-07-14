@@ -99,7 +99,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       } else {
         return `EqualTerm(type,BuildConstant(name),subject);
       }
-    } else if(TomBase.hasTheory(theory, `TrueAU())) {
+    } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);
     }
     return `IsFsym(name,subject);

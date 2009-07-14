@@ -76,15 +76,15 @@ public class ACPropagator implements IBasePropagator {
       // that are supposed to be solved by programm transformation 
       // (basically to reduce all the cases to f(X*,Y*))
       c@MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=slots],subject) -> {
-        if (TomBase.isACOperator(acp.getCompiler().getSymbolTable().getSymbolFromName(`tomName))) { 
-          //decompose the pattern to only f(X*,Y*) matching constraints
-          System.out.println("decompose AC ");
-          return acp.decompose(`c); 
-        }
+        //decompose the pattern to only f(X*,Y*) matching constraints
+        System.out.println("decompose AC ");
+        return `c;
+        //return acp.decompose(`c); 
       }
     }
   }
 
+  /*
   public Constraint decompose(Constraint c) {
     %match(c) {
       MatchConstraint(pattern@RecordAppl[Option=option, NameList=(name@Name(tomName)), Slots=slots],subject) -> {
@@ -135,5 +135,6 @@ public class ACPropagator implements IBasePropagator {
     }
     return c; 
   }
+  */
 
 }

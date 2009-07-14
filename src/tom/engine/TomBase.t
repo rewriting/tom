@@ -212,30 +212,6 @@ public final class TomBase {
     return result;
   }
 
-  
-  /**
-   * Returns <code>true</code> if the symbol corresponds to a %oplist
-   */
-  public static boolean isACOperator(TomSymbol symbol) {
-    if(symbol==null) {
-      return false;
-    }
-    %match(TomSymbol symbol) {
-      Symbol[Option=l] -> {
-        %match(l){
-          concOption(_*,ACSymbol[],_*) -> { return true; }
-        }
-        return false;
-      }
-    }
-    throw new TomRuntimeException("isACOperator -- strange case: '" + symbol + "'");
-  }
-
-
-
-
-
-
   /**
    * Returns <code>true</code> if the symbol corresponds to a %oplist
    */
@@ -362,6 +338,10 @@ public final class TomBase {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
+  }
+
+  public static boolean hasTheory(TomTerm term, ElementaryTheory elementaryTheory) {
+    return hasTheory(getTheory(term),elementaryTheory);
   }
 
   public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
