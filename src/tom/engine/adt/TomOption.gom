@@ -5,7 +5,6 @@ Option =
   | DeclarationToOption(AstDeclaration:Declaration)
   | TomNameToOption(AstName:TomName)
   | TomTermToOption(AstTerm:TomTerm)
-  | DefinedSymbol()
   | GeneratedMatch()
   | OriginTracking(AstName:TomName,Line:int,FileName:String)
   | OriginalText(AstName:TomName)
