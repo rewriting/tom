@@ -63,7 +63,7 @@ public class SymbolTable {
   private final static String TYPE_INT_ARRAY = "intarray";
   private final static String INT_ARRAY_OP   = "concInt";
 
-  public final static TomType TYPE_UNKNOWN   = `TomTypeAlone("unknown type");
+  public final static TomType TYPE_UNKNOWN   = `Type("unknown type",EmptyType());
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
@@ -307,7 +307,7 @@ public class SymbolTable {
   }
 
   //public TomType getUnknownType() {
-  //  return `TomTypeAlone(TYPE_UNKNOWN);
+  //  return `Type(TYPE_UNKNOWN,EmptyType());
   //}
 
   public boolean isIntType(String type) {
@@ -347,7 +347,7 @@ public class SymbolTable {
   }
   
   public boolean isUnknownType(String type) {
-    return `TomTypeAlone(type).equals(TYPE_UNKNOWN);
+    return `Type(type,EmptyType()).equals(TYPE_UNKNOWN);
   }
 
   public String builtinToWrapper(String type) {
@@ -376,7 +376,7 @@ public class SymbolTable {
 
   public boolean isNumericType(TomType type) {    
     %match(type){
-      TomTypeAlone(str) -> {
+      Type(str,EmptyType()) -> {
         return isNumericType(`str);
       }
     }
@@ -436,7 +436,7 @@ public class SymbolTable {
 
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
     %match(symbol) {
-      Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
+      Symbol(name,TypesToType(domain,Codomain(opName)),slots,options) -> {
         //System.out.println("depend from : " + `opName);
         TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
         //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));

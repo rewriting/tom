@@ -157,6 +157,10 @@ public class Typer extends TomGenericPlugin {
      */
     %strategy updateCodomain(typer:Typer) extends `Identity() {
       visit Declaration {
+        GetHeadDecl[] -> {
+            throw new TomRuntimeException("updateCodomain");
+        }
+
         decl@GetHeadDecl[Opname=Name(opName)] -> {
           System.out.println("LA1");
           TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
@@ -262,7 +266,7 @@ public class Typer extends TomGenericPlugin {
              */
             TomSymbol stringSymbol = getSymbolFromName(`tomName);
             TomType termType = stringSymbol.getTypesToType().getCodomain();
-            String type = termType.getTomType().getString();
+            String type = termType.getTomType();
             if(symbolTable().isCharType(type) && `tomName.length()>3) {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
                 SlotList newArgs = `concSlot();

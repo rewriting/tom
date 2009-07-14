@@ -232,9 +232,8 @@ public class ASTFactory {
   }
 
   protected static TomType makeType(String typeNameTom, String typeNametGL) {
-    TomType typeTom = `ASTTomType(typeNameTom);
-    TomType sortTL  = `TLType(ITL(typeNametGL));
-    return `Type(typeTom,sortTL);
+    TomType sortTL  = `TLType(typeNametGL);
+    return `Type(typeNameTom,sortTL);
   }
 
     /*
@@ -246,7 +245,7 @@ public class ASTFactory {
                              String value, List optionList) {
     TomTypeList typeList = `concTomType();
     PairNameDeclList pairSlotDeclList = `concPairNameDecl();
-    TomSymbol astSymbol = makeSymbol(value,`TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
+    TomSymbol astSymbol = makeSymbol(value,`Type(sort,EmptyType()),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
 

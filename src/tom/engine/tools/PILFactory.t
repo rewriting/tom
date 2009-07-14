@@ -259,7 +259,7 @@ public PILFactory() {
     }
 
     %match(subject) {
-      Type[TomType = ASTTomType(name)] -> { return `name; }
+      Type[TomType = name] -> { return `name; }
     }
 
     %match(subject) {

@@ -80,15 +80,15 @@ public class Expander extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final TomType objectType = `TLType(ITL("Object"));
-  private static final TomType genericType = `TLType(ITL("T"));
-  private static final TomType methodparameterType = `TLType(ITL("<T> T"));
-  private static final TomType objectArrayType = `TLType(ITL("Object[]"));
-  private static final TomType intType = `TLType(ITL("int"));
+  private static final TomType objectType = `TLType("Object");
+  private static final TomType genericType = `TLType("T");
+  private static final TomType methodparameterType = `TLType("<T> T");
+  private static final TomType objectArrayType = `TLType("Object[]");
+  private static final TomType intType = `TLType("int");
   
-  private static final TomType basicStratType = `TLType(ITL("tom.library.sl.AbstractStrategyBasic"));
-  private static final TomType introspectorType = `TLType(ITL("tom.library.sl.Introspector"));
-  private static final TomType visitfailureType = `TLType(ITL("tom.library.sl.VisitFailure"));
+  private static final TomType basicStratType = `TLType("tom.library.sl.AbstractStrategyBasic");
+  private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
+  private static final TomType visitfailureType = `TLType("tom.library.sl.VisitFailure");
   // introspector argument of visitLight
   private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
   private static final TomTerm objectVar = `Variable(concOption(),Name("o"),objectType,concConstraint());
@@ -275,7 +275,7 @@ matchBlock: {
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if(!(symbolTable.isBuiltinType(`typeName))) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   TomSymbolList list = symbolTable.getSymbolFromType(type);
@@ -311,7 +311,7 @@ matchBlock: {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if (! symbolTable.isBuiltinType(`typeName)) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
@@ -378,7 +378,7 @@ matchBlock: {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if(! symbolTable.isBuiltinType(`typeName)) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
@@ -408,9 +408,9 @@ matchBlock: {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
                             Declaration decl = pairNameDecl.getSlotDecl();
                             TomType slotType = TomBase.getSlotType(symbol,TomBase.getSlotName(symbol,i));
-                            String slotTypeName = slotType.getTomType().getString();
+                            String slotTypeName = slotType.getTomType();
                             // manage builtin slots
-                            if (symbolTable.isBuiltinType(slotTypeName)) {
+                            if(symbolTable.isBuiltinType(slotTypeName)) {
                               slots = `concTomTerm(slots*,TargetLanguageToTomTerm(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]")));
                             } else {
                               slots = `concTomTerm(slots*,ExpressionToTomTerm(Cast(slotType,TomTermToExpression(TargetLanguageToTomTerm(ITL("children["+i+"]"))))));
@@ -462,7 +462,7 @@ matchBlock: {
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
           %match(visit) {
-            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
+            VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
               TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type; // function name
@@ -522,7 +522,7 @@ matchBlock: {
           Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
           Instruction return2 = `Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
+                environmentVar,ExpressionToTomTerm(Bottom(Type("Object",EmptyType())))));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),
