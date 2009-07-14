@@ -77,8 +77,6 @@ public class ACPropagator implements IBasePropagator {
       // (basically to reduce all the cases to f(X*,Y*))
       c@MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=slots],subject) -> {
         //decompose the pattern to only f(X*,Y*) matching constraints
-        System.out.println("decompose AC ");
-        return `c;
         //return acp.decompose(`c); 
       }
     }
