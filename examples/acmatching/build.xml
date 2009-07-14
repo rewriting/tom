@@ -4,7 +4,15 @@
   <property name="example" value="acmatching"/>
   <target name="build" depends="init">
     <gomcompile/>
-    <tomcompile/>
+    <tom.preset srcdir="${examples.dir}"
+      pretty="on"
+      optimize="off"
+      inline="off"
+      inlineplus="off"
+      optimize2="off"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+    </tom.preset>
     <javacompile/>
   </target>
   <property name="distribute" value="yes"/>

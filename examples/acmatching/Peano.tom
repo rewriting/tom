@@ -1,0 +1,43 @@
+%typeterm Nat {
+  implement { acmatching.peano.types.Nat }
+  is_sort(t) { ($t instanceof acmatching.peano.types.Nat) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Nat a() {
+  is_fsym(t) { ($t instanceof acmatching.peano.types.nat.a) }
+  make() { acmatching.peano.types.nat.a.make() }
+}
+
+%op Nat b() {
+  is_fsym(t) { ($t instanceof acmatching.peano.types.nat.b) }
+  make() { acmatching.peano.types.nat.b.make() }
+}
+
+%op Nat c() {
+  is_fsym(t) { ($t instanceof acmatching.peano.types.nat.c) }
+  make() { acmatching.peano.types.nat.c.make() }
+}
+
+%op Nat Emptyf() {
+  is_fsym(t) { ($t instanceof acmatching.peano.types.nat.Emptyf) }
+  make() { acmatching.peano.types.nat.Emptyf.make() }
+}
+
+%op Nat Consf(Headf:Nat, Tailf:Nat) {
+  is_fsym(t) { ($t instanceof acmatching.peano.types.nat.Consf) }
+  get_slot(Headf, t) { $t.getHeadf() }
+  get_slot(Tailf, t) { $t.getTailf() }
+  make(t0, t1) { acmatching.peano.types.nat.Consf.make($t0, $t1) }
+}
+
+
+%opac Nat f(Nat*) {
+  is_fsym(t) { (($t instanceof acmatching.peano.types.nat.Consf) || ($t instanceof acmatching.peano.types.nat.Emptyf)) }
+  make_empty() { acmatching.peano.types.nat.Emptyf.make() }
+  make_insert(e,l) { acmatching.peano.types.nat.Consf.make($e,$l) }
+  get_head(l) { $l.getHeadf() }
+  get_tail(l) { $l.getTailf() }
+  is_empty(l) { $l.isEmptyf() }
+}

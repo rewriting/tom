@@ -34,14 +34,16 @@ public class ACTest {
 
     %include{ Peano.tom }  
     %include{ int.tom }
+    %include{ intarray.tom }
   
   private void run() {
-      int[] titi = `concInt(1,2,3);
       Nat t = `f(a(),a(),b(),b(),b()); 
       %match(t) {
+        /**
           f(b(),T1*,T2*) -> { 
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
+          */
           f(T1*,T2*) -> { 
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
