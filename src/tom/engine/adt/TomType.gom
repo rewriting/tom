@@ -14,7 +14,7 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)
         | TLType(String:String)
         | EmptyType()
-        | TypeList(TypeList:TomTypeList)
+        //| TypeList(TypeList:TomTypeList)
         | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
 
 TomTypeList = concTomType(TomType*)
