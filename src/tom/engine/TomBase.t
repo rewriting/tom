@@ -105,8 +105,7 @@ public final class TomBase {
    */
   public static String getTLCode(TomType type) {
     %match(type) {
-      TLType(TL[Code=tlType])  -> { return `tlType; }
-      TLType(ITL[Code=tlType]) -> { return `tlType; }
+      TLType(str)  -> { return `str; }
     }
     System.out.println("getTLCode error on term: " + type);
     throw new TomRuntimeException("getTLCode error on term: " + type);

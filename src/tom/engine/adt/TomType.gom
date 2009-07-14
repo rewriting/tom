@@ -5,9 +5,14 @@ abstract syntax
 TomType = Type(TomType:TomType,TlType:TomType)
         | TomTypeAlone(String:String)
         | ASTTomType(String:String)
-        | Codomain(AstName:TomName)
+        /**
+         * Codomain is used by SymbolTable and TomParserPlugin
+	 *          define a type as the same type as another symbol
+         * @param AstName then name of the symbol we want to mimic  
+         */
+        | Codomain(AstName:String)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)
-        | TLType(Tl:TargetLanguage)
+        | TLType(String:String)
         | EmptyType()
         | TypeList(TypeList:TomTypeList)
         | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)

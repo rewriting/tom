@@ -143,7 +143,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 			TomTypeAlone(code) -> {
 				output.write(deep," extends " + `code);
 			}
-      TLType(ITL(code)) -> {
+      TLType(code) -> {
         output.write(deep," extends " + `code);
       }
     }
@@ -266,23 +266,19 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       varList = varList.getTailconcTomTerm();
       if(!varList.isEmptyconcTomTerm()) {
         output.write(deep,", ");
-
       }
     }
     output.writeln(deep,")");
 
     %match(throwsType) {
-      TomTypeAlone(throws) -> {
-        output.write(deep," throws " + `throws);
-      }
-      TLType(ITL(throws)) -> {
-        output.write(deep," throws " + `throws);
+      (TomTypeAlone|TLType)[String=str] -> {
+        output.write(deep," throws " + `str);
       }
     }
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
-    output.writeln(deep," }");
+    output.writeln(deep,"}");
   }
 
 }

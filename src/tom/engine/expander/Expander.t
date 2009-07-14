@@ -80,15 +80,15 @@ public class Expander extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final TomType objectType = `TLType(ITL("Object"));
-  private static final TomType genericType = `TLType(ITL("T"));
-  private static final TomType methodparameterType = `TLType(ITL("<T> T"));
-  private static final TomType objectArrayType = `TLType(ITL("Object[]"));
-  private static final TomType intType = `TLType(ITL("int"));
+  private static final TomType objectType = `TLType("Object");
+  private static final TomType genericType = `TLType("T");
+  private static final TomType methodparameterType = `TLType("<T> T");
+  private static final TomType objectArrayType = `TLType("Object[]");
+  private static final TomType intType = `TLType("int");
   
-  private static final TomType basicStratType = `TLType(ITL("tom.library.sl.AbstractStrategyBasic"));
-  private static final TomType introspectorType = `TLType(ITL("tom.library.sl.Introspector"));
-  private static final TomType visitfailureType = `TLType(ITL("tom.library.sl.VisitFailure"));
+  private static final TomType basicStratType = `TLType("tom.library.sl.AbstractStrategyBasic");
+  private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
+  private static final TomType visitfailureType = `TLType("tom.library.sl.VisitFailure");
   // introspector argument of visitLight
   private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
   private static final TomTerm objectVar = `Variable(concOption(),Name("o"),objectType,concConstraint());

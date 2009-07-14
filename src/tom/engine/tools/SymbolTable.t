@@ -409,7 +409,7 @@ public class SymbolTable {
 
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
     %match(symbol) {
-      Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
+      Symbol(name,TypesToType(domain,Codomain(opName)),slots,options) -> {
         //System.out.println("depend from : " + `opName);
         TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
         //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
