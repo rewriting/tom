@@ -84,6 +84,11 @@ public class Desugarer extends TomGenericPlugin {
        kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
        TomTerm syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
 
+       // underscores by fresh variables
+       syntaxExpandedTerm = 
+         `TopDown(DesugarUnderscore(this)).visitLight(syntaxExpandedTerm);
+
+
        // WARNING side effect on the symbol table
        updateSymbolTable();
        //getStreamManager().getSymbolTable().dump();
@@ -98,6 +103,26 @@ public class Desugarer extends TomGenericPlugin {
           new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
       e.printStackTrace();
       return;
+    }
+  }
+
+  // FIXME : generate truly fresh variables
+  private int freshCounter = 0;
+  private TomName getFreshVariable() {
+    freshCounter++;
+    return `Name("_t_h_i_s_i_s_a_f_r_e_s_h_v_a_r_" + freshCounter);
+  }
+
+  /* replaces  _  by a fresh variable
+               _* by a fresh varstar    */
+  %strategy DesugarUnderscore(desugarer:Desugarer) extends Identity() {
+    visit TomTerm {
+       UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
+         return `Variable(opts,desugarer.getFreshVariable(),ty,constr);
+       }
+       UnamedVariableStar[Option=opts,AstType=ty,Constraints=constr] -> {
+         return `VariableStar(opts,desugarer.getFreshVariable(),ty,constr);
+       }
     }
   }
 
@@ -386,7 +411,7 @@ matchBlock:
       TomTerm xmlHead;
 
       if(newNameList.isEmptyconcTomName()) {
-        xmlHead = `UnamedVariable(concOption(),symbolTable().TYPE_UNKNOWN,concConstraint());
+        xmlHead = `UnamedVariable(optionList,symbolTable().TYPE_UNKNOWN,concConstraint());
       } else {
         xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
       }

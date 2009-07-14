@@ -1157,7 +1157,10 @@ xmlAttribute returns [TomTerm result] throws TomException
             	
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(concOption(),SymbolTable.TYPE_UNKNOWN,concConstraint())));
+                optionList.add(`OriginTracking(Name("_"),getLine(),currentFile()));
+                option = ASTFactory.makeOptionList(optionList);
+                constraint = ASTFactory.makeConstraintList(constraintList);
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(option,SymbolTable.TYPE_UNKNOWN,constraint)));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
