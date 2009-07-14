@@ -200,7 +200,7 @@ public class TomTypeChecker extends TomChecker {
 
   private void verifyStrategyVariable(TomVisitList list) {
     %match(list) {
-      concTomVisit(_*,VisitTerm(TomTypeAlone(strVisitType),_,options),_*) -> {
+      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyType()),_,options),_*) -> {
         String fileName = findOriginTrackingFileName(`options);
         messageError(fileName,
             findOriginTrackingLine(`options),

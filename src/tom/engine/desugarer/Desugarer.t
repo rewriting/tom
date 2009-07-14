@@ -447,7 +447,7 @@ matchBlock:
 
   %strategy expandType(desugarer:Desugarer) extends Identity() {
     visit TomType {
-      subject@TomTypeAlone(tomType) -> {
+      subject@Type(tomType,EmptyType()) -> {
         TomType type = desugarer.symbolTable().getType(`tomType);
         if(type != null) {
           return type;

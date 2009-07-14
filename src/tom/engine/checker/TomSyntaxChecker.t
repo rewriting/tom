@@ -362,7 +362,7 @@ public class TomSyntaxChecker extends TomChecker {
         return;
       }
 
-      TomTypeAlone(typeName) -> {
+      Type(typeName,EmptyType()) -> {
         if(!testTypeExistence(`typeName)) {
           messageError(getCurrentTomStructureOrgTrack().getFileName(),getCurrentTomStructureOrgTrack().getLine(),
               TomMessage.symbolCodomainError,
@@ -391,7 +391,7 @@ public class TomSyntaxChecker extends TomChecker {
     int position = 1;
     if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) {
       %match(TomTypeList args) {
-        (_*,  TomTypeAlone(typeName),_*) -> { // for each symbol types
+        (_*,  Type(typeName,EmptyType()),_*) -> { // for each symbol types
           if(!testTypeExistence(`typeName)) {
             messageError(getCurrentTomStructureOrgTrack().getFileName(),
                 getCurrentTomStructureOrgTrack().getLine(),
@@ -404,7 +404,7 @@ public class TomSyntaxChecker extends TomChecker {
       return (position-1);
     } else { // OPARRAY and OPLIST
       %match(TomTypeList args) {
-        (TomTypeAlone(typeName)) -> {
+        (Type(typeName,EmptyType())) -> {
           if(!testTypeExistence(`typeName)) {
             messageError(getCurrentTomStructureOrgTrack().getFileName(),
                 getCurrentTomStructureOrgTrack().getLine(),
@@ -554,7 +554,7 @@ matchLbl: %match(constr) {
           
           computeDependencies(varRelationsMap,patternVars,subjectVars);
           %match(subject) {            
-            TomTypeToTomTerm(TomTypeAlone[]) -> {
+            TomTypeToTomTerm(Type(_,EmptyType())) -> {
               // this is from %strategy construct and is already checked in verifyStrategy              
               break matchLbl;
             }
@@ -823,7 +823,7 @@ matchLbl: %match(constr) {
    */
   private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints) {
     %match(subject) {
-      Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {        
+      Variable[AstName=Name(name),AstType=tomType@Type(type,EmptyType())] -> {        
         if(`tomType==SymbolTable.TYPE_UNKNOWN) {
           // try to guess
           return guessSubjectType(`subject,constraints);

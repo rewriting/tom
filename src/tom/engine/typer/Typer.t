@@ -143,7 +143,7 @@ public class Typer extends TomGenericPlugin {
 
   %strategy expandType(typer:Typer) extends Identity() {
     visit TomType {
-      subject@TomTypeAlone(tomType) -> {
+      subject@Type(tomType,EmptyType()) -> {
         TomType type = typer.symbolTable().getType(`tomType);
         if(type != null) {
           return type;

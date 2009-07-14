@@ -524,7 +524,7 @@ matchBlock: {
           Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
           Instruction return2 = `Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
+                environmentVar,ExpressionToTomTerm(Bottom(Type("Object",EmptyType())))));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),

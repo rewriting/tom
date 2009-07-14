@@ -140,7 +140,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     output.write(deep, stratmodifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
-			TomTypeAlone(code) -> {
+			Type(code,EmptyType()) -> {
 				output.write(deep," extends " + `code);
 			}
       TLType(code) -> {
@@ -271,7 +271,10 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     output.writeln(deep,")");
 
     %match(throwsType) {
-      (TomTypeAlone|TLType)[String=str] -> {
+      TLType[String=str] -> {
+        output.write(deep," throws " + `str);
+      }
+      Type(str,EmptyType()) -> {
         output.write(deep," throws " + `str);
       }
     }

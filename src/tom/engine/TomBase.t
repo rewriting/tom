@@ -78,7 +78,7 @@ public final class TomBase {
    */
   public static String getTomType(TomType type) {
     %match(type) {
-      TomTypeAlone(s) -> {return `s;}
+      Type(s,EmptyType()) -> {return `s;}
       Type(s,_) -> {return `s;}
       EmptyType() -> {return null;}
       TypeWithSymbol[TomType=s] -> { return `s; }
@@ -94,7 +94,6 @@ public final class TomBase {
     %match(type) {
       TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
-      TomTypeAlone[String=str] -> { return `str; }
     }
     throw new TomRuntimeException("getTLType error on term: " + type);
   }

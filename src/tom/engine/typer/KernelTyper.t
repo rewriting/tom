@@ -174,7 +174,7 @@ public class KernelTyper {
     }
 
     visit TomType {
-      subject@TomTypeAlone(tomType) -> {
+      subject@Type(tomType,EmptyType()) -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
           return type;
@@ -248,7 +248,7 @@ public class KernelTyper {
         }
       }
 
-      var@(Variable|UnamedVariable)[AstType=TomTypeAlone(tomType),Constraints=constraints] -> {
+      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {

@@ -3,7 +3,6 @@ imports TomSignature
 abstract syntax
 
 TomType = Type(TomType:String,TlType:TomType)
-        | TomTypeAlone(String:String)
         /**
          * Codomain is used by SymbolTable and TomParserPlugin
 	 *          define a type as the same type as another symbol

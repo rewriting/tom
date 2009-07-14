@@ -133,7 +133,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
-			TomTypeAlone(code) -> {
+			Type(code,EmptyType()) -> {
 				output.write(deep," : " + `code);
 			}
     }
@@ -256,7 +256,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln(deep,")");
 /*
     %match(TomType throwsType){
-      TomTypeAlone(throws) -> {
+      Type(throws,EmptyType()) -> {
         output.write(deep," throws " + `throws);
       }
     }

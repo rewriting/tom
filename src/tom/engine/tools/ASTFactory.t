@@ -245,7 +245,7 @@ public class ASTFactory {
                              String value, List optionList) {
     TomTypeList typeList = `concTomType();
     PairNameDeclList pairSlotDeclList = `concPairNameDecl();
-    TomSymbol astSymbol = makeSymbol(value,`TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
+    TomSymbol astSymbol = makeSymbol(value,`Type(sort,EmptyType()),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
 
