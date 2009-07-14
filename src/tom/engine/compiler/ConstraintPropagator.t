@@ -111,7 +111,7 @@ public class ConstraintPropagator {
   public Constraint performDetach(Constraint subject) {    
     Constraint result = `AndConstraint(); 
     %match(subject){
-      MatchConstraint((RecordAppl|Variable)[Constraints=constraints@!concConstraint()],g) -> {
+      MatchConstraint((RecordAppl|Variable|UnamedVariable)[Constraints=constraints@!concConstraint()],g) -> {
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
             // add constraint to the list
@@ -119,7 +119,7 @@ public class ConstraintPropagator {
           }
         }// end match   
       }      
-      MatchConstraint(t@VariableStar[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
+      MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
         TomTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
