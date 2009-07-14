@@ -75,7 +75,7 @@ public class ConstraintGenerator {
  
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
-  private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
+  private static final String[] generatorsNames = {"ACGenerator", "SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
   // constants
   public static final String computeLengthFuncName = "__computeLength";
   public static final String multiplicityFuncName = "__getMultiplicities";
@@ -167,6 +167,10 @@ public class ConstraintGenerator {
       AntiMatchExpression(expr) -> {
         return buildAntiMatchInstruction(`expr,action);
       }
+      // AC loop
+      ACMatchLoop(pattern, subject) -> {
+        return `buildACMatchLoop(pattern, subject, action);
+      }
       // conditions			
       x -> {
         return `If(x,action,Nop());
@@ -174,7 +178,7 @@ public class ConstraintGenerator {
     }
     throw new TomRuntimeException("ConstraintGenerator.generateAutomata - strange expression:" + expression);
   }
- 
+
   /**
    * Converts 'Subterm' to 'GetSlot'
    */
@@ -187,7 +191,7 @@ public class ConstraintGenerator {
       }
     }
   }
-  
+
 
   /**
    * compile a disjunction of pattern by duplication the action part

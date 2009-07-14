@@ -32,8 +32,7 @@ import acmatching.peano.types.*;
 
 public class ACTest {
 
-    %include{ peano/Peano.tom }  
-    %include{ intarray.tom }
+    %include{ Peano.tom }  
     %include{ int.tom }
   
   private void run() {

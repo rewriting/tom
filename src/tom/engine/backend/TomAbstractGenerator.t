@@ -511,9 +511,11 @@ public abstract class TomAbstractGenerator {
         return;
       }
       OriginTracking[] -> { return; }
-
+      ACSymbol() -> {
+        // TODO RK: here add the declarations for intarray
+        return; 
+      }
       t -> {
-        System.out.println("Cannot generate code for option: " + `t);
         throw new TomRuntimeException("Cannot generate code for option: " + `t);
       }
     }
@@ -566,7 +568,7 @@ public abstract class TomAbstractGenerator {
         return ;
       }
 
-      ListSymbolDecl(Name(tomName)) -> {
+      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);

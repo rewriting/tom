@@ -55,13 +55,15 @@ public class ACPropagator implements IBasePropagator {
   }
 
   private Compiler compiler;  
+  private ConstraintPropagator constraintPropagator; 
  
   public Compiler getCompiler() {
     return this.compiler;
   }
  
-  public ACPropagator(Compiler compiler) {
+  public ACPropagator(Compiler compiler, ConstraintPropagator constraintPropagator) {
     this.compiler = compiler;
+    this.constraintPropagator = constraintPropagator;
   }
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {

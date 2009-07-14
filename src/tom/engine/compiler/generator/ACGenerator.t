@@ -59,13 +59,15 @@ public class ACGenerator implements IBaseGenerator {
   }
 
   private Compiler compiler; 
+  private ConstraintGenerator constraintGenerator; 
   
   public Compiler getCompiler() {
     return this.compiler;
   }
 
-  public ACGenerator(Compiler compiler) {
+  public ACGenerator(Compiler compiler, ConstraintGenerator generator) {
     this.compiler = compiler;
+    this.constraintGenerator = generator;
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
