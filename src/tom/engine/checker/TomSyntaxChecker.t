@@ -353,8 +353,8 @@ public class TomSyntaxChecker extends TomChecker {
 
   private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
     %match(codomain) {
-      Codomain(Name(opName)) -> {
-        if(symbolTable().getSymbolFromName(`opName) == null) {
+      Codomain(Name) -> {
+        if(symbolTable().getSymbolFromName(`Name) == null) {
           messageError(getCurrentTomStructureOrgTrack().getFileName(),getCurrentTomStructureOrgTrack().getLine(),
               TomMessage.symbolCodomainError,
               new Object[]{symbName, codomain});
