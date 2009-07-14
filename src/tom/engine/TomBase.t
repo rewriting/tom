@@ -78,11 +78,10 @@ public final class TomBase {
    */
   public static String getTomType(TomType type) {
     %match(type) {
-      ASTTomType(s) -> {return `s;}
       TomTypeAlone(s) -> {return `s;}
-      Type(ASTTomType(s),_) -> {return `s;}
+      Type(s,_) -> {return `s;}
       EmptyType() -> {return null;}
-      TypeWithSymbol[TomType=ASTTomType(s)] -> { return `s; }
+      TypeWithSymbol[TomType=s] -> { return `s; }
     }
     System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);

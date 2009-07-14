@@ -129,7 +129,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 
       // test if the argument is a Strategy
       %match(type) {
-        Type(ASTTomType("Strategy"), _) -> {
+        Type("Strategy", _) -> {
           stratChild.add(Integer.valueOf(index));
         }
       }

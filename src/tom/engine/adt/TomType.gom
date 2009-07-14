@@ -2,9 +2,8 @@ module TomType
 imports TomSignature
 abstract syntax
 
-TomType = Type(TomType:TomType,TlType:TomType)
+TomType = Type(TomType:String,TlType:TomType)
         | TomTypeAlone(String:String)
-        | ASTTomType(String:String)
         /**
          * Codomain is used by SymbolTable and TomParserPlugin
 	 *          define a type as the same type as another symbol
@@ -14,7 +13,6 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)
         | TLType(String:String)
         | EmptyType()
-        //| TypeList(TypeList:TomTypeList)
-        | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
+        | TypeWithSymbol(TomType:String,TlType:TomType,RootSymbolName:TomName)
 
 TomTypeList = concTomType(TomType*)

@@ -1854,7 +1854,7 @@ typeTerm returns [Declaration result] throws TomException
             t:RBRACE
         )
 {
-  TomType astType = `Type(ASTTomType(type.getText()),TLType(implement.getCode()));
+  TomType astType = `Type(type.getText(),TLType(implement.getCode()));
           putType(type.getText(), astType); 
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());

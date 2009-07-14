@@ -331,7 +331,7 @@ public class Typer extends TomGenericPlugin {
              */
             TomSymbol stringSymbol = getSymbolFromName(`tomName);
             TomType termType = stringSymbol.getTypesToType().getCodomain();
-            String type = termType.getTomType().getString();
+            String type = termType.getTomType();
             if(symbolTable().isCharType(type) && `tomName.length()>3) {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
                 SlotList newArgs = `concSlot();

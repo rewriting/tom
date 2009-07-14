@@ -322,7 +322,7 @@ public class TomBackend extends TomGenericPlugin {
     }
 
     visit TomType {
-      Type(ASTTomType(type),_) -> {
+      Type(type,_) -> {
         try {
           String moduleName = stack.peek();
           tb.setUsedType(moduleName,`type,markStrategy);
@@ -404,7 +404,7 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
 
-      IsSortDecl[TermArg=Variable[AstType=Type(ASTTomType(type),_)],Expr=Code(code)] -> {
+      IsSortDecl[TermArg=Variable[AstType=Type(type,_)],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putIsSort(`type,`code);
@@ -413,7 +413,7 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
 
-      EqualTermDecl[TermArg1=Variable[AstType=Type(ASTTomType(type),_)],Expr=Code(code)] -> {
+      EqualTermDecl[TermArg1=Variable[AstType=Type(type,_)],Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putEqualTerm(`type,`code);

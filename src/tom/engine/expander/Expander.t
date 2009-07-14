@@ -277,7 +277,7 @@ matchBlock: {
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if(!(symbolTable.isBuiltinType(`typeName))) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   TomSymbolList list = symbolTable.getSymbolFromType(type);
@@ -313,7 +313,7 @@ matchBlock: {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if (! symbolTable.isBuiltinType(`typeName)) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
@@ -380,7 +380,7 @@ matchBlock: {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             %match(type) {
-              Type[TomType=ASTTomType(typeName)] -> {
+              Type[TomType=typeName] -> {
                 if(! symbolTable.isBuiltinType(`typeName)) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
@@ -410,9 +410,9 @@ matchBlock: {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
                             Declaration decl = pairNameDecl.getSlotDecl();
                             TomType slotType = TomBase.getSlotType(symbol,TomBase.getSlotName(symbol,i));
-                            String slotTypeName = slotType.getTomType().getString();
+                            String slotTypeName = slotType.getTomType();
                             // manage builtin slots
-                            if (symbolTable.isBuiltinType(slotTypeName)) {
+                            if(symbolTable.isBuiltinType(slotTypeName)) {
                               slots = `concTomTerm(slots*,TargetLanguageToTomTerm(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]")));
                             } else {
                               slots = `concTomTerm(slots*,ExpressionToTomTerm(Cast(slotType,TomTermToExpression(TargetLanguageToTomTerm(ITL("children["+i+"]"))))));
@@ -464,7 +464,7 @@ matchBlock: {
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
           %match(visit) {
-            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
+            VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
               TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type; // function name

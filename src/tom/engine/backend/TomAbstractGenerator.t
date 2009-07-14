@@ -282,8 +282,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      IsSort((Type|TypeWithSymbol)[TomType=type@ASTTomType[]], exp) -> {
-        `buildExpIsSort(deep,TomBase.getTomType(type),exp,moduleName);
+      IsSort((Type|TypeWithSymbol)[TomType=type], exp) -> {
+        `buildExpIsSort(deep,type,exp,moduleName);
         return;
       }
 
@@ -578,7 +578,7 @@ public abstract class TomAbstractGenerator {
       }
 
       GetImplementationDecl(Variable[AstName=Name(name),
-                            AstType=Type(ASTTomType(type),tlType@TLType[])],
+                            AstType=Type(type,tlType@TLType[])],
                             instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
           `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
@@ -604,8 +604,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
-                     Variable[AstName=Name(name2), AstType=Type(ASTTomType(type2),_)],
+      EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(type1,_)],
+                     Variable[AstName=Name(name2), AstType=Type(type2,_)],
                      code, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type1)) {
           `buildEqualTermDecl(deep, name1, name2, type1, type2, code, moduleName);
@@ -613,7 +613,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
       
-      IsSortDecl(Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),_)], expr, _) -> {
+      IsSortDecl(Variable[AstName=Name(varName), AstType=Type(type,_)], expr, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildIsSortDecl(deep, varName, type, expr, moduleName);
         }
@@ -622,7 +622,7 @@ public abstract class TomAbstractGenerator {
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
                   Codomain=Type[TlType=codomain],
-                  Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(suffix),domain@TLType[])],
+                  Variable=Variable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
                   Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -632,7 +632,7 @@ public abstract class TomAbstractGenerator {
       }
 
       GetTailDecl[Opname=opNameAST@Name(opname),
-                  Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),tlType@TLType[])],
+                  Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
                   Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -642,7 +642,7 @@ public abstract class TomAbstractGenerator {
       }
 
       IsEmptyDecl[Opname=opNameAST@Name(opname),
-                  Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),tlType@TLType[])],
+                  Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
                   Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -673,7 +673,7 @@ public abstract class TomAbstractGenerator {
       }
 
       GetElementDecl[Opname=opNameAST@Name(opname),
-                     Variable=Variable[AstName=Name(name1), AstType=Type[TomType=ASTTomType(type1),TlType=tlType1@TLType[]]],
+                     Variable=Variable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
                      Index=Variable[AstName=Name(name2)],
                      Expr=code] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -684,7 +684,7 @@ public abstract class TomAbstractGenerator {
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
 	Variable=Variable[AstName=Name(name),
-	AstType=Type(ASTTomType(type),tlType@TLType[])],
+	AstType=Type(type,tlType@TLType[])],
 	Expr=code] -> {
 	  if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
 	    `buildGetSizeDecl(deep, opNameAST, name, type, tlType, code, moduleName);

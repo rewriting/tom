@@ -232,9 +232,8 @@ public class ASTFactory {
   }
 
   protected static TomType makeType(String typeNameTom, String typeNametGL) {
-    TomType typeTom = `ASTTomType(typeNameTom);
     TomType sortTL  = `TLType(typeNametGL);
-    return `Type(typeTom,sortTL);
+    return `Type(typeNameTom,sortTL);
   }
 
     /*
