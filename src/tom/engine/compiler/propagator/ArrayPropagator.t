@@ -135,7 +135,7 @@ public class ArrayPropagator implements IBasePropagator {
                 TomTerm newFreshIndex = ap.getFreshIndex();                
           mAppl:%match(appl){
                   // if we have a variable star
-                  (VariableStar | UnamedVariableStar)[] -> {
+                  VariableStar[] -> {
                     // if it is the last element               
                     if(`X.length() == 0) {
                       // we should only assign it, without generating a loop

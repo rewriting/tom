@@ -88,7 +88,7 @@ public class VariadicGenerator implements IBaseGenerator {
        *     end_i = (TomList) GET_TAIL_TomList(end_i);
        * } while( end_i != begin_i ) 
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
+      ConstraintToExpression(MatchConstraint(v@VariableStar[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));

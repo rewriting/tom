@@ -142,10 +142,7 @@ public class ConstraintGenerator {
       ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
         return `LetRef(v,TomTermToExpression(t),action);
       }  
-      // nothing for unamed ones
-      ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
-        return action;      
-      }
+
       // numeric constraints
       ConstraintToExpression(n@NumericConstraint[]) -> {
         return buildNumericCondition(`n,action);
