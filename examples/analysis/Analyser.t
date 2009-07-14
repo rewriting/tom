@@ -136,7 +136,7 @@ public class Analyser{
     ArrayList list = new ArrayList();
     VariableRef var = new VariableRef();
     try {
-    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AX(StrictDeRef(AU(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).visit(cfg);
+    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AXCtl(StrictDeRef(AUCtl(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).visit(cfg);
     } catch (VisitFailure f) {
       return null;
     }
@@ -163,7 +163,7 @@ public class Analyser{
             )
           ));
     //onceUsedCond AX(A(s1 U s2))  
-    Strategy onceUsed = `AX(StrictDeRef(AU(StrictDeRef(s1),StrictDeRef(s2))));
+    Strategy onceUsed = `AXCtl(StrictDeRef(AUCtl(StrictDeRef(s1),StrictDeRef(s2))));
 
     try{
       `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).visit(cfg);
