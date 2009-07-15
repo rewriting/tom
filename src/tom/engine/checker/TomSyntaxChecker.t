@@ -1689,7 +1689,7 @@ matchLbl: %match(constr) {
           //messageError(fileName, decLine, TomMessage.unknownSymbol, new Object[]{`(name)});
         } else {
           //System.out.println("symbol = " + symbol);
-          // check the arity (for syntacti operators)
+          // check the arity (for syntactic operators)
           if(!TomBase.isArrayOperator(`symbol) && !TomBase.isListOperator(`symbol)) {
             TomTypeList types = symbol.getTypesToType().getDomain();
             int nbExpectedArgs = types.length();

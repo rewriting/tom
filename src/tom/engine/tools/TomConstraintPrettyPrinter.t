@@ -274,6 +274,9 @@ public class TomConstraintPrettyPrinter {
       concSlot(_*, t, _*) -> {
         s += prettyPrint(`t)+",";
       }
+      concSlot() -> {
+        return "";
+      }
     }
     if (! s.equals("")) return s.substring(0,s.length()-1);
 
