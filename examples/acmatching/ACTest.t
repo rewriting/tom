@@ -44,7 +44,7 @@ public class ACTest {
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
           */
-          f(T1*,T2*) -> { 
+          f??(T1*,T2*) -> { 
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
       } 
