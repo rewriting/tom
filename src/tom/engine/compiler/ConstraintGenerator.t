@@ -110,7 +110,6 @@ public class ConstraintGenerator {
         expression = result; 
       }
     } // end while
-    //System.out.println("result: " + result);
     return buildInstructionFromExpression(result,action);
   }
   
