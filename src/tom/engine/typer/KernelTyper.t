@@ -358,11 +358,6 @@ public class KernelTyper {
             newSubjectType = type;                    
           }
 
-          TomTypeToTomTerm(type) -> {
-            newSubject = `Variable(concOption(),Name("tom__arg"),type,concConstraint());
-            newSubjectType = `type;
-          }
-
           // the user specified the type (already checked for consistence in SyntaxChecker)
           term@BuildReducedTerm[AstType=userType] -> {            
             newSubjectType = `userType;

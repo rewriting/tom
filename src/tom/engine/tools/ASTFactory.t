@@ -59,14 +59,10 @@ public class ASTFactory {
      TomTerm term; 
      if(elt instanceof TargetLanguage) { 	 
         term = `TargetLanguageToTomTerm((TargetLanguage)elt); 	 
-      } else if(elt instanceof TomType) { 	 
-        term = `TomTypeToTomTerm((TomType)elt); 	 
       } else if(elt instanceof Declaration) { 	 
         term = `DeclarationToTomTerm((Declaration)elt); 	 
       } else if(elt instanceof Expression) { 	 
         term = `ExpressionToTomTerm((Expression)elt); 	 
-      } else if(elt instanceof TomName) { 	 
-        term = `TomNameToTomTerm((TomName)elt); 	 
       } else if(elt instanceof Instruction) { 	 
         term = `InstructionToTomTerm((Instruction)elt); 	 
       } else { 	 

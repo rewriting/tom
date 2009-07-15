@@ -272,7 +272,7 @@ patternInstruction [TomList subjectList, List<ConstraintInstruction> list, TomTy
         )
     ;
 
-visitInstruction [TomList subjectList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
+visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomException
 {
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
@@ -293,22 +293,17 @@ visitInstruction [TomList subjectList, List<ConstraintInstruction> list, TomType
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList,true] 
             {
-              if(matchPatternList.size() != subjectList.length()) {                       
+            int subjectListLength = 1;
+              if(matchPatternList.size() != subjectListLength) {                       
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
-                    new Object[]{new Integer(subjectList.length()), new Integer(matchPatternList.size())},
+                    new Object[]{subjectListLength, new Integer(matchPatternList.size())},
                     currentFile(), getLine()));
                 return;
               }
               
-              int counter = 0;
-              %match(subjectList) {
-                concTomTerm(_*,subjectAtIndex,_*) -> {
-                  constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
-                  counter++;
-                }
-              }
-              
-              optionList = `concOption(option, OriginalText(Name(text.toString())));
+              TomTerm subject = `Variable(concOption(),Name("tom__arg"),rhsType,concConstraint());
+              constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject));
+              //optionList = `concOption(option, OriginalText(Name(text.toString())));
               
               matchPatternList.clear();
               clearText();
@@ -693,21 +688,9 @@ strategyVisit [List<TomVisit> list] throws TomException
 }
     :   
   (
-    visit:ALL_ID { 
-      if (!"visit".equals(visit.getText())) {
-        throw new TomException(TomMessage.malformedStrategy,
-          new Object[]{currentFile(), new Integer(getLine()),
-          "strat","visit",visit.getText()});
-      }
-    }
-    type:ALL_ID  LBRACE
-    {
-      vType = `Type(type.getText(),EmptyType());
-      subjectList = `concTomTerm(TomTypeToTomTerm(vType));
-    }
-    (  
-      visitInstruction[subjectList,constraintInstructionList,vType] 
-    )* 
+    "visit" type:ALL_ID LBRACE
+    { vType = `Type(type.getText(),EmptyType()); }
+    ( visitInstruction[constraintInstructionList,vType] )* 
     RBRACE
   )
   {

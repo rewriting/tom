@@ -676,6 +676,7 @@ public class Compiler extends TomGenericPlugin {
    *    // the end of the list
    *    if(subj.isConsf()) { 
    *      elem = subj.getHeadf();
+   *      subj = subj.getTailf();
    *    } else {
    *      elem = subj;
    *      subj = EmptyList();
@@ -695,11 +696,6 @@ public class Compiler extends TomGenericPlugin {
    *      // we take this element
    *      result = conc(result*,elem);
    *      elemCounter++;
-   *    }
-   *    
-   *    // if we didn't get to the end of the list
-   *    if(subj != EmptyList() ) {
-   *      subj = subj.getTailf();
    *    }
    *  }     
    *  return result;
@@ -722,7 +718,10 @@ public class Compiler extends TomGenericPlugin {
       // test if subj is consOpName
       TomName opName = `Name(opNameString);
       Instruction isConsOpName = `If(IsFsym(opName,subject),
-          Assign(elem,GetHead(opName,opType,subject)),
+          AbstractBlock(concInstruction(
+            Assign(elem,GetHead(opName,opType,subject)),
+            Assign(subject,GetTail(opName,subject))
+            )),
           AbstractBlock(concInstruction(
               Assign(elem,TomTermToExpression(subject)),
               Assign(subject,TomTermToExpression(BuildEmptyList(opName))))));
@@ -758,13 +757,10 @@ public class Compiler extends TomGenericPlugin {
       Instruction tempSolValBlock = `LetRef(tempSolVal,
               GetElement(intArrayName,intType,tempSol,tempSolIndex),
               UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
-      
-      // last if
-      Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
-      Instruction lastIf = `If(notEmptySubj,Assign(subject,GetTail(opName,subject)),Nop());
       // the while
+      Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
       Instruction whileBlock = `UnamedBlock(concInstruction(
-              isConsOpName,isNewElem,tempSolValBlock,lastIf));                  
+              isConsOpName,isNewElem,tempSolValBlock));                  
       Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);
          
       Instruction functionBody = `LetRef(result,TomTermToExpression(BuildEmptyList(opName)),

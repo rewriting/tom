@@ -553,15 +553,7 @@ matchLbl: %match(constr) {
           `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
           
           computeDependencies(varRelationsMap,patternVars,subjectVars);
-          %match(subject) {            
-            TomTypeToTomTerm(Type(_,EmptyType())) -> {
-              // this is from %strategy construct and is already checked in verifyStrategy              
-              break matchLbl;
-            }
-            _ -> {
-              typeMatch = getSubjectType(`subject,constraints);
-            }
-          }
+          typeMatch = getSubjectType(`subject,constraints);
           if(typeMatch == null) {
             Object messageContent = `subject;
             %match(subject) {

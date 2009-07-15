@@ -117,8 +117,6 @@ TomTerm =
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
    */
     | TargetLanguageToTomTerm(Tl:TargetLanguage)
-    | TomTypeToTomTerm(AstType:TomType)
-    | TomNameToTomTerm(AstName:TomName)
     | TomSymbolToTomTerm(AstSymbol:TomSymbol)
     | DeclarationToTomTerm(AstDeclaration:Declaration)
     | OptionToTomTerm(Option:OptionList)
@@ -140,9 +138,6 @@ TomTerm =
 
     | BackQuoteAppl(Option:OptionList,AstName:TomName,Args:TomList)
     | Composite(Args:TomList)
-
-    | SubjectList(TomList:TomList)
-    | Term(TomTerm:TomTerm)
     | AntiTerm(TomTerm:TomTerm)
     | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
     | SymbolOf(GroundTerm:TomTerm)
