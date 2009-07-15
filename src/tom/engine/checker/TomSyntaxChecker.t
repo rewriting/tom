@@ -49,6 +49,7 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -229,9 +230,9 @@ public class TomSyntaxChecker extends TomChecker {
       }
     }
 
-    visit TomTerm {
-      subject@BackQuoteAppl[] -> {
-        tsc.verifyBackQuoteAppl(`subject);
+    visit BQTerm {
+      subject@BQAppl[] -> {
+        tsc.verifyBQAppl(`subject);
       }
     }
   }
@@ -252,7 +253,7 @@ public class TomSyntaxChecker extends TomChecker {
         matchblock:{
           %match(decl) {
             // Common Macro functions
-            EqualTermDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
+            EqualTermDecl(BQVariable[AstName=Name(name1)],BQVariable[AstName=Name(name2)],_, orgTrack) -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.EQUALS,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
@@ -270,7 +271,7 @@ public class TomSyntaxChecker extends TomChecker {
               break matchblock;
             }
             // Array specific Macro functions
-            GetElementDecl[Variable=Variable[AstName=Name(name1)],Index=Variable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
+            GetElementDecl[Variable=BQVariable[AstName=Name(name1)],Index=BQVariable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
@@ -440,7 +441,7 @@ public class TomSyntaxChecker extends TomChecker {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddArray[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+            MakeAddArray[VarList=BQVariable[AstName=Name(name1)], VarElt=BQVariable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
@@ -449,7 +450,7 @@ public class TomSyntaxChecker extends TomChecker {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddList[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+            MakeAddList[VarList=BQVariable[AstName=Name(name1)], VarElt=BQVariable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
@@ -557,12 +558,15 @@ matchLbl: %match(constr) {
           if(typeMatch == null) {
             Object messageContent = `subject;
             %match(subject) {
-              Variable[AstName=Name(stringName)] -> {
+              BQVariable[AstName=Name(stringName)] -> {
                 messageContent = `stringName;
               }
+              /**
+                impossible case
               TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
                 messageContent = `stringName;
               }
+              */
             }
             messageError(getCurrentTomStructureOrgTrack().getFileName(),
                 getCurrentTomStructureOrgTrack().getLine(),
@@ -1678,9 +1682,9 @@ matchLbl: %match(constr) {
     * @param subject the backquote term
     * 1. arity
     */
-  private void verifyBackQuoteAppl(TomTerm subject) throws VisitFailure {
+  private void verifyBQAppl(BQTerm subject) throws VisitFailure {
     %match(subject) {
-      BackQuoteAppl[Option=options,AstName=Name(name),Args=args] -> {
+      BQAppl[Option=options,AstName=Name(name),Args=args] -> {
         int decLine = findOriginTrackingLine(`options);
         String fileName = findOriginTrackingFileName(`options);
         TomSymbol symbol = getSymbolFromName(`name);

@@ -134,7 +134,7 @@
              memoryMaximumSize= "@{memoryMaximumSize}"
              nowarn= "@{nowarn}">
         <srcelements/>
-        <!-- compilerarg value="-Xlint"/ -->
+        <!-- <compilerarg value="-Xmaxerrors 1000"/> -->
       </javac>
     </sequential>
   </macrodef>
@@ -295,11 +295,13 @@
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/HostLanguage.g.t"/>
     </tomcompile>
+    <!--
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
     </tomcompile>
+    -->
     <tomcompile srcdir="${src.src}"
       outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
       import="${src.gen}/tom/gom/adt">
@@ -351,10 +353,12 @@
            outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
+    <!--
     <antlr target="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
            outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
+    -->
 
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"

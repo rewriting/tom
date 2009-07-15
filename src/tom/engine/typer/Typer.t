@@ -108,8 +108,8 @@ public class Typer extends TomGenericPlugin {
       syntaxExpandedTerm = expandType(syntaxExpandedTerm);
       TomTerm variableExpandedTerm = (TomTerm) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedTerm);
       /* transform each BackQuoteTerm into its compiled form */
-      TomTerm backQuoteExpandedTerm = `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
-      TomTerm stringExpandedTerm = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
+      BQTerm backQuoteExpandedTerm = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedTerm);
+      BQTerm stringExpandedTerm = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
       typedTerm = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
       typedTerm = kernelTyper.propagateVariablesTypes(typedTerm);
       setWorkingTerm(typedTerm);      
@@ -184,7 +184,7 @@ public class Typer extends TomGenericPlugin {
         tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
-        tomSymbol = `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -276,7 +276,7 @@ public class Typer extends TomGenericPlugin {
           }
         }
 
-        decl@GetHeadDecl[Variable=Variable[AstType=domain]] -> {
+        decl@GetHeadDecl[Variable=BQVariable[AstType=domain]] -> {
           TomSymbol tomSymbol = typer.getSymbolFromType(`domain);
           if(tomSymbol != null) {
             TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
@@ -432,13 +432,13 @@ public class Typer extends TomGenericPlugin {
     }
 
     /*
-     * transform a BackQuoteAppl into its compiled form
+     * transform a BQAppl into its compiled form
      */
-    %strategy typeBackQuoteAppl(typer:Typer) extends Identity() {
-      visit TomTerm {
-        BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
+    %strategy typeBQAppl(typer:Typer) extends Identity() {
+      visit BQTerm {
+        BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
-          TomList args  = `TopDownIdStopOnSuccess(typeBackQuoteAppl(typer)).visitLight(`l);
+          TomList args  = `TopDownIdStopOnSuccess(typeBQAppl(typer)).visitLight(`l);
 
           //System.out.println("BackQuoteTerm: " + `tomName);
           //System.out.println("tomSymbol: " + tomSymbol);
@@ -497,27 +497,29 @@ public class Typer extends TomGenericPlugin {
                   return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
                 }
               }
-
-            BackQuoteAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
-              BackQuoteAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
+          
+            /**
+            BQAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
+              BQAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
                 if(`name1.compareTo(`name2) > 0) {
                   return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
                 }
               }
 
-            BackQuoteAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
-              BackQuoteAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
+            BQAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
+              BQAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
                 if(`name1.compareTo(`name2) > 0) {
                   return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
                 }
               }
 
-            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
-              BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
+            BQAppl[Args=concTomTerm(BQAppl[AstName=Name(name1)],_*)],
+              BQAppl[Args=concTomTerm(BQAppl[AstName=Name(name2)],_*)] -> {
                 if(`name1.compareTo(`name2) > 0) {
                   return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
                 }
               }
+              */
           }
         }
       }

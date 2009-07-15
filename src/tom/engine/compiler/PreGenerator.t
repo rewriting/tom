@@ -186,7 +186,11 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
              *
              */
-            MatchConstraint(_,SymbolOf(var@(Variable|VariableStar)[])),MatchConstraint(var,_) -> {
+            MatchConstraint(_,SymbolOf(BQVariable[AstName=name])),MatchConstraint(Variable[AstName=name],_) -> {
+              modification |= swap(array,i,j);
+              break block;
+            }
+            MatchConstraint(_,SymbolOf(BQVariableStar[AstName=name])),MatchConstraint(VariableStar[AstName=name],_) -> {
               modification |= swap(array,i,j);
               break block;
             }
@@ -209,8 +213,8 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
              * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
              */
-            _,MatchConstraint(v,_)
-              && ( EmptyListConstraint[Variable=v] << first || Negate(EmptyListConstraint[Variable=v]) << first ) -> {
+            _,MatchConstraint(VariableStar[AstName=name],_)
+              && ( EmptyListConstraint[Variable=BQVariableStar[AstName=name]] << first || Negate(EmptyListConstraint[Variable=BQVariableStar[AstName=name]]) << first ) -> {
                 modification |= swap(array,i,j);
                 break block;
               }
@@ -221,8 +225,8 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
              * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
              */
-            _,MatchConstraint(idx,_)
-              && ( EmptyArrayConstraint[Index=idx] << first || Negate(EmptyArrayConstraint[Index=idx]) << first ) -> {
+            _,MatchConstraint(VariableStar[AstName=name],_)
+              && ( EmptyArrayConstraint[Index=BQVariableStar[AstName=name]] << first || Negate(EmptyArrayConstraint[Index=BQVariableStar[AstName=name]]) << first ) -> {
                 modification |= swap(array,i,j);
                 break block;
               }
@@ -268,7 +272,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
              * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
              */
-            MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),_
+            MatchConstraint(_,ExpressionToBQTerm(GetElement[Variable=v])),_
               && ( Negate(EmptyArrayConstraint[Index=v]) << second || EmptyArrayConstraint[Index=v] << second ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -278,7 +282,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
              * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
              */
-            MatchConstraint(_,v@VariableStar[]),MatchConstraint(_,subjectSecond)
+            MatchConstraint(_,v@BQVariableStar[]),MatchConstraint(_,subjectSecond)
               && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
                 modification |= swap(array,i,j);
                 break block;
@@ -329,11 +333,15 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
              *
              */
-            MatchConstraint[Subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],IsSortConstraint[TomTerm=sub] -> {
+            MatchConstraint[Subject=ExpressionToBQTerm(Cast[Source=BQTermToExpression(sub)])],IsSortConstraint[TomTerm=sub] -> {
               modification |= swap(array,i,j);
               break block;
             }
-            IsSortConstraint[TomTerm=var@(Variable|VariableStar)[]],MatchConstraint(var,_) -> {
+            IsSortConstraint[TomTerm=BQVariable[AstName=name]],MatchConstraint(Variable[AstName=name],_) -> {
+              modification |= swap(array,i,j);
+              break block;
+            }
+            IsSortConstraint[TomTerm=BQVariableStar[AstName=name]],MatchConstraint(VariableStar[AstName=name],_) -> {
               modification |= swap(array,i,j);
               break block;
             }

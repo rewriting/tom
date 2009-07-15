@@ -1,19 +1,19 @@
 module TomConstraint
-imports TomTerm
+imports Code TomTerm
 abstract syntax
 
 Constraint = 
 		  /**
 		   * <code>AssignTo</code> specifies that we want to instanciate Variable with the term on which this constraint is attached
 		   *
-		   * @param Variable the variable to constrain
+		   * @param Variable the variable to constraint
 		   */
-			| AssignTo(Variable:TomTerm)
-			| AssignPositionTo(Variable:TomTerm)
+			| AssignTo(Variable:BQTerm)
+			| AssignPositionTo(Variable:BQTerm)
 			| TrueConstraint()
 			| FalseConstraint()				   
 			| Negate(c:Constraint)
-			| IsSortConstraint(AstType:TomType,TomTerm:TomTerm)
+			| IsSortConstraint(AstType:TomType,TomTerm:BQTerm)
 			| AndConstraint(Constraint*)
 			| OrConstraint(Constraint*)
 		  /**
@@ -22,11 +22,11 @@ Constraint =
 		   * @param Constraint the list of AndConstraints that are linked by Or
 		   */		   
 			| OrConstraintDisjunction(Constraint*)
-			| MatchConstraint(Pattern:TomTerm, Subject:TomTerm)
+			| MatchConstraint(Pattern:TomTerm, Subject:BQTerm)
 			| AntiMatchConstraint(Constraint:Constraint)
-			| NumericConstraint(Pattern:TomTerm, Subject:TomTerm, Type:NumericConstraintType)
-			| EmptyListConstraint(Opname:TomName,Variable:TomTerm)
-			| EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
+			| NumericConstraint(Pattern:TomTerm, Subject:BQTerm, Type:NumericConstraintType)
+			| EmptyListConstraint(Opname:TomName,Variable:BQTerm)
+			| EmptyArrayConstraint(Opname:TomName,Variable:BQTerm,Index:BQTerm)
 
 NumericConstraintType = NumLessThan() 
 					| NumLessOrEqualThan()

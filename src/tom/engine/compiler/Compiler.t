@@ -32,6 +32,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
@@ -167,10 +168,10 @@ public class Compiler extends TomGenericPlugin {
   public void run(Map informationTracker) {
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
-      TomTerm compiledTerm = compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
+      Code compiledTerm = compile((Code)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
-      TomTerm renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
+      Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
        // add the aditional functions needed by the AC operators
       renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
@@ -190,7 +191,7 @@ public class Compiler extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
 
-  public TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
+  public Code compile(Code termToCompile,SymbolTable symbolTable) throws VisitFailure {
     getCompilerEnvironment().setSymbolTable(symbolTable);
     // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
     return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
@@ -280,7 +281,7 @@ public class Compiler extends TomGenericPlugin {
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + (++(compiler.getCompilerEnvironment().freshSubjectCounter))))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
-          (Variable|VariableStar)[AstType=variableType] -> { 
+          (BQVariable|BQVariableStar)[AstType=variableType] -> { 
             freshSubjectType = `variableType;
           }          
           sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
@@ -449,24 +450,24 @@ public class Compiler extends TomGenericPlugin {
    * 
    * @param subject the AST of the program
    */
-  private TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
+  private Code addACFunctions(Code subject) throws VisitFailure {
     // we use the symbol table as all AC the operators were marked as
     // used when the loop was generated
     HashSet<String> bag = new HashSet<String>();
     `TopDown(CollectACSymbols(bag)).visitLight(subject);
 
-    TomList l = `concTomTerm();
+    CodeList l = `concCode();
     for(String op:bag) {
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
       if(getSymbolTable().isUsedSymbolConstructor(op)) {
         // gen all
         TomType opType = opSymbol.getTypesToType().getCodomain();        
         // 1. computeLength
-        l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
+        l = `concCode(DeclarationToCode(getPILforComputeLength(op,opType)),l*);
         // 2. getMultiplicities
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
+        l = `concCode(DeclarationToCode(getPILforGetMultiplicities(op,opType)),l*);
         // 3. getTerm        
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
+        l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
       }
     }
     // make sure the variables are correctly defined
@@ -484,10 +485,10 @@ public class Compiler extends TomGenericPlugin {
   }
 
   %strategy InsertDeclarations(TomList l) extends Identity() {
-    visit TomList {
-      concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {        
+    visit CodeList {
+      concCode(X*,d@DeclarationToCode[],Y*) -> {        
         %match(l) {
-          concTomTerm(Z*) -> { return `concTomTerm(X*,Z*,d,Y*); }
+          concCode(Z*) -> { return `concCode(X*,Z*,d,Y*); }
         }         
       }
     }

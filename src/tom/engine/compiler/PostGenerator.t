@@ -79,7 +79,7 @@ public class PostGenerator {
    */
   %strategy ChangeVarDeclarations() extends Identity() {
     visit Instruction {
-      LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+      LetRef(var@(BQVariable|BQVariableStar)[AstName=name],exp,body) -> {
         /*
          * when there is an identical LetRef between the root and the current LetRef
          * the current LetRef is replaced by an Assign
@@ -109,7 +109,7 @@ public class PostGenerator {
 
   %strategy CheckLetRefExistence(varName:TomName) extends Identity() {
     visit Instruction {
-      LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
+      LetRef[Variable=(BQVariable|BQVariableStar)[AstName=name]] -> {
         if(varName == `name ) {
           throw new VisitFailure();
         }
@@ -119,7 +119,7 @@ public class PostGenerator {
 
   %strategy CheckAssignExistence(varName:TomName) extends Identity() {
     visit Instruction {
-      (Assign|AssignArray)[Variable=(Variable|VariableStar)[AstName=name]] -> {
+      (Assign|AssignArray)[Variable=(BQVariable|BQVariableStar)[AstName=name]] -> {
         if(varName == `name ) {
           throw new VisitFailure();
         }

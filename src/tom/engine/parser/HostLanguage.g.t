@@ -84,7 +84,7 @@ options{
   // the lexer for target language
   HostLexer targetlexer = null;
 
-  BackQuoteParser bqparser;
+  //BackQuoteParser bqparser;
 
   OptionManager optionManager;
 
@@ -112,7 +112,7 @@ options{
     testIncludedFile(currentFile, includedFileSet);
     // then create the Tom mode parser
     tomparser = new TomParser(getInputState(),this, optionManager);
-    bqparser = tomparser.bqparser;
+    //bqparser = tomparser.bqparser;
   }
 
   private void setSkipComment() {
@@ -633,6 +633,8 @@ backquoteTerm [List<TomTerm> list]
     :
         t:BACKQUOTE
         {
+          throw new RuntimeException("BackQuote parser not yet implemented");
+          /*
           String textCode = getCode();
           if(isCorrect(textCode)) {
             code = `TL(
@@ -649,6 +651,7 @@ backquoteTerm [List<TomTerm> list]
           // update position for new target block
           updatePosition();
           list.add(bqTerm);
+          */
         }
     ;
 

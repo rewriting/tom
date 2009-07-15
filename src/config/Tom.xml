@@ -51,6 +51,8 @@
       class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="Syntax checker"
       class="tom.engine.checker.TomSyntaxCheckerAp"/>
+    <plugin name="Desugar"
+      class="tom.engine.desugarer.Desugarer"/>
     <plugin name="Typer"
       class="tom.engine.typer.Typer"/>
     <plugin name="Type checker"

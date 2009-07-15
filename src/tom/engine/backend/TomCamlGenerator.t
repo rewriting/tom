@@ -431,11 +431,6 @@ public class TomCamlGenerator extends TomGenericGenerator {
         return;
       }
 
-      Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
-        `buildNop();
-        return;
-      }
-
       _ -> {
         super.generateInstruction(deep, subject, moduleName);
       }

@@ -32,6 +32,7 @@ import java.util.*;
 import tom.engine.tools.SymbolTable;
 
 import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
@@ -88,16 +89,16 @@ public class Verifier {
     return camlsemantics;
   }
 
-  public Term termFromTomTerm(TomTerm tomterm) {
+  public BQTerm termFromBQTerm(BQTerm tomterm) {
     %match(tomterm) {
-      ExpressionToTomTerm(expr) -> {
+      ExpressionToBQTerm(expr) -> {
         return `termFromExpresssion(expr);
       }
-      Variable[AstName=name] -> {
+      BQVariable[AstName=name] -> {
         return `termFromTomName(name);
       }
     }
-    System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
+    System.out.println("termFromBQTerm don't know how to handle this: " + tomterm);
     return `repr("foirade");
   }
 
@@ -123,10 +124,10 @@ public class Verifier {
   public Term termFromExpresssion(Expression expression) {
     %match(expression) {
       GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=tomterm] -> {
-        Term term = termFromTomTerm(`tomterm);
+        Term term = termFromBQTerm(`tomterm);
         return `slot(fsymbol(symbolName),term,slotName);
       }
-      TomTermToExpression(Variable[AstName=name]) -> {
+      BQTermToExpression(BQVariable[AstName=name]) -> {
         Term term = termFromTomName(`name);
         return `term;
       }
@@ -142,12 +143,12 @@ public class Verifier {
     %match(expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
-      IsFsym[AstName=Name(symbolName),Variable=tomterm] -> {
-        Term term = termFromTomTerm(`tomterm);
+      IsFsym[AstName=Name(symbolName),Variable=bqterm] -> {
+        Term term = termFromBQTerm(`bqterm);
         return `isfsym(term,fsymbol(symbolName));
       }
       EqualTerm[Kid1=t1,Kid2=t2] -> {
-        return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
+        return `eq(termFromBQTerm(t1),termFromBQTerm(t2));
       }
       IsSort[] -> { return `iltrue(subs(undefsubs())); }
     }
@@ -176,23 +177,17 @@ public class Verifier {
             instrFromInstruction(ift),
             instrFromInstruction(iff));
       }
-      (Let|LetRef)(Variable[AstName=avar],expr,body) -> {
+      (Let|LetRef)(BQVariable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
             termFromExpresssion(expr),
             instrFromInstruction(body));
       }
-      Assign(Variable[AstName=avar],expr) -> {
+      Assign(BQVariable[AstName=avar],expr) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
             termFromExpresssion(expr),
             refuse()); /* check that refuse is correct here */
-      }
-      (Let|LetRef)(UnamedVariable[],_,body) -> {
-        return instrFromInstruction(`body);
-      }
-      Assign(UnamedVariable[],_) -> {
-        return `refuse(); /* check that refuse is correct here */
       }
       CompiledPattern[AutomataInst=instr] -> {
         return instrFromInstruction(`instr);

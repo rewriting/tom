@@ -44,6 +44,7 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.theory.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -335,7 +336,7 @@ public final class TomBase {
 
   private static TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(constraintList) {
-      concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
+      concConstraint(_*,AssignTo(var@BQVariable[]),_*) -> { return `var; }
     }
     return null;
   }
@@ -561,22 +562,33 @@ public final class TomBase {
         return `type; 
       }
 
-      TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
+      AntiTerm(term) -> { return getTermType(`term,symbolTable);}
+      
+    }
+    //System.out.println("getTermType error on term: " + t);
+    //throw new TomRuntimeException("getTermType error on term: " + t);
+    return `EmptyType();
+  }
+
+  public static TomType getTermType(BQTerm t, SymbolTable symbolTable) {
+    %match(t) {
+      (BQVariable|BQVariableStar)[AstType=type] -> { 
+        return `type; 
+      }
 
       FunctionCall[AstType=type] -> { return `type; }
 
-      AntiTerm(term) -> { return getTermType(`term,symbolTable);}
-
-      ExpressionToTomTerm(expr) -> { return getTermType(`expr,symbolTable); }
+      ExpressionToBQTerm(expr) -> { return getTermType(`expr,symbolTable); }
 
       ListHead[Codomain=type] -> { return `type; }
+      
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
 
       Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }
-    }
+   }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
@@ -598,19 +610,27 @@ public final class TomBase {
         return symbolTable.getSymbolFromName(`tomName); 
       }
 
-      FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
-
       AntiTerm(term) -> { return getSymbolFromTerm(`term,symbolTable);}
     }
     return null;
   }
 
+  public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
+    %match(t) {
+      (BQVariable|BQVariableStar)[AstName=Name(tomName)] -> { 
+        return symbolTable.getSymbolFromName(`tomName); 
+      }
+
+      FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
+    }
+    return null;
+  }
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable) {
     %match(t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
-      TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
+      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
       GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }

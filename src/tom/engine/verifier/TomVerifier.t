@@ -26,6 +26,7 @@
 package tom.engine.verifier;
 
 import java.io.File;
+import tom.engine.adt.code.types.*;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -216,7 +217,7 @@ public class TomVerifier extends TomGenericPlugin {
       Or(cond,FalseTL()) -> {
         return `cond;
       }
-      TomTermToExpression(ExpressionToTomTerm(expr)) -> {
+      BQTermToExpression(ExpressionToBQTerm(expr)) -> {
         return `expr;
       }
     }
@@ -228,13 +229,6 @@ public class TomVerifier extends TomGenericPlugin {
       (UnamedBlock|AbstractBlock)(concInstruction(inst)) -> {
         return `inst;
       }
-      (Let|LetRef)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
-        return `body;
-      }
-      Assign[Variable=(UnamedVariable|UnamedVariableStar)[]] -> {
-        return `Nop();
-      }
-
       CompiledPattern[AutomataInst=inst] -> {
         return `inst;
       }
@@ -391,9 +385,6 @@ public class TomVerifier extends TomGenericPlugin {
       }
       Variable[AstName=Name(name)] -> {
         return `name;
-      }
-      UnamedVariable[] -> {
-        return "\\_";
       }
     }
     return "StrangePattern" + tomTerm;

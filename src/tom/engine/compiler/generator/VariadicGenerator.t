@@ -88,26 +88,26 @@ public class VariadicGenerator implements IBaseGenerator {
        *     end_i = (TomList) GET_TAIL_TomList(end_i);
        * } while( end_i != begin_i ) 
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@BQVariableStar[AstType=type]))) -> {
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
-          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));
+          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }
     } // end visit
-    visit TomTerm {
+    visit BQTerm {
       // generate getHead
       ListHead(opName,type,variable) -> {
-        return `ExpressionToTomTerm(vg.genGetHead(opName,type,variable));
+        return `ExpressionToBQTerm(vg.genGetHead(opName,type,variable));
       }
       // generate getTail
       ListTail(opName,variable) -> {
-        return `ExpressionToTomTerm(vg.genGetTail(opName,variable));
+        return `ExpressionToBQTerm(vg.genGetTail(opName,variable));
       }
     }
   } // end strategy	

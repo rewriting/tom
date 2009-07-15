@@ -126,7 +126,7 @@ public class ArrayPropagator implements IBasePropagator {
                 getSymbolFromName(`tomName))) {return `m;}        
             // declare fresh variable            
             TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
-            TomTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
+            BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
             Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
             
             // declare fresh index = 0            

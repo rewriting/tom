@@ -224,8 +224,8 @@ public class TomTypeChecker extends TomChecker {
   }
  
   %strategy checkVariableStar(ttc:TomTypeChecker) extends Identity() {
-    visit TomTerm {
-      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
+    visit BQTerm {
+      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
         if(!`listName.equals(`rootName)) {
           ttc.messageError(ttc.findOriginTrackingFileName(`options),
               ttc.findOriginTrackingLine(`options),
@@ -235,4 +235,5 @@ public class TomTypeChecker extends TomChecker {
       }
     }
   }
+
 }

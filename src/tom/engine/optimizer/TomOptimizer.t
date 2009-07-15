@@ -116,7 +116,7 @@ public class TomOptimizer extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
-       TomTerm renamedTerm = (TomTerm)getWorkingTerm();
+       Code renamedTerm = (Code)getWorkingTerm();
         if(getOptionBooleanValue("optimize2")) {
           Strategy optStrategy2 = `Sequence(
               InnermostId(ChoiceId(NormExpr(this),NopElimAndFlatten())),
@@ -172,10 +172,10 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy Inline(context:Constraint) extends Identity() {
-    visit TomTerm {
+    visit BQTerm {
       /* optimize the insertion of a slice into a list */
-      BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
-        return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
+      BuildAppendList(name,ExpressionToBQTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
+        return `ExpressionToBQTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
       }
     }
 
@@ -186,27 +186,16 @@ public class TomOptimizer extends TomGenericPlugin {
         return `t;
       }
 
-      /*
-       *
-       * Let x<-variable in body ==> inline
-       * If exp does no depend from values which are modified between Let x<-exp and the use of x in the body
-       * Let x<-exp in body where x is used 0 times ==> eliminate
-       * Let x<-exp in body where x is used 1 times ==> inline
-       */
-      Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-        return `body;
-      }
-
       /* only for generated variables */
       /* Let x <- y in body where y is a variable ==> inline */
       /* Let x <- (T) y in body where y is a variable ==> inline */
-      Let((Variable|VariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
-        (TomTermToExpression((Variable|VariableStar)[AstName=expname])<<exp ||
-         Cast[Source=TomTermToExpression((Variable|VariableStar)[AstName=expname])]<<exp) -> {
+      Let((BQVariable|BQVariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
+        (BQTermToExpression((BQVariable|BQVariableStar)[AstName=expname])<<exp ||
+         Cast[Source=BQTermToExpression((BQVariable|BQVariableStar)[AstName=expname])]<<exp) -> {
           return `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
       }
 
-      Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+      Let(var@(BQVariable|BQVariableStar)[AstName=name],exp,body) -> {
         String varName = ""; // real name of the variable (i.e. without the tom_ prefix)
         %match(name) {
           Name(tomName) -> { varName = `extractRealName(tomName); }
@@ -256,7 +245,7 @@ public class TomOptimizer extends TomGenericPlugin {
             }
             Position current = getPosition();
             getEnvironment().goToPosition(infoBody.usePosition);
-            getEnvironment().setSubject(`ExpressionToTomTerm(exp));
+            getEnvironment().setSubject(`ExpressionToBQTerm(exp));
             getEnvironment().goToPosition(current);
             Instruction newlet = (Instruction) getEnvironment().getSubject();
             // return only the body
@@ -274,7 +263,7 @@ public class TomOptimizer extends TomGenericPlugin {
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      LetRef(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
+      LetRef(var@(BQVariable|BQVariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled
@@ -343,7 +332,7 @@ public class TomOptimizer extends TomGenericPlugin {
                 info(TomMessage.inline,mult,varName);
               }
               getEnvironment().goToPosition(readPos);
-              TomTerm value = `ExpressionToTomTerm(info.assignment);
+              TomTerm value = `ExpressionToBQTerm(info.assignment);
               getEnvironment().setSubject(value);
               getEnvironment().goToPosition(current);
               `CleanAssign(name).visit(getEnvironment());
@@ -443,7 +432,7 @@ public class TomOptimizer extends TomGenericPlugin {
    */
   %strategy computeOccurenceLet_AssignCase(defaultCase:Strategy,info:InfoVariable) extends defaultCase {
     visit Instruction {
-      (Assign|AssignArray)[Variable=Variable[AstName=varname]] -> {
+      (Assign|AssignArray)[Variable=BQVariable[AstName=varname]] -> {
         if(info.getAssignmentVariables().contains(`varname)) {
           info.modifiedAssignmentVariables=true;
           throw new VisitFailure();
@@ -470,7 +459,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       // should not happen
-      (Assign|AssignArray)[Variable=Variable[AstName=varname]] -> {
+      (Assign|AssignArray)[Variable=BQVariable[AstName=varname]] -> {
         if(variableName.equals(`varname)) {
           logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
         }
@@ -543,7 +532,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
       }
 
-      (Assign|AssignArray)[Variable=Variable[AstName=name],Source=src] -> {
+      (Assign|AssignArray)[Variable=BQVariable[AstName=name],Source=src] -> {
         if(variableName == `name) {
           info.setAssignment(`src,getPosition());
         } else {
@@ -602,7 +591,7 @@ public class TomOptimizer extends TomGenericPlugin {
     visit TomTerm {
       (Variable|VariableStar)[AstName=astName] -> {
         if(variable == `astName) {
-          return `ExpressionToTomTerm(exp);
+          return `ExpressionToBQTerm(exp);
         }
       }
     }
@@ -614,7 +603,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy CleanAssignOnce(varname:TomName) extends Identity() {
     visit Instruction {
-      (Assign|AssignArray)[Variable=(Variable|VariableStar)[AstName=name]] -> {
+      (Assign|AssignArray)[Variable=(BQVariable|BQVariableStar)[AstName=name]] -> {
         if(`name.equals(varname)) { return `Nop(); }
       }
     }
@@ -696,8 +685,8 @@ public class TomOptimizer extends TomGenericPlugin {
   %strategy BlockFusion() extends Identity() {
     visit Instruction {
       block@AbstractBlock(concInstruction(X1*,
-            Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
-            Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
+            Let(var1@(BQVariable|BQVariableStar)[AstName=name1],term1,body1),
+            Let(var2@(BQVariable|BQVariableStar)[AstName=name2],term2,body2),
             X2*)) -> {
         /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
         if(`compare(term1,term2)) {

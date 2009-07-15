@@ -76,7 +76,6 @@ options{
 
     // the default-mode parser
     private HostParser targetparser;
-    protected BackQuoteParser bqparser;
     private TomLexer tomlexer;
 
     //store information for the OriginalText contained in the OptionList
@@ -90,7 +89,6 @@ options{
                      OptionManager optionManager){
         this(state);
         this.targetparser = target;
-        this.bqparser = new BackQuoteParser(state,this);
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
     }
@@ -528,16 +526,6 @@ matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result]
             )*
         )
     ;
-
-/* 
-extendsBqTerm returns [TomTerm bqTerm] throws TomException
-{
-  bqTerm = null;
-}
-  :
-    EXTENDS { selector().push("bqlexer"); bqTerm = bqparser.beginBackquote(); }
-;
-*/
 
 // The %strategy construct
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException

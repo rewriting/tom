@@ -183,7 +183,7 @@ public class ConstraintGenerator {
    * Converts 'Subterm' to 'GetSlot'
    */
   %strategy ReplaceSubterms(cg:ConstraintGenerator) extends Identity() {
-    visit TomTerm {
+    visit BQTerm {
       Subterm(constructorName@Name(name), slotName, term) -> {
         TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(`name);
         TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	

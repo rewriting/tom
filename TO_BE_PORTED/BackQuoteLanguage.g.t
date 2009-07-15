@@ -92,19 +92,14 @@ options{
       return tomparser.selector();
     }
     
-   private TomTerm buildBqAppl(Token id, LinkedList blockList, TomTerm term, boolean composite) {
+   private BQTerm buildBqAppl(Token id, LinkedList blockList, boolean composite) {
      OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
-     TomList target = (term==null)?
-       `concTomTerm():
-       `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
-
      if(composite) {
-			 TomList list = ASTFactory.makeList(blockList);
-			 return `Composite(concTomTerm(BackQuoteAppl(option,Name(id.getText()),list),target*));
+			 BQTermList list = ASTFactory.makeBQTermList(blockList);
+			 return `BackQuoteAppl(option,Name(id.getText()),list);
      } else {
-			 return `Composite(concTomTerm(Variable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint()),target*));
+			 return `BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN);
 		 }
-
    }
  
    /*
@@ -147,15 +142,15 @@ options{
     }
 
     // sorts attributes of xml term with lexicographical order
-    private TomList sortAttributeList(TomList list){
+    private BQTermList sortAttributeList(BQTermList list) {
       %match(list) {
-        concTomTerm() -> { return list; }
-        concTomTerm(X1*,e1,X2*,e2,X3*) -> {
+        concBQTerm() -> { return list; }
+        concBQTerm(X1*,e1,X2*,e2,X3*) -> {
           %match(e1, e2) {
-            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
-            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
+            BackQuoteAppl[Args=concBQTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
+            BackQuoteAppl[Args=concBQTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+                return `sortAttributeList(concBQTerm(X1*,e2,X2*,e1,X3*));
               }
             }
           }
@@ -192,7 +187,6 @@ ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 mainBqTerm [TomList context] returns [TomTerm result]
 {
     result = null;
-    TomTerm term = null;
     TomList list = `concTomTerm();
 
     Token t = null;
@@ -231,7 +225,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
                  // `x(...)
                  {LA(1) == BQ_LPAREN}? BQ_LPAREN ws ( termList[blockList,list] )? BQ_RPAREN 
                  {   
-                   result = buildBqAppl(id,blockList,term,true);
+                   result = buildBqAppl(id,blockList,true);
                  }
                  // `X{type}
                  | {LA(1) == BQ_LBRACE}? BQ_LBRACE type:BQ_ID BQ_RBRACE
@@ -258,7 +252,6 @@ mainBqTerm [TomList context] returns [TomTerm result]
 bqTerm [TomList context] returns [TomTerm result]
 {
     result = null;
-    TomTerm term = null;
     TomList xmlTermList = `concTomTerm();
 
     Token t = null;
@@ -283,9 +276,8 @@ bqTerm [TomList context] returns [TomTerm result]
             (
              {LA(1) == BQ_LPAREN}? BQ_LPAREN {arguments = true;} ws (termList[blockList,context])? BQ_RPAREN 
             )?
-            ( (BQ_DOT term = bqTerm[null] ) => BQ_DOT term = bqTerm[context] )?
             {   
-                result = buildBqAppl(id,blockList,term,arguments);
+                result = buildBqAppl(id,blockList,arguments);
             }
         )
     |
