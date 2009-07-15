@@ -157,7 +157,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 
     //write constructor initialization
     output.write(deep,") : base(");
-    generate(deep,superTerm,moduleName);
+    generateBQTerm(deep,superTerm,moduleName);
     output.write(deep,") {");
 
     //here index represents the parameter number
@@ -239,7 +239,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
         %match(localVar) {
           v@BQVariable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
-            generate(deep,`v,moduleName);
+            generateBQTerm(deep,`v,moduleName);
             break matchBlock;
           }
           _ -> {

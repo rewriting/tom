@@ -113,7 +113,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     output.write(deep,"}");
   }
 
-  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
@@ -249,11 +249,11 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
   private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.writeln(deep, "@SuppressWarnings(\"unchecked\")");
     output.write(deep, methodModifier + TomBase.getTLType(`codomain) + " " + tomName + "(");
-    while(!varList.isEmptyconcTomTerm()) {
-      TomTerm localVar = varList.getHeadconcTomTerm();
+    while(!varList.isEmptyconcBQTerm()) {
+      BQTerm localVar = varList.getHeadconcBQTerm();
       matchBlock: {
         %match(localVar) {
-          v@Variable[AstType=type2] -> {
+          v@BQVariable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
             generateBQTerm(deep,`v,moduleName);
             break matchBlock;
@@ -264,8 +264,8 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
           }
         }
       }
-      varList = varList.getTailconcTomTerm();
-      if(!varList.isEmptyconcTomTerm()) {
+      varList = varList.getTailconcBQTerm();
+      if(!varList.isEmptyconcBQTerm()) {
         output.write(deep,", ");
       }
     }

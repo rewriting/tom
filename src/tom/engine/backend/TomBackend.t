@@ -223,7 +223,7 @@ public class TomBackend extends TomGenericPlugin {
     is_sort(t) { ($t instanceof TomBackend) }
   }
 
-  private void markUsedConstructorDestructor(TomTerm pilCode) {
+  private void markUsedConstructorDestructor(Code pilCode) {
     Stack<String> stack = new Stack<String>();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {

@@ -89,15 +89,15 @@ public class TomPythonGenerator extends TomGenericGenerator {
     buildWhileDo(deep,exp,succes,moduleName);
   }
   
-protected void buildExpEqualTerm(int deep, BQTerm type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(TomBase.getBQTerm(`type))) {
+protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(" == ");
       generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_equal_term_" + TomBase.getBQTerm(type) + "(");
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
       generateBQTerm(deep,exp2,moduleName);
@@ -131,7 +131,7 @@ protected void buildExpEqualTerm(int deep, BQTerm type, BQTerm exp1,BQTerm exp2,
     output.write(" ) ");
   }
 
-  protected void buildExpCast(int deep, BQTerm tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
     generateExpression(deep,exp,moduleName);
   }
 
@@ -163,13 +163,13 @@ protected void buildExpEqualTerm(int deep, BQTerm type, BQTerm exp1,BQTerm exp2,
     generateInstructionList(deep, instructionList, moduleName);
   }
 
-  protected void buildLet(int deep, BQTerm var, OptionList optionList, BQTerm tlType, 
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
-  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, BQTerm tlType, 
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
@@ -220,15 +220,15 @@ protected void buildExpEqualTerm(int deep, BQTerm type, BQTerm exp1,BQTerm exp2,
 
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    BQTerm listType = TomBase.getSymbolCodomain(tomSymbol);
-    BQTerm eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcBQTerm();
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
       return;
     }
 
-    String tomType = TomBase.getBQTerm(listType);
+    String tomType = TomBase.getTomType(listType);
     String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
 
@@ -272,7 +272,7 @@ protected void buildExpEqualTerm(int deep, BQTerm type, BQTerm exp1,BQTerm exp2,
     output.write(s);
   }
 
-  protected void genDeclMake(String prefix,String funName, BQTerm returnType, 
+  protected void genDeclMake(String prefix,String funName, TomType returnType, 
       BQTermList argList, Instruction instr, String moduleName) throws IOException {
     StringBuilder s = new StringBuilder();
     StringBuilder check = new StringBuilder();
@@ -341,15 +341,15 @@ matchBlock: {
     }
   }
 
-  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, BQTerm codomain, BQTerm throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
   }
 
-  protected void buildMethodDef(int deep, String tomName, BQTermList argList, BQTerm codomain, BQTerm throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
 
-  private void buildMethod(int deep, String tomName, BQTermList varList, BQTerm codomain, BQTerm throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.write(deep, "def " + tomName + "(");
     while(!varList.isEmptyconcBQTerm()) {
       BQTerm localVar = varList.getHeadconcBQTerm();

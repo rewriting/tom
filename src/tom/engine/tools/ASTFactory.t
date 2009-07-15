@@ -52,24 +52,26 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList makeList(Collection<TomTerm> c) {
-    Object array[] = c.toArray();  
+  public static CodeList makeList(Collection<Code> c) {
+    Object array[] = c.toArray();
     TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
-     Object elt = array[i];    
-     TomTerm term; 
+     Object elt = array[i];
+     TomTerm term;
      if(elt instanceof TargetLanguage) { 	 
-        term = `TargetLanguageToTomTerm((TargetLanguage)elt); 	 
+        term = `TargetLanguageToCode((TargetLanguage)elt); 	 
       } else if(elt instanceof Declaration) { 	 
-        term = `DeclarationToTomTerm((Declaration)elt); 	 
-      } else if(elt instanceof Expression) { 	 
+        term = `DeclarationToCode((Declaration)elt); 	 
+        /* seems to never happen
+      } else if(elt instanceof Expression) { 
         term = `ExpressionToTomTerm((Expression)elt); 	 
+        */
       } else if(elt instanceof Instruction) { 	 
-        term = `InstructionToTomTerm((Instruction)elt); 	 
+        term = `InstructionToCode((Instruction)elt); 	 
       } else { 	 
         term = (TomTerm)elt; 	 
       } 	 
-      list = `concTomTerm(term,list*);
+      list = `concCode(term,list*);
     } 	     
     return list;
   }

@@ -267,14 +267,14 @@ public class Compiler extends TomGenericPlugin {
         }        
         // test if we already renamed this subject 
         if(subjectList.contains(`subject)) {
-          TomTerm renamedSubj = (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
+          BQTerm renamedSubj = (BQTerm) renamedSubjects.get(subjectList.indexOf(`subject));
           Constraint newConstraint = `constr.setSubject(renamedSubj);
-          TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
-          TomTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+          TomType freshSubjectType = renamedSubj.getAstType();
+          BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
           return `AndConstraint(
               MatchConstraint(freshVar,subject),
               IsSortConstraint(freshSubjectType,freshVar),
-              MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
+              MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
               newConstraint);
         }
         TomNumberList path = compiler.getRootpath();
@@ -297,17 +297,17 @@ public class Compiler extends TomGenericPlugin {
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(renamedVar);   
-        TomTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
+        BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
         return `AndConstraint(
             MatchConstraint(freshVar,subject),
             IsSortConstraint(freshSubjectType,freshVar),
-            MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
+            MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
             newConstraint);
       }
     }
   }
 
-  private TomTerm getUniversalObjectForSubject(TomType subjectType){    
+  private BQTerm getUniversalObjectForSubject(TomType subjectType){    
     if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {

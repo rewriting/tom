@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
 import tom.library.sl.Strategy;

@@ -48,6 +48,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.TomMessage;
 import tom.engine.tools.TomGenericPlugin;
@@ -152,14 +153,14 @@ public class TomOptimizer extends TomGenericPlugin {
       }
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX,
-            (TomTerm)getWorkingTerm() );
+            (Code)getWorkingTerm() );
       }
     } else {
       // not active plugin
       logger.log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
     if(getOptionBooleanValue("prettyPIL")) {
-      System.out.println(factory.prettyPrintCompiledMatch(factory.remove((TomTerm)getWorkingTerm())));
+      System.out.println(factory.prettyPrintCompiledMatch(factory.remove((Code)getWorkingTerm())));
     }
   }
 
@@ -332,7 +333,7 @@ public class TomOptimizer extends TomGenericPlugin {
                 info(TomMessage.inline,mult,varName);
               }
               getEnvironment().goToPosition(readPos);
-              TomTerm value = `ExpressionToBQTerm(info.assignment);
+              BQTerm value = `ExpressionToBQTerm(info.assignment);
               getEnvironment().setSubject(value);
               getEnvironment().goToPosition(current);
               `CleanAssign(name).visit(getEnvironment());
@@ -398,8 +399,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy CollectVariable(set:TomNameHashSet) extends Identity() {
-    visit TomTerm {
-      (Variable|VariableStar)[AstName=name] -> {
+    visit BQTerm {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         set.add(`name);
         //stop to visit this branch (like "return false" with traversal)
         throw new VisitFailure();
@@ -473,8 +474,8 @@ public class TomOptimizer extends TomGenericPlugin {
    */
   %strategy computeOccurenceLet_BaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariable) extends defaultCase {
 
-    visit TomTerm {
-      (Variable|VariableStar)[AstName=name] -> {
+    visit BQTerm {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         if(variableName == `name) {
           info.usePosition = getPosition();
           info.readCount++;
@@ -557,8 +558,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy computeOccurencesLetRef_BaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariable) extends defaultCase {
-    visit TomTerm {
-      (Variable|VariableStar)[AstName=name] -> {
+    visit BQTerm {
+      (BQVariable|BQVariableStar)[AstName=name] -> {
         if(variableName == `name) {
           info.readCount++;
           info.usePosition = getPosition();
@@ -578,8 +579,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends Identity() {
-    visit TomTerm {
-      var@(Variable|VariableStar)[AstName=astName] -> {
+    visit BQTerm {
+      var@(BQVariable|BQVariableStar)[AstName=astName] -> {
         if(variable1 == `astName) {
           return `var.setAstName(variable2);
         }
@@ -588,8 +589,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %strategy replaceVariableByExpression(variable:TomName, exp:Expression) extends Identity() {
-    visit TomTerm {
-      (Variable|VariableStar)[AstName=astName] -> {
+    visit BQTerm {
+      (BQVariable|BQVariableStar)[AstName=astName] -> {
         if(variable == `astName) {
           return `ExpressionToBQTerm(exp);
         }
