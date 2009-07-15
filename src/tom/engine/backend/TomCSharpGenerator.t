@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
@@ -105,7 +106,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
@@ -222,21 +223,21 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep,"}");
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
   }
 
-  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
 
-  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.write(deep, methodModifier + TomBase.getTLType(`codomain) + " " + tomName + "(");
-    while(!varList.isEmptyconcTomTerm()) {
-      TomTerm localVar = varList.getHeadconcTomTerm();
+    while(!varList.isEmptyconcBQTerm()) {
+      BQTerm localVar = varList.getHeadconcBQTerm();
       matchBlock: {
         %match(localVar) {
-          v@Variable[AstType=type2] -> {
+          v@BQVariable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
             generate(deep,`v,moduleName);
             break matchBlock;
@@ -247,8 +248,8 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
           }
         }
       }
-      varList = varList.getTailconcTomTerm();
-      if(!varList.isEmptyconcTomTerm()) {
+      varList = varList.getTailconcBQTerm();
+      if(!varList.isEmptyconcBQTerm()) {
         output.write(deep,", ");
 
       }

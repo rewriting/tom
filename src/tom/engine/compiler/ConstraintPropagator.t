@@ -113,7 +113,7 @@ public class ConstraintPropagator {
     %match(subject){
       MatchConstraint((RecordAppl|Variable|UnamedVariable)[Constraints=constraints@!concConstraint()],g) -> {
         %match(constraints) {
-          concConstraint(_*,AssignTo(var),_*) -> {
+          concConstraint(_*,AliasTo(var),_*) -> {
             // add constraint to the list
             result = `AndConstraint(MatchConstraint(var,g),result*);
           }
@@ -122,7 +122,7 @@ public class ConstraintPropagator {
       MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
         TomTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
-          concConstraint(_*,AssignTo(var),_*) -> {
+          concConstraint(_*,AliasTo(var),_*) -> {
             result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
           }
         }// end match   

@@ -172,7 +172,7 @@ public class TomCGenerator extends TomCFamilyGenerator {
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     System.out.println("Function not yet supported in Caml");
     throw new TomRuntimeException("Function not yet supported in Caml");
   }

@@ -201,8 +201,8 @@ public class ASTFactory {
     return list;
   }
 
-  public static Constraint makeAssignTo(TomName name,int line, String fileName) {
-    return `AssignTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+  public static Constraint makeAliasTo(TomName name,int line, String fileName) {
+    return `AliasTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
           SymbolTable.TYPE_UNKNOWN,
           concConstraint()));

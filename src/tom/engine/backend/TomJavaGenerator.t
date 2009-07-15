@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
@@ -167,7 +168,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     //write constructor initialization
     output.writeln(deep,") {");
     output.write(deep+1,"super(");
-    generate(deep,superTerm,moduleName);
+    generateBQTerm(deep,superTerm,moduleName);
     output.writeln(");");
 
     //here index represents the parameter number
@@ -237,15 +238,15 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     output.writeln(deep,"}");
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
   }
 
-  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
 
-  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.writeln(deep, "@SuppressWarnings(\"unchecked\")");
     output.write(deep, methodModifier + TomBase.getTLType(`codomain) + " " + tomName + "(");
     while(!varList.isEmptyconcTomTerm()) {
@@ -254,7 +255,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
         %match(localVar) {
           v@Variable[AstType=type2] -> {
             output.write(deep,TomBase.getTLType(`type2) + " ");
-            generate(deep,`v,moduleName);
+            generateBQTerm(deep,`v,moduleName);
             break matchBlock;
           }
           _ -> {

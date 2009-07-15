@@ -3,12 +3,14 @@ imports Code TomTerm
 abstract syntax
 
 Constraint = 
+      // TODO : move to TopOption and get rid of constraints in
+      // TomTerm
+      | AliasTo(Var:TomTerm)
 		  /**
 		   * <code>AssignTo</code> specifies that we want to instanciate Variable with the term on which this constraint is attached
 		   *
 		   * @param Variable the variable to constraint
 		   */
-			| AssignTo(Variable:BQTerm)
 			| AssignPositionTo(Variable:BQTerm)
 			| TrueConstraint()
 			| FalseConstraint()				   

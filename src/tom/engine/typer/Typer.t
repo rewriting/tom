@@ -354,9 +354,9 @@ public class Typer extends TomGenericPlugin {
                 }
                 ConstraintList newConstraintList = `concConstraint();
                 %match(constraintList) {
-                  concConstraint(AssignTo(var@Variable[AstType=vartype])) -> {
+                  concConstraint(AliasTo(var@Variable[AstType=vartype])) -> {
                     if(symbolTable().isCharType(TomBase.getTomType(`vartype))) {
-                      newConstraintList = `concConstraint(AssignTo(var.setAstType(symbolTable().getStringType())));
+                      newConstraintList = `concConstraint(AliasTo(var.setAstType(symbolTable().getStringType())));
                     }
                   }
                 }

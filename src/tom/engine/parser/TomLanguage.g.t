@@ -742,7 +742,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
       constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
     }
     if(astAnnotedName != null) {
-      constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
+      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, currentFile()));
     }    
 }
     :         
@@ -882,7 +882,7 @@ implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int li
       constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
     }
     if(astAnnotedName != null) {
-      constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
+      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, currentFile()));
     }
 
 }
@@ -1098,7 +1098,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno2:ALL_ID AT
                 {
                     text.append(anno2.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno2.getText()), getLine(), currentFile()));
+                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno2.getText()), getLine(), currentFile()));
                 }
             )?
             (a:ANTI_SYM {anti = !anti;} )*
@@ -1113,7 +1113,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 anno1:ALL_ID AT
                 {
                     text.append(anno1.getText()+"@");
-                    anno1ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno1.getText()), getLine(), currentFile()));
+                    anno1ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno1.getText()), getLine(), currentFile()));
                 }
             )?
             termName = unamedVariable[optionList,anno1ConstraintList]
@@ -1122,7 +1122,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno3:ALL_ID AT
                 {
                     text.append(anno3.getText()+"@");
-                    anno2ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno3.getText()), getLine(), currentFile()));
+                    anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno3.getText()), getLine(), currentFile()));
                 }
             )?
             (b:ANTI_SYM {anti = !anti;} )*		

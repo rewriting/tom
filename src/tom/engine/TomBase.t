@@ -285,7 +285,7 @@ public final class TomBase {
     visit TomTerm {
       v@(Variable|VariableStar)[Constraints=constraintList] -> {
         collection.add(`v);
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -293,7 +293,7 @@ public final class TomBase {
       }
 
       v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -303,7 +303,7 @@ public final class TomBase {
       // to collect annoted nodes but avoid collect variables in optionSymbol
       t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
         collectVariable(collection,`subterms);
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -334,9 +334,9 @@ public final class TomBase {
     return multiplicityMap;
   }
 
-  private static TomTerm getAssignToVariable(ConstraintList constraintList) {
+  private static TomTerm getAliasToVariable(ConstraintList constraintList) {
     %match(constraintList) {
-      concConstraint(_*,AssignTo(var@BQVariable[]),_*) -> { return `var; }
+      concConstraint(_*,AliasTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
   }

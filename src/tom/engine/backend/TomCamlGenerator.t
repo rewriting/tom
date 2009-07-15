@@ -41,6 +41,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
@@ -50,7 +51,7 @@ import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomGenericGenerator {
-  protected LinkedList<TomTerm> env = new LinkedList<TomTerm>();
+  protected LinkedList<BQTerm> env = new LinkedList<BQTerm>();
 
   public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -64,18 +65,18 @@ public class TomCamlGenerator extends TomGenericGenerator {
    * the implementation of methods are here for caml 
    */
  
-  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
+  protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(" = ");
-      generate(deep,exp2,moduleName);
+      generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     } else {
       output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
-      generate(deep,exp2,moduleName);
+      generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     }
   }
@@ -162,13 +163,13 @@ public class TomCamlGenerator extends TomGenericGenerator {
     generateExpression(deep,exp,moduleName);
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList optionList,
+  protected void buildLet(int deep, BQTerm var, OptionList optionList,
                           TomType tlType, 
                           Expression exp, Instruction body, String moduleName) throws IOException {
 
     output.indent(deep);
     output.write("let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write(" = ");
     generateExpression(deep,exp,moduleName);
     output.writeln(" in ");
@@ -176,12 +177,12 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
  
 
-  protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList,
                              TomType tlType, 
                              Expression exp, Instruction body, String moduleName) throws IOException {
     output.indent(deep);
     output.write("let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write(" = ref (");
     generateExpression(deep,exp,moduleName);
     output.writeln(") in ");
@@ -194,7 +195,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
    * redefinition of TomAbstractGenerator.getVariableName
    * add a ! for variables under a LetRef
    */
-  protected String getVariableName(TomTerm var) {
+  protected String getVariableName(BQTerm var) {
     String varname = super.getVariableName(var);
     if(env.contains(var)) {
       return "!" + varname;
@@ -202,7 +203,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     return varname;
   }
 
-  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     output.write(" ( ");
     output.write(deep+1,super.getVariableName(var));
     output.write(" := ");
@@ -287,18 +288,18 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
-                             TomList argList, Instruction instr, String moduleName)  throws IOException {
+                             BQTermList argList, Instruction instr, String moduleName)  throws IOException {
     StringBuilder s = new StringBuilder();
     if(nodeclMode) { 
       return;
     }
     s.append("let " + prefix+funName + "(");
-    while(!argList.isEmptyconcTomTerm()) {
-      TomTerm arg = argList.getHeadconcTomTerm();
+    while(!argList.isEmptyconcBQTerm()) {
+      BQTerm arg = argList.getHeadconcBQTerm();
       matchBlock: {
         %match(arg) {
             // in caml, we are not interested in the type of arguments
-          Variable[AstName=Name(name)] -> {
+          BQVariable[AstName=Name(name)] -> {
             s.append(`name);
             break matchBlock;
           }
@@ -309,8 +310,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
           }
         }
       }
-      argList = argList.getTailconcTomTerm();
-      if(!argList.isEmptyconcTomTerm()) {
+      argList = argList.getTailconcBQTerm();
+      if(!argList.isEmptyconcBQTerm()) {
         s.append(", ");
       }
     }
@@ -358,9 +359,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(s);
   }
   
-  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType, String moduleName) throws IOException {
+  protected void buildDeclaration(int deep, BQTerm var, String type, TomType tlType, String moduleName) throws IOException {
     output.write(deep,"let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     System.out.println("buildDeclaration : this is a deprecated code");
     output.writeln(" = ref None in");
   }
@@ -383,7 +384,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     buildUnamedBlock(deep,instList,moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     System.out.println("Function not yet supported in Caml");
     throw new TomRuntimeException("Function not yet supported in Caml");
   }
@@ -418,8 +419,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(";;");
   }
 
-  protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
-    generate(deep,exp,moduleName);
+  protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
+    generateBQTerm(deep,exp,moduleName);
   }
 
 
@@ -441,8 +442,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(" () ");
   }
 
-  protected void buildAssignArray(int deep, TomTerm var, OptionList optionList,
-      TomTerm index, 
+  protected void buildAssignArray(int deep, BQTerm var, OptionList optionList,
+      BQTerm index, 
       Expression exp, String moduleName) throws IOException {
     output.indent(deep);
     //  arrays are used in the AC algorithm;

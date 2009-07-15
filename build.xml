@@ -134,7 +134,8 @@
              memoryMaximumSize= "@{memoryMaximumSize}"
              nowarn= "@{nowarn}">
         <srcelements/>
-        <!-- <compilerarg value="-Xmaxerrors 1000"/> -->
+        <compilerarg value="-Xmaxerrs"/> 
+        <compilerarg value="1000"/> 
       </javac>
     </sequential>
   </macrodef>

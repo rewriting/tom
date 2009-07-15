@@ -57,8 +57,8 @@ public class TomConstraintPrettyPrinter {
     
     %match(subject) {
 
-      AssignTo(Variable) -> {
-        return "AssignTo("+prettyPrint(`Variable)+")";
+      AliasTo(Variable) -> {
+        return "AliasTo("+prettyPrint(`Variable)+")";
       }
 
       AssignPositionTo(Variable) -> {
@@ -286,7 +286,31 @@ public class TomConstraintPrettyPrinter {
       ExpressionToBQTerm(term) -> {
         return prettyPrint(`term);
       }
-    } 
+
+      ListHead[Variable=Variable] -> {
+        return "ListHead("+prettyPrint(`Variable)+")";
+      }
+
+      ListTail[Variable=Variable] -> {
+        return "ListTail("+prettyPrint(`Variable)+")";
+      }
+
+      SymbolOf(GroundTerm) -> {
+        return "SymbolOf("+prettyPrint(`GroundTerm)+")";
+      }
+
+      Subterm(AstName, SlotName, GroundTerm) -> {
+        return "Subterm("+prettyPrint(`AstName)+","+prettyPrint(`SlotName)+","+prettyPrint(`GroundTerm)+")";
+      }
+
+      VariableHeadList(Opname,Begin,End) -> {
+        return "VariableHeadList("+prettyPrint(`Opname)+","+prettyPrint(`Begin)+","+prettyPrint(`End)+")";
+      }
+
+      VariableHeadArray(Opname,Subject,BeginIndex,EndIndex) -> {
+        return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
+      }
+    }
     return subject.toString();
   }
 }

@@ -47,6 +47,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
@@ -124,11 +125,11 @@ public class TomBackend extends TomGenericPlugin {
             throw new TomRuntimeException("no selected language for the Backend");
           }
 
-          TomTerm pilCode = (TomTerm) getWorkingTerm();
+          Code pilCode = (Code) getWorkingTerm();
 
           markUsedConstructorDestructor(pilCode);
 
-          generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
+          generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
           getLogger().log(Level.INFO,
               TomMessage.tomGenerationPhase.getMessage(),

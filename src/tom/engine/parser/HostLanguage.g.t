@@ -48,6 +48,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.ASTFactory;
 import aterm.*;
@@ -201,7 +202,7 @@ options{
 
   private synchronized void includeFile(String fileName, List<TomTerm> list)
     throws TomException, TomIncludeException {
-    TomTerm astTom;
+    Code astTom;
     InputStream input;
     byte inputBuffer[];
     //  TomParser tomParser;
@@ -257,7 +258,7 @@ options{
                                          getOptionManager(), getStreamManager());
       parser.setSkipComment();
       astTom = parser.input();
-      astTom = `TomInclude(astTom.getTomList());
+      astTom = `TomInclude(astTom.getCodeList());
       list.add(astTom);
     } catch (Exception e) {
       if(e instanceof TomIncludeException) {
@@ -323,7 +324,7 @@ options{
           Reader codeReader = new BufferedReader(new StringReader(code));
           HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
               getOptionManager(), getStreamManager());
-          TomTerm astTom = parser.input();
+          Code astTom = parser.input();
           list.add(astTom); 
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");

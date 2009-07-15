@@ -62,7 +62,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.writeln(";");
@@ -88,15 +88,15 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       // if the type is null, it means that this is from Java
       if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
         output.write("(");
-        generate(deep,begin,moduleName);
+        generateBQTerm(deep,begin,moduleName);
         output.write(" == ");
-        generate(deep,end,moduleName);
+        generateBQTerm(deep,end,moduleName);
         output.write(")");
       } else {
         output.write("tom_equal_term_" + sType + "(");
-        generate(deep,begin,moduleName);
+        generateBQTerm(deep,begin,moduleName);
         output.write(", ");
-        generate(deep,end,moduleName);
+        generateBQTerm(deep,end,moduleName);
         output.write(")");
       }
     }
@@ -187,7 +187,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
     output.write(deep,"return ");
-    generate(deep,exp,moduleName);
+    generateBQTerm(deep,exp,moduleName);
     output.writeln(deep,";");
   }
 
@@ -458,7 +458,7 @@ s = %[
   }
 
   protected void genDeclMake(String prefix, String funName, TomType returnType,
-                             TomList argList, Instruction instr, String moduleName) throws IOException {
+                             BQTermList argList, Instruction instr, String moduleName) throws IOException {
     if(nodeclMode) {
       return;
     }
