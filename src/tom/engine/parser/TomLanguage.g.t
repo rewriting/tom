@@ -2140,7 +2140,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             selector().pop();
 
             result = `GetImplementationDecl(Variable(option,Name(name.getText()),Type(typeString,EmptyType()),concConstraint()),
-                Return(TargetLanguageToTomTerm(tlCode)),ot);
+                Return(TargetLanguageToCode(tlCode)),ot);
         }
     ;
 
@@ -2232,7 +2232,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                 List<TomTerm> blockList = new LinkedList<TomTerm>();
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
-                blockList.add(`TargetLanguageToTomTerm(tlCode));
+                blockList.add(`TargetLanguageToCode(tlCode));
                 if(blockList.size()==1) {
                   String[] vars = new String[varnameList.size()];
                   String code = ASTFactory.abstractCode(tlCode.getCode(),varnameList.toArray(vars));

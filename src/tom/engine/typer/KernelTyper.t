@@ -308,11 +308,11 @@ public class KernelTyper {
     visit Constraint {
       constraint@(MatchConstraint|NumericConstraint)[Pattern=pattern,Subject=subject] -> {
         boolean isNumeric = `(constraint) instanceof NumericConstraint ? true:false;
-        TomTerm newSubject = null;
+        BQTerm newSubject = null;
         TomType newSubjectType = null;        
         %match(subject) {
-          (Variable|VariableStar)(variableOption,astName@Name(name),tomType,constraints) -> {
-            TomTerm newVariable = null;
+          (BQVariable|BQVariableStar)(variableOption,astName@Name(name),tomType) -> {
+            BQTerm newVariable = null;
             // tomType may be a TomTypeAlone or a type from an typed variable
             String type = TomBase.getTomType(`tomType);
             //System.out.println("match type = " + type);
@@ -320,7 +320,7 @@ public class KernelTyper {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(newSubjectType != null) {
-                newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
+                newVariable = `BQVariable(variableOption,astName,newSubjectType);
               } else {
                 if (!isNumeric) {
                   throw new TomRuntimeException("No symbol found for name '" + `name + "'");
@@ -339,6 +339,8 @@ public class KernelTyper {
             }                  
           }
 
+          /**
+           * impossible case
           t@(TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
             TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
             TomType type = null;
@@ -357,6 +359,7 @@ public class KernelTyper {
             }
             newSubjectType = type;                    
           }
+          */
 
           // the user specified the type (already checked for consistence in SyntaxChecker)
           term@BuildReducedTerm[AstType=userType] -> {            
@@ -370,9 +373,11 @@ public class KernelTyper {
         if (isNumeric) {
           newSubjectType = `EmptyType();
           newSubject = `subject;
+          /** impossible case
           %match(subject){
             RecordAppl[] -> { newSubject = `BuildReducedTerm(subject,newSubjectType);} 
-          }              
+          }
+          */
           %match(pattern){
             RecordAppl[] -> { `pattern = `BuildReducedTerm(pattern, newSubjectType); }
           }

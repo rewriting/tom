@@ -131,7 +131,7 @@ public class ArrayPropagator implements IBasePropagator {
             
             // declare fresh index = 0            
             TomTerm freshIndex = ap.getFreshIndex();				
-            Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
+            Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToCode(ITL("0")));
             Constraint l = `AndConstraint();
     match:  %match(slots) {
               concSlot() -> {
