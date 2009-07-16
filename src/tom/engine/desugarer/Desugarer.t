@@ -44,6 +44,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
 
@@ -77,7 +78,7 @@ public class Desugarer extends TomGenericPlugin {
      // long startChrono = System.currentTimeMillis();
      try {
 
-       TomTerm syntaxExpandedTerm = getWorkingTerm();
+       Code syntaxExpandedTerm = (Code) getWorkingTerm();
 
        // replace underscores by fresh variables
        syntaxExpandedTerm = 
