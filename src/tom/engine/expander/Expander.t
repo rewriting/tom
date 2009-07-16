@@ -273,7 +273,7 @@ matchBlock: {
            */
           String funcName = "getChildCount";//function name
             //manage null children: return 0
-            InstructionList instructions = `concInstruction(If(TomTermToExpression(TargetLanguageToCode(ITL("o==null"))),Return(TargetLanguageToCode(ITL("0"))),Nop()));
+            InstructionList instructions = `concInstruction(If(BQTermToExpression(TargetLanguageToCode(ITL("o==null"))),Return(TargetLanguageToCode(ITL("0"))),Nop()));
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
@@ -288,14 +288,14 @@ matchBlock: {
                         // manage empty lists and arrays
                         inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(TargetLanguageToCode(ITL("0"))),Return(TargetLanguageToCode(ITL("2")))),Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToTomTerm(Integer(0))),Return(TargetLanguageToCode(ITL("0"))),Return(TargetLanguageToCode(ITL("2")))),Nop());
+                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToBQTerm(Integer(0))),Return(TargetLanguageToCode(ITL("0"))),Return(TargetLanguageToCode(ITL("2")))),Nop());
                       } else {
                         inst = `If(IsFsym(opName,var),Return(TargetLanguageToCode(ITL(""+TomBase.getArity(symbol)))),Nop());
                       } 
                       instructionsForSort = `concInstruction(instructionsForSort*,inst);
                     }
                   }
-                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
             }
@@ -321,7 +321,7 @@ matchBlock: {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          TomList array = `concTomTerm(TargetLanguageToCode(ITL("new Object[]{")),ExpressionToTomTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),TargetLanguageToCode(ITL(",")),ExpressionToTomTerm(GetTail(symbolName,var)),TargetLanguageToCode(ITL("}")));
+                          TomList array = `concTomTerm(TargetLanguageToCode(ITL("new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),TargetLanguageToCode(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),TargetLanguageToCode(ITL("}")));
                           //default case (used for builtins too)                     
                           TomTerm emptyArray = `TargetLanguageToCode(ITL("new Object[]{}"));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
@@ -346,7 +346,7 @@ matchBlock: {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {
-                                slotArray = `concTomTerm(slotArray*,ExpressionToTomTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var)));
+                                slotArray = `concTomTerm(slotArray*,ExpressionToBQTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var)));
                                 if(i < arity-1) {
                                   slotArray = `concTomTerm(slotArray*,TargetLanguageToCode(ITL(",")));
                                 }
@@ -361,7 +361,7 @@ matchBlock: {
                       } 
                     }
                   }
-                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 } 
               }
             }
@@ -392,9 +392,9 @@ matchBlock: {
                             TypesToType[Domain=concTomType(domain)] -> {
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
-                                    If(TomTermToExpression(TargetLanguageToCode(ITL("children.length==0"))),
+                                    If(BQTermToExpression(TargetLanguageToCode(ITL("children.length==0"))),
                                       Return(BuildEmptyList(symbolName)),
-                                      Return(BuildConsList(symbolName,ExpressionToTomTerm(Cast(domain,TomTermToExpression(TargetLanguageToCode(ITL("children[0]"))))),ExpressionToTomTerm(Cast(type,TomTermToExpression(TargetLanguageToCode(ITL("children[1]")))))))
+                                      Return(BuildConsList(symbolName,ExpressionToBQTerm(Cast(domain,BQTermToExpression(TargetLanguageToCode(ITL("children[0]"))))),ExpressionToBQTerm(Cast(type,BQTermToExpression(TargetLanguageToCode(ITL("children[1]")))))))
                                       )
                                     ,Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
@@ -415,7 +415,7 @@ matchBlock: {
                             if(symbolTable.isBuiltinType(slotTypeName)) {
                               slots = `concTomTerm(slots*,TargetLanguageToCode(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]")));
                             } else {
-                              slots = `concTomTerm(slots*,ExpressionToTomTerm(Cast(slotType,TomTermToExpression(TargetLanguageToCode(ITL("children["+i+"]"))))));
+                              slots = `concTomTerm(slots*,ExpressionToBQTerm(Cast(slotType,BQTermToExpression(TargetLanguageToCode(ITL("children["+i+"]"))))));
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
@@ -426,7 +426,7 @@ matchBlock: {
                     }
                   } 
 
-                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,BQTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
             }
@@ -514,17 +514,17 @@ matchBlock: {
         Expression testEnvNotNull = null;
         // generate the visitLight
         for(TomType type:dispatchInfo.keySet()) {
-          TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))),introspectorVar);            
-          Instruction returnStatement = `Return(ExpressionToTomTerm(Cast(genericType,TomTermToExpression(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg)))));
+          TomList funcArg = `concTomTerm(ExpressionToBQTerm(Cast(type,BQTermToExpression(vVar))),introspectorVar);            
+          Instruction returnStatement = `Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg)))));
           Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
           ifList = `concInstruction(ifList*,ifInstr);
           // generate the _visit_Term
           TomTerm arg = `Variable(concOption(orgTrack),Name("arg"),type,concConstraint());
           TomTerm environmentVar = `Variable(concOption(orgTrack),Name("environment"),EmptyType(),concConstraint());
-          Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
+          Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
           Instruction return2 = `Return(InstructionToCode(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(Type("Object",EmptyType())))));
+                environmentVar,ExpressionToBQTerm(Bottom(Type("Object",EmptyType())))));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),
@@ -535,7 +535,7 @@ matchBlock: {
         }
         ifList = `concInstruction(ifList*,              
             If(testEnvNotNull,
-              Return(ExpressionToTomTerm(Cast(genericType,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)")))))),
+              Return(ExpressionToBQTerm(Cast(genericType,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)")))))),
               Return(InstructionToCode(TargetLanguageToInstruction(ITL("any.visitLight(v,introspector)"))))));
         Declaration visitLightDeclaration = `MethodDef(
             Name("visitLight"),

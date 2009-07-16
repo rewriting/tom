@@ -29,6 +29,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.tools.SymbolTable;
@@ -155,7 +156,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 matchSlot:  %match(slot, TomName name) {
               ps@PairSlotAppl[Appl=appl],childName &&  
                 (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
-                  TomTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
+                  BQTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
                   constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
                   newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
                   break matchSlot;
@@ -182,8 +183,8 @@ matchSlot:  %match(slot, TomName name) {
       // we can have the same variable both as variableStar and as variable
       // we know that this is ok, because the type checker authorized it
       MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
-        TomTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
-        return `AndConstraint(MatchConstraint(freshVar,subject),MatchConstraint(TestVar(freshVar),var));
+        BQTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
+        return `AndConstraint(MatchConstraint(Compiler.convertFromBQVarToVar(freshVar),subject),MatchConstraint(TestVar(Compiler.convertFromBQVarToVar(freshVar)),Compiler.convertFromVarToBQVar(var)));
       }
     }
   }

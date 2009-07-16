@@ -158,7 +158,7 @@ public class ConstraintGenerator {
       }
       // 'if'
       IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
-        return `If(condition,Assign(left1,BQTermToExpression(right1)),Assign(left2,BQTermToExpression(right2)));
+        return `If(condition,Assign(left1,BQTermToExpression(Compiler.convertFromVarToBQVar(right1))),Assign(left2,BQTermToExpression(Compiler.convertFromVarToBQVar(right2))));
       }
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
@@ -243,7 +243,7 @@ public class ConstraintGenerator {
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToBQTerm(TrueTL())),action,Nop())));    
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,TruePattern()),action,Nop())));    
     // add fresh variables' declarations
     for(BQTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -288,7 +288,7 @@ public class ConstraintGenerator {
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToBQTerm(FalseTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag, FalsePattern()),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
@@ -329,7 +329,7 @@ public class ConstraintGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,var,BuildEmptyList(opName)));
+      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,BuildEmptyList(opName),Compiler.convertFromBQVarToVar(var)));
     }
     return `IsEmptyList(opName, var);
   }
@@ -398,7 +398,7 @@ public class ConstraintGenerator {
     Instruction instruction = `buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToBQTerm(TrueTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,TruePattern()),action,Nop())));
     // counter++ : expression at the end of the loop 
     Instruction counterIncrement = `Assign(counter,AddOne(counter));
     //  stick the flag declaration and the counterIncrement   
@@ -448,7 +448,7 @@ public class ConstraintGenerator {
     BQTerm length = getCompiler().getFreshVariable("length",intType);                
 
     String tomName = null;
-    BQTerm x = null, y=null;
+    TomTerm x = null, y=null;
     %match(pattern) {
       RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
         tomName = `tomName;
@@ -456,7 +456,7 @@ public class ConstraintGenerator {
         y = `y;
       }
     }
-    TomList getTermArgs = `concBQTerm(tempSol,alpha,subject);        
+    BQTermList getTermArgs = `concBQTerm(tempSol,alpha,subject);        
     TomType subtermType = getCompiler().getTermTypeFromTerm(`x);
 
     Expression reinitializationLoopCond = `And(
@@ -492,9 +492,9 @@ public class ConstraintGenerator {
 
     Instruction instruction = `DoWhile(
         LetRef(position,SubstractOne(length),
-          LetRef(x,
+          LetRef(Compiler.convertFromVarToBQVar(x),
             BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
-            LetRef(y,
+            LetRef(Compiler.convertFromVarToBQVar(y),
               BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
               UnamedBlock(
                 concInstruction(

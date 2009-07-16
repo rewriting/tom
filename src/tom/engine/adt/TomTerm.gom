@@ -93,4 +93,11 @@ TomTerm =
    */
     | TestVar(Variable:TomTerm)
 
+  /** 
+   * add builtin constucts for patterns 
+   * */
+    | TruePattern()
+    | FalsePattern()
+    | IntegerPattern(value:int)
+
 TomList = concTomTerm(TomTerm*)

@@ -147,12 +147,6 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(TomTerm subject) {
     %match(subject) {
-      // FIXME : seems useless
-      /*
-      ExpressionToTomTerm(term) -> {
-        return prettyPrint(`term);
-      }*/
-
       Variable(_,name,_,_) -> {
         return prettyPrint(`name);
       }

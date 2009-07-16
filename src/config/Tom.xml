@@ -51,8 +51,6 @@
       class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="Desugar"
       class="tom.engine.desugarer.Desugarer"/>
-    <plugin name="Typer"
-      class="tom.engine.typer.Typer"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"

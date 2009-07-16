@@ -33,12 +33,13 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-import tom.engine.compiler.*;
+import tom.engine.compiler.ConstraintGenerator;
 import tom.engine.compiler.Compiler;
 
 /**
@@ -89,9 +90,9 @@ public class VariadicGenerator implements IBaseGenerator {
        * } while( end_i != begin_i ) 
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@BQVariableStar[AstType=type]))) -> {
-        Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
+        Expression doWhileTest = `Negation(EqualTerm(type,end,Compiler.convertFromBQVarToVar(begin)));
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
-        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
+        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,Compiler.convertFromBQVarToVar(begin)),EqualTerm(type,ListTail(opName,end),Compiler.convertFromBQVarToVar(end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));
@@ -119,12 +120,12 @@ public class VariadicGenerator implements IBaseGenerator {
    *   the element itself is returned when it is not a list operator
    *   this occurs because the last element of a loop may not be a list
    */ 
-  private Expression genGetHead(TomName opName, TomType type, TomTerm var) {
+  private Expression genGetHead(TomName opName, TomType type, BQTerm var) {
     TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),GetHead(opName, type, var),TomTermToExpression(var));
+      return `Conditional(IsFsym(opName,var),GetHead(opName, type, var),BQTermToExpression(var));
     }
     return `GetHead(opName, type, var);
   }
@@ -141,7 +142,7 @@ public class VariadicGenerator implements IBaseGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),GetTail(opName, var), TomTermToExpression(BuildEmptyList(opName)));
+      return `Conditional(IsFsym(opName,var),GetTail(opName, var), BQTermToExpression(BuildEmptyList(opName)));
     }
     return `GetTail(opName, var);
   }

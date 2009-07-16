@@ -61,32 +61,32 @@ public class ASTFactory {
   }
 
   public static BQTermList makeList(Collection<BQTerm> c) {
-    BQTermn list = `concBQTerm();
+    BQTermList list = `concBQTerm();
     for(BQTerm term: c) {
       list = `concBQTerm(list*,term);
     } 	     
     return list;
   }
 
-  public static InstructionList makeInstructionList(Collection c) {
-    Object array[] = c.toArray();
+  public static TomList makeList(Collection<TomTerm> c) {
+    TomList list = `concTomTerm();
+    for(BQTerm term: c) {
+      list = `concTomTerm(list*,term);
+    } 	     
+    return list;
+  }
+
+  public static InstructionList makeInstructionList(Collection<Code> c) {
     InstructionList list = `concInstruction();
-    for(int i=array.length-1; i>=0 ; i--) {
-      Object elt = array[i];
-      Instruction term;
-      if(elt instanceof TargetLanguage) {
-        term = `TargetLanguageToInstruction((TargetLanguage)elt);
-      } else if(elt instanceof TomTerm) {
-        term = `TomTermToInstruction((TomTerm)elt);
-          //System.out.println("term   = " + term);
-      } else if(elt instanceof Instruction) {
-        term = (Instruction)elt;
-      } else {
-        /* XXX: is this an error ? if yes, it should not be that silent */
-        System.out.println("elt   = " + elt);
-        term = (Instruction) elt;
+    for(Code code: c) {
+      %match(code) {
+        TargetLanguageToCode(tl) -> { 
+          list = `concInstruction(list*,TargetLanguageToInstruction(tl)); 
+        }
+        InstructionToCode(i) -> { 
+          list = `concConstraintInstruction(list*,i); 
+        }
       }
-      list = `concInstruction(term,list*);
     }
     return list;
   }

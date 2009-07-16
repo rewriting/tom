@@ -39,7 +39,8 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-import tom.engine.compiler.*;
+import tom.engine.compiler.Compiler;
+import tom.engine.compiler.ConstraintGenerator;
 
 /**
  * Array Generator
@@ -86,7 +87,7 @@ public class ArrayGenerator implements IBaseGenerator{
         Expression doWhileTest = `Negation(GreaterThan(BQTermToExpression(end),GetSize(opName,subject)));
         
         // expression at the end of the loop 
-        Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToBQTerm(AddOne(end))));        
+        Expression endExpression = `ConstraintToExpression(MatchConstraint(Compiler.convertFromBQVarToVar(end),ExpressionToBQTerm(AddOne(end))));        
         // if we have a varStar, then add its declaration also
         if(`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(
