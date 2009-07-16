@@ -31,6 +31,7 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
@@ -136,8 +137,8 @@ public class VariadicPropagator implements IBasePropagator {
         }        
         // declare fresh variable
         TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
-        TomTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
-        Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
+        BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
+        Constraint freshVarDeclaration = `MatchConstraint(Compiler.convertFromBQVarToVar(freshVariable),g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         List<Constraint> l = new ArrayList<Constraint>();
         %match(slots) {
@@ -145,7 +146,7 @@ public class VariadicPropagator implements IBasePropagator {
             l.add(`EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            TomTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
+            BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
 mAppl:      %match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
@@ -154,19 +155,19 @@ mAppl:      %match(appl) {
                   // we should only assign it, without generating a loop
                   l.add(`MatchConstraint(appl,freshVariable));
                 } else {
-                  TomTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
-                  TomTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
-                  l.add(`MatchConstraint(beginSublist,freshVariable));
-                  l.add(`MatchConstraint(endSublist,freshVariable));
+                  BQTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
+                  BQTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
+                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(beginSublist),freshVariable));
+                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(endSublist),freshVariable));
                   l.add(`MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)));
-                  l.add(`MatchConstraint(newFreshVarList,endSublist));
+                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(newFreshVarList),endSublist));
                 }
                 break mAppl;
               }
               _ -> {
                 l.add(`Negate(EmptyListConstraint(name,freshVariable)));
                 l.add(`MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)));
-                l.add(`MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
+                l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(newFreshVarList),ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if(`X.length() == 0) {                  
                   l.add(`EmptyListConstraint(name,newFreshVarList));

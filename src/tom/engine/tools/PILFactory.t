@@ -273,7 +273,7 @@ public class PILFactory {
       FunctionCall(AstName,_,Args) -> {
         String s = "";
         %match(Args) {
-          concTomTerm(_*,x,_*) -> {
+          concBQTerm(_*,x,_*) -> {
             s += ","+prettyPrint(`x);
           }
         }

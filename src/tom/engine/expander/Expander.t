@@ -90,11 +90,11 @@ public class Expander extends TomGenericPlugin {
   private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
   private static final TomType visitfailureType = `TLType("tom.library.sl.VisitFailure");
   // introspector argument of visitLight
-  private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
-  private static final TomTerm objectVar = `Variable(concOption(),Name("o"),objectType,concConstraint());
-  private static final TomTerm childVar = `Variable(concOption(),Name("child"),objectType,concConstraint());
-  private static final TomTerm intVar = `Variable(concOption(),Name("i"),intType,concConstraint());
-  private static final TomTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType,concConstraint());
+  private static final BQTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType);
+  private static final BQTerm objectVar = `Variable(concOption(),Name("o"),objectType);
+  private static final BQTerm childVar = `Variable(concOption(),Name("child"),objectType);
+  private static final BQTerm intVar = `Variable(concOption(),Name("i"),intType);
+  private static final BQTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType);
 
   /** if the flag is true, a class that implements Introspector is generated */
   private boolean genIntrospector = false;
@@ -129,7 +129,7 @@ public class Expander extends TomGenericPlugin {
     try {
       //reinit the variable for intropsector generation
       setGeneratedIntrospector(false);
-      TomTerm expandedTerm = (TomTerm) this.expand((TomTerm)getWorkingTerm());
+      Code expandedTerm = (Code) this.expand((Code)getWorkingTerm());
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );

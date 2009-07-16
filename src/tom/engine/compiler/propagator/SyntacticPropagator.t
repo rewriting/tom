@@ -29,6 +29,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.tools.SymbolTable;
@@ -101,18 +102,18 @@ public class SyntacticPropagator implements IBasePropagator {
        
         //System.out.println("m = " + `m);
         List<Constraint> lastPart = new ArrayList<Constraint>();
-        ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
+        ArrayList<BQTerm> freshVarList = new ArrayList<BQTerm>();
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = sp.getCompiler().getFreshVariable(sp.getCompiler().getSlotType(`firstName,`slotName));
+            BQTerm freshVar = sp.getCompiler().getFreshVariable(sp.getCompiler().getSlotType(`firstName,`slotName));
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
             lastPart.add(`MatchConstraint(appl,freshVar));              
           }
         }
-        TomTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
+        BQTerm freshSubject = sp.getCompiler().getFreshVariable(sp.getCompiler().getTermTypeFromTerm(`g));
         // take each symbol and build the disjunction (OrConstraintDisjunction)
         Constraint l = `OrConstraintDisjunction();
         %match(nameList) {
@@ -125,8 +126,8 @@ public class SyntacticPropagator implements IBasePropagator {
             // for each slot
             %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
-                TomTerm freshVar = freshVarList.get(counter);          
-                andForName.add(`MatchConstraint(freshVar,Subterm(name,slotName,freshSubject)));
+                BQTerm freshVar = freshVarList.get(counter);          
+                andForName.add(`MatchConstraint(Compiler.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshSubject)));
                 counter++;
               }
             }// match slots
@@ -134,7 +135,7 @@ public class SyntacticPropagator implements IBasePropagator {
           }
         }
         lastPart.add(0,l);
-        lastPart.add(0,`MatchConstraint(freshSubject,g));
+        lastPart.add(0,`MatchConstraint(Compiler.convertFromBQVarToVar(freshSubject),g));
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
         //return `AndConstraint(MatchConstraint(freshSubject,g),l,lastPart*,sp.getConstraintPropagator().performDetach(m));

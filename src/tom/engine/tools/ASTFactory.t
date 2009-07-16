@@ -70,7 +70,7 @@ public class ASTFactory {
 
   public static TomList makeList(Collection<TomTerm> c) {
     TomList list = `concTomTerm();
-    for(BQTerm term: c) {
+    for(TomTerm term: c) {
       list = `concTomTerm(list*,term);
     } 	     
     return list;
@@ -84,7 +84,7 @@ public class ASTFactory {
           list = `concInstruction(list*,TargetLanguageToInstruction(tl)); 
         }
         InstructionToCode(i) -> { 
-          list = `concConstraintInstruction(list*,i); 
+          list = `concInstruction(list*,i); 
         }
       }
     }
@@ -203,10 +203,9 @@ public class ASTFactory {
   }
 
   public static Constraint makeStorePosition(TomName name,int line, String fileName) {
-    return `AssignPositionTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+    return `AssignPositionTo(BQVariable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
-          SymbolTable.TYPE_UNKNOWN,
-          concConstraint()));
+          SymbolTable.TYPE_UNKNOWN));
   }
 
   public static OptionList makeOption(Option arg, Option info) {

@@ -1904,7 +1904,7 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
             IMPLEMENT
             {
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();
             }
         )
@@ -1928,12 +1928,12 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText());
                 result = `EqualTermDecl(
-                    Variable(option1,Name(name1.getText()),Type(type,EmptyType()),concConstraint()),
-                    Variable(option2,Name(name2.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
+                    BQVariable(option2,Name(name2.getText()),Type(type,EmptyType())),
                     Code(code), ot);
             }
         )
@@ -1954,12 +1954,12 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
                 
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `IsSortDecl(
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(code), ot);
             }
         )
@@ -1980,12 +1980,12 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
@@ -2007,11 +2007,11 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
 
                 result = `GetTailDecl(opname,
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
@@ -2033,11 +2033,11 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop(); 
 
                 result = `IsEmptyDecl(opname,
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot); 
             }
@@ -2061,12 +2061,12 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
                 
                 result = `GetElementDecl(opname,
-                    Variable(option1,Name(name1.getText()),Type(type,EmptyType()),concConstraint()),
-                    Variable(option2,Name(name2.getText()),Type("int",EmptyType()),concConstraint()),
+                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
+                    BQVariable(option2,Name(name2.getText()),Type("int",EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText())), ot);
             }
         )
@@ -2087,11 +2087,11 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop();  
 
                 result = `GetSizeDecl(opname,
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),ot);
             }
         )
@@ -2111,12 +2111,12 @@ keywordIsFsym[TomName astName, String typeString] returns [Declaration result] t
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
             selector().pop();
 
             String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
             result = `IsFsymDecl(astName,
-                Variable(option,Name(name.getText()),Type(typeString,EmptyType()),concConstraint()),
+                BQVariable(option,Name(name.getText()),Type(typeString,EmptyType())),
                 Code(code),ot);
         }
     ;
@@ -2135,11 +2135,11 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
             selector().pop();
 
-            result = `GetImplementationDecl(Variable(option,Name(name.getText()),Type(typeString,EmptyType()),concConstraint()),
-                Return(TargetLanguageToCode(tlCode)),ot);
+            result = `GetImplementationDecl(BQVariable(option,Name(name.getText()),Type(typeString,EmptyType())),
+                Return(BQTL(tlCode)),ot);
         }
     ;
 
@@ -2159,12 +2159,12 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<TomTerm>());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
                 selector().pop(); 
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
-                    Variable(option,Name(name.getText()),Type(type,EmptyType()),concConstraint()),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                      Code(code), ot);
             }
         )
@@ -2174,7 +2174,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
 {
     result = null;
     Option ot = null;
-    TomList args = `concTomTerm();
+    BQTermList args = `concBQTerm();
     ArrayList<String> varnameList = new ArrayList<String>();
     int index = 0;
     TomType type;
@@ -2196,10 +2196,10 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());  
                         OptionList option1 = `concOption(info1);
                         
-                        args = `concTomTerm(args*,Variable(
+                        args = `concBQTerm(args*,BQVariable(
                                 option1,
                                 Name(nameArg.getText()),
-                                type,concConstraint()
+                                type
                             ));
                         varnameList.add(nameArg.getText());
                     }
@@ -2214,10 +2214,10 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                             Option info2 = `OriginTracking(Name(nameArg2.getText()),nameArg2.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);
                             
-                            args = `concTomTerm(args*,Variable(
+                            args = `concBQTerm(args*,BQVariable(
                                     option2,
                                     Name(nameArg2.getText()),
-                                    type,concConstraint()
+                                    type
                                 ));
                             varnameList.add(nameArg2.getText());
                         }
@@ -2292,13 +2292,13 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
               result = `MakeAddList(Name(name),
-                  Variable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType()),concConstraint()),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
                   ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeAddList(Name(name),
-                  Variable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType()),concConstraint()),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }
@@ -2325,10 +2325,10 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),listName.getText());
               result = `MakeEmptyArray(Name(name),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()), ExpressionToInstruction(Code(code)),ot);
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())), ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeEmptyArray(Name(name),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }
@@ -2357,13 +2357,13 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
               result = `MakeAddArray(Name(name),
-                  Variable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType()),concConstraint()),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
                   ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeAddArray(Name(name),
-                  Variable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType()),concConstraint()),
-                  Variable(listOption,Name(listName.getText()),Type(listType,EmptyType()),concConstraint()),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }

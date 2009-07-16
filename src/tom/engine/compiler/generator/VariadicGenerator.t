@@ -137,7 +137,7 @@ public class VariadicGenerator implements IBaseGenerator {
    *   the neutral element is returned when it is not a list operator
    *   this occurs because the last element of a loop may not be a list
    */ 
-  private Expression genGetTail(TomName opName, TomTerm var) {
+  private Expression genGetTail(TomName opName, BQTerm var) {
     TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);

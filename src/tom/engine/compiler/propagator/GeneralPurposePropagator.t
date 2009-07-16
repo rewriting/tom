@@ -127,10 +127,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
       }
       /**
        * a << a -> true 
-       */      
+       */
+      /**
       MatchConstraint(x,x) -> {
         return `TrueConstraint();
       }
+      */
 
     }
   }// end %strategy
@@ -158,7 +160,7 @@ matchSlot:  %match(slot, TomName name) {
                 (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
                   BQTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
                   constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
-                  newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
+                  newSlots = `concSlot(newSlots*,ps.setAppl(Compiler.convertFromBQVarToVar(freshVariable)));
                   break matchSlot;
                 }
               // else we just add the slot back to the list
