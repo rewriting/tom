@@ -142,6 +142,10 @@ public class SymbolTable {
     return usedKeyEntry.contains(`UsedSymbolDestructor(symbol));
   }
 
+  public boolean isUsedSymbolAC(TomSymbol symbol) {
+    return usedKeyEntry.contains(`UsedSymbolAC(symbol));
+  }
+
   public boolean isUsedType(TomType type) {
     return usedKeyEntry.contains(`UsedType(type));
   }
@@ -152,6 +156,10 @@ public class SymbolTable {
 
   public void setUsedSymbolDestructor(TomSymbol symbol) {
     usedKeyEntry.add(`UsedSymbolDestructor(symbol));
+  }
+
+  public void setUsedSymbolAC(TomSymbol symbol) {
+    usedKeyEntry.add(`UsedSymbolAC(symbol));
   }
 
   public void setUsedType(TomType type) {
@@ -169,6 +177,13 @@ public class SymbolTable {
     TomSymbol symbol = getSymbolFromName(name);
     if(symbol!=null) {
       setUsedSymbolDestructor(symbol);
+    }
+  }
+  
+  public void setUsedSymbolAC(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      setUsedSymbolAC(symbol);
     }
   }
 
@@ -191,6 +206,14 @@ public class SymbolTable {
     TomSymbol symbol = getSymbolFromName(name);
     if(symbol!=null) {
       return isUsedSymbolDestructor(symbol);
+    }
+    return false;
+  }
+
+  public boolean isUsedSymbolAC(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      return isUsedSymbolAC(symbol);
     }
     return false;
   }
@@ -460,6 +483,9 @@ public class SymbolTable {
   }
 
   private String getInliner(String prefix, String opname) {
+    //System.out.println("prefix: " + prefix);
+    //System.out.println("opname: " + opname);
+    //System.out.println("res: " + mapInliner.get(prefix+opname));
     return mapInliner.get(prefix+opname);
   }
 
@@ -487,9 +513,11 @@ public class SymbolTable {
   }
 
   public void putGetHead(String opname, String code) {
+    //System.out.println("putGetHead: " + opname + " - " + code);
     putInliner(prefixGetHead,opname,code);
   }
   public String getGetHead(String opname) {
+    //System.out.println("getGetHead: " + opname);
     return getInliner(prefixGetHead,opname);
   }
 
@@ -538,6 +566,7 @@ public class SymbolTable {
   }
 
   public void putMakeEmptyList(String opname, String code) {
+    //System.out.println("putMakeEmptyList: " + opname);
     putInliner(prefixMakeEmptyList,opname,code);
   }
   public String getMakeEmptyList(String opname) {

@@ -64,7 +64,7 @@ public class ConstraintPropagator {
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
-  private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator"};
+  private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator","GeneralPurposePropagator","ACPropagator"};
 
   public Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure,InvocationTargetException,NoSuchMethodException{

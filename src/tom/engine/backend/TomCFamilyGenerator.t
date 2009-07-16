@@ -336,6 +336,10 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       String prefix = "tom_empty_list_";
       res = %[tom_empty_list_@name@()]%;
     }
+    //System.out.println("getMakeEmptyList name = " + name);
+    //System.out.println("getMakeEmptyList moduleName = " + moduleName);
+    //System.out.println("getMakeEmptyList res = " + res);
+    //System.out.println(getSymbolTable(moduleName).toTerm());
     return res;
   }
 

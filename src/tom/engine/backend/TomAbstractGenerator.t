@@ -553,14 +553,13 @@ public abstract class TomAbstractGenerator {
   public void generateOption(int deep, Option subject, String moduleName) throws IOException {
     %match(subject) {
       DeclarationToOption(decl) -> {
+        //System.out.println("generateOption: " + `decl);
         `generateDeclaration(deep, decl, moduleName);
         return;
       }
+      
       OriginTracking[] -> { return; }
-      ACSymbol() -> {
-        // TODO RK: here add the declarations for intarray
-        return; 
-      }
+
       t -> {
         throw new TomRuntimeException("Cannot generate code for option: " + `t);
       }
@@ -594,7 +593,6 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-
       IntrospectorClass(Name(tomName),declaration) -> {
         `buildIntrospectorClass(deep, tomName, declaration, moduleName);
         return;
@@ -607,18 +605,24 @@ public abstract class TomAbstractGenerator {
 
       ArraySymbolDecl(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+        || getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclArray(tomName, moduleName);
+        }
+        if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
+          `genDeclAC(tomName, moduleName);
         }
         return ;
       }
 
-      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
+      ListSymbolDecl(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+        || getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclList(tomName, moduleName);
+        }
+        if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
+          `genDeclAC(tomName, moduleName);
         }
         return ;
       }
@@ -670,8 +674,9 @@ public abstract class TomAbstractGenerator {
         Codomain=Type[TlType=codomain],
         Variable=Variable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
         Expr=expr] -> {
+          //System.out.println("option GetHead: " + `opname);
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+          || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, expr, moduleName);
           }
           return;
@@ -681,7 +686,7 @@ public abstract class TomAbstractGenerator {
         Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+          || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetTailDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
           }
           return;
@@ -849,8 +854,8 @@ public abstract class TomAbstractGenerator {
       TomList argList, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
-
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
+  protected abstract void genDeclAC(String name, String moduleName) throws IOException;
 
   // ------------------------------------------------------------
 

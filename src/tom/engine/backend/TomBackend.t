@@ -226,14 +226,19 @@ public class TomBackend extends TomGenericPlugin {
     Stack<String> stack = new Stack<String>();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {
+      //System.out.println("pilCode: " + pilCode);
       `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).visitLight(pilCode);
     } catch(VisitFailure e) { /* Ignored */ }
   }
 
   private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
+      //System.out.println("isUsedSymbolConstructor: " + st.isUsedSymbolConstructor(tomSymbol));
+      //System.out.println("isUsedSymbolDestructor: " + st.isUsedSymbolDestructor(tomSymbol));
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      // if the symbol has been marked, there is no need to traverse it again
       try {
+      //System.out.println("setUsedSymbolConstructor: " + tomSymbol);
         markStrategy.visitLight(tomSymbol);
       } catch(VisitFailure e) { /* Ignored */ }
     }
@@ -243,10 +248,12 @@ public class TomBackend extends TomGenericPlugin {
   private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {    
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      // if the symbol has been marked, there is no need to traverse it again
       try {
         markStrategy.visitLight(tomSymbol);
       } catch(VisitFailure e) { /* Ignored */ }
     }
+    //System.out.println("setUsedSymbolDestructor: " + tomSymbol);
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }
 
@@ -256,10 +263,10 @@ public class TomBackend extends TomGenericPlugin {
 
   /*
    * the strategy Collector is used collect the part of the mapping that is really used
-   * this strategy also collect the declarations (IsFsymDecl, GetSLotDecl, etc)
+   * this strategy also collects the declarations (IsFsymDecl, GetSLotDecl, etc)
    * to fill the mapInliner used by the backend to inline calls to IsFsym, GetSlot, etc.
    */
-  %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:StringStack) extends `Identity() {
+  %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:StringStack) extends Identity() {
     visit Instruction {
       CompiledMatch[AutomataInst=inst, Option=optionList] -> {
 
@@ -296,13 +303,14 @@ public class TomBackend extends TomGenericPlugin {
     }
 
     visit Expression {
-      (IsEmptyList|IsEmptyArray|GetHead|GetTail)[Opname=Name(name)] -> {
+      (IsEmptyList|IsEmptyArray|GetHead|GetTail|GetElement|GetSize)[Opname=Name(name)] -> {
         try {
-          // System.out.println("list check: " + `name);
+           //System.out.println("list check: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
+          tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
+          //tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -310,7 +318,7 @@ public class TomBackend extends TomGenericPlugin {
       
       IsFsym[AstName=Name(name)] -> {
         try {
-          // System.out.println("list check: " + `name);
+          //System.out.println("list check: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
@@ -358,7 +366,7 @@ public class TomBackend extends TomGenericPlugin {
       }
       (BuildTerm|BuildEmptyArray)[AstName=Name(name)] -> {
         try {
-          // System.out.println("build: " + `name);
+           //System.out.println("build: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
@@ -369,7 +377,7 @@ public class TomBackend extends TomGenericPlugin {
       }
       (BuildConsList|BuildEmptyList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
         try {
-          // System.out.println("build: " + `name);
+          //System.out.println("build: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 

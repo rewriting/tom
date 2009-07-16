@@ -18,4 +18,5 @@ TomSymbolList = concTomSymbol(TomSymbol*)
 
 KeyEntry = UsedSymbolConstructor(Symbol:TomSymbol)
          | UsedSymbolDestructor(Symbol:TomSymbol)
+         | UsedSymbolAC(Symbol:TomSymbol)
          | UsedType(Typedef:TomType)

@@ -181,6 +181,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected String instantiateTemplate(String template, String head, String tail) {
     if(template != null) {
+      //System.out.println("head: " + head);
+      //System.out.println("tail: " + tail);
       return template.replace("{0}",head).replace("{1}",tail);
     }
     return null;
@@ -231,7 +233,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
+    //System.out.println("ExpGetHead: " + opName);
     String template = getSymbolTable(moduleName).getGetHead(opName);
+    //System.out.println("template = " + template);
     if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
       output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
       generate(deep,var,moduleName);
@@ -494,8 +498,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         String ncode = ocode.replace("{0}",varName);
         if(!ncode.equals(ocode)) {
           inlined = true;
+          /*
+           * WARNING
+           * this is too late to put some information in the SymbolTable
+           * GetHead may have been used before this declaration
+           * a possible bug is that GetHead is not inlined
+           * but the following code does not generate the declaration of GetHead
+           */
           getSymbolTable(moduleName).putGetHead(opname,ocode);
           code = code.setCode(ncode);
+          //System.out.println("code = " + code);
         }
       }
       if(!inline || !code.isCode() || !inlined) {
@@ -521,6 +533,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             }
           }
         }
+        //System.out.println("gen = " + code);
         genDeclInstr(returnType, functionName, suffix,
             new String[] { argType, varName },
             `Return(ExpressionToTomTerm(code)),deep,moduleName);

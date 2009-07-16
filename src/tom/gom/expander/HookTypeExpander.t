@@ -170,7 +170,7 @@ public class HookTypeExpander {
           examinedOps.add(`opName);
           %match(hookList) {
             /* check there is no associtated theory */
-            !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"ACU"]], _*) -> {
+            !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"AC"|"ACU"]], _*) -> {
               /* generate an error to make users specify the theory */
               getLogger().log(Level.SEVERE,
                 "As you use make_insert, make_empty or rules, specify the associated theory for the variadic operator "+`opName);
@@ -232,6 +232,9 @@ public class HookTypeExpander {
             }
             HookKind("AU") -> {
               return `makeAUHookList(hName,mdecl,scode);
+            }
+            HookKind("AC") -> {
+              return `makeACHookList(hName,mdecl,scode);
             }
             HookKind("ACU") -> {
               return `makeACUHookList(hName,mdecl,scode);
@@ -458,7 +461,7 @@ public class HookTypeExpander {
       }
       _ -> {
         getLogger().log(Level.SEVERE,
-            "FL/AU/ACU hook can only be used on a variadic operator");
+            "FL/AU/AC/ACU hook can only be used on a variadic operator");
       }
     }
     return null;
@@ -495,6 +498,73 @@ public class HookTypeExpander {
   }
 
   /*
+   * generate hooks for associative-commutative without neutral element
+   */
+  private HookDeclList makeACHookList(String opName, Decl mdecl, String scode) {
+    /* Can only be applied to a variadic operator, whose domain and codomain
+     * are equals */
+    SortDecl domain = getSortAndCheck(mdecl);
+    if (null == domain)
+      return `ConcHookDecl();
+
+    HookDeclList acHooks = `ConcHookDecl();
+     /*
+      * Remove neutral and flatten:
+     * if(<head>.isEmpty<Conc>()) { return <tail>; }
+     * if(<head>.isCons<Conc>()) { return make(head.head,make(head.tail,tail)); }
+     * if(!<tail>.isCons<Conc>() && !<tail>.isEmpty<Conc>()) { return readMake(<tail>,<empty>); }
+     */
+    acHooks = `ConcHookDecl(
+        MakeHookDecl(
+          mdecl,
+          ConcSlot(Slot("head",domain),Slot("tail",domain)),
+          CodeList(
+            Code("if ("),
+            IsEmpty("head",mdecl.getODecl()),
+            Code(") { return tail; }\n"),
+            Code("if ("),
+            IsCons("head",mdecl.getODecl()),
+            Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n"),
+            Code("if (!"),
+            IsCons("tail",mdecl.getODecl()),
+            Code(" && !"),
+            IsEmpty("tail",mdecl.getODecl()),
+            Code(") { return make(head,realMake(tail,Empty" + opName + ".make())); }\n")
+            ),HookKind("FL"),false()),
+        acHooks*);
+    /*
+     * add the following hooks:
+     * if(tail.isConc) {
+     *   if(head < tail.head) {
+     *     tmp = head
+     *     head = tail.head
+     *     tail = cons(tmp,tail.tail)
+     *   }
+     * }
+     * // in all cases:
+     * return makeReal(head,tail)
+     */
+    acHooks = `ConcHookDecl(
+        MakeHookDecl(
+          mdecl,
+          ConcSlot(Slot("head",domain),Slot("tail",domain)),
+          CodeList(
+            Code("if ("),
+            IsCons("tail",mdecl.getODecl()),
+            Code(") {\n"),
+            Code("  if (0 < "),
+            Compare(Code("head"),Code("tail.getHead" + opName + "()")),
+            Code(") {\n"),
+            Code("    "),FullSortClass(domain),Code(" tmpHd = head;\n"),
+            Code("    head = tail.getHead" + opName + "();\n"),
+            Code("    tail = `"+opName+"(tmpHd,tail.getTail" + opName + "());\n"),
+            Code("  }\n"),
+            Code("}\n")
+            ),HookKind("AC"),true()),
+            acHooks*);
+    return acHooks;
+  }
+  /*
    * generate hooks for associative-commutative with neutral element
    */
   private HookDeclList makeACUHookList(String opName, Decl mdecl, String scode) {
@@ -505,7 +575,7 @@ public class HookTypeExpander {
       return `ConcHookDecl();
 
     /* start with AU normalization */
-    HookDeclList acHooks = makeAUHookList(opName, mdecl, scode);
+    HookDeclList acuHooks = makeAUHookList(opName, mdecl, scode);
     /*
      * add the following hooks:
      * if(tail.isConc) {
@@ -522,7 +592,7 @@ public class HookTypeExpander {
      * // in all cases:
      * return makeReal(head,tail)
      */
-    acHooks = `ConcHookDecl(
+    acuHooks = `ConcHookDecl(
         MakeHookDecl(
           mdecl,
           ConcSlot(Slot("head",domain),Slot("tail",domain)),
@@ -547,8 +617,8 @@ public class HookTypeExpander {
             Code("  }\n"),
             Code("}\n")
             ),HookKind("ACU"),true()),
-            acHooks*);
-    return acHooks;
+            acuHooks*);
+    return acuHooks;
   }
 
   /*

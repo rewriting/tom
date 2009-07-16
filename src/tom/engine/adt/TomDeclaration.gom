@@ -30,9 +30,5 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | ArraySymbolDecl(AstName:TomName)
             | EmptyDeclaration()
             | AbstractDecl(DeclList:DeclarationList)
-            /**             
-            * An AC symbol
-            */
-            | ACSymbolDecl(AstName:TomName)
 
 DeclarationList = concDeclaration(Declaration*)

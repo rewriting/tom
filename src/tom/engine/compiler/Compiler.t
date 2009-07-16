@@ -450,28 +450,25 @@ public class Compiler extends TomGenericPlugin {
    * @param subject the AST of the program
    */
   private TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
-    // we use the symbol table as all AC the operators were marked as
-    // used when the loop was generated
     HashSet<String> bag = new HashSet<String>();
     `TopDown(CollectACSymbols(bag)).visitLight(subject);
 
     TomList l = `concTomTerm();
     for(String op:bag) {
+
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
-      if(getSymbolTable().isUsedSymbolConstructor(op)) {
-        // gen all
-        TomType opType = opSymbol.getTypesToType().getCodomain();        
-        // 1. computeLength
-        l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
-        // 2. getMultiplicities
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
-        // 3. getTerm        
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
-      }
+      // gen all
+      TomType opType = opSymbol.getTypesToType().getCodomain();        
+      // 1. computeLength
+      l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
+      // 2. getMultiplicities
+      l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
+      // 3. getTerm        
+      l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
     }
     // make sure the variables are correctly defined
     l = PostGenerator.changeVarDeclarations(`l);
-    subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
+    subject = `OnceBottomUpId(InsertDeclarations(l)).visitLight(subject);          
     return subject;
   }
   
@@ -485,10 +482,8 @@ public class Compiler extends TomGenericPlugin {
 
   %strategy InsertDeclarations(TomList l) extends Identity() {
     visit TomList {
-      concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {        
-        %match(l) {
-          concTomTerm(Z*) -> { return `concTomTerm(X*,Z*,d,Y*); }
-        }         
+      concTomTerm(d@DeclarationToTomTerm[],Y*) -> {        
+        return `concTomTerm(d,l*,Y*);
       }
     }
   }
@@ -572,11 +567,12 @@ public class Compiler extends TomGenericPlugin {
         AbstractBlock(concInstruction(
         Assign(subject,GetTail(opName,subject)),
         ifEndList)))); // subject is the method's argument     
-    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+    Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
+    Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
          
     // var declarations + ifList + counter declaration + the while + return
-    Instruction functionBody = `LetRef(length, TomTermToExpression(FunctionCall(
-        Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+    Instruction functionBody = `LetRef(length, TomTermToExpression(
+          FunctionCall(Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
         intType,concTomTerm(subject))),
         LetRef(mult,TomTermToExpression(BuildEmptyArray(intArrayName,length)),
             LetRef(oldElem,Bottom(opType),
@@ -585,13 +581,16 @@ public class Compiler extends TomGenericPlugin {
                     LetRef(counter,Integer(0),whileLoop),
                     Return(mult))))));
     
-    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_"+opNameString),
+    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName + "_" + opNameString),
         concTomTerm(subject),intArrayType,EmptyType(),functionBody);
   }
   
   /**
    * // Generates the PIL for the following function (used by the AC algorithm)
    * 
+   * compute the numer of different elements in a list
+   * at present: it assumes that the list is sorted (not good)
+   *
    * private int computeLength(Term subj) {
    *  // a single element
    *  if(!subj.isConsf()) {
@@ -638,7 +637,8 @@ public class Compiler extends TomGenericPlugin {
             Assign(subject,GetTail(opName,subject)),
             isEndList))
         )); // subject is the method's argument    
-    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+    Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
+    Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
     
     // test if subj is consOpName
     Instruction isConsOpName = `If(Negation(IsFsym(opName,subject)),Return(ExpressionToTomTerm(Integer(1))),Nop());
@@ -689,12 +689,12 @@ public class Compiler extends TomGenericPlugin {
    *    } 
    *    
    *    int tempSolVal = tempSol[tempSolIndex];
-   *    if (isComplement) {
+   *    if(isComplement) {
    *      tempSolVal = alpha[tempSolIndex] - tempSolVal;         
-   *    }       
+   *    }
    *    if (tempSolVal != 0 && elemCounter < tempSolVal) {
    *      // we take this element
-   *      result = conc(result*,elem);
+   *      result = conc(elem,result*);
    *      elemCounter++;
    *    }
    *  }     
@@ -750,7 +750,7 @@ public class Compiler extends TomGenericPlugin {
       TomTerm result = `Variable(concOption(),Name("result"),opType,concConstraint());
       Instruction ifTakeElem = `If(ifCond,
           AbstractBlock(concInstruction(
-              Assign(result,TomTermToExpression(BuildAppendList(opName,result,elem))),
+              Assign(result,TomTermToExpression(BuildConsList(opName,elem,result))),
               Assign(elemCounter,AddOne(elemCounter)))),
           Nop());
       //declaration of tempSolVal      

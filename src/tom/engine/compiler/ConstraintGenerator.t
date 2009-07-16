@@ -512,9 +512,9 @@ public class ConstraintGenerator {
             intArrayType,concTomTerm(subject))),instruction);
 
     // make sure the additional functions are generated
-    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
-    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
-    symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+    //symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
+    //symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+    //symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
 
     return instruction;
   }
