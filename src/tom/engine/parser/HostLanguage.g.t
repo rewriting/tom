@@ -481,7 +481,7 @@ gomsignature [List<Code> list] throws TomException
 {
   int initialGomLine;
   TargetLanguage code = null;
-  List<TomTerm> blockList = new LinkedList<TomTerm>();
+  List<Code> blockList = new LinkedList<Code>();
   String gomCode = null;
 }
 :
@@ -721,7 +721,7 @@ operatorArray [List<Code> list] throws TomException
 includeConstruct [List<Code> list] throws TomException
 {
     TargetLanguage tlCode = null;
-    List<TomTerm> blockList = new LinkedList<TomTerm>();
+    List<Code> blockList = new LinkedList<Code>();
 }
     :
         t:INCLUDE
@@ -795,7 +795,7 @@ typeTerm [List<Code> list] throws TomException
 
     ;
 
-goalLanguage [List<TomTerm> list] returns [TargetLanguage result] throws TomException
+goalLanguage [List<Code> list] returns [TargetLanguage result] throws TomException
 {
     result =  null;
 }
@@ -815,7 +815,7 @@ goalLanguage [List<TomTerm> list] returns [TargetLanguage result] throws TomExce
         }
     ;
 
-targetLanguage [List<TomTerm> list] returns [TargetLanguage result] throws TomException
+targetLanguage [List<Code> list] returns [TargetLanguage result] throws TomException
 {
     result = null;
 }

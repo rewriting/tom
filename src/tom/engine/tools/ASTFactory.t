@@ -53,25 +53,17 @@ public class ASTFactory {
   private ASTFactory() {}
 
   public static CodeList makeList(Collection<Code> c) {
-    Object array[] = c.toArray();
-    TomList list = `concTomTerm();
-    for(int i=array.length-1; i>=0 ; i--) {
-     Object elt = array[i];
-     TomTerm term;
-     if(elt instanceof TargetLanguage) { 	 
-        term = `TargetLanguageToCode((TargetLanguage)elt); 	 
-      } else if(elt instanceof Declaration) { 	 
-        term = `DeclarationToCode((Declaration)elt); 	 
-        /* seems to never happen
-      } else if(elt instanceof Expression) { 
-        term = `ExpressionToTomTerm((Expression)elt); 	 
-        */
-      } else if(elt instanceof Instruction) { 	 
-        term = `InstructionToCode((Instruction)elt); 	 
-      } else { 	 
-        term = (TomTerm)elt; 	 
-      } 	 
-      list = `concCode(term,list*);
+    CodeList list = `concCode();
+    for(Code code: c) {
+      list = `concCode(list*,code);
+    } 	     
+    return list;
+  }
+
+  public static BQTermList makeList(Collection<BQTerm> c) {
+    BQTermn list = `concBQTerm();
+    for(BQTerm term: c) {
+      list = `concBQTerm(list*,term);
     } 	     
     return list;
   }

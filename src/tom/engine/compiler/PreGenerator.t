@@ -333,15 +333,15 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
              *
              */
-            MatchConstraint[Subject=ExpressionToBQTerm(Cast[Source=BQTermToExpression(sub)])],IsSortConstraint[TomTerm=sub] -> {
+            MatchConstraint[Subject=ExpressionToBQTerm(Cast[Source=BQTermToExpression(sub)])],IsSortConstraint[BQTerm=sub] -> {
               modification |= swap(array,i,j);
               break block;
             }
-            IsSortConstraint[TomTerm=BQVariable[AstName=name]],MatchConstraint(Variable[AstName=name],_) -> {
+            IsSortConstraint[BQTerm=BQVariable[AstName=name]],MatchConstraint(Variable[AstName=name],_) -> {
               modification |= swap(array,i,j);
               break block;
             }
-            IsSortConstraint[TomTerm=BQVariableStar[AstName=name]],MatchConstraint(VariableStar[AstName=name],_) -> {
+            IsSortConstraint[BQTerm=BQVariableStar[AstName=name]],MatchConstraint(VariableStar[AstName=name],_) -> {
               modification |= swap(array,i,j);
               break block;
             }

@@ -46,6 +46,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;

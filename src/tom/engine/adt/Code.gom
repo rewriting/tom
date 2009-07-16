@@ -27,6 +27,10 @@ BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
        | BQVariable(Option:OptionList,AstName:TomName,AstType:TomType)
        | BQVariableStar(Option:OptionList,AstName:TomName,AstType:TomType)
        | BQTL(Tl:TargetLanguage)
+       // translate a purely algebraic TomTerm into a BQTerm
+       // useful ?
+       | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
+
       /**
        * <code>FunctionCall</code> generates a function call
        *

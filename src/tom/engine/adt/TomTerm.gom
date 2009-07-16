@@ -83,7 +83,6 @@ TomTerm =
 
     | Automata(Option:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
 
-    | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
   /**
    * <code>TestVar</code> instead of generating an assignment, this generates an equality test
    *

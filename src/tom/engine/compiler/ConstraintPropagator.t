@@ -35,6 +35,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.compiler.*;
 import tom.engine.compiler.propagator.*;
 import tom.engine.exception.TomRuntimeException;
@@ -120,13 +121,13 @@ public class ConstraintPropagator {
         }// end match   
       }      
       MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
-        TomTerm freshVariable = getCompiler().getFreshVariableStar(`type);
+        BQTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AliasTo(var),_*) -> {
             result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
           }
         }// end match   
-        result = `AndConstraint(MatchConstraint(freshVariable,g),
+        result = `AndConstraint(MatchConstraint(Compiler.convertFromBQVarToVar(freshVariable),g),
             MatchConstraint(t.setConstraints(concConstraint()),freshVariable),result*);
       }      
     }

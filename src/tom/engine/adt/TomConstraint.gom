@@ -15,7 +15,7 @@ Constraint =
 			| TrueConstraint()
 			| FalseConstraint()				   
 			| Negate(c:Constraint)
-			| IsSortConstraint(AstType:TomType,TomTerm:BQTerm)
+			| IsSortConstraint(AstType:TomType,BQTerm:BQTerm)
 			| AndConstraint(Constraint*)
 			| OrConstraint(Constraint*)
 		  /**
@@ -26,7 +26,7 @@ Constraint =
 			| OrConstraintDisjunction(Constraint*)
 			| MatchConstraint(Pattern:TomTerm, Subject:BQTerm)
 			| AntiMatchConstraint(Constraint:Constraint)
-			| NumericConstraint(Pattern:TomTerm, Subject:BQTerm, Type:NumericConstraintType)
+			| NumericConstraint(Left:TomTerm, Right:BQTerm, Type:NumericConstraintType)
 			| EmptyListConstraint(Opname:TomName,Variable:BQTerm)
 			| EmptyArrayConstraint(Opname:TomName,Variable:BQTerm,Index:BQTerm)
 
