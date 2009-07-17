@@ -322,16 +322,16 @@ matchBlock: {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          BQTermList array = `concBQTerm(BQTL(ITL("new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),BQTL(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),BQTL(ITL("}")));
+                          Instruction return_array = `CodeToInstruction(BQTermListToCode(concBQTerm(BQTL(ITL("return new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),BQTL(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),BQTL(ITL("}")))));
                           //default case (used for builtins too)                     
-                          BQTerm emptyArray = `BQTL(ITL("new Object[]{}"));
-                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
+                          Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{}")));
+                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO 
                         } else {
                           int arity = TomBase.getArity(symbol);
-                          BQTermList slotArray = `concBQTerm(BQTL(ITL(" new Object[]{")));
+                          BQTermList slotArray = `concBQTerm(BQTL(ITL("return new Object[]{")));
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
                           for(int i=0; i< arity; i++) {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
@@ -453,7 +453,7 @@ matchBlock: {
             newChildren[i] = child;
             return setChildren(o, newChildren);
           ]%;
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),TargetLanguageToInstruction(ITL(code))));
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))));
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
 
@@ -522,7 +522,7 @@ matchBlock: {
           // generate the _visit_Term
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
           BQTerm environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
-          Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
+          Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
           Instruction return2 = `Return(BQTL(ITL("any.visitLight(arg,introspector)")));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type("Object",EmptyType()))),TomBase.convertFromBQVarToVar(environmentVar)));

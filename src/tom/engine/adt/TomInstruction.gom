@@ -4,8 +4,7 @@ abstract syntax
 Instruction = 
   | BQTermToInstruction(Tom:BQTerm)
   | ExpressionToInstruction(Expr:Expression)
-  | TargetLanguageToInstruction(Tl:TargetLanguage)
-
+  | CodeToInstruction(Code:Code)
   | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
   | DoWhile(DoInst:Instruction,Condition:Expression)
   | WhileDo(Condition:Expression,DoInst:Instruction)

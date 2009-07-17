@@ -54,7 +54,6 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
-import tom.engine.typer.KernelTyper;
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -74,6 +73,10 @@ public class Typer extends TomGenericPlugin {
   /** Constructor */
   public Typer() {
     super("Typer");
+  }
+
+  public void run(Map informationTracker) {
+    //TODO
   }
 
   private class TypeEnvironment {

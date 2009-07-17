@@ -417,8 +417,8 @@ public abstract class TomAbstractGenerator {
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
     %match(subject) {
 
-      TargetLanguageToInstruction(t) -> {
-        `generateTargetLanguage(deep, t, moduleName);
+      CodeToInstruction(c) -> {
+        `generate(deep, c, moduleName);
         return;
       }
 
