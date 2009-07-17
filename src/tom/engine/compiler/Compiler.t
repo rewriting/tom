@@ -442,6 +442,13 @@ public class Compiler extends TomGenericPlugin {
   
   /**
    * AC methods
+   * TODO:
+   *   generate correct code for f(X,Y) << f() [empty case]
+   *   generate correct code for f(X,Y) << f(a()) [singleton case]
+   *   the AC match is OK only for Gom data-structure with AC hook
+   *   make it work with FL hook
+   *   adapt compiler for %oparray mapping (and not just %oplist mapping)
+   *   fix the inliner (some code is not generated because a GetHead is used before its definition)
    */
   
   /**
