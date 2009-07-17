@@ -669,12 +669,12 @@ public final class TomBase {
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
   }
 
-  public static TomList slotListToTomList(SlotList tomList) {
+  public static BQTermList slotListToBQTermList(SlotList tomList) {
     %match(tomList) {
       concSlot() -> { return `concTomTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
-        TomList tl = slotListToTomList(`tail);
-        return `concTomTerm(head,tl*);
+        BQTermList tl = slotListToBQTermList(`tail);
+        return `concBQTerm(TomBase.convertFromVarToBQVar(head),tl*);
       }
     }
     throw new TomRuntimeException("slotListToTomList: " + tomList);
@@ -687,5 +687,29 @@ public final class TomBase {
       return ((Collection) symbol.getPairNameDeclList()).size();
     }
   } 
+
+  /**
+   * builds a BQVariable from a TomTerm Variable
+   */
+  public static BQTerm convertFromVarToBQVar(TomTerm variable) {
+    %match(variable) {
+      Variable[Option=option,AstName=name,AstType=type] -> {
+        return `BQVariable(option, name, type);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * builds a Variable from a BQVariable
+   */
+  public static TomTerm convertFromBQVarToVar(BQTerm variable) {
+    %match(variable) {
+      BQVariable[Option=option,AstName=name,AstType=type] -> {
+        return `Variable(option, name, type, concConstraint());
+      }
+    }
+    return null;
+  }
 
 } // class TomBase

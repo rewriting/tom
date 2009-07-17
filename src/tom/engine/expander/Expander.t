@@ -175,13 +175,13 @@ public class Expander extends TomGenericPlugin {
   %strategy Expand_once(expander:Expander) extends Identity() {
     visit BQTerm {
       BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
-        return `var;
+        return TomBase.convertFromVarToBQVar(`var);
       }
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
-        BQTermList tomListArgs = TomBase.slotListToTomList(newTermArgs);
+        BQTermList tomListArgs = TomBase.slotListToBQTermList(newTermArgs);
         
         if(TomBase.hasConstant(`optionList)) {
           return `BuildConstant(name);
@@ -325,7 +325,7 @@ matchBlock: {
                           BQTermList array = `concBQTerm(BQTL(ITL("new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),BQTL(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),BQTL(ITL("}")));
                           //default case (used for builtins too)                     
                           BQTerm emptyArray = `BQTL(ITL("new Object[]{}"));
-                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
+                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return((Tom(array))),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO 
@@ -340,7 +340,7 @@ matchBlock: {
                               EmptyDeclaration() -> {
                                 // case of undefined getSlot
                                 // return null (to be improved)
-                                slotArray =  `concBQTerm(slotArray*,TargetLanguageToCode(ITL("null")));
+                                slotArray =  `concBQTerm(slotArray*,BQTL(ITL("null")));
                                 if(i < arity-1) {
                                   slotArray =  `concBQTerm(slotArray*,BQTL(ITL(",")));
                                 } else {
@@ -523,9 +523,9 @@ matchBlock: {
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
           BQTerm environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
           Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
-          Instruction return2 = `Return(InstructionToCode(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))));
+          Instruction return2 = `Return(BQTL(ITL("any.visitLight(arg,introspector)")));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToBQTerm(Bottom(Type("Object",EmptyType())))));
+                ExpressionToBQTerm(Bottom(Type("Object",EmptyType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),
@@ -536,7 +536,7 @@ matchBlock: {
         }
         ifList = `concInstruction(ifList*,              
             If(testEnvNotNull,
-              Return(Cast(genericType,BQTermToExpression(BQTL(ITL("any.visit(environment,introspector)"))))),
+              Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(BQTL(ITL("any.visit(environment,introspector)")))))),
               Return(BQTL(ITL("any.visitLight(v,introspector)")))));
         Declaration visitLightDeclaration = `MethodDef(
             Name("visitLight"),

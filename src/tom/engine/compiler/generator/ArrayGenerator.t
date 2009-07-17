@@ -87,7 +87,7 @@ public class ArrayGenerator implements IBaseGenerator{
         Expression doWhileTest = `Negation(GreaterThan(BQTermToExpression(end),GetSize(opName,subject)));
         
         // expression at the end of the loop 
-        Expression endExpression = `ConstraintToExpression(MatchConstraint(Compiler.convertFromBQVarToVar(end),ExpressionToBQTerm(AddOne(end))));        
+        Expression endExpression = `ConstraintToExpression(MatchConstraint(TomBase.convertFromBQVarToVar(end),ExpressionToBQTerm(AddOne(end))));        
         // if we have a varStar, then add its declaration also
         if(`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(

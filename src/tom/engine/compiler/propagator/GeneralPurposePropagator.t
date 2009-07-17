@@ -160,7 +160,7 @@ matchSlot:  %match(slot, TomName name) {
                 (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
                   BQTerm freshVariable = getCompiler().getFreshVariableStar(getCompiler().getTermTypeFromTerm(`t));                
                   constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
-                  newSlots = `concSlot(newSlots*,ps.setAppl(Compiler.convertFromBQVarToVar(freshVariable)));
+                  newSlots = `concSlot(newSlots*,ps.setAppl(TomBase.convertFromBQVarToVar(freshVariable)));
                   break matchSlot;
                 }
               // else we just add the slot back to the list
@@ -186,7 +186,7 @@ matchSlot:  %match(slot, TomName name) {
       // we know that this is ok, because the type checker authorized it
       MatchConstraint(var@(Variable|VariableStar)[AstName=name,AstType=type],subject) && name == varName -> {        
         BQTerm freshVar = `var.isVariable() ? gpp.getCompiler().getFreshVariable(`type) : gpp.getCompiler().getFreshVariableStar(`type);
-        return `AndConstraint(MatchConstraint(Compiler.convertFromBQVarToVar(freshVar),subject),MatchConstraint(TestVar(Compiler.convertFromBQVarToVar(freshVar)),Compiler.convertFromVarToBQVar(var)));
+        return `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),MatchConstraint(TestVar(TomBase.convertFromBQVarToVar(freshVar)),TomBase.convertFromVarToBQVar(var)));
       }
     }
   }

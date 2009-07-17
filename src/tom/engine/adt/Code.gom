@@ -84,5 +84,3 @@ BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
    * @param Variable the list from which to extract the head / tail
    */
   	| ListTail(Opname:TomName,Variable:BQTerm)  		   
-
-

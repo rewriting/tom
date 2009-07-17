@@ -98,7 +98,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
       } else {
-        return `EqualTerm(type,BuildConstant(name),getCompiler().convertFromBQVarToVar(subject));
+        return `EqualTerm(type,BuildConstant(name),TomBase.convertFromBQVarToVar(subject));
       }
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);

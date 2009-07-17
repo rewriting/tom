@@ -127,7 +127,7 @@ public class SyntacticPropagator implements IBasePropagator {
             %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 BQTerm freshVar = freshVarList.get(counter);          
-                andForName.add(`MatchConstraint(Compiler.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshSubject)));
+                andForName.add(`MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),Subterm(name,slotName,freshSubject)));
                 counter++;
               }
             }// match slots
@@ -135,7 +135,7 @@ public class SyntacticPropagator implements IBasePropagator {
           }
         }
         lastPart.add(0,l);
-        lastPart.add(0,`MatchConstraint(Compiler.convertFromBQVarToVar(freshSubject),g));
+        lastPart.add(0,`MatchConstraint(TomBase.convertFromBQVarToVar(freshSubject),g));
         lastPart.add(sp.getConstraintPropagator().performDetach(`m));
         return ASTFactory.makeAndConstraint(lastPart);
         //return `AndConstraint(MatchConstraint(freshSubject,g),l,lastPart*,sp.getConstraintPropagator().performDetach(m));

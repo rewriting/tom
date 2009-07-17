@@ -141,7 +141,7 @@ public class ConstraintGenerator {
       }
       // variables' assignments
       ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
-        return `LetRef(Compiler.convertFromVarToBQVar(v),BQTermToExpression(t),action);
+        return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
       // nothing for unamed ones
       ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
@@ -158,7 +158,7 @@ public class ConstraintGenerator {
       }
       // 'if'
       IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
-        return `If(condition,Assign(left1,BQTermToExpression(Compiler.convertFromVarToBQVar(right1))),Assign(left2,BQTermToExpression(Compiler.convertFromVarToBQVar(right2))));
+        return `If(condition,Assign(left1,BQTermToExpression(TomBase.convertFromVarToBQVar(right1))),Assign(left2,BQTermToExpression(TomBase.convertFromVarToBQVar(right2))));
       }
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
@@ -329,7 +329,7 @@ public class ConstraintGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,BuildEmptyList(opName),Compiler.convertFromBQVarToVar(var)));
+      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,BuildEmptyList(opName),TomBase.convertFromBQVarToVar(var)));
     }
     return `IsEmptyList(opName, var);
   }
@@ -337,7 +337,7 @@ public class ConstraintGenerator {
   private Instruction buildNumericCondition(Constraint c, Instruction action) {
     %match(c) {
       NumericConstraint(left,right,type) -> {        
-        Expression leftExpr = `BQTermToExpression(Compiler.convertFromVarToBQVar(left));
+        Expression leftExpr = `BQTermToExpression(TomBase.convertFromVarToBQVar(left));
         Expression rightExpr = `BQTermToExpression(right);
         %match(left) {
           RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
@@ -492,9 +492,9 @@ public class ConstraintGenerator {
 
     Instruction instruction = `DoWhile(
         LetRef(position,SubstractOne(length),
-          LetRef(Compiler.convertFromVarToBQVar(x),
+          LetRef(TomBase.convertFromVarToBQVar(x),
             BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
-            LetRef(Compiler.convertFromVarToBQVar(y),
+            LetRef(TomBase.convertFromVarToBQVar(y),
               BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
               UnamedBlock(
                 concInstruction(

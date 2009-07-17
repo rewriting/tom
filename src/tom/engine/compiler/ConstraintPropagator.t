@@ -127,7 +127,7 @@ public class ConstraintPropagator {
             result = `AndConstraint(MatchConstraint(var,freshVariable),result*);
           }
         }// end match   
-        result = `AndConstraint(MatchConstraint(Compiler.convertFromBQVarToVar(freshVariable),g),
+        result = `AndConstraint(MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g),
             MatchConstraint(t.setConstraints(concConstraint()),freshVariable),result*);
       }      
     }

@@ -90,9 +90,9 @@ public class VariadicGenerator implements IBaseGenerator {
        * } while( end_i != begin_i ) 
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@BQVariableStar[AstType=type]))) -> {
-        Expression doWhileTest = `Negation(EqualTerm(type,end,Compiler.convertFromBQVarToVar(begin)));
+        Expression doWhileTest = `Negation(EqualTerm(type,end,TomBase.convertFromBQVarToVar(begin)));
         Expression testEmpty = vg.getConstraintGenerator().genIsEmptyList(`opName,`end);
-        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,Compiler.convertFromBQVarToVar(begin)),EqualTerm(type,ListTail(opName,end),Compiler.convertFromBQVarToVar(end)));
+        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,TomBase.convertFromBQVarToVar(begin)),EqualTerm(type,ListTail(opName,end),TomBase.convertFromBQVarToVar(end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));

@@ -129,11 +129,11 @@ public class ArrayPropagator implements IBasePropagator {
             TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
             BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
             // g should be only a variable
-            Constraint freshVarDeclaration = `MatchConstraint(Compiler.convertFromBQVarToVar(freshVariable),g);
+            Constraint freshVarDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g);
             
             // declare fresh index = 0            
             BQTerm freshIndex = ap.getFreshIndex();				
-            Constraint freshIndexDeclaration = `MatchConstraint(Compiler.convertFromBQVarToVar(freshIndex), ExpressionToBQTerm(Integer(0)));
+            Constraint freshIndexDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex), ExpressionToBQTerm(Integer(0)));
             Constraint l = `AndConstraint();
     match:  %match(slots) {
               concSlot() -> {
@@ -153,10 +153,10 @@ public class ArrayPropagator implements IBasePropagator {
                       BQTerm beginIndex = ap.getBeginIndex();
                       BQTerm endIndex = ap.getEndIndex();
                       l = `AndConstraint(l*,
-                          MatchConstraint(Compiler.convertFromBQVarToVar(beginIndex),freshIndex),
-                          MatchConstraint(Compiler.convertFromBQVarToVar(endIndex),freshIndex),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex),
                           MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex)),
-                          MatchConstraint(Compiler.convertFromBQVarToVar(newFreshIndex),endIndex));     
+                          MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex));     
                     }
                     break mAppl;
                   }
@@ -164,7 +164,7 @@ public class ArrayPropagator implements IBasePropagator {
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
                         MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
-                        MatchConstraint(Compiler.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex))));
+                        MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
                       l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));

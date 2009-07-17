@@ -261,18 +261,18 @@ public class Compiler extends TomGenericPlugin {
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern, Subject=subject] -> {
-        if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(convertFromBQVarToVar(`subject)) ) {
+        if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject)) ) {
           // make sure we don't process generated contraints
           return `constr; 
         }        
         // test if we already renamed this subject 
         if(subjectList.contains(`subject)) {
           TomTerm renamedSubj= (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
-          Constraint newConstraint = `constr.setSubject(convertFromVarToBQVar(renamedSubj));
+          Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedSubj));
           TomType freshSubjectType = renamedSubj.getAstType();
           BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
           return `AndConstraint(
-              MatchConstraint(convertFromBQVarToVar(freshVar),subject),
+              MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),
               IsSortConstraint(freshSubjectType,freshVar),
               MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
               newConstraint);
@@ -296,10 +296,10 @@ public class Compiler extends TomGenericPlugin {
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType, concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
-        Constraint newConstraint = `constr.setSubject(convertFromVarToBQVar(renamedVar));   
+        Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));   
         BQTerm freshVar = compiler.getUniversalObjectForSubject(freshSubjectType);
         return `AndConstraint(
-            MatchConstraint(convertFromBQVarToVar(freshVar),subject),
+            MatchConstraint(TomBase.convertFromBQVarToVar(freshVar),subject),
             IsSortConstraint(freshSubjectType,freshVar),
             MatchConstraint(renamedVar,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
             newConstraint);
@@ -314,31 +314,6 @@ public class Compiler extends TomGenericPlugin {
       return getFreshVariable(getSymbolTable().getUniversalType());
     }
   }
-
-  /**
-    * builds a BQVariable from a TomTerm Variable
-    */
-  public static BQTerm convertFromVarToBQVar(TomTerm variable) {
-    %match(variable) {
-      Variable[Option=option,AstName=name,AstType=type] -> {
-        return `BQVariable(option, name, type);
-      }
-    }
-    return null;
-  }
-
-  /**
-    * builds a Variable from a BQVariable
-    */
-  public static TomTerm convertFromBQVarToVar(BQTerm variable) {
-    %match(variable) {
-      BQVariable[Option=option,AstName=name,AstType=type] -> {
-        return `Variable(option, name, type, concConstraint());
-      }
-    }
-    return null;
-  }
-
 
   /**
    * builds a list of instructions from a list of automata
@@ -587,12 +562,12 @@ public class Compiler extends TomGenericPlugin {
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);
     BQTerm counter = `BQVariable(concOption(),Name("counter"),getSymbolTable().getIntType());
     
-    Instruction ifAnotherElem = `If(EqualTerm(opType, elem, convertFromBQVarToVar(oldElem)),
+    Instruction ifAnotherElem = `If(EqualTerm(opType, elem, TomBase.convertFromBQVarToVar(oldElem)),
         AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
         LetRef(counter,AddOne(counter),LetRef(oldElem,BQTermToExpression(elem),AssignArray(mult, counter, Integer(1)))));
     
     Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
-        If(EqualTerm(opType, subject, convertFromBQVarToVar(oldElem)),
+        If(EqualTerm(opType, subject, TomBase.convertFromBQVarToVar(oldElem)),
             AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
             LetRef(counter,AddOne(counter),AssignArray(mult,counter,Integer(1)))),
       Nop());
@@ -653,13 +628,13 @@ public class Compiler extends TomGenericPlugin {
     BQTerm counter = `BQVariable(concOption(),Name("counter"),getSymbolTable().getIntType());
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);    
     // test if a new element
-    Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,convertFromBQVarToVar(old))), UnamedBlock(concInstruction(
+    Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,TomBase.convertFromBQVarToVar(old))), UnamedBlock(concInstruction(
         LetRef(counter,AddOne(counter),LetRef(old,BQTermToExpression(elem),Nop())))),Nop());    
 
     TomName opName = `Name(opNameString);
     // test if end of list
     Instruction isEndList = `If(Negation(IsFsym(opName,subject)), 
-        If(Negation(EqualTerm(opType,subject,convertFromBQVarToVar(old))),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
+        If(Negation(EqualTerm(opType,subject,TomBase.convertFromBQVarToVar(old))),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),isNewElem),
@@ -757,7 +732,7 @@ public class Compiler extends TomGenericPlugin {
               Assign(subject,BQTermToExpression(BuildEmptyList(opName))))));
       BQTerm tempSolIndex = `BQVariable(concOption(),Name("tempSolIndex"),intType);
       BQTerm old = `BQVariable(concOption(),Name("old"),opType);
-      Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,convertFromBQVarToVar(old))),
+      Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,TomBase.convertFromBQVarToVar(old))),
           AbstractBlock(concInstruction(
               Assign(tempSolIndex,AddOne(tempSolIndex)),
               Assign(old,BQTermToExpression(elem)),
@@ -788,7 +763,7 @@ public class Compiler extends TomGenericPlugin {
               GetElement(intArrayName,intType,tempSol,tempSolIndex),
               UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
       // the while
-      Expression notEmptySubj = `Negation(EqualTerm(opType,BuildEmptyList(opName), convertFromBQVarToVar(subject)));
+      Expression notEmptySubj = `Negation(EqualTerm(opType,BuildEmptyList(opName), TomBase.convertFromBQVarToVar(subject)));
       Instruction whileBlock = `UnamedBlock(concInstruction(
               isConsOpName,isNewElem,tempSolValBlock));                  
       Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);

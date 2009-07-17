@@ -138,7 +138,7 @@ public class VariadicPropagator implements IBasePropagator {
         // declare fresh variable
         TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
         BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
-        Constraint freshVarDeclaration = `MatchConstraint(Compiler.convertFromBQVarToVar(freshVariable),g);
+        Constraint freshVarDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         List<Constraint> l = new ArrayList<Constraint>();
         %match(slots) {
@@ -157,17 +157,17 @@ mAppl:      %match(appl) {
                 } else {
                   BQTerm beginSublist = vp.getCompiler().getBeginVariableStar(listType);
                   BQTerm endSublist = vp.getCompiler().getEndVariableStar(listType);              
-                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(beginSublist),freshVariable));
-                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(endSublist),freshVariable));
+                  l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(beginSublist),freshVariable));
+                  l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(endSublist),freshVariable));
                   l.add(`MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)));
-                  l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(newFreshVarList),endSublist));
+                  l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(newFreshVarList),endSublist));
                 }
                 break mAppl;
               }
               _ -> {
                 l.add(`Negate(EmptyListConstraint(name,freshVariable)));
                 l.add(`MatchConstraint(appl,ListHead(name,vp.getCompiler().getTermTypeFromTerm(appl),freshVariable)));
-                l.add(`MatchConstraint(Compiler.convertFromBQVarToVar(newFreshVarList),ListTail(name,freshVariable)));
+                l.add(`MatchConstraint(TomBase.convertFromBQVarToVar(newFreshVarList),ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if(`X.length() == 0) {                  
                   l.add(`EmptyListConstraint(name,newFreshVarList));
