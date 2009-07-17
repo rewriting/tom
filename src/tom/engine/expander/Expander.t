@@ -325,7 +325,7 @@ matchBlock: {
                           BQTermList array = `concBQTerm(BQTL(ITL("new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),BQTL(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),BQTL(ITL("}")));
                           //default case (used for builtins too)                     
                           BQTerm emptyArray = `BQTL(ITL("new Object[]{}"));
-                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return((Tom(array))),Nop());
+                          Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO 
