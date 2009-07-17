@@ -921,4 +921,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
      generate(deep,var2,moduleName); 	 
    }
 
+
+  protected void genDeclAC(String name, String moduleName) throws IOException {
+    //TODO : must be implemented by the subclasses
+    throw new RuntimeException("AC Not Supported!"); 
+  }
+
 }
