@@ -288,7 +288,7 @@ matchBlock: {
                         // manage empty lists and arrays
                         inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(TargetLanguageToTomTerm(ITL("0"))),Return(TargetLanguageToTomTerm(ITL("2")))),Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToTomTerm(Integer(0))),Return(TargetLanguageToTomTerm(ITL("0"))),Return(TargetLanguageToTomTerm(ITL("2")))),Nop());
+                        inst = `If(IsFsym(opName,var),If(IsEmptyArray(opName,var,ExpressionToTomTerm(Integer(0))),Return(TargetLanguageToTomTerm(ITL("0"))),Return(TargetLanguageToTomTerm(ITL("2")))),Nop());
                       } else {
                         inst = `If(IsFsym(opName,var),Return(TargetLanguageToTomTerm(ITL(""+TomBase.getArity(symbol)))),Nop());
                       } 
