@@ -830,14 +830,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           utype =  TomBase.getTLType(getUniversalType());
         }
 
-        //String listCast = "(" + glType + ")";
-        //String eltCast = "(" + TomBase.getTLType(eltType) + ")";
-        //String make_empty = listCast + "tom_empty_array_" + name;
-        //String make_insert = listCast + "tom_cons_array_" + name;
-        //String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
-        //String get_size = "tom_get_size_" + name +"_" + tomType;
-
         String s = "";
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
+          // add this test to avoid generating get_slice and append_array when
+          // the constructor is not used in any matching
         s = %[
   @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {
     @glType@ result = @getMakeEmptyArray(name,"end-begin",moduleName)@;
@@ -866,6 +862,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return result;
   }]%;
+        }
 
         //If necessary we remove \n code depending on pretty option
         String res = ASTFactory.makeSingleLineCode(s, prettyMode);
@@ -921,10 +918,5 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
      generate(deep,var2,moduleName); 	 
    }
 
-
-  protected void genDeclAC(String name, String moduleName) throws IOException {
-    //TODO : must be implemented by the subclasses
-    throw new RuntimeException("AC Not Supported!"); 
-  }
 
 }

@@ -96,6 +96,7 @@ public class All extends AbstractStrategyCombinator {
     environment.setIntrospector(introspector);
     Object any = environment.getSubject();
     int childCount = introspector.getChildCount(any);
+
     Object[] childs = null;
 
     for(int i = 0; i < childCount; i++) {

@@ -609,9 +609,9 @@ public abstract class TomAbstractGenerator {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclArray(tomName, moduleName);
         }
-        if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
-          `genDeclAC(tomName, moduleName);
-        }
+        //if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
+        //  `genDeclAC(tomName, moduleName);
+       // }
         return ;
       }
 
@@ -621,9 +621,9 @@ public abstract class TomAbstractGenerator {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclList(tomName, moduleName);
         }
-        if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
-          `genDeclAC(tomName, moduleName);
-        }
+        //if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
+        //  `genDeclAC(tomName, moduleName);
+        //}
         return ;
       }
 
@@ -855,7 +855,7 @@ public abstract class TomAbstractGenerator {
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
-  protected abstract void genDeclAC(String name, String moduleName) throws IOException;
+  //protected abstract void genDeclAC(String name, String moduleName) throws IOException;
 
   // ------------------------------------------------------------
 

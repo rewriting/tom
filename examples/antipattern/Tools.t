@@ -82,8 +82,8 @@ public class Tools {
   public void run(Matching match, String fileName) {
     BufferedReader br = null;
     try {  
-      br = new BufferedReader(new FileReader( 
-          match.getClass().getResource(fileName).getFile()));
+      br = new BufferedReader(new FileReader(fileName));
+          //match.getClass().getResource(fileName).getFile()));
     } catch(FileNotFoundException e) {
       System.out.println("Can't find the input file 'input.txt' :" + e.getMessage());
       System.exit(0);
@@ -95,7 +95,8 @@ public class Tools {
           System.out.println("---------------------------------------");
         } else {
           ATerm at = SingletonFactory.getInstance().parse(s);	        
-          Constraint c = atermToConstraint(at);
+          //Constraint c = atermToConstraint(at);
+          Constraint c = Constraint.fromTerm(at);
           Collection solution = new HashSet();
           System.out.println(formatConstraint(c));
 //        if (match instanceof Matching4) {
