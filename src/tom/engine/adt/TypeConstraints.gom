@@ -1,0 +1,39 @@
+module TomTypeConstraint
+imports String TomType
+abstract syntax
+
+* Type Reconstruction */
+TypeConstraint = Equation(Type1: TomType, Type2: TomType)
+               | Subtype(Type1: TomType, Type2: TomType)
+
+TypeConstraintList = concTypeConstraint(TypeConstraint*)
+                   | False()
+                   | True()
+
+ReconResult = Pair(Type: TomType, constraints: TypeConstraintList)
+
+ReconResultList = concReconResult(ReconResult*)
+
+Domain = Domain(TomType*)
+       | VariadicDomain(type: TomType)
+
+Signature = Sig(dom: Domain, codom: TomType)
+
+Jugement = Jugement(var: String, type: TomType)
+         | SigOf(fun: String, sig: Signature)
+
+Context = Context(Jugement*)
+
+Mapping = MapsTo(tvar: TomType, type: TomType)
+
+Substitution = MList(Mapping*)
+
+SubstitutionList = SList(Substitution*)
+
+ContextAndResult = CRPair(ctx: Context, res: ReconResult)
+
+ContextAndResultList = CRLPair(ctx: Context, rlist: ReconResultList)
+
+ContextAndConstraints = CCPair(ctx: Context, constraints: ConstraintList)
+
+
