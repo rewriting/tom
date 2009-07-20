@@ -642,7 +642,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 
          TomType strategyType = `Type("Strategy",EmptyType());
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
-				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
           options.add(`DeclarationToOption(makeDecl));
 
           // Define the is_fsym method.

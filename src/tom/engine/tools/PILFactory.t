@@ -283,6 +283,7 @@ public class PILFactory {
         return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
       }
     }
+    return subject.toString();
   }
 
   public String prettyPrint(TomTerm subject) {

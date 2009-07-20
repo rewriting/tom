@@ -167,7 +167,7 @@ public class Expander extends TomGenericPlugin {
   %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
     visit BQTerm {
       t@(BQVariable|BQVariableStar)[] -> {
-        return `Expand_once(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));
+        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
       }
     }
   }
@@ -356,7 +356,7 @@ matchBlock: {
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
                           slotArray = `concBQTerm(slotArray*,BQTL(ITL("}")));
-                          Instruction inst = `If(IsFsym(symbolName,var),Return(Tom(slotArray)),Nop());
+                          Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermListToCode(slotArray)),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
                       } 

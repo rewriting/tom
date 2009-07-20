@@ -671,7 +671,7 @@ public final class TomBase {
 
   public static BQTermList slotListToBQTermList(SlotList tomList) {
     %match(tomList) {
-      concSlot() -> { return `concTomTerm(); }
+      concSlot() -> { return `concBQTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
         BQTermList tl = slotListToBQTermList(`tail);
         return `concBQTerm(TomBase.convertFromVarToBQVar(head),tl*);

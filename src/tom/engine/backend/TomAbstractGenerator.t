@@ -138,6 +138,22 @@ public abstract class TomAbstractGenerator {
       }
     }
   }
+  
+  /**
+   * Generate the goal language
+   * 
+   * @param deep 
+   * 		The distance from the right side (allows the computation of the column number)
+   */
+  protected void generateTomTerm(int deep, TomTerm subject, String moduleName) throws IOException {
+    //TODO: complete with each constructor used in the baclend input term
+    %match (subject) {
+      var@(Variable|VariableStar)[] -> {
+        output.write(deep,getVariableName(`var));
+        return;
+      }
+    } 
+  }
 
   /**
    * Generate the goal language
@@ -203,6 +219,27 @@ public abstract class TomAbstractGenerator {
       }
 
       BQVariableStar[AstName=Name(name)] -> {
+        return `name;
+      }
+    }
+    return null;
+  }
+
+  protected String getVariableName(TomTerm var) {
+    %match(var) {
+      Variable[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      Variable[AstName=Name(name)] -> {
+        return `name;
+      }
+
+      VariableStar[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      VariableStar[AstName=Name(name)] -> {
         return `name;
       }
     }
@@ -909,7 +946,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm expList, String moduleName) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException;
-  protected abstract void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException;
+  protected abstract void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,TomTerm exp2, String moduleName) throws IOException;
   protected abstract void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, BQTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;

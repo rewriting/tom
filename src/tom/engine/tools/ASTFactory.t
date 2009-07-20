@@ -81,7 +81,7 @@ public class ASTFactory {
     for(Code code: c) {
       %match(code) {
         TargetLanguageToCode(tl) -> { 
-          list = `concInstruction(list*,TargetLanguageToInstruction(tl)); 
+          list = `concInstruction(list*,CodeToInstruction(TargetLanguageToCode(tl))); 
         }
         InstructionToCode(i) -> { 
           list = `concInstruction(list*,i); 

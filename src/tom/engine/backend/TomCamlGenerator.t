@@ -65,18 +65,18 @@ public class TomCamlGenerator extends TomGenericGenerator {
    * the implementation of methods are here for caml 
    */
  
-  protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException {
+  protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1, TomTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(" = ");
-      generateBQTerm(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
       output.write(")");
     } else {
       output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
-      generateBQTerm(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
       output.write(")");
     }
   }
@@ -117,7 +117,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     }
 
     while(!instructionList.isEmptyconcInstruction()) {
-      if(!head.isTargetLanguageToInstruction()) {
+      if(!head.isCodeToInstruction()) {
         output.write("(* end InstructionSequence *) ");
         output.writeln(";");
       }
