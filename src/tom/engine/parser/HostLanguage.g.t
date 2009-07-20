@@ -693,7 +693,7 @@ operatorList [List list] throws TomException
             }
 
             Declaration operatorListDecl = tomparser.operatorList();
-            list.add(operatorListDecl);
+            list.add(`DeclarationToCode(operatorListDecl));
         }
 ;
 
@@ -880,7 +880,7 @@ options {
 // the following tokens are keywords for tom constructs
 // when read, we switch lexers to tom
 BACKQUOTE
-    : "`" {selector().push("bqlexer");}
+    : "`" {selector().push("tomlexer");}
     ;
 STRATEGY
     : "%strategy" {selector().push("tomlexer");}

@@ -860,10 +860,11 @@ plainBQTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [
     BQTerm tmp;
     BQTermList l = `concBQTerm();
 }
-    : name = headSymbol[optionList] LPAREN (tmp=plainBQTerm[astLabeledName,astLabeledName,line] { l = `concBQTerm(l*,tmp); } )* RPAREN
-       { result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l); }
-    | name = headSymbol[optionList] 
+    : name = headSymbol[optionList] 
        { result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); }
+       |  name = headSymbol[optionList] LPAREN (tmp=plainBQTerm[astLabeledName,astLabeledName,line] { l = `concBQTerm(l*,tmp); } )* RPAREN
+       { result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l); }
+   
     ;
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
