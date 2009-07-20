@@ -50,6 +50,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
@@ -91,7 +92,7 @@ public class TomTypeChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          TomTerm subject = (TomTerm) getWorkingTerm();
+          Code subject = (Code) getWorkingTerm();
           //System.out.println("type checking: ");
           //System.out.println(subject);
           `TopDownCollect(checkTypeInference(this)).visitLight(subject);
