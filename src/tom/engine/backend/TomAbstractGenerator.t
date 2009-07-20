@@ -445,12 +445,12 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      Let(var@(Variable|VariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+      Let(var@(Variable|VariableStar)[Option=list,AstType=type],exp,body) && ((Type|TypeWithSymbol)[TlType=tlType]<<type ||  tlType@TLType[]<<type)-> {
         `buildLet(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
 
-      LetRef(var@(Variable|VariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[Option=list,AstType=type],exp,body) && ((Type|TypeWithSymbol)[TlType=tlType]<<type ||  tlType@TLType[]<<type) -> {
         `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
         return;
       }

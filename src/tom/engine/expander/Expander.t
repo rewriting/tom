@@ -319,7 +319,7 @@ matchBlock: {
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
-                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
                           TomList array = `concTomTerm(TargetLanguageToTomTerm(ITL("new Object[]{")),ExpressionToTomTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),TargetLanguageToTomTerm(ITL(",")),ExpressionToTomTerm(GetTail(symbolName,var)),TargetLanguageToTomTerm(ITL("}")));
                           //default case (used for builtins too)                     
@@ -327,7 +327,31 @@ matchBlock: {
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
-                          //TODO 
+                          // we consider that the children of the array are the first element and the tail
+                          
+                          TomList array = `concTomTerm(TargetLanguageToTomTerm(ITL("new Object[]{")),ExpressionToTomTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),TargetLanguageToTomTerm(ITL(",")),ExpressionToTomTerm(GetTail(symbolName,var)),TargetLanguageToTomTerm(ITL("}")));
+                          //default case (used for builtins too)                     
+                          TomTerm emptyArray = `TargetLanguageToTomTerm(ITL("new Object[]{}"));
+                          TomTerm tail = `Variable(concOption(),Name("tail"),codomain,concConstraint());
+                          TomList result = `concTomTerm(TargetLanguageToTomTerm(ITL("new Object[]{")),ExpressionToTomTerm(GetElement(symbolName,codomain,var,ExpressionToTomTerm(Integer(0)))),TargetLanguageToTomTerm(ITL(",")),tail,TargetLanguageToTomTerm(ITL("}")));
+                          Instruction inst = 
+                            `If(IsFsym(symbolName,var),
+                              If(IsEmptyArray(symbolName,var,ExpressionToTomTerm(Integer(0))),
+                                Return(emptyArray),
+                                LetRef(intVar, Integer(1),
+                                  LetRef(tail, TomTermToExpression(BuildEmptyArray(symbolName, ExpressionToTomTerm(SubstractOne(ExpressionToTomTerm(GetSize(symbolName,var)))))),
+                                    AbstractBlock(concInstruction(
+                                        WhileDo(
+                                          LessThan(TomTermToExpression(intVar),GetSize(symbolName,var)),
+                                          AbstractBlock(concInstruction(
+                                              Assign(tail, TomTermToExpression(BuildConsArray(symbolName,ExpressionToTomTerm(GetElement(symbolName,codomain,var,intVar)),tail))),
+                                              Assign(intVar, AddOne(intVar))
+                                              ))
+                                          ),
+                                        Return(Tom(result))))))
+                              ), 
+                              Nop());
+                          instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else {
                           int arity = TomBase.getArity(symbol);
                           TomList slotArray = `concTomTerm(TargetLanguageToTomTerm(ITL(" new Object[]{")));
@@ -401,8 +425,19 @@ matchBlock: {
                             }
                           }
                         } else if (TomBase.isArrayOperator(symbol)) {
-                          //TODO 
-                        } else {
+                           %match(TypesToType) {
+                            TypesToType[Domain=concTomType(domain)] -> {
+                              Instruction inst = 
+                                `If(IsFsym(symbolName,var),
+                                    If(TomTermToExpression(TargetLanguageToTomTerm(ITL("children.length==0"))),
+                                      Return(BuildEmptyArray(symbolName,ExpressionToTomTerm(Integer(0)))),
+                                      Return(BuildConsArray(symbolName,ExpressionToTomTerm(Cast(domain,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[0]"))))),ExpressionToTomTerm(Cast(type,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[1]")))))))
+                                      )
+                                    ,Nop());
+                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                            }
+                          }
+                       } else {
                           int arity = TomBase.getArity(symbol);
                           TomList slots = `concTomTerm();
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
