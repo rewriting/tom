@@ -47,6 +47,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
+import tom.engine.adt.tomtypeconstraints.types.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
@@ -70,25 +71,41 @@ public class Typer extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
+  %typeterm Typer { implement { Typer } }
+
+  /** some output suffixes */
+  private static final String freshTypeVarPrefix = "_freshTypeVar_";
+  public static final String TYPED_SUFFIX       = ".tfix.typed";
+  public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
+
+  /** the declared options string */
+  public static final String DECLARED_OPTIONS =
+    "<options>" +
+    "<boolean name='type' altName='' description='Typer (activated by default)' value='true'/>" +
+    "</options>";
+
+  private TyperEnvironment typerEnvironment;
+
+  public TyperEnvironment getTyperEnvironment() {
+    return typerEnvironment;
+  }
+
   /** Constructor */
   public Typer() {
     super("Typer");
+    typerEnvironment = new TyperEnvironment();
   }
 
-  public void run(Map informationTracker) {
-    //TODO
-  }
-
-  private class TypeEnvironment {
+  private class TyperEnvironment {
     
     /** few attributes */
     private SymbolTable symbolTable;
-    //private int counter = 0;
-/* 
+    private int freshTypeVarCounter = 0;
+ 
     public TyperEnvironment() {
       super();
     }
-*/
+
     /** Accessor methods */
     public SymbolTable getSymbolTable() {
       return this.symbolTable;
@@ -97,7 +114,32 @@ public class Typer extends TomGenericPlugin {
     public void setSymbolTable(SymbolTable symbolTable) {
       this.symbolTable = symbolTable;
     }
+
+    public int getFreshTypeVarCounter() {
+      return this.freshTypeVarCounter;
+    }
+    
+    public void setFreshTypeVarCounter(int freshVarCounter) {
+      this.freshTypeVarCounter = freshTypeVarCounter;
+    }
+    
+    public TomSymbol getSymbolFromName(String tomName) {
+      return TomBase.getSymbolFromName(tomName, getSymbolTable());
+    }
+
+    public TomSymbol getSymbolFromType(TomType type) {
+      %match(type) {
+        TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
+          return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+        }
+      }
+      return TomBase.getSymbolFromType(type, getSymbolTable()); 
+    }
+   
   } // class TyperEnvironment
 
+  public void run(Map informationTracker) {
+    //TODO
+  }
 
 }
