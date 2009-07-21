@@ -502,6 +502,9 @@ public class Compiler extends TomGenericPlugin {
    *       int length = computeLenght(subj);
    *       int[] mult = new int[length];
    *       Term oldElem = null;
+   *       if(subj.isEmpty) {
+   *         return mult;
+   *       }
    *       // if we realy have a list
    *       // TODO: is this really necessary ?
    *       if (subj.isConsf()) {      
@@ -549,6 +552,7 @@ public class Compiler extends TomGenericPlugin {
     TomTerm oldElem = `Variable(concOption(),Name("oldElem"),opType,concConstraint());
     
     TomName opName = `Name(opNameString);
+    Instruction ifEmptyCase = `If(IsEmptyList(opName,subject),Return(mult),Nop());
     Instruction ifList = `If(IsFsym(opName,subject),
         LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
         AbstractBlock(concInstruction(
@@ -577,14 +581,14 @@ public class Compiler extends TomGenericPlugin {
     Expression notEmptySubj = `Negation(EqualTerm(opType,subject,BuildEmptyList(opName)));
     Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
          
-    // var declarations + ifList + counter declaration + the while + return
+    // var declarations + ifEmptyCase + ifList + counter declaration + the while + return
     Instruction functionBody = `LetRef(length, TomTermToExpression(
           FunctionCall(Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
         intType,concTomTerm(subject))),
         LetRef(mult,TomTermToExpression(BuildEmptyArray(intArrayName,length)),
             LetRef(oldElem,Bottom(opType),
                 UnamedBlock(concInstruction(
-                    ifList,
+                    ifEmptyCase,ifList,
                     LetRef(counter,Integer(0),whileLoop),
                     Return(mult))))));
     
