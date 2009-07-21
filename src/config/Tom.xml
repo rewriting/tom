@@ -51,6 +51,8 @@
       class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="Desugar"
       class="tom.engine.desugarer.Desugarer"/>
+    <plugin name="Typer"
+      class="tom.engine.checker.TomTyper"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"
@@ -112,7 +114,7 @@
       <string name="encoding" altName="e"
         description="Specify the character encoding"
         value="UTF-8"
-	attrName="charset"/>
+        attrName="charset"/>
       <boolean name="multithread" altName="mt"
         description="Sets the multithread mode"
         value="false"/>
