@@ -856,16 +856,22 @@ plainBQTerm[]  returns [BQTerm result]
     TomName name = null;
     result = null;
     List<Option> optionList = new LinkedList<Option>();
-    List<Option> secondOptionList = new LinkedList<Option>();
     BQTerm tmp;
     BQTermList l = `concBQTerm();
 }
     : name = headSymbol[optionList] 
-       { result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); }
-       |  name = headSymbol[optionList] LPAREN (tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); } )* RPAREN
-       { result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l); }
-   
-    ;
+      (args:LPAREN 
+         (tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); })? 
+         (COMMA tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); })* 
+       RPAREN)?
+       { 
+         if (args==null) {
+           result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); 
+         } else {
+           result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l);
+         }
+       }
+;
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
