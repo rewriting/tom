@@ -88,7 +88,7 @@ public class PolyAdvanced2 {
 
     res = differentiate(t,var1);
     assertSame("diffentiate(mult(X(),plus(X(),a()),X())) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",res, `plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())));
-    System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
 
     try{
       res = (Term) `BottomUp(rule).visitLight(res);
@@ -96,7 +96,7 @@ public class PolyAdvanced2 {
       System.out.println("reduction failed on: " + res);
     }
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1)) is plus(X,plus(X,a))",res, `plus(X(),plus(X(),a())));
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
   }
 
   @Test
@@ -104,7 +104,7 @@ public class PolyAdvanced2 {
 
     res = differentiate(t,var2);
     assertSame("differentiate(mult(X(),plus(X(),a()),Y())) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))", res, `plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())));
-    System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
 
     try{
       res = (Term) `BottomUp(rule).visitLight(res);
@@ -113,7 +113,7 @@ public class PolyAdvanced2 {
     }
 
     assertSame("simplify(mult(X(),plus(X(),a()),Y())) is 0", res, `zero());
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
   }
 
   public static void main(String[] args) {

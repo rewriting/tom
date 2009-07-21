@@ -60,7 +60,7 @@ public class PolyTraveler3 {
   
     long startChrono = System.currentTimeMillis();
     Expression resSymplify = simplify(t);
-    System.out.println("simplify in " + (System.currentTimeMillis()-startChrono)+ " ms");
+    //System.out.println("simplify in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
     Strategy v = `SimplifyExpression();
     Strategy bottomUp = `BottomUp(Try(v));
@@ -72,15 +72,15 @@ public class PolyTraveler3 {
     try {
       startChrono = System.currentTimeMillis();
       resBottomUp = (Expression) bottomUp.visitLight(t);
-      System.out.println("BottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
+      //System.out.println("BottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
       startChrono = System.currentTimeMillis();
       resInnermost = (Expression) innermost.visitLight(t);
-      System.out.println("Innermost in " + (System.currentTimeMillis()-startChrono)+ " ms");
+      //System.out.println("Innermost in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
       startChrono = System.currentTimeMillis();
       resRepeatOnce = (Expression) repeatOnce.visitLight(t);
-      System.out.println("RepeatOneBottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
+      //System.out.println("RepeatOneBottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
       
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + t);
@@ -93,9 +93,9 @@ public class PolyTraveler3 {
     System.out.println("repeatOnce  = " + resRepeatOnce);
     System.out.println("innermost   = " + resInnermost);
     */
-    System.out.println("check: " + (resBottomUp == resSymplify));
-    System.out.println("check: " + (resRepeatOnce == resBottomUp));
-    System.out.println("check: " + (resInnermost == resRepeatOnce));
+    //System.out.println("check: " + (resBottomUp == resSymplify));
+    //System.out.println("check: " + (resRepeatOnce == resBottomUp));
+    //System.out.println("check: " + (resInnermost == resRepeatOnce));
   }
   
   public Expression differentiate(Expression e, Expression v) {

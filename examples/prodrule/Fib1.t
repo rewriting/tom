@@ -44,11 +44,11 @@ public class Fib1 {
 
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
-    System.out.println("running...");
+    //System.out.println("running...");
     Space space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef()));
     space = loop(space);
     int result = result(space,n);
-    System.out.println("fib(" + n + ") = " + result + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    //System.out.println("fib(" + n + ") = " + result + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
     return result;
   }
   

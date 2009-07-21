@@ -68,10 +68,10 @@ public class Fib3 {
 
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
-    System.out.println("running...");
+    //System.out.println("running...");
     ArrayList space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef()));
     space = loop(space);
-    System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    //System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
     return result(space,n);
   }
   

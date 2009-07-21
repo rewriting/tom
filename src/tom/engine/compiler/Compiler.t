@@ -443,8 +443,8 @@ public class Compiler extends TomGenericPlugin {
   /**
    * AC methods
    * TODO:
-   *   generate correct code for f(X,Y) << f() [empty case]
-   *   generate correct code for f(X,Y) << f(a()) [singleton case]
+   *   DONE: generate correct code for f(X,Y) << f() [empty case]
+   *   DONE: generate correct code for f(X,Y) << f(a()) [singleton case]
    *   the AC match is OK only for Gom data-structure with AC hook
    *   make it work with FL hook
    *   adapt compiler for %oparray mapping (and not just %oplist mapping)
@@ -472,6 +472,23 @@ public class Compiler extends TomGenericPlugin {
       l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
       // 3. getTerm        
       l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
+      // 4. next_minimal_extract
+      String code = %[
+  public boolean next_minimal_extract(int total, int E[], int sol[]) {
+    int multiplicity=1;
+    int pos = total-1;
+    while(pos>=0 && sol[pos]==E[pos]) {
+      sol[pos]=0;
+      pos--;
+    }
+    if(pos<0) {
+      return false;
+    }
+    sol[pos]+=multiplicity;
+    return true;
+  }
+        ]%;
+      l = `concTomTerm(TargetLanguageToTomTerm(ITL(code)),l*);
     }
     // make sure the variables are correctly defined
     l = PostGenerator.changeVarDeclarations(`l);

@@ -95,20 +95,20 @@ public class PolyAdvanced1 {
   @Test
   public void testX() {
     res = differentiate(t,var1);
-    System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
     assertSame("differentiate(mult(X,plus(X,a)),X) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",`plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())),res);
     res = simplify(res);
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(X(),plus(X,a))",`plus(X(),plus(X(),a())),res);
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
    } 
 
   @Test
   public void testY() {
     res = differentiate(t,var2);
-    System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
     assertSame("differentiate(mult(X,plus(X,a)),Y) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))",`plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())),res);
     res = simplify(res);
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is 0",`zero(),res);
   }
   

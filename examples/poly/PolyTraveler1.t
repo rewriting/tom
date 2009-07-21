@@ -49,11 +49,11 @@ public class PolyTraveler1 {
 
     visit Expression {
       plus(a1,a2) -> {
-        System.out.println("plus = " + `plus(a1,a2));
+        //System.out.println("plus = " + `plus(a1,a2));
         return `plus(a1,a2);
       }
       zero() -> {
-        System.out.println("zero = " + `zero());
+        //System.out.println("zero = " + `zero());
         return `zero();
       } 
     }
@@ -66,7 +66,7 @@ public class PolyTraveler1 {
     //v.setTerm(t);
     Strategy bu = `BottomUp(v);
     try {
-    System.out.println(" bu.visitLight(" + t + ")");
+    //System.out.println(" bu.visitLight(" + t + ")");
     bu.visitLight(t);
     } catch (VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());

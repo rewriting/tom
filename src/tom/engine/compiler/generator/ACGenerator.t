@@ -87,6 +87,4 @@ public class ACGenerator implements IBaseGenerator {
     } // end visit
   } // end strategy  
 
-
-
 }

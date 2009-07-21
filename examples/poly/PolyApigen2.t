@@ -101,18 +101,18 @@ private final static int COMPLEXITY = 2;
       res = differentiate(res,var);
     }
     
-    System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
     assertSame("Derivative form of exp(exp(variable(\"X\"))) wrt. variable(\"X\") is:",`plus(mult(mult(one(),exp(variable("X"))),mult(mult(one(),exp(variable("X"))),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),plus(mult(one(),mult(one(),exp(variable("X")))),mult(exp(variable("X")),zero())))),res);
     res = simplify(res);
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
     assertSame("Simplified form is:", `plus(mult(exp(variable("X")),mult(exp(variable("X")),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),exp(variable("X")))),res);
    
     t = `mult(variable("X"),plus(variable("X"),constant("a")));
     res = differentiate(t,res);  
-    System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
     assertSame("Derivative form of mult(variable(\"X\"),plus(variable(\"X\"),constant(\"a\"))) wrt. variable(\"X\") is:        plus(mult(variable(\"X\"),plus(zero,zero)),mult(plus(variable(\"X\"),constant(\"a\")),zero))",`plus(mult(variable("X"),plus(zero(),zero())),mult(plus(variable("X"),constant("a")),zero())),res);
     res = simplify(res);
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
 assertSame("Simplified form is: zero",`zero(),res);
   }
     

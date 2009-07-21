@@ -44,10 +44,10 @@ public class Fib2 {
 
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
-    System.out.println("running...");
+    //System.out.println("running...");
     Space space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef()));
     space = loop(space);
-    System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    //System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
     return result(space,n);
   }
   
@@ -87,14 +87,12 @@ public class Fib2 {
       concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         Space s12 = `concElement(S1*,S2*);
         %match(Space s12) {
-          concElement(T1*, fibn1@Fib[arg=n1,val=Nat(v1)], T2*, fibn2@Fib[arg=n2,val=Nat(v2)], T3*) -> {
+          concElement(_*, Fib[arg=n1,val=Nat(v1)], _*, Fib[arg=n2,val=Nat(v2)], _*) -> {
             if( `(n1+1==n && n2+2==n) ) {
               int modulo = `(v1+v2)%1000000;
-              //return `concElement(T1*,T2*,T3*,Fib(n,Nat(modulo)),fibn1);
               return `concElement(s12*,Fib(n,Nat(modulo)));
             } else if( `(n2+1==n && n1+2==n) ) {
               int modulo = `(v1+v2)%1000000;
-              //return `concElement(T1*,T2*,T3*,Fib(n,Nat(modulo)),fibn2);
               return `concElement(s12*,Fib(n,Nat(modulo)));
             }
           }

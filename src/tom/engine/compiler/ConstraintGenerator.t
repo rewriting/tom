@@ -441,80 +441,41 @@ public class ConstraintGenerator {
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
 
     TomTerm alpha = getCompiler().getFreshVariable("alpha",intArrayType);
-    TomTerm tempSol = getCompiler().getFreshVariable("tempSol",intArrayType);
+    TomTerm sol = getCompiler().getFreshVariable("sol",intArrayType);
     TomTerm position = getCompiler().getFreshVariable("position",intType);
     TomTerm length = getCompiler().getFreshVariable("length",intType);                
 
-    String tomName = null;
-    TomTerm x = null, y=null;
+    String symbolName = null;
+    TomTerm var_x = null;
+    TomTerm var_y=null;
     %match(pattern) {
       RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
-        tomName = `tomName;
-        x = `x;
-        y = `y;
+        symbolName = `tomName;
+        var_x = `x;
+        var_y = `y;
       }
     }
-    TomList getTermArgs = `concTomTerm(tempSol,alpha,subject);        
-    TomType subtermType = getCompiler().getTermTypeFromTerm(`x);
+    TomList getTermArgs = `concTomTerm(sol,alpha,subject);        
+    TomType subtermType = getCompiler().getTermTypeFromTerm(var_x);
+    TomType booleanType = symbolTable.getBooleanType();
 
-    Expression reinitializationLoopCond = `And(
-        GreaterThan(
-          TomTermToExpression(position),
-          zero),
-        GreaterThan(
-          GetElement(intArrayName,intType,tempSol,position),
-          GetElement(intArrayName,intType,alpha,position))
-        );
-
-    Instruction reinitializationLoop = `DoWhile(
-        AbstractBlock(concInstruction(
-        AssignArray(tempSol,position,zero),
-          LetRef(position,SubstractOne(position),
-            AssignArray(tempSol, position, AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))))
-            )
-          )), reinitializationLoopCond);
-
-    Expression testCond = `LessThan(
-        GetElement(intArrayName,intType,tempSol,position),
-        GetElement(intArrayName,intType,alpha,position)
-        );
-
-    Instruction test = `If(testCond,
-        AssignArray(tempSol, position, AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position)))),
-        reinitializationLoop
-        );
-
-    Expression whileCond = `LessOrEqualThan(
-        GetElement(intArrayName,intType,tempSol,ExpressionToTomTerm(zero)),
-        GetElement(intArrayName,intType,alpha,ExpressionToTomTerm(zero)));
+    Expression whileCond = `TomTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concTomTerm(length,alpha,sol)));
 
     Instruction instruction = `DoWhile(
-        LetRef(position,SubstractOne(length),
-          LetRef(x,
-            TomTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(FalseTL())))),
-            LetRef(y,
-              TomTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(TrueTL())))),
-              UnamedBlock(
-                concInstruction(
-                  action,
-                  test
-                  )
-                )
-              )
+          LetRef(var_x,
+            TomTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(FalseTL())))),
+            LetRef(var_y,
+              TomTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(TrueTL())))),
+              action
             )
           ), whileCond);
 
-
-    instruction = `LetRef(tempSol,TomTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
+    instruction = `LetRef(position,SubstractOne(length),instruction);
+    instruction = `LetRef(sol,TomTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
     instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
     instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
-            Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
+            Name(ConstraintGenerator.multiplicityFuncName + "_" + symbolName),
             intArrayType,concTomTerm(subject))),instruction);
-
-    // make sure the additional functions are generated
-    //symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
-    //symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
-    //symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
 
     return instruction;
   }

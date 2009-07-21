@@ -68,9 +68,9 @@ public class PolyTraveler2 {
     //Strategy bu = `OnceBottomUp(v);
     Strategy bu = `BottomUp(Try(v));
     try {
-      System.out.println(" bu.visitLight(" + t + ")");
+      //System.out.println(" bu.visitLight(" + t + ")");
       Expression res = (Expression)bu.visitLight(t);
-      System.out.println("Simplified form is " + res);
+      //System.out.println("Simplified form is " + res);
       assertSame("bu.visitLight(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
     } catch (VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());

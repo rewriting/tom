@@ -115,10 +115,10 @@ private final static int COMPLEXITY = 2;
       res = differentiate(res,var);
     }
     assertSame("Derivative form of exp(exp(variable(\"X\"))) wrt. variable(\"X\") ",`plus(mult(mult(one(),exp(variable("X"))),mult(mult(one(),exp(variable("X"))),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),plus(mult(one(),mult(one(),exp(variable("X")))),mult(exp(variable("X")),zero())))),res);
-    System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    //System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
     res = simplify(res);
     assertSame("Simplified form is:",`plus(mult(exp(variable("X")),mult(exp(variable("X")),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),exp(variable("X")))),res);
-    System.out.println("Simplified form is:\n\t" + res);
+    //System.out.println("Simplified form is:\n\t" + res);
   }
     
   public final static void main(String[] args) {

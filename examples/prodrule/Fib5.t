@@ -62,13 +62,13 @@ public class Fib5 {
   private MyList WM = new MyList();
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
-    System.out.println("running...");
+    //System.out.println("running...");
     WM = WM.add(`Fib(0,Nat(1)));
     WM = WM.add(`Fib(1,Nat(1)));
     WM = WM.add(`Fib(n,Undef()));
     loop(WM);
-    System.out.println("fib(" + n + ") = " + result(n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
-    System.out.println("fire = " + fire);
+    //System.out.println("fib(" + n + ") = " + result(n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    //System.out.println("fire = " + fire);
     return result(n);
   } 
   
