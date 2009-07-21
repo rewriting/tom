@@ -52,7 +52,7 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static CodeList makeList(Collection<Code> c) {
+  public static CodeList makeCodeList(Collection<Code> c) {
     CodeList list = `concCode();
     for(Code code: c) {
       list = `concCode(list*,code);
@@ -60,7 +60,7 @@ public class ASTFactory {
     return list;
   }
 
-  public static BQTermList makeList(Collection<BQTerm> c) {
+  public static BQTermList makeBQTermList(Collection<BQTerm> c) {
     BQTermList list = `concBQTerm();
     for(BQTerm term: c) {
       list = `concBQTerm(list*,term);
@@ -68,7 +68,7 @@ public class ASTFactory {
     return list;
   }
 
-  public static TomList makeList(Collection<TomTerm> c) {
+  public static TomList makeTomList(Collection<TomTerm> c) {
     TomList list = `concTomTerm();
     for(TomTerm term: c) {
       list = `concTomTerm(list*,term);

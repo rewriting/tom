@@ -52,7 +52,7 @@
     <plugin name="Desugar"
       class="tom.engine.desugarer.Desugarer"/>
     <plugin name="Typer"
-      class="tom.engine.checker.TomTyper"/>
+      class="tom.engine.typer.TomTyper"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"

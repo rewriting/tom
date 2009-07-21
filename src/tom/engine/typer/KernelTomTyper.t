@@ -287,7 +287,7 @@ public class KernelTomTyper {
         try {
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
           Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
-          TomList varList = ASTFactory.makeList(lhsVariable);
+          TomList varList = ASTFactory.makeTomList(lhsVariable);
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
           newAction = (Instruction) typeVariable(`EmptyType(),`newAction);
           ConstraintInstructionList newTail = typeConstraintInstructionList(contextType,`tail,matchAndNumericConstraints);

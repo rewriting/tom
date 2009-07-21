@@ -144,7 +144,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN
-            LBRACE { subjectList = ASTFactory.makeList(argumentList); }
+            LBRACE { subjectList = ASTFactory.makeBQTermList(argumentList); }
             ( 
              patternInstruction[subjectList,constraintInstructionList,patternType]
             )* 
@@ -157,7 +157,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                selector().pop(); 
             }
             |
-            LBRACE { subjectList = ASTFactory.makeList(argumentList); }
+            LBRACE { subjectList = ASTFactory.makeBQTermList(argumentList); }
             ( 
              constraintInstruction[constraintInstructionList,patternType]
             )* 
@@ -189,12 +189,12 @@ matchArgument [List<BQTerm> list] throws TomException
 }
     :   
 
-    subject1 = plainBQTerm[null,null,0] { 
+    subject1 = plainBQTerm[] { 
       s1 = text.toString();
       text.delete(0, text.length()); 
     }
     (BACKQUOTE { text.delete(0, text.length()); } )?
-    (subject2 = plainBQTerm[null,null,0] { s2 = text.toString(); })?
+    (subject2 = plainBQTerm[] { s2 = text.toString(); })?
 {
       if(subject2==null) {
         // System.out.println("matchArgument = " + subject1);
@@ -780,7 +780,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
             result = `TermAppl(
                 ASTFactory.makeOptionList(optionList),
                 nameList,
-                ASTFactory.makeList((List<TomTerm>)list),
+                ASTFactory.makeTomList((List<TomTerm>)list),
                 ASTFactory.makeConstraintList(constraintList));
             if(anti) { result = `AntiTerm(result); }
           }
@@ -818,7 +818,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
               result = `TermAppl(
                   ASTFactory.makeOptionList(optionList),
                   nameList,
-                  ASTFactory.makeList((List<TomTerm>)list),
+                  ASTFactory.makeTomList((List<TomTerm>)list),
                   ASTFactory.makeConstraintList(constraintList)
                   );
             }
@@ -842,7 +842,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
               result = `TermAppl(
                   ASTFactory.makeOptionList(optionList),
                   nameList,
-                  ASTFactory.makeList((List<TomTerm>)list),
+                  ASTFactory.makeTomList((List<TomTerm>)list),
                   ASTFactory.makeConstraintList(constraintList)
                   );
             }
@@ -851,7 +851,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
         )
     ;
 
-plainBQTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [BQTerm result] throws TomException
+plainBQTerm[]  returns [BQTerm result]
 {
     TomName name = null;
     result = null;
@@ -862,7 +862,7 @@ plainBQTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [
 }
     : name = headSymbol[optionList] 
        { result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); }
-       |  name = headSymbol[optionList] LPAREN (tmp=plainBQTerm[astLabeledName,astLabeledName,line] { l = `concBQTerm(l*,tmp); } )* RPAREN
+       |  name = headSymbol[optionList] LPAREN (tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); } )* RPAREN
        { result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l); }
    
     ;
@@ -910,7 +910,7 @@ args[list,secondOptionList]
   result = `TermAppl(
       ASTFactory.makeOptionList(optionList),
       nameList,
-      ASTFactory.makeList((List<TomTerm>)list),
+      ASTFactory.makeTomList((List<TomTerm>)list),
       ASTFactory.makeConstraintList(constraintList)
   );
   if (anti) { result = `AntiTerm(result); }
@@ -986,8 +986,8 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                 result = `XMLAppl(
                     option,
                     nameList,
-                    ASTFactory.makeList((List<TomTerm>)attributeList),
-                    ASTFactory.makeList((List<TomTerm>)childs),
+                    ASTFactory.makeTomList((List<TomTerm>)attributeList),
+                    ASTFactory.makeTomList((List<TomTerm>)childs),
                     ASTFactory.makeConstraintList(constraintList));
             }
 
