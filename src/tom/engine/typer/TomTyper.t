@@ -84,12 +84,12 @@ public class TomTyper extends TomGenericPlugin {
     "</options>";
 
   /** the kernel typer acting at very low level */
-  private KernelTyper kernelTyper;
+  private KernelTomTyper kernelTomTyper;
 
   /** Constructor*/
   public TomTyper() {
     super("TomTyper");
-    kernelTyper = new KernelTyper();
+    kernelTomTyper = new KernelTomTyper();
   }
 
   /**
@@ -101,19 +101,19 @@ public class TomTyper extends TomGenericPlugin {
     //System.out.println("(debug) I'm in the Tom typer : TSM"+getStreamManager().toString());
     TomTerm typedTerm = null;
     try {
-      kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
+      kernelTomTyper.setSymbolTable(getStreamManager().getSymbolTable());
       //no more necessary: realised by the desugarer
       //TomTerm syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
 
       updateSymbolTable();
 
       Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-      Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+      Code variableExpandedCode = (Code) kernelTomTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
       /* transform each BackQuoteTerm into its compiled form */
       Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
       Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
       Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
-      typedCode = kernelTyper.propagateVariablesTypes(typedCode);
+      typedCode = kernelTomTyper.propagateVariablesTypes(typedCode);
       setWorkingTerm(typedCode);      
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
@@ -196,7 +196,7 @@ public class TomTyper extends TomGenericPlugin {
       try {
         tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-        tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
+        tomSymbol = ((TomTerm) kernelTomTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
