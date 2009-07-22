@@ -435,8 +435,6 @@ public class ConstraintGenerator {
     SymbolTable symbolTable = getCompiler().getSymbolTable();
     TomType intType = symbolTable.getIntType();
     TomType intArrayType = symbolTable.getIntArrayType();
-    // a 0
-    Expression zero = `Integer(0);
     // the name of the int[] operator
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
 

@@ -99,43 +99,38 @@ public class Compiler extends TomGenericPlugin {
       this.constraintGenerator = new ConstraintGenerator(Compiler.this); 
     }
 
-    /** Accessor methods */
-    public SymbolTable getSymbolTable() {
-      return this.symbolTable;
+    public void nextMatch() {
+      matchNumber++;
+      rootpath = `concTomNumber(MatchNumber(matchNumber));
+      freshSubjectCounter=0;
+      freshVarCounter=0;
     }
 
+    /** Accessor methods */
     public void setSymbolTable(SymbolTable symbolTable) {
       this.symbolTable = symbolTable;
+    }
+    
+    public SymbolTable getSymbolTable() {
+      return this.symbolTable;
     }
 
     public TomNumberList getRootpath() {
       return this.rootpath;
     }
 
-    public void setRootpath(TomNumberList rootpath) {
-      this.rootpath = rootpath;
-    }
-
     public int getMatchNumber() {
       return this.matchNumber;
     }
 
-    public int getFreshSubjectCounter() {
-      return this.freshSubjectCounter;
+    public int genFreshSubjectCounter() {
+      return this.freshSubjectCounter++;
     }
 
-    public void setFreshSubjectCounter(int freshSubjectCounter) {
-      this.freshSubjectCounter = freshSubjectCounter;
-    }
-
-    public int getFreshVarCounter() {
-      return this.freshVarCounter;
+    public int genFreshVarCounter() {
+      return this.freshVarCounter++;
     }
     
-    public void setFreshVarCounter(int freshVarCounter) {
-      this.freshVarCounter = freshVarCounter;
-    }
-   
     public ConstraintPropagator getConstraintPropagator() {
       return this.constraintPropagator;
     }
@@ -206,10 +201,7 @@ public class Compiler extends TomGenericPlugin {
   %strategy CompileMatch(compiler:Compiler) extends Identity() {
     visit Instruction {			
       Match(constraintInstructionList, matchOptionList)  -> {
-        compiler.getCompilerEnvironment().matchNumber++;
-        compiler.getCompilerEnvironment().setRootpath(`concTomNumber(MatchNumber(compiler.getCompilerEnvironment().getMatchNumber())));
-        compiler.getCompilerEnvironment().setFreshSubjectCounter(0);
-        compiler.getCompilerEnvironment().setFreshVarCounter(0);
+        compiler.getCompilerEnvironment().nextMatch();
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
         ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
@@ -277,7 +269,7 @@ public class Compiler extends TomGenericPlugin {
               newConstraint);
         }
         TomNumberList path = compiler.getRootpath();
-        TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + (++(compiler.getCompilerEnvironment().freshSubjectCounter))))));
+        TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
           (Variable|VariableStar)[AstType=variableType] -> { 
@@ -345,14 +337,6 @@ public class Compiler extends TomGenericPlugin {
     return getCompilerEnvironment().getRootpath();
   }
 
-  public int getFreshVarCounter() {
-    return getCompilerEnvironment().getFreshVarCounter();
-  }
-
-  public int getFreshSubjectCounter() {
-    return getCompilerEnvironment().getFreshSubjectCounter();
-  }
-
   public SymbolTable getSymbolTable() {
     return getCompilerEnvironment().getSymbolTable();
   }
@@ -377,31 +361,43 @@ public class Compiler extends TomGenericPlugin {
   }
 
   public TomTerm getFreshVariable(TomType type) {
-    return getFreshVariable(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);    
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableName("_"+n,type);
   }
 
   public TomTerm getFreshVariable(String name, TomType type) {
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableName("_"+name+"_"+n,type);
+  }
+
+  private TomTerm getVariableName(String name, TomType type) {
     TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `Variable(concOption(),freshVarName,type,concConstraint());
   }
 
   public TomTerm getFreshVariableStar(TomType type) {
-    return getFreshVariableStar(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableStarName("_"+n,type);
   }
 
   public TomTerm getFreshVariableStar(String name, TomType type) {
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableStarName("_"+name+"_"+n,type);
+  }
+
+  private TomTerm getVariableStarName(String name, TomType type) {
     TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `VariableStar(concOption(),freshVarName,type,concConstraint());
   }
 
   public TomTerm getBeginVariableStar(TomType type) {
-    return getFreshVariableStar(freshBeginPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+    return getFreshVariableStar(freshBeginPrefix,type);
   }
 
   public TomTerm getEndVariableStar(TomType type) {
-    return getFreshVariableStar(freshEndPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+    return getFreshVariableStar(freshEndPrefix,type);
   }
 
   /*
@@ -564,8 +560,8 @@ public class Compiler extends TomGenericPlugin {
     TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());    
     
     TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
-    TomTerm length = getFreshVariable("length",intType);
-    TomTerm mult = getFreshVariable("mult",intArrayType);
+    TomTerm length = getVariableName("length",intType);
+    TomTerm mult = getVariableName("mult",intArrayType);
     TomTerm oldElem = `Variable(concOption(),Name("oldElem"),opType,concConstraint());
     
     TomName opName = `Name(opNameString);

@@ -274,7 +274,7 @@ public class PILFactory {
       ExpressionToTomTerm(astTerm) -> {
         return prettyPrint(`astTerm);
       }
-      FunctionCall(AstName,AstType,Args) -> {
+      FunctionCall(AstName,_,Args) -> {
         String s = "";
         %match(Args) {
           concTomTerm(_*,x,_*) -> {

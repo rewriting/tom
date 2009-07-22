@@ -92,7 +92,7 @@ public class TomConstraintPrettyPrinter {
         return "("+prettyPrint(`head)+" | "+prettyPrint(`tail)+")";
       }
 
-      MatchConstraint(Pattern, Subject)-> {
+      MatchConstraint(Pattern, Subject) -> {
         if(TomBase.hasTheory(`Pattern,`AC())) {
           return prettyPrint(`Pattern)+" <<_AC "+prettyPrint(`Subject);
         } else {
@@ -100,19 +100,19 @@ public class TomConstraintPrettyPrinter {
         }
       }
 
-      AntiMatchConstraint(Constraint)-> {
+      AntiMatchConstraint(Constraint) -> {
         return "Anti("+prettyPrint(`Constraint)+")";
       }
 
-      NumericConstraint(Pattern, Subject, Type)-> {
+      NumericConstraint(Pattern, Subject, Type) -> {
         return prettyPrint(`Pattern)+prettyPrint(`Type)+prettyPrint(`Subject);
       }
 
-      EmptyListConstraint(Opname, Variable)-> {
+      EmptyListConstraint(Opname, Variable) -> {
         return "IsEmptyList("+prettyPrint(`Opname)+","+prettyPrint(`Variable)+")";
       }
 
-      EmptyArrayConstraint(Opname, Variable, Index)-> {
+      EmptyArrayConstraint(Opname, Variable, Index) -> {
         return "IsEmptyArray("+prettyPrint(`Opname)+","+prettyPrint(`Variable)+","+prettyPrint(`Index)+")";
       }
 
@@ -122,19 +122,19 @@ public class TomConstraintPrettyPrinter {
       NumLessThan() -> {
         return "<";
       }
-      NumLessOrEqualThan()-> {
+      NumLessOrEqualThan() -> {
         return "<=";
       }
-      NumGreaterThan()-> {
+      NumGreaterThan() -> {
         return ">";
       }
-      NumGreaterOrEqualThan()-> {
+      NumGreaterOrEqualThan() -> {
         return ">=";
       }
-      NumDifferent()-> {
+      NumDifferent() -> {
         return "<>";
       }
-      NumEqual()-> {
+      NumEqual() -> {
         return "==";
       }
     }
@@ -186,6 +186,13 @@ public class TomConstraintPrettyPrinter {
 
       VariableHeadArray(Opname,Subject,BeginIndex,EndIndex) -> {
         return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
+      }
+
+      BuildAppendList(name,head,tail) -> {
+        return "BuildAppendList(" + prettyPrint(`head) + "," + prettyPrint(`tail) + ")";
+      }
+      BuildEmptyList(name) -> {
+        return "BuildEmptyList()";
       }
 
     }

@@ -76,12 +76,16 @@ public class ACPropagator implements IBasePropagator {
     result = `RepeatId(TopDown(PerformAbstraction(this))).visitLight(result);		
     result = `TopDown(CleanSingleVariable()).visitLight(result);		
     //Constraint res =  `TopDownWhenConstraint(ACMatching(this)).visitLight(constraint);		
+    if(result!=constraint) {
+      System.out.println("after propagate:");
+      System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+    }
     return result;
   }	
 
   %strategy RemoveNonVariable(acp: ACPropagator) extends Identity() {
     visit Constraint {
-      m@MatchConstraint(pattern@RecordAppl[
+      MatchConstraint(pattern@RecordAppl[
           Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@(Name(tomName)), Slots=slots],subject) -> {
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
@@ -129,10 +133,10 @@ public class ACPropagator implements IBasePropagator {
       /*
        * f(X*) <<ac s => f(X*) <<a s
        */
-      m@MatchConstraint(pattern@RecordAppl[
-          Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@(Name(tomName)), 
-          Slots=slots@concSlot(PairSlotAppl[SlotName=slotname, Appl=VariableStar[]])],subject) -> {
+      MatchConstraint(RecordAppl[
+          Option=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          NameList=namelist@(Name[]), 
+          Slots=slots@concSlot(PairSlotAppl[Appl=VariableStar[]])],subject) -> {
         System.out.println("case f(X*) <<ac s => f(X*) <<a s: " + `slots);
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
         Constraint result = `MatchConstraint(
@@ -146,9 +150,9 @@ public class ACPropagator implements IBasePropagator {
 
   %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
     visit Constraint {
-      m@MatchConstraint(pattern@RecordAppl[
+      MatchConstraint(pattern@RecordAppl[
           Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@(Name(tomName)), Slots=slots],subject) -> {
+          NameList=namelist@(Name[]), Slots=slots],subject) -> {
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
         if(`slots.length() > 2) {
           %match(slots) {

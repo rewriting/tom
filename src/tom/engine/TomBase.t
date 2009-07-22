@@ -132,7 +132,8 @@ public final class TomBase {
   }
 
   private static LRUCache<TomNumberList,String> tomNumberListToStringMap =
-    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE); 
+    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE);
+
   public static String tomNumberListToString(TomNumberList numberList) {
     String result = tomNumberListToStringMap.get(numberList);
     if(result == null) {
@@ -201,7 +202,7 @@ public final class TomBase {
                 identifier = tomNumberListToString(`localNumberList);
               }
             }
-            buf.append("NameNumber");
+            //buf.append("NameNumber");
             buf.append(identifier);
           }
         }
