@@ -447,6 +447,7 @@ public class Compiler extends TomGenericPlugin {
    *   fix the inliner (some code is not generated because a GetHead is used before its definition)
    */
   
+  private static String next_minimal_extract = null;
   /**
    * Adds the necessary functions to the ADT of the program
    * 
@@ -469,7 +470,8 @@ public class Compiler extends TomGenericPlugin {
       // 3. getTerm        
       l = `concTomTerm(DeclarationToTomTerm(getPILforGetTermForMultiplicity(op,opType)),l*);
       // 4. next_minimal_extract
-      String code = %[
+      if(next_minimal_extract==null) {
+        next_minimal_extract = %[
   public boolean next_minimal_extract(int total, int E[], int sol[]) {
     int multiplicity=1;
     int pos = total-1;
@@ -484,7 +486,8 @@ public class Compiler extends TomGenericPlugin {
     return true;
   }
         ]%;
-      l = `concTomTerm(TargetLanguageToTomTerm(ITL(code)),l*);
+      l = `concTomTerm(TargetLanguageToTomTerm(ITL(next_minimal_extract)),l*);
+      }
     }
     // make sure the variables are correctly defined
     l = PostGenerator.changeVarDeclarations(`l);

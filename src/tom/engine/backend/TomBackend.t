@@ -246,6 +246,7 @@ public class TomBackend extends TomGenericPlugin {
   }
 
   private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {    
+    //System.out.println("setUsedSymbolDestructor: " + tomSymbol);
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       // if the symbol has been marked, there is no need to traverse it again
@@ -309,6 +310,7 @@ public class TomBackend extends TomGenericPlugin {
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          //System.out.println("name1: " + `name);
           tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
           //tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
@@ -322,6 +324,7 @@ public class TomBackend extends TomGenericPlugin {
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          //System.out.println("name2: " + `name);
           tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
@@ -352,6 +355,7 @@ public class TomBackend extends TomGenericPlugin {
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
             //System.out.println("mark: " + tomSymbol);
             // if it comes from java
+          //System.out.println("name3: " + l.getHeadconcTomName());
             if (tomSymbol != null) { tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);}
           } catch (EmptyStackException e) {
             System.out.println("No moduleName in stack");

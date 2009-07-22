@@ -131,20 +131,23 @@ public class ACPropagator implements IBasePropagator {
   %strategy CleanSingleVariable() extends Identity() {
     visit Constraint {
       /*
+       * f()   <<ac s => f() <<a s
        * f(X*) <<ac s => f(X*) <<a s
        */
       MatchConstraint(RecordAppl[
           Option=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@(Name[]), 
-          Slots=slots@concSlot(PairSlotAppl[Appl=VariableStar[]])],subject) -> {
-        System.out.println("case f(X*) <<ac s => f(X*) <<a s: " + `slots);
-        OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
-        Constraint result = `MatchConstraint(
-            RecordAppl(optWithoutAC, namelist, slots, concConstraint()),
-            subject);
-        System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
-        return result;
-      }
+          Slots=slots],subject) &&
+        (concSlot()<<slots || concSlot(PairSlotAppl[Appl=VariableStar[]])<<slots) -> {
+          System.out.println("case f(X*) <<ac s => f(X*) <<a s");
+          System.out.println("case f()   <<ac s => f()   <<a s: " + `slots);
+          OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
+          Constraint result = `MatchConstraint(
+              RecordAppl(optWithoutAC, namelist, slots, concConstraint()),
+              subject);
+          System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+          return result;
+        }
     }
   }
 
