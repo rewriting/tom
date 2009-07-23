@@ -47,6 +47,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
@@ -73,7 +74,6 @@ public class Typer extends TomGenericPlugin {
   %typeterm Typer { implement { Typer } }
 
   /** some output suffixes */
-  private static final String freshTypeVarPrefix = "_freshTypeVar_";
   public static final String TYPED_SUFFIX       = ".tfix.typed";
   public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
 
@@ -83,62 +83,130 @@ public class Typer extends TomGenericPlugin {
     "<boolean name='type' altName='' description='Typer (activated by default)' value='true'/>" +
     "</options>";
 
-  private TyperEnvironment typerEnvironment;
-
-  public TyperEnvironment getTyperEnvironment() {
-    return typerEnvironment;
-  }
+  /** the kernel typer acting at very low level */
+  private static KernelTyper kernelTyper;
 
   /** Constructor */
   public Typer() {
     super("Typer");
-    typerEnvironment = new TyperEnvironment();
+    kernelTyper = new KernelTyper();
   }
 
-  private class TyperEnvironment {
+ /**
+   * The run() method performs type inference for variables
+   * occurring in patterns and propagate this information for
+   * variables occurring in actions (BQVariables).
+   */
+  public void run(Map informationTracker) {
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
+    TomTerm typedTerm = null;
+    try {
+      /**
+        * Typing variables whose types are unknown with fresh type variables before
+        * start inference
+        */
+      Code typedCodeWithTypeVariables = typeUnknownTypes((Code)getWorkingTerm());
+      
+      /**
+        * Perform type inference over patterns 
+        */
+      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCodeWithTypeVariables);
+      
+      /** Transform each BackQuoteTerm into its compiled form --> maybe to
+        * desugarer phase before perform type inference 
+        */
+      // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
+      /** Transform a string into an array of characters before type inference, 
+        * so we can apply inference just once on all terms 
+        */
+      //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
+
+      // Update type information for codomain in symbol table
+      Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferedTypeForCode);
     
-    /** few attributes */
-    private SymbolTable symbolTable;
-    private int freshTypeVarCounter = 0;
- 
-    public TyperEnvironment() {
-      super();
-    }
+      //Propagate type information for all variables with same name
+      typedCode = kernelTyper.propagateVariablesTypes(typedCode);
 
-    /** Accessor methods */
-    public SymbolTable getSymbolTable() {
-      return this.symbolTable;
-    }
+      setWorkingTerm(typedCode); 
 
-    public void setSymbolTable(SymbolTable symbolTable) {
-      this.symbolTable = symbolTable;
+      // verbose
+      getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
+          new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
+      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+          new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
+      e.printStackTrace();
+      return;
     }
+    /* Add a suffix for the compilation option --intermediate during typing phase*/
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileName()
+          + TYPED_SUFFIX, typedTerm);
+      Tools.generateOutput(getStreamManager().getOutputFileName()
+          + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
+    }
+  }
 
-    public int getFreshTypeVarCounter() {
-      return this.freshTypeVarCounter;
+  /*
+   * Type unknown types with fresh type variables 
+   */
+  private Code typeUnknownTypes(Code subject) {
+    try {
+      return `TopDownIdStopOnSuccess(typeUnknownTypes(this)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
-    
-    public void setFreshTypeVarCounter(int freshVarCounter) {
-      this.freshTypeVarCounter = freshTypeVarCounter;
-    }
-    
-    public TomSymbol getSymbolFromName(String tomName) {
-      return TomBase.getSymbolFromName(tomName, getSymbolTable());
-    }
+  }
 
-    public TomSymbol getSymbolFromType(TomType type) {
-      %match(type) {
-        TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-          return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+  %strategy typeUnknownTypes(typer:Typer) extends Identity() {
+    visit TomType {
+      Type(tomType,EmptyType()) -> {
+        TomType type = typer.symbolTable().getType(`tomType);
+        if(type != null) {
+          return type;
+        } else {
+          return kernelTyper.getFreshTypeVar(); // useful for SymbolTable.TYPE_UNKNOWN
         }
       }
-      return TomBase.getSymbolFromType(type, getSymbolTable()); 
     }
-   
-  } // class TyperEnvironment
-
-  public void run(Map informationTracker) {
-    //TODO
   }
 
+  /*
+   * this post-processing phase replaces untyped (universalType) codomain
+   * by their precise type (according to the symbolTable)
+   */
+  %strategy updateCodomain(typer:Typer) extends `Identity() {
+    visit Declaration {
+      GetHeadDecl[] -> {
+          throw new TomRuntimeException("updateCodomain");
+      }
+
+      decl@GetHeadDecl[Opname=Name(opName)] -> {
+        TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
+        TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
+        if(codomain.length()==1) {
+          Declaration t = (Declaration)`decl;
+          t = t.setCodomain(codomain.getHeadconcTomType());
+          return t;
+        } else {
+          throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+        }
+      }
+
+      decl@GetHeadDecl[Variable=BQVariable[AstType=domain]] -> {
+        TomSymbol tomSymbol = typer.getSymbolFromType(`domain);
+        if(tomSymbol != null) {
+          TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
+
+          if(codomain.length()==1) {
+            Declaration t = (Declaration)`decl;
+            t = t.setCodomain(codomain.getHeadconcTomType());
+            return t;
+          } else {
+            throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+          }
+        }
+      }
+    } // end match
+  }
 }
