@@ -1,0 +1,3 @@
+%match(subject) {
+a << subject -> { System.out.println }
+}

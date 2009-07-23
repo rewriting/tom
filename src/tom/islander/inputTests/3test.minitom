@@ -1,0 +1,6 @@
+%match (MyType subject, MySecondType s2) { 
+  aa -> { tata }
+  ii -> { titi }
+  oo -> { toto }
+  _ -> { System.out.println }
+}
