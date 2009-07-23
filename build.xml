@@ -51,6 +51,9 @@
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
 
+  <!-- used for exclusion of islander during ./build.sh src.dist -->
+  <property name="src.islander"   location="${src.src}/tom/islander"/>
+
   <!-- for distribution: top, stable and src -->
   <property name="dist"              location="dist"/>
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
@@ -278,6 +281,7 @@
 
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
+      <exclude name="tom/islander/**/*.g.t"/>
       <!-- needs to generate mappings first -->
       <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
@@ -494,6 +498,7 @@
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
+      <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -874,7 +879,6 @@
         <exclude name="lib/tools/*"/>
       </tarfileset>
     </tar>
-
 
   </target>
 
@@ -1303,6 +1307,7 @@
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
+      <exclude name="tom/islander/**/*.java"/>
     </tomjavac>
   </target>
 
