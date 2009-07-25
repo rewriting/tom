@@ -32,6 +32,7 @@ package sl;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
+import sl.testsl.types.*;
 
 public class TestSL {
 
@@ -51,83 +52,123 @@ public class TestSL {
 
   @Test
   public void testSL1() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test1() == nb.test1() );
+    Term result = `f(a());
+    assertEquals( result, ob.test1() );
+    assertEquals( result, nb.test1() );
   }
   @Test
   public void testSL2() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test2() == nb.test2() );
+    Term result = `f(b());
+    assertEquals( result, ob.test2() );
+    assertEquals( result, nb.test2() );
   }
   @Test
   public void testSL3() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test3() == nb.test3() );
+    Term result = `f(a());
+    assertEquals( result, ob.test3() );
+    assertEquals( result, nb.test3() );
   }
   @Test
   public void testSL4() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test4() == nb.test4() );
+    Term result = `g(f(c()),c());
+    assertEquals( result, ob.test4() );
+    assertEquals( result, nb.test4() );
   }
   @Test
   public void testSL5() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test5() == nb.test5() );
+    Term result = `g(f(b()),c()); 
+    assertEquals( result, ob.test5() );
+    assertEquals( result, nb.test5() );
   }
   @Test
   public void testSLChoice() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.testChoice() == nb.testChoice() );
+    Term result = `f(b()); //'Choice' does not fail even if both choices fail.
+    assertEquals( result, ob.testChoice() );
+    assertEquals( result, nb.testChoice() );
   }
   @Test
   public void testSLChoiceSideEffect() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.testChoiceSideEffect() == nb.testChoiceSideEffect() );
-  } 
+    Term result = `f(b()); //'Choice' does not fail even if both choices fail, but the side effect of first R1() remains.
+    assertEquals( result, ob.testChoiceSideEffect() );
+    assertEquals( result, nb.testChoiceSideEffect() );
+  }
   @Test
   public void testSLNot() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.testNot() == nb.testNot() );
+    Term result = `f(b());
+    assertEquals( result, ob.testNot() );
+    assertEquals( result, nb.testNot() );
   }
   @Test
   public void testSLNotSideEffect() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.testNotSideEffect() == nb.testNotSideEffect() );
+    Term result = `f(a());
+    assertEquals( result, ob.testNotSideEffect() );
+    assertEquals( result, nb.testNotSideEffect() );
   }
   @Test
-  public void testSL6() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test6() == nb.test6() );
+  public void testSL6() throws tom.library.sl.VisitFailure {
+    Term result = `g(f(c()),c());
+    assertEquals( result, ob.test6() );
+    assertEquals( result, nb.test6() );
   }
   @Test
   public void testSL7() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test7() == nb.test7() );
+    Term result = `g(f(b()),b());
+    assertEquals( result, ob.test7() );
+    assertEquals( result, nb.test7() );
   }
   @Test
   public void testSL8() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test8() == nb.test8() );
+    Term result = `g(f(a()),c()); 
+    assertEquals( result, ob.test8() );
+    assertEquals( result, nb.test8() );
   }
   @Test
   public void testSL9() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.test9() == nb.test9() );
+    Term result = `b(); 
+    assertEquals( result, ob.test9() );
+    assertEquals( result, nb.test9() );
   }
   @Test
   public void testITESideEffect() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
+    Term result = `f(a()); //todo?? should this not produce side effect?
+    assertEquals( result, ob.testITESideEffect() );
+    assertEquals( result, nb.testITESideEffect() );
   }
   @Test
   public void testSL10() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.test10() == nb.test10() );
+    Term result = `a();
+    assertEquals( result, ob.test10() );
+    assertEquals( result, nb.test10() );
   }
   @Test
   public void testSL11() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.test11() == nb.test11() );
+    Term result = `g(f(c()),c());
+    assertEquals( result, ob.test11() );
+    assertEquals( result, nb.test11() );
   }
   @Test
   public void testSL12() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.test12() == nb.test12() );
+    Term result = `g(f(c()),c()); //'Innermost' applies until no more success. (3 applications as in previous)
+    assertEquals( result, ob.test12() );
+    assertEquals( result, nb.test12() );
   }
   @Test
   public void testSL13() throws tom.library.sl.VisitFailure {   
-    assertTrue( ob.test13() == nb.test13() );
+    Term result = `g(f(c()),c()); //'Outermost' applies until no more success. (3 applications as in previous)
+    assertEquals( result, ob.test13() );
+    assertEquals( result, nb.test13() );
   }
   @Test
   public void testSLWhen1() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.testWhen1() == nb.testWhen1() );
+    Term result = `f(b());
+    assertEquals( result, ob.testWhen1() );
+    assertEquals( result, nb.testWhen1() );
   }
   @Test
   public void testSLCongruence1() throws tom.library.sl.VisitFailure {    
-    assertTrue( ob.testCongruence1() == nb.testCongruence1() );
+    Term result = `g(f(b()),c());
+    assertEquals( result, ob.testCongruence1() );
+    assertEquals( result, nb.testCongruence1() );
   }
   @Test
   public void testSLCongruence2() throws tom.library.sl.VisitFailure {  
@@ -143,7 +184,9 @@ public class TestSL {
   }
   @Test
   public void testSLCongruenceList() throws tom.library.sl.VisitFailure {
-    assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
+    Term result = `l(a(),c()); 
+    assertEquals( result, ob.testCongruenceList() );
+    assertEquals( result, nb.testCongruenceList() );
   }
 
 }
