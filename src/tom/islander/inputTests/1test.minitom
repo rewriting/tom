@@ -1,14 +1,15 @@
-%match(MyType subject, MySecondType s2) { 
+%match(MyType subject, otherSubject, MySecondType s2*, s3*, f(a,b)) { 
   _ -> { underscore }
-  _* -> { underscore.Star }
-  _,_* -> { underscore.Underscore.Star }
-  !aa -> { anti.aa }
-  myAnnotation@_ -> { annotated.Underscore}
-  anno@!bb -> { anno.at.anti.bb }
+  _* -> { underscoreStar }
+  _,_* -> { underscoreUnderscoreStar }
+  !a -> { antiA }
+  myAnnotation@_ -> { annotatedUnderscore}
+  anno@!b -> { annoAtAntiB }
 }
 
-%match(newSubject){
- _ -> { secondMatch }
+%match {
+ a*==b -> { test1 }
+ f(a,g(y))==z || a==b || c<=z && i==e -> { test2 }
 }
 
 {
@@ -16,3 +17,4 @@
     _ -> { thirdMatch }
   }
 }
+

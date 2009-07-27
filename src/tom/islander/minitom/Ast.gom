@@ -1,0 +1,211 @@
+module minitom.Ast
+
+imports int String
+
+abstract syntax
+
+// Temporary starting point
+CompilationUnit = CompilationUnit(BlockList:BlockList)
+
+TomType = Type(TomType:String)
+        | EmptyType()
+
+//TomTypeList = TomTypeList(TomType*)
+
+TomTerm = Variable(Name:TomName,Type:TomType)
+        | VariableStar(Name:TomName,Type:TomType)
+        | AntiVariable(Name:TomName,Type:TomType)
+        | AntiVariableStar(Name:TomName,Type:TomType)
+        | UnamedVariable() // Underscore()
+        | UnamedVariableStar() // UnderscoreStar()
+        | NamedTermList(Name:TomName,TomTermList:TomTermList)
+     //   | PairTerm(Name:TomName,Type:TomType)
+
+TomTermList = TomTermList(TomTerm*)
+            | EmptyList()
+
+TomName = Name(String:String)
+        | EmptyName()
+
+TomNameList = TomNameList(TomName*)
+
+/*
+Option = 
+
+OptionList = OptionList(Option*)
+*/
+
+Pattern = Pattern(Pattern:PlainPattern)
+        | AnnotedPattern(Pattern:PlainPattern,Annotation:String)
+
+PlainPattern = PlainPattern(Term:TomTerm)
+             | XMLTerm(NameList:TomNameList,Attrs:TomTermList,ChildList:TomTermList) // ?
+             | PPExplicitTermList(PatternList:PatternList)
+             | SymbolList(Head:HeadSymbolList,Tail:TailList)
+             | AntiSymbolList(Head:HeadSymbolList,Tail:TailList)
+
+TailList = ImplicitPairList(PairPatternList:PairPatternList)
+         | ExplicitTermList(PatternList:PatternList)
+
+PairPattern = PairPattern(SlotName:String,Pattern:Pattern)
+
+PairPatternList = PairPatternList( PairPattern* )
+
+HeadSymbolList = HeadSymbolList(HeadSymbol*)
+
+HeadSymbol = HeadSymbol(Name:String)
+           | HeadSymbolQMark(Name:String)
+
+PatternList = PatternList( Pattern* )
+
+PatternAction = PatternAction(Patterns:PatternList,BlockList:BlockList)
+              | LabelledPatternAction(Patterns:PatternList,BlockList:BlockList,LabelName:String)
+              | EmptyPatternAction()
+
+PatternActionList = PatternActionList(PatternAction*)
+
+ConstraintActionList = ConstraintActionList(ConstraintAction*)
+
+ConstraintAction = ConstraintAction(Constraint:Constraint,Blocklist:BlockList)
+
+Constraint = AndConstraint(Left:Constraint,Right:Constraint)
+           | OrConstraint(Left:Constraint,Right:Constraint)
+           | MatchConstraint(Pattern:TomTerm,Subject:TomTerm)
+           | OpConstraint(Pattern:TomTerm,Subject:TomTerm,Op:Operator)
+           | ConstraintList(Constraint*)
+
+Operator = NumLessOrEqualThan()
+         | NumGreaterOrEqualThan()
+         | NumEqual()
+         | NumDifferent()
+         | NumLessThan()
+         | NumGreaterThan()
+
+BlockList = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
+	  | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
+          | CompositeTerm(CompositeTerm:String)
+          | BlockList( BlockList* )
+
+// temporary constructors, for test purpose
+/*Arg = Arg(Name:String)
+ArgList = concArg(Arg*)*/
+
+//=========================================
+
+// grammaire matchconstruct du wiki : 
+/*
+
+MatchConstruct 	 ::= 	 '%match' '(' MatchArguments ')' '{' ( PatternAction )* '}'
+	∣ 	'%match' '{' ( ConstraintAction )* '}'
+MatchArguments 	::= 	[Type] Term ( ',' [Type] Term )*
+PatternAction 	::= 	[LabelName':'] PatternList '->' '{' BlockList '}'
+PatternList 	::= 	Pattern( ',' Pattern )* [ ('&&' ∣'||') Constraint ]
+ConstraintAction 	::= 	Constraint '->' '{' BlockList '}'
+Constraint 	::= 	Pattern '<<' [Type] Term
+	∣ 	Constraint '&&' Constraint
+	∣ 	Constraint '||' Constraint
+	∣ 	'(' Constraint ')'
+	∣ 	Term Operator Term
+Operator 	::= 	'>' ∣'>=' ∣'<' ∣'<=' ∣'==' ∣'!='
+*/
+
+//  grammaire pattern du wiki
+/*
+
+Term 	 ::= 	 VariableName['*']
+	∣ 	Name '('[Term ( ',' Term )*]')'
+Pattern 	::= 	[ AnnotedName '@' ] PlainPattern
+PlainPattern 	::= 	['!']VariableName [ '*' ]
+	∣ 	['!'] HeadSymbolList (ExplicitTermList ∣ ImplicitPairList)
+	∣ 	ExplicitTermList
+	∣ 	'_'
+	∣ 	'_*'
+	∣ 	XMLTerm
+HeadSymbolList 	::= 	HeadSymbol [ '?' ]
+	∣ 	'(' HeadSymbol ( '∣' HeadSymbol )+ ')'
+ExplicitTermList 	::= 	'(' [ Pattern ( ',' Pattern )*] ')'
+ImplicitPairList 	::= 	'[' [ PairPattern ( ',' PairPattern )*] ']'
+PairPattern 	::= 	SlotName '=' Pattern
+*/
+
+// convention lexicales du wiki -> cf lexer
+/*
+Identifier 	 ::= 	 Letter ( Letter ∣ Digit ∣ '_' ∣ '-' )*
+Integer 	::= 	(Digit )+
+Double 	::= 	(Digit)+ ['.'] (Digit)* ∣ '.' (Digit)+
+String 	::= 	'"' (Letter ∣ ('\' ('n' ∣ 't' ∣ 'b' ∣ 'r' ∣ 'f' ∣ '\' ∣ '’' ∣ '"') ) )* '"'
+Letter 	::= 	'A' ... 'Z' ∣ 'a' ... 'z'
+Digit 	::= 	'0' ... '9'
+Char 	::= 	'’' (Letter ∣Digit) '’'
+*/
+
+// convention names  du wiki -> lexer
+/*
+SubjectName 	 ::= 	 Identifier
+Type 	::= 	Identifier
+SlotName 	::= 	Identifier
+HeadSymbol 	::= 	Identifier
+  ∣ 	Integer
+	∣ 	Double
+	∣ 	String
+	∣ 	Char
+VariableName 	::= 	Identifier
+AnnotedName 	::= 	Identifier
+LabelName 	::= 	Identifier
+FileName 	::= 	Identifier
+AttributeName 	::= 	Identifier
+XMLName 	::= 	Identifier
+Name 	::= 	Identifier
+*/
+
+// grammaire tom program  du wiki
+/*
+Tom 	 ::= 	 BlockList
+BlockList 	::=
+	( 	MatchConstruct
+	∣ 	StrategyConstruct
+	∣ 	BackQuoteTerm
+	∣ 	IncludeConstruct
+	∣ 	GomConstruct
+	∣ 	TypeTerm
+	∣ 	Operator
+	∣ 	OperatorList
+	∣ 	OperatorArray
+	∣ 	'{' BlockList '}'
+	)* 
+*/
+
+
+// grammaire anti pattern du wiki
+/*
+PlainPattern 	 ::= 	 ['!'] VariableName
+	∣ 	['!'] HeadSymbolList ( ExplicitTermList ∣ ImplicitPairList )
+	∣ 	... 
+*/
+
+
+// grammaire XML Term du wiki
+/*
+XMLTerm 	 ::= 	 '<' XMLNameList XMLAttrList '/>'
+	∣ 	'<' XMLNameList XMLAttrList '>' XMLChilds '</' XMLNameList '>'
+	∣ 	'#TEXT' '(' Identifier ∣ String ')'
+	∣ 	'#COMMENT' '(' Identifier ∣ String ')'
+	∣ 	'#PROCESSING-INSTRUCTION'
+		'(' (Identifier ∣ String) ',' (Identifier ∣ String) ')'
+XMLNameList 	::= 	XMLName
+	∣ 	'(' XMLName ( '∣' XMLName )* ')'
+XMLAttrList 	::= 	'[' [ XMLAttribute (',' XMLAttribute)* ] ']'
+	∣ 	'(' [ XMLAttribute (',' XMLAttribute)* ] ')'
+	∣ 	( XMLAttribute )*
+XMLAttribute 	::= 	'_*'
+	∣ 	VariableName '*'
+	∣ 	AttributeName '=' [AnnotedName '@'] ( Identifier ∣ String )
+	∣ 	[AnnotedName '@'] '_' '=' [AnnotedName '@'] ( Identifier ∣ String )
+XMLChilds 	::= 	( Term )*
+	∣ 	'[' Term ( ',' Term )* ']'
+*/
+
+
+/*
+ *
+ * */
