@@ -3,13 +3,13 @@ module TypeConstraints
 imports String TomType
 abstract syntax
 
-* Type Reconstruction */
+/* Type Reconstruction */
 TypeConstraint = Equation(Type1: TomType, Type2: TomType)
                | Subtype(Type1: TomType, Type2: TomType)
 
 TypeConstraintList = concTypeConstraint(TypeConstraint*)
-                   | False()
-                   | True()
+                   | FalseTypeConstraint()
+                   | TrueTypeConstraint()
 
 ReconResult = Pair(Type: TomType, constraints: TypeConstraintList)
 

@@ -47,6 +47,7 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
+import tom.engine.adt.typeconstraints.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -65,6 +66,7 @@ public class KernelTyper {
   }
 
   /** few attributes */
+  private TypeConstraintList constraintsToTypeVariable = `concTypeConstraint();
   private SymbolTable symbolTable;
   private int freshTypeVarCounter = 0;
 
@@ -77,12 +79,22 @@ public class KernelTyper {
     return this.symbolTable;
   }
 
-  public void setSymbolTable(SymbolTable symbolTable) {
-    this.symbolTable = symbolTable;
+  public void setSymbolTable(SymbolTable newSymbolTable) {
+    this.symbolTable = newSymbolTable;
   }
 
   public TomType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
+  }
+
+  public TypeConstraintList getConstraints() {
+    return this.constraintsToTypeVariable;
+  }
+
+  public void addConstraints(TypeConstraint newConstraint) {
+    TypeConstraintList auxList = this.constraintsToTypeVariable;
+    this.constraintsToTypeVariable=
+      `concTypeConstraint(newConstraint,auxList*); 
   }
 
   public TomSymbol getSymbolFromName(String tomName) {
@@ -127,22 +139,17 @@ public class KernelTyper {
       subject@OriginTracking[] -> { return `subject; }
     }
 
+   // Treat java code?? 
     visit TargetLanguage {
       subject@TL[] -> { return `subject; }
       subject@ITL[] -> { return `subject; }
       subject@Comment[] -> { return `subject; }
     }
-    
-    // FIXME it seems to be duplicated code as in typeUnknownTypes strategy
-    // in Typer.t file
+
+    // Return type found on symbolTable 
     visit TomType {
       Type(tomType,EmptyType()) -> {
-        TomType type = kernelTyper.getType(`tomType);
-        if(type != null) {
-          return type;
-        } else {
-          return kernelTyper.getFreshTypeVar(); // useful for SymbolTable.TYPE_UNKNOWN
-        }
+        return kernelTyper.getType(`tomType);
       }
     }
 
@@ -150,7 +157,10 @@ public class KernelTyper {
       VisitTerm(type,constraintInstructionList,options) -> {
         TomType newType = (TomType)`kernelTyper.typeVariable(contextType,`type);
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        // Collect all match and numeric match (with explicit declaration of
+        // type)
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        // Type a list of matchs
         return `VisitTerm(newType, kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
       }
     }
@@ -160,6 +170,7 @@ public class KernelTyper {
        * Expansion of a Match construct
        * to add types in subjects
        * to add types in variables of patterns and rhs
+       * constraintInstructionList is a list of pair (condition,action)
        */
       Match(constraintInstructionList, options) -> {
         TomType newType = contextType;
@@ -170,7 +181,7 @@ public class KernelTyper {
     }
 
     visit TomTerm {
-      // TO TYPE A FUNCTION OR A LIST
+      // Type a function or a list 
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
@@ -188,8 +199,10 @@ public class KernelTyper {
           tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         }
 
+        // ADD: CT-Fun
         if(tomSymbol != null) {
-          SlotList subterm = kernelTyper.typeVariableList(tomSymbol, `slotList);
+          SlotList subterm =
+            kernelTyper.typeVariableList(tomSymbol,`slotList);//send domain
           ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
           return `RecordAppl(option,nameList,subterm,newConstraints);
         } else {
@@ -209,25 +222,20 @@ public class KernelTyper {
           }
         }
       }
-      // TO TYPE A VARIABLE
-      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
-        TomType localType = kernelTyper.getType(`tomType);
-        //System.out.println("localType = " + localType);
-        if(localType != null) {
-          // The variable has already a known type
-          return `var.setAstType(localType);
-        }
-
-        //System.out.println("contextType = " + contextType);
-        %match(contextType) {
-          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
-            TomType ctype = `Type(tomType,tlType);
-            ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(ctype,`constraints);
-            TomTerm newVar = `var.setAstType(ctype);
-            //System.out.println("newVar = " + newVar);
-            return newVar.setConstraints(newConstraints);
-          }
-        }
+      // FIXME: it seems to be useless to match against a "UnamedVariable"
+      // since the desugarer has already replaced unknown variables by fresh
+      // variables
+      /*
+       * Type a variable
+       * CT-VAR rule: 
+       * found "x:A" and "x:T" already exists in SymbolTable 
+       * -> add a type constraint "A = T"
+       */
+      (Variable|UnamedVariable)[AstType=localType@Type(tomType,EmptyType()),Constraints=constraints] -> {
+        //The variable will always have a type: a primitive type or an unknown
+        //type (a fresh type variable)
+        TomType globalType = kernelTyper.getType(`tomType);
+        kernelTyper.addConstraints(`Equation(localType,globalType));
       }
     }
   }
@@ -296,6 +304,7 @@ public class KernelTyper {
 
   /**
    * Collect the constraints (match and numeric)
+   * NumericConstraint are %match with explicit type declaration
    */
   %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends Identity() {
     visit Constraint {

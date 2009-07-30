@@ -109,9 +109,10 @@ public class Typer extends TomGenericPlugin {
       Code typedCodeWithTypeVariables = typeUnknownTypes((Code)getWorkingTerm());
       
       /**
+        * Start by typing variables with fresh type variables
         * Perform type inference over patterns 
         */
-      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCodeWithTypeVariables);
+      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
       
       /** Transform each BackQuoteTerm into its compiled form --> maybe to
         * desugarer phase before perform type inference 
@@ -160,13 +161,13 @@ public class Typer extends TomGenericPlugin {
 
   %strategy typeUnknownTypes(typer:Typer) extends Identity() {
     visit TomType {
-      Type(tomType,EmptyType()) -> {
-        TomType type = typer.symbolTable().getType(`tomType);
-        if(type != null) {
-          return type;
-        } else {
-          return kernelTyper.getFreshTypeVar(); // useful for SymbolTable.TYPE_UNKNOWN
+      Type(typeName,EmptyType()) -> {
+        TomType type = typer.symbolTable().getType(`typeName);
+        if(type == null) {
+          type = kernelTyper.getFreshTypeVar(); 
+          typer.symbolTable().putType(`typeName,type);
         }
+        return type;
       }
     }
   }
