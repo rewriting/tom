@@ -228,8 +228,8 @@ public class KernelTyper {
       /*
        * Type a variable
        * CT-VAR rule: 
-       * found "x:A" and "x:T" already exists in SymbolTable 
-       * -> add a type constraint "A = T"
+       * IF found "x:A" and "x:T" already exists in SymbolTable 
+       * THEN add a type constraint "A = T"
        */
       (Variable|UnamedVariable)[AstType=localType@Type(tomType,EmptyType()),Constraints=constraints] -> {
         //The variable will always have a type: a primitive type or an unknown
