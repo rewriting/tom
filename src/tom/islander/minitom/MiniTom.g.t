@@ -26,7 +26,20 @@ compilationUnit
 blockList
   : LBRACE blockList RBRACE -> ^(BlockList blockList)
   | matchConstruct
-  | compositeTerm
+  | compositeTerm // to modify
+  | operator
+  | operatorList
+  | operatorArray
+  | typeTerm
+  | includeConstruct
+  | strategyConstruct
+/*
+  | gomConstruct
+*/
+  ;
+
+goalLanguageBlock
+  : LBRACE blockList RBRACE -> ^(BlockList blockList)
   ;
 
 matchConstruct
@@ -53,8 +66,8 @@ compositeTerm
 
 // Is it necessary to create a node for a plainPattern ?
 pattern
-  : plainPattern -> ^(Pattern plainPattern )//^(PlainPattern plainPattern ))
-  | annotatedName=ID AT plainPattern -> ^(AnnotedPattern plainPattern ID[annotatedName])//^(PlainPattern plainPattern ) ID[annotatedName])
+  : plainPattern -> ^(Pattern plainPattern )
+  | annotatedName=ID AT plainPattern -> ^(AnnotedPattern plainPattern ID[annotatedName])
   ;
 
 patternList
@@ -88,43 +101,42 @@ constraint
   | orConstraint
   | simpleOrConstraint
   | LPAREN constraint RPAREN -> constraint
-  | operator
+  | numOperator
   ;
 
 // 'or' and 'and' constraints have the same priority as in Java
 orConstraint
   : simpleOrConstraint OR_CONNECTOR andConstraint -> ^(OrConstraint simpleOrConstraint andConstraint)
   | matchConstraint OR_CONNECTOR andConstraint -> ^(OrConstraint matchConstraint andConstraint)
-  | operator OR_CONNECTOR andConstraint -> ^(OrConstraint operator andConstraint)
+  | numOperator OR_CONNECTOR andConstraint -> ^(OrConstraint numOperator andConstraint)
   | simpleOrConstraint
   ;
 
 simpleOrConstraint
   : m1=matchConstraint OR_CONNECTOR m2=matchConstraint -> ^(OrConstraint $m1 $m2 )
-  | o1=operator OR_CONNECTOR o2=operator -> ^(OrConstraint $o1 $o2 )
-  | operator OR_CONNECTOR matchConstraint -> ^(OrConstraint operator matchConstraint )
-  | matchConstraint OR_CONNECTOR operator -> ^(OrConstraint matchConstraint operator )
+  | o1=numOperator OR_CONNECTOR o2=numOperator -> ^(OrConstraint $o1 $o2 )
+  | numOperator OR_CONNECTOR matchConstraint -> ^(OrConstraint numOperator matchConstraint )
+  | matchConstraint OR_CONNECTOR numOperator -> ^(OrConstraint matchConstraint numOperator )
   ;
 
 andConstraint
   : matchConstraint AND_CONNECTOR andConstraint -> ^(AndConstraint matchConstraint andConstraint)
-  | operator AND_CONNECTOR andConstraint -> ^(AndConstraint operator andConstraint )
+  | numOperator AND_CONNECTOR andConstraint -> ^(AndConstraint numOperator andConstraint )
   | simpleAndConstraint
   ;
 
 simpleAndConstraint
   : m1=matchConstraint AND_CONNECTOR m2=matchConstraint -> ^(AndConstraint $m1 $m2)
-  | matchConstraint AND_CONNECTOR operator -> ^(AndConstraint matchConstraint operator)
-  | operator AND_CONNECTOR matchConstraint -> ^(AndConstraint operator matchConstraint )
-  | o1=operator AND_CONNECTOR o2=operator -> ^(AndConstraint $o1 $o2 )
-
+  | matchConstraint AND_CONNECTOR numOperator -> ^(AndConstraint matchConstraint numOperator)
+  | numOperator AND_CONNECTOR matchConstraint -> ^(AndConstraint numOperator matchConstraint )
+  | o1=numOperator AND_CONNECTOR o2=numOperator -> ^(AndConstraint $o1 $o2 )
   ;
 
 matchConstraint
   : left=pattern MATCH_CONSTRAINT right=term -> ^(MatchConstraint $left $right)
   ;
 
-operator
+numOperator
   : left=term LESSOREQUAL_CONSTRAINT right=term
     -> ^(OpConstraint $left $right ^(NumLessOrEqualThan ))
   | left=term GREATEROREQUAL_CONSTRAINT right=term
@@ -147,10 +159,9 @@ term //why 'ID? ID' and '?ID ID STAR' do not work fine ???
   : t1=ID n1=ID STAR -> ^(VariableStar ^(Name $n1 ) ^(Type $t1) )
   | n2=ID STAR -> ^(VariableStar ^(Name $n2 ) ^(EmptyType ) )
   | t3=ID n3=ID -> ^(Variable ^(Name $n3 ) ^(Type $t3) )
-  | n4=ID -> ^(Variable ^(Name $n4 ) ^(EmptyType ) )
-  | name=ID LPAREN termList* RPAREN -> ^(NamedTermList ^(Name $name ) termList*)
+  | n4=ID (LPAREN RPAREN)? -> ^(Variable ^(Name $n4 ) ^(EmptyType )) // '(LPAREN RPAREN)?' in order to regognize correctly a()
+  | name=ID LPAREN termList RPAREN -> ^(NamedTermList ^(Name $name ) termList)
   ;
-
 /*term[Token type]
   : ID
     -> {type!=null}? ^(Variable ^(Name ID) ^(Type ID[type]))
@@ -169,23 +180,27 @@ termList
 xmlTerm
   : XML_START xmlNameList xmlAttrList XML_CLOSE_SINGLETON -> ^(XMLTerm xmlNameList xmlAttrList ^(TomTermList ))
   | XML_START xmlNameList xmlAttrList XML_CLOSE xmlChilds XML_START_ENDING xmlNameList XML_CLOSE -> ^(XMLTerm xmlNameList xmlAttrList xmlChilds)
-/*  | XML_TEXT LPAREN ( ID | STRING ) RPAREN -> ^(XMLTerm ^(concTomName ) ^(TomTermList ))
-  | XML_COMMENT LPAREN ( ID | STRING ) RPAREN -> ^(XMLTerm )
+  | XML_TEXT LPAREN (id=ID | id=STRING ) RPAREN -> ^(XMLTerm ^(TomNameList ^(Name $id)) ^(EmptyList ) ^(EmptyList ))
+/*  | XML_COMMENT LPAREN ( ID | STRING ) RPAREN -> ^(XMLTerm )
   | XML_PROC LPAREN ( ID | STRING ) COMMA ( ID | STRING ) RPAREN -> ^(XMLTerm )
 */
   ;
 
 xmlAttrList
   : LBRACKET (xmlAttr (COMMA xmlAttr)*)? RBRACKET -> ^(TomTermList xmlAttr+)
-  | xmlAttr* -> ^(TomTermList xmlAttr)
+  | xmlAttr* -> ^(TomTermList xmlAttr*)
   ;
 
 xmlAttr
   : UNDERSCORE STAR -> ^(UnamedVariableStar ) //^(UnderscoreStar )
-  //| ID STAR -> ^(VariableStar ^(Name ID) ^(EmptyType ))
-/*  | ID EQUAL (id1=ID AT)? id2=( ID | STRING ) -> // ?
-  | (id1=ID AT)? UNDERSCORE EQUAL (id2=ID AT)? id3=( ID | STRING ) -> // ?
-*/
+  | ID STAR -> ^(VariableStar ^(Name ID) ^(EmptyType ))
+  | id=ID EQUAL id1=ID AT id2=ID/* | STRING )*/ -> ^(XMLAttr ^(Name $id ) ID[$id2] ^(Annotation $id1) ) // ?
+  | id=ID EQUAL id2=ID/* | STRING )*/ -> ^(XMLAttr ^(Name $id ) ID[$id2] ^(EmptyAnnotation )) // ?
+  //| (id1=ID AT)? UNDERSCORE EQUAL (id2=ID AT)? id3=ID/* | STRING )*/ -> ^(UnamedXMLAttr ID[$id3] (ID[$id1])? (ID[$id2])? )// ?
+  | id1=ID AT UNDERSCORE EQUAL id2=ID AT id3=ID/* | STRING )*/ -> ^(UnamedXMLAttr ID[$id3] ^(Annotation $id2) ^(Annotation $id1))// ?
+  | id1=ID AT UNDERSCORE EQUAL id3=ID/* | STRING )*/ -> ^(UnamedXMLAttr ID[$id3] ^(Annotation $id1) ^(EmptyAnnotation ))// ?
+  | UNDERSCORE EQUAL id2=ID AT id3=ID/* | STRING )*/ -> ^(UnamedXMLAttr ID[$id3] ^(EmptyAnnotation ) ^(Annotation $id2))// ?
+  | UNDERSCORE EQUAL id3=ID/* | STRING )*/ -> ^(UnamedXMLAttr ID[$id3] ^(EmptyAnnotation ) ^(EmptyAnnotation ))// ?
   ;
 
 xmlChilds //TermList
@@ -198,7 +213,7 @@ xmlNameList
   | LPAREN ID (ALTERNATIVE ID)* RPAREN -> ^(TomNameList ^(Name ID )+)
   ;
 
-//something like that ???
+//something like that ?
 /*headSymbol
   : ID -> ^(HeadSymbol ID )
   | INT -> ^(Integer )
@@ -207,11 +222,9 @@ xmlNameList
   | CHAR -> ^(Char )
   ;*/
 
-//something like that
 headSymbolList
-  : ID qm=QMARK?
-    -> {qm!=null}? ^(HeadSymbolQMark ID )
-    -> ^(HeadSymbol ID )
+  : ID QMARK -> ^(HeadSymbolList ^(HeadSymbolQMark ID ))
+  | ID -> ^(HeadSymbolList ^(HeadSymbol ID ))
   | LPAREN ID (ALTERNATIVE ID)+ RPAREN -> ^(HeadSymbolList ID+)
   ;
 
@@ -221,17 +234,170 @@ tail
   ;
 
 explicitTermList
-  : LPAREN (pattern (COMMA pattern)* )? RPAREN -> ^(PatternList pattern+ ) // ???
+  : LPAREN (pattern (COMMA pattern)* )? RPAREN -> ^(PatternList (pattern+)? )
   ;
 
 implicitPairList
-  : LBRACKET (pairPattern (COMMA pairPattern)* )? RBRACKET -> ^(PairPatternList pairPattern+)
+  : LBRACKET (pairPattern (COMMA pairPattern)* )? RBRACKET -> ^(PairPatternList (pairPattern+)? )
   ;
 
 pairPattern
   : ID EQUAL pattern -> ^(PairPattern ID ^(Pattern pattern ))
   ;
 
+//Include
+includeConstruct
+  : INCLUDE LBRACE FILENAME -> ^(Include FILENAME)
+  ;
+
+
+//Strategy
+strategyConstruct
+  : STRATEGY ID LPAREN strategyArguments* RPAREN EXTENDS term LBRACE strategyVisitList RBRACE -> ^(Strategy ^(Name ID) term strategyVisitList strategyArguments* )
+  ;
+
+strategyArguments
+  : n=ID COLON t=ID ( COMMA n2=ID COLON t2=ID )* -> ^(TomTermList ^(Variable ^(Name $n) ^(Type $t))+ )
+  | t=ID n=ID ( COMMA t2=ID n2=ID )* -> ^(TomTermList ^(Variable ^(Name $n) ^(Type $t))+ )
+  ;
+
+strategyVisitList
+  : strategyVisit* -> ^(StrategyVisitList strategyVisit*)
+  ;
+
+strategyVisit
+  : VISIT t=ID LBRACE visitAction* RBRACE -> ^(StrategyVisit ^(Type $t) ^(VisitActionList visitAction*))
+  ;
+
+visitAction // almost the same as patternAction
+  : label=ID COLON patternList ARROW LBRACE blockList RBRACE -> ^(LabelledVisitActionBL patternList blockList $label)
+  | label=ID COLON patternList ARROW term -> ^(LabelledVisitActionT patternList term $label)
+  | patternList ARROW LBRACE blockList RBRACE -> ^(VisitActionBL patternList blockList)
+  | patternList ARROW term -> ^(VisitActionT patternList term)
+  ;
+
+//Operator
+operator
+  : OPERATOR t=ID n=ID LPAREN slotList? RPAREN LBRACE keywordIsFsym ol=( keywordMake | keywordGetSlot )* RBRACE -> ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym ^(OperatorList $ol ))
+  ;
+
+keywordIsFsym
+  : KW_ISFSYM LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsFsym $name goalLanguageBlock)
+  ;
+
+keywordMake 
+  : KW_MAKE LPAREN /*nameList*/ l=(ID ( COMMA ID )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
+//  | KW_MAKE LPAREN RPAREN -> ^(Make ^(TomNameList ) goalLanguageBlock)
+  ;
+
+keywordGetSlot 
+  : KW_GETSLOT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(GetSlot $n1 $n2 goalLanguageBlock)
+  ;
+
+keywordGetHead
+  : KW_GETHEAD LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetHead $name goalLanguageBlock)
+  ;
+
+keywordGetTail
+  : KW_GETTAIL LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetTail $name goalLanguageBlock)
+  ;
+
+keywordIsEmpty
+  : KW_ISEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsEmpty $name goalLanguageBlock)
+  ;
+
+keywordMakeEmptyList
+  : KW_MKEMPTY LPAREN RPAREN goalLanguageBlock -> ^(MakeEmptyList goalLanguageBlock)
+  ;
+
+keywordMakeInsert
+  : KW_MKINSERT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(MakeInsert $n1 $n2 goalLanguageBlock)
+  ;
+
+keywordGetElement
+  : KW_GETELEMENT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(GetElement $n1 $n2 goalLanguageBlock)
+  ;
+
+keywordGetSize
+  : KW_GETSIZE LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetSize $name goalLanguageBlock)
+  ;
+
+keywordMakeEmptyArray
+  : KW_MKEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(MakeEmptyArray $name goalLanguageBlock)
+  ;
+
+keywordMakeAppend
+  : KW_MKAPPEND LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(MakeAppend $n1 $n2 goalLanguageBlock)
+  ;
+
+// 
+//  : ID -> ^(TomNameList ^(Name ID ))
+//  | LPAREN ID (ALTERNATIVE ID)* RPAREN -> ^(TomNameList ^(Name ID )+)
+//nameList
+//  : ID ( COMMA ID )* -> ^(TomNameList ^(Name ID)+)
+//  ;
+
+slot
+  : n=ID COLON t=ID -> ^(Slot ^(Name $n) ^(Type $t))
+  ;
+
+slotList
+  : slot ( COMMA slot )* -> ^(SlotList slot+)
+  ;
+//
+
+operatorList
+  : OPLIST t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym ol=( keywordMakeEmptyList | keywordMakeInsert | keywordGetHead | keywordGetTail | keywordIsEmpty )* RBRACE -> ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList $ol ))
+  ;
+
+operatorArray
+  : OPARRAY t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE ol=(keywordIsFsym | keywordMakeEmptyArray | keywordMakeAppend | keywordGetElement | keywordGetSize )* RBRACE -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList $ol ))
+  ;
+
+typeTerm
+  : TYPETERM ID LBRACE keywordImplement keywordIsSort? keywordEquals? RBRACE ->  ^(TypeTerm  ^(Type ID ) keywordImplement keywordIsSort? keywordEquals? )
+  ;
+
+keywordImplement
+  : KW_IMPLEMENT goalLanguageBlock -> ^(Implement goalLanguageBlock )
+  ;
+
+keywordIsSort
+  : KW_ISSORT ID /*goalLanguageSortCheck*/ goalLanguageBlock -> ^(IsSort ^(Name ID) goalLanguageBlock ) //temp
+  ;
+
+keywordEquals
+  : KW_EQUALS LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(Equals ^(Name $n1 ) ^(Name $n2 ) goalLanguageBlock )
+  ;
+
+// LEXER
+//keywords
+MATCH       :   '%''match'    ;
+INCLUDE     :   '%''include'  ;
+STRATEGY    :   '%''strategy' ;
+OPERATOR    :   '%''op'       ;
+OPLIST      :   '%''oplist'   ;
+OPARRAY     :   '%''oparray'  ;
+TYPETERM    :   '%''typeterm' ;
+EXTENDS     :   'extends'     ;
+VISIT       :   'visit'       ;
+
+KW_ISFSYM       : 'is_fsym'     ;
+KW_GETSLOT      : 'get_slot'    ;
+KW_MAKE         : 'make'        ;
+KW_GETHEAD      : 'get_head'    ;
+KW_GETTAIL      : 'get_tail'    ;
+KW_ISEMPTY      : 'is_empty'    ;
+KW_MKEMPTY      : 'make_empty'  ;
+KW_MKINSERT     : 'make_insert' ;
+KW_GETELEMENT   : 'get_element' ;
+KW_GETSIZE      : 'get_size'    ;
+KW_MKAPPEND     : 'make_append' ;
+KW_IMPLEMENT    : 'implement'   ;
+KW_ISSORT       : 'is_sort'     ;
+KW_EQUALS       : 'equals'      ;
+
+// simple symbols
 LBRACE      :   '{' ;
 RBRACE      :   '}' ;
 LPAREN      :   '(' ;
@@ -252,8 +418,10 @@ STAR        :   '*' ;
 ANTI_SYM    :    '!';
 QMARK       :   '?' ;
 UNDERSCORE  :    '_' ;
-
-MATCH : '%''match' ;
+MINUS       :   '-' ;
+PLUS        :   '+' ;
+DOT         :   '.' ;
+SLASH       :   '/' ;
 
 //XML Tokens
 XML_START   :   '<';
@@ -292,12 +460,20 @@ ML_COMMENT:
   '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\''
   ;*/
 
+// filename is : ./fileName | ./../../fileName | ../../fileName | fileName | path/to/fileName | ./path/to/fileName | ../../path/to/fileName
+fragment
+FILENAME // to modify
+  : ( DOT SLASH | (DOT DOT SLASH)+ | SLASH )?
+    ((DIGIT | LETTER | UNDERSCORE)+ SLASH)*
+    (( LETTER | UNDERSCORE ) ( LETTER | UNDERSCORE | DIGIT | DOT )*)
+  ;
+
 STRING:
   '"' (~('"'|'\\'|'\n'|'\r'))* '"'
   /* '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"' */
   ;
 
-  // useless
+// useless
 /*SPECIAL_CHAR:
   ( LBRACE | RBRACE | LPAREN | RPAREN | LBRACKET | RBRACKET | COMMA | ARROW | DOULEARROW | ALTERNATIVE | AFFECT | DOUBLEEQ | COLON | SEMI | EQUAL | AT | STAR | QMARK | UNDERSCORE | '%' | XML_START | XML_CLOSE | DOUBLE_QUOTE | ANTI_SYM | DOT )
   ;*/
@@ -318,6 +494,12 @@ LETTER:   ('a'..'z' | 'A'..'Z' )   ;
 fragment
 DIGIT:   ('0'..'9')  ;
 
+/*fragment
+DOUBLE: ( (DIGIT)+ DOT? (DIGIT)* | DOT (DIGIT)+ );
+
+fragment
+INT:(DIGIT)+;*/
+
 //fragment
 /*ID: 
   ('_')? LETTER
@@ -328,7 +510,6 @@ DIGIT:   ('0'..'9')  ;
   ;*/
 
 ID: ( LETTER | UNDERSCORE ) ( LETTER | UNDERSCORE | DIGIT )* ;
-        
-MINUS         :   '-' ;
-PLUS          :   '+' ;
-DOT           :   '.' ;
+
+fragment
+XMLID: (ID | STRING);

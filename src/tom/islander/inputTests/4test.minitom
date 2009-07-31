@@ -1,1 +1,7 @@
-%match() {}
+%match(s) {
+  monPattern@<NomXML [_*, var*, attName=anno@attNom, _=id1, anno1@_=id2, _=anno2@id3, anno1@_=anno2@id4] /> -> { test1XML }
+  mon2ndPattern@<NomXML [var*] > myVar </ NomXML> -> { test2XML }
+  mon3rdPattern@<NomXML [var*] > [myVar,my2ndVar*,my3rdVar] </ NomXML> -> { test3XML }
+  mon4thPattern@<NomXML [var*] >  </ NomXML> -> { test4XML }
+  mon5thPattern@#TEXT(monId) -> { test5XML }
+}

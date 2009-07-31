@@ -19,10 +19,15 @@ TomTerm = Variable(Name:TomName,Type:TomType)
         | UnamedVariable() // Underscore()
         | UnamedVariableStar() // UnderscoreStar()
         | NamedTermList(Name:TomName,TomTermList:TomTermList)
-     //   | PairTerm(Name:TomName,Type:TomType)
+        | XMLAttr(Name:TomName,Value:String,Annotation:Annotation)
+        | UnamedXMLAttr(Value:String,Annotation1:Annotation, Annotation2:Annotation)
+//        | AnnotedXMLAttr(Name:TomName,Value:String,Annotation1:String)
 
 TomTermList = TomTermList(TomTerm*)
-            | EmptyList()
+            | EmptyList() // should not exist : workarround that we should get rid of
+
+Annotation = Annotation(Annotation:String)
+           | EmptyAnnotation()
 
 TomName = Name(String:String)
         | EmptyName()
@@ -70,21 +75,63 @@ ConstraintAction = ConstraintAction(Constraint:Constraint,Blocklist:BlockList)
 
 Constraint = AndConstraint(Left:Constraint,Right:Constraint)
            | OrConstraint(Left:Constraint,Right:Constraint)
-           | MatchConstraint(Pattern:TomTerm,Subject:TomTerm)
-           | OpConstraint(Pattern:TomTerm,Subject:TomTerm,Op:Operator)
+           | MatchConstraint(p:Pattern,Subject:TomTerm)
+           | OpConstraint(Pattern:TomTerm,Subject:TomTerm,Op:NumOperator)
            | ConstraintList(Constraint*)
 
-Operator = NumLessOrEqualThan()
+NumOperator = NumLessOrEqualThan()
          | NumGreaterOrEqualThan()
          | NumEqual()
          | NumDifferent()
          | NumLessThan()
          | NumGreaterThan()
 
+Operator = IsFsym(Name:TomName,Block:BlockList)
+	 | GetSlot(Name1:TomName,Name2:TomName,Block:BlockList)
+	 | Make(NameList:TomNameList,Block:BlockList)
+	 | GetHead(Name:TomName,Block:BlockList)
+	 | GetTail(Name:TomName,Block:BlockList)
+	 | IsEmpty(Name:TomName,Block:BlockList)
+	 | MakeEmpty(Name:TomName,Block:BlockList)
+	 | MakeEmptyList(Block:BlockList)
+	 | MakeInsert(Name1:TomName,Name2:TomName,Block:BlockList)
+	 | GetElement(Name1:TomName,Name2:TomName,Block:BlockList)
+	 | GetSize(Name:TomName,Block:BlockList)
+	 | MakeEmptyArray(Name:TomName,Block:BlockList)
+	 | MakeAppend(Name1:TomName,Name2:TomName,Block:BlockList)
+         | Implement(Block:BlockList)
+         | IsSort(Name:TomName,Block:BlockList) //temp - not a goalLanguageBlockList but a goalLanguageSortCheck, maybe different
+         | Equals(Name1:TomName,Name2:TomName,Block:BlockList)
+
+OperatorList = OperatorList(Operator*)
+
 BlockList = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
-	  | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
+      	  | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
           | CompositeTerm(CompositeTerm:String)
+          | Operator(Name:TomName,Type:TomType,Args:SlotList,Op:Operator,OpList:OperatorList) // Name - Type -Args - isfsym - OperatorList
+          | OpList(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OpList:OperatorList)
+          | OpArray(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OpList:OperatorList)
+          | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
+          | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
+          | Include(FileName:String)
           | BlockList( BlockList* )
+
+SlotList = SlotList(Slot*)
+
+Slot = Slot(SlotName:TomName,Type:TomType)
+
+StrategyVisitList = StrategyVisitList(StrategyVisit*)
+
+StrategyVisit = StrategyVisit(Type:TomType,ActionList:VisitActionList)
+
+VisitAction = VisitActionBL(Patterns:PatternList,BlockList:BlockList)
+            | VisitActionT(Patterns:PatternList,Term:TomTerm)
+            | LabelledVisitActionBL(Patterns:PatternList,BlockList:BlockList,LabelName:String)
+            | LabelledVisitActionT(Patterns:PatternList,Term:TomTerm,LabelName:String)
+            | EmptyVisitAction()
+
+VisitActionList = VisitActionList(VisitAction*)
+
 
 // temporary constructors, for test purpose
 /*Arg = Arg(Name:String)
