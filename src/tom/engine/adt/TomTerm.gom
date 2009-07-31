@@ -18,7 +18,6 @@ TomTerm =
    *
    * @param Option a list of options
    * @param NameList a list of head symbol names
-   * @param Args a list of subterms
    * @param Slots a list of pairs (slot,subterm)
    * @param Constraints a list of constraints
    */

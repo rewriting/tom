@@ -181,43 +181,44 @@ public class KernelTyper {
     }
 
     visit TomTerm {
-      // Type a function or a list 
+      // Type a function or a list
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
+        // Find the TomName
         if(`tomName.equals("")) {
-          try {
+            // Take the symbol with type represented by "contextType", but,
+            // why?!? What really is contextType?? Who generates this??
             tomSymbol = kernelTyper.getSymbolFromType(contextType);
             if(tomSymbol==null) {
               throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
             }
+            // Add the name found to the name list. But why the "tomname" (which
+            // is equals to "") is not removed of the nameList???
             `nameList = `concTomName(tomSymbol.getAstName());
-          } catch(UnsupportedOperationException e) {
-            // contextType has no AstType slot
-            tomSymbol = null;
-          }
         } else {
           tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         }
 
-        // ADD: CT-Fun
+      /*
+       * CT-FUN rule:
+       * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+       * THEN infers type of arguments and add a type constraint "A = T" and a
+       * type constraint "Ai = Ti" for each argument, where Ai is a fresh type
+       * variable
+       */
         if(tomSymbol != null) {
+
           SlotList subterm =
-            kernelTyper.typeVariableList(tomSymbol,`slotList);//send domain
+            kernelTyper.typeVariableList(tomSymbol,`slotList);
           ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
           return `RecordAppl(option,nameList,subterm,newConstraints);
         } else {
-          //System.out.println("contextType = " + contextType);
+          // System.out.println("contextType = " + contextType);
           %match(contextType) {
             type@(Type|TypeWithSymbol)[] -> {
               SlotList subterm = kernelTyper.typeVariableList(`emptySymbol(), `slotList);
               ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(`type,`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
-            }
-
-            _ -> {
-              // do nothing
-              //System.out.println("contextType = " + contextType);
-              //System.out.println("subject        = " + subject);
             }
           }
         }
@@ -232,8 +233,8 @@ public class KernelTyper {
        * THEN add a type constraint "A = T"
        */
       (Variable|UnamedVariable)[AstType=localType@Type(tomType,EmptyType()),Constraints=constraints] -> {
-        //The variable will always have a type: a primitive type or an unknown
-        //type (a fresh type variable)
+        //The variable will always have a type: a primitive (Type) or an unknown
+        //(TypeVar) type (a fresh type variable)
         TomType globalType = kernelTyper.getType(`tomType);
         kernelTyper.addConstraints(`Equation(localType,globalType));
       }
@@ -241,7 +242,7 @@ public class KernelTyper {
   }
 
   /*
-   *
+   * ConstraintInstructionList
    * @param contextType
    * @param constraintInstructionList a list of ConstraintInstruction
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
