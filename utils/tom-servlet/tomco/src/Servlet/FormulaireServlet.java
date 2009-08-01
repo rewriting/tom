@@ -72,7 +72,8 @@ public class FormulaireServlet extends HttpServlet {
 
 		// ------ Creation des variables-----
 		HttpSession s = request.getSession();
-		String bash = ConfString.ScriptBash;
+		// utile pour la méthode n°1
+		//String bash = ConfString.ScriptBash;
 		String scriptBash = "";
 		// récup le nom de la session pour créer le dossier
 		// On  cherche à localiser le répertoire temporaire
@@ -223,6 +224,7 @@ public class FormulaireServlet extends HttpServlet {
 	 * @param name Argument du script
 	 * @return ce que renvoie le script bash par les echos
 	 */
+	/**
 	private String lancementBash(String bash,String name) {
 		StringBuffer sb=new StringBuffer();
 		try {
@@ -244,13 +246,12 @@ public class FormulaireServlet extends HttpServlet {
 			sb.append("Le scriptBash n'a pas pu être lancé: mauvaise URL\n Veuillez contacter le webmaster");
 		}
 		return sb.toString();
-	}
+	}*/
 
 	/**
 	 * Méthode qui vérifie que le fichier .class a été créer
 	 */
 	private boolean isCreateJar(String path){
-		System.out.println();
 		File fileclass = new File(path+"/etu.jar");
 		return fileclass.exists();
 	}
@@ -305,10 +306,6 @@ public class FormulaireServlet extends HttpServlet {
 			}
 			String responseErr = new String(buildErr);
 			sb2.append(responseErr);
-			/**BufferedInputStream bes = new BufferedInputStream(p.getErrorStream());
-			while((i=(byte) bes.read()) > 0){
-				sb2.append(String.valueOf((char)i));
-			}*/
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -325,7 +322,6 @@ public class FormulaireServlet extends HttpServlet {
 	 * Cette méthode fais tout le déroulement du fichier bash par java
 	 */
 	private String scriptExecution(String arg1,String arg2){
-		System.out.println("début de script execution ");
 		StringBuffer sb = new StringBuffer();
 		File fileTom = new File(arg1+"/"+arg2+".t");
 		// on teste si le fichier .t existe 
@@ -341,7 +337,6 @@ public class FormulaireServlet extends HttpServlet {
 				sb.append("Lancement de la commande : javac "+arg2+".java\n");
 				String classpath=System.getenv().get("CLASSPATH");
 				String dossierApplet=getServletContext().getRealPath("")+"/applet";
-				System.out.println("chemin du cp : "+ dossierApplet+":"+classpath);
 				String[] cmdJavac= new String[]{"javac","-cp",dossierApplet+":"+classpath,"-sourcepath",arg1,"-d",arg1,arg1+"/"+arg2+".java"};
 				sb.append(toStringExec(cmdJavac));
 				File fileClass = new File(arg1+"/"+arg2+".class");
