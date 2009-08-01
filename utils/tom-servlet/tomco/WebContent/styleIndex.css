@@ -1,0 +1,114 @@
+#nav {
+    list-style: none ;
+    margin: 0 ;
+    padding: 0 ;
+    text-align: center ;
+}
+
+#nav li {
+    display: inline ;
+    margin-right: 1px ;
+    color: #fff ;
+    background: #c00 ;
+}
+
+#nav li a {
+    background: #c00 ;
+    color: #fff ;
+    border: 1px solid #600 ;
+    font: 1em "Trebuchet MS",Arial,sans-serif ;
+    font-weight:bold;
+    line-height: 1em ;
+    padding: 4px 20px ;
+    text-align: center ;
+    text-decoration: none ;
+}
+
+#nav li a:hover, #nav li a:focus, #nav li a:active {
+    background: #900 ;
+    text-decoration: underline ;
+}
+
+textarea#script, textarea#ResultatBash{
+	width:90%;
+}
+
+
+#script,#ResultatBash{
+	width:100%;
+	min-width: 10cm;
+}
+
+
+.formulaire {
+	border:navy groove thick ;
+    left:auto;
+    background-color: #DFF2FF 	;
+}
+
+i {
+    color:#F90101;
+    font-family:fantasy;
+    font-size:15px;
+}
+
+.content {
+	text-align:center;
+	width : 100%;
+	background-color: #CCCCCC;
+	margin:10px 0 10px 0;
+    border-spacing:40px;
+    display:table;
+}
+
+#formulairebouton {
+    display:table-cell;
+    
+}
+
+.Retour_Serveur{
+    background-color:#DFF2FF ;
+    border:navy groove thick ;
+    display:table-cell;
+}
+
+h1 {
+  color:#000;
+  background-color: #BBDDFF;
+  border:1px solid #000;
+  padding: 0 0 0 10px;
+  width: auto;
+  font-style: italic;
+  font-size: large;
+  text-align: center;
+}
+
+a#presentationBouton {
+    background: #EDEDED ;
+    border: 1px solid #600 ;
+    border-color : #BABABA ;
+    font-weight:bold;
+    line-height: 1em ;
+    padding: 3px 8px ;
+    text-align: center;
+    text-decoration: none ;
+}
+
+a#presentationBouton:hover, a#presentationBouton:focus, a#presentationBouton:active {
+    background: #FEBFD2;
+    text-decoration: blink; ;
+}
+
+div#webmaster {
+    font-style:italic ;
+    font-size: 9pt ;
+    font-family:sans-serif;
+}
+
+body {
+    color:#000000;
+    background:#CCCCCC;
+    font-size:11pt;
+    font-family:Tahoma;
+}
+
