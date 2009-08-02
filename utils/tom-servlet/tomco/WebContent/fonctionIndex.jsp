@@ -1,6 +1,7 @@
 
 <%-- ######### Liste des imports ############ --%>
 <%@ page import="Conf.ConfString" %>
+<%@ page import="java.io.File" %>
 
 
 <%-- ######### Liste des noms des noms des attributs ############ --%>
@@ -118,7 +119,8 @@
     private String RedonneURL(HttpServletRequest request){
     	StringBuffer urlLong=request.getRequestURL();
     	// on enléve index.jsp de l'url ou on enléve la partie derrière le dernier /
-    	int index=urlLong.lastIndexOf("/");
+    	// sous Unix ou \ sous windows
+    	int index=urlLong.lastIndexOf(File.separatorChar+"");
     	String urlCourt = urlLong.substring(0,index+1);
     	
     	return urlCourt;

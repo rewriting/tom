@@ -7,7 +7,6 @@ package Conf;
  */
 public class ConfString {
 	
-	public final static String root="workspace2/TOMCO/";
 	public final static String butUpload = "Charger fichier";
     public final static String butRun = "Run";
     public final static String butReset= "Reset";
@@ -17,7 +16,6 @@ public class ConfString {
     public final static String checked = "checked=\"checked\"";
     public final static String hidden = "style=\"visibility:hidden\"";
     public final static String ScriptVide = " Le code source est obligatoire ";
-    public final static String ScriptBash= root+"ScriptBash/TomJavac.sh";
     public final static String nomInvalide="Fichier non créé : minimum attendu \"class \"nomFichier \\s {";
     public final static String regex="class\\s+([\\w_$]+?)\\s";
     public final static String nameClass="class";

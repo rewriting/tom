@@ -38,8 +38,9 @@ public class JarAppletServlet extends HttpServlet {
 		HttpSession s = request.getSession();
 		File dir = (File) getServletContext().getAttribute(
 				"javax.servlet.context.tempdir");
-		String lienApplet = "file://"+ dir.getAbsolutePath() + "/" + s.getId()
-				+ "/etu.jar";
+		String lienApplet = "file:"+File.separatorChar+File.separatorChar+
+		dir.getAbsolutePath() + File.separatorChar+ s.getId()+
+		File.separatorChar+"etu.jar";
 		URLConnection con = (new URL(lienApplet)).openConnection();
 		response.setContentType(con.getContentType());
 		response.setContentLength(con.getContentLength());

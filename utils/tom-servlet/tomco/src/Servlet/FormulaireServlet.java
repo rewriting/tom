@@ -78,7 +78,7 @@ public class FormulaireServlet extends HttpServlet {
 		// récup le nom de la session pour créer le dossier
 		// On  cherche à localiser le répertoire temporaire
 		File dir = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
-		String nameRepertoire = dir.getAbsolutePath()+"/"+s.getId();
+		String nameRepertoire = dir.getAbsolutePath()+File.separatorChar+s.getId();
 
 		// 4 envoi vers la vue
 		s.setAttribute("le_script", script);
@@ -109,12 +109,6 @@ public class FormulaireServlet extends HttpServlet {
 						s.removeAttribute("objetCacher");
 						s.removeAttribute("le_nomClasse");
 					} else {
-						// name est la combinaison de 2 arguments:<chemin> <File>
-						//String name = nameRepertoire + " " + nameFile;
-						//String path = nameRepertoire + "/" + nameFile;
-						// méthode n°1 :on lance ce fichier avec le script bash
-						//scriptBash=lancementBash(bash,name);
-						// méthode n°2 : on utilise une fonction qui fais comme le bash
 						scriptBash=scriptExecution(nameRepertoire, nameFile);
 						// on envoit ce qui est afficher ds le textArea Resultat
 						s.setAttribute("le_scriptBash", scriptBash);
@@ -205,7 +199,9 @@ public class FormulaireServlet extends HttpServlet {
 					if (!(parentFile.exists())) {
 						parentFile.mkdirs(); // créer le rep
 					}
-					PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(parentFile+"/"+nameFile)));
+					String nf=File.separatorChar+nameFile;
+					PrintWriter out = new PrintWriter(new BufferedWriter
+							(new FileWriter(parentFile+nf)));
 					out.write(contenu);
 					out.flush();
 					out.close();
@@ -218,41 +214,10 @@ public class FormulaireServlet extends HttpServlet {
 	}
 
 	/**
-	 * Methode qui lance l'execution du script bash qui construit les liens
-	 * des fichiers tom et java
-	 * @param bash Nom du script
-	 * @param name Argument du script
-	 * @return ce que renvoie le script bash par les echos
-	 */
-	/**
-	private String lancementBash(String bash,String name) {
-		StringBuffer sb=new StringBuffer();
-		try {
-			Process p = Runtime.getRuntime().exec(bash+" "+name);
-			p.waitFor();
-			BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
-			byte i;
-			while((i=(byte) bis.read()) > 0){
-				sb.append(String.valueOf((char)i));
-			}
-			sb.append("\n");
-			BufferedInputStream bes = new BufferedInputStream(p.getErrorStream());
-			while((i=(byte) bes.read()) > 0){
-				sb.append(String.valueOf((char)i));
-			}
-		} catch (InterruptedException e) {
-			sb.append("InterruptedException. Veuillez contacter le webmaster");
-		} catch (IOException e) {
-			sb.append("Le scriptBash n'a pas pu être lancé: mauvaise URL\n Veuillez contacter le webmaster");
-		}
-		return sb.toString();
-	}*/
-
-	/**
 	 * Méthode qui vérifie que le fichier .class a été créer
 	 */
 	private boolean isCreateJar(String path){
-		File fileclass = new File(path+"/etu.jar");
+		File fileclass = new File(path+File.separatorChar+"etu.jar");
 		return fileclass.exists();
 	}
 
@@ -290,16 +255,25 @@ public class FormulaireServlet extends HttpServlet {
 		try {
 			Process p = Runtime.getRuntime().exec(cmd);
 			p.waitFor();
-			BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
+			//on récupère le flux de sortie du programme en input
+			InputStream in = p.getInputStream();
+			StringBuilder buildIn=new StringBuilder();
+			char cIn = (char) in.read();
+			while (cIn != (char) -1) {
+				buildIn.append(cIn);
+				cIn = (char) in.read();
+			}
+			String responseIn = new String(buildIn);
+			sb.append(responseIn);
+			/*BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
 			byte i;
 			while((i=(byte) bis.read()) > 0){
 				sb.append(String.valueOf((char)i));
-			}
+			}*/
+			//on récupère le flux de sortie du programme en error
 			InputStream err = p.getErrorStream();
-			//on récupère le flux de sortie du programme
 			StringBuilder buildErr = new StringBuilder();
 			char c = (char) err.read();
-
 			while (c != (char) -1) {
 				buildErr.append(c);
 				c = (char) err.read();
@@ -323,35 +297,37 @@ public class FormulaireServlet extends HttpServlet {
 	 */
 	private String scriptExecution(String arg1,String arg2){
 		StringBuffer sb = new StringBuffer();
-		File fileTom = new File(arg1+"/"+arg2+".t");
+		File fileTom = new File(arg1+File.separatorChar+arg2+".t");
 		// on teste si le fichier .t existe 
 		if (fileTom.exists()){
 			// dans ce cas on exécute la méthode tom
-			sb.append("Lancement de la commande : tom "+arg2+".t \n");
-			String[] cmdTom= new String[]{"tom","-d",arg1,arg1+"/"+arg2+".t"};
+			sb.append("Lancement de la commande : tom "+arg2+".t\n");
+			String[] cmdTom= new String[]{"tom","-d",arg1,arg1+File.separatorChar+arg2+".t"};
 			sb.append(toStringExec(cmdTom));
 			File fileJava = new File(arg1+"/"+arg2+".java");
 			// on teste que le fichier . java a été créer par la méthode précédente
 			if (fileJava.exists()){
 				// dans ce cas on exécute la méthode javac
-				sb.append("Lancement de la commande : javac "+arg2+".java\n");
+				sb.append(" Lancement de la commande : javac "+arg2+".java\n");
 				String classpath=System.getenv().get("CLASSPATH");
-				String dossierApplet=getServletContext().getRealPath("")+"/applet";
-				String[] cmdJavac= new String[]{"javac","-cp",dossierApplet+":"+classpath,"-sourcepath",arg1,"-d",arg1,arg1+"/"+arg2+".java"};
+				String dossierApplet=getServletContext().getRealPath("")+File.separatorChar+"applet";
+				String[] cmdJavac= new String[]{"javac","-cp",dossierApplet+":"
+						+classpath,"-sourcepath",arg1,"-d",arg1,arg1+
+						File.separatorChar+arg2+".java"};
 				sb.append(toStringExec(cmdJavac));
-				File fileClass = new File(arg1+"/"+arg2+".class");
+				File fileClass = new File(arg1+File.separatorChar+arg2+".class");
 				// on teste que le fichier .class a été créer
 				if (fileClass.exists()){
 					File tmpSession=new File(arg1);
 					// on teste le repertoire où sont stockée les fichiers
 					if (tmpSession.isDirectory()){
 						// on exécute la méthode pour créer le jar
-						sb.append("Création du jar \n");
+						sb.append(" Création du jar\n");
 						String[] find=tmpSession.list();
 						String[] cmdJar= new String[3+(find.length*3)];
 						cmdJar[0]="jar";
 						cmdJar[1]="cf";
-						cmdJar[2]=arg1+"/etu.jar";
+						cmdJar[2]=arg1+File.separatorChar+"etu.jar";
 						int j=3;
 						for (int i = 0; i < find.length; i++) {
 								cmdJar[(j++)]="-C";
@@ -359,10 +335,10 @@ public class FormulaireServlet extends HttpServlet {
 								cmdJar[(j++)]=find[i];
 						}
 						sb.append(toStringExec(cmdJar));
-						File fileJar=new File(arg1+"/etu.jar");
+						File fileJar=new File(arg1+File.separatorChar+"etu.jar");
 						// teste que le jar a été créer
 						if (fileJar.exists()) {
-							sb.append(" CONSTRUCTION FICHIER END \n");
+							sb.append(" CONSTRUCTION FICHIER END\n");
 						} else {
 							sb.append("Jar non créé\n");
 						}
@@ -380,6 +356,4 @@ public class FormulaireServlet extends HttpServlet {
 		}
 		return sb.toString();
 	}
-
-
 }
