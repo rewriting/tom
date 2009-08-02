@@ -696,8 +696,11 @@ public final class TomBase {
       Variable[Option=option,AstName=name,AstType=type] -> {
         return `BQVariable(option, name, type);
       }
+      VariableStar[Option=option,AstName=name,AstType=type] -> {
+        return `BQVariableStar(option, name, type);
+      }
     }
-    return null;
+    throw new RuntimeException("cannot convert into a bq variable the term "+variable);
   }
 
   /**
@@ -708,8 +711,11 @@ public final class TomBase {
       BQVariable[Option=option,AstName=name,AstType=type] -> {
         return `Variable(option, name, type, concConstraint());
       }
+      BQVariableStar[Option=option,AstName=name,AstType=type] -> {
+        return `VariableStar(option, name, type, concConstraint());
+      }
     }
-    return null;
+    throw new RuntimeException("cannot convert into a variable the term "+variable);
   }
 
 } // class TomBase

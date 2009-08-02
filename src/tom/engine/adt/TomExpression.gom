@@ -70,7 +70,6 @@ Expression = BQTermToExpression(AstTerm:BQTerm)
 		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
 		   */
            | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
-           | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
            /*
 		   * check that source is of sort astType, and then execute inst
 		   */

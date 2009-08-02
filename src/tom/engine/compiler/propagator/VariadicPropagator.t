@@ -137,7 +137,7 @@ public class VariadicPropagator implements IBasePropagator {
         }        
         // declare fresh variable
         TomType listType = vp.getCompiler().getTermTypeFromTerm(`t);
-        BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);				
+        BQTerm freshVariable = vp.getCompiler().getFreshVariableStar(listType);
         Constraint freshVarDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         List<Constraint> l = new ArrayList<Constraint>();

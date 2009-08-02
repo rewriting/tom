@@ -157,9 +157,7 @@ public class ConstraintGenerator {
         return `DoWhile(UnamedBlock(concInstruction(action,subInstruction)),condition);
       }
       // 'if'
-      IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
-        return `If(condition,Assign(left1,BQTermToExpression(TomBase.convertFromVarToBQVar(right1))),Assign(left2,BQTermToExpression(TomBase.convertFromVarToBQVar(right2))));
-      }
+      
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
         return buildExpressionDisjunction(`or,action);
