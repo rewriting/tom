@@ -329,7 +329,10 @@ public abstract class TomAbstractGenerator {
         `buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
         return;
       }
-
+      EqualBQTerm(type,exp1,exp2) -> {
+        `buildExpEqualBQTerm(deep, type, exp1, exp2, moduleName);
+        return;
+      }
       IsSort((Type|TypeWithSymbol)[TomType=type], exp) -> {
         `buildExpIsSort(deep,type,exp,moduleName);
         return;
@@ -948,6 +951,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm expList, String moduleName) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,TomTerm exp2, String moduleName) throws IOException;
+  protected abstract void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException;
   protected abstract void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, BQTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;

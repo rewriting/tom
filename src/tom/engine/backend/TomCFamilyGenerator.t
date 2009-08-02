@@ -102,6 +102,28 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
   }
 
+  protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm begin, BQTerm end, String moduleName) throws IOException {
+    String sType = TomBase.getTomType(type);    
+    String template = getSymbolTable(moduleName).getEqualTerm(sType);
+    if(instantiateTemplate(deep,template,`concBQTerm(begin,end),moduleName) == false) {
+      // if the type is null, it means that this is from Java
+      if(sType == null || getSymbolTable(moduleName).isUnknownType(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
+        output.write("(");
+        generateBQTerm(deep,begin,moduleName);
+        output.write(" == ");
+        generateBQTerm(deep,end,moduleName);
+        output.write(")");
+      } else {
+        output.write("tom_equal_term_" + sType + "(");
+        generateBQTerm(deep,begin,moduleName);
+        output.write(", ");
+        generateBQTerm(deep,end,moduleName);
+        output.write(")");
+      }
+    }
+  }
+
+
   protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
     output.write("((");
     generateExpression(deep,cond,moduleName);

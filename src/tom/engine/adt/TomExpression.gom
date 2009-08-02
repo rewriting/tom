@@ -36,6 +36,8 @@ Expression = BQTermToExpression(AstTerm:BQTerm)
            // Kid1 - the subject
            // Kid2 - the pattern
            | EqualTerm(TomType:TomType,Kid1:BQTerm,Kid2:TomTerm)
+           // equality between two backquote terms
+           | EqualBQTerm(TomType:TomType,t1:BQTerm,t2:BQTerm)
            | Cast(AstType:TomType,Source:Expression)
            // AstName - the name of the function symbol from whom to extract the slot
            // Variable - from what to extract the slot 

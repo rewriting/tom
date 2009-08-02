@@ -219,6 +219,7 @@ public class TomOptimizer extends TomGenericPlugin {
           }
         } else {
           int mult = infoBody.readCount;
+          //System.out.println(`name + " --> " + mult);
           if(mult == 0) { // name is not used
             // suppress the Let
             if(varName.length() > 0) {
