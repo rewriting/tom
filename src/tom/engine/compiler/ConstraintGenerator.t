@@ -156,8 +156,10 @@ public class ConstraintGenerator {
         Instruction subInstruction = `generateAutomata(expr,Nop());
         return `DoWhile(UnamedBlock(concInstruction(action,subInstruction)),condition);
       }
-      // 'if'
-      
+      // instruction encapsulated in an expression
+      TomInstructionToExpression(i) -> {
+        return `i;
+      }
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
         return buildExpressionDisjunction(`or,action);
