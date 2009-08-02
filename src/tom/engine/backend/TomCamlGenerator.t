@@ -81,6 +81,22 @@ public class TomCamlGenerator extends TomGenericGenerator {
     }
   }
 
+  protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1, BQTerm exp2, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
+      output.write("(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(" = ");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(")");
+    } else {
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(", ");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(")");
+    }
+  }
+
   protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
     output.write("if(");
     generateExpression(deep,cond,moduleName);
