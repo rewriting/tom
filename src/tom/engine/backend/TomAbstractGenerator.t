@@ -115,6 +115,7 @@ public abstract class TomAbstractGenerator {
 
       BQTermListToCode(list) && concBQTerm(_*,t,_*)<<list -> {
         generateBQTerm(deep,`t, moduleName);
+        return;
       }
 
       TargetLanguageToCode(t) -> {

@@ -85,7 +85,7 @@ options{
   // the lexer for target language
   HostLexer targetlexer = null;
 
-  //BackQuoteParser bqparser;
+  BackQuoteParser bqparser;
 
   OptionManager optionManager;
 
@@ -113,7 +113,7 @@ options{
     testIncludedFile(currentFile, includedFileSet);
     // then create the Tom mode parser
     tomparser = new TomParser(getInputState(),this, optionManager);
-    //bqparser = tomparser.bqparser;
+    bqparser = tomparser.bqparser;
   }
 
   private void setSkipComment() {
@@ -629,7 +629,6 @@ backquoteTerm [List<Code> list]
     :
         t:BACKQUOTE
         {
-          /*
           String textCode = getCode();
           if(isCorrect(textCode)) {
             code = `TL(
@@ -641,30 +640,13 @@ backquoteTerm [List<Code> list]
           }
 
           Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
-          TomTerm bqTerm = bqparser.beginBackquote();
+          //BQTerm bqTerm = tomparser.plainBQTerm();
+          BQTermList result = bqparser.beginBackquote();
 
           // update position for new target block
           updatePosition();
-          list.add(bqTerm);
-          */
+          list.add(`BQTermListToCode(result));
           //throw new RuntimeException("BackQuote parser not yet implemented");
-
-          String textCode = getCode();
-          if(isCorrect(textCode)) {
-            code = `TL(
-                textCode,
-                TextPosition(currentLine,currentColumn),
-                TextPosition(t.getLine(),t.getColumn())
-                );
-            list.add(`TargetLanguageToCode(code));
-          }
-
-          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
-          BQTerm bqTerm = tomparser.plainBQTerm();
-
-          // update position for new target block
-          updatePosition();
-          list.add(`BQTermListToCode(concBQTerm(bqTerm)));
         }
     ;
 
@@ -897,7 +879,7 @@ options {
 // the following tokens are keywords for tom constructs
 // when read, we switch lexers to tom
 BACKQUOTE
-    : "`" {selector().push("tomlexer");}
+    : "`" {selector().push("bqlexer");}
     ;
 STRATEGY
     : "%strategy" {selector().push("tomlexer");}

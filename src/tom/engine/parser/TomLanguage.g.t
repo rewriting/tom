@@ -77,6 +77,7 @@ options{
 
     // the default-mode parser
     private HostParser targetparser;
+    protected BackQuoteParser bqparser;
     private TomLexer tomlexer;
 
     //store information for the OriginalText contained in the OptionList
@@ -92,6 +93,7 @@ options{
         this.targetparser = target;
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
+        this.bqparser = new BackQuoteParser(state,this);
     }
     
     private void putType(String name, TomType type) {

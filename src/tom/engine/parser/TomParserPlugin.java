@@ -109,11 +109,11 @@ public class TomParserPlugin extends TomGenericPlugin {
     // create a lexer for tom mode
     TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
     // create a lexer for backquote mode
-    // FIXME BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
+    BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
     // notify selector about various lexers
     selector.addInputStream(targetlexer,"targetlexer");
     selector.addInputStream(tomlexer, "tomlexer");
-    // FIXME selector.addInputStream(bqlexer, "bqlexer");
+    selector.addInputStream(bqlexer, "bqlexer");
     selector.select("targetlexer");
     // create the parser for target mode
     // also create tom parser and backquote parser
