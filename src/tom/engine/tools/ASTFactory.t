@@ -86,6 +86,9 @@ public class ASTFactory {
         InstructionToCode(i) -> { 
           list = `concInstruction(list*,i); 
         }
+        BQTermListToCode(concBQTerm(_*,t,_*)) -> { 
+          list = `concInstruction(list*,BQTermToInstruction(t)); 
+        }
       }
     }
     return list;

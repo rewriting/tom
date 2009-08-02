@@ -223,7 +223,7 @@ public abstract class TomAbstractGenerator {
         return `name;
       }
     }
-    return null;
+    throw new RuntimeException("cannot generate the name of the variable "+var);
   }
 
   protected String getVariableName(TomTerm var) {
@@ -244,7 +244,7 @@ public abstract class TomAbstractGenerator {
         return `name;
       }
     }
-    return null;
+    throw new RuntimeException("cannot generate the name of the variable "+var);
   }
 
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
