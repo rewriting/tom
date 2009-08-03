@@ -562,12 +562,12 @@ public class Compiler extends TomGenericPlugin {
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);
     BQTerm counter = `BQVariable(concOption(),Name("counter"),getSymbolTable().getIntType());
     
-    Instruction ifAnotherElem = `If(EqualTerm(opType, elem, TomBase.convertFromBQVarToVar(oldElem)),
+    Instruction ifAnotherElem = `If(EqualBQTerm(opType, elem, oldElem),
         AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
         LetRef(counter,AddOne(counter),LetRef(oldElem,BQTermToExpression(elem),AssignArray(mult, counter, Integer(1)))));
     
     Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
-        If(EqualTerm(opType, subject, TomBase.convertFromBQVarToVar(oldElem)),
+        If(EqualBQTerm(opType, subject, oldElem),
             AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
             LetRef(counter,AddOne(counter),AssignArray(mult,counter,Integer(1)))),
       Nop());
@@ -628,13 +628,13 @@ public class Compiler extends TomGenericPlugin {
     BQTerm counter = `BQVariable(concOption(),Name("counter"),getSymbolTable().getIntType());
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);    
     // test if a new element
-    Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,TomBase.convertFromBQVarToVar(old))), UnamedBlock(concInstruction(
+    Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)), UnamedBlock(concInstruction(
         LetRef(counter,AddOne(counter),LetRef(old,BQTermToExpression(elem),Nop())))),Nop());    
 
     TomName opName = `Name(opNameString);
     // test if end of list
     Instruction isEndList = `If(Negation(IsFsym(opName,subject)), 
-        If(Negation(EqualTerm(opType,subject,TomBase.convertFromBQVarToVar(old))),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
+        If(Negation(EqualBQTerm(opType,subject,old)),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),isNewElem),
@@ -732,7 +732,7 @@ public class Compiler extends TomGenericPlugin {
               Assign(subject,BQTermToExpression(BuildEmptyList(opName))))));
       BQTerm tempSolIndex = `BQVariable(concOption(),Name("tempSolIndex"),intType);
       BQTerm old = `BQVariable(concOption(),Name("old"),opType);
-      Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,TomBase.convertFromBQVarToVar(old))),
+      Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)),
           AbstractBlock(concInstruction(
               Assign(tempSolIndex,AddOne(tempSolIndex)),
               Assign(old,BQTermToExpression(elem)),
@@ -763,7 +763,7 @@ public class Compiler extends TomGenericPlugin {
               GetElement(intArrayName,intType,tempSol,tempSolIndex),
               UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
       // the while
-      Expression notEmptySubj = `Negation(EqualTerm(opType,BuildEmptyList(opName), TomBase.convertFromBQVarToVar(subject)));
+      Expression notEmptySubj = `Negation(EqualBQTerm(opType,BuildEmptyList(opName), subject));
       Instruction whileBlock = `UnamedBlock(concInstruction(
               isConsOpName,isNewElem,tempSolValBlock));                  
       Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);

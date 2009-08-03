@@ -87,7 +87,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
-        return `EqualTerm(type,t,v);
+        return `EqualBQTerm(type,t,TomBase.convertFromVarToBQVar(v));
       }
     } // end visit
   } // end strategy	
@@ -98,7 +98,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
       } else {
-        return `EqualTerm(type,BuildConstant(name),TomBase.convertFromBQVarToVar(subject));
+        return `EqualBQTerm(type,BuildConstant(name),subject);
       }
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);
