@@ -125,7 +125,8 @@ public class KernelTyper {
     try {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
-      tom.library.sl.Visitable res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
+      tom.library.sl.Visitable res =
+        `TopDownStopOnSuccess(collectTypeConstraints(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
     } catch(tom.library.sl.VisitFailure e) {
@@ -133,26 +134,7 @@ public class KernelTyper {
     }
   }
 
-  %strategy replace_typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
-
-    visit Option {
-      subject@OriginTracking[] -> { return `subject; }
-    }
-
-   // Treat java code?? 
-    visit TargetLanguage {
-      subject@TL[] -> { return `subject; }
-      subject@ITL[] -> { return `subject; }
-      subject@Comment[] -> { return `subject; }
-    }
-
-    // Return type found on symbolTable 
-    visit TomType {
-      Type(tomType,EmptyType()) -> {
-        return kernelTyper.getType(`tomType);
-      }
-    }
-
+  %strategy collectTypeConstraints(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
         TomType newType = (TomType)`kernelTyper.typeVariable(contextType,`type);
@@ -180,63 +162,70 @@ public class KernelTyper {
       }
     }
 
-    visit TomTerm {
-      // Type a function or a list
-      RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
-        TomSymbol tomSymbol = null;
-        // Find the TomName
-        if(`tomName.equals("")) {
-            // Take the symbol with type represented by "contextType", but,
-            // why?!? What really is contextType?? Who generates this??
-            tomSymbol = kernelTyper.getSymbolFromType(contextType);
-            if(tomSymbol==null) {
-              throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+    // FIXME: maybe the attribute "constraints" in RecordAppl and Variable is
+    // not necessary anymore
+    visit TermToInfer {
+      NewTerm(tomTerm,typeVar) -> {
+        // Type a function or a list
+        %match(tomTerm) {
+          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+            TomSymbol tomSymbol = null;
+            // Find the TomName
+            if(`tomName.equals("")) {
+              // Take the symbol with type represented by "contextType", but,
+              // why?!? What really is contextType?? Who generates this??
+              // Example: if this case is called twice successively (e.g.:
+              // f(g())), so the contextType will be the Codomain of the first
+              // call (e.g.: codomain of "g") and when tomname is empty, so this
+              // can be the case of f(f(g())) (two "f")
+              tomSymbol = kernelTyper.getSymbolFromType(contextType);
+              if(tomSymbol==null) {
+                throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+              }
+              // Add the name found to the name list. But why the "tomname" (which
+              // is equals to "") is not removed of the nameList???
+              `nameList = `concTomName(tomSymbol.getAstName());
+            } else {
+              tomSymbol = kernelTyper.getSymbolFromName(`tomName);
             }
-            // Add the name found to the name list. But why the "tomname" (which
-            // is equals to "") is not removed of the nameList???
-            `nameList = `concTomName(tomSymbol.getAstName());
-        } else {
-          tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-        }
 
-      /*
-       * CT-FUN rule:
-       * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-       * THEN infers type of arguments and add a type constraint "A = T" and a
-       * type constraint "Ai = Ti" for each argument, where Ai is a fresh type
-       * variable
-       */
-        if(tomSymbol != null) {
-
-          SlotList subterm =
-            kernelTyper.typeVariableList(tomSymbol,`slotList);
-          ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
-          return `RecordAppl(option,nameList,subterm,newConstraints);
-        } else {
-          // System.out.println("contextType = " + contextType);
-          %match(contextType) {
-            type@(Type|TypeWithSymbol)[] -> {
-              SlotList subterm = kernelTyper.typeVariableList(`emptySymbol(), `slotList);
-              ConstraintList newConstraints = (ConstraintList)kernelTyper.typeVariable(`type,`constraints);
-              return `RecordAppl(option,nameList,subterm,newConstraints);
+          /*
+           * CT-FUN rule:
+           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+           * THEN infers type of arguments and add a type constraint "A = T" and
+           * calls the TypeVariableList method to adds a type constraint "Ai =
+           * Ti" for each argument, where Ai is a fresh type variable
+           */
+            if(tomSymbol != null) {
+              kernelTyper.addConstraints(`Equation(typeVar,TomBase.getSymbolCodomain(tomSymbol)));
+              // Type the arguments 
+              SlotList subterm =
+                kernelTyper.typeVariableList(tomSymbol,`slotList);
+            } else {
+              System.out.println("contextType = " + contextType);
+              %match(contextType) {
+                type@(Type|TypeWithSymbol)[] -> {
+                  SlotList subterm = kernelTyper.typeVariableList(`emptySymbol(), `slotList);
+                }
+              }
             }
           }
+          // FIXME: it seems to be useless to match against a "UnamedVariable"
+          // since the desugarer has already replaced unknown variables by fresh
+          // variables
+          /*
+           * Type a variable
+           * CT-VAR rule: 
+           * IF found "x:A" and "x:T" already exists in SymbolTable 
+           * THEN add a type constraint "A = T"
+           */
+          var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
+            //The variable will always have a type: a primitive (Type) or an unknown
+            //(TypeVar) type (a fresh type variable)
+            TomType globalType = kernelTyper.getType(`tomType);
+            kernelTyper.addConstraints(`Equation(typeVar,globalType));
+          }
         }
-      }
-      // FIXME: it seems to be useless to match against a "UnamedVariable"
-      // since the desugarer has already replaced unknown variables by fresh
-      // variables
-      /*
-       * Type a variable
-       * CT-VAR rule: 
-       * IF found "x:A" and "x:T" already exists in SymbolTable 
-       * THEN add a type constraint "A = T"
-       */
-      (Variable|UnamedVariable)[AstType=localType@Type(tomType,EmptyType()),Constraints=constraints] -> {
-        //The variable will always have a type: a primitive (Type) or an unknown
-        //(TypeVar) type (a fresh type variable)
-        TomType globalType = kernelTyper.getType(`tomType);
-        kernelTyper.addConstraints(`Equation(localType,globalType));
       }
     }
   }
@@ -247,6 +236,7 @@ public class KernelTyper {
    * @param constraintInstructionList a list of ConstraintInstruction
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
    */
+  // TOCHECK
   private ConstraintInstructionList typeConstraintInstructionList(TomType contextType, ConstraintInstructionList constraintInstructionList, Collection<Constraint> matchAndNumericConstraints) {
     // TODO
     return `concConstraintInstruction(); 
@@ -257,6 +247,7 @@ public class KernelTyper {
    * with type 'unknown' get this type
    *  - apply this for each rhs
    */
+  // TOCHECK
   protected Code propagateVariablesTypes(Code workingTerm){
     try{
       return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(workingTerm);  
@@ -265,6 +256,7 @@ public class KernelTyper {
     }
   }
 
+  // TOCHECK
   %strategy ProcessRhsForVarTypePropagation() extends Identity() {
     visit ConstraintInstruction {
       ConstraintInstruction(constr,action,option) -> {
@@ -276,6 +268,7 @@ public class KernelTyper {
     }
   }  
 
+  // TOCHECK
   %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
     visit TomTerm {       
       //Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
@@ -286,6 +279,7 @@ public class KernelTyper {
     }
   }
 
+  // TOCHECK
   %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
     visit BQTerm {
       //v@BQVariable[AstName=Name(name),AstType=type] -> {
@@ -307,6 +301,7 @@ public class KernelTyper {
    * Collect the constraints (match and numeric)
    * NumericConstraint are %match with explicit type declaration
    */
+  // TOCHECK
   %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends Identity() {
     visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
@@ -316,8 +311,33 @@ public class KernelTyper {
     }
   }
 
+  /*
+   * Continuation of CT-FUN rule (applying to premises):
+   * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+   * THEN infers type of arguments and adds a type constraint "Ai =
+   * Ti" for each argument, where Ai is a fresh type variable
+   */
   private SlotList typeVariableList(TomSymbol symbol, SlotList subtermList) {
-    // TODO 
+    if(symbol == null) {
+      throw new TomRuntimeException("typeVariableList: null symbol");
+    }
+
+    if(subtermList.isEmptyconcSlot()) {
+      return `concSlot();
+    }
+
+    %match(symbol, subtermList) {
+      //TODO
+      symb@emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+        /*
+         * if the top symbol is unknown, the subterms
+         * are typed in an empty context
+         */
+        SlotList sl = typeVariableList(`symb,`tail);
+        return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),slotAppl)),sl*);
+      }
+
+    }
     return `concSlot();
   }
 }

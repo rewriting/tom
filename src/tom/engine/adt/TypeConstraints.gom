@@ -4,6 +4,17 @@ imports String TomType
 abstract syntax
 
 /* Type Reconstruction */
+TermToInfer = 
+            /**
+             * TermToInfer set all kind of terms with a fresh type variable
+             * @param Term a tom term (Variable or RecordAppl)
+             * @param TypeVar a type variable
+             */
+            NewTerm(Term: TomTerm, TypeVar: TomType)
+
+TermToInferList = concTermToInfer(TermToInfer*) 
+
+
 TypeConstraint = Equation(Type1: TomType, Type2: TomType)
                | Subtype(Type1: TomType, Type2: TomType)
 
