@@ -282,6 +282,12 @@ public class PILFactory {
       BuildEmptyArray[AstName=name,Size=size] -> {
         return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
       }
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name);
+      }
     }
     return subject.toString();
   }

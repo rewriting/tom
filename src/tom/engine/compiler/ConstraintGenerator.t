@@ -329,7 +329,7 @@ public class ConstraintGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,BuildEmptyList(opName),TomBase.convertFromBQVarToVar(var)));
+      return `Or(IsEmptyList(opName, var), EqualBQTerm(codomain,BuildEmptyList(opName),var));
     }
     return `IsEmptyList(opName, var);
   }

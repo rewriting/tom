@@ -130,6 +130,7 @@ public static class WhenExprConstrOrTerm extends tom.library.sl.AbstractStrategy
 
   public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
     if (v instanceof tom.engine.adt.tomexpression.types.Expression || 
+        v instanceof tom.engine.adt.code.types.BQTerm || 
         v instanceof tom.engine.adt.tomterm.types.TomTerm || 
         v instanceof tom.engine.adt.tomconstraint.types.Constraint) {
       return s.visitLight(v,introspector);
