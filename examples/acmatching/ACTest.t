@@ -34,7 +34,7 @@ public class ACTest {
 
     %include{ peano/Peano.tom }  
     %include{ int.tom }
-    %include{ intarray.tom }
+    //%include{ intarray.tom }
   
   private void run() {
       Nat t = `f(a(),a(),b(),b(),b()); 
@@ -44,7 +44,8 @@ public class ACTest {
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
           */
-          f??(T1*,T2*) -> { 
+          // f??(T1*,T2*) -> { 
+          f?(T1*,T2*) -> { // to replace by previous line when TomAC will be merged (+ bootstrap)
               System.out.println("T1=" + `T1 + " T2=" + `T2);
           }
       } 
