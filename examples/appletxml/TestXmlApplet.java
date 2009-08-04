@@ -42,6 +42,7 @@ import java.io.*;
 public class TestXmlApplet {
   private TomXMLAnalyser test;
   private XMLConverter converter;
+  private boolean isHeadLessEnv = false;
 
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestXmlApplet.class.getName());
@@ -50,20 +51,33 @@ public class TestXmlApplet {
   @Before
   public void setUp() {
     test = new TomXMLAnalyser();
+    try {
     converter = new XMLConverter();
+    } catch (java.awt.HeadlessException e) {
+      isHeadLessEnv = true;
+      Assert.assertTrue("HeadLessException, please run this test on a computer with an X display.",true);
+    }
   }
 
   @Test
   public void testNonNullDefault() {
     Assert.assertNotNull(test);
-    Assert.assertNotNull(converter);
-    Assert.assertNotNull(converter.defaultText);
+    if(isHeadLessEnv) {
+      System.out.println("The environment is headless, please run this test on a computer with an X display.");
+    } else {
+      Assert.assertNotNull(converter);
+      Assert.assertNotNull(converter.defaultText);
+    }
   }
 
   @Test
-  public void testNonNullConvert() {
-    TNode term = new XmlTools().convertXMLToTNode(new ByteArrayInputStream(converter.defaultText.getBytes()));
-    Assert.assertNotNull(term);
-  }
+    public void testNonNullConvert() {
+      if(isHeadLessEnv) {
+        System.out.println("The environment is headless, please run this test on a computer with an X display.");
+      } else {
+        TNode term = new XmlTools().convertXMLToTNode(new ByteArrayInputStream(converter.defaultText.getBytes()));
+        Assert.assertNotNull(term);
+      }
+    }
 }
 
