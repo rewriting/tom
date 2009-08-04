@@ -168,21 +168,20 @@ public class KernelTyper {
       NewTerm(tomTerm,typeVar) -> {
         // Type a function or a list
         %match(tomTerm) {
-          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=_] -> {
+            // Take the symbol with type represented by "contextType", but,
+            // why?!? What really is contextType?? Who generates this??
+            // Example: if this case is called twice successively (e.g.:
+            // f(g())), so the contextType will be the Codomain of the first
+            // call (e.g.: codomain of "g") and when tomname is empty, so this
+            // can be the case of f(f(g())) (two "f")
             TomSymbol tomSymbol = null;
-            // Find the TomName
             if(`tomName.equals("")) {
-              // Take the symbol with type represented by "contextType", but,
-              // why?!? What really is contextType?? Who generates this??
-              // Example: if this case is called twice successively (e.g.:
-              // f(g())), so the contextType will be the Codomain of the first
-              // call (e.g.: codomain of "g") and when tomname is empty, so this
-              // can be the case of f(f(g())) (two "f")
               tomSymbol = kernelTyper.getSymbolFromType(contextType);
               if(tomSymbol==null) {
                 throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
-              }
-              // Add the name found to the name list. But why the "tomname" (which
+              } 
+              // Add the name found to the name list. But why the "symbolname" (which
               // is equals to "") is not removed of the nameList???
               `nameList = `concTomName(tomSymbol.getAstName());
             } else {
@@ -193,19 +192,42 @@ public class KernelTyper {
            * CT-FUN rule:
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
            * THEN infers type of arguments and add a type constraint "A = T" and
-           * calls the TypeVariableList method to adds a type constraint "Ai =
-           * Ti" for each argument, where Ai is a fresh type variable
+           *      calls the TypeVariableList method which adds a type constraint "Ai =
+           *      Ti" for each argument, where Ai is a fresh type variable
+           *
+           * CT-ELEM rule:
+           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+           * THEN infers type of both sublist "l(e1,...,en)" and last argument
+           *      "e" and adds a type constraint "AA = TT" and calls the
+           *      TypeVariableList method which adds a type constraint "A =T"
+           *      for the last argument, where A is a fresh type variable and
+           *      "e" does not represent a list with head symbol "l"
+           *
+           * CT-MERGE rule:
+           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+           * THEN infers type of both sublist "l(e1,...,en)" and last argument
+           *      "e" and adds a type constraint "AA = TT" and calls the
+           *      TypeVariableList method, where "e" represents a list with
+           *      head symbol "l"
+           *
+           * CT-STAR rule:
+           * Equals to CT-MERGE but with a star variable "x*" instead of "e"
+           * This rule is necessary because it differed from CT-MERGE in the
+           * sense of the type of the last argument ("x*" here) is unknown 
            */
             if(tomSymbol != null) {
               kernelTyper.addConstraints(`Equation(typeVar,TomBase.getSymbolCodomain(tomSymbol)));
+              TomTypeList domainType = TomBase.getSymbolDomain(tomSymbol);
               // Type the arguments 
               SlotList subterm =
-                kernelTyper.typeVariableList(tomSymbol,`slotList);
+                kernelTyper.typeVariableList(tomSymbol,domainType,`slotList);
             } else {
               System.out.println("contextType = " + contextType);
               %match(contextType) {
-                type@(Type|TypeWithSymbol)[] -> {
-                  SlotList subterm = kernelTyper.typeVariableList(`emptySymbol(), `slotList);
+                (Type|TypeWithSymbol)[] -> {
+                  // TOCHECK what do here with domainType
+                  SlotList subterm =
+                    kernelTyper.typeVariableList(`emptySymbol(),`concTomType(),`slotList);
                 }
               }
             }
@@ -219,7 +241,7 @@ public class KernelTyper {
            * IF found "x:A" and "x:T" already exists in SymbolTable 
            * THEN add a type constraint "A = T"
            */
-          var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
+          (Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=_] -> {
             //The variable will always have a type: a primitive (Type) or an unknown
             //(TypeVar) type (a fresh type variable)
             TomType globalType = kernelTyper.getType(`tomType);
@@ -311,13 +333,22 @@ public class KernelTyper {
     }
   }
 
-  /*
-   * Continuation of CT-FUN rule (applying to premises):
-   * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-   * THEN infers type of arguments and adds a type constraint "Ai =
-   * Ti" for each argument, where Ai is a fresh type variable
-   */
-  private SlotList typeVariableList(TomSymbol symbol, SlotList subtermList) {
+  private TomSymbol findSymbol(TomType contextType, String symbolName) {
+    TomSymbol tomSymbol = null;
+    if(symbolName.equals("")) {
+      tomSymbol = this.getSymbolFromType(contextType);
+      if(tomSymbol==null) {
+        throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+      } 
+      // Add the name found to the name list. But why the "symbolname" (which
+      // is equals to "") is not removed of the nameList???
+    } else {
+      tomSymbol = this.getSymbolFromName(`symbolName);
+    }
+    return tomSymbol;
+  }
+
+  private SlotList typeVariableList(TomSymbol symbol, TomTypeList domainType, SlotList subtermList) {
     if(symbol == null) {
       throw new TomRuntimeException("typeVariableList: null symbol");
     }
@@ -326,19 +357,97 @@ public class KernelTyper {
       return `concSlot();
     }
 
-    %match(symbol, subtermList) {
+    %match(symbol, domainType, subtermList) {
       //TODO
-      symb@emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+      symb@emptySymbol(), concTomType(firstDomainType,tail1*),
+        concSlot(PairSlotAppl(slotName,slotAppl),tail2*) -> {
         /*
          * if the top symbol is unknown, the subterms
          * are typed in an empty context
          */
-        SlotList sl = typeVariableList(`symb,`tail);
-        return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),slotAppl)),sl*);
+        SlotList sl = typeVariableList(`symb,`tail1*,`tail2);
+        TomType typeVar = this.getFreshTypeVar();
+        this.addConstraints(`Equation(typeVar,firstDomainType));
+        return
+          `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),NewTerm(slotAppl,typeVar))),sl*);
       }
 
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,codomain@Type(tomCodomain,tlCodomain))], concTomType(firstDomainType,tail1*),
+        concSlot(PairSlotAppl(slotName,slotAppl),tail2*) -> {
+          TomType typeVar = this.getFreshTypeVar();
+          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
+            /*
+             * todo
+             * when the symbol is an associative operator,
+             * the signature has the form: list conc( element* )
+             * the list of types is reduced to the singleton { element }
+             *
+             * consider a pattern: conc(e1*,x,e2*,y,e3*)
+             * assign the type "element" to each subterm: x and y
+             * assign the type "list" to each subtermlist: e1*,e2* and e3*
+             */
+// TOCHECK from here----------------
+            %match(slotAppl) {
+              VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
+                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                SlotList sl = typeVariableList(`symb,domainType,`tail2);
+                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
+              }
+
+              UnamedVariableStar[Option=option,Constraints=constraints] -> {
+                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                SlotList sl = typeVariableList(`symb,domainType,`tail2);
+                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
+              }
+
+// TOCHECK untill here----------------
+              /*
+               * Continuation of CT-MERGE rule (applying to premises):
+               * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+               * THEN infers type of both sublist "l(e1,...,en)" and last argument
+               *      "e", where "e" represents a list with
+               *      head symbol "l"
+               *
+               */
+              RecordAppl[Option=_,NameList=concTomName(Name(tomName),_),Slots=_,Constraints=_] -> {
+                TomSymbol tomSymbol = this.findSymbol(`firstDomainType,`tomName);
+                if (`symb == tomSymbol) {
+                  SlotList sl = typeVariableList(`symb,domainType,`tail2);
+                  return 
+                    `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
+                }
+              }
+                             
+              /*
+               * Continuation of CT-ELEM rule (applying to premises):
+               * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
+               * THEN infers type of both sublist "l(e1,...,en)" and last argument
+               *      "e" and adds a type constraint "A = T" for the last
+               *      argument, where "A" is a fresh type variable  and
+               *      "e" does not represent a list with head symbol "l"
+               */
+              _ -> {
+                this.addConstraints(`Equation(typeVar,firstDomainType));
+                SlotList sl = typeVariableList(`symb,domainType,`tail2);
+                return 
+                  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
+              }
+            }
+          } 
+          /*
+           * Continuation of CT-FUN rule (applying to premises):
+           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+           * THEN infers type of arguments and adds a type constraint "Ai =
+           *      Ti" for each argument, where "Ai" is a fresh type variable
+           */
+          else {
+            this.addConstraints(`Equation(typeVar,firstDomainType));
+            SlotList sl = typeVariableList(`symb,`tail1,`tail2);
+            return
+              `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName),NewTerm(slotAppl,typeVar))),sl*);
+          }
+        }
     }
-    return `concSlot();
+    throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
   }
-}
- 
+} 
