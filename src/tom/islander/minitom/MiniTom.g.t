@@ -277,16 +277,17 @@ visitAction // almost the same as patternAction
   | patternList ARROW term -> ^(VisitActionT patternList term)
   ;
 
-//Operator
+//Operator : fix it :  keywordIsFsym is optional since Tom 2.5
 operator
-  : OPERATOR t=ID n=ID LPAREN slotList? RPAREN LBRACE keywordIsFsym l=listKeywordsOp? /*ol=((keywordMake | keywordGetSlot)+)?*/ RBRACE
-    -> {l!=null}? ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym $l /*^(OperatorList ($l)? )*/)
-    -> ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym ^(OperatorList ))
+  : OPERATOR t=ID n=ID LPAREN slotList? RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOp? /*ol=((keywordMake | keywordGetSlot)+)?*/ RBRACE
+    -> {l!=null}? ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ $l /*^(OperatorList ($l)? )*/)
+    -> ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
 /*keywords for %op*/ 
 keywordsOp
-  : keywordMake
+  : keywordIsFsym
+  | keywordMake
   | keywordGetSlot
   ;
 
@@ -309,7 +310,8 @@ listKeywordsOpArray
 
 /*keywords for %oplist*/
 keywordsOpList
-  : keywordMakeEmptyList
+  : keywordIsFsym
+  | keywordMakeEmptyList
   | keywordMakeInsert
   | keywordGetHead
   | keywordGetTail
@@ -387,15 +389,15 @@ slotList
 //
 
 operatorList
-  : OPLIST t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym l=listKeywordsOpList? RBRACE
-    -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym $l)
-    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList ))
+  : OPLIST t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpList? RBRACE
+    -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
+    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
 operatorArray
-  : OPARRAY t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym l=listKeywordsOpArray? RBRACE
-    -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym $l)
-    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList ))
+  : OPARRAY t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE /*keywordIsFsym*/ l=listKeywordsOpArray? RBRACE
+    -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ $l)
+    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
 typeTerm
