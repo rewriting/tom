@@ -166,6 +166,11 @@ public class KernelTyper {
     // not necessary anymore
     visit TermToInfer {
       NewTerm(tomTerm,typeVar) -> {
+
+        // TODO: to put code to treat constraints, because this is important
+        // when using an alias ("@")
+
+
         // Type a function or a list
         %match(tomTerm) {
           RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=_] -> {
@@ -175,6 +180,7 @@ public class KernelTyper {
             // f(g())), so the contextType will be the Codomain of the first
             // call (e.g.: codomain of "g") and when tomname is empty, so this
             // can be the case of f(f(g())) (two "f")
+
             TomSymbol tomSymbol = null;
             if(`tomName.equals("")) {
               tomSymbol = kernelTyper.getSymbolFromType(contextType);
@@ -187,7 +193,7 @@ public class KernelTyper {
             } else {
               tomSymbol = kernelTyper.getSymbolFromName(`tomName);
             }
-
+            tomSymbol = kernelTyper.getSymbolFromName(`tomName);
           /*
            * CT-FUN rule:
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
@@ -385,22 +391,29 @@ public class KernelTyper {
              * consider a pattern: conc(e1*,x,e2*,y,e3*)
              * assign the type "element" to each subterm: x and y
              * assign the type "list" to each subtermlist: e1*,e2* and e3*
+             * assign the type "list" to each subtermlist: conc(...)
              */
-// TOCHECK from here----------------
             %match(slotAppl) {
+              /*
+               * Continuation of CT-STAR rule (applying to premises):
+               * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
+               * THEN infers type of both sublist "l(e1,...,en)" and last argument
+               *      "x", where "x" represents a list with
+               *      head symbol "l"
+               *
+               */
               VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
-                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                this.addConstraints(`Equation(typeVar,codomain));
                 SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
+                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),constraints)),sl*);
               }
 
               UnamedVariableStar[Option=option,Constraints=constraints] -> {
-                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                this.addConstraints(`Equation(typeVar,codomain));
                 SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
+                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,constraints)),sl*);
               }
 
-// TOCHECK untill here----------------
               /*
                * Continuation of CT-MERGE rule (applying to premises):
                * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
@@ -419,7 +432,8 @@ public class KernelTyper {
               }
                              
               /*
-               * Continuation of CT-ELEM rule (applying to premises):
+               * Continuation of CT-ELEM rule (applying to premises which are
+               * not lists):
                * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
                * THEN infers type of both sublist "l(e1,...,en)" and last argument
                *      "e" and adds a type constraint "A = T" for the last
