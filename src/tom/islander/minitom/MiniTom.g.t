@@ -39,7 +39,7 @@ blockList
   ;
 
 goalLanguageBlock
-  : LBRACE blockList RBRACE -> ^(BlockList blockList)
+  : LBRACE blockList /*compositeTerm*/ RBRACE -> /*^(BlockList compositeTerm)*/ ^(BlockList blockList)
   ;
 
 matchConstruct
@@ -61,7 +61,8 @@ patternAction
   ;
 
 compositeTerm
-  : exp=ID -> ^(CompositeTerm ID[exp] ) //temporary rule
+  : exp=CID -> ^(CompositeTerm CID[exp] ) //temporary rule
+  | exp=ID -> ^(CompositeTerm ID[exp] ) //temporary rule
   ;
 
 // Is it necessary to create a node for a plainPattern ?
@@ -278,11 +279,50 @@ visitAction // almost the same as patternAction
 
 //Operator
 operator
-  : OPERATOR t=ID n=ID LPAREN slotList? RPAREN LBRACE keywordIsFsym ol=( keywordMake | keywordGetSlot )* RBRACE -> ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym ^(OperatorList $ol ))
+  : OPERATOR t=ID n=ID LPAREN slotList? RPAREN LBRACE keywordIsFsym l=listKeywordsOp? /*ol=((keywordMake | keywordGetSlot)+)?*/ RBRACE
+    -> {l!=null}? ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym $l /*^(OperatorList ($l)? )*/)
+    -> ^(Operator ^(Name $n) ^(Type $t) slotList? keywordIsFsym ^(OperatorList ))
   ;
 
+/*keywords for %op*/ 
+keywordsOp
+  : keywordMake
+  | keywordGetSlot
+  ;
+
+listKeywordsOp
+  : keywordsOp+ -> ^(OperatorList keywordsOp+)
+  ;
+
+/*keywords for %oparray*/
+keywordsOpArray
+  : keywordIsFsym
+  | keywordMakeEmptyArray
+  | keywordMakeAppend
+  | keywordGetElement
+  | keywordGetSize
+  ;
+
+listKeywordsOpArray
+  : keywordsOpArray+ -> ^(OperatorList keywordsOpArray+)
+  ;
+
+/*keywords for %oplist*/
+keywordsOpList
+  : keywordMakeEmptyList
+  | keywordMakeInsert
+  | keywordGetHead
+  | keywordGetTail
+  | keywordIsEmpty
+  ;
+
+listKeywordsOpList
+  : keywordsOpList+ -> ^(OperatorList keywordsOpList+)
+  ;
+//
+
 keywordIsFsym
-  : KW_ISFSYM LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsFsym $name goalLanguageBlock)
+  : KW_ISFSYM LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMake 
@@ -291,19 +331,19 @@ keywordMake
   ;
 
 keywordGetSlot 
-  : KW_GETSLOT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(GetSlot $n1 $n2 goalLanguageBlock)
+  : KW_GETSLOT LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(GetSlot ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetHead
-  : KW_GETHEAD LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetHead $name goalLanguageBlock)
+  : KW_GETHEAD LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetHead ^(Name $name) goalLanguageBlock)
   ;
 
 keywordGetTail
-  : KW_GETTAIL LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetTail $name goalLanguageBlock)
+  : KW_GETTAIL LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetTail ^(Name $name) goalLanguageBlock)
   ;
 
 keywordIsEmpty
-  : KW_ISEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsEmpty $name goalLanguageBlock)
+  : KW_ISEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsEmpty ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeEmptyList
@@ -311,23 +351,23 @@ keywordMakeEmptyList
   ;
 
 keywordMakeInsert
-  : KW_MKINSERT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(MakeInsert $n1 $n2 goalLanguageBlock)
+  : KW_MKINSERT LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(MakeInsert ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetElement
-  : KW_GETELEMENT LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(GetElement $n1 $n2 goalLanguageBlock)
+  : KW_GETELEMENT LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(GetElement ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 keywordGetSize
-  : KW_GETSIZE LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetSize $name goalLanguageBlock)
+  : KW_GETSIZE LPAREN name=ID RPAREN goalLanguageBlock -> ^(GetSize ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeEmptyArray
-  : KW_MKEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(MakeEmptyArray $name goalLanguageBlock)
+  : KW_MKEMPTY LPAREN name=ID RPAREN goalLanguageBlock -> ^(MakeEmptyArray ^(Name $name) goalLanguageBlock)
   ;
 
 keywordMakeAppend
-  : KW_MKAPPEND LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(MakeAppend $n1 $n2 goalLanguageBlock)
+  : KW_MKAPPEND LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(MakeAppend ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
 // 
@@ -347,11 +387,15 @@ slotList
 //
 
 operatorList
-  : OPLIST t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym ol=( keywordMakeEmptyList | keywordMakeInsert | keywordGetHead | keywordGetTail | keywordIsEmpty )* RBRACE -> ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList $ol ))
+  : OPLIST t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym l=listKeywordsOpList? RBRACE
+    -> {l!=null}? ^(OpList ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym $l)
+    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList ))
   ;
 
 operatorArray
-  : OPARRAY t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE ol=(keywordIsFsym | keywordMakeEmptyArray | keywordMakeAppend | keywordGetElement | keywordGetSize )* RBRACE -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList $ol ))
+  : OPARRAY t=ID n=ID LPAREN t2=ID STAR RPAREN LBRACE keywordIsFsym l=listKeywordsOpArray? RBRACE
+    -> {l!=null}? ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym $l)
+    -> ^(OpArray ^(Name $n) ^(Type $t) ^(Type $t2) keywordIsFsym ^(OperatorList ))
   ;
 
 typeTerm
@@ -363,11 +407,11 @@ keywordImplement
   ;
 
 keywordIsSort
-  : KW_ISSORT ID /*goalLanguageSortCheck*/ goalLanguageBlock -> ^(IsSort ^(Name ID) goalLanguageBlock ) //temp
+  : KW_ISSORT LPAREN ID RPAREN /*goalLanguageSortCheck*/ goalLanguageBlock -> ^(IsSort ^(Name ID) goalLanguageBlock ) //temp
   ;
 
 keywordEquals
-  : KW_EQUALS LPAREN n1=ID n2=ID RPAREN goalLanguageBlock -> ^(Equals ^(Name $n1 ) ^(Name $n2 ) goalLanguageBlock )
+  : KW_EQUALS LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(Equals ^(Name $n1 ) ^(Name $n2 ) goalLanguageBlock )
   ;
 
 // LEXER
@@ -417,7 +461,7 @@ AT          :   '@' ;
 STAR        :   '*' ;
 ANTI_SYM    :    '!';
 QMARK       :   '?' ;
-UNDERSCORE  :    '_' ;
+UNDERSCORE  :   '_' ;
 MINUS       :   '-' ;
 PLUS        :   '+' ;
 DOT         :   '.' ;
@@ -513,3 +557,6 @@ ID: ( LETTER | UNDERSCORE ) ( LETTER | UNDERSCORE | DIGIT )* ;
 
 fragment
 XMLID: (ID | STRING);
+
+fragment
+CID: ( ID | '$' | WS | STRING | DOT | LPAREN .* RPAREN )+ ;

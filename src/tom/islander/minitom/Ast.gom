@@ -108,9 +108,9 @@ OperatorList = OperatorList(Operator*)
 BlockList = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
       	  | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
           | CompositeTerm(CompositeTerm:String)
-          | Operator(Name:TomName,Type:TomType,Args:SlotList,Op:Operator,OpList:OperatorList) // Name - Type -Args - isfsym - OperatorList
-          | OpList(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OpList:OperatorList)
-          | OpArray(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OpList:OperatorList)
+          | Operator(Name:TomName,Type:TomType,Args:SlotList,Op:Operator,OperatorList:OperatorList) // Name - Type -Args - isfsym - OperatorList
+          | OpList(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OperatorList:OperatorList)
+          | OpArray(Name:TomName,Type:TomType,Arg:TomType,Op:Operator,OperatorList:OperatorList)
           | Strategy(Name:TomName,Extends:TomTerm,VisitList:StrategyVisitList,Arguments:TomTermList) //?
           | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
           | Include(FileName:String)
