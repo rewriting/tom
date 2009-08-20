@@ -7,7 +7,7 @@ Code =
      | TargetLanguageToCode(Tl:TargetLanguage)
      | InstructionToCode(AstInstruction:Instruction)
      | DeclarationToCode(AstDeclaration:Declaration)
-     | BQTermListToCode(Bq:BQTermList)
+     | BQTermToCode(Bq:BQTerm)
   /**
    * <code>Tom</code> main construct to embed a Tom island
    * It will be generated on a single line
