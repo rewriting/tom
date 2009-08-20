@@ -641,11 +641,11 @@ backquoteTerm [List<Code> list]
 
           Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
           //BQTerm bqTerm = tomparser.plainBQTerm();
-          BQTermList result = bqparser.beginBackquote();
+          BQTerm result = bqparser.beginBackquote();
 
           // update position for new target block
           updatePosition();
-          list.add(`BQTermListToCode(result));
+          list.add(`BQTermToCode(result));
           //throw new RuntimeException("BackQuote parser not yet implemented");
         }
     ;

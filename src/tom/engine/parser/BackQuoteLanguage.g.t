@@ -94,21 +94,28 @@ options{
       return tomparser.selector();
     }
     
-   private BQTermList buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTermList terms, boolean composite) {
-     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
-     BQTermList target = (terms==null)?
-       `concBQTerm():
-       `concBQTerm(BQTL(ITL(".")),terms*);
+   private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, 
+       BQTerm target, boolean composite) {
+     OptionList option = `concOption(
+         OriginTracking(Name(id.getText()),id.getLine(),currentFile()),
+         ModuleName(DEFAULT_ MODULE_NAME));
+     target = (target==null)?
+       `Composite():
+       `Composite(CompositeTL(ITL(".")),target);
 
      if(composite) {
-			 BQTermList list = ASTFactory.makeBQTermList(blockList);
-			 return `concBQTerm(BQAppl(option,Name(id.getText()),list),target*);
+       BQTermList list = ASTFactory.makeBQTermList(blockList);
+       return `Composite(
+           CompositeBQTerm(BQAppl(option,Name(id.getText()),list)),
+           target*);
      } else {
-			 return `concBQTerm(BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN),target*);
-		 }
-
+       return `Composite(
+           CompositeBQTerm(
+             BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),
+           target*);
+     }
    }
- 
+
    // sorts attributes of xml term with lexicographical order
     private BQTermList sortAttributeList(BQTermList list){
       %match(list) {
@@ -136,13 +143,12 @@ options{
     private String encodeName(String name) {
       return "\"" + name + "\"";
     }
-
 }
 
 /*
  * Backquoted Term
  */
-beginBackquote returns [BQTermList result]
+beginBackquote returns [BQTerm result]
 { 
   result = null; 
   BQTermList context = `concBQTerm();
@@ -152,7 +158,7 @@ ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 ;
 
 
-mainBqTerm [BQTermList context] returns [BQTermList result]
+mainBqTerm [BQTerm context] returns [BQTerm result]
 {
     result = null;
     BQTermList terms = null;
@@ -218,7 +224,7 @@ mainBqTerm [BQTermList context] returns [BQTermList result]
         )
     ;
 
-bqTerm [BQTermList context] returns [BQTermList result]
+bqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
     BQTermList terms = null;
@@ -238,7 +244,7 @@ bqTerm [BQTermList context] returns [BQTermList result]
             {   
               String name = id.getText();
               Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-              result = `concBQTerm(BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN));
+              result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);
             }
             
             |  ws /*ws*/ 
@@ -260,7 +266,7 @@ bqTerm [BQTermList context] returns [BQTermList result]
         t = target
         {
           //System.out.println("target = " + t);
-          result = `concBQTerm(BQTL(ITL(t.getText())));
+          result = `Composite(CompositeTL(ITL(t.getText())));
         }
     ;
 
