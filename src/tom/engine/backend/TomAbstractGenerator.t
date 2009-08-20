@@ -202,9 +202,15 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      BQTL(tl) -> {
-        generateTargetLanguage(deep,`tl, moduleName);
-        return;
+      Composite(_*,t,_*) -> {
+        %match(t) {
+          CMTL(target) -> {
+            generateTargetLanguage(deep,`target, moduleName);
+          }
+          CMTerm(term) -> {
+            generateBQTerm(deep,`term, moduleName);
+          }
+        }
       }
     }
   }

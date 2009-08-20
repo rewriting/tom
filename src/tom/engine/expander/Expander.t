@@ -274,7 +274,7 @@ matchBlock: {
            */
           String funcName = "getChildCount";//function name
             //manage null children: return 0
-            InstructionList instructions = `concInstruction(If(BQTermToExpression(BQTL(ITL("o==null"))),Return(BQTL(ITL("0"))),Nop()));
+            InstructionList instructions = `concInstruction(If(BQTermToExpression(Composite(CompositeTL(ITL("o==null")))),Return(Composite(CompositeTL(ITL("0")))),Nop()));
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             %match(type) {
@@ -287,11 +287,11 @@ matchBlock: {
                       Instruction inst = `Nop();
                       if ( TomBase.isListOperator(`symbol) ) {
                         // manage empty lists and arrays
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(BQTL(ITL("0"))),Return(BQTL(ITL("2")))),Nop());
+                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToBQTerm(Integer(0))),Return(BQTL(ITL("0"))),Return(BQTL(ITL("2")))),Nop());
+                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToBQTerm(Integer(0))),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
                       } else {
-                        inst = `If(IsFsym(opName,var),Return(BQTL(ITL(""+TomBase.getArity(symbol)))),Nop());
+                        inst = `If(IsFsym(opName,var),Return(Composite(CompositeTL(ITL(""+TomBase.getArity(symbol))))),Nop());
                       } 
                       instructionsForSort = `concInstruction(instructionsForSort*,inst);
                     }
@@ -302,7 +302,7 @@ matchBlock: {
             }
           }
           //default case (for builtins too): return 0
-          instructions = `concInstruction(instructions*,Return(BQTL(ITL("0"))));
+          instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("0")))));
           l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)));
           /**
            * generate code for:
@@ -322,7 +322,7 @@ matchBlock: {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          Instruction return_array = `CodeToInstruction(BQTermListToCode(concBQTerm(BQTL(ITL("return new Object[]{")),ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var)),BQTL(ITL(",")),ExpressionToBQTerm(GetTail(symbolName,var)),BQTL(ITL("}")))));
+                          Instruction return_array = `CodeToInstruction(BQTermListToCode(concBQTerm(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}"))))));
                           //default case (used for builtins too)                     
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{}")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
@@ -331,7 +331,7 @@ matchBlock: {
                           //TODO 
                         } else {
                           int arity = TomBase.getArity(symbol);
-                          BQTermList slotArray = `concBQTerm(BQTL(ITL("return new Object[]{")));
+                          BQTermList slotArray = `concBQTerm(Composite(CompositeTL(ITL("return new Object[]{"))));
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
                           for(int i=0; i< arity; i++) {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
@@ -340,22 +340,22 @@ matchBlock: {
                               EmptyDeclaration() -> {
                                 // case of undefined getSlot
                                 // return null (to be improved)
-                                slotArray =  `concBQTerm(slotArray*,BQTL(ITL("null")));
+                                slotArray =  `concBQTerm(slotArray*,Composite(CompositeTL(ITL("null"))));
                                 if(i < arity-1) {
-                                  slotArray =  `concBQTerm(slotArray*,BQTL(ITL(",")));
+                                  slotArray =  `concBQTerm(slotArray*,Composite(CompositeTL(ITL(","))));
                                 } else {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {
                                 slotArray = `concBQTerm(slotArray*,ExpressionToBQTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var)));
                                 if(i < arity-1) {
-                                  slotArray = `concBQTerm(slotArray*,BQTL(ITL(",")));
+                                  slotArray = `concBQTerm(slotArray*,Composite(CompositeTL(ITL(","))));
                                 }
                               }
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
-                          slotArray = `concBQTerm(slotArray*,BQTL(ITL("}")));
+                          slotArray = `concBQTerm(slotArray*,Composite(CompositeTL(ITL("}"))));
                           Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermListToCode(slotArray)),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
@@ -368,7 +368,7 @@ matchBlock: {
             }
           }
           //default case: return null
-          instructions = `concInstruction(instructions*,Return(BQTL(ITL("null"))));
+          instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("null")))));
           l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)));
 
           /**
@@ -393,9 +393,9 @@ matchBlock: {
                             TypesToType[Domain=concTomType(domain)] -> {
                               Instruction inst = 
                                 `If(IsFsym(symbolName,var),
-                                    If(BQTermToExpression(BQTL(ITL("children.length==0"))),
+                                    If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
                                       Return(BuildEmptyList(symbolName)),
-                                      Return(BuildConsList(symbolName,ExpressionToBQTerm(Cast(domain,BQTermToExpression(BQTL(ITL("children[0]"))))),ExpressionToBQTerm(Cast(type,BQTermToExpression(BQTL(ITL("children[1]")))))))
+                                      Return(BuildConsList(symbolName,ExpressionToBQTerm(Cast(domain,BQTermToExpression(Composite(CompositeTL(ITL("children[0]")))))),ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("children[1]"))))))))
                                       )
                                     ,Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
@@ -414,9 +414,9 @@ matchBlock: {
                             String slotTypeName = slotType.getTomType();
                             // manage builtin slots
                             if(symbolTable.isBuiltinType(slotTypeName)) {
-                              slots = `concBQTerm(slots*,BQTL(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]")));
+                              slots = `concBQTerm(slots*,Composite(CompositeTL(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]"))));
                             } else {
-                              slots = `concBQTerm(slots*,ExpressionToBQTerm(Cast(slotType,BQTermToExpression(BQTL(ITL("children["+i+"]"))))));
+                              slots = `concBQTerm(slots*,ExpressionToBQTerm(Cast(slotType,BQTermToExpression(Composite(CompositeTL(ITL("children["+i+"]")))))));
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
@@ -441,7 +441,7 @@ matchBlock: {
            * public Object getChildAt(Object o, int i);
            */
           funcName = "getChildAt";//function name
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(BQTL(ITL("getChildren(o)[i]")))));
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))));
 
           /**
            * generate code for:
@@ -523,7 +523,7 @@ matchBlock: {
           BQTerm arg = `BQVariable(concOption(orgTrack),Name("arg"),type);
           BQTerm environmentVar = `BQVariable(concOption(orgTrack),Name("environment"),EmptyType());
           Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
-          Instruction return2 = `Return(BQTL(ITL("any.visitLight(arg,introspector)")));
+          Instruction return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type("Object",EmptyType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
@@ -536,8 +536,8 @@ matchBlock: {
         }
         ifList = `concInstruction(ifList*,              
             If(testEnvNotNull,
-              Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(BQTL(ITL("any.visit(environment,introspector)")))))),
-              Return(BQTL(ITL("any.visitLight(v,introspector)")))));
+              Return(ExpressionToBQTerm(Cast(genericType,BQTermToExpression(Composite(CompositeTL(ITL("any.visit(environment,introspector)"))))))),
+              Return(Composite(CompositeTL(ITL("any.visitLight(v,introspector)"))))));
         Declaration visitLightDeclaration = `MethodDef(
             Name("visitLight"),
             concBQTerm(vVar,introspectorVar),

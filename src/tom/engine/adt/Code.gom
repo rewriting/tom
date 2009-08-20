@@ -27,13 +27,13 @@ BQTermList = concBQTerm(BQTerm*)
 /* used for the compilation of backquote expressions
  * ex: `f(x+2,a()) -> 
  *          BQAppl("f",concBQTerm(
- *                        Composite(CMTerm(BQVar(x)),
- *                                  CMTL(ITL("+")),
- *                                  CMTerm(BuildConstant("2")))
+ *                        Composite(CompositeBQTerm(BQVar(x)),
+ *                                  CompositeTL(ITL("+")),
+ *                                  CompositeBQTerm(BuildConstant("2")))
  *                         BQAppl("a",concBQTerm())))
  */
-CompositeMember = CMTerm(term:BQTerm) 
-                | CMTL(Tl:TargetLanguage)
+CompositeMember = CompositeBQTerm(term:BQTerm) 
+                | CompositeTL(Tl:TargetLanguage)
 
 
 BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
