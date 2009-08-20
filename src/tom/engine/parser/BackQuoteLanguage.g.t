@@ -206,7 +206,7 @@ mainBqTerm [BQTermList context] returns [BQTermList result]
                  // `x
                 |   t = targetCode 
                  {
-                   //System.out.println("targetCode = " + t);
+                   System.out.println("targetCode = " + t);
                    addTargetCode(t);
                    String name = id.getText();
                    OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));

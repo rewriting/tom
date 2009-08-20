@@ -674,7 +674,7 @@ public final class TomBase {
       concSlot() -> { return `concBQTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
         BQTermList tl = slotListToBQTermList(`tail);
-        return `concBQTerm(TomBase.convertFromVarToBQVar(head),tl*);
+        return `concBQTerm(convertFromVarToBQVar(head),tl*);
       }
     }
     throw new TomRuntimeException("slotListToTomList: " + tomList);

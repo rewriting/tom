@@ -191,12 +191,12 @@ matchArgument [List<BQTerm> list] throws TomException
 }
     :   
 
-    subject1 = plainBQTerm[] { 
+    subject1 = plainBQTerm { 
       s1 = text.toString();
       text.delete(0, text.length()); 
     }
     (BACKQUOTE { text.delete(0, text.length()); } )?
-    (subject2 = plainBQTerm[] { s2 = text.toString(); })?
+    (subject2 = plainBQTerm { s2 = text.toString(); })?
 {
       if(subject2==null) {
         // System.out.println("matchArgument = " + subject1);
@@ -288,7 +288,7 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
     boolean isAnd = false;
  
     List<Code> blockList = new LinkedList<Code>();
-    TomTerm rhsTerm = null;
+    BQTerm rhsTerm = null;
    
     clearText();
 }
@@ -350,12 +350,12 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
      optionList)
    );
  }
- | rhsTerm = plainTerm[null,null,0]
+ | rhsTerm = plainBQTerm
  {
  // case where the rhs of a rule is an algebraic term
  list.add(`ConstraintInstruction(
      constraint,
-     Return(BuildReducedTerm(rhsTerm,rhsType)),
+     Return(rhsTerm),
      optionList)
    );
 
@@ -367,7 +367,7 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
 arrowAndAction[List<ConstraintInstruction> list, OptionList optionList, List<Option> optionListLinked, Token label, TomType rhsType, Constraint constraint] throws TomException
 {
   List<Code> blockList = new LinkedList<Code>();
-  TomTerm rhsTerm = null;
+  BQTerm rhsTerm = null;
 } :
    ARROW 
    {
@@ -536,7 +536,7 @@ matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result]
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
     result = null;
-    TomTerm extendsTerm = null;
+    BQTerm extendsBQTerm = null;
     List<TomVisit> visitList = new LinkedList<TomVisit>();
     TomVisitList astVisitList = `concTomVisit();
     TomName orgText = null;
@@ -616,8 +616,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
             )*
             )? RPAREN
         )
-        //extendsTerm = extendsBqTerm
-        EXTENDS (BACKQUOTE)? extendsTerm = plainTerm[null,null,0]
+        EXTENDS (BACKQUOTE)? extendsBQTerm = plainBQTerm
         LBRACE
         strategyVisitList[visitList] { astVisitList = ASTFactory.makeTomVisitList(visitList); }
         t:RBRACE
@@ -660,7 +659,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
 
-          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()), BuildReducedTerm(extendsTerm,strategyType),astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()), extendsBQTerm, astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
@@ -853,7 +852,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
         )
     ;
 
-plainBQTerm[]  returns [BQTerm result]
+plainBQTerm  returns [BQTerm result]
 {
     TomName name = null;
     result = null;
@@ -863,8 +862,8 @@ plainBQTerm[]  returns [BQTerm result]
 }
     : name = headSymbol[optionList] 
       (args:LPAREN 
-         (tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); })? 
-         (COMMA tmp=plainBQTerm[] { l = `concBQTerm(l*,tmp); })* 
+         (tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })? 
+         (COMMA tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })* 
        RPAREN)?
        { 
          if (args==null) {
@@ -873,6 +872,8 @@ plainBQTerm[]  returns [BQTerm result]
            result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l);
          }
        }
+    | number:NUM_INT { result=`BQTL(ITL(number.getText())); }
+    | string:STRING { result=`BQTL(ITL(string.getText())); }
 ;
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException

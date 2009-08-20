@@ -55,13 +55,17 @@ public class ConstraintGenerator {
 
 //------------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }	
-  %include { java/util/types/Collection.tom}
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------	
 
   %typeterm ConstraintGenerator {
     implement { ConstraintGenerator }
     is_sort(t) { ($t instanceof ConstraintGenerator) }
+  }
+
+  %typeterm BQTermCollection {
+    implement { java.util.Collection<BQTerm> }
+    is_sort(t) { ($t instanceof java.util.Collection) }
   }
 
   private Compiler compiler;
@@ -243,7 +247,7 @@ public class ConstraintGenerator {
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,TruePattern()),action,Nop())));    
+          If(BQTermToExpression(flag),action,Nop())));    
     // add fresh variables' declarations
     for(BQTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -283,22 +287,22 @@ public class ConstraintGenerator {
    */
   private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
-    BQTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());    
+    BQTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag, FalsePattern()),action,Nop())));
+          If(Negation(BQTermToExpression(flag)),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
   /**
    * Collect the variables in a match constraint
    */
-  %strategy CollectVar(varList:Collection) extends Identity() {
+  %strategy CollectVar(varList:BQTermCollection) extends Identity() {
     visit Constraint {
       MatchConstraint(v@Variable[],_) -> {
-        if(!varList.contains(`v)) { varList.add(`v); }        
+        if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }        
       }      
     }// end visit
   }// end strategy   
@@ -306,10 +310,10 @@ public class ConstraintGenerator {
   /**
    * Collect the free variables in an expression (do not inspect under a anti)  
    */
-  %strategy CollectFreeVar(varList:Collection) extends Identity() {     
+  %strategy CollectFreeVar(varList:BQTermCollection) extends Identity() {     
     visit Expression {
       ConstraintToExpression(MatchConstraint(v@Variable[],_)) -> {
-        if(!varList.contains(`v)) { varList.add(`v); }     
+        if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }     
         throw new VisitFailure();
       }
       AntiMatchExpression[] -> {        

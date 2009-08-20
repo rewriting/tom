@@ -23,14 +23,26 @@ Code =
 
 
 BQTermList = concBQTerm(BQTerm*)
+
+/* used for the compilation of backquote expressions
+ * ex: `f(x+2,a()) -> 
+ *          BQAppl("f",concBQTerm(
+ *                        Composite(CMTerm(BQVar(x)),
+ *                                  CMTL(ITL("+")),
+ *                                  CMTerm(BuildConstant("2")))
+ *                         BQAppl("a",concBQTerm())))
+ */
+CompositeMember = CMTerm(term:BQTerm) 
+                | CMTL(Tl:TargetLanguage)
+
+
 BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
        | BQVariable(Option:OptionList,AstName:TomName,AstType:TomType)
        | BQVariableStar(Option:OptionList,AstName:TomName,AstType:TomType)
-       | BQTL(Tl:TargetLanguage)
        // translate a purely algebraic TomTerm into a BQTerm
        // useful ?
        | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
-
+       | Composite(CompositeMember*)
       /**
        * <code>FunctionCall</code> generates a function call
        *
