@@ -201,8 +201,12 @@ public abstract class TomAbstractGenerator {
         generateExpression(deep,`t, moduleName);
         return;
       }
-    }
 
+      BQTL(tl) -> {
+        generateTargetLanguage(deep,`tl, moduleName);
+        return;
+      }
+    }
   }
 
   protected String getVariableName(BQTerm var) {

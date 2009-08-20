@@ -504,14 +504,9 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concBQTerm(head@(BuildTerm|BuildConstant|BQVariable|BuildAppendList|BuildConsList)[],tail*) -> {
+      concBQTerm(head@(BQTL|BuildTerm|BuildConstant|BQVariable|BuildAppendList|BuildConsList)[],tail*) -> {
         BQTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
-      }
-
-      concBQTerm(BQTL[],tail*) -> {
-        BQTerm subList = buildList(name,`tail,symbolTable);
-        return subList;
       }
 
     }
