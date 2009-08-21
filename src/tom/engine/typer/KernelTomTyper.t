@@ -147,14 +147,14 @@ public class KernelTomTyper {
    * Variable and TermAppl are typed in the TomTerm case
    */
 
-  public tom.library.sl.Visitable typeVariable(TomType contextType, tom.library.sl.Visitable subject) {
+  public <T extends tom.library.sl.Visitable> T typeVariable(TomType contextType, T subject) {
     if(contextType == null) {
       throw new TomRuntimeException("typeVariable: null contextType");
     }
     try {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
-      tom.library.sl.Visitable res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
+      T res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
     } catch(tom.library.sl.VisitFailure e) {
@@ -187,7 +187,7 @@ public class KernelTomTyper {
 
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
-        TomType newType = (TomType)`kernelTomTyper.typeVariable(contextType,`type);
+        TomType newType = `kernelTomTyper.typeVariable(contextType,`type);
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         return `VisitTerm(newType, kernelTomTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
@@ -228,7 +228,7 @@ public class KernelTomTyper {
 
         if(tomSymbol != null) {
           SlotList subterm = kernelTomTyper.typeVariableList(tomSymbol, `slotList);
-          ConstraintList newConstraints = (ConstraintList)kernelTomTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
+          ConstraintList newConstraints = kernelTomTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
           return `RecordAppl(option,nameList,subterm,newConstraints);
         } else {
           //System.out.println("contextType = " + contextType);
@@ -236,7 +236,7 @@ public class KernelTomTyper {
           %match(contextType) {
             type@(Type|TypeWithSymbol)[] -> {
               SlotList subterm = kernelTomTyper.typeVariableList(`emptySymbol(), `slotList);
-              ConstraintList newConstraints = (ConstraintList)kernelTomTyper.typeVariable(`type,`constraints);
+              ConstraintList newConstraints = kernelTomTyper.typeVariable(`type,`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
 
@@ -261,7 +261,7 @@ public class KernelTomTyper {
         %match(contextType) {
           (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
             TomType ctype = `Type(tomType,tlType);
-            ConstraintList newConstraints = (ConstraintList)kernelTomTyper.typeVariable(ctype,`constraints);
+            ConstraintList newConstraints = kernelTomTyper.typeVariable(ctype,`constraints);
             TomTerm newVar = `var.setAstType(ctype);
             //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
@@ -289,7 +289,7 @@ public class KernelTomTyper {
           Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeTomList(lhsVariable);
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
-          newAction = (Instruction) typeVariable(`EmptyType(),`newAction);
+          newAction = typeVariable(`EmptyType(),`newAction);
           ConstraintInstructionList newTail = typeConstraintInstructionList(contextType,`tail,matchAndNumericConstraints);
           return `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionConstraint),newTail*);
         } catch(VisitFailure e) {}
@@ -341,22 +341,23 @@ public class KernelTomTyper {
             }                  
           }
 
-          /* TODO: do we need also to manage RecordAppl? */
-          t@BQAppl[AstName=Name(name)] -> {
+          t@BQAppl[AstName=n@Name(name),Args=args] -> {
             TomSymbol symbol = kernelTomTyper.getSymbolFromName(`name);
             TomType type = null;
             if(symbol!=null) {
               type = TomBase.getSymbolCodomain(symbol);
+              if(type != null) {
+                newSubject = `t;
+              }
             } else {
               // unknown function call
               type = kernelTomTyper.guessSubjectType(`subject,matchAndNumericConstraints);
-            }
-            if(type != null) {
-              newSubject = `t;
-            } else {
-              if (!isNumeric) {
-                throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+              if(type != null) {
+                newSubject = `FunctionCall(n,type,args);
               }
+            }
+            if (type == null && !isNumeric) {
+              throw new TomRuntimeException("No symbol found for name '" + `name + "'");
             }
             newSubjectType = type;                    
           }
@@ -373,7 +374,7 @@ public class KernelTomTyper {
         if (isNumeric) {
           newSubjectType = `EmptyType();
           newSubject = `subject;
-          /** impossible case  */
+          /** impossible cases  */
           /**
           %match(subject){
             RecordAppl[] -> { newSubject = `BuildReducedTerm(subject,newSubjectType);} 
@@ -383,13 +384,10 @@ public class KernelTomTyper {
           }
           */
         } else {
-          if (newSubjectType == null) {
-            throw new RuntimeException("typeVariable: null contextType "+`subject);
-          }
-          newSubjectType = (TomType)kernelTomTyper.typeVariable(contextType,newSubjectType);
-          newSubject = (BQTerm)kernelTomTyper.typeVariable(newSubjectType, newSubject);                  
+          newSubjectType = kernelTomTyper.typeVariable(contextType,newSubjectType);
+          newSubject = kernelTomTyper.typeVariable(newSubjectType, newSubject);                  
         }
-        TomTerm newPattern = (TomTerm)kernelTomTyper.typeVariable(newSubjectType, `pattern);
+        TomTerm newPattern = kernelTomTyper.typeVariable(newSubjectType, `pattern);
         TomBase.collectVariable(lhsVariable,newPattern);
         return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
@@ -401,10 +399,11 @@ public class KernelTomTyper {
       %match(constr) {
         MatchConstraint(pattern,s) -> {
           // we want two terms to be equal even if their option is different 
-          // ( because of their position for example )
+          // ( because of their possition for example )
 matchL:  %match(subject,s){
            BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
-           BQAppl[AstName=name,Args=args],BQAppl[AstName=name,Args=args] -> {break matchL;}
+           BQAppl[AstName=astName,Args=tomList],BQAppl[AstName=astName,Args=tomList] -> {break matchL;}
+           BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
            _,_ -> { continue; }
          }
          TomTerm patt = `pattern;
@@ -448,7 +447,7 @@ matchL:  %match(subject,s){
          * are typed in an empty context
          */
         SlotList sl = typeVariableList(`symb,`tail);
-        return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),slotAppl)),sl*);
+        return `concSlot(PairSlotAppl(slotName,typeVariable(EmptyType(),slotAppl)),sl*);
       }
 
       symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
@@ -473,13 +472,13 @@ matchL:  %match(subject,s){
 
             %match(slotAppl) {
               VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
-                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                ConstraintList newconstraints = typeVariable(`codomain,`constraints);
                 SlotList sl = typeVariableList(`symb,`tail);
                 return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
               }
 
               UnamedVariableStar[Option=option,Constraints=constraints] -> {
-                ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
+                ConstraintList newconstraints = typeVariable(`codomain,`constraints);
                 SlotList sl = typeVariableList(`symb,`tail);
                 return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
               }
@@ -487,7 +486,7 @@ matchL:  %match(subject,s){
               _ -> {
                 TomType domaintype = `typelist.getHeadconcTomType();
                 SlotList sl = typeVariableList(`symb,`tail);
-                SlotList res = `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(domaintype, slotAppl)),sl*);
+                SlotList res = `concSlot(PairSlotAppl(slotName,typeVariable(domaintype, slotAppl)),sl*);
                 //System.out.println("domaintype = " + domaintype);
                 //System.out.println("res = " + res);
                 return res;
@@ -496,7 +495,7 @@ matchL:  %match(subject,s){
             }
           } else {
             SlotList sl = typeVariableList(`symb,`tail);
-            return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
+            return `concSlot(PairSlotAppl(slotName,typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
           }
         }
     }

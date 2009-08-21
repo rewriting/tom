@@ -389,7 +389,7 @@ public class TomTyper extends TomGenericPlugin {
 
     /*
      * replaces 'TermAppl' by its 'RecordAppl' form
-     * when no slotName exits, the position becomes the slotName
+     * when no slotName exists, the position becomes the slotName
      */
     protected TomTerm typeTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
       TomName headName = nameList.getHeadconcTomName();
@@ -452,7 +452,6 @@ public class TomTyper extends TomGenericPlugin {
         BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
           BQTermList args  = `TopDownIdStopOnSuccess(typeBQAppl(typer)).visitLight(`l);
-
           //System.out.println("BackQuoteTerm: " + `tomName);
           //System.out.println("tomSymbol: " + tomSymbol);
           if(TomBase.hasConstant(`optionList)) {

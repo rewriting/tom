@@ -880,16 +880,6 @@ plainBQTerm  returns [BQTerm result]
    | string:STRING { result=`Composite(CompositeTL(ITL(string.getText()))); }
 ;
 
-bqTerm returns [BQTerm result] 
-   { result = null; } :
- /* default case */
-{
-  result =  bqparser.beginBackquote();
-  // update position for new target block
-  updatePosition(tomlexer.getLine(),tomlexer.getColumn());
-}
-;
-
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
     List<Option> optionList = new LinkedList<Option>();
