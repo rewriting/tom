@@ -581,11 +581,16 @@ public class ASTFactory {
         }
         return `BuildConsArray(name,head,subList);
       }
+
       concBQTerm(head@(BuildTerm|BuildConstant|BQVariable)[],tail*) -> {
         BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         return `BuildConsArray(name,head,subList);
       }
 
+      concBQTerm(head@Composite(_*),tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        return `BuildConsArray(name,head,subList);
+      }
     }
 
     throw new TomRuntimeException("buildArray strange term: " + args);

@@ -33,6 +33,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqterm.BQVariable;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
@@ -261,7 +262,7 @@ public class Compiler extends TomGenericPlugin {
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects, Compiler compiler) extends Identity() {
     visit Constraint {
       constr@MatchConstraint[Pattern=pattern, Subject=subject] -> {
-        if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject)) ) {
+        if(renamedSubjects.contains(`pattern) || ( `(subject) instanceof BQVariable && renamedSubjects.contains(TomBase.convertFromBQVarToVar(`subject))) ) {
           // make sure we don't process generated contraints
           return `constr; 
         }        

@@ -341,9 +341,8 @@ public class KernelTomTyper {
             }                  
           }
 
-          /**
-           * impossible case
-          t@(TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
+          /* TODO: do we need also to manage RecordAppl? */
+          t@BQAppl[AstName=Name(name)] -> {
             TomSymbol symbol = kernelTomTyper.getSymbolFromName(`name);
             TomType type = null;
             if(symbol!=null) {
@@ -353,7 +352,7 @@ public class KernelTomTyper {
               type = kernelTomTyper.guessSubjectType(`subject,matchAndNumericConstraints);
             }
             if(type != null) {
-              newSubject = `BuildReducedTerm(t,type);
+              newSubject = `t;
             } else {
               if (!isNumeric) {
                 throw new TomRuntimeException("No symbol found for name '" + `name + "'");
@@ -361,7 +360,6 @@ public class KernelTomTyper {
             }
             newSubjectType = type;                    
           }
-          */
 
           // the user specified the type (already checked for consistence in SyntaxChecker)
           term@BuildReducedTerm[AstType=userType] -> {            
@@ -375,17 +373,19 @@ public class KernelTomTyper {
         if (isNumeric) {
           newSubjectType = `EmptyType();
           newSubject = `subject;
-          /** impossible case
+          /** impossible case  */
+          /**
           %match(subject){
             RecordAppl[] -> { newSubject = `BuildReducedTerm(subject,newSubjectType);} 
           }
-          */
-          /** FIXME
           %match(pattern){
             RecordAppl[] -> { `pattern = `BuildReducedTerm(pattern, newSubjectType); }
           }
           */
         } else {
+          if (newSubjectType == null) {
+            throw new RuntimeException("typeVariable: null contextType "+`subject);
+          }
           newSubjectType = (TomType)kernelTomTyper.typeVariable(contextType,newSubjectType);
           newSubject = (BQTerm)kernelTomTyper.typeVariable(newSubjectType, newSubject);                  
         }
