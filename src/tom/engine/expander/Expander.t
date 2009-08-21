@@ -322,7 +322,7 @@ matchBlock: {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          Instruction return_array = `CodeToInstruction(BQTermListToCode(concBQTerm(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}"))))));
+                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}")))));
                           //default case (used for builtins too)                     
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{}")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
@@ -331,7 +331,7 @@ matchBlock: {
                           //TODO 
                         } else {
                           int arity = TomBase.getArity(symbol);
-                          BQTermList slotArray = `concBQTerm(Composite(CompositeTL(ITL("return new Object[]{"))));
+                          BQTerm composite = `Composite(CompositeTL(ITL("return new Object[]{")));
                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
                           for(int i=0; i< arity; i++) {
                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
@@ -340,23 +340,23 @@ matchBlock: {
                               EmptyDeclaration() -> {
                                 // case of undefined getSlot
                                 // return null (to be improved)
-                                slotArray =  `concBQTerm(slotArray*,Composite(CompositeTL(ITL("null"))));
+                                composite =  `Composite(composite*,CompositeTL(ITL("null")));
                                 if(i < arity-1) {
-                                  slotArray =  `concBQTerm(slotArray*,Composite(CompositeTL(ITL(","))));
+                                  composite =  `Composite(composite*,CompositeTL(ITL(",")));
                                 } else {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {
-                                slotArray = `concBQTerm(slotArray*,ExpressionToBQTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var)));
+                                composite = `Composite(composite*,CompositeBQTerm(ExpressionToBQTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var))));
                                 if(i < arity-1) {
-                                  slotArray = `concBQTerm(slotArray*,Composite(CompositeTL(ITL(","))));
+                                  composite = `Composite(composite*,CompositeTL(ITL(",")));
                                 }
                               }
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
-                          slotArray = `concBQTerm(slotArray*,Composite(CompositeTL(ITL("}"))));
-                          Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermListToCode(slotArray)),Nop());
+                          composite = `Composite(composite*,CompositeTL(ITL("}")));
+                          Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermToCode(composite)),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
                       } 

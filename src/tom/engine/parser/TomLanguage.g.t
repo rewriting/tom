@@ -872,8 +872,8 @@ plainBQTerm  returns [BQTerm result]
            result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l);
          }
        }
-    | number:NUM_INT { result=`BQTL(ITL(number.getText())); }
-    | string:STRING { result=`BQTL(ITL(string.getText())); }
+    | number:NUM_INT { result=`Composite(CompositeTL(ITL(number.getText()))); }
+    | string:STRING { result=`Composite(CompositeTL(ITL(string.getText()))); }
 ;
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
@@ -2149,7 +2149,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             selector().pop();
 
             result = `GetImplementationDecl(BQVariable(option,Name(name.getText()),Type(typeString,EmptyType())),
-                Return(BQTL(tlCode)),ot);
+                Return(Composite(CompositeTL(tlCode))),ot);
         }
     ;
 

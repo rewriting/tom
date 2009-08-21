@@ -43,6 +43,7 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqterm.Composite;
 
 import tom.engine.exception.TomRuntimeException;
 import aterm.ATerm;
@@ -68,6 +69,14 @@ public class ASTFactory {
     return list;
   }
 
+  public static Composite makeComposite(Collection<BQTerm> c) {
+    BQTerm list = `Composite();
+    for(BQTerm term: c) {
+      list = `Composite(list*,CompositeBQTerm(term));
+    } 	     
+    return (Composite) list;
+  }
+
   public static TomList makeTomList(Collection<TomTerm> c) {
     TomList list = `concTomTerm();
     for(TomTerm term: c) {
@@ -86,7 +95,7 @@ public class ASTFactory {
         InstructionToCode(i) -> { 
           list = `concInstruction(list*,i); 
         }
-        BQTermListToCode(concBQTerm(_*,t,_*)) -> { 
+        BQTermToCode(t) -> { 
           list = `concInstruction(list*,BQTermToInstruction(t)); 
         }
       }
@@ -438,11 +447,11 @@ public class ASTFactory {
       }
 
       /* FIXME : seems useless
-      concBQTerm(head@Composite(concBQTerm(VariableStar[],_*)),tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+       */
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         return `BuildAppendList(name,head,subList);
       }
-       */
 
       /* buildList "l" [X,a2,...,an] = 
            if l: B* -> A then
@@ -465,8 +474,9 @@ public class ASTFactory {
       }
 
       /* FIXME : seems useless
-      concBQTerm(head@Composite(concBQTerm(Variable[AstType=varType],_*)),tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+       */
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariable[AstType=varType]),_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
             return `BuildAppendList(name,head,subList);
@@ -474,7 +484,6 @@ public class ASTFactory {
         }
         return `BuildConsList(name,head,subList);
       }
-      */
 
       concBQTerm(head@BuildConsList[AstName=opName],tail*) -> {
         BQTerm subList = buildList(name,`tail,symbolTable);
@@ -509,6 +518,11 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
+      concBQTerm(head@Composite(_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
+        return `BuildConsList(name,head,subList);
+      }
+
     }
     throw new TomRuntimeException("buildList strange term: " + args);
   }
@@ -534,11 +548,11 @@ public class ASTFactory {
       }
 
       /* FIXME : useless ?
-      concBQTerm(head@Composite(concBQTerm(VariableStar[],_*)),tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+       */
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         return `BuildAppendArray(name,head,subList);
       }
-      */
 
       concBQTerm(head@BuildConsArray[AstName=opName],tail*) -> {
         BQTerm subList = buildArray(name,`tail,size+1,symbolTable);

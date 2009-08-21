@@ -113,7 +113,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      BQTermListToCode(list) && concBQTerm(_*,t,_*)<<list -> {
+      BQTermToCode(t) -> {
         generateBQTerm(deep,`t, moduleName);
         return;
       }
@@ -204,10 +204,10 @@ public abstract class TomAbstractGenerator {
 
       Composite(_*,t,_*) -> {
         %match(t) {
-          CMTL(target) -> {
+          CompositeTL(target) -> {
             generateTargetLanguage(deep,`target, moduleName);
           }
-          CMTerm(term) -> {
+          CompositeBQTerm(term) -> {
             generateBQTerm(deep,`term, moduleName);
           }
         }
