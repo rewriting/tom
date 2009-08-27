@@ -272,7 +272,7 @@ public class SymbolTable {
 
   public TomType getStringType() {
     String type = "String";
-    if(pCode) {
+    if(cCode) {
       type = "char*";
     } else if(pCode) {
       type = "str";
