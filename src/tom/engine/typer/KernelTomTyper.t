@@ -308,10 +308,9 @@ public class KernelTomTyper {
   %strategy typeConstraint(TomType contextType, Collection lhsVariable,
       Collection matchAndNumericConstraints, KernelTomTyper kernelTomTyper) extends Fail() {
     visit Constraint {
-      constraint@(MatchConstraint|NumericConstraint)[Pattern=pattern,Subject=subject] -> {
-        boolean isNumeric = `(constraint) instanceof NumericConstraint ? true:false;
-        BQTerm newSubject = null;
-        TomType newSubjectType = null;        
+      constraint@MatchConstraint[Pattern=pattern,Subject=subject] -> {
+        BQTerm newSubject = `subject;
+        TomType newSubjectType = `EmptyType();
         %match(subject) {
           (BQVariable|BQVariableStar)(variableOption,astName@Name(name),tomType) -> {
             BQTerm newVariable = null;
@@ -324,17 +323,13 @@ public class KernelTomTyper {
               if(newSubjectType != null) {
                 newVariable = `BQVariable(variableOption,astName,newSubjectType);
               } else {
-                if (!isNumeric) {
                   throw new TomRuntimeException("No symbol found for name '" + `name + "'");
-                }
               }
             } else {
               newVariable = `subject;
             }
             if(newVariable == null) {
-              if (!isNumeric) { 
                 throw new TomRuntimeException("Type cannot be guessed for '" + `subject + "'");
-              }
             } else {
               newSubject = newVariable;
               newSubjectType = newVariable.getAstType();
@@ -356,10 +351,11 @@ public class KernelTomTyper {
                 newSubject = `FunctionCall(n,type,args);
               }
             }
-            if (type == null && !isNumeric) {
+            if (type == null) {
               throw new TomRuntimeException("No symbol found for name '" + `name + "'");
-            }
-            newSubjectType = type;                    
+            } else {
+              newSubjectType = type;
+            }                   
           }
 
           // the user specified the type (already checked for consistence in SyntaxChecker)
@@ -367,30 +363,26 @@ public class KernelTomTyper {
             newSubjectType = `userType;
             newSubject = `term;
           }
-
+          
+         c@BuildConstant(Name(n)) -> {
+            newSubjectType = TomBase.getSymbolCodomain(kernelTomTyper.getSymbolTable().getSymbolFromName(`n));
+            newSubject = `c;
+         } 
         } // end match subject     
-        // if it is numeric, we do not care about the type
-        // we transform the lhs and rhs into buildTerms with empty type
-        if (isNumeric) {
-          newSubjectType = `EmptyType();
-          newSubject = `subject;
-          /** impossible cases  */
-          /**
-          %match(subject){
-            RecordAppl[] -> { newSubject = `BuildReducedTerm(subject,newSubjectType);} 
-          }
-          %match(pattern){
-            RecordAppl[] -> { `pattern = `BuildReducedTerm(pattern, newSubjectType); }
-          }
-          */
-        } else {
-          newSubjectType = kernelTomTyper.typeVariable(contextType,newSubjectType);
-          newSubject = kernelTomTyper.typeVariable(newSubjectType, newSubject);                  
-        }
+        
+        newSubjectType = kernelTomTyper.typeVariable(contextType,newSubjectType);
+        newSubject = kernelTomTyper.typeVariable(newSubjectType, newSubject);                  
         TomTerm newPattern = kernelTomTyper.typeVariable(newSubjectType, `pattern);
         TomBase.collectVariable(lhsVariable,newPattern);
         return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
+
+      constraint@NumericConstraint[Left=lhs,Right=rhs] -> {
+        // if it is numeric, we do not care about the type
+        BQTerm newLhs = kernelTomTyper.typeVariable(`EmptyType(), `lhs);                  
+        BQTerm newRhs = kernelTomTyper.typeVariable(`EmptyType(), `rhs);                  
+        return `constraint.setLeft(newLhs).setRight(newRhs);               
+      }       
     } 
   }
 

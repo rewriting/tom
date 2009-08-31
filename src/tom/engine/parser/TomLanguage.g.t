@@ -448,10 +448,14 @@ matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint r
       result = null; 
       List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
     } :  
-      (matchPattern[matchPatternList,true]) => result = matchConstraint[optionListLinked]
+      (matchPattern[matchPatternList,true]) => result = constraint[optionListLinked]
       | LPAREN result = matchOrConstraint[optionListLinked] RPAREN
     ;    
        
+constraint [List<Option> optionListLinked] returns [Constraint result] throws TomException:
+(matchPattern[null,true] MATCH_CONSTRAINT) => result = matchConstraint[optionListLinked] 
+| result = numericConstraint
+;
 
 matchConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
@@ -462,25 +466,42 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
   int consType = -1;
 }
 :   
-  (
     option = matchPattern[matchPatternList,true] 
-    consType = constraintType 
+    MATCH_CONSTRAINT 
     matchArgument[matchSubjectList]
     {
       optionListLinked.add(option);
-      TomTerm left  = (TomTerm)matchPatternList.get(0);
-      BQTerm right = (BQTerm)matchSubjectList.get(0);
-      switch(consType) {
-        case MATCH_CONSTRAINT : {
-          return `MatchConstraint(left,right);           
-        }
-        case /*LESS_CONSTRAINT*/XML_START : {         
+      TomTerm left  = matchPatternList.get(0);
+      BQTerm right = matchSubjectList.get(0);
+      return `MatchConstraint(left,right);           
+    }
+;
+ 
+numericConstraint returns [Constraint result] throws TomException
+{
+  //TODO could be simplified without using matchArgument rule
+  // we are sure to have only one argument in each case
+  List<BQTerm> matchLhsList = new LinkedList<BQTerm>();
+  List<BQTerm> matchRhsList = new LinkedList<BQTerm>();
+  result = null;
+  int consType = -1;
+}
+:   
+    matchArgument[matchLhsList] 
+    consType=numconstraintType
+    matchArgument[matchRhsList]
+    {
+      BQTerm left  = matchLhsList.get(0);
+      BQTerm right = matchRhsList.get(0);
+      
+    switch(consType) {
+        case XML_START : {         
           return `NumericConstraint(left,right, NumLessThan());           
         }
         case LESSOREQUAL_CONSTRAINT : {         
           return `NumericConstraint(left,right, NumLessOrEqualThan());           
         }
-        case /*GREATER_CONSTRAINT*/XML_CLOSE : {         
+        case XML_CLOSE : {         
           return `NumericConstraint(left,right, NumGreaterThan());           
         }
         case GREATEROREQUAL_CONSTRAINT : {         
@@ -495,19 +516,17 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
       } 
       // should never reach this statement because of the parsing error that should occur before
       throw new TomException(TomMessage.invalidConstraintType);
-    }
-  )  
+  }
 ;
 
-constraintType returns [int result]
+numconstraintType returns [int result]
 {
   result = -1;
 }
 :   (
-      MATCH_CONSTRAINT              { result = MATCH_CONSTRAINT; }
-      | /*LESS_CONSTRAINT*/XML_START             { result = /*LESS_CONSTRAINT;*/XML_START; }
+      XML_START             { result = XML_START; }
       | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
-      | /*GREATER_CONSTRAINT*/XML_CLOSE          { result = /*GREATER_CONSTRAINT*/XML_CLOSE; }
+      | XML_CLOSE          { result = XML_CLOSE; }
       | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
       | DOUBLEEQ                    { result = DOUBLEEQ; }
       | DIFFERENT_CONSTRAINT        { result = DIFFERENT_CONSTRAINT; }
@@ -876,8 +895,19 @@ plainBQTerm  returns [BQTerm result]
            result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l);
          }
        }
-   | number:NUM_INT { result=`Composite(CompositeTL(ITL(number.getText()))); }
-   | string:STRING { result=`Composite(CompositeTL(ITL(string.getText()))); }
+    | number:NUM_INT { 
+      String val = number.getText();
+      ASTFactory.makeIntegerSymbol(symbolTable,val,optionList); 
+      result = `BuildConstant(Name(val)); 
+    }
+
+    | string:STRING { 
+      String val = string.getText();
+      ASTFactory.makeStringSymbol(symbolTable,val,optionList); 
+      result = `BuildConstant(Name(val)); 
+    }
+
+    //| name = headConstant[optionList] { result = `BuildConstant(name); }
 ;
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
@@ -1649,7 +1679,7 @@ headConstant [List<Option> optionList] returns [TomName result]
     Token t;
 } : 
   t=constant // add to symbol table
-{  
+{ 
 	String name = t.getText();        
 	int line = t.getLine();
 	text.append(name);

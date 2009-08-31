@@ -341,28 +341,25 @@ public class ConstraintGenerator {
   private Instruction buildNumericCondition(Constraint c, Instruction action) {
     %match(c) {
       NumericConstraint(left,right,type) -> {        
-        Expression leftExpr = `BQTermToExpression(TomBase.convertFromVarToBQVar(left));
+        Expression leftExpr = `BQTermToExpression(left);
         Expression rightExpr = `BQTermToExpression(right);
-        %match(left) {
-          RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
-            leftExpr = `BQTermToExpression(BuildConstant(name));            
-          }
-        }
+        
         %match(type) {
           NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
           NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumEqual()                -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-                                         return `If(EqualTerm(tomType,right,left),action,Nop()); }
-          NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-                                         return `If(Negation(EqualTerm(tomType,right,left)),action,Nop()); }
+            return `If(EqualBQTerm(tomType,right,left),action,Nop()); }
+            NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
+              return `If(Negation(EqualBQTerm(tomType,right,left)),action,Nop()); }
         }
       }
     }
     // should never reach here
     throw new TomRuntimeException("Untreated numeric constraint: " + `c);
   }
+
 
   /*
    * NO LONGER USEFUL: DEAD CODE

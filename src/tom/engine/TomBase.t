@@ -700,8 +700,30 @@ public final class TomBase {
         return `BQVariableStar(option, name, type);
       }
     }
-    throw new RuntimeException("cannot convert into a bq variable the term "+variable);
+    throw new TomRuntimeException("cannot convert into a bq variable the term "+variable);
   }
+
+  /**
+   * builds a BQTerm from a TomTerm 
+   */
+/**
+//not used anymore
+  public static BQTerm convertFromTermToBQTerm(TomTerm term) {
+    %match(term) {
+      RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
+        return `BuildConstant(name);
+      }
+      RecordAppl[NameList=concTomName(name),Slots=concSlot()] -> {
+        return `BuildConstant(name);
+      }
+      Variable[] -> {
+        return TomBase.convertFromVarToBQVar(term);
+      }
+    }
+    throw new TomRuntimeException("cannot convert into a bqterm the term "+term);
+  }
+*/
+
 
   /**
    * builds a Variable from a BQVariable
@@ -715,7 +737,7 @@ public final class TomBase {
         return `VariableStar(option, name, type, concConstraint());
       }
     }
-    throw new RuntimeException("cannot convert into a variable the term "+variable);
+    throw new TomRuntimeException("cannot convert into a variable the term "+variable);
   }
 
 } // class TomBase

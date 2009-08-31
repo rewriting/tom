@@ -236,7 +236,7 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
              * 
              * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
              */
-            (MatchConstraint|NumericConstraint)[Subject=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+            MatchConstraint[Subject=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
               } catch(VisitFailure ex) {
@@ -245,9 +245,45 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
               }
             }
 
-            (MatchConstraint|NumericConstraint)[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+            MatchConstraint[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
               try {
                 `TopDown(HasTerm(v)).visitLight(`rhs);
+              } catch(VisitFailure ex) {
+                modification |= buildXjiYZ(array,i,j);
+                break block;
+              }
+            }
+
+            NumericConstraint[Right=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+              try {
+                `TopDown(HasTerm(v)).visitLight(`rhs);
+              } catch(VisitFailure ex) {
+                modification |= buildXjiYZ(array,i,j);
+                break block;
+              }
+            }
+
+            NumericConstraint[Right=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+              try {
+                `TopDown(HasTerm(v)).visitLight(`rhs);
+              } catch(VisitFailure ex) {
+                modification |= buildXjiYZ(array,i,j);
+                break block;
+              }
+            }
+
+            NumericConstraint[Left=lhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+              try {
+                `TopDown(HasTerm(v)).visitLight(`lhs);
+              } catch(VisitFailure ex) {
+                modification |= buildXjiYZ(array,i,j);
+                break block;
+              }
+            }
+
+            NumericConstraint[Left=lhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+              try {
+                `TopDown(HasTerm(v)).visitLight(`lhs);
               } catch(VisitFailure ex) {
                 modification |= buildXjiYZ(array,i,j);
                 break block;
