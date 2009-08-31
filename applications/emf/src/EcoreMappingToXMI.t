@@ -376,7 +376,7 @@ public class EcoreMappingToXMI{
         sb.append("<eLiterals " +
             "name=\"" + `name + "\" " +
             ((Integer)`el.eClass().getEStructuralFeature("value").getDefaultValue() != `value?"value=\"" + `value + "\" " : "") +
-            (!`literal.equals(name) ? "literal=\"" + `literal + "\" " : "") +
+            (!`literal.equals(`name) ? "literal=\"" + `literal + "\" " : "") +
             ">");
         sb.append(parse(`eAnnotations));
         sb.append("</eLiterals>");
