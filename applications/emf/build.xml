@@ -26,7 +26,7 @@
   </target>
 
   <target name="compile" depends="init" description="To compile all programs">
-    <!-- Compiling XMI generator -->
+    <!-- Compiling Tom programs -->
     <tom.preset config="${tomconfigfile}" srcdir="${src.dir}" destdir="${gen.dir}" options="-I ${mapping.dir}" genIntrospector="on" pretty="on">
       <include name="*.t" />
     </tom.preset>
@@ -36,19 +36,19 @@
       <compilerarg value="-Xlint:all,-cast,-unchecked"/>
       <classpath>
         <pathelement path="${build.dir}" />
-        <fileset dir="${eclipse.dir}">
+        <fileset dir="${env.ECLIPSE_HOME}">
           <include name="plugins/org.eclipse.emf*.jar" />
         </fileset>
       </classpath>
       <include name="*.java" />
     </javac.preset>
 
-    <!-- Compiling XMI generator -->
+    <!-- Compiling Tom program generated files -->
     <javac.preset srcdir="${gen.dir}" destdir="${build.dir}">
       <compilerarg value="-Xlint:all,-cast,-unchecked"/>
       <classpath>
         <pathelement path="${build.dir}" />
-        <fileset dir="${eclipse.dir}">
+        <fileset dir="${env.ECLIPSE_HOME}">
           <include name="plugins/org.eclipse.emf*.jar" />
         </fileset>
       </classpath>
