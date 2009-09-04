@@ -704,28 +704,6 @@ public final class TomBase {
   }
 
   /**
-   * builds a BQTerm from a TomTerm 
-   */
-/**
-//not used anymore
-  public static BQTerm convertFromTermToBQTerm(TomTerm term) {
-    %match(term) {
-      RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
-        return `BuildConstant(name);
-      }
-      RecordAppl[NameList=concTomName(name),Slots=concSlot()] -> {
-        return `BuildConstant(name);
-      }
-      Variable[] -> {
-        return TomBase.convertFromVarToBQVar(term);
-      }
-    }
-    throw new TomRuntimeException("cannot convert into a bqterm the term "+term);
-  }
-*/
-
-
-  /**
    * builds a Variable from a BQVariable
    */
   public static TomTerm convertFromBQVarToVar(BQTerm variable) {

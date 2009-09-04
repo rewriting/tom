@@ -409,6 +409,27 @@ loop_j: for(int j=i+1 ; j<array.length ; j++) {
         if(`x == term) { throw new VisitFailure(); }
       }
     }
+
+    visit BQTerm {
+      BQVariable[AstName=name, AstType=type] -> {
+        %match(term) {
+          Variable[AstName=n,AstType=t] -> {
+            if (`name == `n && `type == `t) {
+              throw new VisitFailure();
+            }
+          }
+        }
+      }
+      BQVariableStar[AstName=name, AstType=type] -> {
+        %match(term) {
+          VariableStar[AstName=n,AstType=t] -> {
+            if (`name == `n && `type == `t) {
+              throw new VisitFailure();
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
