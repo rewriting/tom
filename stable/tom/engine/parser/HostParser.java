@@ -795,20 +795,25 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final void operatorList(
-		List<TomTerm> list
+		List list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
-		Token  t = null;
+		Token  t1 = null;
 		
 		TargetLanguage code = null;
+		int line = 0;
+		int column = 0;
 		
 		
-		t = LT(1);
+		{
+		t1 = LT(1);
 		match(OPERATORLIST);
+		line=t1.getLine();column=t1.getColumn();
+		}
 		
 		String textCode = pureCode(getCode());
 		if(isCorrect(textCode)) {
-		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn()))
+		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(line,column))
 		
 		
 		;
@@ -816,7 +821,7 @@ public HostParser(ParserSharedInputState state) {
 		}
 		
 		Declaration operatorListDecl = tomparser.operatorList();
-		list.add(tom_make_DeclarationToTomTerm(operatorListDecl));
+		list.add(operatorListDecl);
 		
 	}
 	

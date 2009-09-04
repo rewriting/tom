@@ -128,10 +128,10 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch71NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {if ( "Strategy".equals( tomMatch71NameNumber_freshVar_1.getString() ) ) {
+      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
 
           stratChild.add(Integer.valueOf(index));
-        }}}}}}
+        }}}}}
 
 
 	    tomTypes = tomTypes.getTailconcTomType();
@@ -139,13 +139,13 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, stratmodifier + "class " + tomName);
     //write extends
-		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
+		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
 
-				output.write(deep," extends " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getString() );
-			}}}{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch72NameNumber_freshVar_4= (( tom.engine.adt.tomtype.types.TomType )extendsType).getTl() ;if ( (tomMatch72NameNumber_freshVar_4 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+				output.write(deep," extends " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
+			}}}}{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
 
-        output.write(deep," extends " +  tomMatch72NameNumber_freshVar_4.getCode() );
-      }}}}}
+        output.write(deep," extends " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getString() );
+      }}}}
 
     output.writeln(deep," {");
     int args = names.size();
@@ -266,23 +266,22 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       varList = varList.getTailconcTomTerm();
       if(!varList.isEmptyconcTomTerm()) {
         output.write(deep,", ");
-
       }
     }
     output.writeln(deep,")");
 
-    {{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
+    {{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
 
         output.write(deep," throws " +  (( tom.engine.adt.tomtype.types.TomType )throwsType).getString() );
-      }}}{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch74NameNumber_freshVar_4= (( tom.engine.adt.tomtype.types.TomType )throwsType).getTl() ;if ( (tomMatch74NameNumber_freshVar_4 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+      }}}{if ( (throwsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )throwsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )throwsType).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
 
-        output.write(deep," throws " +  tomMatch74NameNumber_freshVar_4.getCode() );
+        output.write(deep," throws " +  (( tom.engine.adt.tomtype.types.TomType )throwsType).getTomType() );
       }}}}}
 
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
-    output.writeln(deep," }");
+    output.writeln(deep,"}");
   }
 
 }

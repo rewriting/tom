@@ -106,10 +106,10 @@ public class ToolBox {
       map.put(accessObj[i],accessFlags[i]);
     }
 
-    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch621NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch621NameNumber_end_4.isEmptyAccessList() )) {
+    {{if ( (list instanceof tom.library.adt.bytecode.types.AccessList) ) {if ( (((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.ConsAccessList) || ((( tom.library.adt.bytecode.types.AccessList )list) instanceof tom.library.adt.bytecode.types.accesslist.EmptyAccessList)) ) { tom.library.adt.bytecode.types.AccessList  tomMatch646NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);do {{if (!( tomMatch646NameNumber_end_4.isEmptyAccessList() )) {
 
-        value = value | (map.get( tomMatch621NameNumber_end_4.getHeadAccessList() )).intValue();
-      }if ( tomMatch621NameNumber_end_4.isEmptyAccessList() ) {tomMatch621NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch621NameNumber_end_4= tomMatch621NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch621NameNumber_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
+        value = value | (map.get( tomMatch646NameNumber_end_4.getHeadAccessList() )).intValue();
+      }if ( tomMatch646NameNumber_end_4.isEmptyAccessList() ) {tomMatch646NameNumber_end_4=(( tom.library.adt.bytecode.types.AccessList )list);} else {tomMatch646NameNumber_end_4= tomMatch646NameNumber_end_4.getTailAccessList() ;}}} while(!( (tomMatch646NameNumber_end_4==(( tom.library.adt.bytecode.types.AccessList )list)) ));}}}}
 
     return value;   
   }

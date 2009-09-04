@@ -33,9 +33,14 @@
   make() { tom.engine.adt.theory.types.elementarytheory.Unitary.make() }
 }
 
-%op ElementaryTheory TrueAU() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.TrueAU) }
-  make() { tom.engine.adt.theory.types.elementarytheory.TrueAU.make() }
+%op ElementaryTheory AC() {
+  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.AC) }
+  make() { tom.engine.adt.theory.types.elementarytheory.AC.make() }
+}
+
+%op ElementaryTheory AU() {
+  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.AU) }
+  make() { tom.engine.adt.theory.types.elementarytheory.AU.make() }
 }
 
 %op Theory EmptyconcElementaryTheory() {
