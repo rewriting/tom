@@ -77,11 +77,12 @@ public final class TomBase {
    * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
-    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )type).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
-return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
-return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
- return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ; }}}}
+    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
+return  (( tom.engine.adt.tomtype.types.TomType )type).getString() ;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
+return  (( tom.engine.adt.tomtype.types.TomType )type).getString() ;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumber_freshVar_7= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch1NameNumber_freshVar_7 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
+return  tomMatch1NameNumber_freshVar_7.getString() ;}}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
+return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) { tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumber_freshVar_15= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch1NameNumber_freshVar_15 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
+ return  tomMatch1NameNumber_freshVar_15.getString() ; }}}}}
 
     System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);
@@ -93,7 +94,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   public static String getTLType(TomType type) {
     {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
  return getTLCode(type); }}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- return getTLCode( (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ); }}}}
+ return getTLCode( (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ); }}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
+ return  (( tom.engine.adt.tomtype.types.TomType )type).getString() ; }}}}
 
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
@@ -102,8 +104,9 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
    * Returns the implementation-type of a <code>TLType</code>
    */
   public static String getTLCode(TomType type) {
-    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
- return  (( tom.engine.adt.tomtype.types.TomType )type).getString() ; }}}}
+    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch3NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )type).getTl() ;if ( (tomMatch3NameNumber_freshVar_1 instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {
+ return  tomMatch3NameNumber_freshVar_1.getCode() ; }}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) { tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch3NameNumber_freshVar_6= (( tom.engine.adt.tomtype.types.TomType )type).getTl() ;if ( (tomMatch3NameNumber_freshVar_6 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
+ return  tomMatch3NameNumber_freshVar_6.getCode() ; }}}}}
 
     System.out.println("getTLCode error on term: " + type);
     throw new TomRuntimeException("getTLCode error on term: " + type);
@@ -132,8 +135,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   private static LRUCache<TomNumberList,String> tomNumberListToStringMap =
-    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE);
-
+    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE); 
   public static String tomNumberListToString(TomNumberList numberList) {
     String result = tomNumberListToStringMap.get(numberList);
     if(result == null) {
@@ -202,7 +204,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
                 identifier = tomNumberListToString( (( tom.engine.adt.tomname.types.TomName )tom_tomName).getNumberList() );
               }}}}
 
-            //buf.append("NameNumber");
+            buf.append("NameNumber");
             buf.append(identifier);
           }}}}
 
@@ -214,8 +216,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   /**
-   * Returns <code>true</code> if the symbol corresponds to a %oplist
-   */
+    * Returns <code>true</code> if the symbol corresponds to a %oplist
+    */
   public static boolean isListOperator(TomSymbol symbol) {
     if(symbol==null) {
       return false;
@@ -238,8 +240,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   /**
-   * Returns <code>true</code> if the symbol corresponds to a %oparray
-   */
+    * Returns <code>true</code> if the symbol corresponds to a %oparray
+    */
   public static boolean isArrayOperator(TomSymbol symbol) {
     if(symbol==null) {
       return false;
@@ -260,24 +262,24 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
     throw new TomRuntimeException("isArrayOperator -- strange case: '" + symbol + "'");
   }
-
+  
   /**
-   * Returns <code>true</code> if the symbol corresponds to a %op
-   */
+    * Returns <code>true</code> if the symbol corresponds to a %op
+    */
   public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
 
   // ------------------------------------------------------------
   /**
-   * Collects the variables athat appears in a term
-   * @param collection the bag which collect the results
-   * @param subject the term to traverse
-   */
+    * Collects the variables athat appears in a term
+    * @param collection the bag which collect the results
+    * @param subject the term to traverse
+    */
   public static void collectVariable(Collection<TomTerm> collection, tom.library.sl.Visitable subject) {
     try {
       //TODO: replace TopDownCollect by continuations
-      tom_make_TopDownCollect(tom_make_collectVariable(collection)).visitLight(subject);
+    tom_make_TopDownCollect(tom_make_collectVariable(collection)).visitLight(subject);
     } catch(VisitFailure e) { }
   }
 
@@ -314,8 +316,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
 
   /**
-   * Returns a Map which associates an interger to each variable name
-   */
+    * Returns a Map which associates an interger to each variable name
+    */
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     Collection<TomTerm> variableList = new HashSet<TomTerm>();
@@ -341,17 +343,13 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
     return null;
   }
 
-  public static boolean hasTheory(TomTerm term, ElementaryTheory elementaryTheory) {
-    return hasTheory(getTheory(term),elementaryTheory);
-  }
-
   public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
     {{if ( (theory instanceof tom.engine.adt.theory.types.Theory) ) {if ( (((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory) || ((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory)) ) { tom.engine.adt.theory.types.Theory  tomMatch13NameNumber_end_4=(( tom.engine.adt.theory.types.Theory )theory);do {{if (!( tomMatch13NameNumber_end_4.isEmptyconcElementaryTheory() )) {
  if( tomMatch13NameNumber_end_4.getHeadconcElementaryTheory() ==elementaryTheory) return true; }if ( tomMatch13NameNumber_end_4.isEmptyconcElementaryTheory() ) {tomMatch13NameNumber_end_4=(( tom.engine.adt.theory.types.Theory )theory);} else {tomMatch13NameNumber_end_4= tomMatch13NameNumber_end_4.getTailconcElementaryTheory() ;}}} while(!( (tomMatch13NameNumber_end_4==(( tom.engine.adt.theory.types.Theory )theory)) ));}}}}
 
     return false;
   }
-
+ 
   public static Theory getTheory(TomTerm term) {
     {{if ( (term instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )term) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch14NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )term).getOption() ;if ( ((tomMatch14NameNumber_freshVar_1 instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (tomMatch14NameNumber_freshVar_1 instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch14NameNumber_end_6=tomMatch14NameNumber_freshVar_1;do {{if (!( tomMatch14NameNumber_end_6.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch14NameNumber_freshVar_10= tomMatch14NameNumber_end_6.getHeadconcOption() ;if ( (tomMatch14NameNumber_freshVar_10 instanceof tom.engine.adt.tomoption.types.option.MatchingTheory) ) {
  return  tomMatch14NameNumber_freshVar_10.getTheory() ; }}if ( tomMatch14NameNumber_end_6.isEmptyconcOption() ) {tomMatch14NameNumber_end_6=tomMatch14NameNumber_freshVar_1;} else {tomMatch14NameNumber_end_6= tomMatch14NameNumber_end_6.getTailconcOption() ;}}} while(!( (tomMatch14NameNumber_end_6==tomMatch14NameNumber_freshVar_1) ));}}}}}
@@ -381,7 +379,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
     return false;
   }
-
+  
   public static String getModuleName(OptionList optionList) {
     {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_end_4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch18NameNumber_end_4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch18NameNumber_freshVar_8= tomMatch18NameNumber_end_4.getHeadconcOption() ;if ( (tomMatch18NameNumber_freshVar_8 instanceof tom.engine.adt.tomoption.types.option.ModuleName) ) {
  return  tomMatch18NameNumber_freshVar_8.getString() ; }}if ( tomMatch18NameNumber_end_4.isEmptyconcOption() ) {tomMatch18NameNumber_end_4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch18NameNumber_end_4= tomMatch18NameNumber_end_4.getTailconcOption() ;}}} while(!( (tomMatch18NameNumber_end_4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
@@ -525,9 +523,9 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-
+    
     if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
-
+    
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
     TomSymbolList filteredList =  tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol.make() ;
     // Not necessary since checker ensure the uniqueness of the symbol
@@ -582,7 +580,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ;
   }
-
+  
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
     {{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch29NameNumber_freshVar_6= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch29NameNumber_freshVar_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch29NameNumber_freshVar_6= true ;tomMatch29NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch29NameNumber_freshVar_6= true ;tomMatch29NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}}}if ((tomMatch29NameNumber_freshVar_6 ==  true )) {if ( ((tomMatch29NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch29NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch29NameNumber_freshVar_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch29NameNumber_freshVar_1.getHeadconcTomName() ;
 

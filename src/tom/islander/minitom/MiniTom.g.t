@@ -61,8 +61,8 @@ patternAction
   ;
 
 compositeTerm
-  : exp=CID -> ^(CompositeTerm CID[exp] ) //temporary rule
-  | exp=ID -> ^(CompositeTerm ID[exp] ) //temporary rule
+  : CID -> ^(CompositeTerm CID ) //temporary rule
+  | ID -> ^(CompositeTerm ID ) //temporary rule
   ;
 
 // Is it necessary to create a node for a plainPattern ?
@@ -555,10 +555,13 @@ INT:(DIGIT)+;*/
   )* 
   ;*/
 
+
 ID: ( LETTER | UNDERSCORE ) ( LETTER | UNDERSCORE | DIGIT )* ;
+fragment
+CID: ( ID | DOLLARID | WS | STRING | DOT | LPAREN .* RPAREN | LBRACE .* RBRACE )+ ;
 
 fragment
 XMLID: (ID | STRING);
 
 fragment
-CID: ( ID | '$' | WS | STRING | DOT | LPAREN .* RPAREN )+ ;
+DOLLARID: '$'ID;

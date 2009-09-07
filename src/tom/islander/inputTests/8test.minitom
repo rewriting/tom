@@ -5,7 +5,7 @@
 }
 
 %op TomPerson person(name:String,age:int) {
-  is_fsym(t) { someCompositeTerm }
+  is_fsym(t) { $s }
   make(t1,t2) { someCompositeTerm }
   get_slot(name,t) { someCompositeTerm }
   get_slot(age,t) { someCompositeTerm }

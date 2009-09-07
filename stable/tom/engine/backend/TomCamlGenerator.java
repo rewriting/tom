@@ -273,9 +273,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch60NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch60NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch60NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch60NameNumber_freshVar_2.getLine() ;if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch58NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch58NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch58NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch58NameNumber_freshVar_2.getLine() ;if ( (tomMatch58NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,s, tom_startLine,  tomMatch60NameNumber_freshVar_3.getLine() - tom_startLine);
+        output.write(0,s, tom_startLine,  tomMatch58NameNumber_freshVar_3.getLine() - tom_startLine);
         return;
       }}}}}{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
 
@@ -296,10 +296,10 @@ public class TomCamlGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-        {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch61NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ;if ( (tomMatch61NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch59NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ;if ( (tomMatch59NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            s.append( tomMatch61NameNumber_freshVar_1.getString() );
+            s.append( tomMatch59NameNumber_freshVar_1.getString() );
             break matchBlock;
           }}}}{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
 
@@ -429,7 +429,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
 
 ;
         return;
-      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch62NameNumber_freshVar_3= (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ;boolean tomMatch62NameNumber_freshVar_7= false ;if ( (tomMatch62NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {tomMatch62NameNumber_freshVar_7= true ;} else {if ( (tomMatch62NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch62NameNumber_freshVar_7= true ;}}if ((tomMatch62NameNumber_freshVar_7 ==  true )) {buildNop()
+      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch60NameNumber_freshVar_3= (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ;boolean tomMatch60NameNumber_freshVar_7= false ;if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {tomMatch60NameNumber_freshVar_7= true ;} else {if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch60NameNumber_freshVar_7= true ;}}if ((tomMatch60NameNumber_freshVar_7 ==  true )) {buildNop()
 
 
 ;
@@ -446,14 +446,5 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(" () ");
   }
 
-  protected void buildAssignArray(int deep, TomTerm var, OptionList optionList,
-      TomTerm index, 
-      Expression exp, String moduleName) throws IOException {
-    output.indent(deep);
-    //  arrays are used in the AC algorithm;
-    // and the AC maching is only supported for AC operators comming from GOM (which isn't available anyway for caml)   
-    throw new RuntimeException("Arrays NOT SUPPORTED in Caml !"); 
-    
-  }
 
 } // class TomCamlGenerator

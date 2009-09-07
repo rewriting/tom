@@ -87,6 +87,33 @@ public class TomCGenerator extends TomCFamilyGenerator {
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
+    if(TomBase.isDefinedSymbol(tomSymbol)) {
+        // TODO: build an abstract declaration
+      int argno=1;
+      output.indent(deep);
+      if(!l.isEmptyconcTomType()) {
+        output.write(TomBase.getTLType(type1));
+        output.writeSpace();
+        output.write(name1);
+        if(!l.isEmptyconcTomType()) {
+          output.writeOpenBrace();
+          while (!l.isEmptyconcTomType()) {
+            output.write(TomBase.getTLType(l.getHeadconcTomType()));
+              //out.writeUnderscore();
+              //out.write(argno);
+            argno++;
+            l = l.getTailconcTomType() ;
+            if(!l.isEmptyconcTomType()) {
+              output.writeComa();
+            }
+          }
+          output.writeCloseBrace();
+          output.writeSemiColon();
+        }
+      }
+      output.writeln();
+    } 
+
     // inspect the optionList
     generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist

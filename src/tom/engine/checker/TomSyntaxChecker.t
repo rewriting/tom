@@ -1008,13 +1008,13 @@ matchLbl: %match(constr) {
    * verify the structure of a %strategy
    */
   private void verifyStrategy(TomVisitList visitList) throws VisitFailure {
-    for(TomVisit v:(tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit)visitList) {
-      verifyVisit(v);
+    for(TomVisit visit:(tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit)visitList) {
+      verifyVisit(visit);
     }
   }
 
-  private void verifyVisit(TomVisit v) throws VisitFailure {
-    %match(v) {
+  private void verifyVisit(TomVisit visit) throws VisitFailure {
+    %match(visit) {
       VisitTerm(type,constraintInstructionList,option) -> {        
         ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
         %match(constraintInstructionList){

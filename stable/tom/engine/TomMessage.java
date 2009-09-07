@@ -206,8 +206,6 @@ public class TomMessage implements PlatformMessage {
     new TomMessage("{0} -> no inline:  {1}");
   public static final TomMessage doNothing             =
     new TomMessage("{0} -> do nothing: {1}");
-  public static final TomMessage cannotInline              =
-    new TomMessage("    -> cannot inline {1} (modified value)");
 
   // verifier
   public static final TomMessage verifierInactivated   =

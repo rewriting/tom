@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-07-17 14:47:07
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-07-07 16:34:46
 
 package tom.gom.parser;
 
@@ -157,8 +157,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = MODULE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:10: ( 'module' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:12: 'module'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:10: ( 'module' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:12: 'module'
             {
             match("module"); 
 
@@ -178,8 +178,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = IMPORTS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:10: ( 'imports' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:12: 'imports'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:10: ( 'imports' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:12: 'imports'
             {
             match("imports"); 
 
@@ -199,8 +199,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = PUBLIC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:10: ( 'public' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:12: 'public'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:10: ( 'public' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:12: 'public'
             {
             match("public"); 
 
@@ -220,8 +220,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = PRIVATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:10: ( 'private' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:12: 'private'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:10: ( 'private' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:12: 'private'
             {
             match("private"); 
 
@@ -241,8 +241,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ABSTRACT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:10: ( 'abstract' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:12: 'abstract'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:10: ( 'abstract' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:12: 'abstract'
             {
             match("abstract"); 
 
@@ -262,8 +262,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SYNTAX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:10: ( 'syntax' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:12: 'syntax'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:10: ( 'syntax' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:12: 'syntax'
             {
             match("syntax"); 
 
@@ -283,8 +283,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SORT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:10: ( 'sort' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:12: 'sort'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:10: ( 'sort' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:12: 'sort'
             {
             match("sort"); 
 
@@ -304,8 +304,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = OPERATOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:10: ( 'operator' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:12: 'operator'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:10: ( 'operator' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:12: 'operator'
             {
             match("operator"); 
 
@@ -325,8 +325,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ATOM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:10: ( 'atom' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:12: 'atom'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:10: ( 'atom' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:12: 'atom'
             {
             match("atom"); 
 
@@ -346,8 +346,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = INNER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:10: ( 'inner' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:12: 'inner'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:10: ( 'inner' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:12: 'inner'
             {
             match("inner"); 
 
@@ -367,8 +367,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = OUTER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:10: ( 'outer' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:12: 'outer'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:10: ( 'outer' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:12: 'outer'
             {
             match("outer"); 
 
@@ -388,8 +388,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = NEUTRAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:10: ( 'neutral' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:12: 'neutral'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:10: ( 'neutral' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:12: 'neutral'
             {
             match("neutral"); 
 
@@ -409,8 +409,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = BINDS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:10: ( 'binds' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:12: 'binds'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:10: ( 'binds' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:12: 'binds'
             {
             match("binds"); 
 
@@ -430,8 +430,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:10: ( '->' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:12: '->'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:10: ( '->' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:12: '->'
             {
             match("->"); 
 
@@ -451,8 +451,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:10: ( ':' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:12: ':'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:10: ( ':' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:12: ':'
             {
             match(':'); 
 
@@ -471,8 +471,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:10: ( ',' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:12: ','
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:10: ( ',' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:12: ','
             {
             match(','); 
 
@@ -491,8 +491,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:10: ( '.' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:12: '.'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:10: ( '.' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:12: '.'
             {
             match('.'); 
 
@@ -511,8 +511,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:10: ( '(' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:12: '('
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:10: ( '(' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:12: '('
             {
             match('('); 
 
@@ -531,8 +531,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:10: ( ')' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:12: ')'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:10: ( ')' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:12: ')'
             {
             match(')'); 
 
@@ -551,8 +551,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:10: ( '*' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:12: '*'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:10: ( '*' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:12: '*'
             {
             match('*'); 
 
@@ -571,8 +571,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:10: ( '=' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:12: '='
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:10: ( '=' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:12: '='
             {
             match('='); 
 
@@ -591,8 +591,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ALT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:10: ( '|' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:12: '|'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:10: ( '|' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:12: '|'
             {
             match('|'); 
 
@@ -611,8 +611,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SEMI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:10: ( ';;' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:12: ';;'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:10: ( ';;' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:12: ';;'
             {
             match(";;"); 
 
@@ -632,8 +632,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LDIPLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:10: ( '<' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:12: '<'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:10: ( '<' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:12: '<'
             {
             match('<'); 
 
@@ -652,8 +652,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RDIPLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:228:10: ( '>' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:228:12: '>'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:10: ( '>' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:12: '>'
             {
             match('>'); 
 
@@ -672,8 +672,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:230:7: ( '{' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:230:9: '{'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:229:7: ( '{' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:229:9: '{'
             {
             match('{'); 
 
@@ -698,8 +698,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:239:7: ( '}' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:239:9: '}'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:7: ( '}' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:9: '}'
             {
             match('}'); 
 
@@ -718,10 +718,10 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:4: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:4: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             int alt2=3;
             switch ( input.LA(1) ) {
             case ' ':
@@ -749,23 +749,23 @@ public class GomLanguageLexer extends Lexer {
 
             switch (alt2) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:8: ' '
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:8: ' '
                     {
                     match(' '); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: '\\t'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:10: '\\t'
                     {
                     match('\t'); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: ( '\\r\\n' | '\\n' | '\\r' )
                     {
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: ( '\\r\\n' | '\\n' | '\\r' )
                     int alt1=3;
                     int LA1_0 = input.LA(1);
 
@@ -789,7 +789,7 @@ public class GomLanguageLexer extends Lexer {
                     }
                     switch (alt1) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:12: '\\r\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:12: '\\r\\n'
                             {
                             match("\r\n"); 
 
@@ -797,14 +797,14 @@ public class GomLanguageLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:244:14: '\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:14: '\\n'
                             {
                             match('\n'); 
 
                             }
                             break;
                         case 3 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:245:14: '\\r'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:244:14: '\\r'
                             {
                             match('\r'); 
 
@@ -836,12 +836,12 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:250:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:8: (~ ( '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:8: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
@@ -854,7 +854,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:9: ~ ( '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:9: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -874,7 +874,7 @@ public class GomLanguageLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:24: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:24: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -886,17 +886,17 @@ public class GomLanguageLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:25: '\\n'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:25: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:30: '\\r' ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:30: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:34: ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:34: ( '\\n' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -905,7 +905,7 @@ public class GomLanguageLexer extends Lexer {
                     }
                     switch (alt4) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:35: '\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:35: '\\n'
                             {
                             match('\n'); 
 
@@ -937,8 +937,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = MLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:11: ( '/*' ~ '*' ( . )* '*/' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:3: '/*' ~ '*' ( . )* '*/'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:255:11: ( '/*' ~ '*' ( . )* '*/' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:3: '/*' ~ '*' ( . )* '*/'
             {
             match("/*"); 
 
@@ -951,7 +951,7 @@ public class GomLanguageLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:12: ( . )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:12: ( . )*
             loop6:
             do {
                 int alt6=2;
@@ -976,7 +976,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:12: .
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:12: .
             	    {
             	    matchAny(); 
 
@@ -1007,12 +1007,12 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = JAVADOC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: ( '/**' ( . )* '*/' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:3: '/**' ( . )* '*/'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:260:9: ( '/**' ( . )* '*/' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:3: '/**' ( . )* '*/'
             {
             match("/**"); 
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:9: ( . )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: ( . )*
             loop7:
             do {
                 int alt7=2;
@@ -1037,7 +1037,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:9: .
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: .
             	    {
             	    matchAny(); 
 
@@ -1067,8 +1067,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:4: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:264:4: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:264:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1079,7 +1079,7 @@ public class GomLanguageLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:266:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             loop8:
             do {
                 int alt8=2;

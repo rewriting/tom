@@ -73,7 +73,7 @@ public BackQuoteLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("xml", this), new Integer(12));
+	literals.put(new ANTLRHashString("xml", this), new Integer(10));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -119,10 +119,6 @@ tryAgain:
 				}
 				else if ((LA(1)==')') && (true)) {
 					mBQ_RPAREN(true);
-					theRetToken=_returnToken;
-				}
-				else if ((LA(1)=='{') && (true)) {
-					mBQ_LBRACE(true);
 					theRetToken=_returnToken;
 				}
 				else if ((LA(1)=='}') && (true)) {
@@ -226,19 +222,6 @@ tryAgain:
 		int _saveIndex;
 		
 		match(')');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mBQ_LBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = BQ_LBRACE;
-		int _saveIndex;
-		
-		match("{");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -492,7 +475,7 @@ tryAgain:
 		
 		match("<?");
 		{
-		_loop71:
+		_loop70:
 		do {
 			if ((_tokenSet_4.member(LA(1)))) {
 				{
@@ -500,7 +483,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop71;
+				break _loop70;
 			}
 			
 		} while (true);
@@ -524,10 +507,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched75 = false;
+		boolean synPredMatched74 = false;
 		if (((_tokenSet_2.member(LA(1))) && (_tokenSet_5.member(LA(2))))) {
-			int _m75 = mark();
-			synPredMatched75 = true;
+			int _m74 = mark();
+			synPredMatched74 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -535,12 +518,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched75 = false;
+				synPredMatched74 = false;
 			}
-			rewind(_m75);
+			rewind(_m74);
 inputState.guessing--;
 		}
-		if ( synPredMatched75 ) {
+		if ( synPredMatched74 ) {
 			mBQ_MINUS_ID(false);
 		}
 		else if ((_tokenSet_2.member(LA(1))) && (true)) {
@@ -647,7 +630,7 @@ inputState.guessing--;
 		}
 		}
 		{
-		_loop81:
+		_loop80:
 		do {
 			switch ( LA(1)) {
 			case 'A':  case 'B':  case 'C':  case 'D':
@@ -710,7 +693,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop81;
+				break _loop80;
 			}
 			}
 		} while (true);
@@ -757,18 +740,18 @@ inputState.guessing--;
 		int _saveIndex;
 		
 		{
-		int _cnt86=0;
-		_loop86:
+		int _cnt85=0;
+		_loop85:
 		do {
 			if ((LA(1)=='-')) {
 				mBQ_MINUS(false);
 				mBQ_SIMPLE_ID(false);
 			}
 			else {
-				if ( _cnt86>=1 ) { break _loop86; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt85>=1 ) { break _loop85; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt86++;
+			_cnt85++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -803,17 +786,17 @@ inputState.guessing--;
 		}
 		}
 		{
-		int _cnt90=0;
-		_loop90:
+		int _cnt89=0;
+		_loop89:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mBQ_DIGIT(false);
 			}
 			else {
-				if ( _cnt90>=1 ) { break _loop90; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt89>=1 ) { break _loop89; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt90++;
+			_cnt89++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -830,7 +813,7 @@ inputState.guessing--;
 		
 		match('"');
 		{
-		_loop94:
+		_loop93:
 		do {
 			if ((LA(1)=='\\')) {
 				mBQ_ESC(false);
@@ -841,7 +824,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop94;
+				break _loop93;
 			}
 			
 		} while (true);
@@ -905,17 +888,17 @@ inputState.guessing--;
 		case 'u':
 		{
 			{
-			int _cnt103=0;
-			_loop103:
+			int _cnt102=0;
+			_loop102:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt103>=1 ) { break _loop103; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt102>=1 ) { break _loop102; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt103++;
+				_cnt102++;
 			} while (true);
 			}
 			mBQ_HEX_DIGIT(false);

@@ -121,10 +121,10 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
+      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch55NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch55NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {if ( "Strategy".equals( tomMatch55NameNumber_freshVar_1.getString() ) ) {
 
           stratChild.add(Integer.valueOf(index));
-        }}}}}
+        }}}}}}
 
 
 	    tomTypes = tomTypes.getTailconcTomType();
@@ -132,10 +132,10 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
+		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
 
-				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
-			}}}}}
+				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getString() );
+			}}}}
 
     output.write(deep," {");
     int args = names.size();
@@ -256,7 +256,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln(deep,")");
 /*
     %match(TomType throwsType){
-      Type(throws,EmptyType()) -> {
+      TomTypeAlone(throws) -> {
         output.write(deep," throws " + `throws);
       }
     }

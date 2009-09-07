@@ -361,14 +361,6 @@
   make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.Assign.make($t0, $t1) }
 }
 
-%op Instruction AssignArray(Variable:TomTerm, Index:TomTerm, Source:Expression) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.AssignArray) }
-  get_slot(Variable, t) { $t.getVariable() }
-  get_slot(Index, t) { $t.getIndex() }
-  get_slot(Source, t) { $t.getSource() }
-  make(t0, t1, t2) { tom.engine.adt.tominstruction.types.instruction.AssignArray.make($t0, $t1, $t2) }
-}
-
 %op Instruction Return(Kid1:TomTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.Return) }
   get_slot(Kid1, t) { $t.getKid1() }
@@ -478,14 +470,26 @@
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make($t0, $t1) }
 }
 
-%op TomType Type(TomType:String, TlType:TomType) {
+%op TomType Type(TomType:TomType, TlType:TomType) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.Type) }
   get_slot(TomType, t) { $t.getTomType() }
   get_slot(TlType, t) { $t.getTlType() }
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtype.Type.make($t0, $t1) }
 }
 
-%op TomType Codomain(AstName:String) {
+%op TomType TomTypeAlone(String:String) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) }
+  get_slot(String, t) { $t.getString() }
+  make(t0) { tom.engine.adt.tomtype.types.tomtype.TomTypeAlone.make($t0) }
+}
+
+%op TomType ASTTomType(String:String) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) }
+  get_slot(String, t) { $t.getString() }
+  make(t0) { tom.engine.adt.tomtype.types.tomtype.ASTTomType.make($t0) }
+}
+
+%op TomType Codomain(AstName:TomName) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.Codomain) }
   get_slot(AstName, t) { $t.getAstName() }
   make(t0) { tom.engine.adt.tomtype.types.tomtype.Codomain.make($t0) }
@@ -498,9 +502,9 @@
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtype.TypesToType.make($t0, $t1) }
 }
 
-%op TomType TLType(String:String) {
+%op TomType TLType(Tl:TargetLanguage) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TLType) }
-  get_slot(String, t) { $t.getString() }
+  get_slot(Tl, t) { $t.getTl() }
   make(t0) { tom.engine.adt.tomtype.types.tomtype.TLType.make($t0) }
 }
 
@@ -509,7 +513,13 @@
   make() { tom.engine.adt.tomtype.types.tomtype.EmptyType.make() }
 }
 
-%op TomType TypeWithSymbol(TomType:String, TlType:TomType, RootSymbolName:TomName) {
+%op TomType TypeList(TypeList:TomTypeList) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TypeList) }
+  get_slot(TypeList, t) { $t.getTypeList() }
+  make(t0) { tom.engine.adt.tomtype.types.tomtype.TypeList.make($t0) }
+}
+
+%op TomType TypeWithSymbol(TomType:TomType, TlType:TomType, RootSymbolName:TomName) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) }
   get_slot(TomType, t) { $t.getTomType() }
   get_slot(TlType, t) { $t.getTlType() }
@@ -638,12 +648,6 @@
   make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor.make($t0) }
 }
 
-%op KeyEntry UsedSymbolAC(Symbol:TomSymbol) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolAC) }
-  get_slot(Symbol, t) { $t.getSymbol() }
-  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolAC.make($t0) }
-}
-
 %op KeyEntry UsedType(Typedef:TomType) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedType) }
   get_slot(Typedef, t) { $t.getTypedef() }
@@ -665,14 +669,9 @@
   make() { tom.engine.adt.theory.types.elementarytheory.Unitary.make() }
 }
 
-%op ElementaryTheory AC() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.AC) }
-  make() { tom.engine.adt.theory.types.elementarytheory.AC.make() }
-}
-
-%op ElementaryTheory AU() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.AU) }
-  make() { tom.engine.adt.theory.types.elementarytheory.AU.make() }
+%op ElementaryTheory TrueAU() {
+  is_fsym(t) { ($t instanceof tom.engine.adt.theory.types.elementarytheory.TrueAU) }
+  make() { tom.engine.adt.theory.types.elementarytheory.TrueAU.make() }
 }
 
 %op Theory EmptyconcElementaryTheory() {
@@ -1219,19 +1218,6 @@
   make(t0) { tom.engine.adt.tomexpression.types.expression.AddOne.make($t0) }
 }
 
-%op Expression SubstractOne(Variable:TomTerm) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.SubstractOne) }
-  get_slot(Variable, t) { $t.getVariable() }
-  make(t0) { tom.engine.adt.tomexpression.types.expression.SubstractOne.make($t0) }
-}
-
-%op Expression Substract(Term1:TomTerm, Term2:TomTerm) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.Substract) }
-  get_slot(Term1, t) { $t.getTerm1() }
-  get_slot(Term2, t) { $t.getTerm2() }
-  make(t0, t1) { tom.engine.adt.tomexpression.types.expression.Substract.make($t0, $t1) }
-}
-
 %op Expression GetSize(Opname:TomName, Variable:TomTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.GetSize) }
   get_slot(Opname, t) { $t.getOpname() }
@@ -1270,13 +1256,6 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.ConstraintToExpression) }
   get_slot(cons, t) { $t.getcons() }
   make(t0) { tom.engine.adt.tomexpression.types.expression.ConstraintToExpression.make($t0) }
-}
-
-%op Expression ACMatchLoop(Pattern:TomTerm, Subject:TomTerm) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.ACMatchLoop) }
-  get_slot(Pattern, t) { $t.getPattern() }
-  get_slot(Subject, t) { $t.getSubject() }
-  make(t0, t1) { tom.engine.adt.tomexpression.types.expression.ACMatchLoop.make($t0, $t1) }
 }
 
 %op Expression DoWhileExpression(EndExpression:Expression, LoopCondition:Expression) {
@@ -1474,6 +1453,11 @@
   make(t0) { tom.engine.adt.tomoption.types.option.TomTermToOption.make($t0) }
 }
 
+%op Option DefinedSymbol() {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.DefinedSymbol) }
+  make() { tom.engine.adt.tomoption.types.option.DefinedSymbol.make() }
+}
+
 %op Option GeneratedMatch() {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.GeneratedMatch) }
   make() { tom.engine.adt.tomoption.types.option.GeneratedMatch.make() }
@@ -1532,25 +1516,9 @@
   make() { tom.engine.adt.tomoption.types.option.ImplicitXMLChild.make() }
 }
 
-%op Option ACSymbol() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.ACSymbol) }
-  make() { tom.engine.adt.tomoption.types.option.ACSymbol.make() }
-}
-
 %op Option noOption() {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.noOption) }
   make() { tom.engine.adt.tomoption.types.option.noOption.make() }
-}
-
-%op Option DefinedSymbol() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.DefinedSymbol) }
-  make() { tom.engine.adt.tomoption.types.option.DefinedSymbol.make() }
-}
-
-%op Option TypeForVariable(String:String) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomoption.types.option.TypeForVariable) }
-  get_slot(String, t) { $t.getString() }
-  make(t0) { tom.engine.adt.tomoption.types.option.TypeForVariable.make($t0) }
 }
 
 %op OptionList EmptyconcOption() {
@@ -1683,6 +1651,18 @@
   make(t0) { tom.engine.adt.tomterm.types.tomterm.TargetLanguageToTomTerm.make($t0) }
 }
 
+%op TomTerm TomTypeToTomTerm(AstType:TomType) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.TomTypeToTomTerm) }
+  get_slot(AstType, t) { $t.getAstType() }
+  make(t0) { tom.engine.adt.tomterm.types.tomterm.TomTypeToTomTerm.make($t0) }
+}
+
+%op TomTerm TomNameToTomTerm(AstName:TomName) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.TomNameToTomTerm) }
+  get_slot(AstName, t) { $t.getAstName() }
+  make(t0) { tom.engine.adt.tomterm.types.tomterm.TomNameToTomTerm.make($t0) }
+}
+
 %op TomTerm TomSymbolToTomTerm(AstSymbol:TomSymbol) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.TomSymbolToTomTerm) }
   get_slot(AstSymbol, t) { $t.getAstSymbol() }
@@ -1737,6 +1717,18 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.Composite) }
   get_slot(Args, t) { $t.getArgs() }
   make(t0) { tom.engine.adt.tomterm.types.tomterm.Composite.make($t0) }
+}
+
+%op TomTerm SubjectList(TomList:TomList) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.SubjectList) }
+  get_slot(TomList, t) { $t.getTomList() }
+  make(t0) { tom.engine.adt.tomterm.types.tomterm.SubjectList.make($t0) }
+}
+
+%op TomTerm Term(TomTerm:TomTerm) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.Term) }
+  get_slot(TomTerm, t) { $t.getTomTerm() }
+  make(t0) { tom.engine.adt.tomterm.types.tomterm.Term.make($t0) }
 }
 
 %op TomTerm AntiTerm(TomTerm:TomTerm) {
@@ -1819,7 +1811,7 @@
   make(t0, t1, t2) { tom.engine.adt.tomterm.types.tomterm.BuildAppendList.make($t0, $t1, $t2) }
 }
 
-%op TomTerm BuildEmptyArray(AstName:TomName, Size:TomTerm) {
+%op TomTerm BuildEmptyArray(AstName:TomName, Size:int) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyArray) }
   get_slot(AstName, t) { $t.getAstName() }
   get_slot(Size, t) { $t.getSize() }

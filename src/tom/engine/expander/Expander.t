@@ -496,9 +496,9 @@ matchBlock: {
          */
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        for(TomVisit v:(concTomVisit)`visitList) {
+        for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
-          %match(v) {
+          %match(visit) {
             VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
               TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);

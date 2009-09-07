@@ -109,8 +109,8 @@ public abstract class AbstractStrategy implements Strategy {
    * @throws VisitFailure if visit fails
    */
   @SuppressWarnings("unchecked")
-  public <T> T visit(T any, Introspector i) throws VisitFailure {
-    init(i);
+  public <T> T visit(T any, Introspector i) throws VisitFailure{
+    init();
     setRoot(any);
     int status = visit(i);
     if(status == Environment.SUCCESS) {
@@ -200,8 +200,8 @@ public abstract class AbstractStrategy implements Strategy {
   /** 
    * Initialize the Strategy
    */
-  public void init(Introspector introspector) {
-    init(this,new Environment(introspector));
+  public void init() {
+    init(this,new Environment());
   }
 
   /** 
