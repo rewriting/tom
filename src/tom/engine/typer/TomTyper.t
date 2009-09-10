@@ -99,7 +99,9 @@ public class TomTyper extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     //System.out.println("(debug) I'm in the Tom typer : TSM"+getStreamManager().toString());
-    TomTerm typedTerm = null;
+    
+    //TomTerm typedTerm = null;
+    Code typedCode = null;
     try {
       kernelTomTyper.setSymbolTable(getStreamManager().getSymbolTable());
       //no more necessary: realised by the desugarer
@@ -112,7 +114,7 @@ public class TomTyper extends TomGenericPlugin {
       /* transform each BackQuoteTerm into its compiled form */
       Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
       Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
-      Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
+      typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
       typedCode = kernelTomTyper.propagateVariablesTypes(typedCode);
       setWorkingTerm(typedCode);      
       // verbose
@@ -126,7 +128,7 @@ public class TomTyper extends TomGenericPlugin {
     }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
-          + TYPED_SUFFIX, typedTerm);
+          + TYPED_SUFFIX, typedCode);
       Tools.generateOutput(getStreamManager().getOutputFileName()
           + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
     }
