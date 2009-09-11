@@ -325,7 +325,11 @@ options{
           HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
               getOptionManager(), getStreamManager());
           Code astTom = parser.input();
-          list.add(astTom); 
+          %match(astTom) {
+            Tom(concCode(_*,c,_*)) -> {
+              list.add(`c); 
+            }
+          }
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");
         } catch (Exception e) {

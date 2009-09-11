@@ -57,7 +57,7 @@ public class ASTFactory {
     CodeList list = `concCode();
     for(Code code: c) {
       list = `concCode(list*,code);
-    } 	     
+    }
     return list;
   }
 

@@ -166,7 +166,6 @@ public class TomParserPlugin extends TomGenericPlugin {
       parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
-      //System.out.println(getWorkingTerm());
       /*
        * we update codomains which are constrained by a symbolName
        * (come from the %strategy operator)
