@@ -130,7 +130,7 @@ options{
             return; 
           }
           Composite(_*), t2 -> { 
-            list.add(`Composite(t2)); 
+            list.add(`Composite(CompositeBQTerm(t2))); 
             return; 
           }
         }
