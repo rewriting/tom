@@ -333,7 +333,8 @@ public class ConstraintGenerator {
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Or(IsEmptyList(opName, var), EqualBQTerm(codomain,BuildEmptyList(opName),var));
+      //TODO: we should check if the BuildEmptyList exists for the mapping (can be null)
+      return `Or(IsEmptyList(opName, var), EqualBQTerm(codomain,var,BuildEmptyList(opName)));
     }
     return `IsEmptyList(opName, var);
   }
