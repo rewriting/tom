@@ -434,6 +434,7 @@ public class ASTFactory {
     String topDomain = 
       TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
+    //System.out.println("call buildList"+`args);
     %match(args) {
       concBQTerm() -> {
         return `BuildEmptyList(name);
@@ -518,8 +519,16 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concBQTerm(head@Composite(_*),tail*) -> {
-        BQTerm subList = buildList(name,`tail,symbolTable);
+      concBQTerm(head@Composite(X*),tail*) -> {
+       BQTerm subList = buildList(name,`tail,symbolTable);
+       // TODO: avoid this particular case
+        %match(X) {
+         Composite(CompositeTL(ITL(s))) -> {
+            if (`s.trim().equals("")) {
+              return subList;
+            }
+          }
+        }
         return `BuildConsList(name,head,subList);
       }
 
@@ -587,8 +596,16 @@ public class ASTFactory {
         return `BuildConsArray(name,head,subList);
       }
 
-      concBQTerm(head@Composite(_*),tail*) -> {
+      concBQTerm(head@Composite(X*),tail*) -> {
         BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        // TODO: avoid this particular case
+        %match(X) {
+          Composite(CompositeTL(ITL(s))) -> {
+            if (`s.trim().equals("")) {
+              return subList;
+            }
+          }
+        }
         return `BuildConsArray(name,head,subList);
       }
     }

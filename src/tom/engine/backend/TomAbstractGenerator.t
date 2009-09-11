@@ -212,6 +212,9 @@ public abstract class TomAbstractGenerator {
           }
         }
       }
+      t@!Composite(_*) -> {
+        throw new TomRuntimeException("Cannot generate code for bqterm "+`t);
+      }
     }
   }
 
