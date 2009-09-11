@@ -434,7 +434,7 @@ public class ASTFactory {
     String topDomain = 
       TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
-    //System.out.println("call buildList"+`args);
+   
     %match(args) {
       concBQTerm() -> {
         return `BuildEmptyList(name);
@@ -447,8 +447,6 @@ public class ASTFactory {
         return `BuildAppendList(name,head,subList);
       }
 
-      /* FIXME : seems useless
-       */
       concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
         BQTerm subList = buildList(name,`tail,symbolTable);
         return `BuildAppendList(name,head,subList);
@@ -474,9 +472,10 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      /* FIXME : seems useless
-       */
       concBQTerm(head@Composite(CompositeBQTerm(BQVariable[AstType=varType]),_*),tail*) -> {
+        //System.out.println("topDomain = " + topDomain);
+        //System.out.println("topCodomain = " + topCodomain);
+        //System.out.println("varType = " + TomBase.getTomType(`varType));
         BQTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
@@ -485,8 +484,8 @@ public class ASTFactory {
         }
         return `BuildConsList(name,head,subList);
       }
-
-      concBQTerm(head@BuildConsList[AstName=opName],tail*) -> {
+      
+      concBQTerm(head@Composite(CompositeBQTerm(BuildConsList[AstName=opName]),_*),tail*) -> {
         BQTerm subList = buildList(name,`tail,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
@@ -497,7 +496,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concBQTerm(head@BuildTerm[AstName=Name(tomName)],tail*) -> {
+      concBQTerm(head@Composite(CompositeBQTerm(BuildTerm[AstName=Name(tomName)]),_*),tail*) -> {
         BQTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
         /*
@@ -556,8 +555,6 @@ public class ASTFactory {
         return `BuildAppendArray(name,head,subList);
       }
 
-      /* FIXME : useless ?
-       */
       concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
         BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         return `BuildAppendArray(name,head,subList);
