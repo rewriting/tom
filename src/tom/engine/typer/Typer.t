@@ -112,7 +112,7 @@ public class Typer extends TomGenericPlugin {
         * Start by typing variables with fresh type variables
         * Perform type inference over patterns 
         */
-      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
+      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCodeWithTypeVariables);
       
       /** Transform each BackQuoteTerm into its compiled form --> maybe to
         * desugarer phase before perform type inference 
@@ -181,7 +181,7 @@ public class Typer extends TomGenericPlugin {
       GetHeadDecl[] -> {
           throw new TomRuntimeException("updateCodomain");
       }
-
+      // In case of constants, where the domain is the codomain 
       decl@GetHeadDecl[Opname=Name(opName)] -> {
         TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
         TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);

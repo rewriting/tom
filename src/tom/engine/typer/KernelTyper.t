@@ -118,14 +118,15 @@ public class KernelTyper {
    * Variable is typed in the TomTerm case
    */
 
-  public tom.library.sl.Visitable typeVariable(TomType contextType, tom.library.sl.Visitable subject) {
+  public <T extends tom.library.sl.Visitable> T typeVariable(TomType
+      contextType, T subject) {
     if(contextType == null) {
       throw new TomRuntimeException("typeVariable: null contextType");
     }
     try {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
-      tom.library.sl.Visitable res =
+      T res =
         `TopDownStopOnSuccess(collectTypeConstraints(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
@@ -173,13 +174,12 @@ public class KernelTyper {
 
         // Type a function or a list
         %match(tomTerm) {
-          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=_] -> {
+          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
             // Take the symbol with type represented by "contextType", but,
             // why?!? What really is contextType?? Who generates this??
-            // Example: if this case is called twice successively (e.g.:
-            // f(g())), so the contextType will be the Codomain of the first
-            // call (e.g.: codomain of "g") and when tomname is empty, so this
-            // can be the case of f(f(g())) (two "f")
+            // Example: in a match, if the type of the subject is known, then
+            // this is taken as the contextType to help to infer the type of
+            // the pattern 
 
             TomSymbol tomSymbol = null;
             if(`tomName.equals("")) {
@@ -193,7 +193,7 @@ public class KernelTyper {
             } else {
               tomSymbol = kernelTyper.getSymbolFromName(`tomName);
             }
-            tomSymbol = kernelTyper.getSymbolFromName(`tomName);
+
           /*
            * CT-FUN rule:
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
@@ -224,16 +224,26 @@ public class KernelTyper {
             if(tomSymbol != null) {
               kernelTyper.addConstraints(`Equation(typeVar,TomBase.getSymbolCodomain(tomSymbol)));
               TomTypeList domainType = TomBase.getSymbolDomain(tomSymbol);
-              // Type the arguments 
+              // Typing the arguments 
               SlotList subterm =
                 kernelTyper.typeVariableList(tomSymbol,domainType,`slotList);
+              //Typing the term after a "@" symbol
+              ConstraintList newConstraints =
+                kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
+              return
+                `NewTerm(RecordAppl(option,nameList,subterm,newConstraints),typeVar);
             } else {
-              System.out.println("contextType = " + contextType);
+              System.out.println("contextType when tomSymbol is 'null' = " + contextType);
+
               %match(contextType) {
-                (Type|TypeWithSymbol)[] -> {
+                type@(Type|TypeWithSymbol)[] -> {
                   // TOCHECK what do here with domainType
+                  //kernelTyper.addConstraints(`Equation(typeVar,contextType));
                   SlotList subterm =
                     kernelTyper.typeVariableList(`emptySymbol(),`concTomType(),`slotList);
+                  ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
+                  return
+                    `NewTerm(RecordAppl(option,nameList,subterm,newConstraints),typeVar);
                 }
               }
             }
@@ -374,8 +384,8 @@ public class KernelTyper {
         SlotList sl = typeVariableList(`symb,`tail1*,`tail2);
         TomType typeVar = this.getFreshTypeVar();
         this.addConstraints(`Equation(typeVar,firstDomainType));
-        return
-          `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),NewTerm(slotAppl,typeVar))),sl*);
+        //return
+        //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),NewTerm(slotAppl,typeVar))),sl*);
       }
 
       symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,codomain@Type(tomCodomain,tlCodomain))], concTomType(firstDomainType,tail1*),
@@ -411,7 +421,7 @@ public class KernelTyper {
               UnamedVariableStar[Option=option,Constraints=constraints] -> {
                 this.addConstraints(`Equation(typeVar,codomain));
                 SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,constraints)),sl*);
+                //return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,constraints)),sl*);
               }
 
               /*
@@ -426,8 +436,8 @@ public class KernelTyper {
                 TomSymbol tomSymbol = this.findSymbol(`firstDomainType,`tomName);
                 if (`symb == tomSymbol) {
                   SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                  return 
-                    `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
+                  //return 
+                  //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
                 }
               }
                              
@@ -443,8 +453,8 @@ public class KernelTyper {
               _ -> {
                 this.addConstraints(`Equation(typeVar,firstDomainType));
                 SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                return 
-                  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
+                //return 
+                //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
               }
             }
           } 
@@ -457,8 +467,8 @@ public class KernelTyper {
           else {
             this.addConstraints(`Equation(typeVar,firstDomainType));
             SlotList sl = typeVariableList(`symb,`tail1,`tail2);
-            return
-              `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName),NewTerm(slotAppl,typeVar))),sl*);
+            //return
+            //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName),NewTerm(slotAppl,typeVar))),sl*);
           }
         }
     }
