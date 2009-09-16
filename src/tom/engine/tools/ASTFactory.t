@@ -462,6 +462,10 @@ public class ASTFactory {
              => cons       
        */
       concBQTerm(head@BQVariable[AstType=varType],tail*) -> {
+        //System.out.println("topDomain = " + topDomain);
+        //System.out.println("topCodomain = " + topCodomain);
+        //System.out.println("varType = " + TomBase.getTomType(`varType));
+
         BQTerm subList = buildList(name,`tail,symbolTable);
         /* a Variable is flattened if type and codomain are equals */
         if(topDomain != topCodomain) {

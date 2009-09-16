@@ -105,17 +105,20 @@ public class TomTyper extends TomGenericPlugin {
     try {
       kernelTomTyper.setSymbolTable(getStreamManager().getSymbolTable());
       //no more necessary: realised by the desugarer
-      //TomTerm syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
+      //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
 
       updateSymbolTable();
 
       Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
       Code variableExpandedCode = (Code) kernelTomTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
-      /* transform each BackQuoteTerm into its compiled form */
-      Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
-      Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
+     
+      Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
       typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
       typedCode = kernelTomTyper.propagateVariablesTypes(typedCode);
+
+      /* transform each BackQuoteTerm into its compiled form */
+      typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+      
       setWorkingTerm(typedCode);      
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),

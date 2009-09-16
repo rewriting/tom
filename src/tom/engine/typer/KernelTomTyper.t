@@ -107,14 +107,14 @@ public class KernelTomTyper {
   }
   %strategy ProcessRhsForVarTypePropagation() extends Identity() {
     visit ConstraintInstruction {
-      ConstraintInstruction(constr,action,option) -> {
+      c@ConstraintInstruction(constr,action,option) -> {
         HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
         `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
-        Constraint c = `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
-        return `ConstraintInstruction(c,action,option);
+        return `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`c);        
       }
     }
-  }  
+  }
+
   %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
     visit TomTerm {       
       Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
@@ -124,7 +124,17 @@ public class KernelTomTyper {
       }
     }
   }
+
   %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
+    visit BQTerm {
+      v@BQVariable[AstName=Name(name),AstType=type] -> {
+        if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
+          if (map.containsKey(`name)) {
+            return `v.setAstType((TomType)map.get(`name)); 
+          }
+        }
+      }
+    }
     visit TomTerm {
       v@Variable[AstName=Name(name),AstType=type] -> {
         if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
@@ -135,7 +145,6 @@ public class KernelTomTyper {
       }
     }
   }
-  
 
   /*
    * The "typeVariable" phase types RecordAppl into Variable
@@ -265,6 +274,64 @@ public class KernelTomTyper {
             TomTerm newVar = `var.setAstType(ctype);
             //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
+          }
+        }
+      }
+    }
+
+    visit BQTerm {
+
+      BQAppl[Option=option,AstName=name@Name(tomName),Args=args] -> {
+        TomSymbol tomSymbol = null;
+        if(`tomName.equals("")) {
+          try {
+            tomSymbol = kernelTomTyper.getSymbolFromType(contextType);
+            if(tomSymbol==null) {
+              throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+            }
+            `name = `tomSymbol.getAstName();
+          } catch(UnsupportedOperationException e) {
+            // contextType has no AstType slot
+            tomSymbol = null;
+          }
+        } else {
+          tomSymbol = kernelTomTyper.getSymbolFromName(`tomName);
+        }
+
+        if(tomSymbol != null) {
+          BQTermList subterm = kernelTomTyper.typeVariableList(tomSymbol, `args);
+          return `BQAppl(option,name,subterm);
+        } else {
+          //System.out.println("contextType = " + contextType);
+
+          %match(contextType) {
+            type@(Type|TypeWithSymbol)[] -> {
+              BQTermList subterm = kernelTomTyper.typeVariableList(`emptySymbol(), `args);
+              return `BQAppl(option,name,subterm);
+            }
+
+            _ -> {
+              // do nothing
+              //System.out.println("contextType = " + contextType);
+              //System.out.println("subject        = " + subject);
+            }
+          }
+        }
+      }
+
+      var@BQVariable[AstType=Type(tomType,EmptyType())] -> {
+        TomType localType = kernelTomTyper.getType(`tomType);
+        //System.out.println("localType = " + localType);
+        if(localType != null) {
+          // The variable has already a known type
+          return `var.setAstType(localType);
+        }
+
+        //System.out.println("contextType = " + contextType);
+        %match(contextType) {
+          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tomType,tlType);
+            return `var.setAstType(ctype);
           }
         }
       }
@@ -417,6 +484,72 @@ matchL:  %match(subject,s){
     }// for    
     return null;
   }
+
+  /*
+   * perform type inference of subterms (subtermList)
+   * under a given operator (symbol)
+   */
+  private BQTermList typeVariableList(TomSymbol symbol, BQTermList subtermList) {
+    if(symbol == null) {
+      throw new TomRuntimeException("typeVariableList: null symbol");
+    }
+
+    if(subtermList.isEmptyconcBQTerm()) {
+      return `concBQTerm();
+    }
+
+    //System.out.println("symbol = " + symbol.getastname());
+    %match(symbol, subtermList) {
+      symb@emptySymbol(), concBQTerm(head,tail*) -> {
+        /*
+         * if the top symbol is unknown, the subterms
+         * are typed in an empty context
+         */
+        BQTermList sl = typeVariableList(`symb,`tail);
+        return `concBQTerm(typeVariable(EmptyType(),head),sl*);
+      }
+
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
+        concBQTerm(head,tail*) -> {
+          //System.out.println("codomain = " + `codomain);
+          // process a list of subterms and a list of types
+          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
+            /*
+             * todo:
+             * when the symbol is an associative operator,
+             * the signature has the form: list conc( element* )
+             * the list of types is reduced to the singleton { element }
+             *
+             * consider a pattern: conc(e1*,x,e2*,y,e3*)
+             *  assign the type "element" to each subterm: x and y
+             *  assign the type "list" to each subtermlist: e1*,e2* and e3*
+             */
+
+            //System.out.println("listoperator: " + `symb);
+            //System.out.println("subtermlist: " + subtermList);
+            //System.out.println("slotAppl: " + `slotAppl);
+
+            %match(head) {
+              BQVariableStar[Option=option,AstName=name] -> {
+                BQTermList sl = typeVariableList(`symb,`tail);
+                return `concBQTerm(BQVariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName)),sl*);
+              }
+              _ -> {
+                //we cannot know the type precisely (the var can be of domain or codomain type)
+                BQTermList sl = typeVariableList(`symb,`tail);
+                return `concBQTerm(typeVariable(EmptyType(), head),sl*);
+              }
+            }
+          } else {
+            BQTermList sl = typeVariableList(`symb,`tail);
+            //TODO: find the correct type of this argument (using its rank)
+            return `concBQTerm(typeVariable(EmptyType(), head),sl*);
+          }
+        }
+    }
+    throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
+  }
+
 
   /*
    * perform type inference of subterms (subtermList)
