@@ -1,9 +1,5 @@
-Examples qui ne compilent pas (11 Sept):
-  -bdd (1)
+Examples qui ne compilent pas:
   -gom (65)
   -modeltrans (1)
   -strategy (+de 100)
-  -subtyping (1)
-  -termgraph (6)
   -tomjastadd (78)
-  -zenon (plus d'option verify maintenant) Est ce qu'on porte le Verifier?
