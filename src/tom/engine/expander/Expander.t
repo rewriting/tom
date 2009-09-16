@@ -322,9 +322,9 @@ matchBlock: {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}")))));
+                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("};")))));
                           //default case (used for builtins too)                     
-                          Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{}")));
+                          Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
@@ -355,7 +355,7 @@ matchBlock: {
                             }
                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
                           }
-                          composite = `Composite(composite*,CompositeTL(ITL("}")));
+                          composite = `Composite(composite*,CompositeTL(ITL("};")));
                           Instruction inst = `If(IsFsym(symbolName,var),CodeToInstruction(BQTermToCode(composite)),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         }
