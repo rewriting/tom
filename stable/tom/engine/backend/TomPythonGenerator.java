@@ -31,6 +31,8 @@ import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
@@ -70,9 +72,9 @@ public class TomPythonGenerator extends TomGenericGenerator {
   }
   */
 
-  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.write(";\n");
@@ -86,23 +88,39 @@ public class TomPythonGenerator extends TomGenericGenerator {
     generateInstruction(deep,succes,moduleName);
     buildWhileDo(deep,exp,succes,moduleName);
   }
-  
-protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
+
+  protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1, TomTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
       output.write("(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(" == ");
-      generate(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
       output.write(")");
     } else {
       output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
-      generate(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
       output.write(")");
     }
   }
-  
+
+  protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1, BQTerm exp2, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
+      output.write("(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(" == ");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(")");
+    } else {
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(", ");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(")");
+    }
+  }
+
   protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
     output.write("((");
     generateExpression(deep,exp1,moduleName);
@@ -161,20 +179,20 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generateInstructionList(deep, instructionList, moduleName);
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
-  protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
 
-  protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
+  protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
     output.write(deep,"return ");
-    generate(deep,exp,moduleName);
+    generateBQTerm(deep,exp,moduleName);
   }
 
   /* FIXME */
@@ -271,7 +289,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
   }
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
-      TomList argList, Instruction instr, String moduleName) throws IOException {
+      BQTermList argList, Instruction instr, String moduleName) throws IOException {
     StringBuilder s = new StringBuilder();
     StringBuilder check = new StringBuilder();
     if( nodeclMode) {
@@ -279,14 +297,14 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     }
 
     s.append("def " + prefix+funName + "(");
-    while(!argList.isEmptyconcTomTerm()) {
-      TomTerm arg = argList.getHeadconcTomTerm();
+    while(!argList.isEmptyconcBQTerm()) {
+      BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch75NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch75NameNumber_freshVar_2= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstType() ;if ( (tomMatch75NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch75NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch75NameNumber_freshVar_2.getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
+              {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch86NameNumber_freshVar_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch86NameNumber_freshVar_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( (tomMatch86NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch86NameNumber_freshVar_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch86NameNumber_freshVar_2.getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
 
-                  s.append( tomMatch75NameNumber_freshVar_1.getString() );
+                  s.append( tomMatch86NameNumber_freshVar_1.getString() );
                   break matchBlock;
-                }}}}}}{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+                }}}}}}{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 
                   System.out.println("genDeclMake: strange term: " + arg);
@@ -294,8 +312,8 @@ matchBlock: {
                 }}}
 
             }
-            argList = argList.getTailconcTomTerm();
-            if(!argList.isEmptyconcTomTerm()) {
+            argList = argList.getTailconcBQTerm();
+            if(!argList.isEmptyconcBQTerm()) {
               s.append(", ");
             }
     }
@@ -339,33 +357,33 @@ matchBlock: {
     }
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
   }
 
-  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
 
-  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.write(deep, "def " + tomName + "(");
-    while(!varList.isEmptyconcTomTerm()) {
-      TomTerm localVar = varList.getHeadconcTomTerm();
+    while(!varList.isEmptyconcBQTerm()) {
+      BQTerm localVar = varList.getHeadconcBQTerm();
 matchBlock: {
-              {{if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )localVar) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+              {{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
                   //output.write(deep,getTLType(`type2) + " ");
-                  generate(deep,(( tom.engine.adt.tomterm.types.TomTerm )localVar),moduleName);
+                  generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
                   break matchBlock;
-                }}}{if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+                }}}{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
 
                   System.out.println("MakeFunction: strange term: " + localVar);
                   throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
                 }}}
 
             }
-            varList = varList.getTailconcTomTerm();
-            if(!varList.isEmptyconcTomTerm()) {
+            varList = varList.getTailconcBQTerm();
+            if(!varList.isEmptyconcBQTerm()) {
               output.write(deep,", ");
 
             }
@@ -400,4 +418,19 @@ matchBlock: {
     s.append("\n # end def " + declName + "_" + suffix + "\n");
     output.write(s);
   }
+
+  protected void buildAssignArray(int deep, BQTerm var, OptionList optionList, BQTerm index, 
+      Expression exp, String moduleName) throws IOException {
+    buildAssignArrayVar(deep,var,optionList, index, exp, moduleName);
+  }
+
+  protected void buildAssignArrayVar(int deep, BQTerm var, OptionList list, BQTerm index, 
+      Expression exp, String moduleName) throws IOException {    
+    //output.indent(deep);
+    generateArray(deep,var,index,moduleName);
+    output.write("=");
+    generateExpression(deep,exp,moduleName);
+    output.write(";\n");
+  } 
+
 }

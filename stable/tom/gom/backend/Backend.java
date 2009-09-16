@@ -46,6 +46,7 @@ public class Backend {
   private int generateStratMapping = 0;
   private boolean multithread = false;
   private boolean maximalsharing = true;
+  private boolean jmicompatible = false;
   private GomEnvironment gomEnvironment;
 
          private static   tom.gom.adt.objects.types.GomClassList  tom_append_list_ConcGomClass( tom.gom.adt.objects.types.GomClassList l1,  tom.gom.adt.objects.types.GomClassList  l2) {     if( l1.isEmptyConcGomClass() ) {       return l2;     } else if( l2.isEmptyConcGomClass() ) {       return l1;     } else if(  l1.getTailConcGomClass() .isEmptyConcGomClass() ) {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,l2) ;     } else {       return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( l1.getHeadConcGomClass() ,tom_append_list_ConcGomClass( l1.getTailConcGomClass() ,l2)) ;     }   }   private static   tom.gom.adt.objects.types.GomClassList  tom_get_slice_ConcGomClass( tom.gom.adt.objects.types.GomClassList  begin,  tom.gom.adt.objects.types.GomClassList  end, tom.gom.adt.objects.types.GomClassList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcGomClass()  ||  (end== tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make( begin.getHeadConcGomClass() ,( tom.gom.adt.objects.types.GomClassList )tom_get_slice_ConcGomClass( begin.getTailConcGomClass() ,end,tail)) ;   }             
@@ -56,13 +57,15 @@ public class Backend {
           int generateStratMapping,
           boolean multithread,
           boolean nosharing,
+          boolean jmicompatible,
           List importList,
           GomEnvironment gomEnvironment) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.generateStratMapping = generateStratMapping;
     this.multithread = multithread;
-    this.maximalsharing = ! nosharing;
+    this.maximalsharing = !nosharing;
+    this.jmicompatible = jmicompatible;
     this.importList = importList;
     this.gomEnvironment = gomEnvironment;
   }
@@ -76,13 +79,13 @@ public class Backend {
     Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
     Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
-    {{if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch407NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{if (!( tomMatch407NameNumber_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch407NameNumber_freshVar_8= tomMatch407NameNumber_end_4.getHeadConcGomClass() ;if ( (tomMatch407NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch407NameNumber_freshVar_7= tomMatch407NameNumber_freshVar_8.getClassName() ;if ( (tomMatch407NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch407NameNumber_end_4.getHeadConcGomClass() ;
+    {{if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {if ( (((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ((( tom.gom.adt.objects.types.GomClassList )classList) instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) { tom.gom.adt.objects.types.GomClassList  tomMatch349NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);do {{if (!( tomMatch349NameNumber_end_4.isEmptyConcGomClass() )) { tom.gom.adt.objects.types.GomClass  tomMatch349NameNumber_freshVar_8= tomMatch349NameNumber_end_4.getHeadConcGomClass() ;if ( (tomMatch349NameNumber_freshVar_8 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) { tom.gom.adt.objects.types.ClassName  tomMatch349NameNumber_freshVar_7= tomMatch349NameNumber_freshVar_8.getClassName() ;if ( (tomMatch349NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.classname.ClassName) ) { tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch349NameNumber_end_4.getHeadConcGomClass() ;
 
 
 
         MappingTemplateClass mapping = null;
         if(generateStratMapping>0) { // generate congruence strategies
-          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch407NameNumber_freshVar_7.getPkg() , "_"+ tomMatch407NameNumber_freshVar_7.getName() ) ;
+          ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make( tomMatch349NameNumber_freshVar_7.getPkg() , "_"+ tomMatch349NameNumber_freshVar_7.getName() ) ;
           GomClass nGomClass = tom_gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
           if(generateStratMapping==1) {
@@ -98,8 +101,8 @@ public class Backend {
           mapping = templatefactory.makeTomMappingTemplate(tom_gomclass,null,getGomEnvironment());
         }
         mappingSet.add(mapping);
-        generators.put(tomMatch407NameNumber_freshVar_7,mapping);
-      }}}if ( tomMatch407NameNumber_end_4.isEmptyConcGomClass() ) {tomMatch407NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch407NameNumber_end_4= tomMatch407NameNumber_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch407NameNumber_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
+        generators.put(tomMatch349NameNumber_freshVar_7,mapping);
+      }}}if ( tomMatch349NameNumber_end_4.isEmptyConcGomClass() ) {tomMatch349NameNumber_end_4=(( tom.gom.adt.objects.types.GomClassList )classList);} else {tomMatch349NameNumber_end_4= tomMatch349NameNumber_end_4.getTailConcGomClass() ;}}} while(!( (tomMatch349NameNumber_end_4==(( tom.gom.adt.objects.types.GomClassList )classList)) ));}}}}
 
     // generate a class for each element of the list
     while (!classList.isEmptyConcGomClass()) {
@@ -165,6 +168,7 @@ public class Backend {
             (TemplateClass)generators.get( (( tom.gom.adt.objects.types.GomClass )gomclass).getMapping() ),
             multithread,
             maximalsharing,
+            jmicompatible,
             getGomEnvironment());
         generators.put( (( tom.gom.adt.objects.types.GomClass )gomclass).getClassName() ,operator);
         if(generateStratMapping>0) {

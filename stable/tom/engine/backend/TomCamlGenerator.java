@@ -41,6 +41,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
@@ -50,7 +51,7 @@ import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomGenericGenerator {
-  protected LinkedList<TomTerm> env = new LinkedList<TomTerm>();
+  protected LinkedList<BQTerm> env = new LinkedList<BQTerm>();
 
   public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -64,18 +65,34 @@ public class TomCamlGenerator extends TomGenericGenerator {
    * the implementation of methods are here for caml 
    */
  
-  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
+  protected void buildExpEqualTerm(int deep, TomType type, BQTerm exp1, TomTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
       output.write("(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(" = ");
-      generate(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
       output.write(")");
     } else {
       output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-      generate(deep,exp1,moduleName);
+      generateBQTerm(deep,exp1,moduleName);
       output.write(", ");
-      generate(deep,exp2,moduleName);
+      generateTomTerm(deep,exp2,moduleName);
+      output.write(")");
+    }
+  }
+
+  protected void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1, BQTerm exp2, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(type))) {
+      output.write("(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(" = ");
+      generateBQTerm(deep,exp2,moduleName);
+      output.write(")");
+    } else {
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
+      generateBQTerm(deep,exp1,moduleName);
+      output.write(", ");
+      generateBQTerm(deep,exp2,moduleName);
       output.write(")");
     }
   }
@@ -116,7 +133,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     }
 
     while(!instructionList.isEmptyconcInstruction()) {
-      if(!head.isTargetLanguageToInstruction()) {
+      if(!head.isCodeToInstruction()) {
         output.write("(* end InstructionSequence *) ");
         output.writeln(";");
       }
@@ -162,13 +179,13 @@ public class TomCamlGenerator extends TomGenericGenerator {
     generateExpression(deep,exp,moduleName);
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList optionList,
+  protected void buildLet(int deep, BQTerm var, OptionList optionList,
                           TomType tlType, 
                           Expression exp, Instruction body, String moduleName) throws IOException {
 
     output.indent(deep);
     output.write("let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write(" = ");
     generateExpression(deep,exp,moduleName);
     output.writeln(" in ");
@@ -176,12 +193,12 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
  
 
-  protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList,
                              TomType tlType, 
                              Expression exp, Instruction body, String moduleName) throws IOException {
     output.indent(deep);
     output.write("let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     output.write(" = ref (");
     generateExpression(deep,exp,moduleName);
     output.writeln(") in ");
@@ -194,7 +211,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
    * redefinition of TomAbstractGenerator.getVariableName
    * add a ! for variables under a LetRef
    */
-  protected String getVariableName(TomTerm var) {
+  protected String getVariableName(BQTerm var) {
     String varname = super.getVariableName(var);
     if(env.contains(var)) {
       return "!" + varname;
@@ -202,7 +219,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     return varname;
   }
 
-  protected void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     output.write(" ( ");
     output.write(deep+1,super.getVariableName(var));
     output.write(" := ");
@@ -273,9 +290,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch58NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch58NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch58NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch58NameNumber_freshVar_2.getLine() ;if ( (tomMatch58NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch69NameNumber_freshVar_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch69NameNumber_freshVar_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch69NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch69NameNumber_freshVar_2.getLine() ;if ( (tomMatch69NameNumber_freshVar_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,s, tom_startLine,  tomMatch58NameNumber_freshVar_3.getLine() - tom_startLine);
+        output.write(0,s, tom_startLine,  tomMatch69NameNumber_freshVar_3.getLine() - tom_startLine);
         return;
       }}}}}{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
 
@@ -287,21 +304,21 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
-                             TomList argList, Instruction instr, String moduleName)  throws IOException {
+                             BQTermList argList, Instruction instr, String moduleName)  throws IOException {
     StringBuilder s = new StringBuilder();
     if(nodeclMode) { 
       return;
     }
     s.append("let " + prefix+funName + "(");
-    while(!argList.isEmptyconcTomTerm()) {
-      TomTerm arg = argList.getHeadconcTomTerm();
+    while(!argList.isEmptyconcBQTerm()) {
+      BQTerm arg = argList.getHeadconcBQTerm();
       matchBlock: {
-        {{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomname.types.TomName  tomMatch59NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )arg).getAstName() ;if ( (tomMatch59NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ;if ( (tomMatch70NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            s.append( tomMatch59NameNumber_freshVar_1.getString() );
+            s.append( tomMatch70NameNumber_freshVar_1.getString() );
             break matchBlock;
-          }}}}{if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+          }}}}{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
 
             System.out.println("genDeclMake: strange term: " + arg);
@@ -309,8 +326,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
           }}}
 
       }
-      argList = argList.getTailconcTomTerm();
-      if(!argList.isEmptyconcTomTerm()) {
+      argList = argList.getTailconcBQTerm();
+      if(!argList.isEmptyconcBQTerm()) {
         s.append(", ");
       }
     }
@@ -358,9 +375,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(s);
   }
   
-  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType, String moduleName) throws IOException {
+  protected void buildDeclaration(int deep, BQTerm var, String type, TomType tlType, String moduleName) throws IOException {
     output.write(deep,"let ");
-    generate(deep,var,moduleName);
+    generateBQTerm(deep,var,moduleName);
     System.out.println("buildDeclaration : this is a deprecated code");
     output.writeln(" = ref None in");
   }
@@ -383,7 +400,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
     buildUnamedBlock(deep,instList,moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     System.out.println("Function not yet supported in Caml");
     throw new TomRuntimeException("Function not yet supported in Caml");
   }
@@ -418,8 +435,8 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(";;");
   }
 
-  protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
-    generate(deep,exp,moduleName);
+  protected void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException {
+    generateBQTerm(deep,exp,moduleName);
   }
 
 
@@ -429,12 +446,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
 
 ;
         return;
-      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )subject) instanceof tom.engine.adt.tominstruction.types.instruction.Assign) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch60NameNumber_freshVar_3= (( tom.engine.adt.tominstruction.types.Instruction )subject).getVariable() ;boolean tomMatch60NameNumber_freshVar_7= false ;if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {tomMatch60NameNumber_freshVar_7= true ;} else {if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch60NameNumber_freshVar_7= true ;}}if ((tomMatch60NameNumber_freshVar_7 ==  true )) {buildNop()
-
-
-;
-        return;
-      }}}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
+      }}}{if ( (subject instanceof tom.engine.adt.tominstruction.types.Instruction) ) {
 
 
         super.generateInstruction(deep, subject, moduleName);
@@ -446,5 +458,14 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.write(" () ");
   }
 
+  protected void buildAssignArray(int deep, BQTerm var, OptionList optionList,
+      BQTerm index, 
+      Expression exp, String moduleName) throws IOException {
+    output.indent(deep);
+    //  arrays are used in the AC algorithm;
+    // and the AC maching is only supported for AC operators comming from GOM (which isn't available anyway for caml)   
+    throw new RuntimeException("Arrays NOT SUPPORTED in Caml !"); 
+    
+  }
 
 } // class TomCamlGenerator

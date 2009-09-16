@@ -105,23 +105,52 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
-    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+    return getMethod(slot,false);
+  }
 
-        return "get"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
+  public String setMethod(SlotField slot) {
+    return setMethod(slot,false);
+  }
+
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
+  public String getMethod(SlotField slot,boolean jmi) {
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
+
+        if(jmi) {
+          return "get"+jmize(tom_name);
+        } else {
+          return "get"+tom_name;
+        }
       }}}}
 
     throw new GomRuntimeException(
         "TemplateClass:getMethod got a strange SlotField "+slot);
   }
 
-  public String setMethod(SlotField slot) {
-    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {
+  /**
+    * @param slot contains the name of the slot
+    * @param jmi true to generate a name with a capital letter
+    */
+  public String setMethod(SlotField slot,boolean jmi) {
+    {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_name= (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
 
-        return "set"+ (( tom.gom.adt.objects.types.SlotField )slot).getName() ;
+        if(jmi) {
+          return "set"+jmize(tom_name);
+        } else {
+          return "set"+tom_name;
+        }
       }}}}
 
     throw new GomRuntimeException(
         "TemplateClass:setMethod got a strange SlotField "+slot);
+  }
+
+  private String jmize(String name) {
+    //TODO
+    return org.apache.commons.lang.StringUtils.capitalize(name);
   }
 
   public String index(SlotField slot) {
@@ -418,11 +447,11 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch427NameNumber_freshVar_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( (tomMatch427NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
+      {{if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {if ( ((( tom.gom.adt.objects.types.SlotField )slot) instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { tom.gom.adt.objects.types.ClassName  tomMatch369NameNumber_freshVar_2= (( tom.gom.adt.objects.types.SlotField )slot).getDomain() ;if ( (tomMatch369NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {
 
           writer.write( (( tom.gom.adt.objects.types.SlotField )slot).getName() );
           writer.write(":");
-          writer.write( tomMatch427NameNumber_freshVar_2.getName() );
+          writer.write( tomMatch369NameNumber_freshVar_2.getName() );
           index++;
         }}}}}
 

@@ -35,7 +35,9 @@ import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.adt.tomsignature.types.TomSymbol;
-import tom.engine.adt.tomterm.types.TomTerm;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tomtype.types.TomType;
 import tom.platform.OptionManager;
 import tom.platform.Plugin;
@@ -62,7 +64,7 @@ public abstract class TomGenericPlugin implements Plugin {
   private String pluginName;
 
   /** The term the plugin works on. */
-  private TomTerm term;
+  private Code term;
 
   /** The streamanager */
   protected TomStreamManager streamManager;
@@ -102,22 +104,22 @@ public abstract class TomGenericPlugin implements Plugin {
   /**
    * From Plugin interface 
    * Puts the input Object into the variable "term", after casting it as a
-   * TomTerm. If the cast operation fails, an error will be raised.
+   * Code. If the cast operation fails, an error will be raised.
    *
    * @param arg the input Object
    */
   public void setArgs(Object[] arg) {
-    if (arg[0] instanceof TomTerm && arg[1] instanceof TomStreamManager) {
-      term = (TomTerm)arg[0];
+    if (arg[0] instanceof Code && arg[1] instanceof TomStreamManager) {
+      term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
-      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(), new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
+      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(), new Object[]{"[Code, TomStreamManager]", getArgumentArrayString(arg)});
     }
   }
 
   public void setWorkingTerm(Object arg) {
-    if (arg instanceof TomTerm) {
-      term = (TomTerm)arg;
+    if (arg instanceof Code) {
+      term = (Code)arg;
     } else {
       getLogger().log(Level.SEVERE, TomMessage.tomTermExpected.getMessage(), pluginName);
     }
@@ -132,7 +134,7 @@ public abstract class TomGenericPlugin implements Plugin {
 
   /**
    * From Plugin interface 
-   * Returns the Object "term" (which is really a TomTerm).
+   * Returns the Object "term" (which is really a Code).
    *
    * @return the Object "term"
    */
@@ -169,10 +171,18 @@ public abstract class TomGenericPlugin implements Plugin {
     return TomBase.getSymbolFromType(tomType, streamManager.getSymbolTable());
   }
   
+  protected TomType getTermType(BQTerm t) {
+    return  TomBase.getTermType(t, streamManager.getSymbolTable());
+  }
+
   protected TomType getTermType(TomTerm t) {
     return  TomBase.getTermType(t, streamManager.getSymbolTable());
   }
-  
+ 
+  protected TomType getTermType(Expression t) {
+    return  TomBase.getTermType(t, streamManager.getSymbolTable());
+  }
+
   protected TomType getUniversalType() {
     return streamManager.getSymbolTable().getUniversalType();
   }

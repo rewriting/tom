@@ -462,9 +462,9 @@ matchBlock: {
          */
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        for(TomVisit visit:(concTomVisit)`visitList) {
+        for(TomVisit visit_ins:(concTomVisit)`visitList) {
           BQTermList subjectListAST = `concBQTerm();
-          %match(visit) {
+          %match(visit_ins) {
             VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
               BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
               subjectListAST = `concBQTerm(subjectListAST*,arg,introspectorVar);
