@@ -1,2 +1,0 @@
-Examples qui ne compilent pas:
-  -modeltrans (1)

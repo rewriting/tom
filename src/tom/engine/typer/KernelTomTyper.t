@@ -117,7 +117,7 @@ public class KernelTomTyper {
 
   %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
     visit TomTerm {       
-      Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
+      (Variable|VariableStar)[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
         if(`type!=SymbolTable.TYPE_UNKNOWN) {
           map.put(`name,`type);
         }
@@ -127,7 +127,7 @@ public class KernelTomTyper {
 
   %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
     visit BQTerm {
-      v@BQVariable[AstName=Name(name),AstType=type] -> {
+      v@(BQVariable|BQVariableStar)[AstName=Name(name),AstType=type] -> {
         if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
           if (map.containsKey(`name)) {
             return `v.setAstType((TomType)map.get(`name)); 
@@ -136,7 +136,7 @@ public class KernelTomTyper {
       }
     }
     visit TomTerm {
-      v@Variable[AstName=Name(name),AstType=type] -> {
+      v@(Variable|VariableStar)[AstName=Name(name),AstType=type] -> {
         if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
           if (map.containsKey(`name)) {
             return `v.setAstType((TomType)map.get(`name)); 
