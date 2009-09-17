@@ -38,6 +38,7 @@ import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -82,6 +83,10 @@ public abstract class TomAbstractGenerator {
     return TomBase.getTermType(t, symbolTable);
   }
 
+  protected TomType getTermType(BQTerm t) {
+    return TomBase.getTermType(t, symbolTable);
+  }
+
   protected TomType getUniversalType() {
     return symbolTable.getUniversalType();
   }
@@ -89,19 +94,13 @@ public abstract class TomAbstractGenerator {
   %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
-  protected TomTerm operatorsTogenerate(TomTerm subject)throws IOException {
-    //System.out.println("Subject "+subject);
-    //collectMake(subject);
-    return subject;
-  }
-
   /**
    * Generate the goal language
    * 
    * @param deep 
    * 		The distance from the right side (allows the computation of the column number)
    */
-  protected void generate(int deep, TomTerm subject, String moduleName) throws IOException {
+  protected void generate(int deep, Code subject, String moduleName) throws IOException {
     %match(subject) {
 
       Tom(l) -> {
@@ -114,6 +113,57 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
+      BQTermToCode(t) -> {
+        generateBQTerm(deep,`t, moduleName);
+        return;
+      }
+
+      TargetLanguageToCode(t) -> {
+        generateTargetLanguage(deep,`t, moduleName);
+        return;
+      }
+
+      InstructionToCode(t) -> {
+        generateInstruction(deep,`t, moduleName);
+        return;
+      }
+
+      DeclarationToCode(t) -> {
+        generateDeclaration(deep,`t, moduleName);
+        return;
+      }
+
+      t -> {
+        System.out.println("Cannot generate code for: " + `t);
+        throw new TomRuntimeException("Cannot generate code for: " + `t);
+      }
+    }
+  }
+  
+  /**
+   * Generate the goal language
+   * 
+   * @param deep 
+   * 		The distance from the right side (allows the computation of the column number)
+   */
+  protected void generateTomTerm(int deep, TomTerm subject, String moduleName) throws IOException {
+    //TODO: complete with each constructor used in the baclend input term
+    %match (subject) {
+      var@(Variable|VariableStar)[] -> {
+        output.write(deep,getVariableName(`var));
+        return;
+      }
+    } 
+  }
+
+  /**
+   * Generate the goal language
+   * 
+   * @param deep 
+   * 		The distance from the right side (allows the computation of the column number)
+   */
+  protected void generateBQTerm(int deep, BQTerm subject, String moduleName) throws IOException {
+    %match (subject) {
       BuildConstant[AstName=Name(name)] -> {
         if(`name.charAt(0)=='\'' && `name.charAt(`name.length()-1)=='\'') {
           String substring = `name.substring(1,`name.length()-1);
@@ -142,41 +192,51 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      Composite(argList) -> {
-        generateList(deep,`argList, moduleName);
-        return;
-      }
-      
-      var@(Variable|VariableStar)[] -> {
+      var@(BQVariable|BQVariableStar)[] -> {
         output.write(deep,getVariableName(`var));
         return;
       }
 
-      TargetLanguageToTomTerm(t) -> {
-        generateTargetLanguage(deep,`t, moduleName);
-        return;
-      }
-
-      ExpressionToTomTerm(t) -> {
+      ExpressionToBQTerm(t) -> {
         generateExpression(deep,`t, moduleName);
         return;
       }
 
-      InstructionToTomTerm(t) -> {
-        generateInstruction(deep,`t, moduleName);
-        return;
+      Composite(_*,t,_*) -> {
+        %match(t) {
+          CompositeTL(target) -> {
+            generateTargetLanguage(deep,`target, moduleName);
+          }
+          CompositeBQTerm(term) -> {
+            generateBQTerm(deep,`term, moduleName);
+          }
+        }
       }
-
-      DeclarationToTomTerm(t) -> {
-        generateDeclaration(deep,`t, moduleName);
-        return;
-      }
-
-      t -> {
-        System.out.println("Cannot generate code for: " + `t);
-        throw new TomRuntimeException("Cannot generate code for: " + `t);
+      t@!Composite(_*) -> {
+        throw new TomRuntimeException("Cannot generate code for bqterm "+`t);
       }
     }
+  }
+
+  protected String getVariableName(BQTerm var) {
+    %match(var) {
+      BQVariable[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      BQVariable[AstName=Name(name)] -> {
+        return `name;
+      }
+
+      BQVariableStar[AstName=PositionName(l)] -> {
+        return ("tom" + TomBase.tomNumberListToString(`l));
+      }
+
+      BQVariableStar[AstName=Name(name)] -> {
+        return `name;
+      }
+    }
+    throw new RuntimeException("cannot generate the name of the variable "+var);
   }
 
   protected String getVariableName(TomTerm var) {
@@ -197,8 +257,9 @@ public abstract class TomAbstractGenerator {
         return `name;
       }
     }
-    return null;
+    throw new RuntimeException("cannot generate the name of the variable "+var);
   }
+
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
     %match(subject) {
       Code(t) -> {
@@ -235,17 +296,17 @@ public abstract class TomAbstractGenerator {
         buildExpGreaterThan(deep, `exp1, `exp2, moduleName);
         return;
       }
-      
+
       GreaterOrEqualThan(exp1,exp2) -> {
         buildExpGreaterOrEqualThan(deep, `exp1, `exp2, moduleName);
         return;
       }
-      
+
       LessThan(exp1,exp2) -> {
         buildExpLessThan(deep, `exp1, `exp2, moduleName);
         return;
       }
-      
+
       LessOrEqualThan(exp1,exp2) -> {
         buildExpLessOrEqualThan(deep, `exp1, `exp2, moduleName);
         return;
@@ -281,7 +342,10 @@ public abstract class TomAbstractGenerator {
         `buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
         return;
       }
-
+      EqualBQTerm(type,exp1,exp2) -> {
+        `buildExpEqualBQTerm(deep, type, exp1, exp2, moduleName);
+        return;
+      }
       IsSort((Type|TypeWithSymbol)[TomType=type], exp) -> {
         `buildExpIsSort(deep,type,exp,moduleName);
         return;
@@ -302,11 +366,11 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@(BQVariable|BuildTerm|ExpressionToBQTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
-      GetSlot(_,Name(opname),slotName, var@ExpressionToTomTerm(GetSlot[])) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@ExpressionToBQTerm(GetSlot[])) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
@@ -350,22 +414,22 @@ public abstract class TomAbstractGenerator {
         buildExpGetSliceList(deep, `name, `varBegin, `varEnd, `tailSlice,moduleName);
         return;
       }
-      
+
       GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
         buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
         return;
       }
 
-      TomTermToExpression(t) -> {
-        generate(deep,`t, moduleName);
+      BQTermToExpression(t) -> {
+        generateBQTerm(deep,`t, moduleName);
         return;
       }      
-      
+
       TomInstructionToExpression(t) -> {
         generateInstruction(deep, `t, moduleName);
         return;
       }
-      
+
       t -> {
         System.out.println("Cannot generate code for expression: " + `t);
         throw new TomRuntimeException("Cannot generate code for expression: " + `t);
@@ -376,27 +440,27 @@ public abstract class TomAbstractGenerator {
   /**
    * generates var[index] 
    */
-  protected void generateArray(int deep, TomTerm subject, TomTerm index, String moduleName) throws IOException {
-    %match(TomTerm subject) {
-      Variable[AstName=PositionName(l)] -> {        
+  protected void generateArray(int deep, BQTerm subject, BQTerm index, String moduleName) throws IOException {
+    %match(subject) {
+      BQVariable[AstName=PositionName(l)] -> {        
         output.write("tom" + TomBase.tomNumberListToString(`l));        
       }
-      Variable[AstName=Name(name)] -> {
+      BQVariable[AstName=Name(name)] -> {
         output.write(`name);        
       }
     }
-    %match(TomTerm index) {
-      Variable[AstName=PositionName(l)] -> {
+    %match(index) {
+      BQVariable[AstName=PositionName(l)] -> {
         output.write("[");
         output.write("tom" + TomBase.tomNumberListToString(`l));
         output.write("]");        
       }
-      Variable[AstName=Name(name)] -> {
+      BQVariable[AstName=Name(name)] -> {
         output.write("[");
         output.write(`name);
         output.write("]");
       }
-      ExpressionToTomTerm(Integer(x)) -> {
+      ExpressionToBQTerm(Integer(x)) -> {
         output.write("[");
         output.write(`x);
         output.write("]");  
@@ -407,13 +471,13 @@ public abstract class TomAbstractGenerator {
   public void generateInstruction(int deep, Instruction subject, String moduleName) throws IOException {
     %match(subject) {
 
-      TargetLanguageToInstruction(t) -> {
-        `generateTargetLanguage(deep, t, moduleName);
+      CodeToInstruction(c) -> {
+        `generate(deep, c, moduleName);
         return;
       }
 
-      TomTermToInstruction(t) -> {
-        `generate(deep, t, moduleName);
+      BQTermToInstruction(t) -> {
+        `generateBQTerm(deep, t, moduleName);
         return;
       }
 
@@ -426,31 +490,37 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      Assign(var@(Variable|VariableStar)[Option=option],exp) -> {
+      Assign(var@(BQVariable|BQVariableStar)[Option=option],exp) -> {
         `buildAssign(deep, var, option, exp, moduleName);
         return;
       }
 
-      Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
-        return;
-      }
+      /**
+       * no more unamed variables in this phase
+       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
+       return;
+       }
+       */
 
-      AssignArray(var@Variable[Option=list],index,exp) -> {
+      AssignArray(var@BQVariable[Option=list],index,exp) -> {
         `buildAssignArray(deep, var, list, index, exp, moduleName);
         return;
-      }  
-
-      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-        `generateInstruction(deep, body, moduleName);
-        return;
       }
 
-      Let(var@(Variable|VariableStar)[Option=list,AstType=type],exp,body) && ((Type|TypeWithSymbol)[TlType=tlType]<<type ||  tlType@TLType[]<<type)-> {
+      /**
+       * no more unamed variables in this phase
+       (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+       `generateInstruction(deep, body, moduleName);
+       return;
+       }
+       */
+
+      Let(var@(BQVariable|BQVariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
         `buildLet(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
 
-      LetRef(var@(Variable|VariableStar)[Option=list,AstType=type],exp,body) && ((Type|TypeWithSymbol)[TlType=tlType]<<type ||  tlType@TLType[]<<type) -> {
+      LetRef(var@(BQVariable|BQVariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
         `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
@@ -553,13 +623,14 @@ public abstract class TomAbstractGenerator {
   public void generateOption(int deep, Option subject, String moduleName) throws IOException {
     %match(subject) {
       DeclarationToOption(decl) -> {
-        //System.out.println("generateOption: " + `decl);
         `generateDeclaration(deep, decl, moduleName);
         return;
       }
-      
       OriginTracking[] -> { return; }
-
+      ACSymbol() -> {
+        // TODO RK: here add the declarations for intarray
+        return; 
+      }
       t -> {
         throw new TomRuntimeException("Cannot generate code for option: " + `t);
       }
@@ -593,6 +664,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
+
       IntrospectorClass(Name(tomName),declaration) -> {
         `buildIntrospectorClass(deep, tomName, declaration, moduleName);
         return;
@@ -605,31 +677,25 @@ public abstract class TomAbstractGenerator {
 
       ArraySymbolDecl(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-        || getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclArray(tomName, moduleName);
         }
-        //if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
-        //  `genDeclAC(tomName, moduleName);
-       // }
         return ;
       }
 
-      ListSymbolDecl(Name(tomName)) -> {
+      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-        || getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+            ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclList(tomName, moduleName);
         }
-        //if(getSymbolTable(moduleName).isUsedSymbolAC(`tomName)) {
-        //  `genDeclAC(tomName, moduleName);
-        //}
         return ;
       }
 
-      GetImplementationDecl(Variable[AstName=Name(name),
-                            AstType=Type(type,tlType@TLType[])],
-                            instr, _) -> {
+      GetImplementationDecl(BQVariable[AstName=Name(name),
+          AstType=Type(type,tlType@TLType[])],
+          instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
           `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
         }
@@ -637,7 +703,7 @@ public abstract class TomAbstractGenerator {
       }
 
       IsFsymDecl(Name(tomName),
-          Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
+          BQVariable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildIsFsymDecl(deep, tomName, varname, tlType, code, moduleName);
         }
@@ -646,7 +712,7 @@ public abstract class TomAbstractGenerator {
 
       GetSlotDecl[AstName=Name(tomName),
         SlotName=slotName,
-        Variable=Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]],
+        Variable=BQVariable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
             `buildGetSlotDecl(deep, tomName, name, tlType, code, slotName, moduleName);
@@ -654,16 +720,16 @@ public abstract class TomAbstractGenerator {
           return;
         }
 
-     EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(type1,_)],
-                     Variable[AstName=Name(name2), AstType=Type(type2,_)],
-                     code, _) -> {
+      EqualTermDecl(BQVariable[AstName=Name(name1), AstType=Type(type1,_)],
+          BQVariable[AstName=Name(name2), AstType=Type(type2,_)],
+          code, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type1)) {
           `buildEqualTermDecl(deep, name1, name2, type1, type2, code, moduleName);
         }
         return;
       }
 
-      IsSortDecl(Variable[AstName=Name(varName), AstType=Type(type,_)], expr, _) -> {
+      IsSortDecl(BQVariable[AstName=Name(varName), AstType=Type(type,_)], expr, _) -> {
         if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildIsSortDecl(deep, varName, type, expr, moduleName);
         }
@@ -672,28 +738,27 @@ public abstract class TomAbstractGenerator {
 
       GetHeadDecl[Opname=opNameAST@Name(opname),
         Codomain=Type[TlType=codomain],
-        Variable=Variable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
+        Variable=BQVariable[AstName=Name(varName), AstType=Type(suffix,domain@TLType[])],
         Expr=expr] -> {
-          //System.out.println("option GetHead: " + `opname);
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-          || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, expr, moduleName);
           }
           return;
         }
 
       GetTailDecl[Opname=opNameAST@Name(opname),
-        Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Variable=BQVariable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-          || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+              ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetTailDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
           }
           return;
         }
 
       IsEmptyDecl[Opname=opNameAST@Name(opname),
-        Variable=Variable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
+        Variable=BQVariable[AstName=Name(varName), AstType=Type(type,tlType@TLType[])],
         Expr=expr] -> {
           if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
               ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -706,26 +771,26 @@ public abstract class TomAbstractGenerator {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
             || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `genDeclMake("tom_empty_list_", opname, returnType, concTomTerm(), instr, moduleName);
+          `genDeclMake("tom_empty_list_", opname, returnType, concBQTerm(), instr, moduleName);
         }
         return;
       }
 
       MakeAddList(Name(opname),
-          elt@Variable[AstType=Type[TlType=TLType[]]],
-          list@Variable[AstType=fullListType@Type[TlType=TLType[]]],
+          elt@BQVariable[AstType=Type[TlType=TLType[]]],
+          list@BQVariable[AstType=fullListType@Type[TlType=TLType[]]],
           instr, _) -> {
         TomType returnType = `fullListType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
             ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `genDeclMake("tom_cons_list_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
+          `genDeclMake("tom_cons_list_", opname, returnType, concBQTerm(elt,list), instr, moduleName);
         }
         return;
       }
 
       GetElementDecl[Opname=opNameAST@Name(opname),
-        Variable=Variable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
-        Index=Variable[AstName=Name(name2)],
+        Variable=BQVariable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
+        Index=BQVariable[AstName=Name(name2)],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
             `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, code, moduleName);
@@ -734,7 +799,7 @@ public abstract class TomAbstractGenerator {
         }
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
-        Variable=Variable[AstName=Name(name),
+        Variable=BQVariable[AstName=Name(name),
         AstType=Type(type,tlType@TLType[])],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -744,23 +809,23 @@ public abstract class TomAbstractGenerator {
         }
 
       MakeEmptyArray(Name(opname),
-          Variable[Option=option,AstName=name,Constraints=constraints],
+          BQVariable[Option=option,AstName=name],
           instr, _) -> {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
-        TomTerm newVar = `Variable(option, name, getSymbolTable(moduleName).getIntType(), constraints);
+        BQTerm newVar = `BQVariable(option, name, getSymbolTable(moduleName).getIntType());
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
-          `genDeclMake("tom_empty_array_", opname, returnType, concTomTerm(newVar), instr, moduleName);
+          `genDeclMake("tom_empty_array_", opname, returnType, concBQTerm(newVar), instr, moduleName);
         }
         return;
       }
 
       MakeAddArray(Name(opname),
-          elt@Variable[AstType=Type[TlType=TLType[]]],
-          list@Variable[AstType=fullArrayType@Type[TlType=TLType[]]],
+          elt@BQVariable[AstType=Type[TlType=TLType[]]],
+          list@BQVariable[AstType=fullArrayType@Type[TlType=TLType[]]],
           instr, _) -> {
         TomType returnType = `fullArrayType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
-          `genDeclMake("tom_cons_array_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
+          `genDeclMake("tom_cons_array_", opname, returnType, concBQTerm(elt,list), instr, moduleName);
         }
         return;
       }
@@ -784,17 +849,17 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateListInclude(int deep, TomList subject, String moduleName) throws IOException {
+  public void generateListInclude(int deep, CodeList subject, String moduleName) throws IOException {
     output.setSingleLine();
     generateList(deep, subject, moduleName);
     output.unsetSingleLine();
   }
 
-  public void generateList(int deep, TomList subject, String moduleName)
+  public void generateList(int deep, CodeList subject, String moduleName)
     throws IOException {
-      while(!subject.isEmptyconcTomTerm()) {
-        generate(deep, subject.getHeadconcTomTerm(), moduleName);
-        subject = subject.getTailconcTomTerm();
+      while(!subject.isEmptyconcCode()) {
+        generate(deep, subject.getHeadconcCode(), moduleName);
+        subject = subject.getTailconcCode();
       }
     }
 
@@ -851,29 +916,29 @@ public abstract class TomAbstractGenerator {
       String moduleName) throws IOException;
 
   protected abstract void genDeclMake(String prefix, String funName, TomType returnType,
-      TomList argList, Instruction instr, String moduleName) throws IOException;
+      BQTermList argList, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
+
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
-  //protected abstract void genDeclAC(String name, String moduleName) throws IOException;
 
   // ------------------------------------------------------------
 
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
-  protected abstract void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException;
-  protected abstract void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException;
+  protected abstract void buildTerm(int deep, String name, BQTermList argList, String moduleName) throws IOException;
+  protected abstract void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException;
 
-  protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
-  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected abstract void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName)  throws IOException;
+  protected abstract void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend "+getClass()+" does not support Methods");
   }
 
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass
    */
-  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend does not support Class");
   }
 
@@ -896,33 +961,34 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpBottom(int deep, TomType type, String moduleName) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
-  protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, TomTerm expList, String moduleName) throws IOException;
-  protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException;
-  protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException;
-  protected abstract void buildExpIsSort(int deep, String type, TomTerm exp, String moduleName) throws IOException;
-  protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm expList, String moduleName) throws IOException;
+  protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException;
+  protected abstract void buildExpEqualTerm(int deep, TomType type, BQTerm exp1,TomTerm exp2, String moduleName) throws IOException;
+  protected abstract void buildExpEqualBQTerm(int deep, TomType type, BQTerm exp1,BQTerm exp2, String moduleName) throws IOException;
+  protected abstract void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException;
+  protected abstract void buildExpIsFsym(int deep, String opname, BQTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
-  protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp, String moduleName) throws IOException;
-  protected abstract void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetTail(int deep, String opName, TomType type1, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
-  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;
-  protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException;
-  protected abstract void buildAssign(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
-  protected abstract void buildAssignArray(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, String moduleName) throws IOException ;
-  protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildExpGetSlot(int deep, String opname, String slotName, BQTerm exp, String moduleName) throws IOException;
+  protected abstract void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetTail(int deep, String opName, TomType type1, BQTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, BQTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException;
+  protected abstract void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tailSlice, String moduleName) throws IOException;
+  protected abstract void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException;
+  protected abstract void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildAssignArray(int deep, BQTerm var, OptionList list, BQTerm index, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildLet(int deep, BQTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildLetRef(int deep, BQTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
   protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;
   protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
-  protected abstract void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildSubstract(int deep, TomTerm var1, TomTerm var2, String moduleName) throws IOException;
-  protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
+  protected abstract void buildAddOne(int deep, BQTerm var, String moduleName) throws IOException;
+  protected abstract void buildSubstractOne(int deep, BQTerm var, String moduleName) throws IOException;
+  protected abstract void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException;
+  protected abstract void buildReturn(int deep, BQTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,
       TomType tlType, Instruction instr, String moduleName) throws IOException;

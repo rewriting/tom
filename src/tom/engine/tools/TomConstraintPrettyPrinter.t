@@ -44,6 +44,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.library.sl.*;
 
@@ -52,12 +53,12 @@ public class TomConstraintPrettyPrinter {
   %include{ ../adt/tomconstraint/TomConstraint.tom }
 
 
-  public static String prettyPrint(tom.library.sl.Visitable subject) {
+  public static String prettyPrint(Constraint subject) {
     
     %match(subject) {
 
-      AssignTo(Variable) -> {
-        return "AssignTo("+prettyPrint(`Variable)+")";
+      AliasTo(Variable) -> {
+        return "AliasTo("+prettyPrint(`Variable)+")";
       }
 
       AssignPositionTo(Variable) -> {
@@ -92,7 +93,7 @@ public class TomConstraintPrettyPrinter {
         return "("+prettyPrint(`head)+" | "+prettyPrint(`tail)+")";
       }
 
-      MatchConstraint(Pattern, Subject) -> {
+      MatchConstraint(Pattern, Subject)-> {
         if(TomBase.hasTheory(`Pattern,`AC())) {
           return prettyPrint(`Pattern)+" <<_AC "+prettyPrint(`Subject);
         } else {
@@ -100,50 +101,52 @@ public class TomConstraintPrettyPrinter {
         }
       }
 
-      AntiMatchConstraint(Constraint) -> {
+      AntiMatchConstraint(Constraint)-> {
         return "Anti("+prettyPrint(`Constraint)+")";
       }
 
-      NumericConstraint(Pattern, Subject, Type) -> {
+      NumericConstraint(Pattern, Subject, Type)-> {
         return prettyPrint(`Pattern)+prettyPrint(`Type)+prettyPrint(`Subject);
       }
 
-      EmptyListConstraint(Opname, Variable) -> {
+      EmptyListConstraint(Opname, Variable)-> {
         return "IsEmptyList("+prettyPrint(`Opname)+","+prettyPrint(`Variable)+")";
       }
 
-      EmptyArrayConstraint(Opname, Variable, Index) -> {
+      EmptyArrayConstraint(Opname, Variable, Index)-> {
         return "IsEmptyArray("+prettyPrint(`Opname)+","+prettyPrint(`Variable)+","+prettyPrint(`Index)+")";
       }
+    } 
+    return subject.toString();
+  }
 
-    }
 
+  public static String prettyPrint(NumericConstraintType subject) {
     %match(subject) { 
       NumLessThan() -> {
         return "<";
       }
-      NumLessOrEqualThan() -> {
+      NumLessOrEqualThan()-> {
         return "<=";
       }
-      NumGreaterThan() -> {
+      NumGreaterThan()-> {
         return ">";
       }
-      NumGreaterOrEqualThan() -> {
+      NumGreaterOrEqualThan()-> {
         return ">=";
       }
-      NumDifferent() -> {
+      NumDifferent()-> {
         return "<>";
       }
-      NumEqual() -> {
+      NumEqual()-> {
         return "==";
       }
-    }
+    } 
+    return subject.toString();
+  }
 
+  public static String prettyPrint(TomTerm subject) {
     %match(subject) {
-      ExpressionToTomTerm(term) -> {
-        return prettyPrint(`term);
-      }
-
       Variable(_,name,_,_) -> {
         return prettyPrint(`name);
       }
@@ -162,6 +165,120 @@ public class TomConstraintPrettyPrinter {
 
       RecordAppl[NameList=nameList,Slots=slots] ->{
         return prettyPrint(`nameList)+"("+prettyPrint(`slots)+")"; 
+      }
+    } 
+    return subject.toString();
+  }
+
+
+  public static String prettyPrint(Expression subject) {
+    %match(subject) {
+      Cast(AstType,Source) -> {
+        return "("+prettyPrint(`AstType)+") "+ prettyPrint(`Source); 
+      }
+
+      GetSliceList(AstName, VariableBeginAST, VariableEndAST, Tail) -> {
+        return "GetSliceList("+prettyPrint(`AstName)+","+prettyPrint(`VariableBeginAST)+","+prettyPrint(`VariableEndAST)+","+prettyPrint(`Tail)+")";
+      }
+
+      GetSliceArray(_, SubjectListName, VariableBeginAST, VariableEndAST) -> {
+        return "GetSliceArray("+prettyPrint(`SubjectListName)+","+prettyPrint(`VariableBeginAST)+","+prettyPrint(`VariableEndAST)+")";
+      }
+
+      GetSize(_, Variable) -> {
+        return "GetSize("+prettyPrint(`Variable)+")";
+      }
+
+      GetElement[Variable=Variable,Index=Index] -> {
+        return "GetElement("+prettyPrint(`Variable)+","+prettyPrint(`Index)+")";
+      }
+    } 
+    return subject.toString();
+  }
+
+
+  public static String prettyPrint(TomName subject) {
+    %match(subject) {
+      PositionName(number_list) -> {
+        return "t"+ TomBase.tomNumberListToString(`number_list);
+      }
+      Name(string) -> {
+        return `string;
+      }
+    } 
+    return subject.toString();
+  }
+
+  public static String prettyPrint(TomNameList subject) {
+    %match(subject) {
+      concTomName(Name) -> {
+        return prettyPrint(`Name);
+      }
+
+      ConsconcTomName(head,tail) -> {
+        return prettyPrint(`head)+"."+prettyPrint(`tail);
+      }
+    } 
+    return subject.toString();
+  }
+
+  public static String prettyPrint(TomType subject) {
+    %match(subject) {
+      Type[TomType = name] -> { return `name; }
+    } 
+    return subject.toString();
+  }
+
+  public static String prettyPrint(TomNumber subject) {
+    %match(subject) {
+      Position(i) -> {
+        return "" + `i;
+      }
+
+      NameNumber(name) -> {
+        return prettyPrint(`name);
+      }
+
+      ListNumber(number) -> {
+        return "listNumber"+`number;
+      }
+
+      Begin(number) -> {
+        return "begin"+`number;
+      }
+
+      End(number) -> {
+        return "end"+`number;
+      }
+    } 
+    return subject.toString();
+  }
+
+  public static String prettyPrint(Slot subject) {
+    %match(subject) {
+      PairSlotAppl(_,Appl) -> {
+        return prettyPrint(`Appl);
+      }
+    } 
+    return subject.toString();
+  }
+
+  public static String prettyPrint(SlotList subject) {
+    String s = "";
+    %match(subject) {
+      concSlot(_*, t, _*) -> {
+        s += prettyPrint(`t)+",";
+      }
+    }
+    if (! s.equals("")) return s.substring(0,s.length()-1);
+
+    return subject.toString();
+  }
+
+  public static String prettyPrint(BQTerm subject) {
+    %match(subject) {
+      ExpressionToBQTerm(term) -> {
+        return prettyPrint(`term);
       }
 
       ListHead[Variable=Variable] -> {
@@ -187,107 +304,7 @@ public class TomConstraintPrettyPrinter {
       VariableHeadArray(Opname,Subject,BeginIndex,EndIndex) -> {
         return "VariableHeadArray("+prettyPrint(`Opname)+","+prettyPrint(`Subject)+","+prettyPrint(`BeginIndex)+","+prettyPrint(`EndIndex)+")";
       }
-
-      BuildAppendList(name,head,tail) -> {
-        return "BuildAppendList(" + prettyPrint(`head) + "," + prettyPrint(`tail) + ")";
-      }
-      BuildEmptyList(name) -> {
-        return "BuildEmptyList()";
-      }
-
     }
-
-    %match(subject) {
-      Cast(AstType,Source) -> {
-        return "("+prettyPrint(`AstType)+") "+ prettyPrint(`Source); 
-      }
-
-      GetSliceList(AstName, VariableBeginAST, VariableEndAST, Tail) -> {
-        return "GetSliceList("+prettyPrint(`AstName)+","+prettyPrint(`VariableBeginAST)+","+prettyPrint(`VariableEndAST)+","+prettyPrint(`Tail)+")";
-      }
-
-      GetSliceArray(_, SubjectListName, VariableBeginAST, VariableEndAST) -> {
-        return "GetSliceArray("+prettyPrint(`SubjectListName)+","+prettyPrint(`VariableBeginAST)+","+prettyPrint(`VariableEndAST)+")";
-      }
-
-      GetSize(_, Variable) -> {
-        return "GetSize("+prettyPrint(`Variable)+")";
-      }
-
-      GetElement[Variable=Variable,Index=Index] -> {
-        return "GetElement("+prettyPrint(`Variable)+","+prettyPrint(`Index)+")";
-      }
-
-      TomTermToExpression(AstTerm) -> {
-        return prettyPrint(`AstTerm);
-      }
-
-    }
-
-    %match(subject) {
-      PositionName(number_list) -> {
-        return "t"+ TomBase.tomNumberListToString(`number_list);
-      }
-      Name(string) -> {
-        return `string;
-      }
-
-    }
-
-    %match(subject) {
-      concTomName(Name) -> {
-        return prettyPrint(`Name);
-      }
-
-      ConsconcTomName(head,tail) -> {
-        return prettyPrint(`head)+"."+prettyPrint(`tail);
-      }
-    }
-
-    %match(subject) {
-      Type[TomType = name] -> { return `name; }
-    }
-
-    %match(subject) {
-      Position(i) -> {
-        return "" + `i;
-      }
-
-      NameNumber(name) -> {
-        return prettyPrint(`name);
-      }
-
-      ListNumber(number) -> {
-        return "listNumber"+`number;
-      }
-
-      Begin(number) -> {
-        return "begin"+`number;
-      }
-
-      End(number) -> {
-        return "end"+`number;
-      }
-    }
-
-    %match(subject) {
-      PairSlotAppl(_,Appl) -> {
-        return prettyPrint(`Appl);
-      }
-    }
-
-    String s = "";
-    %match(subject) {
-      concSlot(_*, t, _*) -> {
-        s += prettyPrint(`t)+",";
-      }
-      concSlot() -> {
-        return "";
-      }
-    }
-    if (! s.equals("")) return s.substring(0,s.length()-1);
-
     return subject.toString();
   }
-
 }

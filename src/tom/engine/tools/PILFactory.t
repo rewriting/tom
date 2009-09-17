@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.library.sl.*;
 
@@ -108,7 +109,7 @@ public class PILFactory {
     return res.toString();
   }
 
-  public String prettyPrint(tom.library.sl.Visitable subject) {
+  public String prettyPrint(Instruction subject) {
     %match(subject) {
       CompiledMatch(automata,_) -> { 
         return prettyPrint(`automata); 
@@ -176,11 +177,13 @@ public class PILFactory {
       CompiledPattern(_,automata) -> { 
         return prettyPrint(`automata); 
       }
-
     }
+    return subject.toString();
+  }
 
+  public String prettyPrint(Expression subject) {
     %match(subject) {
-      TomTermToExpression(astTerm) -> {
+      BQTermToExpression(astTerm) -> {
         return prettyPrint(`astTerm);
       }
 
@@ -258,26 +261,19 @@ public class PILFactory {
         return prettyPrint(`Variable)+"-1";
       }
     }
+    return subject.toString();
+  }
 
+
+  public String prettyPrint(BQTerm subject) {
     %match(subject) {
-      Variable(_,name,_,_) -> {
-        return prettyPrint(`name);
-      }
-
-      VariableStar(_,name,_,_) -> {
-        return prettyPrint(`name);
-      }
-
-      RecordAppl(_,nameList,_,_) ->{
-        return prettyPrint(`nameList); 
-      }
-      ExpressionToTomTerm(astTerm) -> {
+      ExpressionToBQTerm(astTerm) -> {
         return prettyPrint(`astTerm);
       }
       FunctionCall(AstName,_,Args) -> {
         String s = "";
         %match(Args) {
-          concTomTerm(_*,x,_*) -> {
+          concBQTerm(_*,x,_*) -> {
             s += ","+prettyPrint(`x);
           }
         }
@@ -286,8 +282,32 @@ public class PILFactory {
       BuildEmptyArray[AstName=name,Size=size] -> {
         return "new "+prettyPrint(`name)+"["+prettyPrint(`size)+"]";
       }
+      BQVariable[AstName=name] -> {
+        return prettyPrint(`name);
+      }
+      BQVariableStar[AstName=name] -> {
+        return prettyPrint(`name);
+      }
     }
+    return subject.toString();
+  }
 
+  public String prettyPrint(TomTerm subject) {
+    %match(subject) {
+      Variable(_,name,_,_) -> {
+        return prettyPrint(`name);
+      }
+      VariableStar(_,name,_,_) -> {
+        return prettyPrint(`name);
+      }
+      RecordAppl(_,nameList,_,_) ->{
+        return prettyPrint(`nameList); 
+      }
+    }
+    return subject.toString();
+  }
+
+  public String prettyPrint(TomName subject) {
     %match(subject) {
       PositionName(number_list) -> {
         return "t"+ TomBase.tomNumberListToString(`number_list);
@@ -295,36 +315,29 @@ public class PILFactory {
       Name(string) -> {
         return `string;
       }
-
     }
+    return subject.toString();
+  }
 
+  public String prettyPrint(TomType subject) {
     %match(subject) {
      Type[TomType = name] -> { return `name; }
     }
+    return subject.toString();
+  }
 
+  public String prettyPrint(TomNumber subject) {
     %match(subject) {
-      Position(i) -> {
-        return "" + `i;
-      }
-
-      NameNumber(name) -> {
-        return prettyPrint(`name);
-      }
-
-      ListNumber(number) -> {
-        return "listNumber"+`number;
-      }
-
-      Begin(number) -> {
-        return "begin"+`number;
-      }
-
-      End(number) -> {
-        return "end"+`number;
-      }
-
+      Position(i)        -> { return "" + `i; }
+      NameNumber(name)   -> { return prettyPrint(`name); }
+      ListNumber(number) -> { return "listNumber"+`number; }
+      Begin(number)      -> { return "begin"+`number; }
+      End(number)        -> { return "end"+`number; }
     }
+    return subject.toString();
+  }
 
+  public String prettyPrint(Visitable subject) {
     if(subject instanceof InstructionList) {
       InstructionList list = (InstructionList)subject;
       if(list.isEmptyconcInstruction()) {
@@ -332,7 +345,7 @@ public class PILFactory {
       } else {
         return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
       }
-    }  else if(subject instanceof TomNumberList) {
+    }  else if (subject instanceof TomNumberList) {
       TomNumberList list = (TomNumberList)subject;
       if(list.isEmptyconcTomNumber()) {
         return "";

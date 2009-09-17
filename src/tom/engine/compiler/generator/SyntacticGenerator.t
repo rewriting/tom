@@ -32,6 +32,7 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
@@ -86,18 +87,18 @@ public class SyntacticGenerator implements IBaseGenerator {
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
-        return `EqualTerm(type,v,t);
+        return `EqualBQTerm(type,t,TomBase.convertFromVarToBQVar(v));
       }
     } // end visit
   } // end strategy	
   
-  private Expression buildEqualFunctionSymbol(TomType type, TomTerm subject, TomName name, Theory theory) {
+  private Expression buildEqualFunctionSymbol(TomType type, BQTerm subject, TomName name, Theory theory) {
     TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(name.getString());
     if(getCompiler().getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
       } else {
-        return `EqualTerm(type,BuildConstant(name),subject);
+        return `EqualBQTerm(type,BuildConstant(name),subject);
       }
     } else if(TomBase.hasTheory(theory, `AU())) {
       return `IsSort(type,subject);

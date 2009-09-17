@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -81,7 +82,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * independant of the target language
    */
 
-  protected void buildTerm(int deep, String opname, TomList argList, String moduleName) throws IOException {
+  protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
     String prefix = "tom_make_";
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,argList,moduleName) == false) {
@@ -123,8 +124,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generateExpression(deep,exp2,moduleName);
   }
 
-  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
-    generate(deep,expIndex,moduleName);
+  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException {
+    generateBQTerm(deep,expIndex,moduleName);
     output.write(" >= ");
     %match(opNameAST) {
       EmptyName() -> {
@@ -134,9 +135,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String opName = opNameAST.getString();
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
-    if(instantiateTemplate(deep,template,`concTomTerm(expArray),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(expArray),moduleName) == false) {
       output.write("tom_get_size_" + `opName + "_" + sType + "(");
-      generate(deep,expArray,moduleName);
+      generateBQTerm(deep,expArray,moduleName);
       output.write(")");
     }
   }
@@ -146,15 +147,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * write the result and returns true if a substitution has been done
    * does nothing and returns false otherwise
    */
-  protected boolean instantiateTemplate(int deep, String template, TomList termList, String moduleName) throws IOException {
+  protected boolean instantiateTemplate(int deep, String template, BQTermList termList, String moduleName) throws IOException {
     if(inline && template != null) {
       OutputCode oldOutput=output;
       String instance = template;
       int index = 0;
       %match(termList) {
-        concTomTerm(_*,t,_*) -> {
+        concBQTerm(_*,t,_*) -> {
           output = new OutputCode(new StringWriter());
-          generate(deep,`t,moduleName);
+          generateBQTerm(deep,`t,moduleName);
           String dump = output.stringDump();
           instance = instance.replace("{"+index+"}",dump);
           index++;
@@ -181,87 +182,83 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected String instantiateTemplate(String template, String head, String tail) {
     if(template != null) {
-      //System.out.println("head: " + head);
-      //System.out.println("tail: " + tail);
       return template.replace("{0}",head).replace("{1}",tail);
     }
     return null;
   }
 
-  protected void buildExpIsSort(int deep, String type, TomTerm exp, String moduleName) throws IOException {
+  protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       generateExpression(deep,`TrueTL(),moduleName);
       return;
     }
 
     String template = getSymbolTable(moduleName).getIsSort(type);
-    if(instantiateTemplate(deep,template,`concTomTerm(exp),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(exp),moduleName) == false) {
       output.write("tom_is_sort_" + type + "(");
-      generate(deep,exp,moduleName);
+      generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
+  protected void buildExpIsFsym(int deep, String opname, BQTerm exp, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsFsym(opname);
-    if(instantiateTemplate(deep,template,`concTomTerm(exp),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(exp),moduleName) == false) {
       String s = isFsymMap.get(opname);
       if(s == null) {
         s = "tom_is_fun_sym_" + opname + "(";
         isFsymMap.put(opname,s);
       }
       output.write(s);
-      generate(deep,exp,moduleName);
+      generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetSlot(int deep, String opname, String slotName, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetSlot(opname,slotName);
-    if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
       //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
-      //generate(deep,var);
+      //generateBQTerm(deep,var);
       //output.write(")");
       output.write("tom_get_slot_");
       output.write(opname);
       output.writeUnderscore();
       output.write(slotName);
       output.writeOpenBrace();
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.writeCloseBrace();
     }
   }
 
-  protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
-    //System.out.println("ExpGetHead: " + opName);
+  protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetHead(opName);
-    //System.out.println("template = " + template);
-    if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
       output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetTail(int deep, String opName, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetTail(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetTail(opName);
-    if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
       output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpIsEmptyList(int deep, String opName, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsEmptyList(opName);
-    if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
       output.write("tom_is_empty_" + `opName + "_" + TomBase.getTomType(type) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, BQTerm var, String moduleName) throws IOException {
     %match(opNameAST) {
       EmptyName() -> {
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
@@ -270,35 +267,35 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String opName = opNameAST.getString();
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
-    if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
+    if(instantiateTemplate(deep,template,`concBQTerm(var),moduleName) == false) {
       output.write("tom_get_size_" + `opName + "_" + sType + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tail, String moduleName) throws IOException {
+  protected void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tail, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varBegin,moduleName);
+    generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,varEnd,moduleName);
+    generateBQTerm(deep,varEnd,moduleName);
     output.write(",");
-    generate(deep,tail,moduleName);
+    generateBQTerm(deep,tail,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException {
+  protected void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varArray,moduleName);
+    generateBQTerm(deep,varArray,moduleName);
     output.write(",");
-    generate(deep,varBegin,moduleName);
+    generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,expEnd,moduleName);
+    generateBQTerm(deep,expEnd,moduleName);
     output.write(")");
   }
 
-  protected void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException {
-    generate(deep,var,moduleName);
+  protected void buildAddOne(int deep, BQTerm var, String moduleName) throws IOException {
+    generateBQTerm(deep,var,moduleName);
     output.write(" + 1");
   }
 
@@ -366,7 +363,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
-          new String[] { argType, varname }, `Return(ExpressionToTomTerm(code)),deep,moduleName);
+          new String[] { argType, varname }, `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
 
   }
@@ -411,7 +408,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       genDeclInstr(TomBase.getTLType(returnType),
           "tom_get_slot", opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
-          `Return(ExpressionToTomTerm(code)),deep,moduleName);
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
   }
 
@@ -461,7 +458,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           TomBase.getTLType(argType1), varname1,
           TomBase.getTLType(argType2), varname2
           },
-          `Return(ExpressionToTomTerm(code)),deep,moduleName);
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
   }
 
@@ -484,7 +481,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
       genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
           new String[] { TomBase.getTLType(argType), varName },
-          `Return(ExpressionToTomTerm(code)),deep,moduleName);
+          `Return(ExpressionToBQTerm(code)),deep,moduleName);
     }
   }
 
@@ -498,16 +495,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         String ncode = ocode.replace("{0}",varName);
         if(!ncode.equals(ocode)) {
           inlined = true;
-          /*
-           * WARNING
-           * this is too late to put some information in the SymbolTable
-           * GetHead may have been used before this declaration
-           * a possible bug is that GetHead is not inlined
-           * but the following code does not generate the declaration of GetHead
-           */
           getSymbolTable(moduleName).putGetHead(opname,ocode);
           code = code.setCode(ncode);
-          //System.out.println("code = " + code);
         }
       }
       if(!inline || !code.isCode() || !inlined) {
@@ -533,10 +522,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             }
           }
         }
-        //System.out.println("gen = " + code);
         genDeclInstr(returnType, functionName, suffix,
             new String[] { argType, varName },
-            `Return(ExpressionToTomTerm(code)),deep,moduleName);
+            `Return(ExpressionToBQTerm(code)),deep,moduleName);
       }
     }
 
@@ -581,7 +569,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
             genDeclInstr(returnType, functionName, type,
                 new String[] { argType, varName },
-                `Return(ExpressionToTomTerm(code)),deep,moduleName);
+                `Return(ExpressionToBQTerm(code)),deep,moduleName);
           }
         }
 
@@ -622,7 +610,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()),
               functionName, type,
               new String[] { argType, varName },
-              `Return(ExpressionToTomTerm(code)),deep,moduleName);
+              `Return(ExpressionToBQTerm(code)),deep,moduleName);
         }
       }
 
@@ -666,7 +654,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               argType, name1,
               TomBase.getTLType(getSymbolTable(moduleName).getIntType()), name2
               },
-              `Return(ExpressionToTomTerm(code)),deep,moduleName);
+              `Return(ExpressionToBQTerm(code)),deep,moduleName);
         }
       }
 
@@ -705,7 +693,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getIntType()),
               functionName+"_"+opname, type,
               new String[] { argType, name1 },
-              `Return(ExpressionToTomTerm(code)),deep,moduleName);
+              `Return(ExpressionToBQTerm(code)),deep,moduleName);
         }
       }
 
@@ -713,7 +701,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
        * the method implementations are here common to C, Java, C#, caml and python
        */
 
-      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
+      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         %match(opNameAST) {
           EmptyName() -> {
             throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
@@ -722,22 +710,22 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         String opName = opNameAST.getString();
         String sType = TomBase.getTomType(domain);
         String template = getSymbolTable(moduleName).getGetElementArray(opName);
-        if(instantiateTemplate(deep,template,`concTomTerm(varName,varIndex),moduleName) == false) {
+        if(instantiateTemplate(deep,template,`concBQTerm(varName,varIndex),moduleName) == false) {
           output.write("tom_get_element_" + `opName + "_" + sType + "(");
-          generate(deep,varName,moduleName);
+          generateBQTerm(deep,varName,moduleName);
           output.write(",");
-          generate(deep,varIndex,moduleName);
+          generateBQTerm(deep,varIndex,moduleName);
           output.write(")");
         }
 
       }
 
-      protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
+      protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
         %match(list) {
           BuildEmptyList(Name(name)) -> {
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(`name);
-            if(instantiateTemplate(deep,template,`concTomTerm(),moduleName) == false) {
+            if(instantiateTemplate(deep,template,`concBQTerm(),moduleName) == false) {
               output.write(prefix + `name + "()");
             }
             return;
@@ -746,11 +734,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           BuildConsList(Name(name), headTerm, tailTerm) -> {
             String prefix = "tom_cons_list_";
             String template = getSymbolTable(moduleName).getMakeAddList(`name);
-            if(instantiateTemplate(deep,template,`concTomTerm(headTerm,tailTerm),moduleName) == false) {
+            if(instantiateTemplate(deep,template,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
               output.write(prefix + `name + "(");
-              generate(deep,`headTerm,moduleName);
+              generateBQTerm(deep,`headTerm,moduleName);
               output.write(",");
-              generate(deep,`tailTerm,moduleName);
+              generateBQTerm(deep,`tailTerm,moduleName);
               output.write(")");
             }
             return;
@@ -758,9 +746,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
           BuildAppendList(Name(name), headTerm, tailTerm) -> {
             output.write("tom_append_list_" + `name + "(");
-            generate(deep,`headTerm,moduleName);
+            generateBQTerm(deep,`headTerm,moduleName);
             output.write(",");
-            generate(deep,`tailTerm,moduleName);
+            generateBQTerm(deep,`tailTerm,moduleName);
             output.write(")");
             return;
           }
@@ -768,9 +756,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           BuildEmptyArray(Name(name),size) -> {
             String prefix = "tom_empty_array_";
             String template = getSymbolTable(moduleName).getMakeEmptyArray(`name);
-            if(instantiateTemplate(deep,template,`concTomTerm(size),moduleName) == false) {
+            if(instantiateTemplate(deep,template,`concBQTerm(size),moduleName) == false) {
               output.write(prefix + `name + "(");
-              generate(deep,`size,moduleName);
+              generateBQTerm(deep,`size,moduleName);
               output.write(")");
             }
             return;
@@ -778,12 +766,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
           BuildConsArray(Name(name), headTerm, tailTerm) -> {
             String template = getSymbolTable(moduleName).getMakeAddArray(`name);
-            if(instantiateTemplate(deep,template,`concTomTerm(headTerm,tailTerm),moduleName) == false) {
+            if(instantiateTemplate(deep,template,`concBQTerm(headTerm,tailTerm),moduleName) == false) {
               String prefix = "tom_cons_array_";
               output.write(prefix + `name + "(");
-              generate(deep,`headTerm,moduleName);
+              generateBQTerm(deep,`headTerm,moduleName);
               output.write(",");
-              generate(deep,`tailTerm,moduleName);
+              generateBQTerm(deep,`tailTerm,moduleName);
               output.write(")");
             }
             return;
@@ -791,22 +779,22 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
           BuildAppendArray(Name(name), headTerm, tailTerm) -> {
             output.write("tom_append_array_" + `name + "(");
-            generate(deep,`headTerm,moduleName);
+            generateBQTerm(deep,`headTerm,moduleName);
             output.write(",");
-            generate(deep,`tailTerm,moduleName);
+            generateBQTerm(deep,`tailTerm,moduleName);
             output.write(")");
             return;
           }
         }
       }
 
-      protected void buildFunctionCall(int deep, String name, TomList argList, String moduleName) throws IOException {
+      protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
         output.write(name);
         output.writeOpenBrace();
-        while(!argList.isEmptyconcTomTerm()) {
-          generate(deep,argList.getHeadconcTomTerm(),moduleName);
-          argList = argList.getTailconcTomTerm();
-          if(!argList.isEmptyconcTomTerm()) {
+        while(!argList.isEmptyconcBQTerm()) {
+          generateBQTerm(deep,argList.getHeadconcBQTerm(),moduleName);
+          argList = argList.getTailconcBQTerm();
+          if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();
           }
         }
@@ -830,10 +818,17 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           utype =  TomBase.getTLType(getUniversalType());
         }
 
+        //String listCast = "(" + glType + ")";
+        //String eltCast = "(" + TomBase.getTLType(eltType) + ")";
+        //String make_empty = listCast + "tom_empty_array_" + name;
+        //String make_insert = listCast + "tom_cons_array_" + name;
+        //String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
+        //String get_size = "tom_get_size_" + name +"_" + tomType;
+
         String s = "";
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
-          // add this test to avoid generating get_slice and append_array when
-          // the constructor is not used in any matching
+ if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
+  	           // add this test to avoid generating get_slice and append_array when
+  	           // the constructor is not used in any matching
         s = %[
   @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {
     @glType@ result = @getMakeEmptyArray(name,"end-begin",moduleName)@;
@@ -862,8 +857,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return result;
   }]%;
-        }
-
+ }
         //If necessary we remove \n code depending on pretty option
         String res = ASTFactory.makeSingleLineCode(s, prettyMode);
         output.write(res);
@@ -907,16 +901,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     return res;
   }
 
-  protected void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException { 	 
-     generate(deep,var,moduleName); 	 
+  protected void buildSubstractOne(int deep, BQTerm var, String moduleName) throws IOException { 	 
+     generateBQTerm(deep,var,moduleName); 	 
      output.write(" - 1"); 	 
    } 	 
   	 
-   protected void buildSubstract(int deep, TomTerm var1, TomTerm var2, String moduleName) throws IOException { 	 
-     generate(deep,var1,moduleName); 	 
+   protected void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException { 	 
+     generateBQTerm(deep,var1,moduleName); 	 
      output.write(" - "); 	 
-     generate(deep,var2,moduleName); 	 
+     generateBQTerm(deep,var2,moduleName); 	 
    }
-
 
 }

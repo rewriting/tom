@@ -32,13 +32,15 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-import tom.engine.compiler.*;
+import tom.engine.compiler.*;/*Compiler;
+import tom.engine.compiler.ConstraintGenerator;*/
 
 /**
  * Array Generator
@@ -82,12 +84,13 @@ public class ArrayGenerator implements IBaseGenerator{
        * *** we need <= instead of < to make the algorithm complete ***
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadArray(opName,subject,begin,end))) -> {
-        Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(end),GetSize(opName,subject)));
+        Expression doWhileTest = `Negation(GreaterThan(BQTermToExpression(end),GetSize(opName,subject)));
+        
         // expression at the end of the loop 
-        Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(end))));        
+        Expression endExpression = `ConstraintToExpression(MatchConstraint(TomBase.convertFromBQVarToVar(end),ExpressionToBQTerm(AddOne(end))));        
         // if we have a varStar, then add its declaration also
         if(`v.isVariableStar()) {
-          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(
+          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToBQTerm(
                 GetSliceArray(opName,subject,begin,end))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
@@ -104,12 +107,12 @@ public class ArrayGenerator implements IBaseGenerator{
    *   the element itself is returned when it is not an array operator operator
    *   this occurs because the last element of an array may not be an array
    */ 
-  private Expression genGetElement(TomName opName, TomTerm var, Expression getElem) {
+  private Expression genGetElement(TomName opName, BQTerm var, Expression getElem) {
     TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),getElem,TomTermToExpression(var));
+      return `Conditional(IsFsym(opName,var),getElem,BQTermToExpression(var));
     }
     return getElem;
   }

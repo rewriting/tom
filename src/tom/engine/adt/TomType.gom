@@ -1,5 +1,5 @@
 module TomType
-imports TomSignature
+imports TomSignature int
 abstract syntax
 
 TomType =
@@ -15,9 +15,30 @@ TomType =
          * @param AstName the name of the symbol we want to mimic  
          */
         | Codomain(AstName:String)
-        | TypesToType(Domain:TomTypeList,Codomain:TomType)
+        /**
+         * TypesToType is used by SymbolTable and Typer
+	 *          define the rang of a Tom term 
+         * @param Domain the domain of the term  
+         * @param Codomain the codomain of the term  
+         */
+	| TypesToType(Domain:TomTypeList,Codomain:TomType)
+	/**
+	 * TLType associates a Java class to a Tom sort name
+	 * @param String the name of the Java class
+	 */
         | TLType(String:String)
         | EmptyType()
+	/**
+         * TypeWithSymbol
+         * @param TomType the name of the Tom sort name
+         * @param TlType either TLType(String) or EmptyType()
+         * @param RootSymbolName the name of the head symbol  
+         */
         | TypeWithSymbol(TomType:String,TlType:TomType,RootSymbolName:TomName)
+	/**
+         * TypeVar
+         * @param Index the fresh variable to an unknown Tom sort
+         */
+	| TypeVar(Index:int)
 
 TomTypeList = concTomType(TomType*)

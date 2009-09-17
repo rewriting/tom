@@ -41,6 +41,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
@@ -172,8 +173,7 @@ public class TomCGenerator extends TomCFamilyGenerator {
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    System.out.println("Function not yet supported in Caml");
-    throw new TomRuntimeException("Function not yet supported in Caml");
+  protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    throw new TomRuntimeException("Function not yet supported in C");
   }
 } // class TomCGenerator

@@ -44,6 +44,8 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqterm.Composite;
 
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.SymbolTable;
@@ -92,17 +94,17 @@ options{
       return tomparser.selector();
     }
     
-   private TomTerm buildBqAppl(Token id, LinkedList blockList, TomTerm term, boolean composite) {
+   private BQTerm buildBqAppl(Token id, LinkedList<BQTerm> blockList, BQTerm term, boolean composite) {
      OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
-     TomList target = (term==null)?
-       `concTomTerm():
-       `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
+     Composite target = (Composite) ((term==null)?
+       `Composite():
+       `Composite(CompositeTL(ITL(".")),CompositeBQTerm(term)));
 
      if(composite) {
-			 TomList list = ASTFactory.makeList(blockList);
-			 return `Composite(concTomTerm(BackQuoteAppl(option,Name(id.getText()),list),target*));
+			 BQTermList list = ASTFactory.makeBQTermList(blockList);
+			 return `Composite(CompositeBQTerm(BQAppl(option,Name(id.getText()),list)),target*);
      } else {
-			 return `Composite(concTomTerm(Variable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint()),target*));
+			 return `Composite(CompositeBQTerm(BQVariable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN)),target*);
 		 }
 
    }
@@ -111,35 +113,35 @@ options{
     * add a term to a list of term
     * when newComposite is true, this means that a ',' has been read before the term
     */
-    private void addTerm(LinkedList list, TomTerm term, boolean newComposite) {
+    private void addTerm(LinkedList<BQTerm> list, BQTerm term, boolean newComposite) {
       // if the list is empty put an empty composite in it to simplify the code
       if(list.isEmpty()) {
-        list.add(`Composite(concTomTerm()));
+        list.add(`Composite());
       }
-      TomTerm lastElement = (TomTerm) list.getLast();
+      BQTerm lastElement = (BQTerm) list.getLast();
       /*
        * when newComposite is true, we add the term, eventually wrapped by a Composite 
        * otherwise, the term is inserted (eventually unwrapped) into the last Composite of the list
        */
       if(newComposite) {
         %match(lastElement, term) {
-          Composite(_), t2@Composite[] -> { 
+          Composite(_*), t2@Composite(_*) -> { 
             list.add(`t2); 
             return; 
           }
-          Composite(_), t2 -> { 
-            list.add(`Composite(concTomTerm(t2))); 
+          Composite(_*), t2 -> { 
+            list.add(`Composite(CompositeBQTerm(t2))); 
             return; 
           }
         }
       } else {
         %match(lastElement, term) {
-          Composite(l1), Composite(l2) -> { 
-            list.set(list.size()-1,`Composite(concTomTerm(l1*,l2*))); 
+          Composite(l1*), Composite(l2*) -> { 
+            list.set(list.size()-1,`Composite(l1*,l2*)); 
             return;
           }
-          Composite(l1), t2 -> { 
-            list.set(list.size()-1,`Composite(concTomTerm(l1*,t2))); 
+          Composite(l1*), t2 -> { 
+            list.set(list.size()-1,`Composite(l1*,CompositeBQTerm(t2))); 
             return;
           }
         }
@@ -147,15 +149,15 @@ options{
     }
 
     // sorts attributes of xml term with lexicographical order
-    private TomList sortAttributeList(TomList list){
+    private BQTermList sortAttributeList(BQTermList list){
       %match(list) {
-        concTomTerm() -> { return list; }
-        concTomTerm(X1*,e1,X2*,e2,X3*) -> {
+        concBQTerm() -> { return list; }
+        concBQTerm(X1*,e1,X2*,e2,X3*) -> {
           %match(e1, e2) {
-            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
-            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
+            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name1)],_*)],
+            BQAppl[Args=concBQTerm(BQAppl[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
-                return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+                return `sortAttributeList(concBQTerm(X1*,e2,X2*,e1,X3*));
               }
             }
           }
@@ -164,9 +166,9 @@ options{
       return list;
     }
     
-    // built a sorted TomList from a LinkedList
-    private TomList buildAttributeList(LinkedList list) {
-      return sortAttributeList(ASTFactory.makeList(list));
+    // built a sorted BQTermList from a LinkedList
+    private BQTermList buildAttributeList(LinkedList<BQTerm> list) {
+      return sortAttributeList(ASTFactory.makeBQTermList(list));
     }
     
     // add double quotes around a string
@@ -179,24 +181,24 @@ options{
 /*
  * Backquoted Term
  */
-beginBackquote returns [TomTerm result]
+beginBackquote returns [BQTerm result]
 { 
   result = null; 
-  TomList context = `concTomTerm();
+  BQTermList context = `concBQTerm();
 }
 :
 ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 ;
 
 
-mainBqTerm [TomList context] returns [TomTerm result]
+mainBqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
-    TomTerm term = null;
-    TomList list = `concTomTerm();
+    BQTerm term = null;
+    BQTermList list = `concBQTerm();
 
     Token t = null;
-    LinkedList blockList = new LinkedList();
+    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
 }
     :
         (
@@ -209,7 +211,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
            {   
              String name = id.getText();
              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-             result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
+             result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);  
            }
            // `X*{type}
            /*
@@ -218,7 +220,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
            {   
              String name = id.getText();
              OptionList ol = `concOption(TypeForVariable(type1.getText()),OriginTracking(Name(name), id.getLine(), currentFile()));
-             result = `VariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
+             result = `BQVariableStar(ol,Name(name),SymbolTable.TYPE_UNKNOWN);  
            }
            */
            | {LA(1) == BQ_RBRACE}?
@@ -238,7 +240,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
                 {   
                    String name = id.getText();
                    OptionList ol = `concOption(TypeForVariable(type.getText()), OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-                   result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+                   result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
                 }
                  // `x
                 |   t = targetCode 
@@ -247,22 +249,22 @@ mainBqTerm [TomList context] returns [TomTerm result]
                    addTargetCode(t);
                    String name = id.getText();
                    OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-                   //result = `BackQuoteAppl(ol,Name(name),concTomTerm());
-                   result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
+                   //result = `BQAppl(ol,Name(name),concBQTerm());
+                   result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
                  }
                 )
             )
         )
     ;
 
-bqTerm [TomList context] returns [TomTerm result]
+bqTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
-    TomTerm term = null;
-    TomList xmlTermList = `concTomTerm();
+    BQTerm term = null;
+    BQTermList xmlTermList = `concBQTerm();
 
     Token t = null;
-    LinkedList blockList = new LinkedList();
+    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
     boolean arguments = false;
 }
     :
@@ -275,7 +277,7 @@ bqTerm [TomList context] returns [TomTerm result]
             {   
               String name = id.getText();
               Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-              result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());      
+              result = `BQVariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN);      
             }
             
             |  ws /*ws*/ 
@@ -297,7 +299,7 @@ bqTerm [TomList context] returns [TomTerm result]
         t = target
         {
           //System.out.println("target = " + t);
-          result = `TargetLanguageToTomTerm(ITL(t.getText()));
+          result = `Composite(CompositeTL(ITL(t.getText())));
         }
     ;
 
@@ -306,13 +308,13 @@ bqTerm [TomList context] returns [TomTerm result]
  *    xml(c1,...,cn,t)
  * or (t1 ... tn) 
  */
-basicTerm [TomList context] returns [TomTerm result]
+basicTerm [BQTermList context] returns [BQTerm result]
 {
     result = null;
-    TomTerm term = null;
-    TomList localContext = `concTomTerm();
+    BQTerm term = null;
+    BQTermList localContext = `concBQTerm();
 
-    LinkedList blockList = new LinkedList();
+    LinkedList<BQTerm> blockList = new LinkedList<BQTerm>();
 }
     :
         (
@@ -321,18 +323,17 @@ basicTerm [TomList context] returns [TomTerm result]
              (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
              { blockList.add(term); } 
              )* 
-            { localContext = ASTFactory.makeList(blockList); }
+            { localContext = ASTFactory.makeBQTermList(blockList); }
             result = bqTerm[localContext]
             BQ_RPAREN
             
         |   BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
-              TomList compositeList = ASTFactory.makeList(blockList);
-                result = `Composite(concTomTerm(
-                        TargetLanguageToTomTerm(ITL("(")),
+              Composite compositeList = ASTFactory.makeComposite(blockList);
+                result = `Composite(
+                        CompositeTL(ITL("(")),
                         compositeList*,
-                        TargetLanguageToTomTerm(ITL(")"))
-                    )
+                        CompositeTL(ITL(")"))
                 );
             }
         )
@@ -341,9 +342,9 @@ basicTerm [TomList context] returns [TomTerm result]
 /*
  * termList parses a list of terms, eventually separated by a comma
  */
-termList [LinkedList list,TomList context]
+termList [LinkedList<BQTerm> list,BQTermList context]
 {
-    TomTerm term = null;
+    BQTerm term = null;
 }
     :
       term = bqTerm[context] /*ws*/ { addTerm(list,term,false); }
@@ -352,19 +353,19 @@ termList [LinkedList list,TomList context]
         )*
     ;
 
-xmlAttributeStringOrVariable returns [TomTerm result]
+xmlAttributeStringOrBQVariable returns [BQTerm result]
   { result = null; } : 
   (
      id:BQ_ID 
 		 {
        String name = id.getText();
        OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-       result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
-		   //result = `TargetLanguageToTomTerm(ITL(id.getText())); 
+       result = `BQVariable(ol,Name(name),SymbolTable.TYPE_UNKNOWN);
+		   //result = `Composite(CompositeTL(ITL(id.getText()))); 
 		 }
    | string:BQ_STRING
 	   {
-		   result = `TargetLanguageToTomTerm(ITL(string.getText()));
+		   result = `Composite(CompositeTL(ITL(string.getText())));
 		 }
   )
     ;
@@ -412,53 +413,52 @@ targetCode returns [Token result]
  * XML
  */
 
-xmlAttribute [TomList context] returns [TomTerm result]
+xmlAttribute [BQTermList context] returns [BQTerm result]
 {
     result = null;
-    TomTerm value = null;
+    BQTerm value = null;
 }
     :
         (
             id:BQ_ID
             (
-                ws XML_EQUAL ws value = xmlAttributeStringOrVariable
+                ws XML_EQUAL ws value = xmlAttributeStringOrBQVariable
                 {
-                    TomList args = `concTomTerm(
-                        BackQuoteAppl(
+                    BQTermList args = `concBQTerm(
+                        BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
-                            concTomTerm()
+                            concBQTerm()
                         ),
-                        BackQuoteAppl(
+                        BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name("\"true\""),
-                            concTomTerm()
+                            concBQTerm()
                         ),
                         value
                     );
 		    if(context != null) {
-		    args = `concTomTerm(context*,args*);
+		    args = `concBQTerm(context*,args*);
 		    }
-		    result = `BackQuoteAppl(
+		    result = `BQAppl(
 		      concOption(ModuleName(TNODE_MODULE_NAME)),
 		      Name(Constants.ATTRIBUTE_NODE),
 		      args);
                 }
             | BQ_STAR
               {
-		result = `VariableStar(
+		result = `BQVariableStar(
 		    concOption(),
 		    Name(id.getText()),
-		    SymbolTable.TYPE_UNKNOWN,
-		    concConstraint());
+		    SymbolTable.TYPE_UNKNOWN);
               }
             )
         )
     ;
 
-xmlAttributeList [LinkedList attributeList, TomList context]
+xmlAttributeList [LinkedList<BQTerm> attributeList, BQTermList context]
 {
-    TomTerm term = null;
+    BQTerm term = null;
 }
     :
         (
@@ -469,9 +469,9 @@ xmlAttributeList [LinkedList attributeList, TomList context]
         )*
     ;
 
-xmlChildren[LinkedList children, TomList context]
+xmlChildren[LinkedList<BQTerm> children, BQTermList context]
 {
-    TomTerm term = null;
+    BQTerm term = null;
 }
     :
         (
@@ -481,21 +481,21 @@ xmlChildren[LinkedList children, TomList context]
         )*
     ;
 
-xmlTerm[TomList context] returns [TomTerm result]
+xmlTerm[BQTermList context] returns [BQTerm result]
 {
     result = null;
-    TomList attributeTomList = `concTomTerm();
-    TomList childrenTomList = `concTomTerm();
-    TomTerm term = null;
+    BQTermList attributeBQTermList = `concBQTerm();
+    BQTermList childrenBQTermList = `concBQTerm();
+    BQTerm term = null;
 
-    LinkedList attributes = new LinkedList();
-    LinkedList children = new LinkedList();
+    LinkedList<BQTerm> attributes = new LinkedList<BQTerm>();
+    LinkedList<BQTerm> children = new LinkedList<BQTerm>();
 }
     :
         (
             XML_START ws id:BQ_ID ws xmlAttributeList[attributes,context]
             {
-                attributeTomList = buildAttributeList(attributes);
+                attributeBQTermList = buildAttributeList(attributes);
             }
                 
                 ( 
@@ -503,40 +503,40 @@ xmlTerm[TomList context] returns [TomTerm result]
                 |   XML_CLOSE
                     ws xmlChildren[children,context]
                 {
-                  childrenTomList = ASTFactory.makeList(children);
+                  childrenBQTermList = ASTFactory.makeBQTermList(children);
                 }
                     XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )
                 {
-                    TomList args = `concTomTerm(
-                        BackQuoteAppl(
+                    BQTermList args = `concBQTerm(
+                        BQAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
-                            concTomTerm()
+                            concBQTerm()
                         ),
-                        BackQuoteAppl(
+                        BQAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),
-                            attributeTomList
+                            attributeBQTermList
                         ),
-                        BackQuoteAppl(
+                        BQAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),
-                            childrenTomList
+                            childrenBQTermList
                         )
                     );
                     
                     if(context == null){
-                        result = `BackQuoteAppl(
+                        result = `BQAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.ELEMENT_NODE),
                             args
                         );
                     } else {
-											result = `BackQuoteAppl(
+											result = `BQAppl(
 													concOption(ModuleName(TNODE_MODULE_NAME)),
 													Name(Constants.ELEMENT_NODE),
-													concTomTerm(
+													concBQTerm(
 														context*,
 														args*)
                         );
@@ -546,10 +546,10 @@ xmlTerm[TomList context] returns [TomTerm result]
 
         |   XML_TEXT BQ_LPAREN term = bqTerm[context] BQ_RPAREN
             {
-                result = `BackQuoteAppl(
+                result = `BQAppl(
 										concOption(ModuleName(TNODE_MODULE_NAME)),
                     Name(Constants.TEXT_NODE),
-                    concTomTerm(
+                    concBQTerm(
                         context*,
                         term
                     )

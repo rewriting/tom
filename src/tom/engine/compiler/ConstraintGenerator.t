@@ -44,6 +44,7 @@ import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 
 /**
@@ -61,6 +62,11 @@ public class ConstraintGenerator {
   %typeterm ConstraintGenerator {
     implement { ConstraintGenerator }
     is_sort(t) { ($t instanceof ConstraintGenerator) }
+  }
+
+  %typeterm BQTermCollection {
+    implement { java.util.Collection<BQTerm> }
+    is_sort(t) { ($t instanceof java.util.Collection) }
   }
 
   private Compiler compiler;
@@ -139,7 +145,7 @@ public class ConstraintGenerator {
       }
       // variables' assignments
       ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
-        return `LetRef(v,TomTermToExpression(t),action);
+        return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
       // nothing for unamed ones
       ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
@@ -154,9 +160,9 @@ public class ConstraintGenerator {
         Instruction subInstruction = `generateAutomata(expr,Nop());
         return `DoWhile(UnamedBlock(concInstruction(action,subInstruction)),condition);
       }
-      // 'if'
-      IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
-        return `If(condition,Assign(left1,TomTermToExpression(right1)),Assign(left2,TomTermToExpression(right2)));
+      // instruction encapsulated in an expression
+      TomInstructionToExpression(i) -> {
+        return `i;
       }
       // disjunction of symbols
       or@OrExpressionDisjunction(_*) -> {
@@ -182,11 +188,11 @@ public class ConstraintGenerator {
    * Converts 'Subterm' to 'GetSlot'
    */
   %strategy ReplaceSubterms(cg:ConstraintGenerator) extends Identity() {
-    visit TomTerm {
+    visit BQTerm {
       Subterm(constructorName@Name(name), slotName, term) -> {
         TomSymbol tomSymbol = cg.getCompiler().getSymbolTable().getSymbolFromName(`name);
         TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
-        return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
+        return `ExpressionToBQTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
       }
     }
   }
@@ -233,17 +239,16 @@ public class ConstraintGenerator {
    */
   private Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
          throws VisitFailure {     
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
+    BQTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
-    Collection<TomTerm> freshVarList = new HashSet<TomTerm>();
+    Collection<BQTerm> freshVarList = new HashSet<BQTerm>();
     // collect variables    
     `TopDown(CollectVar(freshVarList)).visitLight(orDisjunction);    
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
-    instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
+    instruction = `AbstractBlock(concInstruction(instruction,If(BQTermToExpression(flag),action,Nop())));    
     // add fresh variables' declarations
-    for(TomTerm var:freshVarList) {
+    for(BQTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
     }
     // stick the flag declaration also
@@ -281,22 +286,22 @@ public class ConstraintGenerator {
    */
   private Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
       throws VisitFailure {
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());    
+    BQTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
+         If(Negation(BQTermToExpression(flag)),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
   /**
    * Collect the variables in a match constraint
    */
-  %strategy CollectVar(varList:Collection) extends Identity() {
+  %strategy CollectVar(varList:BQTermCollection) extends Identity() {
     visit Constraint {
       MatchConstraint(v@Variable[],_) -> {
-        if(!varList.contains(`v)) { varList.add(`v); }        
+        if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }        
       }      
     }// end visit
   }// end strategy   
@@ -304,10 +309,10 @@ public class ConstraintGenerator {
   /**
    * Collect the free variables in an expression (do not inspect under a anti)  
    */
-  %strategy CollectFreeVar(varList:Collection) extends Identity() {     
+  %strategy CollectFreeVar(varList:BQTermCollection) extends Identity() {     
     visit Expression {
       ConstraintToExpression(MatchConstraint(v@Variable[],_)) -> {
-        if(!varList.contains(`v)) { varList.add(`v); }     
+        if(!varList.contains(`v)) { varList.add(TomBase.convertFromVarToBQVar(`v)); }     
         throw new VisitFailure();
       }
       AntiMatchExpression[] -> {        
@@ -322,12 +327,13 @@ public class ConstraintGenerator {
    *   is_empty(l) || l==make_empty()
    *   this is needed because get_tail() may return the neutral element 
    */ 
-  public Expression genIsEmptyList(TomName opName, TomTerm var) {
+  public Expression genIsEmptyList(TomName opName, BQTerm var) {
     TomSymbol tomSymbol = getCompiler().getSymbolTable().getSymbolFromName(opName.getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
-      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,var,BuildEmptyList(opName)));
+      //TODO: we should check if the BuildEmptyList exists for the mapping (can be null)
+      return `Or(IsEmptyList(opName, var), EqualBQTerm(codomain,var,BuildEmptyList(opName)));
     }
     return `IsEmptyList(opName, var);
   }
@@ -335,28 +341,24 @@ public class ConstraintGenerator {
   private Instruction buildNumericCondition(Constraint c, Instruction action) {
     %match(c) {
       NumericConstraint(left,right,type) -> {        
-        Expression leftExpr = `TomTermToExpression(left);
-        Expression rightExpr = `TomTermToExpression(right);
-        %match(left) {
-          RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
-            leftExpr = `TomTermToExpression(BuildConstant(name));            
-          }
-        }
+        Expression leftExpr = `BQTermToExpression(left);
+        Expression rightExpr = `BQTermToExpression(right);
         %match(type) {
           NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
           NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumEqual()                -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-                                         return `If(EqualTerm(tomType,right,left),action,Nop()); }
+                                         return `If(EqualBQTerm(tomType,right,left),action,Nop()); }
           NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-                                         return `If(Negation(EqualTerm(tomType,right,left)),action,Nop()); }
+                                         return `If(Negation(EqualBQTerm(tomType,right,left)),action,Nop()); }
         }
       }
     }
     // should never reach here
     throw new TomRuntimeException("Untreated numeric constraint: " + `c);
   }
+
 
   /*
    * NO LONGER USEFUL: DEAD CODE
@@ -388,25 +390,25 @@ public class ConstraintGenerator {
    *  
    */
   private Instruction buildConstraintDisjunctionWithoutCopy(Expression orConnector, Instruction action) throws VisitFailure {    
-    TomTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
+    BQTerm flag = getCompiler().getFreshVariable(getCompiler().getSymbolTable().getBooleanType());
     Instruction assignFlagTrue = `Assign(flag,TrueTL());
     TomType intType = getCompiler().getSymbolTable().getIntType();
-    TomTerm counter = getCompiler().getFreshVariable(intType);    
+    BQTerm counter = getCompiler().getFreshVariable(intType);    
     // build the ifs
     Instruction instruction = `buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+          If(EqualTerm(getCompiler().getSymbolTable().getBooleanType(),flag,TruePattern()),action,Nop())));
     // counter++ : expression at the end of the loop 
     Instruction counterIncrement = `Assign(counter,AddOne(counter));
     //  stick the flag declaration and the counterIncrement   
     instruction = `LetRef(flag,FalseTL(),AbstractBlock(concInstruction(instruction,counterIncrement)));      
-    instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter), Integer(orConnector.length())));    
+    instruction = `DoWhile(instruction,LessThan(BQTermToExpression(counter), Integer(orConnector.length())));    
     // add fresh variables' declarations
-    Collection<TomTerm> freshVarList = new HashSet<TomTerm>();
+    Collection<BQTerm> freshVarList = new HashSet<BQTerm>();
     // collect free variables    
     `TopDownCollect(CollectFreeVar(freshVarList)).visitLight(orConnector);
-    for(TomTerm var:freshVarList) {
+    for(BQTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
     }
     // stick the counter declaration
@@ -419,11 +421,11 @@ public class ConstraintGenerator {
    * builds the ifs in a constraint disjunction (see buildConstraintDisjunction above for details)
    */
   private Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
-      TomTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
+      BQTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
     %match(orConnector) {
       OrConnector(x,Y*) -> {        
-        return `If(And(GreaterOrEqualThan(TomTermToExpression(counter),Integer(cnt)),
-                  LessOrEqualThan(TomTermToExpression(counter),Integer(cnt))),
+        return `If(And(GreaterOrEqualThan(BQTermToExpression(counter),Integer(cnt)),
+                  LessOrEqualThan(BQTermToExpression(counter),Integer(cnt))),
                   generateAutomata(x,assignFlagTrue),
                   buildTestsInConstraintDisjuction(cnt,assignFlagTrue,counter,intType,OrConnector(Y*)));        
       }       
@@ -431,53 +433,115 @@ public class ConstraintGenerator {
     return `Nop();
   }
 
-  private Instruction buildACMatchLoop(TomTerm pattern, TomTerm subject, Instruction action) {    
+  private Instruction buildACMatchLoop(TomTerm pattern, BQTerm subject, Instruction action) {    
     SymbolTable symbolTable = getCompiler().getSymbolTable();
     TomType intType = symbolTable.getIntType();
     TomType intArrayType = symbolTable.getIntArrayType();
+    // a 0
+    ///Expression zero = `Integer(0);
     // the name of the int[] operator
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
 
-    TomTerm alpha = getCompiler().getFreshVariable("alpha",intArrayType);
-    TomTerm sol = getCompiler().getFreshVariable("sol",intArrayType);
-    TomTerm position = getCompiler().getFreshVariable("position",intType);
-    TomTerm length = getCompiler().getFreshVariable("length",intType);                
+    BQTerm alpha = getCompiler().getFreshVariable("alpha",intArrayType);
+    BQTerm tempSol = getCompiler().getFreshVariable("tempSol",intArrayType);
+    BQTerm position = getCompiler().getFreshVariable("position",intType);
+    BQTerm length = getCompiler().getFreshVariable("length",intType);                
 
+    ///String tomName = null;
     String symbolName = null;
     TomTerm var_x = null;
-    TomTerm var_y=null;
+    TomTerm var_y = null;
     %match(pattern) {
       RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
+        ///tomName = `tomName;
         symbolName = `tomName;
         var_x = `x;
         var_y = `y;
       }
     }
-    TomList getTermArgs = `concTomTerm(sol,alpha,subject);        
+    BQTermList getTermArgs = `concBQTerm(tempSol,alpha,subject);        
     TomType subtermType = getCompiler().getTermTypeFromTerm(var_x);
     TomType booleanType = symbolTable.getBooleanType();
+/*
+    Expression reinitializationLoopCond = `And(
+        GreaterThan(
+          BQTermToExpression(position),
+          zero),
+        GreaterThan(
+          GetElement(intArrayName,intType,tempSol,position),
+          GetElement(intArrayName,intType,alpha,position))
+        );
 
-    Expression whileCond = `TomTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concTomTerm(length,alpha,sol)));
+    Instruction reinitializationLoop = `DoWhile(
+        AbstractBlock(concInstruction(
+        AssignArray(tempSol,position,zero),
+          LetRef(position,SubstractOne(position),
+            AssignArray(tempSol, position, AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,tempSol,position))))
+            )
+          )), reinitializationLoopCond);
+
+    Expression testCond = `LessThan(
+        GetElement(intArrayName,intType,tempSol,position),
+        GetElement(intArrayName,intType,alpha,position)
+        );
+
+    Instruction test = `If(testCond,
+        AssignArray(tempSol, position, AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,tempSol,position)))),
+        reinitializationLoop
+        );
+
+    Expression whileCond = `LessOrEqualThan(
+        GetElement(intArrayName,intType,tempSol,ExpressionToBQTerm(zero)),
+        GetElement(intArrayName,intType,alpha,ExpressionToBQTerm(zero)));
 
     Instruction instruction = `DoWhile(
-          LetRef(var_x,
-            TomTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(FalseTL())))),
-            LetRef(var_y,
-              TomTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concTomTerm(getTermArgs*,ExpressionToTomTerm(TrueTL())))),
+        LetRef(position,SubstractOne(length),
+          LetRef(TomBase.convertFromVarToBQVar(x),
+            BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
+            LetRef(TomBase.convertFromVarToBQVar(y),
+              BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
+              UnamedBlock(
+                concInstruction(
+                  action,
+                  test
+                  )
+                )
+              )
+            )
+          ), whileCond);
+
+
+    instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
+    instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
+    instruction = `LetRef(alpha,BQTermToExpression(FunctionCall(
+            Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
+            intArrayType,concBQTerm(subject))),instruction);
+
+    // make sure the additional functions are generated
+    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
+    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+    symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+*/
+    
+    Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(length,alpha,tempSol)));
+
+    Instruction instruction = `DoWhile(
+          LetRef(TomBase.convertFromVarToBQVar(var_x),
+            BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
+            LetRef(TomBase.convertFromVarToBQVar(var_y),
+              BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
               action
             )
           ), whileCond);
 
     instruction = `LetRef(position,SubstractOne(length),instruction);
-    instruction = `LetRef(sol,TomTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
+    instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
     instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
-    instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
+    instruction = `LetRef(alpha,BQTermToExpression(FunctionCall(
             Name(ConstraintGenerator.multiplicityFuncName + "_" + symbolName),
-            intArrayType,concTomTerm(subject))),instruction);
+            intArrayType,concBQTerm(subject))),instruction);
 
     return instruction;
   }
-
-
 
 }

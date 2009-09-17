@@ -50,6 +50,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
@@ -91,7 +92,7 @@ public class TomTypeChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          TomTerm subject = (TomTerm) getWorkingTerm();
+          Code subject = (Code) getWorkingTerm();
           //System.out.println("type checking: ");
           //System.out.println(subject);
           `TopDownCollect(checkTypeInference(this)).visitLight(subject);
@@ -224,8 +225,8 @@ public class TomTypeChecker extends TomChecker {
   }
  
   %strategy checkVariableStar(ttc:TomTypeChecker) extends Identity() {
-    visit TomTerm {
-      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
+    visit BQTerm {
+      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
         if(!`listName.equals(`rootName)) {
           ttc.messageError(ttc.findOriginTrackingFileName(`options),
               ttc.findOriginTrackingLine(`options),
@@ -235,4 +236,5 @@ public class TomTypeChecker extends TomChecker {
       }
     }
   }
+
 }

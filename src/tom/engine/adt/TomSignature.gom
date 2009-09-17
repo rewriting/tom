@@ -1,5 +1,6 @@
 module TomSignature
-imports TomName TomType TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot int String
+imports TomName TomType TomConstraint TomInstruction TomExpression 
+        TomDeclaration TomOption TomTerm TomSlot int String Code TypeConstraints
 abstract syntax
 TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
                | ITL(Code:String)

@@ -44,6 +44,7 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.theory.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -132,8 +133,7 @@ public final class TomBase {
   }
 
   private static LRUCache<TomNumberList,String> tomNumberListToStringMap =
-    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE);
-
+    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE); 
   public static String tomNumberListToString(TomNumberList numberList) {
     String result = tomNumberListToStringMap.get(numberList);
     if(result == null) {
@@ -270,7 +270,7 @@ public final class TomBase {
 
   // ------------------------------------------------------------
   /**
-   * Collects the variables athat appears in a term
+   * Collects the variables that appears in a term
    * @param collection the bag which collect the results
    * @param subject the term to traverse
    */
@@ -285,7 +285,7 @@ public final class TomBase {
     visit TomTerm {
       v@(Variable|VariableStar)[Constraints=constraintList] -> {
         collection.add(`v);
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -293,7 +293,7 @@ public final class TomBase {
       }
 
       v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -303,7 +303,7 @@ public final class TomBase {
       // to collect annoted nodes but avoid collect variables in optionSymbol
       t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
         collectVariable(collection,`subterms);
-        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -334,9 +334,9 @@ public final class TomBase {
     return multiplicityMap;
   }
 
-  private static TomTerm getAssignToVariable(ConstraintList constraintList) {
+  private static TomTerm getAliasToVariable(ConstraintList constraintList) {
     %match(constraintList) {
-      concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
+      concConstraint(_*,AliasTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
   }
@@ -562,22 +562,33 @@ public final class TomBase {
         return `type; 
       }
 
-      TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
+      AntiTerm(term) -> { return getTermType(`term,symbolTable);}
+      
+    }
+    //System.out.println("getTermType error on term: " + t);
+    //throw new TomRuntimeException("getTermType error on term: " + t);
+    return `EmptyType();
+  }
+
+  public static TomType getTermType(BQTerm t, SymbolTable symbolTable) {
+    %match(t) {
+      (BQVariable|BQVariableStar)[AstType=type] -> { 
+        return `type; 
+      }
 
       FunctionCall[AstType=type] -> { return `type; }
 
-      AntiTerm(term) -> { return getTermType(`term,symbolTable);}
-
-      ExpressionToTomTerm(expr) -> { return getTermType(`expr,symbolTable); }
+      ExpressionToBQTerm(expr) -> { return getTermType(`expr,symbolTable); }
 
       ListHead[Codomain=type] -> { return `type; }
+      
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
 
       Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }
-    }
+   }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
@@ -599,19 +610,27 @@ public final class TomBase {
         return symbolTable.getSymbolFromName(`tomName); 
       }
 
-      FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
-
       AntiTerm(term) -> { return getSymbolFromTerm(`term,symbolTable);}
     }
     return null;
   }
 
+  public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
+    %match(t) {
+      (BQVariable|BQVariableStar)[AstName=Name(tomName)] -> { 
+        return symbolTable.getSymbolFromName(`tomName); 
+      }
+
+      FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
+    }
+    return null;
+  }
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable) {
     %match(t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
-      TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
+      BQTermToExpression(term) -> { return getTermType(`term, symbolTable); }
       GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
@@ -650,12 +669,12 @@ public final class TomBase {
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
   }
 
-  public static TomList slotListToTomList(SlotList tomList) {
+  public static BQTermList slotListToBQTermList(SlotList tomList) {
     %match(tomList) {
-      concSlot() -> { return `concTomTerm(); }
+      concSlot() -> { return `concBQTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
-        TomList tl = slotListToTomList(`tail);
-        return `concTomTerm(head,tl*);
+        BQTermList tl = slotListToBQTermList(`tail);
+        return `concBQTerm(convertFromVarToBQVar(head),tl*);
       }
     }
     throw new TomRuntimeException("slotListToTomList: " + tomList);
@@ -668,5 +687,35 @@ public final class TomBase {
       return ((Collection) symbol.getPairNameDeclList()).size();
     }
   } 
+
+  /**
+   * builds a BQVariable from a TomTerm Variable
+   */
+  public static BQTerm convertFromVarToBQVar(TomTerm variable) {
+    %match(variable) {
+      Variable[Option=option,AstName=name,AstType=type] -> {
+        return `BQVariable(option, name, type);
+      }
+      VariableStar[Option=option,AstName=name,AstType=type] -> {
+        return `BQVariableStar(option, name, type);
+      }
+    }
+    throw new TomRuntimeException("cannot convert into a bq variable the term "+variable);
+  }
+
+  /**
+   * builds a Variable from a BQVariable
+   */
+  public static TomTerm convertFromBQVarToVar(BQTerm variable) {
+    %match(variable) {
+      BQVariable[Option=option,AstName=name,AstType=type] -> {
+        return `Variable(option, name, type, concConstraint());
+      }
+      BQVariableStar[Option=option,AstName=name,AstType=type] -> {
+        return `VariableStar(option, name, type, concConstraint());
+      }
+    }
+    throw new TomRuntimeException("cannot convert into a variable the term "+variable);
+  }
 
 } // class TomBase

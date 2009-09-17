@@ -179,7 +179,7 @@ public class SymbolTable {
       setUsedSymbolDestructor(symbol);
     }
   }
-  
+
   public void setUsedSymbolAC(String name) {
     TomSymbol symbol = getSymbolFromName(name);
     if(symbol!=null) {
@@ -210,14 +210,6 @@ public class SymbolTable {
     return false;
   }
 
-  public boolean isUsedSymbolAC(String name) {
-    TomSymbol symbol = getSymbolFromName(name);
-    if(symbol!=null) {
-      return isUsedSymbolAC(symbol);
-    }
-    return false;
-  }
-
   public boolean isUsedType(String name) {
     TomType type = getType(name);
     if(type!=null) {
@@ -227,19 +219,19 @@ public class SymbolTable {
   }
 
   public TomType getIntType() {
-    return `ASTFactory.makeType(TYPE_INT,"int");
+    return ASTFactory.makeType(TYPE_INT,"int");
   }
 
   public TomType getIntArrayType() {
-    return `ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
+    return ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
   }
 
   public TomType getLongType() {
-    return `ASTFactory.makeType(TYPE_LONG,"long");
+    return ASTFactory.makeType(TYPE_LONG,"long");
   }
 
   public TomType getFloatType() {
-    return `ASTFactory.makeType(TYPE_FLOAT,"float");
+    return ASTFactory.makeType(TYPE_FLOAT,"float");
   }
 
   public TomType getCharType() {
@@ -247,7 +239,7 @@ public class SymbolTable {
     if(pCode) {
       type = "str";
     }
-    return `ASTFactory.makeType(TYPE_CHAR,type);
+    return ASTFactory.makeType(TYPE_CHAR,type);
   }
 
   public TomType getDoubleType() {
@@ -255,7 +247,7 @@ public class SymbolTable {
     if(pCode) {
       type = "float";
     }
-    return `ASTFactory.makeType(TYPE_DOUBLE,type);
+    return ASTFactory.makeType(TYPE_DOUBLE,type);
   }
 
   public TomType getBooleanType() {
@@ -267,17 +259,17 @@ public class SymbolTable {
     } else if(pCode) {
       type = "bool";
     } 
-    return `ASTFactory.makeType(TYPE_BOOLEAN,type);
+    return ASTFactory.makeType(TYPE_BOOLEAN,type);
   }
 
   public TomType getStringType() {
     String type = "String";
-    if(cCode) {
+    if(pCode) {
       type = "char*";
     } else if(pCode) {
       type = "str";
     } 
-    return `ASTFactory.makeType(TYPE_STRING,type);
+    return ASTFactory.makeType(TYPE_STRING,type);
   }
 
   public TomType getUniversalType() {
@@ -289,7 +281,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "None";
     }
-    return `ASTFactory.makeType(TYPE_UNIVERSAL,type);
+    return ASTFactory.makeType(TYPE_UNIVERSAL,type);
   }
 
   public TomType getVoidType() {
@@ -299,7 +291,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "function";
     }
-    return `ASTFactory.makeType(TYPE_VOID,type);
+    return ASTFactory.makeType(TYPE_VOID,type);
   }
 
   //public TomType getUnknownType() {
@@ -483,9 +475,6 @@ public class SymbolTable {
   }
 
   private String getInliner(String prefix, String opname) {
-    //System.out.println("prefix: " + prefix);
-    //System.out.println("opname: " + opname);
-    //System.out.println("res: " + mapInliner.get(prefix+opname));
     return mapInliner.get(prefix+opname);
   }
 
@@ -513,11 +502,9 @@ public class SymbolTable {
   }
 
   public void putGetHead(String opname, String code) {
-    //System.out.println("putGetHead: " + opname + " - " + code);
     putInliner(prefixGetHead,opname,code);
   }
   public String getGetHead(String opname) {
-    //System.out.println("getGetHead: " + opname);
     return getInliner(prefixGetHead,opname);
   }
 
@@ -566,7 +553,6 @@ public class SymbolTable {
   }
 
   public void putMakeEmptyList(String opname, String code) {
-    //System.out.println("putMakeEmptyList: " + opname);
     putInliner(prefixMakeEmptyList,opname,code);
   }
   public String getMakeEmptyList(String opname) {

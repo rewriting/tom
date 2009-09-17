@@ -42,6 +42,8 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqterm.Composite;
 
 import tom.engine.exception.TomRuntimeException;
 import aterm.ATerm;
@@ -51,47 +53,52 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList makeList(Collection<TomTerm> c) {
-    Object array[] = c.toArray();  
-    TomList list = `concTomTerm();
-    for(int i=array.length-1; i>=0 ; i--) {
-     Object elt = array[i];    
-     TomTerm term; 
-     if(elt instanceof TargetLanguage) { 	 
-        term = `TargetLanguageToTomTerm((TargetLanguage)elt); 	 
-      } else if(elt instanceof Declaration) { 	 
-        term = `DeclarationToTomTerm((Declaration)elt); 	 
-      } else if(elt instanceof Expression) { 	 
-        term = `ExpressionToTomTerm((Expression)elt); 	 
-      } else if(elt instanceof Instruction) { 	 
-        term = `InstructionToTomTerm((Instruction)elt); 	 
-      } else { 	 
-        term = (TomTerm)elt; 	 
-      } 	 
-      list = `concTomTerm(term,list*);
+  public static CodeList makeCodeList(Collection<Code> c) {
+    CodeList list = `concCode();
+    for(Code code: c) {
+      list = `concCode(list*,code);
+    }
+    return list;
+  }
+
+  public static BQTermList makeBQTermList(Collection<BQTerm> c) {
+    BQTermList list = `concBQTerm();
+    for(BQTerm term: c) {
+      list = `concBQTerm(list*,term);
     } 	     
     return list;
   }
 
-  public static InstructionList makeInstructionList(Collection c) {
-    Object array[] = c.toArray();
+  public static Composite makeComposite(Collection<BQTerm> c) {
+    BQTerm list = `Composite();
+    for(BQTerm term: c) {
+      list = `Composite(list*,CompositeBQTerm(term));
+    } 	     
+    return (Composite) list;
+  }
+
+  public static TomList makeTomList(Collection<TomTerm> c) {
+    TomList list = `concTomTerm();
+    for(TomTerm term: c) {
+      list = `concTomTerm(list*,term);
+    } 	     
+    return list;
+  }
+
+  public static InstructionList makeInstructionList(Collection<Code> c) {
     InstructionList list = `concInstruction();
-    for(int i=array.length-1; i>=0 ; i--) {
-      Object elt = array[i];
-      Instruction term;
-      if(elt instanceof TargetLanguage) {
-        term = `TargetLanguageToInstruction((TargetLanguage)elt);
-      } else if(elt instanceof TomTerm) {
-        term = `TomTermToInstruction((TomTerm)elt);
-          //System.out.println("term   = " + term);
-      } else if(elt instanceof Instruction) {
-        term = (Instruction)elt;
-      } else {
-        /* XXX: is this an error ? if yes, it should not be that silent */
-        System.out.println("elt   = " + elt);
-        term = (Instruction) elt;
+    for(Code code: c) {
+      %match(code) {
+        TargetLanguageToCode(tl) -> { 
+          list = `concInstruction(list*,CodeToInstruction(TargetLanguageToCode(tl))); 
+        }
+        InstructionToCode(i) -> { 
+          list = `concInstruction(list*,i); 
+        }
+        BQTermToCode(t) -> { 
+          list = `concInstruction(list*,BQTermToInstruction(t)); 
+        }
       }
-      list = `concInstruction(term,list*);
     }
     return list;
   }
@@ -200,18 +207,17 @@ public class ASTFactory {
     return list;
   }
 
-  public static Constraint makeAssignTo(TomName name,int line, String fileName) {
-    return `AssignTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+  public static Constraint makeAliasTo(TomName name,int line, String fileName) {
+    return `AliasTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
           SymbolTable.TYPE_UNKNOWN,
           concConstraint()));
   }
 
   public static Constraint makeStorePosition(TomName name,int line, String fileName) {
-    return `AssignPositionTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+    return `AssignPositionTo(BQVariable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
-          SymbolTable.TYPE_UNKNOWN,
-          concConstraint()));
+          SymbolTable.TYPE_UNKNOWN));
   }
 
   public static OptionList makeOption(Option arg, Option info) {
@@ -227,7 +233,7 @@ public class ASTFactory {
     return `OriginTracking(Name(name), line, fileName);
   }
 
-  protected static TomType makeType(String typeNameTom, String typeNametGL) {
+  public static TomType makeType(String typeNameTom, String typeNametGL) {
     TomType sortTL  = `TLType(typeNametGL);
     return `Type(typeNameTom,sortTL);
   }
@@ -423,33 +429,44 @@ public class ASTFactory {
     return list;
   }
 
-  public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
+  public static BQTerm buildList(TomName name, BQTermList args, SymbolTable symbolTable) {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
-    String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
+    String topDomain = 
+      TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
+   
     %match(args) {
-      concTomTerm() -> {
+      concBQTerm() -> {
         return `BuildEmptyList(name);
       }
 
-      concTomTerm(head@VariableStar[],tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+      /* buildList "l" [X*,a2,...,an] => append */
+      concBQTerm(head@BQVariableStar[],tail*) -> {
+        BQTerm subList = `buildList(name,tail,symbolTable);
         /* a VariableStar is always flattened */
         return `BuildAppendList(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(VariableStar[],_*)),tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
-        /* a VariableStar is always flattened */
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         return `BuildAppendList(name,head,subList);
       }
 
-      concTomTerm(head@Variable[AstType=varType],tail*) -> {
+      /* buildList "l" [X,a2,...,an] = 
+           if l: B* -> A then
+              if X:A then 
+                => append
+              else 
+                => cons
+           else 
+             => cons       
+       */
+      concBQTerm(head@BQVariable[AstType=varType],tail*) -> {
         //System.out.println("topDomain = " + topDomain);
         //System.out.println("topCodomain = " + topCodomain);
         //System.out.println("varType = " + TomBase.getTomType(`varType));
 
-        TomTerm subList = buildList(name,`tail,symbolTable);
+        BQTerm subList = buildList(name,`tail,symbolTable);
         /* a Variable is flattened if type and codomain are equals */
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
@@ -459,13 +476,11 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(Variable[AstType=varType],_*)),tail*) -> {
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariable[AstType=varType]),_*),tail*) -> {
         //System.out.println("topDomain = " + topDomain);
         //System.out.println("topCodomain = " + topCodomain);
         //System.out.println("varType = " + TomBase.getTomType(`varType));
-
-        TomTerm subList = buildList(name,`tail,symbolTable);
-        /* a Variable is flattened if type and codomain are equals */
+        BQTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
             return `BuildAppendList(name,head,subList);
@@ -473,9 +488,9 @@ public class ASTFactory {
         }
         return `BuildConsList(name,head,subList);
       }
-
-      concTomTerm(head@Composite(concTomTerm(BuildConsList[AstName=opName],_*)),tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+      
+      concBQTerm(head@Composite(CompositeBQTerm(BuildConsList[AstName=opName]),_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
           if(name.equals(`opName)) {
@@ -485,8 +500,8 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+      concBQTerm(head@Composite(CompositeBQTerm(BuildTerm[AstName=Name(tomName)]),_*),tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
         /*
          * compare the codomain of tomName with topDomain
@@ -502,48 +517,55 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList|BuildConsList)[],tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
+      concBQTerm(head@(FunctionCall|BuildTerm|BuildConstant|BQVariable|BuildAppendList|BuildConsList)[],tail*) -> {
+        BQTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
-        TomTerm subList = buildList(name,`tail,symbolTable);
-        return subList;
+      concBQTerm(head@Composite(X*),tail*) -> {
+       BQTerm subList = buildList(name,`tail,symbolTable);
+       // TODO: avoid this particular case
+        %match(X) {
+         Composite(CompositeTL(ITL(s))) -> {
+            if (`s.trim().equals("")) {
+              return subList;
+            }
+          }
+        }
+        return `BuildConsList(name,head,subList);
       }
 
     }
     throw new TomRuntimeException("buildList strange term: " + args);
   }
 
-  public static TomTerm buildArray(TomName name,TomList args, SymbolTable symbolTable) {
+  public static BQTerm buildArray(TomName name, BQTermList args, SymbolTable symbolTable) {
     return buildArray(name,args.reverse(),0, symbolTable);
   }
 
-  private static TomTerm buildArray(TomName name,TomList args, int size, SymbolTable symbolTable) {
+  private static BQTerm buildArray(TomName name, BQTermList args, int size, SymbolTable symbolTable) {
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
 
     %match(args) {
-      concTomTerm() -> {
-        return `BuildEmptyArray(name,ExpressionToTomTerm(Integer(size)));
+      concBQTerm() -> {
+        return `BuildEmptyArray(name,ExpressionToBQTerm(Integer(size)));
       }
 
-      concTomTerm(head@VariableStar[],tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+      concBQTerm(head@BQVariableStar[],tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         /* a VariableStar is always flattened */
         return `BuildAppendArray(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(VariableStar[],_*)),tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
-        /* a VariableStar is always flattened */
+      concBQTerm(head@Composite(CompositeBQTerm(BQVariableStar[]),_*),tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         return `BuildAppendArray(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(BuildConsArray[AstName=opName],_*)),tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+      concBQTerm(head@BuildConsArray[AstName=opName],tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
           if(name.equals(`opName)) {
@@ -553,8 +575,8 @@ public class ASTFactory {
         return `BuildConsArray(name,head,subList);
       }
 
-      concTomTerm(head@Composite(concTomTerm(BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+      concBQTerm(head@BuildTerm[AstName=Name(tomName)],tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         if(topDomain != topCodomain) {
         /*
          * compare the codomain of tomName with topDomain
@@ -569,16 +591,24 @@ public class ASTFactory {
         }
         return `BuildConsArray(name,head,subList);
       }
-      concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+
+      concBQTerm(head@(BuildTerm|BuildConstant|BQVariable)[],tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
         return `BuildConsArray(name,head,subList);
       }
 
-      concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size,symbolTable);
-        return subList;
+      concBQTerm(head@Composite(X*),tail*) -> {
+        BQTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        // TODO: avoid this particular case
+        %match(X) {
+          Composite(CompositeTL(ITL(s))) -> {
+            if (`s.trim().equals("")) {
+              return subList;
+            }
+          }
+        }
+        return `BuildConsArray(name,head,subList);
       }
-
     }
 
     throw new TomRuntimeException("buildArray strange term: " + args);

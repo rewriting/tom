@@ -61,8 +61,6 @@
       class="tom.engine.compiler.Compiler"/>
     <plugin name="Optimizer"
       class="tom.engine.optimizer.TomOptimizer"/>
-    <plugin name="Verifier"
-      class="tom.engine.verifier.TomVerifier"/>
     <plugin name="Backend"
       class="tom.engine.backend.TomBackend"/>
   </plugins>

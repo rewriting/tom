@@ -2,7 +2,7 @@ module TomExpression
 imports TomSignature String
 abstract syntax
 
-Expression = TomTermToExpression(AstTerm:TomTerm)
+Expression = BQTermToExpression(AstTerm:BQTerm)
 		       | TomInstructionToExpression(Instruction:Instruction)
            /**
             * We have different Bottom for different types
@@ -33,39 +33,38 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | TrueTL()
            | FalseTL()
            | Integer(value:int)
-           // Exp1 - the subject
-           // Exp2 - the pattern
-           | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
+           // Kid1 - the subject
+           // Kid2 - the pattern
+           | EqualTerm(TomType:TomType,Kid1:BQTerm,Kid2:TomTerm)
+           // equality between two backquote terms
+           | EqualBQTerm(TomType:TomType,t1:BQTerm,t2:BQTerm)
            | Cast(AstType:TomType,Source:Expression)
            // AstName - the name of the function symbol from whom to extract the slot
            // Variable - from what to extract the slot 
-           | GetSlot(Codomain:TomType,AstName:TomName,SlotNameString:String,Variable:TomTerm)
-           | IsFsym(AstName:TomName,Variable:TomTerm)
-           | GetHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
-           | GetTail(Opname:TomName,Variable:TomTerm)
-           | IsEmptyList(Opname:TomName,Variable:TomTerm)
-           | IsEmptyArray(Opname:TomName,Variable:TomTerm,Index:TomTerm)
-           | AddOne(Variable:TomTerm)
-           | SubstractOne(Variable:TomTerm)
+           | GetSlot(Codomain:TomType,AstName:TomName,SlotNameString:String,Variable:BQTerm)
+           | IsFsym(AstName:TomName,Variable:BQTerm)
+           | GetHead(Opname:TomName,Codomain:TomType,Variable:BQTerm)
+           | GetTail(Opname:TomName,Variable:BQTerm)
+           | IsEmptyList(Opname:TomName,Variable:BQTerm)
+           | IsEmptyArray(Opname:TomName,Variable:BQTerm,Index:BQTerm)
+           | AddOne(Variable:BQTerm)
+           | SubstractOne(Variable:BQTerm)
            /**
-            *  <code>Substract(Term1:TomTerm,Term2:TomTerm)</code> performs Term1-Term2
+            *  <code>Substract(Term1:BQTerm,Term2:BQTerm)</code> performs Term1-Term2
             *
             */
-           | Substract(Term1:TomTerm,Term2:TomTerm)
-           | GetSize(Opname:TomName,Variable:TomTerm)
-           | GetElement(Opname:TomName,Codomain:TomType,Variable:TomTerm,Index:TomTerm)
-           | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
-           | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+           | Substract(Term1:BQTerm,Term2:BQTerm)
+           | GetSize(Opname:TomName,Variable:BQTerm)
+           | GetElement(Opname:TomName,Codomain:TomType,Variable:BQTerm,Index:BQTerm)
+           | GetSliceList(AstName:TomName,VariableBeginAST:BQTerm,VariableEndAST:BQTerm, Tail:BQTerm)
+           | GetSliceArray(AstName:TomName,SubjectListName:BQTerm,VariableBeginAST:BQTerm,VariableEndAST:BQTerm)
            | ConstraintToExpression(cons:Constraint)
            /**
             * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
             * @param Pattern the f(x,y)
             * @param Subject the subject to match 
             */
-           | ACMatchLoop(Pattern:TomTerm,Subject:TomTerm)
-
-
-
+           | ACMatchLoop(Pattern:TomTerm,Subject:BQTerm)
            /**
 		   * <code>WhileExpression</code> a do while loop
 		   *
@@ -73,11 +72,10 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
 		   */
            | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
-           | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
            /*
 		   * check that source is of sort astType, and then execute inst
 		   */
-           | IsSort(AstType:TomType,Variable:TomTerm)
+           | IsSort(AstType:TomType,Variable:BQTerm)
        /*
         * used to represent a piece of code
         * similar to ITL, but preprocessed to perform macro-expansion
@@ -85,6 +83,6 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | Code(Code:String)
 
 module TomExpression:rules() {
-  TomTermToExpression(ExpressionToTomTerm(t)) -> t
-  ExpressionToTomTerm(TomTermToExpression(t)) -> t
+  BQTermToExpression(ExpressionToBQTerm(t)) -> t
+  ExpressionToBQTerm(BQTermToExpression(t)) -> t
 }

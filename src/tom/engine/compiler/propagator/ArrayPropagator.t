@@ -32,6 +32,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.code.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
@@ -126,43 +127,44 @@ public class ArrayPropagator implements IBasePropagator {
                 getSymbolFromName(`tomName))) {return `m;}        
             // declare fresh variable            
             TomType termType = ap.getCompiler().getTermTypeFromTerm(`g);            
-            TomTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
-            Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
+            BQTerm freshVariable = ap.getCompiler().getFreshVariableStar(termType);
+            // g should be only a variable
+            Constraint freshVarDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshVariable),g);
             
             // declare fresh index = 0            
-            TomTerm freshIndex = ap.getFreshIndex();				
-            Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
+            BQTerm freshIndex = ap.getFreshIndex();				
+            Constraint freshIndexDeclaration = `MatchConstraint(TomBase.convertFromBQVarToVar(freshIndex), ExpressionToBQTerm(Integer(0)));
             Constraint l = `AndConstraint();
     match:  %match(slots) {
               concSlot() -> {
                 l = `AndConstraint(l*,EmptyArrayConstraint(name,freshVariable,freshIndex));
               }
               concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-                TomTerm newFreshIndex = ap.getFreshIndex();                
+                BQTerm newFreshIndex = ap.getFreshIndex();                
           mAppl:%match(appl){
                   // if we have a variable star
                   (VariableStar | UnamedVariableStar)[] -> {
                     // if it is the last element               
                     if(`X.length() == 0) {
                       // we should only assign it, without generating a loop
-                      l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
-                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToTomTerm(GetSize(name,freshVariable))))));
+                      l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToBQTerm(
+                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToBQTerm(GetSize(name,freshVariable))))));
                     } else {
-                      TomTerm beginIndex = ap.getBeginIndex();
-                      TomTerm endIndex = ap.getEndIndex();
+                      BQTerm beginIndex = ap.getBeginIndex();
+                      BQTerm endIndex = ap.getEndIndex();
                       l = `AndConstraint(l*,
-                          MatchConstraint(beginIndex,freshIndex),
-                          MatchConstraint(endIndex,freshIndex),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(beginIndex),freshIndex),
+                          MatchConstraint(TomBase.convertFromBQVarToVar(endIndex),freshIndex),
                           MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex)),
-                          MatchConstraint(newFreshIndex,endIndex));     
+                          MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),endIndex));     
                     }
                     break mAppl;
                   }
                   _ -> {                    
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
-                        MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(freshIndex))));
+                        MatchConstraint(appl,ExpressionToBQTerm(GetElement(name,ap.getCompiler().getTermTypeFromTerm(appl),freshVariable,freshIndex))),
+                        MatchConstraint(TomBase.convertFromBQVarToVar(newFreshIndex),ExpressionToBQTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
                       l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));
@@ -180,15 +182,15 @@ public class ArrayPropagator implements IBasePropagator {
     }
   }// end %strategy
 
-  private TomTerm getBeginIndex() {
+  private BQTerm getBeginIndex() {
     return getCompiler().getBeginVariableStar(getCompiler().getSymbolTable().getIntType());
   }
 
-  private TomTerm getEndIndex() {
+  private BQTerm getEndIndex() {
     return getCompiler().getEndVariableStar(getCompiler().getSymbolTable().getIntType());
   }
 
-  private TomTerm getFreshIndex() {
+  private BQTerm getFreshIndex() {
     return getCompiler().getFreshVariableStar(getCompiler().getSymbolTable().getIntType());    
   }
 }
