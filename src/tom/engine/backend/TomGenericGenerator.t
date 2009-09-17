@@ -826,6 +826,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         //String get_size = "tom_get_size_" + name +"_" + tomType;
 
         String s = "";
+ if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
+  	           // add this test to avoid generating get_slice and append_array when
+  	           // the constructor is not used in any matching
         s = %[
   @modifier@ @utype@ tom_get_slice_@name@(@utype@ subject, int begin, int end) {
     @glType@ result = @getMakeEmptyArray(name,"end-begin",moduleName)@;
@@ -854,7 +857,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return result;
   }]%;
-
+ }
         //If necessary we remove \n code depending on pretty option
         String res = ASTFactory.makeSingleLineCode(s, prettyMode);
         output.write(res);
