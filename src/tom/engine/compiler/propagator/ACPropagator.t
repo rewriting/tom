@@ -120,7 +120,7 @@ public class ACPropagator implements IBasePropagator {
             BQTerm X3 = acp.getCompiler().getFreshVariableStar(listType);
             Constraint c1 = `MatchConstraint(RecordAppl(optWithoutAC,
                     namelist,
-                    concSlot( PairSlotAppl(slotname, X1), slot, PairSlotAppl(slotname, X2)),
+                    concSlot( PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X1)), slot, PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X2))),
                     concConstraint()),subject);
 
             //generate f(X,...) << f(X1*,X2*)
@@ -184,7 +184,7 @@ public class ACPropagator implements IBasePropagator {
               BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);				
               Constraint c1 = 
                 `MatchConstraint(RecordAppl(optWithAC,
-                      namelist,concSlot(vstar,PairSlotAppl(slotname,X1)),
+                      namelist,concSlot(vstar,PairSlotAppl(slotname,TomBase.convertFromBQVarToVar(X1))),
                       concConstraint()),subject);
               //generate: f(X,...) << X1
               Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,

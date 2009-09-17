@@ -526,9 +526,9 @@ public class ConstraintGenerator {
     Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(length,alpha,tempSol)));
 
     Instruction instruction = `DoWhile(
-          LetRef(var_x,
+          LetRef(TomBase.convertFromVarToBQVar(var_x),
             BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
-            LetRef(var_y,
+            LetRef(TomBase.convertFromVarToBQVar(var_y),
               BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
               action
             )
