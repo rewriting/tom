@@ -788,7 +788,7 @@ public class Compiler extends TomGenericPlugin {
         Nop());
 
     // if (tempSolVal != 0 && elemCounter < tempSolVal)      
-    Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,IntegerPattern(0))),
+    Expression ifCond = `And(Negation(EqualBQTerm(intType,tempSolVal,ExpressionToBQTerm(Integer(0)))),
         LessThan(BQTermToExpression(elemCounter),BQTermToExpression(tempSolVal)));
     BQTerm result = `BQVariable(concOption(),Name("result"),opType);
     Instruction ifTakeElem = `If(ifCond,
