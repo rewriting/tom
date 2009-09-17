@@ -258,7 +258,7 @@ public class Viewer {
    */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch576NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch576NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tom_name= tomMatch576NameNumber_freshVar_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch576_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch576_1 instanceof aterm.AFun ) { String  tom_name= tomMatch576_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
@@ -271,7 +271,7 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + tom_name.length() + 3;
-            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch577NameNumber_freshVar_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch577NameNumber_end_5=tomMatch577NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch577NameNumber_freshVar_2,tomMatch577NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch577NameNumber_end_5.isEmpty() )) {if (  tomMatch577NameNumber_end_5.getNext() .isEmpty() ) {
+            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch577_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch577__end__5=tomMatch577_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch577_2,tomMatch577__end__5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch577__end__5.isEmpty() )) {if (  tomMatch577__end__5.getNext() .isEmpty() ) {
 
                 // first child
                 w.write("─" + tom_name+ "─┬");
@@ -281,21 +281,21 @@ public class Viewer {
                 w.write('\n');
 
                 // 2 ... n-1
-                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch578NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch578NameNumber_end_4.isEmpty() )) {
+                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch578__end__4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch578__end__4.isEmpty() )) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch578NameNumber_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch578__end__4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch578NameNumber_end_4.isEmpty() ) {tomMatch578NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch578NameNumber_end_4= tomMatch578NameNumber_end_4.getNext() ;}}} while(!( tomMatch578NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
+                  }if ( tomMatch578__end__4.isEmpty() ) {tomMatch578__end__4=(( aterm.ATermList )tom_l);} else {tomMatch578__end__4= tomMatch578__end__4.getNext() ;}}} while(!( tomMatch578__end__4==(( aterm.ATermList )tom_l) ));}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch577NameNumber_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch577NameNumber_end_5.isEmpty() ) {tomMatch577NameNumber_end_5=tomMatch577NameNumber_freshVar_2;} else {tomMatch577NameNumber_end_5= tomMatch577NameNumber_end_5.getNext() ;}}} while(!( tomMatch577NameNumber_end_5==tomMatch577NameNumber_freshVar_2 ));}}}}}
+                ATermToTree( tomMatch577__end__5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch577__end__5.isEmpty() ) {tomMatch577__end__5=tomMatch577_2;} else {tomMatch577__end__5= tomMatch577__end__5.getNext() ;}}} while(!( tomMatch577__end__5==tomMatch577_2 ));}}}}}
 
           }
         }}}}}

@@ -180,10 +180,10 @@ public class Typer extends TomGenericPlugin {
 
 
           throw new TomRuntimeException("updateCodomain");
-      }}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch295NameNumber_freshVar_3= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;if ( (tomMatch295NameNumber_freshVar_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch295_3= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;if ( (tomMatch295_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-        TomSymbol tomSymbol = typer.getSymbolFromName( tomMatch295NameNumber_freshVar_3.getString() );
+        TomSymbol tomSymbol = typer.getSymbolFromName( tomMatch295_3.getString() );
         TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
           Declaration t = (Declaration)(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);
@@ -192,10 +192,10 @@ public class Typer extends TomGenericPlugin {
         } else {
           throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
         }
-      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch295NameNumber_freshVar_8= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getVariable() ;if ( (tomMatch295NameNumber_freshVar_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch295_8= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getVariable() ;if ( (tomMatch295_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
 
-        TomSymbol tomSymbol = typer.getSymbolFromType( tomMatch295NameNumber_freshVar_8.getAstType() );
+        TomSymbol tomSymbol = typer.getSymbolFromType( tomMatch295_8.getAstType() );
         if(tomSymbol != null) {
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
 

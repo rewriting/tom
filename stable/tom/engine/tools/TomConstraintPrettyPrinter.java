@@ -265,10 +265,10 @@ public class TomConstraintPrettyPrinter {
 
   public static String prettyPrint(SlotList subject) {
     String s = "";
-    {{if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch237NameNumber_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);do {{if (!( tomMatch237NameNumber_end_4.isEmptyconcSlot() )) {
+    {{if ( (subject instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )subject) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) { tom.engine.adt.tomslot.types.SlotList  tomMatch237__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);do {{if (!( tomMatch237__end__4.isEmptyconcSlot() )) {
 
-        s += prettyPrint( tomMatch237NameNumber_end_4.getHeadconcSlot() )+",";
-      }if ( tomMatch237NameNumber_end_4.isEmptyconcSlot() ) {tomMatch237NameNumber_end_4=(( tom.engine.adt.tomslot.types.SlotList )subject);} else {tomMatch237NameNumber_end_4= tomMatch237NameNumber_end_4.getTailconcSlot() ;}}} while(!( (tomMatch237NameNumber_end_4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));}}}}
+        s += prettyPrint( tomMatch237__end__4.getHeadconcSlot() )+",";
+      }if ( tomMatch237__end__4.isEmptyconcSlot() ) {tomMatch237__end__4=(( tom.engine.adt.tomslot.types.SlotList )subject);} else {tomMatch237__end__4= tomMatch237__end__4.getTailconcSlot() ;}}} while(!( (tomMatch237__end__4==(( tom.engine.adt.tomslot.types.SlotList )subject)) ));}}}}
 
     if (! s.equals("")) return s.substring(0,s.length()-1);
 

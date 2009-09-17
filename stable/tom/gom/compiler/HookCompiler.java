@@ -92,7 +92,7 @@ public class HookCompiler {
       GomClassList classes,
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
-    {{if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch442NameNumber_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{if (!( tomMatch442NameNumber_end_4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch442NameNumber_end_4.getHeadConcHookDecl() ;
+    {{if ( (declList instanceof tom.gom.adt.gom.types.HookDeclList) ) {if ( (((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ((( tom.gom.adt.gom.types.HookDeclList )declList) instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) ) { tom.gom.adt.gom.types.HookDeclList  tomMatch147__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);do {{if (!( tomMatch147__end__4.isEmptyConcHookDecl() )) { tom.gom.adt.gom.types.HookDecl  tom_hook= tomMatch147__end__4.getHeadConcHookDecl() ;
 
         Decl decl = tom_hook.getPointcut();
         {{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutModule) ) {
@@ -139,7 +139,7 @@ public class HookCompiler {
             }     
           }}}}
 
-      }if ( tomMatch442NameNumber_end_4.isEmptyConcHookDecl() ) {tomMatch442NameNumber_end_4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch442NameNumber_end_4= tomMatch442NameNumber_end_4.getTailConcHookDecl() ;}}} while(!( (tomMatch442NameNumber_end_4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
+      }if ( tomMatch147__end__4.isEmptyConcHookDecl() ) {tomMatch147__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch147__end__4= tomMatch147__end__4.getTailConcHookDecl() ;}}} while(!( (tomMatch147__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
 
     return classes;
   }

@@ -340,11 +340,11 @@ inputState.guessing--;
 			}
 			
 			int counter = 0;
-			{{if (tom_is_sort_BQTermList(subjectList)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )subjectList))) { tom.engine.adt.code.types.BQTermList  tomMatch2NameNumber_end_4=(( tom.engine.adt.code.types.BQTermList )subjectList);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch2NameNumber_end_4))) {
+			{{if (tom_is_sort_BQTermList(subjectList)) {if (tom_is_fun_sym_concBQTerm((( tom.engine.adt.code.types.BQTermList )subjectList))) { tom.engine.adt.code.types.BQTermList  tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )subjectList);do {{if (!(tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4))) {
 			
-			constraint = tom_cons_list_AndConstraint(constraint,tom_cons_list_AndConstraint(tom_make_MatchConstraint(matchPatternList.get(counter),tom_get_head_concBQTerm_BQTermList(tomMatch2NameNumber_end_4)),tom_empty_list_AndConstraint()));
+			constraint = tom_cons_list_AndConstraint(constraint,tom_cons_list_AndConstraint(tom_make_MatchConstraint(matchPatternList.get(counter),tom_get_head_concBQTerm_BQTermList(tomMatch2__end__4)),tom_empty_list_AndConstraint()));
 			counter++;
-			}if (tom_is_empty_concBQTerm_BQTermList(tomMatch2NameNumber_end_4)) {tomMatch2NameNumber_end_4=(( tom.engine.adt.code.types.BQTermList )subjectList);} else {tomMatch2NameNumber_end_4=tom_get_tail_concBQTerm_BQTermList(tomMatch2NameNumber_end_4);}}} while(!(tom_equal_term_BQTermList(tomMatch2NameNumber_end_4, (( tom.engine.adt.code.types.BQTermList )subjectList))));}}}}
+			}if (tom_is_empty_concBQTerm_BQTermList(tomMatch2__end__4)) {tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )subjectList);} else {tomMatch2__end__4=tom_get_tail_concBQTerm_BQTermList(tomMatch2__end__4);}}} while(!(tom_equal_term_BQTermList(tomMatch2__end__4, (( tom.engine.adt.code.types.BQTermList )subjectList))));}}}}
 			
 			
 			optionList = tom_cons_list_concOption(option,tom_cons_list_concOption(tom_make_OriginalText(tom_make_Name(text.toString())),tom_empty_list_concOption()));

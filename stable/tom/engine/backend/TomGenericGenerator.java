@@ -152,14 +152,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       OutputCode oldOutput=output;
       String instance = template;
       int index = 0;
-      {{if ( (termList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch73NameNumber_end_4=(( tom.engine.adt.code.types.BQTermList )termList);do {{if (!( tomMatch73NameNumber_end_4.isEmptyconcBQTerm() )) {
+      {{if ( (termList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);do {{if (!( tomMatch73__end__4.isEmptyconcBQTerm() )) {
 
           output = new OutputCode(new StringWriter());
-          generateBQTerm(deep, tomMatch73NameNumber_end_4.getHeadconcBQTerm() ,moduleName);
+          generateBQTerm(deep, tomMatch73__end__4.getHeadconcBQTerm() ,moduleName);
           String dump = output.stringDump();
           instance = instance.replace("{"+index+"}",dump);
           index++;
-        }if ( tomMatch73NameNumber_end_4.isEmptyconcBQTerm() ) {tomMatch73NameNumber_end_4=(( tom.engine.adt.code.types.BQTermList )termList);} else {tomMatch73NameNumber_end_4= tomMatch73NameNumber_end_4.getTailconcBQTerm() ;}}} while(!( (tomMatch73NameNumber_end_4==(( tom.engine.adt.code.types.BQTermList )termList)) ));}}}}
+        }if ( tomMatch73__end__4.isEmptyconcBQTerm() ) {tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);} else {tomMatch73__end__4= tomMatch73__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch73__end__4==(( tom.engine.adt.code.types.BQTermList )termList)) ));}}}}
 
       //System.out.println("template: " + template);
       //System.out.println("instance: " + instance);
@@ -721,7 +721,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
-        {{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_1= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81NameNumber_freshVar_1.getString() ;
+        {{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_1= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_1.getString() ;
 
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(tom_name);
@@ -729,7 +729,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(prefix + tom_name+ "()");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_6= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81NameNumber_freshVar_6.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_6= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_6.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
             String prefix = "tom_cons_list_";
@@ -742,16 +742,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_13= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_13= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            output.write("tom_append_list_" +  tomMatch81NameNumber_freshVar_13.getString() + "(");
+            output.write("tom_append_list_" +  tomMatch81_13.getString() + "(");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);
             output.write(")");
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_20= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81NameNumber_freshVar_20.getString() ; tom.engine.adt.code.types.BQTerm  tom_size= (( tom.engine.adt.code.types.BQTerm )list).getSize() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_20= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_20.getString() ; tom.engine.adt.code.types.BQTerm  tom_size= (( tom.engine.adt.code.types.BQTerm )list).getSize() ;
 
 
             String prefix = "tom_empty_array_";
@@ -762,7 +762,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_26= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81NameNumber_freshVar_26.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_26= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_26.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
             String template = getSymbolTable(moduleName).getMakeAddArray(tom_name);
@@ -775,10 +775,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81NameNumber_freshVar_33= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81NameNumber_freshVar_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_33= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            output.write("tom_append_array_" +  tomMatch81NameNumber_freshVar_33.getString() + "(");
+            output.write("tom_append_array_" +  tomMatch81_33.getString() + "(");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);

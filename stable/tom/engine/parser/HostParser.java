@@ -333,10 +333,10 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
           HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
               getOptionManager(), getStreamManager());
           Code astTom = parser.input();
-          {{if (tom_is_sort_Code(astTom)) {if (tom_is_fun_sym_Tom((( tom.engine.adt.code.types.Code )astTom))) { tom.engine.adt.code.types.CodeList  tomMatch1NameNumber_freshVar_1=tom_get_slot_Tom_CodeList((( tom.engine.adt.code.types.Code )astTom));if (tom_is_fun_sym_concCode(tomMatch1NameNumber_freshVar_1)) { tom.engine.adt.code.types.CodeList  tomMatch1NameNumber_end_6=tomMatch1NameNumber_freshVar_1;do {{if (!(tom_is_empty_concCode_CodeList(tomMatch1NameNumber_end_6))) {
+          {{if (tom_is_sort_Code(astTom)) {if (tom_is_fun_sym_Tom((( tom.engine.adt.code.types.Code )astTom))) { tom.engine.adt.code.types.CodeList  tomMatch1_1=tom_get_slot_Tom_CodeList((( tom.engine.adt.code.types.Code )astTom));if (tom_is_fun_sym_concCode(tomMatch1_1)) { tom.engine.adt.code.types.CodeList  tomMatch1__end__6=tomMatch1_1;do {{if (!(tom_is_empty_concCode_CodeList(tomMatch1__end__6))) {
 
-              list.add(tom_get_head_concCode_CodeList(tomMatch1NameNumber_end_6)); 
-            }if (tom_is_empty_concCode_CodeList(tomMatch1NameNumber_end_6)) {tomMatch1NameNumber_end_6=tomMatch1NameNumber_freshVar_1;} else {tomMatch1NameNumber_end_6=tom_get_tail_concCode_CodeList(tomMatch1NameNumber_end_6);}}} while(!(tom_equal_term_CodeList(tomMatch1NameNumber_end_6, tomMatch1NameNumber_freshVar_1)));}}}}}
+              list.add(tom_get_head_concCode_CodeList(tomMatch1__end__6)); 
+            }if (tom_is_empty_concCode_CodeList(tomMatch1__end__6)) {tomMatch1__end__6=tomMatch1_1;} else {tomMatch1__end__6=tom_get_tail_concCode_CodeList(tomMatch1__end__6);}}} while(!(tom_equal_term_CodeList(tomMatch1__end__6, tomMatch1_1)));}}}}}
 
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");
