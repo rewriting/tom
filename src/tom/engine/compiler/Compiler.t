@@ -781,7 +781,7 @@ public class Compiler extends TomGenericPlugin {
     BQTerm alpha = `BQVariable(concOption(),Name("alpha"),intArrayType); 
     BQTerm isComplement = `BQVariable(concOption(),Name("isComplement"),boolType);
     TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());
-    Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,TruePattern()),
+    Instruction ifIsComplement = `If(BQTermToExpression(isComplement),
         Assign(tempSolVal,
           Substract(ExpressionToBQTerm(GetElement(intArrayName,intType,alpha,tempSolIndex)),
             tempSolVal)),
