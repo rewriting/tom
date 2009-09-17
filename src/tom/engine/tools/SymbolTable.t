@@ -219,19 +219,19 @@ public class SymbolTable {
   }
 
   public TomType getIntType() {
-    return `ASTFactory.makeType(TYPE_INT,"int");
+    return ASTFactory.makeType(TYPE_INT,"int");
   }
 
   public TomType getIntArrayType() {
-    return `ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
+    return ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
   }
 
   public TomType getLongType() {
-    return `ASTFactory.makeType(TYPE_LONG,"long");
+    return ASTFactory.makeType(TYPE_LONG,"long");
   }
 
   public TomType getFloatType() {
-    return `ASTFactory.makeType(TYPE_FLOAT,"float");
+    return ASTFactory.makeType(TYPE_FLOAT,"float");
   }
 
   public TomType getCharType() {
@@ -239,7 +239,7 @@ public class SymbolTable {
     if(pCode) {
       type = "str";
     }
-    return `ASTFactory.makeType(TYPE_CHAR,type);
+    return ASTFactory.makeType(TYPE_CHAR,type);
   }
 
   public TomType getDoubleType() {
@@ -247,7 +247,7 @@ public class SymbolTable {
     if(pCode) {
       type = "float";
     }
-    return `ASTFactory.makeType(TYPE_DOUBLE,type);
+    return ASTFactory.makeType(TYPE_DOUBLE,type);
   }
 
   public TomType getBooleanType() {
@@ -259,7 +259,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "bool";
     } 
-    return `ASTFactory.makeType(TYPE_BOOLEAN,type);
+    return ASTFactory.makeType(TYPE_BOOLEAN,type);
   }
 
   public TomType getStringType() {
@@ -269,7 +269,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "str";
     } 
-    return `ASTFactory.makeType(TYPE_STRING,type);
+    return ASTFactory.makeType(TYPE_STRING,type);
   }
 
   public TomType getUniversalType() {
@@ -281,7 +281,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "None";
     }
-    return `ASTFactory.makeType(TYPE_UNIVERSAL,type);
+    return ASTFactory.makeType(TYPE_UNIVERSAL,type);
   }
 
   public TomType getVoidType() {
@@ -291,7 +291,7 @@ public class SymbolTable {
     } else if(pCode) {
       type = "function";
     }
-    return `ASTFactory.makeType(TYPE_VOID,type);
+    return ASTFactory.makeType(TYPE_VOID,type);
   }
 
   //public TomType getUnknownType() {

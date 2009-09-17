@@ -85,7 +85,7 @@ public class Expander extends TomGenericPlugin {
   private static final TomType genericType = `TLType("T");
   private static final TomType methodparameterType = `TLType("<T> T");
   private static final TomType objectArrayType = `TLType("Object[]");
-  private static final TomType intType = `TLType("int");
+  private static final TomType intType = ASTFactory.makeType("int","int");
   
   private static final TomType basicStratType = `TLType("tom.library.sl.AbstractStrategyBasic");
   private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
@@ -289,7 +289,7 @@ matchBlock: {
                         // manage empty lists and arrays
                         inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
                       } else if ( TomBase.isArrayOperator(`symbol) ) {
-                        inst = `If(IsFsym(opName,var),If(IsEmptyList(opName,var,ExpressionToBQTerm(Integer(0))),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
+                        inst = `If(IsFsym(opName,var),If(IsEmptyArray(opName,var,ExpressionToBQTerm(Integer(0))),Return(Composite(CompositeTL(ITL("0")))),Return(Composite(CompositeTL(ITL("2"))))),Nop());
                       } else {
                         inst = `If(IsFsym(opName,var),Return(Composite(CompositeTL(ITL(""+TomBase.getArity(symbol))))),Nop());
                       } 
@@ -336,11 +336,9 @@ matchBlock: {
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO
                           // we consider that the children of the array are the first element and the tail
-
-                          Instruction array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}")))));
                           //default case (used for builtins too)                     
                           BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
-//`CodeToInstruction(TargetLanguageToCode(ITL("new Object[]{}")));
+                          //`CodeToInstruction(TargetLanguageToCode(ITL("new Object[]{}")));
                           BQTerm tail = `BQVariable(concOption(),Name("tail"),codomain);
 
                           CodeList result = `concCode(BQTermToCode(Composite(

@@ -233,7 +233,7 @@ public class ASTFactory {
     return `OriginTracking(Name(name), line, fileName);
   }
 
-  protected static TomType makeType(String typeNameTom, String typeNametGL) {
+  public static TomType makeType(String typeNameTom, String typeNametGL) {
     TomType sortTL  = `TLType(typeNametGL);
     return `Type(typeNameTom,sortTL);
   }
