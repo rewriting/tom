@@ -258,7 +258,7 @@ public class Viewer {
    */
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch572NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch572NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tom_name= tomMatch572NameNumber_freshVar_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
+      {{if ( term instanceof aterm.ATerm ) {if ( (( aterm.ATerm )term) instanceof aterm.ATermAppl ) { aterm.AFun  tomMatch576NameNumber_freshVar_1= ((aterm.ATermAppl)(( aterm.ATerm )term)).getAFun() ;if ( tomMatch576NameNumber_freshVar_1 instanceof aterm.AFun ) { String  tom_name= tomMatch576NameNumber_freshVar_1.getName() ; aterm.ATermList  tom_list= ((aterm.ATermAppl)(( aterm.ATerm )term)).getArguments() ;
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
@@ -271,7 +271,7 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + tom_name.length() + 3;
-            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch573NameNumber_freshVar_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch573NameNumber_end_5=tomMatch573NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch573NameNumber_freshVar_2,tomMatch573NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch573NameNumber_end_5.isEmpty() )) {if (  tomMatch573NameNumber_end_5.getNext() .isEmpty() ) {
+            {{if ( tom_list instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_list) instanceof aterm.ATermList ) {if (!( (( aterm.ATermList )tom_list).isEmpty() )) { aterm.ATermList  tomMatch577NameNumber_freshVar_2= (( aterm.ATermList )tom_list).getNext() ; aterm.ATermList  tomMatch577NameNumber_end_5=tomMatch577NameNumber_freshVar_2;do {{ aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch577NameNumber_freshVar_2,tomMatch577NameNumber_end_5, aterm.pure.SingletonFactory.getInstance().makeList() );if (!( tomMatch577NameNumber_end_5.isEmpty() )) {if (  tomMatch577NameNumber_end_5.getNext() .isEmpty() ) {
 
                 // first child
                 w.write("─" + tom_name+ "─┬");
@@ -281,21 +281,21 @@ public class Viewer {
                 w.write('\n');
 
                 // 2 ... n-1
-                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch574NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch574NameNumber_end_4.isEmpty() )) {
+                {{if ( tom_l instanceof aterm.ATermList ) {if ( (( aterm.ATermList )tom_l) instanceof aterm.ATermList ) { aterm.ATermList  tomMatch578NameNumber_end_4=(( aterm.ATermList )tom_l);do {{if (!( tomMatch578NameNumber_end_4.isEmpty() )) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("├");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch574NameNumber_end_4.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch578NameNumber_end_4.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }if ( tomMatch574NameNumber_end_4.isEmpty() ) {tomMatch574NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch574NameNumber_end_4= tomMatch574NameNumber_end_4.getNext() ;}}} while(!( tomMatch574NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
+                  }if ( tomMatch578NameNumber_end_4.isEmpty() ) {tomMatch578NameNumber_end_4=(( aterm.ATermList )tom_l);} else {tomMatch578NameNumber_end_4= tomMatch578NameNumber_end_4.getNext() ;}}} while(!( tomMatch578NameNumber_end_4==(( aterm.ATermList )tom_l) ));}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("└");
-                ATermToTree( tomMatch573NameNumber_end_5.getFirst() ,w,context,ndeep);
-              }}if ( tomMatch573NameNumber_end_5.isEmpty() ) {tomMatch573NameNumber_end_5=tomMatch573NameNumber_freshVar_2;} else {tomMatch573NameNumber_end_5= tomMatch573NameNumber_end_5.getNext() ;}}} while(!( tomMatch573NameNumber_end_5==tomMatch573NameNumber_freshVar_2 ));}}}}}
+                ATermToTree( tomMatch577NameNumber_end_5.getFirst() ,w,context,ndeep);
+              }}if ( tomMatch577NameNumber_end_5.isEmpty() ) {tomMatch577NameNumber_end_5=tomMatch577NameNumber_freshVar_2;} else {tomMatch577NameNumber_end_5= tomMatch577NameNumber_end_5.getNext() ;}}} while(!( tomMatch577NameNumber_end_5==tomMatch577NameNumber_freshVar_2 ));}}}}}
 
           }
         }}}}}
@@ -329,7 +329,7 @@ public class Viewer {
           //corresponds to a pointer due to MuVar
           throw new VisitFailure();
         }
-      }}}return _visit_Strategy(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!( environment== null  )) {return (( tom.library.sl.Strategy )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.sl.Strategy) ) {return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));}if (!( environment== null  )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_RemoveMu() { return new RemoveMu();}
+      }}}return _visit_Strategy(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.library.sl.Strategy  _visit_Strategy( tom.library.sl.Strategy  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.library.sl.Strategy )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.library.sl.Strategy) ) {return ((T)visit_Strategy((( tom.library.sl.Strategy )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_RemoveMu() { return new RemoveMu();}
 
 
 

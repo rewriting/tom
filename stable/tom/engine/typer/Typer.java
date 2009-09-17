@@ -112,7 +112,7 @@ public class Typer extends TomGenericPlugin {
         * Start by typing variables with fresh type variables
         * Perform type inference over patterns 
         */
-      Code inferedTypeForCode = (Code) kernelTyper.typeVariable( tom.engine.adt.tomtype.types.tomtype.EmptyType.make() , (Code)getWorkingTerm());
+      Code inferedTypeForCode = (Code) kernelTyper.typeVariable( tom.engine.adt.tomtype.types.tomtype.EmptyType.make() , typedCodeWithTypeVariables);
       
       /** Transform each BackQuoteTerm into its compiled form --> maybe to
         * desugarer phase before perform type inference 
@@ -168,7 +168,7 @@ public class Typer extends TomGenericPlugin {
           typer.symbolTable().putType(tom_typeName,type);
         }
         return type;
-      }}}}}return _visit_TomType(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_typeUnknownTypes( Typer  t0) { return new typeUnknownTypes(t0);}
+      }}}}}return _visit_TomType(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_typeUnknownTypes( Typer  t0) { return new typeUnknownTypes(t0);}
 
 
 
@@ -180,10 +180,10 @@ public class Typer extends TomGenericPlugin {
 
 
           throw new TomRuntimeException("updateCodomain");
-      }}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch291NameNumber_freshVar_3= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;if ( (tomMatch291NameNumber_freshVar_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch295NameNumber_freshVar_3= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ;if ( (tomMatch295NameNumber_freshVar_3 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-        TomSymbol tomSymbol = typer.getSymbolFromName( tomMatch291NameNumber_freshVar_3.getString() );
+        TomSymbol tomSymbol = typer.getSymbolFromName( tomMatch295NameNumber_freshVar_3.getString() );
         TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
           Declaration t = (Declaration)(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);
@@ -192,10 +192,10 @@ public class Typer extends TomGenericPlugin {
         } else {
           throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
         }
-      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch291NameNumber_freshVar_8= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getVariable() ;if ( (tomMatch291NameNumber_freshVar_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetHeadDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch295NameNumber_freshVar_8= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getVariable() ;if ( (tomMatch295NameNumber_freshVar_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
 
-        TomSymbol tomSymbol = typer.getSymbolFromType( tomMatch291NameNumber_freshVar_8.getAstType() );
+        TomSymbol tomSymbol = typer.getSymbolFromType( tomMatch295NameNumber_freshVar_8.getAstType() );
         if(tomSymbol != null) {
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
 
@@ -207,7 +207,7 @@ public class Typer extends TomGenericPlugin {
             throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
           }
         }
-      }}}}}return _visit_Declaration(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_updateCodomain( Typer  t0) { return new updateCodomain(t0);}
+      }}}}}return _visit_Declaration(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_updateCodomain( Typer  t0) { return new updateCodomain(t0);}
 
 
 }

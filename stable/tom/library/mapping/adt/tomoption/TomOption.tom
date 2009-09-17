@@ -587,6 +587,12 @@
   make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor.make($t0) }
 }
 
+%op KeyEntry UsedSymbolAC(Symbol:TomSymbol) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolAC) }
+  get_slot(Symbol, t) { $t.getSymbol() }
+  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolAC.make($t0) }
+}
+
 %op KeyEntry UsedType(Typedef:TomType) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedType) }
   get_slot(Typedef, t) { $t.getTypedef() }

@@ -431,6 +431,28 @@
     make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor( $new_Symbol) }
   }
 
+  %op Strategy _UsedSymbolAC(arg0:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolAC))}
+    
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolAC)$t).getChildAt(0) }
+    make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolAC($arg0) }
+  }
+  
+  %op Strategy When_UsedSymbolAC(s:Strategy) {
+    make(s) { `Sequence(Is_UsedSymbolAC(),s) }
+  }
+
+  %op Strategy Is_UsedSymbolAC() {
+    make() { new tom.engine.adt.tomsignature.strategy.keyentry.Is_UsedSymbolAC()}
+  }
+  
+  %op Strategy Make_UsedSymbolAC(arg0:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolAC)) }
+
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolAC)$t).getChildAt(0) }
+    make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolAC( $new_Symbol) }
+  }
+
   %op Strategy _UsedType(arg0:Strategy) {
     is_fsym(t) { (($t!=null) && ($t instanceof tom.engine.adt.tomsignature.strategy.keyentry._UsedType))}
     
