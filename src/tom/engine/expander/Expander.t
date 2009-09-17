@@ -166,7 +166,7 @@ public class Expander extends TomGenericPlugin {
 
   %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
     visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> {
+      t@(BQVariable|BQVariableStar)[] -> { //t@(BQVariable|BQVariableStar|RecordAppl)[] -> {   ???
         return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
       }
     }
@@ -320,7 +320,7 @@ matchBlock: {
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
-                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
                           Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("};")))));
                           //default case (used for builtins too)                     
@@ -328,7 +328,7 @@ matchBlock: {
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
-                          //TODO 
+                          //TODO
                         } else {
                           int arity = TomBase.getArity(symbol);
                           BQTerm composite = `Composite(CompositeTL(ITL("return new Object[]{")));

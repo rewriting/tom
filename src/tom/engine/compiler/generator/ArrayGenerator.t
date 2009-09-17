@@ -39,8 +39,8 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-import tom.engine.compiler.Compiler;
-import tom.engine.compiler.ConstraintGenerator;
+import tom.engine.compiler.*;/*Compiler;
+import tom.engine.compiler.ConstraintGenerator;*/
 
 /**
  * Array Generator

@@ -142,6 +142,10 @@ public class SymbolTable {
     return usedKeyEntry.contains(`UsedSymbolDestructor(symbol));
   }
 
+  public boolean isUsedSymbolAC(TomSymbol symbol) {
+    return usedKeyEntry.contains(`UsedSymbolAC(symbol));
+  }
+
   public boolean isUsedType(TomType type) {
     return usedKeyEntry.contains(`UsedType(type));
   }
@@ -152,6 +156,10 @@ public class SymbolTable {
 
   public void setUsedSymbolDestructor(TomSymbol symbol) {
     usedKeyEntry.add(`UsedSymbolDestructor(symbol));
+  }
+
+  public void setUsedSymbolAC(TomSymbol symbol) {
+    usedKeyEntry.add(`UsedSymbolAC(symbol));
   }
 
   public void setUsedType(TomType type) {
@@ -169,6 +177,13 @@ public class SymbolTable {
     TomSymbol symbol = getSymbolFromName(name);
     if(symbol!=null) {
       setUsedSymbolDestructor(symbol);
+    }
+  }
+
+  public void setUsedSymbolAC(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      setUsedSymbolAC(symbol);
     }
   }
 

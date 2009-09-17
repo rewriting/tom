@@ -27,10 +27,12 @@ package tom.engine.compiler.propagator;
 
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.code.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
@@ -38,6 +40,8 @@ import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 import java.util.ArrayList;
 import tom.engine.compiler.Compiler;
+import tom.engine.tools.TomConstraintPrettyPrinter;
+import tom.engine.tools.ASTFactory;
 
 /**
  * AC propagator
@@ -67,9 +71,20 @@ public class ACPropagator implements IBasePropagator {
   }
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return `BottomUp(ACMatching(this)).visitLight(constraint);		
+    Constraint result = constraint;
+    //return `TopDownIdStopOnSuccess(ACMatching(this)).visitLight(constraint);		
+    result = `RepeatId(TopDown(RemoveNonVariable(this))).visitLight(result);		
+    result = `RepeatId(TopDown(PerformAbstraction(this))).visitLight(result);		
+    result = `TopDown(CleanSingleVariable()).visitLight(result);		
+    //Constraint res = `TopDownWhenConstraint(ACMatching(this)).visitLight(constraint);		
+    if(result!=constraint) {
+      System.out.println("after propagate:");
+      System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+    }
+    return result;
   }	
 
+/*
   %strategy ACMatching(acp: ACPropagator) extends Identity() {
     visit Constraint {
       // here we handle all the cases of the AC match
@@ -81,58 +96,110 @@ public class ACPropagator implements IBasePropagator {
       }
     }
   }
+*/
 
-  /*
-  public Constraint decompose(Constraint c) {
-    %match(c) {
-      MatchConstraint(pattern@RecordAppl[Option=option, NameList=(name@Name(tomName)), Slots=slots],subject) -> {
+  %strategy RemoveNonVariable(acp: ACPropagator) extends Identity() {
+    visit Constraint {
+      MatchConstraint(pattern@RecordAppl[
+          Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          NameList=namelist@(Name(tomName)), Slots=slots],subject) -> {
+        OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
+
         %match(slots) {
-          concSlot(slot@!PairSlotAppl[Appl=VariableStar[]],tail*) -> {
+          /*
+           * f(t,X,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(X,...) <<ac f(X1*,X2*)
+           */
+          concSlot(C1*, slot@PairSlotAppl[SlotName=slotname, Appl=!VariableStar[]], C2*) -> {
+            System.out.println("case F(t,X*,...): " + `slots);
+            //System.out.println("slot: " + `slot);
 
-            // get fresh variables
-            TomType listType = getCompiler().getTermTypeFromTerm(`pattern);
-            TomTerm X1 = getCompiler().getFreshVariableStar(listType);				
-            TomName X1_Name = X1.getAstName();				
-            TomTerm X2 = getCompiler().getFreshVariableStar(listType);
-            TomName X2_Name = X2.getAstName();				
-
-            //generate: f(X1,X2) << subject && f(slot) << X1 && decompose(f(tail) << X2) 
-            Constraint c1 = 
-              `ACMatchConstraint(RecordAppl(option,
-                    concTomName(Name(tomName)),concSlot(PairSlotAppl(X1_Name,X1),PairSlotAppl(X2_Name,X2)),
+            //generate f(X1*, slot, X2*) << s and modify s <- f(X1*,X2*)
+            TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
+            BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);			
+            BQTerm X2 = acp.getCompiler().getFreshVariableStar(listType);
+            BQTerm X3 = acp.getCompiler().getFreshVariableStar(listType);
+            Constraint c1 = `MatchConstraint(RecordAppl(optWithoutAC,
+                    namelist,
+                    concSlot( PairSlotAppl(slotname, X1), slot, PairSlotAppl(slotname, X2)),
                     concConstraint()),subject);
-            Constraint c2 = 
-              `MatchConstraint(RecordAppl(option,
-                    concTomName(Name(tomName)),concSlot(slot),concConstraint()),X1);
-            Constraint c3 = decompose(`MatchConstraint(RecordAppl(option,
-                    concTomName(Name(tomName)),tail,concConstraint()),X2));
-            return `AndConstraint(c1, c2, c3);
-          }
 
-          concSlot(vstar@PairSlotAppl[Appl=VariableStar[]], tail*) -> {
-            // get fresh variables
-            TomType listType = getCompiler().getTermTypeFromTerm(`pattern);
-            TomTerm X1 = getCompiler().getFreshVariableStar(listType);				
-            TomName X1_Name = X1.getAstName();				
+            //generate f(X,...) << f(X1*,X2*)
+            TomSymbol tomSymbol = acp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
+            BQTerm newSubject = null;
+            if(TomBase.isListOperator(tomSymbol)) {
+              newSubject = ASTFactory.buildList(`Name(tomName),`concBQTerm(X1,X2),acp.getCompiler().getSymbolTable());
+            } else if(TomBase.isArrayOperator(tomSymbol)) {
+              newSubject = ASTFactory.buildArray(`Name(tomName),`concBQTerm(X1,X2),acp.getCompiler().getSymbolTable());
+            }
+            Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,namelist,concSlot(C1*,C2*),concConstraint()), newSubject);
 
-            //generate: f(vstar,X1) << subject && decompose(f(tail) << X1) 
-            Constraint c1 = 
-              `ACMatchConstraint(RecordAppl(option,
-                    concTomName(Name(tomName)),concSlot(vstar,PairSlotAppl(X1_Name,X1)),
-                    concConstraint()),subject);
-            Constraint c2 = decompose(`MatchConstraint(RecordAppl(option,
-                    concTomName(Name(tomName)),tail,concConstraint()),X1));
-            System.out.println(tom.engine.tools.TomConstraintPrettyPrinter.prettyPrint(`AndConstraint(c1, c2)));
-            return `AndConstraint(c1, c2);
-          }
-          concSlot() -> {
-            return `EmptyListConstraint(name,subject);
+            Constraint result = `AndConstraint(c1,c2);
+            //System.out.println("result: " + result);
+            System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+            return result;
           }
         }
       }
     }
-    return c; 
   }
-  */
+
+  %strategy CleanSingleVariable() extends Identity() {
+    visit Constraint {
+      /*
+       * f()   <<ac s => f() <<a s
+       * f(X*) <<ac s => f(X*) <<a s
+       */
+      MatchConstraint(RecordAppl[
+          Option=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          NameList=namelist@(Name[]), 
+          Slots=slots],subject) &&
+        (concSlot()<<slots || concSlot(PairSlotAppl[Appl=VariableStar[]])<<slots) -> {
+          System.out.println("case f(X*) <<ac s => f(X*) <<a s");
+          System.out.println("case f()   <<ac s => f()   <<a s: " + `slots);
+          OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
+          Constraint result = `MatchConstraint(
+              RecordAppl(optWithoutAC, namelist, slots, concConstraint()),
+              subject);
+          System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+          return result;
+        }
+    }
+  }
+
+  %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
+    visit Constraint {
+      MatchConstraint(pattern@RecordAppl[
+          Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          NameList=namelist@(Name[]), Slots=slots],subject) -> {
+        OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
+        if(`slots.length() > 2) {
+          %match(slots) {
+            /*
+             * f(Z,X,...) <<ac s -> (Z,X1) <<ac s ^ f(X,...) <<ac X1
+             */
+            concSlot(C1*, vstar@PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], C2*) -> {
+              System.out.println("case F(Z*,X*,...): " + `slots);
+              //generate: f(vstar,X1) << s 
+              TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
+              BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);				
+              Constraint c1 = 
+                `MatchConstraint(RecordAppl(optWithAC,
+                      namelist,concSlot(vstar,PairSlotAppl(slotname,X1)),
+                      concConstraint()),subject);
+              //generate: f(X,...) << X1
+              Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,
+                    namelist, concSlot(C1*,C2*), concConstraint()),X1);
+              Constraint result = `AndConstraint(c1,c2);
+
+              //System.out.println("result: " + result);
+              System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+              return result;
+            }
+          }
+        }
+      }
+
+    }
+  }
 
 }

@@ -248,9 +248,7 @@ patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, To
               int counter = 0;
               %match(subjectList) {
                 concBQTerm(_*,subjectAtIndex,_*) -> {
-                constraint = `AndConstraint(
-                  constraint,
-                  MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
+                constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
                   counter++;
                 }
               }

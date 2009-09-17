@@ -55,6 +55,7 @@ public class ConstraintGenerator {
 
 //------------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }	
+  %include { java/util/types/Collection.tom}
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------	
 
@@ -115,7 +116,6 @@ public class ConstraintGenerator {
         expression = result; 
       }
     } // end while
-    //System.out.println("result: " + result);
     return buildInstructionFromExpression(result,action);
   }
   
@@ -246,8 +246,7 @@ public class ConstraintGenerator {
     `TopDown(CollectVar(freshVarList)).visitLight(orDisjunction);    
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
-    instruction = `AbstractBlock(concInstruction(instruction,
-          If(BQTermToExpression(flag),action,Nop())));    
+    instruction = `AbstractBlock(concInstruction(instruction,If(BQTermToExpression(flag),action,Nop())));    
     // add fresh variables' declarations
     for(BQTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -292,7 +291,7 @@ public class ConstraintGenerator {
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-          If(Negation(BQTermToExpression(flag)),action,Nop())));
+         If(Negation(BQTermToExpression(flag)),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 
@@ -344,16 +343,15 @@ public class ConstraintGenerator {
       NumericConstraint(left,right,type) -> {        
         Expression leftExpr = `BQTermToExpression(left);
         Expression rightExpr = `BQTermToExpression(right);
-        
         %match(type) {
           NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
           NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
           NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumEqual()                -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-            return `If(EqualBQTerm(tomType,right,left),action,Nop()); }
-            NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
-              return `If(Negation(EqualBQTerm(tomType,right,left)),action,Nop()); }
+                                         return `If(EqualBQTerm(tomType,right,left),action,Nop()); }
+          NumDifferent()            -> { TomType tomType = getCompiler().getTermTypeFromTerm(`left);
+                                         return `If(Negation(EqualBQTerm(tomType,right,left)),action,Nop()); }
         }
       }
     }
@@ -440,7 +438,7 @@ public class ConstraintGenerator {
     TomType intType = symbolTable.getIntType();
     TomType intArrayType = symbolTable.getIntArrayType();
     // a 0
-    Expression zero = `Integer(0);
+    ///Expression zero = `Integer(0);
     // the name of the int[] operator
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
 
@@ -449,18 +447,22 @@ public class ConstraintGenerator {
     BQTerm position = getCompiler().getFreshVariable("position",intType);
     BQTerm length = getCompiler().getFreshVariable("length",intType);                
 
-    String tomName = null;
-    TomTerm x = null, y=null;
+    ///String tomName = null;
+    String symbolName = null;
+    TomTerm var_x = null;
+    TomTerm var_y = null;
     %match(pattern) {
       RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
-        tomName = `tomName;
-        x = `x;
-        y = `y;
+        ///tomName = `tomName;
+        symbolName = `tomName;
+        var_x = `x;
+        var_y = `y;
       }
     }
     BQTermList getTermArgs = `concBQTerm(tempSol,alpha,subject);        
-    TomType subtermType = getCompiler().getTermTypeFromTerm(`x);
-
+    TomType subtermType = getCompiler().getTermTypeFromTerm(var_x);
+    TomType booleanType = symbolTable.getBooleanType();
+/*
     Expression reinitializationLoopCond = `And(
         GreaterThan(
           BQTermToExpression(position),
@@ -519,10 +521,27 @@ public class ConstraintGenerator {
     symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
     symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
     symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
+*/
+    
+    Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(length,alpha,tempSol)));
+
+    Instruction instruction = `DoWhile(
+          LetRef(var_x,
+            BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
+            LetRef(var_y,
+              BQTermToExpression(FunctionCall(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + symbolName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
+              action
+            )
+          ), whileCond);
+
+    instruction = `LetRef(position,SubstractOne(length),instruction);
+    instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
+    instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
+    instruction = `LetRef(alpha,BQTermToExpression(FunctionCall(
+            Name(ConstraintGenerator.multiplicityFuncName + "_" + symbolName),
+            intArrayType,concBQTerm(subject))),instruction);
 
     return instruction;
   }
-
-
 
 }

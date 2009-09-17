@@ -77,7 +77,8 @@ public class ACGenerator implements IBaseGenerator {
   // If we find ConstraintToExpression it means that this constraint was not processed	
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
-      ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
+      // old : ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
+      ConstraintToExpression(MatchConstraint(pattern@RecordAppl[Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
 
         if(TomBase.hasTheory(`pattern,`AC())) {
           // TODO - generate all the functions
@@ -86,7 +87,5 @@ public class ACGenerator implements IBaseGenerator {
       }
     } // end visit
   } // end strategy  
-
-
 
 }

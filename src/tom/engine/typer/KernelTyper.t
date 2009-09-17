@@ -65,7 +65,6 @@ public class KernelTyper {
     is_sort(t) { ($t instanceof KernelTyper) }
   }
 
-  /** few attributes */
   private TypeConstraintList constraintsToTypeVariable = `concTypeConstraint();
   private SymbolTable symbolTable;
   private int freshTypeVarCounter = 0;
@@ -74,13 +73,25 @@ public class KernelTyper {
     super();
   }
 
-  /** Accessor methods */
   public SymbolTable getSymbolTable() {
     return this.symbolTable;
   }
 
   public void setSymbolTable(SymbolTable newSymbolTable) {
     this.symbolTable = newSymbolTable;
+  }
+
+  public TomSymbol getSymbolFromName(String tomName) {
+    return TomBase.getSymbolFromName(tomName, getSymbolTable());
+  }
+
+  /*public*/ protected TomSymbol getSymbolFromType(TomType type) {
+    %match(type) {
+      TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
+        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+      }
+    }
+    return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
 
   public TomType getFreshTypeVar() {
@@ -95,19 +106,6 @@ public class KernelTyper {
     TypeConstraintList auxList = this.constraintsToTypeVariable;
     this.constraintsToTypeVariable=
       `concTypeConstraint(newConstraint,auxList*); 
-  }
-
-  public TomSymbol getSymbolFromName(String tomName) {
-    return TomBase.getSymbolFromName(tomName, getSymbolTable());
-  }
-
-  public TomSymbol getSymbolFromType(TomType type) {
-    %match(type) {
-      TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
-      }
-    }
-    return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
 
   /*

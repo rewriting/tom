@@ -77,9 +77,9 @@ public class Compiler extends TomGenericPlugin {
   public CompilerEnvironment getCompilerEnvironment() {
     return compilerEnvironment;
   }
-  
+
   private class CompilerEnvironment {
-    
+
     /** few attributes */
     private SymbolTable symbolTable;
     private TomNumberList rootpath = null;
@@ -99,6 +99,13 @@ public class Compiler extends TomGenericPlugin {
       super();
       this.constraintPropagator = new ConstraintPropagator(Compiler.this); 
       this.constraintGenerator = new ConstraintGenerator(Compiler.this); 
+    }
+
+    public void nextMatch() {
+      matchNumber++;
+      rootpath = `concTomNumber(MatchNumber(matchNumber));
+      freshSubjectCounter=0;
+      freshVarCounter=0;
     }
 
     /** Accessor methods */
@@ -122,22 +129,22 @@ public class Compiler extends TomGenericPlugin {
       return this.matchNumber;
     }
 
-    public int getFreshSubjectCounter() {
-      return this.freshSubjectCounter;
+    public int genFreshSubjectCounter() {
+      return this.freshSubjectCounter++;
+    }
+
+    public int genFreshVarCounter() {
+      return this.freshVarCounter++;
     }
 
     public void setFreshSubjectCounter(int freshSubjectCounter) {
       this.freshSubjectCounter = freshSubjectCounter;
     }
 
-    public int getFreshVarCounter() {
-      return this.freshVarCounter;
-    }
-    
     public void setFreshVarCounter(int freshVarCounter) {
       this.freshVarCounter = freshVarCounter;
     }
-   
+
     public ConstraintPropagator getConstraintPropagator() {
       return this.constraintPropagator;
     }
@@ -165,7 +172,7 @@ public class Compiler extends TomGenericPlugin {
     compilerEnvironment = new CompilerEnvironment();
   }
 
- protected static long startChrono = System.currentTimeMillis();
+  protected static long startChrono = System.currentTimeMillis();
   public void run(Map informationTracker) {
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
@@ -173,7 +180,7 @@ public class Compiler extends TomGenericPlugin {
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-       // add the aditional functions needed by the AC operators
+      // add the aditional functions needed by the AC operators
       renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
@@ -187,7 +194,7 @@ public class Compiler extends TomGenericPlugin {
       e.printStackTrace();
     }
   }
-  
+
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
@@ -198,7 +205,7 @@ public class Compiler extends TomGenericPlugin {
     return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
-   // looks for a 'Match' instruction:
+  // looks for a 'Match' instruction:
   // 1. transforms each sequence of patterns into a conjuction of MatchConstraint
   // 2. launch PropagationManager
   // 3. launch PreGenerator
@@ -208,10 +215,7 @@ public class Compiler extends TomGenericPlugin {
   %strategy CompileMatch(compiler:Compiler) extends Identity() {
     visit Instruction {			
       Match(constraintInstructionList, matchOptionList)  -> {
-        compiler.getCompilerEnvironment().matchNumber++;
-        compiler.getCompilerEnvironment().setRootpath(`concTomNumber(MatchNumber(compiler.getCompilerEnvironment().getMatchNumber())));
-        compiler.getCompilerEnvironment().setFreshSubjectCounter(0);
-        compiler.getCompilerEnvironment().setFreshVarCounter(0);
+        compiler.getCompilerEnvironment().nextMatch();
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
         ArrayList<BQTerm> subjectList = new ArrayList<BQTerm>();
@@ -252,7 +256,7 @@ public class Compiler extends TomGenericPlugin {
     }// end visit
   }// end strategy  
 
-   /**
+  /**
    * Takes all MatchConstraints and renames the subjects;
    * (this ensures that the subject is not constructed more than once) 
    * Match(p,s) -> Match(object,s) /\ IsSort(object) /\ Match(freshSubj,Cast(object)) /\ Match(p,freshSubj) 
@@ -279,7 +283,7 @@ public class Compiler extends TomGenericPlugin {
               newConstraint);
         }
         TomNumberList path = compiler.getRootpath();
-        TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + (++(compiler.getCompilerEnvironment().freshSubjectCounter))))));
+        TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
           (BQVariable|BQVariableStar)[AstType=variableType] -> { 
@@ -294,7 +298,7 @@ public class Compiler extends TomGenericPlugin {
             }
           }
         }
-        TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType, concConstraint());
+        TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
         Constraint newConstraint = `constr.setSubject(TomBase.convertFromVarToBQVar(renamedVar));   
@@ -347,14 +351,6 @@ public class Compiler extends TomGenericPlugin {
     return getCompilerEnvironment().getRootpath();
   }
 
-  public int getFreshVarCounter() {
-    return getCompilerEnvironment().getFreshVarCounter();
-  }
-
-  public int getFreshSubjectCounter() {
-    return getCompilerEnvironment().getFreshSubjectCounter();
-  }
-
   public SymbolTable getSymbolTable() {
     return getCompilerEnvironment().getSymbolTable();
   }
@@ -377,37 +373,49 @@ public class Compiler extends TomGenericPlugin {
   public TomType getTermTypeFromTerm(TomTerm tomTerm) {    
     return TomBase.getTermType(tomTerm,getCompilerEnvironment().getSymbolTable());    
   }
-
+ 
   public TomType getTermTypeFromTerm(BQTerm tomTerm) {    
     return TomBase.getTermType(tomTerm,getCompilerEnvironment().getSymbolTable());    
   }
 
   public BQTerm getFreshVariable(TomType type) {
-    return getFreshVariable(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);    
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableName("_"+n,type);
   }
 
   public BQTerm getFreshVariable(String name, TomType type) {
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableName("_"+name+"_"+n,type);
+  }
+
+  private BQTerm getVariableName(String name, TomType type) {
     TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `BQVariable(concOption(),freshVarName,type);
   }
 
   public BQTerm getFreshVariableStar(TomType type) {
-    return getFreshVariableStar(freshVarPrefix + (getCompilerEnvironment().freshVarCounter++), type);
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableStarName("_"+n,type);
   }
 
   public BQTerm getFreshVariableStar(String name, TomType type) {
+    int n = getCompilerEnvironment().genFreshVarCounter();
+    return getVariableStarName("_"+name+"_"+n,type);
+  }
+
+  private BQTerm getVariableStarName(String name, TomType type) {
     TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `BQVariableStar(concOption(),freshVarName,type);
+    TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `BQVariable(concOption(),freshVarName,type);
   }
 
   public BQTerm getBeginVariableStar(TomType type) {
-    return getFreshVariableStar(freshBeginPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+    return getFreshVariableStar(freshBeginPrefix,type);
   }
 
   public BQTerm getEndVariableStar(TomType type) {
-    return getFreshVariableStar(freshEndPrefix + (getCompilerEnvironment().freshVarCounter++),type);
+    return getFreshVariableStar(freshEndPrefix,type);
   }
 
   /*
@@ -445,11 +453,19 @@ public class Compiler extends TomGenericPlugin {
   }
 
   /******************************************************************************/
-  
+
   /**
    * AC methods
+   * TODO:
+   *   DONE: generate correct code for f(X,Y) << f() [empty case]
+   *   DONE: generate correct code for f(X,Y) << f(a()) [singleton case]
+   *   the AC match is OK only for Gom data-structure with AC hook
+   *   make it work with FL hook
+   *   adapt compiler for %oparray mapping (and not just %oplist mapping)
+   *   fix the inliner (some code is not generated because a GetHead is used before its definition)
    */
-  
+
+  private static String next_minimal_extract = null;
   /**
    * Adds the necessary functions to the ADT of the program
    * 
@@ -464,7 +480,6 @@ public class Compiler extends TomGenericPlugin {
     CodeList l = `concCode();
     for(String op:bag) {
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
-      if(getSymbolTable().isUsedSymbolConstructor(op)) {
         // gen all
         TomType opType = opSymbol.getTypesToType().getCodomain();        
         // 1. computeLength
@@ -473,14 +488,32 @@ public class Compiler extends TomGenericPlugin {
         l = `concCode(DeclarationToCode(getPILforGetMultiplicities(op,opType)),l*);
         // 3. getTerm        
         l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
+        // 4. next_minimal_extract
+        if(next_minimal_extract==null) {
+          next_minimal_extract = %[
+            public boolean next_minimal_extract(int total, int E[], int sol[]) {
+              int multiplicity=1;
+              int pos = total-1;
+              while(pos>=0 && sol[pos]==E[pos]) {
+                sol[pos]=0;
+                pos--;
+              }
+              if(pos<0) {
+                return false;
+              }
+              sol[pos]+=multiplicity;
+              return true;
+            }
+          ]%;
+          l = `concCode(TargetLanguageToCode(ITL(next_minimal_extract)),l*);
+        }
       }
-    }
-    // make sure the variables are correctly defined
-    l = PostGenerator.changeVarDeclarations(`l);
-    subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
-    return subject;
+      // make sure the variables are correctly defined
+      l = PostGenerator.changeVarDeclarations(`l);
+      subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
+      return subject;
   }
-  
+
   %strategy CollectACSymbols(HashSet bag) extends Identity() {
     visit TomTerm {
       RecordAppl[NameList=(Name(headName),_*),Option=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
@@ -498,7 +531,7 @@ public class Compiler extends TomGenericPlugin {
       }
     }
   }
-  
+
   /**
    *    // Generates the PIL for the following function (used by the AC algorithm)
    * 
@@ -546,55 +579,57 @@ public class Compiler extends TomGenericPlugin {
     TomType intArrayType = getSymbolTable().getIntArrayType();
     // the name of the int[] operator
     TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());    
-    
+
     BQTerm subject = `BQVariable(concOption(),Name("subject"),opType);
     BQTerm length = getFreshVariable("length",intType);
     BQTerm mult = getFreshVariable("mult",intArrayType);
     BQTerm oldElem = `BQVariable(concOption(),Name("oldElem"),opType);
-    
+
     TomName opName = `Name(opNameString);
     Instruction ifList = `If(IsFsym(opName,subject),
         LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
         AbstractBlock(concInstruction(
             AssignArray(mult,ExpressionToBQTerm(Integer(0)),Integer(1)), 
             Return(mult))));
-    
+
     // the two ifs
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);
     BQTerm counter = `BQVariable(concOption(),Name("counter"),getSymbolTable().getIntType());
-    
+
     Instruction ifAnotherElem = `If(EqualBQTerm(opType, elem, oldElem),
         AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
         LetRef(counter,AddOne(counter),LetRef(oldElem,BQTermToExpression(elem),AssignArray(mult, counter, Integer(1)))));
-    
+
     Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
         If(EqualBQTerm(opType, subject, oldElem),
-            AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
-            LetRef(counter,AddOne(counter),AssignArray(mult,counter,Integer(1)))),
-      Nop());
-    
+          AssignArray(mult,counter,AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,mult,counter)))),
+          LetRef(counter,AddOne(counter),AssignArray(mult,counter,Integer(1)))),
+        Nop());
+
     Instruction whileBlock = `UnamedBlock(concInstruction(
-        LetRef(elem,GetHead(opName,opType,subject),ifAnotherElem),
-        AbstractBlock(concInstruction(
-        Assign(subject,GetTail(opName,subject)),
-        ifEndList)))); // subject is the method's argument     
-    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
-         
+          LetRef(elem,GetHead(opName,opType,subject),ifAnotherElem),
+          AbstractBlock(concInstruction(
+              Assign(subject,GetTail(opName,subject)),
+              ifEndList)))); // subject is the method's argument     
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(opName)));
+    Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
+    //old : Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+
     // var declarations + ifList + counter declaration + the while + return
     Instruction functionBody = `LetRef(length, BQTermToExpression(FunctionCall(
-        Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
-        intType,concBQTerm(subject))),
+            Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+            intType,concBQTerm(subject))),
         LetRef(mult,BQTermToExpression(BuildEmptyArray(intArrayName,length)),
-            LetRef(oldElem,Bottom(opType),
-                UnamedBlock(concInstruction(
-                    ifList,
-                    LetRef(counter,Integer(0),whileLoop),
-                    Return(mult))))));
-    
-    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_"+opNameString),
+          LetRef(oldElem,Bottom(opType),
+            UnamedBlock(concInstruction(
+                ifList,
+                LetRef(counter,Integer(0),whileLoop),
+                Return(mult))))));
+
+    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_" + opNameString),
         concBQTerm(subject),intArrayType,EmptyType(),functionBody);
   }
-  
+
   /**
    * // Generates the PIL for the following function (used by the AC algorithm)
    * 
@@ -630,36 +665,38 @@ public class Compiler extends TomGenericPlugin {
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);    
     // test if a new element
     Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)), UnamedBlock(concInstruction(
-        LetRef(counter,AddOne(counter),LetRef(old,BQTermToExpression(elem),Nop())))),Nop());    
+            LetRef(counter,AddOne(counter),LetRef(old,BQTermToExpression(elem),Nop())))),Nop());    
 
     TomName opName = `Name(opNameString);
     // test if end of list
     Instruction isEndList = `If(Negation(IsFsym(opName,subject)), 
         If(Negation(EqualBQTerm(opType,subject,old)),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
-    
+
     Instruction whileBlock = `UnamedBlock(concInstruction(
-        LetRef(elem,GetHead(opName,opType,subject),isNewElem),
-        AbstractBlock(
-          concInstruction(
-            Assign(subject,GetTail(opName,subject)),
-            isEndList))
-        )); // subject is the method's argument    
-    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
-    
+          LetRef(elem,GetHead(opName,opType,subject),isNewElem),
+          AbstractBlock(
+            concInstruction(
+              Assign(subject,GetTail(opName,subject)),
+              isEndList))
+          )); // subject is the method's argument    
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,subject,BuildEmptyList(opName)));
+    Instruction whileLoop = `WhileDo(And(IsFsym(opName,subject),notEmptySubj),whileBlock);
+    //old : Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+
     // test if subj is consOpName
     Instruction isConsOpName = `If(Negation(IsFsym(opName,subject)),Return(ExpressionToBQTerm(Integer(1))),Nop());
-    
+
     Instruction functionBody = `UnamedBlock(concInstruction(
-        isConsOpName,
-        LetRef(old,Bottom(opType),LetRef(counter,Integer(0),
-            UnamedBlock(concInstruction(
-                whileLoop,
-                Return(counter)))))));
-        
-    return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName+"_"+opNameString),
+          isConsOpName,
+          LetRef(old,Bottom(opType),LetRef(counter,Integer(0),
+              UnamedBlock(concInstruction(
+                  whileLoop,
+                  Return(counter)))))));
+
+    return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
         concBQTerm(subject),getSymbolTable().getIntType(),EmptyType(),functionBody);
   }  
-  
+
   /**
    * Generates the PIL for the following function (used by the AC algorithm):
    * (tempSol contains the multiplicities of the elements of the current solution, 
@@ -710,74 +747,73 @@ public class Compiler extends TomGenericPlugin {
    */
   private Declaration getPILforGetTermForMultiplicity(String opNameString, TomType opType) {
 
-      TomType intArrayType = getSymbolTable().getIntArrayType();
-      TomType boolType = getSymbolTable().getBooleanType();
-      TomType intType = getSymbolTable().getIntType();
-            
-      // the variables      
-      BQTerm tempSol = `BQVariable(concOption(),Name("tempSol"),intArrayType);      
-      BQTerm subject = `BQVariable(concOption(),Name("subject"),opType);
-      BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);
-      
-      BQTerm elemCounter = `BQVariable(concOption(),Name("elemCounter"),intType);
-            
-      // test if subj is consOpName
-      TomName opName = `Name(opNameString);
-      Instruction isConsOpName = `If(IsFsym(opName,subject),
-          AbstractBlock(concInstruction(
+    TomType intArrayType = getSymbolTable().getIntArrayType();
+    TomType boolType = getSymbolTable().getBooleanType();
+    TomType intType = getSymbolTable().getIntType();
+
+    // the variables      
+    BQTerm tempSol = `BQVariable(concOption(),Name("tempSol"),intArrayType);      
+    BQTerm subject = `BQVariable(concOption(),Name("subject"),opType);
+    BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);
+
+    BQTerm elemCounter = `BQVariable(concOption(),Name("elemCounter"),intType);
+
+    // test if subj is consOpName
+    TomName opName = `Name(opNameString);
+    Instruction isConsOpName = `If(IsFsym(opName,subject),
+        AbstractBlock(concInstruction(
             Assign(elem,GetHead(opName,opType,subject)),
             Assign(subject,GetTail(opName,subject))
             )),
-          AbstractBlock(concInstruction(
-              Assign(elem,BQTermToExpression(subject)),
-              Assign(subject,BQTermToExpression(BuildEmptyList(opName))))));
-      BQTerm tempSolIndex = `BQVariable(concOption(),Name("tempSolIndex"),intType);
-      BQTerm old = `BQVariable(concOption(),Name("old"),opType);
-      Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)),
-          AbstractBlock(concInstruction(
-              Assign(tempSolIndex,AddOne(tempSolIndex)),
-              Assign(old,BQTermToExpression(elem)),
-              Assign(elemCounter,Integer(0)))),
-          Nop());  
-      // the if for the complement
-      BQTerm tempSolVal = `BQVariable(concOption(),Name("tempSolVal"),intType);
-      BQTerm alpha = `BQVariable(concOption(),Name("alpha"),intArrayType); 
-      BQTerm isComplement = `BQVariable(concOption(),Name("isComplement"),boolType);
-      TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());
-      Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,TruePattern()),
-          Assign(tempSolVal,
-                    Substract(ExpressionToBQTerm(GetElement(intArrayName,intType,alpha,tempSolIndex)),
-                              tempSolVal)),
-          Nop());
-      
-      // if (tempSolVal != 0 && elemCounter < tempSolVal)      
-      Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,IntegerPattern(0))),
-              LessThan(BQTermToExpression(elemCounter),BQTermToExpression(tempSolVal)));
-      BQTerm result = `BQVariable(concOption(),Name("result"),opType);
-      Instruction ifTakeElem = `If(ifCond,
-          AbstractBlock(concInstruction(
-              Assign(result,BQTermToExpression(BuildAppendList(opName,result,elem))),
-              Assign(elemCounter,AddOne(elemCounter)))),
-          Nop());
-      //declaration of tempSolVal      
-      Instruction tempSolValBlock = `LetRef(tempSolVal,
-              GetElement(intArrayName,intType,tempSol,tempSolIndex),
-              UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
-      // the while
-      Expression notEmptySubj = `Negation(EqualBQTerm(opType,BuildEmptyList(opName), subject));
-      Instruction whileBlock = `UnamedBlock(concInstruction(
-              isConsOpName,isNewElem,tempSolValBlock));                  
-      Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);
-         
-      Instruction functionBody = `LetRef(result,BQTermToExpression(BuildEmptyList(opName)),
-                                      LetRef(old,Bottom(opType),
-                                          LetRef(elem,Bottom(opType),
-                                              LetRef(elemCounter,Integer(0),
-                                                   LetRef(tempSolIndex,Integer(-1),
-                                                       UnamedBlock(concInstruction(whileLoop,Return(result)))))))); 
-   
-      return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
-              concBQTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
-  } 
+        AbstractBlock(concInstruction(
+            Assign(elem,BQTermToExpression(subject)),
+            Assign(subject,BQTermToExpression(BuildEmptyList(opName))))));
+    BQTerm tempSolIndex = `BQVariable(concOption(),Name("tempSolIndex"),intType);
+    BQTerm old = `BQVariable(concOption(),Name("old"),opType);
+    Instruction isNewElem = `If(Negation(EqualBQTerm(opType,elem,old)),
+        AbstractBlock(concInstruction(
+            Assign(tempSolIndex,AddOne(tempSolIndex)),
+            Assign(old,BQTermToExpression(elem)),
+            Assign(elemCounter,Integer(0)))),
+        Nop());  
+    // the if for the complement
+    BQTerm tempSolVal = `BQVariable(concOption(),Name("tempSolVal"),intType);
+    BQTerm alpha = `BQVariable(concOption(),Name("alpha"),intArrayType); 
+    BQTerm isComplement = `BQVariable(concOption(),Name("isComplement"),boolType);
+    TomName intArrayName = `Name(getSymbolTable().getIntArrayOp());
+    Instruction ifIsComplement = `If(EqualTerm(boolType,isComplement,TruePattern()),
+        Assign(tempSolVal,
+          Substract(ExpressionToBQTerm(GetElement(intArrayName,intType,alpha,tempSolIndex)),
+            tempSolVal)),
+        Nop());
 
+    // if (tempSolVal != 0 && elemCounter < tempSolVal)      
+    Expression ifCond = `And(Negation(EqualTerm(intType,tempSolVal,IntegerPattern(0))),
+        LessThan(BQTermToExpression(elemCounter),BQTermToExpression(tempSolVal)));
+    BQTerm result = `BQVariable(concOption(),Name("result"),opType);
+    Instruction ifTakeElem = `If(ifCond,
+        AbstractBlock(concInstruction(
+            Assign(result,BQTermToExpression(BuildAppendList(opName,result,elem))),
+            Assign(elemCounter,AddOne(elemCounter)))),
+        Nop());
+    //declaration of tempSolVal      
+    Instruction tempSolValBlock = `LetRef(tempSolVal,
+        GetElement(intArrayName,intType,tempSol,tempSolIndex),
+        UnamedBlock(concInstruction(ifIsComplement,ifTakeElem)));
+    // the while
+    Expression notEmptySubj = `Negation(EqualBQTerm(opType,BuildEmptyList(opName), subject));
+    Instruction whileBlock = `UnamedBlock(concInstruction(
+          isConsOpName,isNewElem,tempSolValBlock));                  
+    Instruction whileLoop = `WhileDo(notEmptySubj,whileBlock);
+
+    Instruction functionBody = `LetRef(result,BQTermToExpression(BuildEmptyList(opName)),
+        LetRef(old,Bottom(opType),
+          LetRef(elem,Bottom(opType),
+            LetRef(elemCounter,Integer(0),
+              LetRef(tempSolIndex,Integer(-1),
+                UnamedBlock(concInstruction(whileLoop,Return(result)))))))); 
+
+    return `MethodDef(Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + opNameString),
+        concBQTerm(tempSol,alpha,subject,isComplement),opType,EmptyType(),functionBody);
+  } 
 }
