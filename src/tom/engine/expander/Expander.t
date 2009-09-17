@@ -166,7 +166,7 @@ public class Expander extends TomGenericPlugin {
 
   %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
     visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> { //t@(BQVariable|BQVariableStar|RecordAppl)[] -> {   ???
+      t@(BQVariable|BQVariableStar)[] -> {
         return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
       }
     }
@@ -320,7 +320,7 @@ matchBlock: {
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
-                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
                         if(TomBase.isListOperator(symbol)) {
                           Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("};")))));
                           //default case (used for builtins too)                     
