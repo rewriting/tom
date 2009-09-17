@@ -320,15 +320,66 @@ matchBlock: {
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
-                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain,Codomain=codomain]] -> {
                         if(TomBase.isListOperator(symbol)) {
-                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("return new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("};")))));
+                          Instruction return_array = `CodeToInstruction(BQTermToCode(Composite(
+                                  CompositeTL(ITL("return new Object[]{")),
+                                  CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),
+                                  CompositeTL(ITL(",")),
+                                  CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),
+                                  CompositeTL(ITL("};"))
+                                  )));
                           //default case (used for builtins too)                     
                           Instruction return_emptyArray = `CodeToInstruction(TargetLanguageToCode(ITL("return new Object[]{};")));
                           Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),return_emptyArray,return_array),Nop());
                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO
+                          // we consider that the children of the array are the first element and the tail
+
+                          Instruction array = `CodeToInstruction(BQTermToCode(Composite(CompositeTL(ITL("new Object[]{")),CompositeBQTerm(ExpressionToBQTerm(GetHead(symbolName,domain.getHeadconcTomType(),var))),CompositeTL(ITL(",")),CompositeBQTerm(ExpressionToBQTerm(GetTail(symbolName,var))),CompositeTL(ITL("}")))));
+                          //default case (used for builtins too)                     
+                          BQTerm emptyArray = `Composite(CompositeTL(ITL("new Object[]{}")));
+//`CodeToInstruction(TargetLanguageToCode(ITL("new Object[]{}")));
+                          BQTerm tail = `BQVariable(concOption(),Name("tail"),codomain);
+
+                          CodeList result = `concCode(BQTermToCode(Composite(
+                                  CompositeTL(ITL("new Object[]{")),
+                                  CompositeBQTerm(ExpressionToBQTerm(GetElement(symbolName,codomain,var,ExpressionToBQTerm(Integer(0))))),
+                                  CompositeTL(ITL(",")),
+                                  CompositeBQTerm(tail),
+                                  CompositeTL(ITL("}"))
+                                  )));
+
+                          //Return(ExpressionToBQTerm(TomInstructionToExpression(emptyArray))),
+                          Instruction inst = 
+                            `If(IsFsym(symbolName,var),
+                                If(IsEmptyArray(symbolName,var,ExpressionToBQTerm(Integer(0))),
+                                  Return(emptyArray),
+                                  LetRef(
+                                    intVar,
+                                    Integer(1),
+                                    LetRef(
+                                      tail,
+                                      BQTermToExpression(
+                                        BuildEmptyArray(
+                                          symbolName,
+                                          ExpressionToBQTerm(SubstractOne(ExpressionToBQTerm(GetSize(symbolName,var)))))
+                                        ),
+                                      AbstractBlock(concInstruction(
+                                          WhileDo(
+                                            LessThan(BQTermToExpression(intVar),GetSize(symbolName,var)),
+                                            AbstractBlock(concInstruction(
+                                                Assign(tail, BQTermToExpression(BuildConsArray(symbolName,ExpressionToBQTerm(GetElement(symbolName,codomain,var,intVar)),tail))),
+                                                Assign(intVar, AddOne(intVar))
+                                                ))
+                                            ),
+                                          Return(ExpressionToBQTerm(TomInstructionToExpression(CodeToInstruction(Tom(result)))))
+                                          ))))
+                                    ), 
+                                    Nop());
+                          instructionsForSort = `concInstruction(instructionsForSort*,inst);
+
                         } else {
                           int arity = TomBase.getArity(symbol);
                           BQTerm composite = `Composite(CompositeTL(ITL("return new Object[]{")));
@@ -403,6 +454,23 @@ matchBlock: {
                           }
                         } else if (TomBase.isArrayOperator(symbol)) {
                           //TODO 
+                          %match(TypesToType) {
+                            TypesToType[Domain=concTomType(domain)] -> {
+                              Instruction inst = 
+                                `If(IsFsym(symbolName,var),
+                                    If(BQTermToExpression(Composite(CompositeTL(ITL("children.length==0")))),
+                                      Return(BuildEmptyArray(symbolName,ExpressionToBQTerm(Integer(0)))),
+                                      Return(BuildConsArray(
+                                          symbolName,
+                                          ExpressionToBQTerm(Cast(domain,BQTermToExpression(Composite(CompositeTL(ITL("children[0]")))))),
+                                          ExpressionToBQTerm(Cast(type,BQTermToExpression(Composite(CompositeTL(ITL("children[1]"))))))
+                                          ))
+                                      ),
+                                    Nop());
+                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                            }
+                          }
+
                         } else {
                           int arity = TomBase.getArity(symbol);
                           BQTermList slots = `concBQTerm();
