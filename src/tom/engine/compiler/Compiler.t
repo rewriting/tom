@@ -407,7 +407,7 @@ public class Compiler extends TomGenericPlugin {
   private BQTerm getVariableStarName(String name, TomType type) {
     TomNumberList path = getRootpath();
     TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
-    return `BQVariable(concOption(),freshVarName,type);
+    return `BQVariableStar(concOption(),freshVarName,type);
   }
 
   public BQTerm getBeginVariableStar(TomType type) {
