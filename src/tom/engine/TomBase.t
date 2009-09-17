@@ -270,7 +270,7 @@ public final class TomBase {
 
   // ------------------------------------------------------------
   /**
-   * Collects the variables athat appears in a term
+   * Collects the variables that appears in a term
    * @param collection the bag which collect the results
    * @param subject the term to traverse
    */

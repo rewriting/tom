@@ -476,42 +476,47 @@ public class Compiler extends TomGenericPlugin {
     // used when the loop was generated
     HashSet<String> bag = new HashSet<String>();
     `TopDown(CollectACSymbols(bag)).visitLight(subject);
-
+    if (! bag.isEmpty()) {
+      //force the use of the concInt operator
+      //TODO: should work without this code
+      getSymbolTable().setUsedSymbolConstructor(getSymbolTable().getIntArrayOp());
+      getSymbolTable().setUsedSymbolDestructor(getSymbolTable().getIntArrayOp());
+    }
     CodeList l = `concCode();
     for(String op:bag) {
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
-        // gen all
-        TomType opType = opSymbol.getTypesToType().getCodomain();        
-        // 1. computeLength
-        l = `concCode(DeclarationToCode(getPILforComputeLength(op,opType)),l*);
-        // 2. getMultiplicities
-        l = `concCode(DeclarationToCode(getPILforGetMultiplicities(op,opType)),l*);
-        // 3. getTerm        
-        l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
-        // 4. next_minimal_extract
-        if(next_minimal_extract==null) {
-          next_minimal_extract = %[
-            public boolean next_minimal_extract(int total, int E[], int sol[]) {
-              int multiplicity=1;
-              int pos = total-1;
-              while(pos>=0 && sol[pos]==E[pos]) {
-                sol[pos]=0;
-                pos--;
-              }
-              if(pos<0) {
-                return false;
-              }
-              sol[pos]+=multiplicity;
-              return true;
+      // gen all
+      TomType opType = opSymbol.getTypesToType().getCodomain();        
+      // 1. computeLength
+      l = `concCode(DeclarationToCode(getPILforComputeLength(op,opType)),l*);
+      // 2. getMultiplicities
+      l = `concCode(DeclarationToCode(getPILforGetMultiplicities(op,opType)),l*);
+      // 3. getTerm        
+      l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
+      // 4. next_minimal_extract
+      if(next_minimal_extract==null) {
+        next_minimal_extract = %[
+          public boolean next_minimal_extract(int total, int E[], int sol[]) {
+            int multiplicity=1;
+            int pos = total-1;
+            while(pos>=0 && sol[pos]==E[pos]) {
+              sol[pos]=0;
+              pos--;
             }
-          ]%;
-          l = `concCode(TargetLanguageToCode(ITL(next_minimal_extract)),l*);
-        }
+            if(pos<0) {
+              return false;
+            }
+            sol[pos]+=multiplicity;
+            return true;
+          }
+        ]%;
+        l = `concCode(TargetLanguageToCode(ITL(next_minimal_extract)),l*);
       }
-      // make sure the variables are correctly defined
-      l = PostGenerator.changeVarDeclarations(`l);
-      subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
-      return subject;
+    }
+    // make sure the variables are correctly defined
+    l = PostGenerator.changeVarDeclarations(`l);
+    subject = `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
+    return subject;
   }
 
   %strategy CollectACSymbols(HashSet bag) extends Identity() {
