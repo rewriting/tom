@@ -1,3 +1,9 @@
+2009-09-17 balland
+ * merge with wtjtom branch
+ * major improvements in the compiler adts
+ (in particular, different types for backquote terms and patterns)
+ * bootstrap
+
 2009-09-16 balland
  * remove verifier
 
