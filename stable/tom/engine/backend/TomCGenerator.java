@@ -41,6 +41,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
@@ -87,33 +88,6 @@ public class TomCGenerator extends TomCFamilyGenerator {
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    if(TomBase.isDefinedSymbol(tomSymbol)) {
-        // TODO: build an abstract declaration
-      int argno=1;
-      output.indent(deep);
-      if(!l.isEmptyconcTomType()) {
-        output.write(TomBase.getTLType(type1));
-        output.writeSpace();
-        output.write(name1);
-        if(!l.isEmptyconcTomType()) {
-          output.writeOpenBrace();
-          while (!l.isEmptyconcTomType()) {
-            output.write(TomBase.getTLType(l.getHeadconcTomType()));
-              //out.writeUnderscore();
-              //out.write(argno);
-            argno++;
-            l = l.getTailconcTomType() ;
-            if(!l.isEmptyconcTomType()) {
-              output.writeComa();
-            }
-          }
-          output.writeCloseBrace();
-          output.writeSemiColon();
-        }
-      }
-      output.writeln();
-    } 
-
     // inspect the optionList
     generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
@@ -199,8 +173,7 @@ public class TomCGenerator extends TomCFamilyGenerator {
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    System.out.println("Function not yet supported in Caml");
-    throw new TomRuntimeException("Function not yet supported in Caml");
+  protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    throw new TomRuntimeException("Function not yet supported in C");
   }
 } // class TomCGenerator

@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
@@ -105,7 +106,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, BQTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList<String> names = new ArrayList<String>();
@@ -121,10 +122,10 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch55NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;if ( (tomMatch55NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {if ( "Strategy".equals( tomMatch55NameNumber_freshVar_1.getString() ) ) {
+      {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( "Strategy".equals( (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ) ) {
 
           stratChild.add(Integer.valueOf(index));
-        }}}}}}
+        }}}}}
 
 
 	    tomTypes = tomTypes.getTailconcTomType();
@@ -132,10 +133,10 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.TomTypeAlone) ) {
+		{{if ( (extendsType instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )extendsType) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )extendsType).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
 
-				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getString() );
-			}}}}
+				output.write(deep," : " +  (( tom.engine.adt.tomtype.types.TomType )extendsType).getTomType() );
+			}}}}}
 
     output.write(deep," {");
     int args = names.size();
@@ -156,7 +157,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 
     //write constructor initialization
     output.write(deep,") : base(");
-    generate(deep,superTerm,moduleName);
+    generateBQTerm(deep,superTerm,moduleName);
     output.write(deep,") {");
 
     //here index represents the parameter number
@@ -222,33 +223,33 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.write(deep,"}");
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
   }
 
-  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+  protected void buildMethodDef(int deep, String tomName, BQTermList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
   }
 
-  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+  private void buildMethod(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.write(deep, methodModifier + TomBase.getTLType(codomain) + " " + tomName + "(");
-    while(!varList.isEmptyconcTomTerm()) {
-      TomTerm localVar = varList.getHeadconcTomTerm();
+    while(!varList.isEmptyconcBQTerm()) {
+      BQTerm localVar = varList.getHeadconcBQTerm();
       matchBlock: {
-        {{if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )localVar) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+        {{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )localVar) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
 
-            output.write(deep,TomBase.getTLType( (( tom.engine.adt.tomterm.types.TomTerm )localVar).getAstType() ) + " ");
-            generate(deep,(( tom.engine.adt.tomterm.types.TomTerm )localVar),moduleName);
+            output.write(deep,TomBase.getTLType( (( tom.engine.adt.code.types.BQTerm )localVar).getAstType() ) + " ");
+            generateBQTerm(deep,(( tom.engine.adt.code.types.BQTerm )localVar),moduleName);
             break matchBlock;
-          }}}{if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {
+          }}}{if ( (localVar instanceof tom.engine.adt.code.types.BQTerm) ) {
 
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
           }}}
 
       }
-      varList = varList.getTailconcTomTerm();
-      if(!varList.isEmptyconcTomTerm()) {
+      varList = varList.getTailconcBQTerm();
+      if(!varList.isEmptyconcBQTerm()) {
         output.write(deep,", ");
 
       }
@@ -256,7 +257,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln(deep,")");
 /*
     %match(TomType throwsType){
-      TomTypeAlone(throws) -> {
+      Type(throws,EmptyType()) -> {
         output.write(deep," throws " + `throws);
       }
     }

@@ -47,6 +47,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
@@ -124,11 +125,11 @@ public class TomBackend extends TomGenericPlugin {
             throw new TomRuntimeException("no selected language for the Backend");
           }
 
-          TomTerm pilCode = (TomTerm) getWorkingTerm();
+          Code pilCode = (Code) getWorkingTerm();
 
           markUsedConstructorDestructor(pilCode);
 
-          generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
+          generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
           getLogger().log(Level.INFO,
               TomMessage.tomGenerationPhase.getMessage(),
@@ -222,7 +223,7 @@ public class TomBackend extends TomGenericPlugin {
 
 
 
-  private void markUsedConstructorDestructor(TomTerm pilCode) {
+  private void markUsedConstructorDestructor(Code pilCode) {
     Stack<String> stack = new Stack<String>();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {
@@ -292,7 +293,7 @@ public class TomBackend extends TomGenericPlugin {
 
         markStrategy.visitLight( (( tom.engine.adt.tominstruction.types.Instruction )tom__arg).getAstInstruction() );
         throw new tom.library.sl.VisitFailure();
-      }}}}return _visit_Instruction(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {boolean tomMatch47NameNumber_freshVar_5= false ; tom.engine.adt.tomname.types.TomName  tomMatch47NameNumber_freshVar_1= null ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyList) ) {{tomMatch47NameNumber_freshVar_5= true ;tomMatch47NameNumber_freshVar_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyArray) ) {{tomMatch47NameNumber_freshVar_5= true ;tomMatch47NameNumber_freshVar_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {{tomMatch47NameNumber_freshVar_5= true ;tomMatch47NameNumber_freshVar_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {{tomMatch47NameNumber_freshVar_5= true ;tomMatch47NameNumber_freshVar_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}}}}}if ((tomMatch47NameNumber_freshVar_5 ==  true )) {if ( (tomMatch47NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}}return _visit_Instruction(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {boolean tomMatch57_5= false ; tom.engine.adt.tomname.types.TomName  tomMatch57_1= null ;if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyList) ) {{tomMatch57_5= true ;tomMatch57_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsEmptyArray) ) {{tomMatch57_5= true ;tomMatch57_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {{tomMatch57_5= true ;tomMatch57_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {{tomMatch57_5= true ;tomMatch57_1= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getOpname() ;}}}}}if (tomMatch57_5) {if ( (tomMatch57_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
 
@@ -301,40 +302,40 @@ public class TomBackend extends TomGenericPlugin {
           // System.out.println("list check: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch47NameNumber_freshVar_1.getString() ,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch57_1.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) { tom.engine.adt.tomname.types.TomName  tomMatch47NameNumber_freshVar_7= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getAstName() ;if ( (tomMatch47NameNumber_freshVar_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )tom__arg) instanceof tom.engine.adt.tomexpression.types.expression.IsFsym) ) { tom.engine.adt.tomname.types.TomName  tomMatch57_7= (( tom.engine.adt.tomexpression.types.Expression )tom__arg).getAstName() ;if ( (tomMatch57_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
         try {
           // System.out.println("list check: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch47NameNumber_freshVar_7.getString() ,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch57_7.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}return _visit_Expression(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch48NameNumber_freshVar_1= (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ;if ( (tomMatch48NameNumber_freshVar_1 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {
+      }}}}}return _visit_Expression(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )tom__arg) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
 
 
 
 
         try {
           String moduleName = stack.peek();
-          tb.setUsedType(moduleName, tomMatch48NameNumber_freshVar_1.getString() ,markStrategy);
+          tb.setUsedType(moduleName, (( tom.engine.adt.tomtype.types.TomType )tom__arg).getTomType() ,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}return _visit_TomType(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch49NameNumber_freshVar_3= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch49NameNumber_freshVar_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch49NameNumber_freshVar_3= true ;tomMatch49NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch49NameNumber_freshVar_3= true ;tomMatch49NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;}}}if ((tomMatch49NameNumber_freshVar_3 ==  true )) {
+      }}}}return _visit_TomType(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch59_3= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch59_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch59_3= true ;tomMatch59_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch59_3= true ;tomMatch59_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getNameList() ;}}}if (tomMatch59_3) {
 
 
 
 
-        TomNameList l = tomMatch49NameNumber_freshVar_1;
+        TomNameList l = tomMatch59_1;
         // System.out.println("dest " + `l);
         while(!l.isEmptyconcTomName()) {
           try {
@@ -355,24 +356,27 @@ public class TomBackend extends TomGenericPlugin {
          * therefore, they are marked when traversing the compiledAutomata
          */
         throw new tom.library.sl.VisitFailure();
-      }}}{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch49NameNumber_freshVar_9= false ; tom.engine.adt.tomname.types.TomName  tomMatch49NameNumber_freshVar_5= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildTerm) ) {{tomMatch49NameNumber_freshVar_9= true ;tomMatch49NameNumber_freshVar_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyArray) ) {{tomMatch49NameNumber_freshVar_9= true ;tomMatch49NameNumber_freshVar_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}}}if ((tomMatch49NameNumber_freshVar_9 ==  true )) {if ( (tomMatch49NameNumber_freshVar_5 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}}return _visit_TomTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch60_5= false ; tom.engine.adt.tomname.types.TomName  tomMatch60_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildTerm) ) {{tomMatch60_5= true ;tomMatch60_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) {{tomMatch60_5= true ;tomMatch60_1= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}}}if (tomMatch60_5) {if ( (tomMatch60_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+
+
 
         try {
           // System.out.println("build: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch49NameNumber_freshVar_5.getString() ,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch60_1.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch49NameNumber_freshVar_15= false ; tom.engine.adt.tomname.types.TomName  tomMatch49NameNumber_freshVar_11= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsList) ) {{tomMatch49NameNumber_freshVar_15= true ;tomMatch49NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyList) ) {{tomMatch49NameNumber_freshVar_15= true ;tomMatch49NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendList) ) {{tomMatch49NameNumber_freshVar_15= true ;tomMatch49NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsArray) ) {{tomMatch49NameNumber_freshVar_15= true ;tomMatch49NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendArray) ) {{tomMatch49NameNumber_freshVar_15= true ;tomMatch49NameNumber_freshVar_11= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getAstName() ;}}}}}}if ((tomMatch49NameNumber_freshVar_15 ==  true )) {if ( (tomMatch49NameNumber_freshVar_11 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}}{if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch60_11= false ; tom.engine.adt.tomname.types.TomName  tomMatch60_7= null ;if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) {{tomMatch60_11= true ;tomMatch60_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) {{tomMatch60_11= true ;tomMatch60_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) {{tomMatch60_11= true ;tomMatch60_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) {{tomMatch60_11= true ;tomMatch60_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) {{tomMatch60_11= true ;tomMatch60_7= (( tom.engine.adt.code.types.BQTerm )tom__arg).getAstName() ;}}}}}}if (tomMatch60_11) {if ( (tomMatch60_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
         try {
           // System.out.println("build: " + `name);
           String moduleName = stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch49NameNumber_freshVar_11.getString() ,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName( tomMatch60_7.getString() ,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */
@@ -381,7 +385,7 @@ public class TomBackend extends TomGenericPlugin {
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}return _visit_TomTerm(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_1= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_2= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch50NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_2 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}return _visit_BQTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_1= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tomexpression.types.Expression  tomMatch61_2= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch61_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_2 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
 
@@ -398,92 +402,92 @@ public class TomBackend extends TomGenericPlugin {
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putIsFsym( tomMatch50NameNumber_freshVar_1.getString() , tomMatch50NameNumber_freshVar_2.getCode() );
+          tb.getSymbolTable(moduleName).putIsFsym( tomMatch61_1.getString() , tomMatch61_2.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch50NameNumber_freshVar_9= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg() ; tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_10= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch50NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch50NameNumber_freshVar_12= tomMatch50NameNumber_freshVar_9.getAstType() ;if ( (tomMatch50NameNumber_freshVar_12 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch50NameNumber_freshVar_14= tomMatch50NameNumber_freshVar_12.getTomType() ;if ( (tomMatch50NameNumber_freshVar_14 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {if ( (tomMatch50NameNumber_freshVar_10 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch61_9= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg() ; tom.engine.adt.tomexpression.types.Expression  tomMatch61_10= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch61_9 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch61_12= tomMatch61_9.getAstType() ;if ( (tomMatch61_12 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( (tomMatch61_10 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putIsSort( tomMatch50NameNumber_freshVar_14.getString() , tomMatch50NameNumber_freshVar_10.getCode() );
+          tb.getSymbolTable(moduleName).putIsSort( tomMatch61_12.getTomType() , tomMatch61_10.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch50NameNumber_freshVar_22= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg1() ; tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_23= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch50NameNumber_freshVar_22 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch50NameNumber_freshVar_25= tomMatch50NameNumber_freshVar_22.getAstType() ;if ( (tomMatch50NameNumber_freshVar_25 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch50NameNumber_freshVar_27= tomMatch50NameNumber_freshVar_25.getTomType() ;if ( (tomMatch50NameNumber_freshVar_27 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {if ( (tomMatch50NameNumber_freshVar_23 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl) ) { tom.engine.adt.code.types.BQTerm  tomMatch61_20= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getTermArg1() ; tom.engine.adt.tomexpression.types.Expression  tomMatch61_21= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch61_20 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomtype.types.TomType  tomMatch61_23= tomMatch61_20.getAstType() ;if ( (tomMatch61_23 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( (tomMatch61_21 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putEqualTerm( tomMatch50NameNumber_freshVar_27.getString() , tomMatch50NameNumber_freshVar_23.getCode() );
+          tb.getSymbolTable(moduleName).putEqualTerm( tomMatch61_23.getTomType() , tomMatch61_21.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_35= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_36= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSlotName() ; tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_37= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch50NameNumber_freshVar_35 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_36 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_37 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_31= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tomname.types.TomName  tomMatch61_32= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getSlotName() ; tom.engine.adt.tomexpression.types.Expression  tomMatch61_33= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch61_31 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_32 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_33 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putGetSlot( tomMatch50NameNumber_freshVar_35.getString() , tomMatch50NameNumber_freshVar_36.getString() , tomMatch50NameNumber_freshVar_37.getCode() );
+          tb.getSymbolTable(moduleName).putGetSlot( tomMatch61_31.getString() , tomMatch61_32.getString() , tomMatch61_33.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_46= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch50NameNumber_freshVar_47= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch50NameNumber_freshVar_46 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_47 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_51= tomMatch50NameNumber_freshVar_47.getExpr() ;if ( (tomMatch50NameNumber_freshVar_51 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_42= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch61_43= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch61_42 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_43 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch61_47= tomMatch61_43.getExpr() ;if ( (tomMatch61_47 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putMake( tomMatch50NameNumber_freshVar_46.getString() , tomMatch50NameNumber_freshVar_51.getCode() );
+          tb.getSymbolTable(moduleName).putMake( tomMatch61_42.getString() , tomMatch61_47.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_56= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch50NameNumber_freshVar_57= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch50NameNumber_freshVar_56 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_57 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_61= tomMatch50NameNumber_freshVar_57.getExpr() ;if ( (tomMatch50NameNumber_freshVar_61 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_52= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch61_53= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch61_52 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_53 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch61_57= tomMatch61_53.getExpr() ;if ( (tomMatch61_57 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putMakeEmptyList( tomMatch50NameNumber_freshVar_56.getString() , tomMatch50NameNumber_freshVar_61.getCode() );
+          tb.getSymbolTable(moduleName).putMakeEmptyList( tomMatch61_52.getString() , tomMatch61_57.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_66= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch50NameNumber_freshVar_67= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch50NameNumber_freshVar_66 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_67 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_71= tomMatch50NameNumber_freshVar_67.getExpr() ;if ( (tomMatch50NameNumber_freshVar_71 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddList) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_62= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch61_63= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch61_62 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_63 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch61_67= tomMatch61_63.getExpr() ;if ( (tomMatch61_67 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putMakeAddList( tomMatch50NameNumber_freshVar_66.getString() , tomMatch50NameNumber_freshVar_71.getCode() );
+          tb.getSymbolTable(moduleName).putMakeAddList( tomMatch61_62.getString() , tomMatch61_67.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_76= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch50NameNumber_freshVar_77= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch50NameNumber_freshVar_76 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_77 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_81= tomMatch50NameNumber_freshVar_77.getExpr() ;if ( (tomMatch50NameNumber_freshVar_81 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_72= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch61_73= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch61_72 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_73 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch61_77= tomMatch61_73.getExpr() ;if ( (tomMatch61_77 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putMakeEmptyArray( tomMatch50NameNumber_freshVar_76.getString() , tomMatch50NameNumber_freshVar_81.getCode() );
+          tb.getSymbolTable(moduleName).putMakeEmptyArray( tomMatch61_72.getString() , tomMatch61_77.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_86= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch50NameNumber_freshVar_87= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch50NameNumber_freshVar_86 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_87 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_91= tomMatch50NameNumber_freshVar_87.getExpr() ;if ( (tomMatch50NameNumber_freshVar_91 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.MakeAddArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_82= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getAstName() ; tom.engine.adt.tominstruction.types.Instruction  tomMatch61_83= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getInstr() ;if ( (tomMatch61_82 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_83 instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch61_87= tomMatch61_83.getExpr() ;if ( (tomMatch61_87 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putMakeAddArray( tomMatch50NameNumber_freshVar_86.getString() , tomMatch50NameNumber_freshVar_91.getCode() );
+          tb.getSymbolTable(moduleName).putMakeAddArray( tomMatch61_82.getString() , tomMatch61_87.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch50NameNumber_freshVar_96= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ; tom.engine.adt.tomexpression.types.Expression  tomMatch50NameNumber_freshVar_97= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch50NameNumber_freshVar_96 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch50NameNumber_freshVar_97 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
+      }}}}}}{if ( (tom__arg instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {if ( ((( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg) instanceof tom.engine.adt.tomdeclaration.types.declaration.GetSizeDecl) ) { tom.engine.adt.tomname.types.TomName  tomMatch61_92= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getOpname() ; tom.engine.adt.tomexpression.types.Expression  tomMatch61_93= (( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg).getExpr() ;if ( (tomMatch61_92 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch61_93 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) {
 
 
         try {
           String moduleName = stack.peek();
-          tb.getSymbolTable(moduleName).putGetSizeArray( tomMatch50NameNumber_freshVar_96.getString() , tomMatch50NameNumber_freshVar_97.getCode() );
+          tb.getSymbolTable(moduleName).putGetSizeArray( tomMatch61_92.getString() , tomMatch61_93.getCode() );
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}return _visit_Declaration(tom__arg,introspector); }@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!((environment ==  null ))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);} }@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if (!((environment ==  null ))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);} }}private static  tom.library.sl.Strategy  tom_make_Collector( tom.library.sl.Strategy  t0,  TomBackend  t1,  Stack<String>  t2) { return new Collector(t0,t1,t2);}
+      }}}}}}return _visit_Declaration(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomtype.types.TomType  _visit_TomType( tom.engine.adt.tomtype.types.TomType  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomtype.types.TomType )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomdeclaration.types.Declaration  _visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomdeclaration.types.Declaration )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tominstruction.types.Instruction  _visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tominstruction.types.Instruction )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomexpression.types.Expression  _visit_Expression( tom.engine.adt.tomexpression.types.Expression  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomexpression.types.Expression )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomtype.types.TomType) ) {return ((T)visit_TomType((( tom.engine.adt.tomtype.types.TomType )v),introspector));}if ( (v instanceof tom.engine.adt.tomdeclaration.types.Declaration) ) {return ((T)visit_Declaration((( tom.engine.adt.tomdeclaration.types.Declaration )v),introspector));}if ( (v instanceof tom.engine.adt.tominstruction.types.Instruction) ) {return ((T)visit_Instruction((( tom.engine.adt.tominstruction.types.Instruction )v),introspector));}if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));}if ( (v instanceof tom.engine.adt.tomexpression.types.Expression) ) {return ((T)visit_Expression((( tom.engine.adt.tomexpression.types.Expression )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_Collector( tom.library.sl.Strategy  t0,  TomBackend  t1,  Stack<String>  t2) { return new Collector(t0,t1,t2);}
 
 
 

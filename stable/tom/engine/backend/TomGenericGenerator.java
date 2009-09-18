@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -73,7 +74,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   // ------------------------------------------------------------
-        private static   tom.engine.adt.tomterm.types.TomList  tom_append_list_concTomTerm( tom.engine.adt.tomterm.types.TomList l1,  tom.engine.adt.tomterm.types.TomList  l2) {     if( l1.isEmptyconcTomTerm() ) {       return l2;     } else if( l2.isEmptyconcTomTerm() ) {       return l1;     } else if(  l1.getTailconcTomTerm() .isEmptyconcTomTerm() ) {       return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,l2) ;     } else {       return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( l1.getHeadconcTomTerm() ,tom_append_list_concTomTerm( l1.getTailconcTomTerm() ,l2)) ;     }   }   private static   tom.engine.adt.tomterm.types.TomList  tom_get_slice_concTomTerm( tom.engine.adt.tomterm.types.TomList  begin,  tom.engine.adt.tomterm.types.TomList  end, tom.engine.adt.tomterm.types.TomList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcTomTerm()  ||  (end== tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( begin.getHeadconcTomTerm() ,( tom.engine.adt.tomterm.types.TomList )tom_get_slice_concTomTerm( begin.getTailconcTomTerm() ,end,tail)) ;   }    
+        private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }    
   // ------------------------------------------------------------
 
   /*
@@ -81,7 +82,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * independant of the target language
    */
 
-  protected void buildTerm(int deep, String opname, TomList argList, String moduleName) throws IOException {
+  protected void buildTerm(int deep, String opname, BQTermList argList, String moduleName) throws IOException {
     String prefix = "tom_make_";
     String template = getSymbolTable(moduleName).getMake(opname);
     if(instantiateTemplate(deep,template,argList,moduleName) == false) {
@@ -123,8 +124,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generateExpression(deep,exp2,moduleName);
   }
 
-  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
-    generate(deep,expIndex,moduleName);
+  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, BQTerm expIndex, BQTerm expArray, String moduleName) throws IOException {
+    generateBQTerm(deep,expIndex,moduleName);
     output.write(" >= ");
     {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
@@ -134,9 +135,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String opName = opNameAST.getString();
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(expArray, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(expArray, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_get_size_" + opName+ "_" + sType + "(");
-      generate(deep,expArray,moduleName);
+      generateBQTerm(deep,expArray,moduleName);
       output.write(")");
     }
   }
@@ -146,19 +147,19 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * write the result and returns true if a substitution has been done
    * does nothing and returns false otherwise
    */
-  protected boolean instantiateTemplate(int deep, String template, TomList termList, String moduleName) throws IOException {
+  protected boolean instantiateTemplate(int deep, String template, BQTermList termList, String moduleName) throws IOException {
     if(inline && template != null) {
       OutputCode oldOutput=output;
       String instance = template;
       int index = 0;
-      {{if ( (termList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )termList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )termList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) { tom.engine.adt.tomterm.types.TomList  tomMatch62NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )termList);do {{if (!( tomMatch62NameNumber_end_4.isEmptyconcTomTerm() )) {
+      {{if ( (termList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);do {{if (!( tomMatch73__end__4.isEmptyconcBQTerm() )) {
 
           output = new OutputCode(new StringWriter());
-          generate(deep, tomMatch62NameNumber_end_4.getHeadconcTomTerm() ,moduleName);
+          generateBQTerm(deep, tomMatch73__end__4.getHeadconcBQTerm() ,moduleName);
           String dump = output.stringDump();
           instance = instance.replace("{"+index+"}",dump);
           index++;
-        }if ( tomMatch62NameNumber_end_4.isEmptyconcTomTerm() ) {tomMatch62NameNumber_end_4=(( tom.engine.adt.tomterm.types.TomList )termList);} else {tomMatch62NameNumber_end_4= tomMatch62NameNumber_end_4.getTailconcTomTerm() ;}}} while(!( (tomMatch62NameNumber_end_4==(( tom.engine.adt.tomterm.types.TomList )termList)) ));}}}}
+        }if ( tomMatch73__end__4.isEmptyconcBQTerm() ) {tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);} else {tomMatch73__end__4= tomMatch73__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch73__end__4==(( tom.engine.adt.code.types.BQTermList )termList)) ));}}}}
 
       //System.out.println("template: " + template);
       //System.out.println("instance: " + instance);
@@ -186,78 +187,78 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     return null;
   }
 
-  protected void buildExpIsSort(int deep, String type, TomTerm exp, String moduleName) throws IOException {
+  protected void buildExpIsSort(int deep, String type, BQTerm exp, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       generateExpression(deep, tom.engine.adt.tomexpression.types.expression.TrueTL.make() ,moduleName);
       return;
     }
 
     String template = getSymbolTable(moduleName).getIsSort(type);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(exp, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(exp, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_is_sort_" + type + "(");
-      generate(deep,exp,moduleName);
+      generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
+  protected void buildExpIsFsym(int deep, String opname, BQTerm exp, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsFsym(opname);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(exp, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(exp, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       String s = isFsymMap.get(opname);
       if(s == null) {
         s = "tom_is_fun_sym_" + opname + "(";
         isFsymMap.put(opname,s);
       }
       output.write(s);
-      generate(deep,exp,moduleName);
+      generateBQTerm(deep,exp,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetSlot(int deep, String opname, String slotName, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetSlot(opname,slotName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(var, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(var, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
-      //generate(deep,var);
+      //generateBQTerm(deep,var);
       //output.write(")");
       output.write("tom_get_slot_");
       output.write(opname);
       output.writeUnderscore();
       output.write(slotName);
       output.writeOpenBrace();
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.writeCloseBrace();
     }
   }
 
-  protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetHead(opName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(var, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(var, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_get_head_" + opName + "_" + TomBase.getTomType(domain) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetTail(int deep, String opName, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetTail(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetTail(opName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(var, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(var, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpIsEmptyList(int deep, String opName, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpIsEmptyList(int deep, String opName, TomType type, BQTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getIsEmptyList(opName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(var, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(var, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_is_empty_" + opName+ "_" + TomBase.getTomType(type) + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
+  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, BQTerm var, String moduleName) throws IOException {
     {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
@@ -266,35 +267,35 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String opName = opNameAST.getString();
     String sType = TomBase.getTomType(type);
     String template = getSymbolTable(moduleName).getGetSizeArray(opName);
-    if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(var, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
+    if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(var, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
       output.write("tom_get_size_" + opName+ "_" + sType + "(");
-      generate(deep,var,moduleName);
+      generateBQTerm(deep,var,moduleName);
       output.write(")");
     }
   }
 
-  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tail, String moduleName) throws IOException {
+  protected void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tail, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varBegin,moduleName);
+    generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,varEnd,moduleName);
+    generateBQTerm(deep,varEnd,moduleName);
     output.write(",");
-    generate(deep,tail,moduleName);
+    generateBQTerm(deep,tail,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException {
+  protected void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varArray,moduleName);
+    generateBQTerm(deep,varArray,moduleName);
     output.write(",");
-    generate(deep,varBegin,moduleName);
+    generateBQTerm(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,expEnd,moduleName);
+    generateBQTerm(deep,expEnd,moduleName);
     output.write(")");
   }
 
-  protected void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException {
-    generate(deep,var,moduleName);
+  protected void buildAddOne(int deep, BQTerm var, String moduleName) throws IOException {
+    generateBQTerm(deep,var,moduleName);
     output.write(" + 1");
   }
 
@@ -362,7 +363,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
-          new String[] { argType, varname },  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+          new String[] { argType, varname },  tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
     }
 
   }
@@ -407,7 +408,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       genDeclInstr(TomBase.getTLType(returnType),
           "tom_get_slot", opname  + "_" + slotName.getString(),
           new String[] { argType, varname },
-           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
     }
   }
 
@@ -457,7 +458,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           TomBase.getTLType(argType1), varname1,
           TomBase.getTLType(argType2), varname2
           },
-           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
     }
   }
 
@@ -480,7 +481,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
       genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type,
           new String[] { TomBase.getTLType(argType), varName },
-           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+           tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
     }
   }
 
@@ -523,7 +524,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         }
         genDeclInstr(returnType, functionName, suffix,
             new String[] { argType, varName },
-             tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+             tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
       }
     }
 
@@ -568,7 +569,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
             genDeclInstr(returnType, functionName, type,
                 new String[] { argType, varName },
-                 tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+                 tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
           }
         }
 
@@ -609,7 +610,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()),
               functionName, type,
               new String[] { argType, varName },
-               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
         }
       }
 
@@ -653,7 +654,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               argType, name1,
               TomBase.getTLType(getSymbolTable(moduleName).getIntType()), name2
               },
-               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
         }
       }
 
@@ -692,7 +693,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getIntType()),
               functionName+"_"+opname, type,
               new String[] { argType, name1 },
-               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(code) ) ,deep,moduleName);
+               tom.engine.adt.tominstruction.types.instruction.Return.make( tom.engine.adt.code.types.bqterm.ExpressionToBQTerm.make(code) ) ,deep,moduleName);
         }
       }
 
@@ -700,7 +701,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
        * the method implementations are here common to C, Java, C#, caml and python
        */
 
-      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
+      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
             throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
@@ -709,89 +710,91 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         String opName = opNameAST.getString();
         String sType = TomBase.getTomType(domain);
         String template = getSymbolTable(moduleName).getGetElementArray(opName);
-        if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(varName, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(varIndex, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ) ,moduleName) == false) {
+        if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(varName, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(varIndex, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
           output.write("tom_get_element_" + opName+ "_" + sType + "(");
-          generate(deep,varName,moduleName);
+          generateBQTerm(deep,varName,moduleName);
           output.write(",");
-          generate(deep,varIndex,moduleName);
+          generateBQTerm(deep,varIndex,moduleName);
           output.write(")");
         }
 
       }
 
-      protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
-        {{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_1= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch70NameNumber_freshVar_1.getString() ;
+      protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
+        {{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_1= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_1.getString() ;
 
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(tom_name);
-            if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ,moduleName) == false) {
+            if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ,moduleName) == false) {
               output.write(prefix + tom_name+ "()");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_6= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch70NameNumber_freshVar_6.getString() ; tom.engine.adt.tomterm.types.TomTerm  tom_headTerm= (( tom.engine.adt.tomterm.types.TomTerm )list).getHeadTerm() ; tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm= (( tom.engine.adt.tomterm.types.TomTerm )list).getTailTerm() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_6= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_6.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
             String prefix = "tom_cons_list_";
             String template = getSymbolTable(moduleName).getMakeAddList(tom_name);
-            if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tom_headTerm, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tom_tailTerm, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ) ,moduleName) == false) {
+            if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_headTerm, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_tailTerm, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
               output.write(prefix + tom_name+ "(");
-              generate(deep,tom_headTerm,moduleName);
+              generateBQTerm(deep,tom_headTerm,moduleName);
               output.write(",");
-              generate(deep,tom_tailTerm,moduleName);
+              generateBQTerm(deep,tom_tailTerm,moduleName);
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_13= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_13= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            output.write("tom_append_list_" +  tomMatch70NameNumber_freshVar_13.getString() + "(");
-            generate(deep, (( tom.engine.adt.tomterm.types.TomTerm )list).getHeadTerm() ,moduleName);
+            output.write("tom_append_list_" +  tomMatch81_13.getString() + "(");
+            generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
-            generate(deep, (( tom.engine.adt.tomterm.types.TomTerm )list).getTailTerm() ,moduleName);
+            generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);
             output.write(")");
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_20= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch70NameNumber_freshVar_20.getString() ; int  tom_size= (( tom.engine.adt.tomterm.types.TomTerm )list).getSize() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_20= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_20.getString() ; tom.engine.adt.code.types.BQTerm  tom_size= (( tom.engine.adt.code.types.BQTerm )list).getSize() ;
 
 
             String prefix = "tom_empty_array_";
             String template = getSymbolTable(moduleName).getMakeEmptyArray(tom_name);
-            if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make( tom.engine.adt.tomexpression.types.expression.Integer.make(tom_size) ) , tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ,moduleName) == false) {
-              output.write(prefix + tom_name+ "(" + tom_size+ ")");
-            }
-            return;
-          }}}}{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_26= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch70NameNumber_freshVar_26.getString() ; tom.engine.adt.tomterm.types.TomTerm  tom_headTerm= (( tom.engine.adt.tomterm.types.TomTerm )list).getHeadTerm() ; tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm= (( tom.engine.adt.tomterm.types.TomTerm )list).getTailTerm() ;
-
-
-            String template = getSymbolTable(moduleName).getMakeAddArray(tom_name);
-            if(instantiateTemplate(deep,template, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tom_headTerm, tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(tom_tailTerm, tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() ) ) ,moduleName) == false) {
-              String prefix = "tom_cons_array_";
+            if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_size, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ,moduleName) == false) {
               output.write(prefix + tom_name+ "(");
-              generate(deep,tom_headTerm,moduleName);
-              output.write(",");
-              generate(deep,tom_tailTerm,moduleName);
+              generateBQTerm(deep,tom_size,moduleName);
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )list) instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_33= (( tom.engine.adt.tomterm.types.TomTerm )list).getAstName() ;if ( (tomMatch70NameNumber_freshVar_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_26= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_26.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
-            output.write("tom_append_array_" +  tomMatch70NameNumber_freshVar_33.getString() + "(");
-            generate(deep, (( tom.engine.adt.tomterm.types.TomTerm )list).getHeadTerm() ,moduleName);
+            String template = getSymbolTable(moduleName).getMakeAddArray(tom_name);
+            if(instantiateTemplate(deep,template, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_headTerm, tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(tom_tailTerm, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) ) ,moduleName) == false) {
+              String prefix = "tom_cons_array_";
+              output.write(prefix + tom_name+ "(");
+              generateBQTerm(deep,tom_headTerm,moduleName);
+              output.write(",");
+              generateBQTerm(deep,tom_tailTerm,moduleName);
+              output.write(")");
+            }
+            return;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_33= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+
+
+            output.write("tom_append_array_" +  tomMatch81_33.getString() + "(");
+            generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
-            generate(deep, (( tom.engine.adt.tomterm.types.TomTerm )list).getTailTerm() ,moduleName);
+            generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);
             output.write(")");
             return;
           }}}}}
 
       }
 
-      protected void buildFunctionCall(int deep, String name, TomList argList, String moduleName) throws IOException {
+      protected void buildFunctionCall(int deep, String name, BQTermList argList, String moduleName) throws IOException {
         output.write(name);
         output.writeOpenBrace();
-        while(!argList.isEmptyconcTomTerm()) {
-          generate(deep,argList.getHeadconcTomTerm(),moduleName);
-          argList = argList.getTailconcTomTerm();
-          if(!argList.isEmptyconcTomTerm()) {
+        while(!argList.isEmptyconcBQTerm()) {
+          generateBQTerm(deep,argList.getHeadconcBQTerm(),moduleName);
+          argList = argList.getTailconcBQTerm();
+          if(!argList.isEmptyconcBQTerm()) {
             output.writeComa();
           }
         }
@@ -823,6 +826,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         //String get_size = "tom_get_size_" + name +"_" + tomType;
 
         String s = "";
+ if(getSymbolTable(moduleName).isUsedSymbolDestructor(name)) {
+  	           // add this test to avoid generating get_slice and append_array when
+  	           // the constructor is not used in any matching
         s = "\n  "+modifier+" "+utype+" tom_get_slice_"+name+"("+utype+" subject, int begin, int end) {\n    "+glType+" result = "+getMakeEmptyArray(name,"end-begin",moduleName)+";\n    while(begin!=end) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"subject","begin",moduleName),"result",moduleName)+";\n      begin++;\n    }\n    return result;\n  }\n\n  "+modifier+" "+utype+" tom_append_array_"+name+"("+utype+" l2, "+utype+" l1) {\n    int size1 = "+getGetSizeArray(name,tomType,"l1",moduleName)+";\n    int size2 = "+getGetSizeArray(name,tomType,"l2",moduleName)+";\n    int index;\n    "+glType+" result = "+getMakeEmptyArray(name,"size1+size2",moduleName)+";\n    index=size1;\n    while(index >0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l1","size1-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n\n    index=size2;\n    while(index > 0) {\n      result = "+getMakeAddArray(name,getGetElementArray(name,tomType,"l2","size2-index",moduleName),"result",moduleName)+";\n      index--;\n    }\n    return result;\n  }"
 
 
@@ -851,7 +857,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 
 ;
-
+ }
         //If necessary we remove \n code depending on pretty option
         String res = ASTFactory.makeSingleLineCode(s, prettyMode);
         output.write(res);
@@ -894,5 +900,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return res;
   }
+
+  protected void buildSubstractOne(int deep, BQTerm var, String moduleName) throws IOException { 	 
+     generateBQTerm(deep,var,moduleName); 	 
+     output.write(" - 1"); 	 
+   } 	 
+  	 
+   protected void buildSubstract(int deep, BQTerm var1, BQTerm var2, String moduleName) throws IOException { 	 
+     generateBQTerm(deep,var1,moduleName); 	 
+     output.write(" - "); 	 
+     generateBQTerm(deep,var2,moduleName); 	 
+   }
 
 }

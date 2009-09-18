@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2009-07-07 16:34:47
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2009-09-18 08:02:12
 
   package tom.gom.parser;
 
@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SimpleBlockLexer extends Lexer {
+    public static final int ML_COMMENT=10;
     public static final int RBRACE=6;
     public static final int OctalESC=8;
-    public static final int EOF=-1;
-    public static final int TARGET=11;
-    public static final int STRING=4;
-    public static final int ML_COMMENT=10;
     public static final int ESC=7;
-    public static final int SL_COMMENT=9;
     public static final int LBRACE=5;
+    public static final int SL_COMMENT=9;
+    public static final int TARGET=11;
+    public static final int EOF=-1;
+    public static final int STRING=4;
 
       public static int nesting = 0;
 
@@ -33,15 +33,15 @@ public class SimpleBlockLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g"; }
+    public String getGrammarFileName() { return "/Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g"; }
 
     // $ANTLR start "LBRACE"
     public final void mLBRACE() throws RecognitionException {
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:50:8: ( '{' )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:50:10: '{'
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:50:8: ( '{' )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:50:10: '{'
             {
             match('{'); 
              nesting++; 
@@ -61,8 +61,8 @@ public class SimpleBlockLexer extends Lexer {
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:51:8: ( '}' )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:51:10: '}'
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:51:8: ( '}' )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:51:10: '}'
             {
             match('}'); 
 
@@ -89,11 +89,11 @@ public class SimpleBlockLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:8: ( '\"' ( ESC | ~ ( '\\\\' | '\"' ) )* '\"' )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:10: '\"' ( ESC | ~ ( '\\\\' | '\"' ) )* '\"'
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:8: ( '\"' ( ESC | ~ ( '\\\\' | '\"' ) )* '\"' )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:10: '\"' ( ESC | ~ ( '\\\\' | '\"' ) )* '\"'
             {
             match('\"'); 
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:14: ( ESC | ~ ( '\\\\' | '\"' ) )*
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:14: ( ESC | ~ ( '\\\\' | '\"' ) )*
             loop1:
             do {
                 int alt1=3;
@@ -109,14 +109,14 @@ public class SimpleBlockLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:15: ESC
+            	    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:21: ~ ( '\\\\' | '\"' )
+            	    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:62:21: ~ ( '\\\\' | '\"' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -151,7 +151,7 @@ public class SimpleBlockLexer extends Lexer {
     // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:66:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | OctalESC )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:66:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | OctalESC )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -179,7 +179,7 @@ public class SimpleBlockLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:66:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:66:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
                     if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -195,7 +195,7 @@ public class SimpleBlockLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:67:7: OctalESC
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:67:7: OctalESC
                     {
                     mOctalESC(); 
 
@@ -212,7 +212,7 @@ public class SimpleBlockLexer extends Lexer {
     // $ANTLR start "OctalESC"
     public final void mOctalESC() throws RecognitionException {
         try {
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:3: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:3: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt3=3;
             int LA3_0 = input.LA(1);
 
@@ -223,9 +223,9 @@ public class SimpleBlockLexer extends Lexer {
                     int LA3_2 = input.LA(3);
 
                     if ( ((LA3_2>='0' && LA3_2<='7')) ) {
-                        int LA3_5 = input.LA(4);
+                        int LA3_4 = input.LA(4);
 
-                        if ( ((LA3_5>='0' && LA3_5<='7')) ) {
+                        if ( ((LA3_4>='0' && LA3_4<='7')) ) {
                             alt3=1;
                         }
                         else {
@@ -258,25 +258,25 @@ public class SimpleBlockLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:7: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:7: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:12: ( '0' .. '3' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:13: '0' .. '3'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:12: ( '0' .. '3' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:13: '0' .. '3'
                     {
                     matchRange('0','3'); 
 
                     }
 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:23: ( '0' .. '7' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:24: '0' .. '7'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:23: ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:24: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
                     }
 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:34: ( '0' .. '7' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:35: '0' .. '7'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:34: ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:72:35: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -286,18 +286,18 @@ public class SimpleBlockLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:7: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:7: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:12: ( '0' .. '7' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:13: '0' .. '7'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:12: ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:13: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
                     }
 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:23: ( '0' .. '7' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:24: '0' .. '7'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:23: ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:73:24: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -307,11 +307,11 @@ public class SimpleBlockLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:7: '\\\\' ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:7: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:12: ( '0' .. '7' )
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:13: '0' .. '7'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:12: ( '0' .. '7' )
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:74:13: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -333,12 +333,12 @@ public class SimpleBlockLexer extends Lexer {
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:81:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:81:12: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
             {
             match("//"); 
 
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:8: (~ ( '\\n' | '\\r' ) )*
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:8: (~ ( '\\n' | '\\r' ) )*
             loop4:
             do {
                 int alt4=2;
@@ -351,7 +351,7 @@ public class SimpleBlockLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:9: ~ ( '\\n' | '\\r' )
+            	    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:9: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -371,7 +371,7 @@ public class SimpleBlockLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:24: ( '\\r' )?
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:24: ( '\\r' )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -380,7 +380,7 @@ public class SimpleBlockLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:24: '\\r'
+                    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:82:24: '\\r'
                     {
                     match('\r'); 
 
@@ -407,12 +407,12 @@ public class SimpleBlockLexer extends Lexer {
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:3: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:5: '/*' ( options {greedy=false; } : . )* '*/'
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:3: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:5: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:10: ( options {greedy=false; } : . )*
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:10: ( options {greedy=false; } : . )*
             loop6:
             do {
                 int alt6=2;
@@ -437,7 +437,7 @@ public class SimpleBlockLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:38: .
+            	    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:87:38: .
             	    {
             	    matchAny(); 
 
@@ -469,10 +469,10 @@ public class SimpleBlockLexer extends Lexer {
             int _channel = DEFAULT_TOKEN_CHANNEL;
             int text;
 
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:8: ( (text=~ ( '{' | '}' | '\"' ) )+ )
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:10: (text=~ ( '{' | '}' | '\"' ) )+
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:8: ( (text=~ ( '{' | '}' | '\"' ) )+ )
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:10: (text=~ ( '{' | '}' | '\"' ) )+
             {
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:10: (text=~ ( '{' | '}' | '\"' ) )+
+            // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:10: (text=~ ( '{' | '}' | '\"' ) )+
             int cnt7=0;
             loop7:
             do {
@@ -486,7 +486,7 @@ public class SimpleBlockLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:12: text=~ ( '{' | '}' | '\"' )
+            	    // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:91:12: text=~ ( '{' | '}' | '\"' )
             	    {
             	    text= input.LA(1);
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='z')||input.LA(1)=='|'||(input.LA(1)>='~' && input.LA(1)<='\uFFFF') ) {
@@ -523,47 +523,47 @@ public class SimpleBlockLexer extends Lexer {
     // $ANTLR end "TARGET"
 
     public void mTokens() throws RecognitionException {
-        // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:8: ( LBRACE | RBRACE | STRING | SL_COMMENT | ML_COMMENT | TARGET )
+        // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:8: ( LBRACE | RBRACE | STRING | SL_COMMENT | ML_COMMENT | TARGET )
         int alt8=6;
         alt8 = dfa8.predict(input);
         switch (alt8) {
             case 1 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:10: LBRACE
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:10: LBRACE
                 {
                 mLBRACE(); 
 
                 }
                 break;
             case 2 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:17: RBRACE
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:17: RBRACE
                 {
                 mRBRACE(); 
 
                 }
                 break;
             case 3 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:24: STRING
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:24: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 4 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:31: SL_COMMENT
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:31: SL_COMMENT
                 {
                 mSL_COMMENT(); 
 
                 }
                 break;
             case 5 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:42: ML_COMMENT
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:42: ML_COMMENT
                 {
                 mML_COMMENT(); 
 
                 }
                 break;
             case 6 :
-                // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:53: TARGET
+                // /Users/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:1:53: TARGET
                 {
                 mTARGET(); 
 
@@ -577,18 +577,18 @@ public class SimpleBlockLexer extends Lexer {
 
     protected DFA8 dfa8 = new DFA8(this);
     static final String DFA8_eotS =
-        "\4\uffff\1\5\1\uffff\4\5\1\13\1\uffff\2\5\1\uffff\1\16";
+        "\4\uffff\1\5\1\uffff\4\5\1\uffff\1\12\1\5\1\uffff\1\5\1\15";
     static final String DFA8_eofS =
         "\20\uffff";
     static final String DFA8_minS =
-        "\1\0\3\uffff\1\52\1\uffff\3\0\1\12\1\0\1\uffff\2\0\1\uffff\1\0";
+        "\1\0\3\uffff\1\52\1\uffff\3\0\1\12\1\uffff\2\0\1\uffff\2\0";
     static final String DFA8_maxS =
-        "\1\uffff\3\uffff\1\57\1\uffff\3\uffff\1\12\1\uffff\1\uffff\2\uffff"+
-        "\1\uffff\1\uffff";
+        "\1\uffff\3\uffff\1\57\1\uffff\3\uffff\1\12\1\uffff\2\uffff\1\uffff"+
+        "\2\uffff";
     static final String DFA8_acceptS =
-        "\1\uffff\1\1\1\2\1\3\1\uffff\1\6\5\uffff\1\4\2\uffff\1\5\1\uffff";
+        "\1\uffff\1\1\1\2\1\3\1\uffff\1\6\4\uffff\1\4\2\uffff\1\5\2\uffff";
     static final String DFA8_specialS =
-        "\1\1\5\uffff\1\5\1\2\1\7\1\uffff\1\4\1\uffff\1\0\1\3\1\uffff\1\6}>";
+        "\1\3\5\uffff\1\5\1\1\1\2\2\uffff\1\6\1\0\1\uffff\1\4\1\7}>";
     static final String[] DFA8_transitionS = {
             "\42\5\1\3\14\5\1\4\113\5\1\1\1\5\1\2\uff82\5",
             "",
@@ -596,20 +596,20 @@ public class SimpleBlockLexer extends Lexer {
             "",
             "\1\7\4\uffff\1\6",
             "",
-            "\12\10\1\12\2\10\1\11\24\10\1\13\130\10\1\13\1\10\1\13\uff82"+
+            "\12\10\1\13\2\10\1\11\24\10\1\12\130\10\1\12\1\10\1\12\uff82"+
             "\10",
-            "\42\15\1\16\7\15\1\14\120\15\1\16\1\15\1\16\uff82\15",
-            "\12\10\1\12\2\10\1\11\24\10\1\13\130\10\1\13\1\10\1\13\uff82"+
+            "\42\16\1\15\7\16\1\14\120\16\1\15\1\16\1\15\uff82\16",
+            "\12\10\1\13\2\10\1\11\24\10\1\12\130\10\1\12\1\10\1\12\uff82"+
             "\10",
-            "\1\12",
+            "\1\13",
+            "",
             "\42\5\1\uffff\130\5\1\uffff\1\5\1\uffff\uff82\5",
+            "\42\16\1\15\7\16\1\14\4\16\1\17\113\16\1\15\1\16\1\15\uff82"+
+            "\16",
             "",
-            "\42\15\1\16\7\15\1\14\4\15\1\17\113\15\1\16\1\15\1\16\uff82"+
-            "\15",
-            "\42\15\1\16\7\15\1\14\120\15\1\16\1\15\1\16\uff82\15",
-            "",
-            "\42\15\1\uffff\7\15\1\14\120\15\1\uffff\1\15\1\uffff\uff82"+
-            "\15"
+            "\42\16\1\15\7\16\1\14\120\16\1\15\1\16\1\15\uff82\16",
+            "\42\16\1\uffff\7\16\1\14\120\16\1\uffff\1\16\1\uffff\uff82"+
+            "\16"
     };
 
     static final short[] DFA8_eot = DFA.unpackEncodedString(DFA8_eotS);
@@ -656,15 +656,45 @@ public class SimpleBlockLexer extends Lexer {
 
                         else if ( (LA8_12=='*') ) {s = 12;}
 
-                        else if ( ((LA8_12>='\u0000' && LA8_12<='!')||(LA8_12>='#' && LA8_12<=')')||(LA8_12>='+' && LA8_12<='.')||(LA8_12>='0' && LA8_12<='z')||LA8_12=='|'||(LA8_12>='~' && LA8_12<='\uFFFF')) ) {s = 13;}
+                        else if ( ((LA8_12>='\u0000' && LA8_12<='!')||(LA8_12>='#' && LA8_12<=')')||(LA8_12>='+' && LA8_12<='.')||(LA8_12>='0' && LA8_12<='z')||LA8_12=='|'||(LA8_12>='~' && LA8_12<='\uFFFF')) ) {s = 14;}
 
-                        else if ( (LA8_12=='\"'||LA8_12=='{'||LA8_12=='}') ) {s = 14;}
+                        else if ( (LA8_12=='\"'||LA8_12=='{'||LA8_12=='}') ) {s = 13;}
 
                         else s = 5;
 
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
+                        int LA8_7 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA8_7=='*') ) {s = 12;}
+
+                        else if ( (LA8_7=='\"'||LA8_7=='{'||LA8_7=='}') ) {s = 13;}
+
+                        else if ( ((LA8_7>='\u0000' && LA8_7<='!')||(LA8_7>='#' && LA8_7<=')')||(LA8_7>='+' && LA8_7<='z')||LA8_7=='|'||(LA8_7>='~' && LA8_7<='\uFFFF')) ) {s = 14;}
+
+                        else s = 5;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA8_8 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA8_8=='\r') ) {s = 9;}
+
+                        else if ( (LA8_8=='\n') ) {s = 11;}
+
+                        else if ( ((LA8_8>='\u0000' && LA8_8<='\t')||(LA8_8>='\u000B' && LA8_8<='\f')||(LA8_8>='\u000E' && LA8_8<='!')||(LA8_8>='#' && LA8_8<='z')||LA8_8=='|'||(LA8_8>='~' && LA8_8<='\uFFFF')) ) {s = 8;}
+
+                        else if ( (LA8_8=='\"'||LA8_8=='{'||LA8_8=='}') ) {s = 10;}
+
+                        else s = 5;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
                         int LA8_0 = input.LA(1);
 
                         s = -1;
@@ -680,41 +710,17 @@ public class SimpleBlockLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
-                        int LA8_7 = input.LA(1);
-
-                        s = -1;
-                        if ( (LA8_7=='*') ) {s = 12;}
-
-                        else if ( ((LA8_7>='\u0000' && LA8_7<='!')||(LA8_7>='#' && LA8_7<=')')||(LA8_7>='+' && LA8_7<='z')||LA8_7=='|'||(LA8_7>='~' && LA8_7<='\uFFFF')) ) {s = 13;}
-
-                        else if ( (LA8_7=='\"'||LA8_7=='{'||LA8_7=='}') ) {s = 14;}
-
-                        else s = 5;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 3 : 
-                        int LA8_13 = input.LA(1);
-
-                        s = -1;
-                        if ( (LA8_13=='*') ) {s = 12;}
-
-                        else if ( ((LA8_13>='\u0000' && LA8_13<='!')||(LA8_13>='#' && LA8_13<=')')||(LA8_13>='+' && LA8_13<='z')||LA8_13=='|'||(LA8_13>='~' && LA8_13<='\uFFFF')) ) {s = 13;}
-
-                        else if ( (LA8_13=='\"'||LA8_13=='{'||LA8_13=='}') ) {s = 14;}
-
-                        else s = 5;
-
-                        if ( s>=0 ) return s;
-                        break;
                     case 4 : 
-                        int LA8_10 = input.LA(1);
+                        int LA8_14 = input.LA(1);
 
                         s = -1;
-                        if ( ((LA8_10>='\u0000' && LA8_10<='!')||(LA8_10>='#' && LA8_10<='z')||LA8_10=='|'||(LA8_10>='~' && LA8_10<='\uFFFF')) ) {s = 5;}
+                        if ( (LA8_14=='*') ) {s = 12;}
 
-                        else s = 11;
+                        else if ( ((LA8_14>='\u0000' && LA8_14<='!')||(LA8_14>='#' && LA8_14<=')')||(LA8_14>='+' && LA8_14<='z')||LA8_14=='|'||(LA8_14>='~' && LA8_14<='\uFFFF')) ) {s = 14;}
+
+                        else if ( (LA8_14=='\"'||LA8_14=='{'||LA8_14=='}') ) {s = 13;}
+
+                        else s = 5;
 
                         if ( s>=0 ) return s;
                         break;
@@ -726,39 +732,33 @@ public class SimpleBlockLexer extends Lexer {
 
                         else if ( (LA8_6=='\r') ) {s = 9;}
 
-                        else if ( (LA8_6=='\n') ) {s = 10;}
+                        else if ( (LA8_6=='\"'||LA8_6=='{'||LA8_6=='}') ) {s = 10;}
 
-                        else if ( (LA8_6=='\"'||LA8_6=='{'||LA8_6=='}') ) {s = 11;}
+                        else if ( (LA8_6=='\n') ) {s = 11;}
 
                         else s = 5;
 
                         if ( s>=0 ) return s;
                         break;
                     case 6 : 
+                        int LA8_11 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA8_11>='\u0000' && LA8_11<='!')||(LA8_11>='#' && LA8_11<='z')||LA8_11=='|'||(LA8_11>='~' && LA8_11<='\uFFFF')) ) {s = 5;}
+
+                        else s = 10;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 7 : 
                         int LA8_15 = input.LA(1);
 
                         s = -1;
                         if ( (LA8_15=='*') ) {s = 12;}
 
-                        else if ( ((LA8_15>='\u0000' && LA8_15<='!')||(LA8_15>='#' && LA8_15<=')')||(LA8_15>='+' && LA8_15<='z')||LA8_15=='|'||(LA8_15>='~' && LA8_15<='\uFFFF')) ) {s = 13;}
+                        else if ( ((LA8_15>='\u0000' && LA8_15<='!')||(LA8_15>='#' && LA8_15<=')')||(LA8_15>='+' && LA8_15<='z')||LA8_15=='|'||(LA8_15>='~' && LA8_15<='\uFFFF')) ) {s = 14;}
 
-                        else s = 14;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 7 : 
-                        int LA8_8 = input.LA(1);
-
-                        s = -1;
-                        if ( (LA8_8=='\r') ) {s = 9;}
-
-                        else if ( (LA8_8=='\n') ) {s = 10;}
-
-                        else if ( ((LA8_8>='\u0000' && LA8_8<='\t')||(LA8_8>='\u000B' && LA8_8<='\f')||(LA8_8>='\u000E' && LA8_8<='!')||(LA8_8>='#' && LA8_8<='z')||LA8_8=='|'||(LA8_8>='~' && LA8_8<='\uFFFF')) ) {s = 8;}
-
-                        else if ( (LA8_8=='\"'||LA8_8=='{'||LA8_8=='}') ) {s = 11;}
-
-                        else s = 5;
+                        else s = 13;
 
                         if ( s>=0 ) return s;
                         break;

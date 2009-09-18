@@ -61,6 +61,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.code.types.*;
 
 import tom.engine.tools.ASTFactory;
 import aterm.*;
@@ -73,7 +74,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
  {
 
   //--------------------------
-    private static boolean tom_equal_term_char(char t1, char t2) {return  t1==t2 ;}private static boolean tom_is_sort_char(char t) {return  true ;} private static boolean tom_equal_term_String(String t1, String t2) {return  t1.equals(t2) ;}private static boolean tom_is_sort_String(String t) {return  t instanceof String ;} private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_Instruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Instruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.Instruction) ;}private static boolean tom_equal_term_InstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_InstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.InstructionList) ;}private static boolean tom_equal_term_ConstraintInstruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstruction) ;}private static boolean tom_equal_term_ConstraintInstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ;}private static boolean tom_equal_term_TomTypeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTypeList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomTypeList) ;}private static boolean tom_equal_term_TomType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomType) ;}private static boolean tom_equal_term_TomSymbolList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ;}private static boolean tom_equal_term_TomVisit(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisit(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisit) ;}private static boolean tom_equal_term_TomStructureTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomStructureTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomStructureTable) ;}private static boolean tom_equal_term_TextPosition(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TextPosition(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TextPosition) ;}private static boolean tom_equal_term_TomEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntry) ;}private static boolean tom_equal_term_TomEntryList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntryList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntryList) ;}private static boolean tom_equal_term_TomVisitList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisitList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisitList) ;}private static boolean tom_equal_term_TargetLanguage(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguage(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ;}private static boolean tom_equal_term_TomSymbolTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable) ;}private static boolean tom_equal_term_TomSymbol(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbol(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbol) ;}private static boolean tom_equal_term_KeyEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_KeyEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.KeyEntry) ;}private static boolean tom_equal_term_ElementaryTheory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ElementaryTheory(Object t) {return  (t instanceof tom.engine.adt.theory.types.ElementaryTheory) ;}private static boolean tom_equal_term_Theory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Theory(Object t) {return  (t instanceof tom.engine.adt.theory.types.Theory) ;}private static boolean tom_equal_term_DeclarationList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_DeclarationList(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList) ;}private static boolean tom_equal_term_Declaration(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Declaration(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.Declaration) ;}private static boolean tom_equal_term_TomNumber(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumber(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumber) ;}private static boolean tom_equal_term_TomNumberList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumberList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumberList) ;}private static boolean tom_equal_term_TomNameList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNameList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNameList) ;}private static boolean tom_equal_term_TomName(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomName(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomName) ;}private static boolean tom_equal_term_Expression(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Expression(Object t) {return  (t instanceof tom.engine.adt.tomexpression.types.Expression) ;}private static boolean tom_equal_term_TomList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomList(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomList) ;}private static boolean tom_equal_term_TomTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTerm(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomTerm) ;}private static boolean tom_equal_term_Option(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Option(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.Option) ;}private static boolean tom_equal_term_OptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_OptionList(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.OptionList) ;}private static boolean tom_equal_term_NumericConstraintType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_NumericConstraintType(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ;}private static boolean tom_equal_term_Constraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Constraint(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.Constraint) ;}private static boolean tom_equal_term_ConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintList(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ;}private static boolean tom_equal_term_PairNameDecl(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDecl(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDecl) ;}private static boolean tom_equal_term_PairNameDeclList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDeclList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ;}private static boolean tom_equal_term_SlotList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_SlotList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.SlotList) ;}private static boolean tom_equal_term_Slot(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Slot(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.Slot) ;}private static  tom.engine.adt.tomsignature.types.TextPosition  tom_make_TextPosition( int  t0,  int  t1) { return  tom.engine.adt.tomsignature.types.textposition.TextPosition.make(t0, t1) ;}private static  tom.engine.adt.tomsignature.types.TargetLanguage  tom_make_TL( String  t0,  tom.engine.adt.tomsignature.types.TextPosition  t1,  tom.engine.adt.tomsignature.types.TextPosition  t2) { return  tom.engine.adt.tomsignature.types.targetlanguage.TL.make(t0, t1, t2) ;}private static  tom.engine.adt.tomsignature.types.TargetLanguage  tom_make_ITL( String  t0) { return  tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(t0) ;}private static  tom.engine.adt.tomname.types.TomName  tom_make_Name( String  t0) { return  tom.engine.adt.tomname.types.tomname.Name.make(t0) ;}private static  tom.engine.adt.tomterm.types.TomTerm  tom_make_TargetLanguageToTomTerm( tom.engine.adt.tomsignature.types.TargetLanguage  t0) { return  tom.engine.adt.tomterm.types.tomterm.TargetLanguageToTomTerm.make(t0) ;}private static  tom.engine.adt.tomterm.types.TomTerm  tom_make_DeclarationToTomTerm( tom.engine.adt.tomdeclaration.types.Declaration  t0) { return  tom.engine.adt.tomterm.types.tomterm.DeclarationToTomTerm.make(t0) ;}private static  tom.engine.adt.tomterm.types.TomTerm  tom_make_InstructionToTomTerm( tom.engine.adt.tominstruction.types.Instruction  t0) { return  tom.engine.adt.tomterm.types.tomterm.InstructionToTomTerm.make(t0) ;}private static  tom.engine.adt.tomterm.types.TomTerm  tom_make_Tom( tom.engine.adt.tomterm.types.TomList  t0) { return  tom.engine.adt.tomterm.types.tomterm.Tom.make(t0) ;}private static  tom.engine.adt.tomterm.types.TomTerm  tom_make_TomInclude( tom.engine.adt.tomterm.types.TomList  t0) { return  tom.engine.adt.tomterm.types.tomterm.TomInclude.make(t0) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1,  String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t2) ;} 
+    private static boolean tom_equal_term_char(char t1, char t2) {return  t1==t2 ;}private static boolean tom_is_sort_char(char t) {return  true ;} private static boolean tom_equal_term_String(String t1, String t2) {return  t1.equals(t2) ;}private static boolean tom_is_sort_String(String t) {return  t instanceof String ;} private static boolean tom_equal_term_int(int t1, int t2) {return  t1==t2 ;}private static boolean tom_is_sort_int(int t) {return  true ;} private static boolean tom_equal_term_TomSymbolTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable) ;}private static boolean tom_equal_term_TomSymbol(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbol(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbol) ;}private static boolean tom_equal_term_TomStructureTable(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomStructureTable(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomStructureTable) ;}private static boolean tom_equal_term_TargetLanguage(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TargetLanguage(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ;}private static boolean tom_equal_term_TomEntryList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntryList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntryList) ;}private static boolean tom_equal_term_TomEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomEntry) ;}private static boolean tom_equal_term_TomVisitList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisitList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisitList) ;}private static boolean tom_equal_term_TomSymbolList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomSymbolList(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) ;}private static boolean tom_equal_term_TextPosition(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TextPosition(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TextPosition) ;}private static boolean tom_equal_term_TomVisit(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomVisit(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.TomVisit) ;}private static boolean tom_equal_term_KeyEntry(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_KeyEntry(Object t) {return  (t instanceof tom.engine.adt.tomsignature.types.KeyEntry) ;}private static boolean tom_equal_term_Signature(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Signature(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Signature) ;}private static boolean tom_equal_term_TypeConstraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraint(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraint) ;}private static boolean tom_equal_term_TermToInfer(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TermToInfer(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TermToInfer) ;}private static boolean tom_equal_term_SubstitutionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_SubstitutionList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.SubstitutionList) ;}private static boolean tom_equal_term_TypeConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TypeConstraintList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TypeConstraintList) ;}private static boolean tom_equal_term_ReconResultList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ReconResultList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.ReconResultList) ;}private static boolean tom_equal_term_ContextAndResult(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ContextAndResult(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.ContextAndResult) ;}private static boolean tom_equal_term_Mapping(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Mapping(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Mapping) ;}private static boolean tom_equal_term_Domain(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Domain(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Domain) ;}private static boolean tom_equal_term_TermToInferList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TermToInferList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.TermToInferList) ;}private static boolean tom_equal_term_Substitution(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Substitution(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Substitution) ;}private static boolean tom_equal_term_ReconResult(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ReconResult(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.ReconResult) ;}private static boolean tom_equal_term_Jugement(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Jugement(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Jugement) ;}private static boolean tom_equal_term_ContextAndConstraints(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ContextAndConstraints(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.ContextAndConstraints) ;}private static boolean tom_equal_term_Context(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Context(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.Context) ;}private static boolean tom_equal_term_ContextAndResultList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ContextAndResultList(Object t) {return  (t instanceof tom.engine.adt.typeconstraints.types.ContextAndResultList) ;}private static boolean tom_equal_term_Expression(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Expression(Object t) {return  (t instanceof tom.engine.adt.tomexpression.types.Expression) ;}private static boolean tom_equal_term_TomList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomList(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomList) ;}private static boolean tom_equal_term_TomTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTerm(Object t) {return  (t instanceof tom.engine.adt.tomterm.types.TomTerm) ;}private static boolean tom_equal_term_Declaration(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Declaration(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.Declaration) ;}private static boolean tom_equal_term_DeclarationList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_DeclarationList(Object t) {return  (t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList) ;}private static boolean tom_equal_term_TomType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomType(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomType) ;}private static boolean tom_equal_term_TomTypeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomTypeList(Object t) {return  (t instanceof tom.engine.adt.tomtype.types.TomTypeList) ;}private static boolean tom_equal_term_CodeList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CodeList(Object t) {return  (t instanceof tom.engine.adt.code.types.CodeList) ;}private static boolean tom_equal_term_CompositeMember(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_CompositeMember(Object t) {return  (t instanceof tom.engine.adt.code.types.CompositeMember) ;}private static boolean tom_equal_term_BQTermList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTermList(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTermList) ;}private static boolean tom_equal_term_BQTerm(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_BQTerm(Object t) {return  (t instanceof tom.engine.adt.code.types.BQTerm) ;}private static boolean tom_equal_term_Code(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Code(Object t) {return  (t instanceof tom.engine.adt.code.types.Code) ;}private static boolean tom_equal_term_ConstraintInstruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstruction) ;}private static boolean tom_equal_term_Instruction(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Instruction(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.Instruction) ;}private static boolean tom_equal_term_InstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_InstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.InstructionList) ;}private static boolean tom_equal_term_ConstraintInstructionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintInstructionList(Object t) {return  (t instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) ;}private static boolean tom_equal_term_TomNumber(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumber(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumber) ;}private static boolean tom_equal_term_TomNameList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNameList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNameList) ;}private static boolean tom_equal_term_TomNumberList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomNumberList(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomNumberList) ;}private static boolean tom_equal_term_TomName(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_TomName(Object t) {return  (t instanceof tom.engine.adt.tomname.types.TomName) ;}private static boolean tom_equal_term_Slot(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Slot(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.Slot) ;}private static boolean tom_equal_term_SlotList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_SlotList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.SlotList) ;}private static boolean tom_equal_term_PairNameDecl(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDecl(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDecl) ;}private static boolean tom_equal_term_PairNameDeclList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_PairNameDeclList(Object t) {return  (t instanceof tom.engine.adt.tomslot.types.PairNameDeclList) ;}private static boolean tom_equal_term_OptionList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_OptionList(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.OptionList) ;}private static boolean tom_equal_term_Option(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Option(Object t) {return  (t instanceof tom.engine.adt.tomoption.types.Option) ;}private static boolean tom_equal_term_NumericConstraintType(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_NumericConstraintType(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) ;}private static boolean tom_equal_term_Constraint(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Constraint(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.Constraint) ;}private static boolean tom_equal_term_ConstraintList(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ConstraintList(Object t) {return  (t instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ;}private static boolean tom_equal_term_Theory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_Theory(Object t) {return  (t instanceof tom.engine.adt.theory.types.Theory) ;}private static boolean tom_equal_term_ElementaryTheory(Object t1, Object t2) {return  (t1==t2) ;}private static boolean tom_is_sort_ElementaryTheory(Object t) {return  (t instanceof tom.engine.adt.theory.types.ElementaryTheory) ;}private static  tom.engine.adt.tomsignature.types.TargetLanguage  tom_make_TL( String  t0,  tom.engine.adt.tomsignature.types.TextPosition  t1,  tom.engine.adt.tomsignature.types.TextPosition  t2) { return  tom.engine.adt.tomsignature.types.targetlanguage.TL.make(t0, t1, t2) ;}private static  tom.engine.adt.tomsignature.types.TargetLanguage  tom_make_ITL( String  t0) { return  tom.engine.adt.tomsignature.types.targetlanguage.ITL.make(t0) ;}private static  tom.engine.adt.tomsignature.types.TextPosition  tom_make_TextPosition( int  t0,  int  t1) { return  tom.engine.adt.tomsignature.types.textposition.TextPosition.make(t0, t1) ;}private static  tom.engine.adt.code.types.Code  tom_make_TargetLanguageToCode( tom.engine.adt.tomsignature.types.TargetLanguage  t0) { return  tom.engine.adt.code.types.code.TargetLanguageToCode.make(t0) ;}private static  tom.engine.adt.code.types.Code  tom_make_InstructionToCode( tom.engine.adt.tominstruction.types.Instruction  t0) { return  tom.engine.adt.code.types.code.InstructionToCode.make(t0) ;}private static  tom.engine.adt.code.types.Code  tom_make_DeclarationToCode( tom.engine.adt.tomdeclaration.types.Declaration  t0) { return  tom.engine.adt.code.types.code.DeclarationToCode.make(t0) ;}private static  tom.engine.adt.code.types.Code  tom_make_BQTermToCode( tom.engine.adt.code.types.BQTerm  t0) { return  tom.engine.adt.code.types.code.BQTermToCode.make(t0) ;}private static boolean tom_is_fun_sym_Tom( tom.engine.adt.code.types.Code  t) {return  (t instanceof tom.engine.adt.code.types.code.Tom) ;}private static  tom.engine.adt.code.types.Code  tom_make_Tom( tom.engine.adt.code.types.CodeList  t0) { return  tom.engine.adt.code.types.code.Tom.make(t0) ;}private static  tom.engine.adt.code.types.CodeList  tom_get_slot_Tom_CodeList( tom.engine.adt.code.types.Code  t) {return  t.getCodeList() ;}private static  tom.engine.adt.code.types.Code  tom_make_TomInclude( tom.engine.adt.code.types.CodeList  t0) { return  tom.engine.adt.code.types.code.TomInclude.make(t0) ;}private static  tom.engine.adt.tomname.types.TomName  tom_make_Name( String  t0) { return  tom.engine.adt.tomname.types.tomname.Name.make(t0) ;}private static  tom.engine.adt.tomoption.types.Option  tom_make_OriginTracking( tom.engine.adt.tomname.types.TomName  t0,  int  t1,  String  t2) { return  tom.engine.adt.tomoption.types.option.OriginTracking.make(t0, t1, t2) ;}private static boolean tom_is_fun_sym_concCode( tom.engine.adt.code.types.CodeList  t) {return  ((t instanceof tom.engine.adt.code.types.codelist.ConsconcCode) || (t instanceof tom.engine.adt.code.types.codelist.EmptyconcCode)) ;}private static  tom.engine.adt.code.types.CodeList  tom_empty_list_concCode() { return  tom.engine.adt.code.types.codelist.EmptyconcCode.make() ;}private static  tom.engine.adt.code.types.CodeList  tom_cons_list_concCode( tom.engine.adt.code.types.Code  e,  tom.engine.adt.code.types.CodeList  l) { return  tom.engine.adt.code.types.codelist.ConsconcCode.make(e,l) ;}private static  tom.engine.adt.code.types.Code  tom_get_head_concCode_CodeList( tom.engine.adt.code.types.CodeList  l) {return  l.getHeadconcCode() ;}private static  tom.engine.adt.code.types.CodeList  tom_get_tail_concCode_CodeList( tom.engine.adt.code.types.CodeList  l) {return  l.getTailconcCode() ;}private static boolean tom_is_empty_concCode_CodeList( tom.engine.adt.code.types.CodeList  l) {return  l.isEmptyconcCode() ;}   private static   tom.engine.adt.code.types.CodeList  tom_append_list_concCode( tom.engine.adt.code.types.CodeList l1,  tom.engine.adt.code.types.CodeList  l2) {     if( l1.isEmptyconcCode() ) {       return l2;     } else if( l2.isEmptyconcCode() ) {       return l1;     } else if(  l1.getTailconcCode() .isEmptyconcCode() ) {       return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,l2) ;     } else {       return  tom.engine.adt.code.types.codelist.ConsconcCode.make( l1.getHeadconcCode() ,tom_append_list_concCode( l1.getTailconcCode() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.CodeList  tom_get_slice_concCode( tom.engine.adt.code.types.CodeList  begin,  tom.engine.adt.code.types.CodeList  end, tom.engine.adt.code.types.CodeList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcCode()  ||  (end==tom_empty_list_concCode()) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.codelist.ConsconcCode.make( begin.getHeadconcCode() ,( tom.engine.adt.code.types.CodeList )tom_get_slice_concCode( begin.getTailconcCode() ,end,tail)) ;   }    
   //--------------------------
 
   // the lexer selector
@@ -207,9 +208,9 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     return targetlexer.getColumn();
   }
 
-  private synchronized void includeFile(String fileName, List<TomTerm> list)
+  private synchronized void includeFile(String fileName, List<Code> list)
     throws TomException, TomIncludeException {
-    TomTerm astTom;
+    Code astTom;
     InputStream input;
     byte inputBuffer[];
     //  TomParser tomParser;
@@ -265,7 +266,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
                                          getOptionManager(), getStreamManager());
       parser.setSkipComment();
       astTom = parser.input();
-      astTom = tom_make_TomInclude(astTom.getTomList());
+      astTom = tom_make_TomInclude(astTom.getCodeList());
       list.add(astTom);
     } catch (Exception e) {
       if(e instanceof TomIncludeException) {
@@ -297,7 +298,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
    * alternatively, each string correspond either to a metaString, or a string
    * to parse the @@ encoded by ]% is put back as a single '@' in the metaString
    */
-  public String tomSplitter(String subject, List<TomTerm> list) {
+  public String tomSplitter(String subject, List<Code> list) {
 
     String metaChar = "]%";
     String escapeChar = "@";
@@ -322,7 +323,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
         String code = metaEncodeCode(split[i].replace(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
-        list.add(tom_make_TargetLanguageToTomTerm(tom_make_ITL(code)));
+        list.add(tom_make_TargetLanguageToCode(tom_make_ITL(code)));
       } else {
         String code = "+"+split[i]+"+";
         metaMode = true;
@@ -331,8 +332,12 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
           Reader codeReader = new BufferedReader(new StringReader(code));
           HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
               getOptionManager(), getStreamManager());
-          TomTerm astTom = parser.input();
-          list.add(astTom); 
+          Code astTom = parser.input();
+          {{if (tom_is_sort_Code(astTom)) {if (tom_is_fun_sym_Tom((( tom.engine.adt.code.types.Code )astTom))) { tom.engine.adt.code.types.CodeList  tomMatch1_1=tom_get_slot_Tom_CodeList((( tom.engine.adt.code.types.Code )astTom));if (tom_is_fun_sym_concCode(tomMatch1_1)) { tom.engine.adt.code.types.CodeList  tomMatch1__end__6=tomMatch1_1;do {{if (!(tom_is_empty_concCode_CodeList(tomMatch1__end__6))) {
+
+              list.add(tom_get_head_concCode_CodeList(tomMatch1__end__6)); 
+            }if (tom_is_empty_concCode_CodeList(tomMatch1__end__6)) {tomMatch1__end__6=tomMatch1_1;} else {tomMatch1__end__6=tom_get_tail_concCode_CodeList(tomMatch1__end__6);}}} while(!(tom_equal_term_CodeList(tomMatch1__end__6, tomMatch1_1)));}}}}}
+
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");
         } catch (Exception e) {
@@ -342,7 +347,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     }
     if(subject.endsWith(escapeChar)) {
       // add an empty string when %[...@...@]%
-      list.add(tom_make_TargetLanguageToTomTerm(tom_make_ITL("\"\"")));
+      list.add(tom_make_TargetLanguageToCode(tom_make_ITL("\"\"")));
     }
     return res;
   }
@@ -415,13 +420,13 @@ public HostParser(ParserSharedInputState state) {
   tokenNames = _tokenNames;
 }
 
-	public final TomTerm  input() throws RecognitionException, TokenStreamException, TomException {
-		TomTerm result;
+	public final Code  input() throws RecognitionException, TokenStreamException, TomException {
+		Code result;
 		
 		Token  t = null;
 		
 		result = null;
-		List<TomTerm> list = new LinkedList<TomTerm>();
+		List<Code> list = new LinkedList<Code>();
 		
 		
 		blockList(list);
@@ -429,20 +434,18 @@ public HostParser(ParserSharedInputState state) {
 		match(Token.EOF_TYPE);
 		
 		// This TL is last block: do no need to specify line and column
-		list.add(tom_make_TargetLanguageToTomTerm(tom_make_TL(getCode(),tom_make_TextPosition(currentLine(),currentColumn()),tom_make_TextPosition(t.getLine(),t.getColumn())))
-		
-		
+		list.add(tom_make_TargetLanguageToCode(tom_make_TL(getCode(),tom_make_TextPosition(currentLine(),currentColumn()),tom_make_TextPosition(t.getLine(),t.getColumn())))
 		
 		);
 		//String comment = "Generated by TOM (version " + Tom.VERSION + "): Do not edit this file";
-		//list.add(0,`TargetLanguageToTomTerm(Comment(comment)));
-		result = tom_make_Tom(ASTFactory.makeList(list));
+		//list.add(0,`TargetLanguageToCode(Comment(comment)));
+		result = tom_make_Tom(ASTFactory.makeCodeList(list));
 		
 		return result;
 	}
 	
 	public final void blockList(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		
@@ -522,7 +525,7 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final void matchConstruct(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
@@ -541,18 +544,18 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Option ot = tom_make_OriginTracking(tom_make_Name("Match"),t.getLine(),currentFile);
 		
 		Instruction match = tomparser.matchConstruct(ot);
-		list.add(tom_make_InstructionToTomTerm(match));
+		list.add(tom_make_InstructionToCode(match));
 		
 	}
 	
 	public final void strategyConstruct(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
@@ -573,26 +576,26 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Option ot = tom_make_OriginTracking(tom_make_Name("Strategy"),t.getLine(),currentFile);
 		
 		// call the tomparser for the construct
 		Declaration strategy = tomparser.strategyConstruct(ot);
-		list.add(tom_make_DeclarationToTomTerm(strategy));
+		list.add(tom_make_DeclarationToCode(strategy));
 		
 	}
 	
 	public final void gomsignature(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
 		
 		int initialGomLine;
 		TargetLanguage code = null;
-		List<TomTerm> blockList = new LinkedList<TomTerm>();
+		List<Code> blockList = new LinkedList<Code>();
 		String gomCode = null;
 		
 		
@@ -606,7 +609,7 @@ public HostParser(ParserSharedInputState state) {
 		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn()))
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		
@@ -716,10 +719,7 @@ public HostParser(ParserSharedInputState state) {
 		currentFile, initialGomLine));
 		return;
 		}
-		//String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
 		String generatedMapping = (String)informationTracker.get("lastGeneratedMapping");
-		/////// String generatedMapping = (String)informationTracker.get(java.lang.Thread.currentThread().getId());
-		//tests statiques String generatedMapping = (String)(tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().remove(java.lang.Thread.currentThread().getId()));
 		
 		// Simulate the inclusion of generated Tom file
 		/*
@@ -737,7 +737,7 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final void backquoteTerm(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException {
 		
 		Token  t = null;
@@ -756,20 +756,23 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Option ot = tom_make_OriginTracking(tom_make_Name("Backquote"),t.getLine(),currentFile);
-		TomTerm bqTerm = bqparser.beginBackquote();
+		//BQTerm bqTerm = tomparser.plainBQTerm();
+		BQTerm result = bqparser.beginBackquote();
+		//System.out.println("parse bqterm \n"+result);
 		
 		// update position for new target block
 		updatePosition();
-		list.add(bqTerm);
+		list.add(tom_make_BQTermToCode(result));
+		//throw new RuntimeException("BackQuote parser not yet implemented");
 		
 	}
 	
 	public final void operator(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
@@ -786,42 +789,47 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Declaration operatorDecl = tomparser.operator();
-		list.add(tom_make_DeclarationToTomTerm(operatorDecl));
+		list.add(tom_make_DeclarationToCode(operatorDecl));
 		
 	}
 	
 	public final void operatorList(
-		List<TomTerm> list
+		List list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
-		Token  t = null;
+		Token  t1 = null;
 		
 		TargetLanguage code = null;
+		int line = 0;
+		int column = 0;
 		
 		
-		t = LT(1);
+		{
+		t1 = LT(1);
 		match(OPERATORLIST);
+		line=t1.getLine();column=t1.getColumn();
+		}
 		
 		String textCode = pureCode(getCode());
 		if(isCorrect(textCode)) {
-		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn()))
+		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(line,column))
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Declaration operatorListDecl = tomparser.operatorList();
-		list.add(tom_make_DeclarationToTomTerm(operatorListDecl));
+		list.add(tom_make_DeclarationToCode(operatorListDecl));
 		
 	}
 	
 	public final void operatorArray(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
@@ -838,22 +846,22 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		Declaration operatorArrayDecl = tomparser.operatorArray();
-		list.add(tom_make_DeclarationToTomTerm(operatorArrayDecl));
+		list.add(tom_make_DeclarationToCode(operatorArrayDecl));
 		
 	}
 	
 	public final void includeConstruct(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
 		
 		TargetLanguage tlCode = null;
-		List<TomTerm> blockList = new LinkedList<TomTerm>();
+		List<Code> blockList = new LinkedList<Code>();
 		
 		
 		t = LT(1);
@@ -866,7 +874,7 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		
 		tlCode=goalLanguage(blockList);
@@ -877,7 +885,7 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final void typeTerm(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  tt = null;
@@ -902,16 +910,16 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		Declaration termdecl = tomparser.typeTerm();
 		
-		list.add(tom_make_DeclarationToTomTerm(termdecl));
+		list.add(tom_make_DeclarationToCode(termdecl));
 		
 	}
 	
 	public final void code(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  t = null;
@@ -930,7 +938,7 @@ public HostParser(ParserSharedInputState state) {
 		
 		
 		;
-		list.add(tom_make_TargetLanguageToTomTerm(code));
+		list.add(tom_make_TargetLanguageToCode(code));
 		}
 		textCode = t.getText();
 		String metacode = textCode.substring(2,textCode.length()-2);
@@ -940,7 +948,7 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final TargetLanguage  goalLanguage(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		TargetLanguage result;
 		
@@ -970,7 +978,7 @@ public HostParser(ParserSharedInputState state) {
 	}
 	
 	public final TargetLanguage  targetLanguage(
-		List<TomTerm> list
+		List<Code> list
 	) throws RecognitionException, TokenStreamException, TomException {
 		TargetLanguage result;
 		

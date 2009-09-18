@@ -74,6 +74,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='withSeparateCongruenceStrategies' altName='wscs' description='Generate the definition of congruence strategies in _file.tom file' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
+    "<boolean name='jmicompatible' altName='jmi' description='Generate code whose syntax is compatible with JMI standards (capitalize getters and setters)' value='false'/>" +
     "</options>";
 
   /**
@@ -128,9 +129,10 @@ public class BackendPlugin extends GomGenericPlugin {
     }
     boolean multithread = getOptionBooleanValue("multithread");
     boolean nosharing = getOptionBooleanValue("nosharing");
+    boolean jmicompatible = getOptionBooleanValue("jmicompatible");
     Backend backend =
       new Backend(templateFactory.getFactory(getOptionManager()),
-                  tomHomePath, generateStratMapping, multithread, nosharing,
+                  tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
                   getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if(classList == null) {
