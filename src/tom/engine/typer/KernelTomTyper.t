@@ -161,8 +161,8 @@ public class KernelTomTyper {
       throw new TomRuntimeException("typeVariable: null contextType");
     }
     try {
-      System.out.println("typeVariable: " + contextType);
-      System.out.println("typeVariable subject: " + subject);
+      //System.out.println("typeVariable: " + contextType);
+      //System.out.println("typeVariable subject: " + subject);
       T res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
@@ -197,9 +197,9 @@ public class KernelTomTyper {
     visit TomVisit {
       v@VisitTerm(type,constraintInstructionList,options) -> {
         TomType newType = `kernelTomTyper.typeVariable(contextType,`type);
-        if (`type != newType) {
-          System.out.println("\nLe type avant = " + `type + " et le type apres = " + newType);
-        }
+        //if (`type != newType) {
+        //  System.out.println("\nLe type avant = " + `type + " et le type apres = " + newType);
+        //}
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         return `VisitTerm(newType, kernelTomTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
