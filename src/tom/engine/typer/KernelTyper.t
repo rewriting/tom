@@ -125,7 +125,7 @@ public class KernelTyper {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
       T res =
-        `TopDownStopOnSuccess(collectTypeConstraints(contextType,this)).visitLight(subject);
+        `TopDownStopOnSuccess(typeVariable(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
     } catch(tom.library.sl.VisitFailure e) {
@@ -133,7 +133,7 @@ public class KernelTyper {
     }
   }
 
-  %strategy collectTypeConstraints(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
+  %strategy typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
     // TomVisit exists in a "%strategy"
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
@@ -141,8 +141,14 @@ public class KernelTyper {
         // Collect all match and numeric match (with explicit declaration of
         // type)
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        TypeConstraintList typeConstraints =
+          kernelTyper.`inferTypeForConstraintInstructionList(type,constraintInstructionList,matchAndNumericConstraints,concTypeConstraint());
+        // Call type constraint resolution algorithm
+        MappingList listOfMappings =
+          kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
         // Type a list of matchs
-        return `VisitTerm(type, kernelTyper.typeConstraintInstructionList(type,constraintInstructionList,matchAndNumericConstraints),options);
+        return `VisitTerm(type,
+            kernelTyper.typeConstraintInstructionList(constraintInstructionList,listOfMappings),options);
       }
     }
 
@@ -159,8 +165,14 @@ public class KernelTyper {
         // Collect all match and numeric match (with explicit declaration of
         // type)
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        TypeConstraintList typeConstraints = kernelTyper.`inferTypeForConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints,concTypeConstraint());
+        // Call type constraint resolution algorithm
+        MappingList listOfMappings =
+          kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
+
         // Type a list of matchs
-        return `Match(kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
+        return
+          `Match(kernelTyper.typeConstraintInstructionList(constraintInstructionList,listOfMappings),options);
       }
     }
 
@@ -277,27 +289,47 @@ public class KernelTyper {
    * @param contextType
    * @param constraintInstructionList a list of ConstraintInstruction
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
+   * @param typeConstraints a list of TypeConstraint to pass for type constraint
+   * resolution algorithm
    */
-  // TOCHECK
-  private ConstraintInstructionList typeConstraintInstructionList(TomType contextType, ConstraintInstructionList constraintInstructionList, Collection<Constraint> matchAndNumericConstraints) {
-    // TODO
+  private TypeConstraintList inferTypeForConstraintInstructionList(TomType
+      contextType, ConstraintInstructionList constraintInstructionList,
+      Collection<Constraint> matchAndNumericConstraints, TypeConstraintList
+      typeConstraints) {
     %match(constraintInstructionList) {
       concConstraintInstruction() -> {
-        return constraintInstructionList;
+        return typeConstraints;
       }
 /*
-      concConstraintInstruction(firstConstraint@ConstraintInstruction(constraint,action,option),tail*) -> {
+      concConstraintInstruction(firstConstraint,tail*) -> {
         try {
-          TypeConstraintList typeConstraints = `concTypeConstraint();
-          //Constraint newConstraint = `TopDownOnSuccess(typeConstraint()).visitLight(`constraint); 
+          Collection<TomType> typeVariables = new HashSet<TomType>();
+          // Collect type constraints in lhs + rhs
+          typeConstraints = kernelTyper.`inferTypeForConstraintInstruction(contextType,typeVariables,typeConstraints,matchAndNumericConstraints,this)).visitLight(`firstConstraint); 
+          TypeConstraintList newTypeConstraints = 
+            inferTypeForConstraintInstructionList(contextType,`tail,matchAndNumericConstraints,typeConstraints); 
+          return `concTypeConstraint(newTypeConstraints*,typeConstraints*);
         } catch(VisitFailure e) {
-          // put an error message 
-        } 
+          System.out.println("Error in 'inferTypeForConstraintInstructionList'");
+        }
       }
- */
+*/
     }
-    return `concConstraintInstruction(); 
+    throw new TomRuntimeException("Bad ConstraintInstruction: " + constraintInstructionList);
+ }
+
+  // TOCHECK
+  private MappingList resolveTypeConstraints(MappingList
+      emptyMapping,TypeConstraintList typeConstraints) {
+    return `concMapping();
   }
+
+  // TOCHECK
+  private ConstraintInstructionList
+    typeConstraintInstructionList(ConstraintInstructionList
+        constraintInstructionList, MappingList listOfMappings) {
+    return `concConstraintInstruction();
+    }
 
   /**
    * If a variable with a type X is found, then all the variables that have the same name and 

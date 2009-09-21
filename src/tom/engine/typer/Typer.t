@@ -181,6 +181,7 @@ public class Typer extends TomGenericPlugin {
           // This happens when typeName = unknown type and javaClassType = null 
           javaClassType = kernelTyper.getFreshTypeVar(); 
           typer.symbolTable().putType(`typeName,javaClassType);
+          javaClassType = `Type(typeName,javaClassType);
         }
         return javaClassType;
       }

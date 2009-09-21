@@ -38,9 +38,9 @@ Context = Context(Jugement*)
 
 Mapping = MapsTo(tvar: TomType, type: TomType)
 
-Substitution = MList(Mapping*)
+MappingList = concMapping(Mapping*)
 
-SubstitutionList = SList(Substitution*)
+//SubstitutionList = SList(Substitution*)
 
 ContextAndResult = CRPair(ctx: Context, res: ReconResult)
 
