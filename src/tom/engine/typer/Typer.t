@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -76,12 +77,17 @@ public class Typer extends TomGenericPlugin {
   /** some output suffixes */
   public static final String TYPED_SUFFIX       = ".tfix.typed";
   public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
+  private static Logger logger = Logger.getLogger("tom.engine.typer.Typer");
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='type' altName='' description='Typer (activated by default)' value='true'/>" +
+    "<boolean name='newtyper' altName='nt' description='New version of Typer (working in progress)' value='false'/>" +
     "</options>";
+
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(Typer.DECLARED_OPTIONS);
+  }
 
   /** the kernel typer acting at very low level */
   private static KernelTyper kernelTyper;
@@ -100,50 +106,57 @@ public class Typer extends TomGenericPlugin {
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-    TomTerm typedTerm = null;
-    try {
-      /**
-        * Typing variables whose types are unknown with fresh type variables before
-        * start inference
-        */
-      Code typedCodeWithTypeVariables = collectKnownTypes((Code)getWorkingTerm());
-      
-      /**
-        * Start by typing variables with fresh type variables
-        * Perform type inference over patterns 
-        */
-      Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCodeWithTypeVariables);
-      
-      /** Transform each BackQuoteTerm into its compiled form --> maybe to
-        * desugarer phase before perform type inference 
-        */
-      // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
-      /** Transform a string into an array of characters before type inference, 
-        * so we can apply inference just once on all terms 
-        */
-      //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
 
-      // Update type information for codomain in symbol table
-      Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferedTypeForCode);
-    
-      //Propagate type information for all variables with same name
-      typedCode = kernelTyper.propagateVariablesTypes(typedCode);
-      setWorkingTerm(typedCode); 
+    if(getOptionBooleanValue("newtyper")) {
+ 
+      TomTerm typedTerm = null;
+      try {
+        /**
+          * Typing variables whose types are unknown with fresh type variables before
+          * start inference
+          */
+        Code typedCodeWithTypeVariables = collectKnownTypes((Code)getWorkingTerm());
+        
+        /**
+          * Start by typing variables with fresh type variables
+          * Perform type inference over patterns 
+          */
+        Code inferedTypeForCode = (Code) kernelTyper.typeVariable(`EmptyType(), typedCodeWithTypeVariables);
+        
+        /** Transform each BackQuoteTerm into its compiled form --> maybe to
+          * desugarer phase before perform type inference 
+          */
+        // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
+        /** Transform a string into an array of characters before type inference, 
+          * so we can apply inference just once on all terms 
+          */
+        //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
 
-      // verbose
-      getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
-      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
-      e.printStackTrace();
-      return;
-    }
-    /* Add a suffix for the compilation option --intermediate during typing phase*/
-    if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileName()
-          + TYPED_SUFFIX, typedTerm);
-      Tools.generateOutput(getStreamManager().getOutputFileName()
-          + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
+        // Update type information for codomain in symbol table
+        Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferedTypeForCode);
+      
+        //Propagate type information for all variables with same name
+        typedCode = kernelTyper.propagateVariablesTypes(typedCode);
+        setWorkingTerm(typedCode); 
+
+        // verbose
+        getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
+            new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+            new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
+        e.printStackTrace();
+        return;
+      }
+      /* Add a suffix for the compilation option --intermediate during typing phase*/
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_SUFFIX, typedTerm);
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
+      }
+    } else {
+      // not active plugin
+      logger.log(Level.INFO, "The new typer is not in use.");
     }
   }
 
