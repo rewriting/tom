@@ -137,12 +137,12 @@ public class KernelTyper {
     // TomVisit exists in a "%strategy"
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
-        HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        //HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
         // Collect all match and numeric match (with explicit declaration of
         // type)
-        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        //`TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         TypeConstraintList typeConstraints =
-          kernelTyper.`inferTypeForConstraintInstructionList(type,constraintInstructionList,matchAndNumericConstraints,concTypeConstraint());
+          kernelTyper.`reconConstraintInstructionList(type,constraintInstructionList,concTypeConstraint());
         // Call type constraint resolution algorithm
         MappingList listOfMappings =
           kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
@@ -161,11 +161,11 @@ public class KernelTyper {
        */
       Match(constraintInstructionList, options) -> {
         TomType newType = contextType;
-        HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        //HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
         // Collect all match and numeric match (with explicit declaration of
         // type)
-        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
-        TypeConstraintList typeConstraints = kernelTyper.`inferTypeForConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints,concTypeConstraint());
+        //`TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        TypeConstraintList typeConstraints = kernelTyper.`reconConstraintInstructionList(newType,constraintInstructionList,concTypeConstraint());
         // Call type constraint resolution algorithm
         MappingList listOfMappings =
           kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
@@ -289,34 +289,75 @@ public class KernelTyper {
    * @param contextType
    * @param constraintInstructionList a list of ConstraintInstruction
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
-   * @param typeConstraints a list of TypeConstraint to pass for type constraint
+   * @param typeConstraints a list of TypeConstraint to by sended for the type constraint
    * resolution algorithm
    */
-  private TypeConstraintList inferTypeForConstraintInstructionList(TomType
+  private TypeConstraintList reconConstraintInstructionList(TomType
       contextType, ConstraintInstructionList constraintInstructionList,
-      Collection<Constraint> matchAndNumericConstraints, TypeConstraintList
-      typeConstraints) {
+      TypeConstraintList typeConstraints) {
     %match(constraintInstructionList) {
       concConstraintInstruction() -> {
         return typeConstraints;
       }
-/*
-      concConstraintInstruction(firstConstraint,tail*) -> {
+
+      concConstraintInstruction(ConstraintInstruction(constraint,action,option),tail*) -> {
         try {
-          Collection<TomType> typeVariables = new HashSet<TomType>();
-          // Collect type constraints in lhs + rhs
-          typeConstraints = kernelTyper.`inferTypeForConstraintInstruction(contextType,typeVariables,typeConstraints,matchAndNumericConstraints,this)).visitLight(`firstConstraint); 
-          TypeConstraintList newTypeConstraints = 
-            inferTypeForConstraintInstructionList(contextType,`tail,matchAndNumericConstraints,typeConstraints); 
+          Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
+          `TopDownStopOnSuccess(reconConstraint(contextType,lhsVariable,typeConstraints,this)).visitLight(`constraint);
+          TomList varList = ASTFactory.makeTomList(lhsVariable);
+          Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
+          newAction = typeVariable(`EmptyType(),`newAction);
+          TypeConstraintList newTypeConstraints =
+            reconConstraintInstructionList(contextType, `tail, typeConstraints);
           return `concTypeConstraint(newTypeConstraints*,typeConstraints*);
         } catch(VisitFailure e) {
-          System.out.println("Error in 'inferTypeForConstraintInstructionList'");
+          System.out.println("Error in 'reconConstraintInstructionList'");
         }
       }
-*/
     }
     throw new TomRuntimeException("Bad ConstraintInstruction: " + constraintInstructionList);
  }
+
+  // TOCHECK
+  %strategy reconConstraint(contextType: TomType, lhsVariable: Collection, typeConstraints:
+      TypeConstraintList, kernelTyper: KernelTyper) extends Fail() {
+    visit Constraint {
+    } 
+  }
+
+  /**
+   * Replace variables that are already instantiated before. So, this happens
+   * when having a %match inside the action (right hand-side) of another
+   * external %match and both use variables with the same name
+   */
+  protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
+    try {
+      return `TopDownStopOnSuccess(replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
+    }
+  }
+
+  %strategy replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
+    visit TomTerm {
+      subject -> {
+        %match(subject, instantiatedVariable) {
+          RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            System.out.println("RecordAppl, opNameAST = " + `opNameAST);
+            return `var;
+          }
+          Variable[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            System.out.println("Variable, opNameAST = " + `opNameAST);
+            return `var;
+          }
+          VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
+            System.out.println("VariableStar, opNameAST = " + `opNameAST);
+            return `var;
+          }
+        }
+      }
+    }
+  }
 
   // TOCHECK
   private MappingList resolveTypeConstraints(MappingList
@@ -390,6 +431,7 @@ public class KernelTyper {
    * Collect the constraints (match and numeric)
    * NumericConstraint are %match with explicit type declaration
    */
+  /*
   %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends
     Fail() {
     visit Constraint {
@@ -398,7 +440,7 @@ public class KernelTyper {
       }      
     }
   }
-
+*/
   private TomSymbol findSymbol(TomType contextType, String symbolName) {
     TomSymbol tomSymbol = null;
     if(symbolName.equals("")) {
