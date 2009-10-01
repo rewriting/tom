@@ -40,7 +40,7 @@ import org.xml.sax.SAXParseException;
  * 
  */
 
-public class EcoreMappingToXMI{
+public class EcoreMappingToXMI {
 
   %include { ecoremapping.tom }
   
@@ -51,11 +51,10 @@ public class EcoreMappingToXMI{
    * @return XML string matching the object
    */
   
-  public static String parse(EPackage eo, boolean subpackage){
+  public static String parse(EPackage eo, boolean subpackage) {
     StringBuffer sb=new StringBuffer();
-    %match(eo){
-      EPackage(eAnnotations, name, nsURI, nsPrefix, _, eClassifiers, eSubpackages) -> 
-      {
+    %match(eo) {
+      EPackage(eAnnotations, name, nsURI, nsPrefix, _, eClassifiers, eSubpackages) -> {
         sb.append("<"+(subpackage?"eSubpackages":"ecore:EPackage " +
             "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
             "xmlns:ecore=\"http://www.eclipse.org/emf/2002/Ecore\" " +
@@ -79,9 +78,9 @@ public class EcoreMappingToXMI{
    * @return XML string matching the object
    */
   
-  public static String parse(EClass eo){
+  public static String parse(EClass eo) {
     StringBuffer sb=new StringBuffer();
-    %match(eo){
+    %match(eo) {
       c@EClass(eAnnotations, name, instanceClassName, instanceTypeName, eTypeParameters, _abstract, _interface, eSuperTypes, eOperations, eStructuralFeatures, _) -> {
         StringBuffer sb2=new StringBuffer();
         %match(eSuperTypes){
@@ -486,7 +485,7 @@ public class EcoreMappingToXMI{
       System.exit(1);
     }
     String xml ="";
-    try{
+    try {
       EPackage p2 = (EPackage) Class.forName(args[0]).getField("eINSTANCE").get(
               null);
       
@@ -507,7 +506,7 @@ public class EcoreMappingToXMI{
   
       String xmlString = result.getWriter().toString();
       System.out.println(xmlString);
-    }catch(Exception e){
+    } catch(Exception e) {
       e.printStackTrace();
       System.err.println(xml.replaceAll(">", ">\n"));
     }

@@ -591,11 +591,18 @@ public class Compiler extends TomGenericPlugin {
     BQTerm oldElem = `BQVariable(concOption(),Name("oldElem"),opType);
 
     TomName opName = `Name(opNameString);
-    Instruction ifList = `If(IsFsym(opName,subject),
+    /*
+     * empty list => return array
+     * is_fun_sym => oldElem = getHead
+     * else       => array[0]=1; return array
+     */
+    Instruction ifList = `
+      If(EqualBQTerm(opType,subject,BuildEmptyList(opName)),Return(mult),
+      If(IsFsym(opName,subject),
         LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
         AbstractBlock(concInstruction(
             AssignArray(mult,ExpressionToBQTerm(Integer(0)),Integer(1)), 
-            Return(mult))));
+            Return(mult)))));
 
     // the two ifs
     BQTerm elem = `BQVariable(concOption(),Name("elem"),opType);

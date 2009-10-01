@@ -349,7 +349,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       String ncode = ocode.replace("{0}",varname);
       if(!ncode.equals(ocode)) {
         inlined = true;
-        //getSymbolTable(moduleName).putIsFsym(opname,ocode);
         code = code.setCode(ncode);
       }
     }
@@ -386,7 +385,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       String ncode = ocode.replace("{0}",varname);
       if(!ncode.equals(ocode)) {
         inlined = true;
-        //getSymbolTable(moduleName).putGetSlot(opname,slotName.getString(),ocode);
         code = code.setCode(ncode);
       }
     }
@@ -448,7 +446,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       String ncode = ocode.replace("{0}",varname1).replace("{1}",varname2);
       if(!ncode.equals(ocode)) {
         inlined = true;
-        getSymbolTable(moduleName).putEqualTerm(type1,ocode);
         code = code.setCode(ncode);
       }
     }
@@ -470,7 +467,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       String ncode = ocode.replace("{0}",varName);
       if(!ncode.equals(ocode)) {
         inlined = true;
-        getSymbolTable(moduleName).putIsSort(type,ocode);
         code = code.setCode(ncode);
       }
     }
@@ -495,7 +491,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         String ncode = ocode.replace("{0}",varName);
         if(!ncode.equals(ocode)) {
           inlined = true;
-          getSymbolTable(moduleName).putGetHead(opname,ocode);
           code = code.setCode(ncode);
         }
       }
@@ -538,7 +533,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             String ncode = ocode.replace("{0}",varName);
             if(!ncode.equals(ocode)) {
               inlined = true;
-              getSymbolTable(moduleName).putGetTail(opname,ocode);
               code = code.setCode(ncode);
             }
           }
@@ -583,7 +577,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           String ncode = ocode.replace("{0}",varName);
           if(!ncode.equals(ocode)) {
             inlined = true;
-            getSymbolTable(moduleName).putIsEmptyList(opname,ocode);
             code = code.setCode(ncode);
           }
         }
@@ -624,7 +617,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           String ncode = ocode.replace("{0}",name1).replace("{1}",name2);
           if(!ncode.equals(ocode)) {
             inlined = true;
-            getSymbolTable(moduleName).putGetElementArray(opname,ocode);
             code = code.setCode(ncode);
           }
         }
@@ -667,7 +659,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           String ncode = ocode.replace("{0}",name1);
           if(!ncode.equals(ocode)) {
             inlined = true;
-            getSymbolTable(moduleName).putGetSizeArray(opname,ocode);
             code = code.setCode(ncode);
           }
         }

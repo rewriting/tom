@@ -257,10 +257,10 @@ public class TomBackend extends TomGenericPlugin {
 
   /*
    * the strategy Collector is used collect the part of the mapping that is really used
-   * this strategy also collect the declarations (IsFsymDecl, GetSLotDecl, etc)
+   * this strategy also collect the declarations (IsFsymDecl, GetSlotDecl, etc)
    * to fill the mapInliner used by the backend to inline calls to IsFsym, GetSlot, etc.
    */
-  %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:StringStack) extends `Identity() {
+  %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:StringStack) extends Identity() {
     visit Instruction {
       CompiledMatch[AutomataInst=inst, Option=optionList] -> {
 
@@ -297,7 +297,7 @@ public class TomBackend extends TomGenericPlugin {
     }
 
     visit Expression {
-      (IsEmptyList|IsEmptyArray|GetHead|GetTail)[Opname=Name(name)] -> {
+      (IsEmptyList|IsEmptyArray|GetHead|GetTail|GetSize|GetElement)[Opname=Name(name)] -> {
         try {
           // System.out.println("list check: " + `name);
           String moduleName = stack.peek();
@@ -389,11 +389,6 @@ public class TomBackend extends TomGenericPlugin {
     }
 
     visit Declaration {
-      //TypeTermDecl[] -> {
-        // should not search under a declaration
-        //throw new tom.library.sl.VisitFailure();
-      //}
-
       /*
        * collect all declarations and add them in the mapInliner
        * this is needed because a %op or %typeterm may be defined
@@ -435,10 +430,37 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
 
+      GetHeadDecl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          tb.getSymbolTable(moduleName).putGetHead(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      GetTailDecl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          tb.getSymbolTable(moduleName).putGetTail(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
       MakeDecl[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
         try {
           String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putMake(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      IsEmptyDecl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          tb.getSymbolTable(moduleName).putIsEmptyList(`opname,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -480,10 +502,30 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
 
+      GetElementDecl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = stack.peek();
+          tb.getSymbolTable(moduleName).putGetElementArray(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
       GetSizeDecl[Opname=Name(opname),Expr=Code(code)] -> {
         try {
           String moduleName = stack.peek();
           tb.getSymbolTable(moduleName).putGetSizeArray(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      (SymbolDecl|ListSymbolDecl|ArraySymbolDecl)[AstName=Name(opname)] -> {
+        try {
+          String moduleName = stack.peek();
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(`opname,tb.getSymbolTable(moduleName));
+          //System.out.println("SymbolDecl: " + tomSymbol);
+          markStrategy.visitLight(tomSymbol);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
