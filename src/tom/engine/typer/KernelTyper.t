@@ -94,7 +94,7 @@ public class KernelTyper {
     return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
 
-  public TomType getFreshTypeVar() {
+  protected TomType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
   }
 
@@ -108,7 +108,7 @@ public class KernelTyper {
       `concTypeConstraint(newConstraint,auxList*); 
   }
 
-  /*
+  /**
    * The "typeVariable" phase types RecordAppl into Variable
    * we focus on
    * - Match
@@ -153,7 +153,7 @@ public class KernelTyper {
     }
 
     visit Instruction {
-      /*
+      /**
        * Expansion of a Match construct
        * to add types in subjects
        * to add types in variables of patterns and rhs
@@ -208,7 +208,7 @@ public class KernelTyper {
               tomSymbol = kernelTyper.getSymbolFromName(`tomName);
             }
 
-          /*
+          /**
            * CT-FUN rule:
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
            * THEN infers type of arguments and add a type constraint "A = T" and
@@ -267,7 +267,7 @@ public class KernelTyper {
           // FIXME: it seems to be useless to match against a "UnamedVariable"
           // since the desugarer has already replaced unknown variables by fresh
           // variables
-          /*
+          /**
            * Type a variable
            * CT-VAR rule: 
            * IF found "x:A" and "x:T" already exists in SymbolTable 
@@ -284,7 +284,7 @@ public class KernelTyper {
     }
   }
 
-  /*
+  /**
    * ConstraintInstructionList
    * @param contextType
    * @param constraintInstructionList a list of ConstraintInstruction
@@ -302,13 +302,27 @@ public class KernelTyper {
 
       concConstraintInstruction(ConstraintInstruction(constraint,action,option),tail*) -> {
         try {
+          /**
+           * CT-RULE rule:
+           * IF found "(constraint -> (e1,...,en)):wt" and "forall ei, ei has
+           * type Ai" in SymbolTable
+           * THEN calls the reconConstraint method to infer types of the variables in
+           * the constraint and calls the typeVariable to set types Ai for each ei
+           */
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
+          // 1 - Infer types of a condition and collect both variables and type
+          // constraints
           `TopDownStopOnSuccess(reconConstraint(contextType,lhsVariable,typeConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeTomList(lhsVariable);
+          // 2 - If a variable 'x' is instantiated by 'a()', replace all variables 'x'
+          // found in the code succeeding by 'a()' 
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
+          // 3 - Infer types of an action
           newAction = typeVariable(`EmptyType(),`newAction);
+          // 4 - Infer types for the rest of the rules (constraint -> action)
           TypeConstraintList newTypeConstraints =
             reconConstraintInstructionList(contextType, `tail, typeConstraints);
+          // 5 - Return all collected type constraints 
           return `concTypeConstraint(newTypeConstraints*,typeConstraints*);
         } catch(VisitFailure e) {
           System.out.println("Error in 'reconConstraintInstructionList'");
@@ -322,7 +336,34 @@ public class KernelTyper {
   %strategy reconConstraint(contextType: TomType, lhsVariable: Collection, typeConstraints:
       TypeConstraintList, kernelTyper: KernelTyper) extends Fail() {
     visit Constraint {
+      MatchConstraint[Pattern=pattern,Subject=subject] -> {}
+
+      constraint@NumericConstraint[Left=lhsTerm,Right=rhsTerm] -> {
+        //lundi: il faut que j'appele la fonction getTypeBQTermInConstraint pour
+        //recuperer le type et pouvoir ajouter la contrainte lhsTermType =
+        //rhsTermType
+
+        //TomType typeVar = kernelTyper.getFreshTypeVar();
+        //kernelTyper.addConstraints(`Equation(typeVar,globalType));
+        BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhsTerm);                  
+        BQTerm newRhs = kernelTyper.typeVariable(`EmptyType(), `rhsTerm);                  
+        return `constraint.setLeft(newLhs).setRight(newRhs);               
+      }       
     } 
+  }
+
+  private TomType getTypeBQTermInConstraint(BQTerm bqTerm) {
+    %match(bqTerm) {
+      (BQVariable|BQVariable)[Option=_,AstName=_,AstType=astType] -> {
+        return `astType;
+      }
+
+      term@BQAppl[Option=_,AstName=astName,Args=_] -> {
+        //lundi: il faut creer une fonction pour recuperer le tom type 
+        //return term.getType(astName);
+      }
+    }
+      throw new TomRuntimeException("Bad term in constraint: " + bqTerm);
   }
 
   /**
@@ -330,7 +371,7 @@ public class KernelTyper {
    * when having a %match inside the action (right hand-side) of another
    * external %match and both use variables with the same name
    */
-  protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
+  private tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
     try {
       return `TopDownStopOnSuccess(replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
