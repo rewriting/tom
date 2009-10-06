@@ -73,7 +73,7 @@ public class ACPropagator implements IBasePropagator {
   public Constraint propagate(Constraint constraint) throws VisitFailure {
     Constraint result = constraint;
     //return `TopDownIdStopOnSuccess(ACMatching(this)).visitLight(constraint);		
-    result = `RepeatId(TopDown(RemoveNonVariable(this))).visitLight(result);		
+    result = `RepeatId(TopDown(RemoveNonVariableStar(this))).visitLight(result);		
     result = `RepeatId(TopDown(PerformAbstraction(this))).visitLight(result);		
     result = `TopDown(CleanSingleVariable()).visitLight(result);		
     //Constraint res = `TopDownWhenConstraint(ACMatching(this)).visitLight(constraint);		
@@ -98,7 +98,7 @@ public class ACPropagator implements IBasePropagator {
   }
 */
 
-  %strategy RemoveNonVariable(acp: ACPropagator) extends Identity() {
+  %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
           Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
@@ -107,10 +107,10 @@ public class ACPropagator implements IBasePropagator {
 
         %match(slots) {
           /*
-           * f(t,X,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(X,...) <<ac f(X1*,X2*)
+           * f(t,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(...) <<ac f(X1*,X2*)
            */
           concSlot(C1*, slot@PairSlotAppl[SlotName=slotname, Appl=!VariableStar[]], C2*) -> {
-            System.out.println("case F(t,X*,...): " + `slots);
+            System.out.println("case F(t,...): " + `slots);
             //System.out.println("slot: " + `slot);
 
             //generate f(X1*, slot, X2*) << s and modify s <- f(X1*,X2*)
@@ -123,7 +123,7 @@ public class ACPropagator implements IBasePropagator {
                     concSlot( PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X1)), slot, PairSlotAppl(slotname, TomBase.convertFromBQVarToVar(X2))),
                     concConstraint()),subject);
 
-            //generate f(X,...) << f(X1*,X2*)
+            //generate f(...) << f(X1*,X2*)
             TomSymbol tomSymbol = acp.getCompiler().getSymbolTable().getSymbolFromName(`tomName);
             BQTerm newSubject = null;
             if(TomBase.isListOperator(tomSymbol)) {
@@ -140,6 +140,43 @@ public class ACPropagator implements IBasePropagator {
           }
         }
       }
+    }
+  }
+
+  %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
+    visit Constraint {
+      MatchConstraint(pattern@RecordAppl[
+          Option=optWithAC@concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*),
+          NameList=namelist@(Name[]), Slots=slots],subject) -> {
+        if(`slots.length() > 2) {
+          %match(slots) {
+            /*
+             * f(Z*,...) <<ac s -> (Z*,X1*) <<ac s ^ f(...) <<ac X1* IF Z* linear 
+             */
+            concSlot(C1*, Z@PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], C2*)
+        && !concSlot(_*, PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], _*) << concSlot(C1*,C2*)
+            -> {
+              System.out.println("case F(Z*,...): " + `slots);
+              //generate: f(Z,X1) <<ac s 
+              TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
+              BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);				
+              Constraint c1 = 
+                `MatchConstraint(RecordAppl(optWithAC,
+                      namelist,concSlot(Z,PairSlotAppl(slotname,TomBase.convertFromBQVarToVar(X1))),
+                      concConstraint()),subject);
+              //generate: f(...) <<ac X1
+              Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,
+                    namelist, concSlot(C1*,C2*), concConstraint()),X1);
+              Constraint result = `AndConstraint(c1,c2);
+
+              //System.out.println("result: " + result);
+              System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+              return result;
+            }
+          }
+        }
+      }
+
     }
   }
 
@@ -163,42 +200,6 @@ public class ACPropagator implements IBasePropagator {
           System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
           return result;
         }
-    }
-  }
-
-  %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
-    visit Constraint {
-      MatchConstraint(pattern@RecordAppl[
-          Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
-          NameList=namelist@(Name[]), Slots=slots],subject) -> {
-        OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
-        if(`slots.length() > 2) {
-          %match(slots) {
-            /*
-             * f(Z,X,...) <<ac s -> (Z,X1) <<ac s ^ f(X,...) <<ac X1
-             */
-            concSlot(C1*, vstar@PairSlotAppl[SlotName=slotname, Appl=VariableStar[]], C2*) -> {
-              System.out.println("case F(Z*,X*,...): " + `slots);
-              //generate: f(vstar,X1) << s 
-              TomType listType = acp.getCompiler().getTermTypeFromTerm(`pattern);
-              BQTerm X1 = acp.getCompiler().getFreshVariableStar(listType);				
-              Constraint c1 = 
-                `MatchConstraint(RecordAppl(optWithAC,
-                      namelist,concSlot(vstar,PairSlotAppl(slotname,TomBase.convertFromBQVarToVar(X1))),
-                      concConstraint()),subject);
-              //generate: f(X,...) << X1
-              Constraint c2 = `MatchConstraint(RecordAppl(optWithAC,
-                    namelist, concSlot(C1*,C2*), concConstraint()),X1);
-              Constraint result = `AndConstraint(c1,c2);
-
-              //System.out.println("result: " + result);
-              System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
-              return result;
-            }
-          }
-        }
-      }
-
     }
   }
 

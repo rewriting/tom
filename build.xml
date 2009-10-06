@@ -1324,6 +1324,7 @@
         <exclude name="**/adt/**/*.java"/>
         <exclude name="**/bootcheck/**/*"/>
         <exclude name="**/bootstrap/**/*"/>
+        <exclude name="**/islander/**/*"/>
         <exclude name="**/gen/**/*"/>
       </fileset>
       <fileset dir="${src.gen}">

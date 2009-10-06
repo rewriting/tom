@@ -1,3 +1,8 @@
+2009-10-06 pem
+ * compile non-linear AC patterns of the form f(X*,Y*,...,Y*)
+	 not yet f(X*,X*,Y*,Y*) or f(X*,Y*...,Y*,Z*,...,Z*)
+ * fix a bug in the generation of next_minimal_extract
+
 2009-09-30 pem
  * fix a problem with AC matching: getMultiplicities
  * improved the inliner such that AC matching can be compiled with inlining

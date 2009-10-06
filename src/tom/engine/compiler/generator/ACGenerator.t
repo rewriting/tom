@@ -32,6 +32,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
@@ -71,19 +72,56 @@ public class ACGenerator implements IBaseGenerator {
   }
  
   public Expression generate(Expression expression) throws VisitFailure {
-    return `TopDown(Generator(this)).visitLight(expression);
+    return `TopDownIdStopOnSuccess(Generator(this)).visitLight(expression);
   }
 
-  // If we find ConstraintToExpression it means that this constraint was not processed	
+  /**
+   * generate code for a pattern of the form F_ac(X*,Y*,...,Y*)
+   *
+   * If we find ConstraintToExpression it means that this constraint was not processed	
+   */
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
-      // old : ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
-      ConstraintToExpression(MatchConstraint(pattern@RecordAppl[Slots=concSlot(PairSlotAppl[Appl=VariableStar[]],PairSlotAppl[Appl=VariableStar[]])],subject)) -> {
-
+      ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],subject)) -> {
         if(TomBase.hasTheory(`pattern,`AC())) {
-          // TODO - generate all the functions
-          return `ACMatchLoop(pattern, subject);
+          int mult_x=1;
+          int mult_y=0;
+          String name_y = null;
+          TomTerm var_y=null;
+
+          System.out.println("\n *** ACGenerator on: " + `pattern);
+
+          for(Slot t:`tail.getCollectionconcSlot()) {
+            %match(t) {
+              PairSlotAppl[Appl=var@VariableStar[AstName=Name(name)]] -> {
+                if(`name!=`name_x && name_y==null) {
+                  name_y=`name;
+                  var_y=`var;
+                }
+
+                //System.out.println("name   = " + `name);
+                //System.out.println("name_x = " + `name_x);
+                //System.out.println("name_y = " + name_y);
+
+                if(`name==`name_x) {
+                  mult_x++;
+                } else if(`name==name_y) {
+                  mult_y++;
+                } else {
+                  throw new TomRuntimeException("Bad VariableStar: " + `var);
+                }
+              }
+            }
+          }
+          if(mult_x==1 && mult_y>=1) {
+            return `ACMatchLoop(symbolName,var_x,var_y,mult_y,subject);
+          } else if(mult_x>=1 && mult_y==1) {
+            return `ACMatchLoop(symbolName,var_y,var_x,mult_x,subject);
+          } else {
+            throw new TomRuntimeException("Bad AC pattern: " + `pattern);
+          }
         }
+
       }
     } // end visit
   } // end strategy  

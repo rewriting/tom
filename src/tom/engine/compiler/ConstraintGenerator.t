@@ -173,8 +173,8 @@ public class ConstraintGenerator {
         return buildAntiMatchInstruction(`expr,action);
       }
       // AC loop
-      ACMatchLoop(pattern, subject) -> {
-        return `buildACMatchLoop(pattern, subject, action);
+      ACMatchLoop(symbolName,var_x,var_y,mult_y,subject) -> {
+        return `buildACMatchLoop(symbolName, var_x, var_y, mult_y, subject, action);
       }
       // conditions			
       x -> {
@@ -433,7 +433,12 @@ public class ConstraintGenerator {
     return `Nop();
   }
 
-  private Instruction buildACMatchLoop(TomTerm pattern, BQTerm subject, Instruction action) {    
+  /**
+    * generate a loop and a call to next_minimal_extract
+    */
+  private Instruction buildACMatchLoop(String symbolName, TomTerm var_x, TomTerm var_y, int mult_y, BQTerm subject, Instruction action) {
+    //System.out.println("buildACMatchLoop: mult_y = " + mult_y);
+
     SymbolTable symbolTable = getCompiler().getSymbolTable();
     TomType intType = symbolTable.getIntType();
     TomType intArrayType = symbolTable.getIntArrayType();
@@ -446,84 +451,13 @@ public class ConstraintGenerator {
     BQTerm tempSol = getCompiler().getFreshVariable("tempSol",intArrayType);
     BQTerm position = getCompiler().getFreshVariable("position",intType);
     BQTerm length = getCompiler().getFreshVariable("length",intType);                
+    BQTerm multiplicity = getCompiler().getFreshVariable("multiplicity",intType);                
 
-    ///String tomName = null;
-    String symbolName = null;
-    TomTerm var_x = null;
-    TomTerm var_y = null;
-    %match(pattern) {
-      RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
-        ///tomName = `tomName;
-        symbolName = `tomName;
-        var_x = `x;
-        var_y = `y;
-      }
-    }
     BQTermList getTermArgs = `concBQTerm(tempSol,alpha,subject);        
     TomType subtermType = getCompiler().getTermTypeFromTerm(var_x);
     TomType booleanType = symbolTable.getBooleanType();
-/*
-    Expression reinitializationLoopCond = `And(
-        GreaterThan(
-          BQTermToExpression(position),
-          zero),
-        GreaterThan(
-          GetElement(intArrayName,intType,tempSol,position),
-          GetElement(intArrayName,intType,alpha,position))
-        );
-
-    Instruction reinitializationLoop = `DoWhile(
-        AbstractBlock(concInstruction(
-        AssignArray(tempSol,position,zero),
-          LetRef(position,SubstractOne(position),
-            AssignArray(tempSol, position, AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,tempSol,position))))
-            )
-          )), reinitializationLoopCond);
-
-    Expression testCond = `LessThan(
-        GetElement(intArrayName,intType,tempSol,position),
-        GetElement(intArrayName,intType,alpha,position)
-        );
-
-    Instruction test = `If(testCond,
-        AssignArray(tempSol, position, AddOne(ExpressionToBQTerm(GetElement(intArrayName,intType,tempSol,position)))),
-        reinitializationLoop
-        );
-
-    Expression whileCond = `LessOrEqualThan(
-        GetElement(intArrayName,intType,tempSol,ExpressionToBQTerm(zero)),
-        GetElement(intArrayName,intType,alpha,ExpressionToBQTerm(zero)));
-
-    Instruction instruction = `DoWhile(
-        LetRef(position,SubstractOne(length),
-          LetRef(TomBase.convertFromVarToBQVar(x),
-            BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(FalseTL())))),
-            LetRef(TomBase.convertFromVarToBQVar(y),
-              BQTermToExpression(FunctionCall( Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName), subtermType,concBQTerm(getTermArgs*,ExpressionToBQTerm(TrueTL())))),
-              UnamedBlock(
-                concInstruction(
-                  action,
-                  test
-                  )
-                )
-              )
-            )
-          ), whileCond);
-
-
-    instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
-    instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
-    instruction = `LetRef(alpha,BQTermToExpression(FunctionCall(
-            Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
-            intArrayType,concBQTerm(subject))),instruction);
-
-    // make sure the additional functions are generated
-    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
-    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
-    symbolTable.setUsedSymbolDestructor(symbolTable.getSymbolFromName(symbolTable.getIntArrayOp()));
-*/
     
-    Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(length,alpha,tempSol)));
+    Expression whileCond = `BQTermToExpression(FunctionCall(Name("next_minimal_extract"),booleanType,concBQTerm(multiplicity,length,alpha,tempSol)));
 
     Instruction instruction = `DoWhile(
           LetRef(TomBase.convertFromVarToBQVar(var_x),
@@ -534,6 +468,7 @@ public class ConstraintGenerator {
             )
           ), whileCond);
 
+    instruction = `LetRef(multiplicity,Integer(mult_y),instruction);
     instruction = `LetRef(position,SubstractOne(length),instruction);
     instruction = `LetRef(tempSol,BQTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
     instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);

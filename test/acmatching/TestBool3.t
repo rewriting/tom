@@ -59,7 +59,7 @@ public class TestBool3 {
       | not(x:T)
 
       m:AC{}
-p:AC{}
+      p:AC{}
 
   }
 

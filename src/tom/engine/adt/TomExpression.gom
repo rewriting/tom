@@ -64,7 +64,7 @@ Expression = BQTermToExpression(AstTerm:BQTerm)
             * @param Pattern the f(x,y)
             * @param Subject the subject to match 
             */
-           | ACMatchLoop(Pattern:TomTerm,Subject:BQTerm)
+           | ACMatchLoop(SymbolName:String,VariableX:TomTerm,VariableY:TomTerm,MultiplicityY:int,Subject:BQTerm)
            /**
 		   * <code>WhileExpression</code> a do while loop
 		   *

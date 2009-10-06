@@ -459,13 +459,29 @@ public class Compiler extends TomGenericPlugin {
    * TODO:
    *   DONE: generate correct code for f(X,Y) << f() [empty case]
    *   DONE: generate correct code for f(X,Y) << f(a()) [singleton case]
+   *   DONE: fix the inliner (some code is not generated because a GetHead is used before its definition)
+   *   generate correct code for F(X,X,Y,Y) [two non-linear variables]
    *   the AC match is OK only for Gom data-structure with AC hook
    *   make it work with FL hook
    *   adapt compiler for %oparray mapping (and not just %oplist mapping)
-   *   fix the inliner (some code is not generated because a GetHead is used before its definition)
    */
 
-  private static String next_minimal_extract = null;
+  private static String next_minimal_extract = 
+        %[
+          public boolean next_minimal_extract(int multiplicity, int total, int E[], int sol[]) {
+            int pos = total-1;
+            while(pos>=0 && (sol[pos]+multiplicity)>E[pos]) {
+              sol[pos]=0;
+              pos--;
+            }
+            if(pos<0) {
+              return false;
+            }
+            sol[pos]+=multiplicity;
+            return true;
+          }
+        ]%;
+
   /**
    * Adds the necessary functions to the ADT of the program
    * 
@@ -483,6 +499,7 @@ public class Compiler extends TomGenericPlugin {
       getSymbolTable().setUsedSymbolDestructor(getSymbolTable().getIntArrayOp());
     }
     CodeList l = `concCode();
+    boolean generatedNextMinimalExtract = false;
     for(String op:bag) {
       TomSymbol opSymbol = getSymbolTable().getSymbolFromName(op);
       // gen all
@@ -494,23 +511,9 @@ public class Compiler extends TomGenericPlugin {
       // 3. getTerm        
       l = `concCode(DeclarationToCode(getPILforGetTermForMultiplicity(op,opType)),l*);
       // 4. next_minimal_extract
-      if(next_minimal_extract==null) {
-        next_minimal_extract = %[
-          public boolean next_minimal_extract(int total, int E[], int sol[]) {
-            int multiplicity=1;
-            int pos = total-1;
-            while(pos>=0 && sol[pos]==E[pos]) {
-              sol[pos]=0;
-              pos--;
-            }
-            if(pos<0) {
-              return false;
-            }
-            sol[pos]+=multiplicity;
-            return true;
-          }
-        ]%;
+      if(!generatedNextMinimalExtract) {
         l = `concCode(TargetLanguageToCode(ITL(next_minimal_extract)),l*);
+        generatedNextMinimalExtract = true;
       }
     }
     // make sure the variables are correctly defined
