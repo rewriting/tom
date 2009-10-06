@@ -439,16 +439,21 @@ public final class TomBase {
   public static int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
     int index = 0;
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
+    ArrayList<String> nameList = new ArrayList<String>();
     while(!pairNameDeclList.isEmptyconcPairNameDecl()) {
       TomName name = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
       // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
+      nameList.add(name.getString());
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
-    return -1;
+    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
+        + slotName.getString() + "' but expected one of the following names: " 
+        + Arrays.toString(nameList.toArray()) + ".");
+    //return -1;
   }
 
   public static TomType elementAt(TomTypeList l, int index) {
