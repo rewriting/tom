@@ -80,7 +80,6 @@ g:AC{}
       assertEquals("bagX.size==4",bagX.size(),4);
     }
 
-  /*
   @Test
     public void test2() {
       T t1 = `f(a(),b(),a());
@@ -96,22 +95,22 @@ g:AC{}
 
       assertTrue("f() is solution of X",bagX.contains(`f()));
       assertTrue("f(a(),a()) is solution of X",bagX.contains(`f(a(),a())));
-      assertTrue("t1 is solution of Y",bagY.contains(t1));
-      assertTrue("b() is solution of Y",bagX.contains(`b()));
+      assertTrue("t1 is solution ofYX",bagY.contains(t1));
+      assertTrue("b() is solution of Y",bagY.contains(`b()));
       assertEquals("bagX.size==2",bagX.size(),2);
+      assertEquals("bagY.size==2",bagY.size(),2);
 
       Set<T> bagXX = new HashSet<T>();
       Set<T> bagYY = new HashSet<T>();
       %match(t1) {
         f??(XX*,YY*,YY*) -> { 
-          bagX.add(`XX);
-          bagY.add(`YY);
+          bagXX.add(`XX);
+          bagYY.add(`YY);
         }
       }
       assertEquals("bagX==bagYY",bagX,bagYY);
       assertEquals("bagXX==bagY",bagXX,bagY);
 
     }
-    */
 
 }

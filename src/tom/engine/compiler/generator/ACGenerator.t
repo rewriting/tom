@@ -113,10 +113,12 @@ public class ACGenerator implements IBaseGenerator {
               }
             }
           }
-          if(mult_x==1 && mult_y>=1) {
-            return `ACMatchLoop(symbolName,var_x,var_y,mult_y,subject);
-          } else if(mult_x>=1 && mult_y==1) {
-            return `ACMatchLoop(symbolName,var_y,var_x,mult_x,subject);
+          //System.out.println("mult_x = " + mult_x);
+          //System.out.println("mult_y = " + mult_y);
+          if(mult_x>=1 && mult_y==1) {
+            return `ACMatchLoop(symbolName,var_x,var_y,mult_x,subject);
+          } else if(mult_x==1 && mult_y>=1) {
+            return `ACMatchLoop(symbolName,var_y,var_x,mult_y,subject);
           } else {
             throw new TomRuntimeException("Bad AC pattern: " + `pattern);
           }
