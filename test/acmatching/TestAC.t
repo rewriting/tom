@@ -109,7 +109,7 @@ g:AC{}
         }
       }
       assertEquals("bagX==bagYY",bagX,bagYY);
-      assertEquals("bagXX==bagY",bagXX,bagY);
+      assertEquals("bagY==bagXX",bagY,bagXX);
 
     }
 

@@ -89,7 +89,7 @@ public class ACGenerator implements IBaseGenerator {
           String name_y = null;
           TomTerm var_y=null;
 
-          System.out.println("\n *** ACGenerator on: " + `pattern);
+          //System.out.println("\n *** ACGenerator on: " + `pattern);
 
           for(Slot t:`tail.getCollectionconcSlot()) {
             %match(t) {

@@ -84,20 +84,10 @@ public class ACPropagator implements IBasePropagator {
     return result;
   }	
 
-/*
-  %strategy ACMatching(acp: ACPropagator) extends Identity() {
-    visit Constraint {
-      // here we handle all the cases of the AC match
-      // that are supposed to be solved by programm transformation 
-      // (basically to reduce all the cases to f(X*,Y*))
-      c@MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName)), Slots=slots],subject) -> {
-        //decompose the pattern to only f(X*,Y*) matching constraints
-        //return acp.decompose(`c); 
-      }
-    }
-  }
-*/
-
+  /**
+   * remove a term which is not a VariableStar
+   * f(t,...) <<ac s -> (X1*,t,X2*) <<a s ^ f(...) <<ac f(X1*,X2*)
+   */
   %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
@@ -143,6 +133,11 @@ public class ACPropagator implements IBasePropagator {
     }
   }
 
+  /**
+   * use abstraction to compile  
+   * 
+   * f(Z*,...) <<ac s -> (Z*,X1*) <<ac s ^ f(...) <<ac X1* IF Z* linear 
+   */
   %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
@@ -180,6 +175,18 @@ public class ACPropagator implements IBasePropagator {
     }
   }
 
+  /**
+   * use abstraction to compile non-linear variables
+   *
+   * f(X1,X2^a2,...,Xn^an) <<ac s -> if(Z,Xn^an) <<ac s ^ f(X1,X2^a2,...,Xn-1^an-1) <<ac Z
+   */
+
+  /**
+   * transform AC matching into A matching when the pattern is reduced to 
+   * an empty-list or a single variable
+   * f()   <<ac s => f() <<a s
+   * f(X*) <<ac s => f(X*) <<a s
+   */
   %strategy CleanSingleVariable() extends Identity() {
     visit Constraint {
       /*
