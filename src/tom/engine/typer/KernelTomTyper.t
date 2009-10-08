@@ -299,6 +299,10 @@ public class KernelTomTyper {
           }
         } else {
           tomSymbol = kernelTomTyper.getSymbolFromName(`tomName);
+/*          if (`tomName == "nothing") {
+            System.out.println("\n tomSymbol of 'nothing' = " + `tomSymbol);
+          }
+*/
         }
 
         if(tomSymbol != null) {
@@ -353,8 +357,9 @@ public class KernelTomTyper {
         return constraintInstructionList; 
       }
 
-      concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
+      c@concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
+        //System.out.println("\n ConstraintInstruction = " + `c);
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
           Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeTomList(lhsVariable);
@@ -448,6 +453,8 @@ public class KernelTomTyper {
       }
 
       constraint@NumericConstraint[Left=lhs,Right=rhs] -> {
+        //System.out.println("\nNumeric constraint = " + `constraint);
+
         // if it is numeric, we do not care about the type
         BQTerm newLhs = kernelTomTyper.typeVariable(`EmptyType(), `lhs);                  
         BQTerm newRhs = kernelTomTyper.typeVariable(`EmptyType(), `rhs);                  
@@ -630,17 +637,22 @@ matchL:  %match(subject,s){
     throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
   }
 
+// Strategy called when there exist a %match with another one (or more) %match
+// inside it, so tthe strategy links all variables which have the same name
   %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
     visit TomTerm {
       subject -> {
         %match(subject, instantiatedVariable) {
           RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            //System.out.println("RecordAppl, opNameAST = " + `opNameAST);
             return `var;
           }
           Variable[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            //System.out.println("Variable, opNameAST = " + `opNameAST);
             return `var;
           }
           VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
+            //System.out.println("VariableStar, opNameAST = " + `opNameAST);
             return `var;
           }
         }
@@ -650,8 +662,8 @@ matchL:  %match(subject,s){
 
   protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
     try {
-      //System.out.println("varlist = " + instantiatedVariable);
-      //System.out.println("subject = " + subject);
+      //System.out.println("\nvarlist = " + instantiatedVariable);
+      //System.out.println("\nsubject = " + subject);
       return `TopDownStopOnSuccess(replace_replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
