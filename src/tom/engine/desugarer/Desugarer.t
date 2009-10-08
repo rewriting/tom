@@ -180,7 +180,6 @@ public class Desugarer extends TomGenericPlugin {
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-      // FIXME : control the loop by the arguments in the signature
       for(TomTerm arg:(concTomTerm)args) {
         try{
           TomTerm subterm = typeStrategy.visitLight(arg);
