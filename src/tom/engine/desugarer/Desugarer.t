@@ -180,6 +180,7 @@ public class Desugarer extends TomGenericPlugin {
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
+      // FIXME : control the loop by the arguments in the signature
       for(TomTerm arg:(concTomTerm)args) {
         try{
           TomTerm subterm = typeStrategy.visitLight(arg);
@@ -193,6 +194,12 @@ public class Desugarer extends TomGenericPlugin {
         } catch(tom.library.sl.VisitFailure e) {
           System.out.println("should not be there");
         }
+      }
+      %match(pairNameDeclList){
+        !concPairNameDecl() -> { 
+          throw new TomRuntimeException("The symbol '"
+                +
+                `pairNameDeclList.getHeadconcPairNameDecl().getSlotName().getString() + "' has a bad arity"); }
       }
     }
 
