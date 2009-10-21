@@ -27,27 +27,27 @@ public class McLean extends Policy {
 
     %match(cs) {
       //read only (comparable and) lower level resources 
-      state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
-        if(! `slL.leq(`rsl,`ssl)) {
-          //           System.out.println("read: " + `rsl + " by " + `ssl);
-          return false;
-        }
-      } 
-
-      //weaker -> read only  lower level resources or uncomparable
 //       state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
-//         if(`slL.ge(`rsl,`ssl)) {
+//         if(! `slL.leq(`rsl,`ssl)) {
 //           //           System.out.println("read: " + `rsl + " by " + `ssl);
 //           return false;
 //         }
 //       } 
 
+      //weaker -> read only  lower level resources or uncomparable
+      state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
+        if(`slL.ge(`rsl,`ssl)) {
+//                     System.out.println("*******read: " + `rsl + " by " + `ssl);
+          return false;
+        }
+      } 
+
       //*-security property
       state(accesses(_*,read(s,resource[sl=rsl1]),_*,
                         write(s,resource[sl=rsl2]),_*)) -> {
         if(`slL.le(`rsl2,`rsl1)) {
-//           System.out.println("write: " + `rsl2 + " by " + `s);
-//           System.out.println("read:  " + `rsl1 + " by " + `s);
+//           System.out.println("+++++write: " + `rsl2 + " by " + `s);
+//           System.out.println("+++++read:  " + `rsl1 + " by " + `s);
           return false;
         }
       }

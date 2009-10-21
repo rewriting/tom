@@ -41,8 +41,8 @@ public class Tests {
     //ListOfResources rlist = `resources(r3,r1);
     //ListOfSubjects slist = `subjects(s3,s2,s1);
     //ListOfResources rlist = `resources(r3,r2,r1);
-    ListOfSubjects slist = `subjects(s4,s3,s2,s1);
-    ListOfResources rlist = `resources(r4,r3,r2,r1);
+    ListOfSubjects slist = `subjects(s3,s2,s1);
+    ListOfResources rlist = `resources(r3,r2,r1);
     //ListOfSubjects slist = `subjects(s4,s3,s2,s1,s0);
     //ListOfResources rlist = `resources(r4,r3,r2,r1,r0);
 
