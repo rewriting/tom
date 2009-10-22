@@ -44,8 +44,8 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class SymbolTable {
 
-  %include { adt/gom/Gom.tom}
-  %include { adt/symboltable/SymbolTable.tom}
+  %include { adt/gom/Gom.tom }
+  %include { adt/symboltable/SymbolTable.tom }
   %include { ../library/mapping/java/sl.tom }
 
   /** map sort-name -> SortDescription */
