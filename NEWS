@@ -4,7 +4,7 @@ version 2.7:
   - Gom has a new option: --nosharing, to generate a data-structure without
     maximal-sharing
   - new traversal combinator in the Strategy Library: Up
-  - Java generics in the type preserving visit methods of the Strategy library 
+  - Java generics in the type preserving visit methods of the Strategy library
   - Gom <--> ATerm has been improved for better compatibility
   - new ant options: ccode and camlcode
   - the Tom compiler is now thread-safe (can compile file in parallel)
