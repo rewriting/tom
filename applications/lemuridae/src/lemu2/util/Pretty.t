@@ -232,8 +232,69 @@ public class Pretty {
       RawrootR(RawRootRPrem1(a,pa,M)) -> { return %[@`pr(a,pa,sp)@ @`pretty(M,sp+1)@]%; }
       RawfoldL(id,RawFoldLPrem1(x,px,M),n) -> { return %[foldL[@`id@](@`pr(x,px,sp)@ @`pretty(M,sp+1)@,@`n@)]%; }
       RawfoldR(id,RawFoldRPrem1(a,pa,M),cn) -> { return %[foldR[@`id@](@`pr(a,pa,sp)@ @`pretty(M,sp+1)@,@`cn@)]%; }
+      RawsuperR(id,prems,ts,cn) -> { return %[superR[@`id@](@`pr(prems,sp+1)@,(@`pretty(ts)@),@`cn@)]%; }
+      RawsuperL(id,prems,ts,n) -> { return %[superL[@`id@](@`pr(prems,sp+1)@,(@`pretty(ts)@),@`n@)]%; }
     }
     throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String pr(RawSuperPrems prems,int sp) {
+    %match(prems) {
+      RawPremList()  -> { return ""; }
+      RawPremList(x) -> { return `pr(x,sp); }
+      RawPremList(x,xs*) -> { return %[@`pr(x,sp)@,@`pr(xs,sp)@]% ; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawGPrem p, int sp) {
+    %match(p) {
+      RawGPrem(xs,as,fxs,M) -> {
+        return %[<@`pr(xs)@><@`pr(as)@><@`pr(fxs)@>@`pretty(M,sp)@]%;
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawTyNameList l) { 
+    %match(l) {
+      RawTyNameList()  -> { return ""; }
+      RawTyNameList(x) -> { return `pr(x); }
+      RawTyNameList(x,xs*) -> { return %[@`pr(x)@,@`pr(xs)@]% ; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawTyCoNameList l) { 
+    %match(l) {
+      RawTyCoNameList()  -> { return ""; }
+      RawTyCoNameList(x) -> { return `pr(x); }
+      RawTyCoNameList(x,xs*) -> { return %[@`pr(x)@,@`pr(xs)@]% ; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawBFoVarList l) { 
+    %match(l) {
+      RawBFoVarList()  -> { return ""; }
+      RawBFoVarList(x) -> { return `x; }
+      RawBFoVarList(x,xs*) -> { return %[@`x@,@`pr(xs)@]% ; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawTyName nty) { 
+    %match(nty) {
+      RawTyName(n,ty) -> { return %[@`n@:@`ty@]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  public static String pr(RawTyCoName cnty) { 
+    %match(cnty) {
+      RawTyCoName(cn,ty) -> { return %[@`cn@:@`ty@]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
   }
 
   public static String pretty(RawProofTerm t) {

@@ -6,6 +6,7 @@ abstract syntax
 atom Name
 atom CoName
 atom FoVar
+atom MetaVar
 
 /* first-order terms */
 
@@ -44,6 +45,11 @@ PropRewriteRules = proprrules(PropRewriteRule*)
 
 /* proof terms */
 
+MetaTerm = MetaTerm(mt:<MetaTermContent>)
+MetaTermContent binds MetaVar = 
+  MetaTermContent(mvs:MetaVarList, inner M:ProofTerm)
+MetaVarList binds MetaVar = MetaVarList(MetaVar*)
+
 ProofTerm = ax(x:Name,a:CoName)
           | cut(cp1:<CutPrem1>,cp2:<CutPrem2>)
           | falseL(x:Name)
@@ -63,7 +69,24 @@ ProofTerm = ax(x:Name,a:CoName)
           /* extensions */
           | foldR(name:String,forp1:<FoldRPrem1>,cn:CoName)
           | foldL(name:String,folp1:<FoldLPrem1>,n:Name)
-          
+          | superR(name:String,prems:SuperPrems,ts:TermList,cn:CoName)
+          | superL(name:String,prems:SuperPrems,ts:TermList,n:Name)
+          /* metavariables */
+          | meta(m:MetaVar)
+
+SuperPrems = PremList(<GPrem>*)
+TyNameList binds Name CoName FoVar = TyNameList(TyName*)
+TyCoNameList binds Name CoName FoVar = TyCoNameList(TyCoName*)
+BFoVarList binds Name CoName FoVar = BFoVarList(FoVar*)
+
+GPrem binds Name CoName FoVar = 
+   GPrem(xs:TyNameList,
+         as:TyCoNameList,
+         fxs:BFoVarList,
+         inner M:ProofTerm)
+
+TyName binds Name CoName FoVar = TyName(x:Name, outer px:Prop)
+TyCoName binds Name CoName FoVar = TyCoName(a:CoName, outer pa:Prop) 
 
 RootLPrem1 binds Name = RootLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 RootRPrem1 binds CoName = RootRPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)

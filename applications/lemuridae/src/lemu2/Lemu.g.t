@@ -178,6 +178,10 @@ propfold returns [RawPropRewriteRules res]
 : PROP FOLD LBRACE l=proprrules RBRACE { $res=l; }
 ;
 
+propsuper returns [RawPropRewriteRules res] 
+: PROP SUPER LBRACE l=proprrules RBRACE { $res=l; }
+;
+
 toplevel : proofterm EOF;
 
 
@@ -214,6 +218,7 @@ TERM : 'term';
 PROP : 'prop';
 MODULO : 'modulo';
 FOLD : 'fold';
+SUPER : 'super';
 
 /* proofterms */
 AX : 'ax';
