@@ -171,7 +171,7 @@
 
 2008-24-10 pem
   * fixed bug related to non linear variables: g(x) || f(x,x)
-  * compile disjuntion of patterns by duplicating the action, to make 
+  * compile disjuntion of patterns by duplicating the action, to make
     the semantics correct
 
 2008-18-10 pem
@@ -227,7 +227,7 @@
   * tom 2.6-rc2
 
 2008-04-08 balland
-  * add a new variadic strategy combinator ChoiceUndet corresponding to undeterministic choice 
+  * add a new variadic strategy combinator ChoiceUndet corresponding to undeterministic choice
 
 2008-03-25 pem
   * a default "make" is added only if no other mapping is defined
