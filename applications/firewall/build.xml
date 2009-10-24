@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="javac" basedir=".">
-  
+
   <property environment="env"/>
   <property name="tom.home"        location="../../src/dist"/>
   <property name="firewall.dir"      location="."/>
@@ -12,28 +12,28 @@
   <property name="firewall.ast"      value="${firewall.package}/Ast"/>
   <property name="firewall.grammarname"  value="Langage"/>
   <property name="firewall.grammar"  value="${firewall.package}/${firewall.grammarname}"/>
-  
+
   <import file="${tom.home}/lib/tom-common.xml"/>
-  
+
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
     <classpath refid="tom.classpath"/>
   </taskdef>
-  
+
   <target name="init" depends="tom.init">
     <mkdir dir="${firewall.build}"/>
     <mkdir dir="${firewall.gen}"/>
   </target>
-  
+
   <target name="tom" depends="gom">
     <tom.preset srcdir="${firewall.src}"
                 destdir="${firewall.gen}"
-                import="${firewall.gen}"> 
+                import="${firewall.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
-  
+
   <target name="antlrtom" depends="gomantlradapter">
     <tom.preset srcdir="${firewall.src}"
         outputfile="${firewall.gen}/${firewall.grammar}.g">
@@ -44,7 +44,7 @@
       </tomincludedir>
     </tom.preset>
   </target>
-  
+
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${firewall.src}"
                             destdir="${firewall.gen}"
@@ -60,13 +60,13 @@
       <include name="${firewall.ast}.gom"/>
     </gom.preset>
   </target>
-  
+
   <target name="antlr" depends="antlrtom">
     <antlr3 target="${firewall.gen}/${firewall.grammar}.g"
             outputdirectory="${firewall.gen}/${firewall.package}"
             />
   </target>
-  
+
   <target name="javac" depends="tom, antlr">
     <javac.preset destdir="${firewall.build}" >
       <!--<src path="${firewall.src}"/>-->
@@ -75,10 +75,10 @@
       <include name="**/*.java"/>
     </javac.preset>
   </target>
-  
+
   <target name="clean">
     <delete dir="${firewall.gen}"/>
     <delete dir="${firewall.build}"/>
   </target>
-  
+
 </project>
