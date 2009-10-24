@@ -474,13 +474,6 @@
       <include name="tom/gom/adt/Rule.gom"/>
     </gomantlradaptercompile>
 
-    <copy todir="${src.mapping}/adt">
-      <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/tom/engine/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/tom/gom/adt" includes="**/*.tom"/>
-    </copy>
-
   </target>
 
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
@@ -815,11 +808,13 @@
     <!-- tom share -->
     <copy todir="${src.dist.share}/tom">
       <fileset dir="${src.mapping}">
-        <include name="adt/bytecode/**/*.tom"/>
-        <include name="adt/tnode/**/*.tom"/>
         <include name="c/**/*.tom"/>
         <include name="caml/**/*.tom"/>
         <include name="java/**/*.tom"/>
+      </fileset>
+      <fileset dir="${src.gen}/tom/library/">
+        <include name="adt/bytecode/**/*.tom"/>
+        <include name="adt/tnode/**/*.tom"/>
       </fileset>
     </copy>
     <copy todir="${src.dist.share}">
@@ -1335,6 +1330,12 @@
     </copy>
     <copy todir="${stable.mapping}" overwrite="true">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
+    </copy>
+    <copy todir="${stable.mapping}" overwrite="true">
+      <fileset dir="${src.gen}/tom/library/">
+        <include name="adt/bytecode/**/*.tom"/>
+        <include name="adt/tnode/**/*.tom"/>
+      </fileset>
     </copy>
     <copy todir="${stable.config}" overwrite="true">
       <fileset dir="${src.config}" includes="*.xml"/>
