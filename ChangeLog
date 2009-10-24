@@ -257,7 +257,7 @@
 
 2008-02-12 balland
   * fix PR-4932
-  * fix PR-5053 
+  * fix PR-5053
 
 2008-02-01 pem
   * fix PR-4960
@@ -273,7 +273,7 @@
   * re-activated the TypeChecker
   * introduce a new TypeWithSymbol
   * prepare to improve the TypeChecker
-  
+
 2008-01-07 balland
   * remove autodispatch option (default behaviour)
   * simplify Gom consequently (remove the generation of BasicStrategy and VisitorFwd classes)
