@@ -1,0 +1,7 @@
+dist/
+stable/build/
+stable/dist/
+stable/gen/
+src/build/
+src/dist/
+src/gen/
