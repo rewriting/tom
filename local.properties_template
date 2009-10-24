@@ -1,6 +1,7 @@
 # This file predefines some properties:
 # None of them are mantatory, but defining them will enable some features,
 # mainly in the examples
+# To enable, copy this to local.properties and adapt to your needs
 
 # To build the C examples, you have to install the aterm library, and the cpl
 # library for the nqueens examples (located in integerc)
