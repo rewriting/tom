@@ -12,7 +12,7 @@
   <property name="comp.src"      location="src"/>
   <property name="comp.gen"      location="gen"/>
   <property name="comp.build"    location="build"/>
- 
+
   <target name="clean" description="Clean generated files">
     <delete dir="${comp.build}"/>
   </target>
@@ -35,22 +35,22 @@
     <antcall target="caml.make"/>
   </target>
   <target name="caml.make">
-    <exec dir="${comp.build}" 
+    <exec dir="${comp.build}"
           failonerror="yes"
           executable="touch">
       <arg line=".depends"/>
     </exec>
-    <exec dir="${comp.build}" 
+    <exec dir="${comp.build}"
           failonerror="yes"
           executable="touch">
       <arg line="*.mli"/>
     </exec>
-    <exec dir="${comp.build}" 
+    <exec dir="${comp.build}"
           failonerror="yes"
           executable="make">
       <arg line="dep"/>
     </exec>
-    <exec dir="${comp.build}" 
+    <exec dir="${comp.build}"
           failonerror="yes"
           executable="make">
       <arg line=""/>
