@@ -91,8 +91,7 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    */
   public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("fresh")) {
-      boolean intermediate = 
-        ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+      boolean intermediate = getOptionBooleanValue("intermediate");
 
       getLogger().log(Level.INFO, "Start expanding freshgom parts");
       FreshExpander expander = new FreshExpander(getGomEnvironment());

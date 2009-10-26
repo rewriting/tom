@@ -1,25 +1,25 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.expander;
@@ -86,16 +86,18 @@ public class ExpanderPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+    boolean intermediate = getOptionBooleanValue("intermediate");
     getLogger().log(Level.INFO, "Start expanding");
     Expander expander = new Expander(getGomEnvironment());
     modules = expander.expand(module);
     // for the moment, the symbol table is only intialised for termgraph and freshgom
-    if (getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer") || getOptionBooleanValue("fresh")) {
+    if (getOptionBooleanValue("termgraph")
+        || getOptionBooleanValue("termpointer")
+        || getOptionBooleanValue("fresh")) {
       getGomEnvironment().initSymbolTable(modules);
     }
-    if(modules == null) {
-      getLogger().log(Level.SEVERE, 
+    if (null == modules) {
+      getLogger().log(Level.SEVERE,
           GomMessage.expansionIssue.getMessage(),
           getStreamManager().getInputFileName());
     } else {

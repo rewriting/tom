@@ -93,7 +93,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public synchronized void run(Map<String,String> informationTracker) {
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+    boolean intermediate = getOptionBooleanValue("intermediate");
     if (inputReader == null)
       return;
     CharStream input = null;
