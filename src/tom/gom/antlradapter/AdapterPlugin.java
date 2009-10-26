@@ -89,8 +89,9 @@ public class AdapterPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start adapter generation");
+    getLogger().info("Start adapter generation");
     // make sure the environment has the correct streamManager
     //environment().setStreamManager(getStreamManager());
     //do not understand why the streamManager would not be correct. keep previous comment
@@ -98,7 +99,7 @@ public class AdapterPlugin extends GomGenericPlugin {
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
     try {
-      if(tomHome == null) {
+      if (null == tomHome) {
         String xmlConfigFilename = getOptionStringValue("X");
         tomHome = new File(xmlConfigFilename).getParent();
       }
@@ -106,10 +107,12 @@ public class AdapterPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-    String grammarName = (String)getOptionManager().getOptionValue("grammar");
+    String grammarName = (String) getOptionManager().getOptionValue("grammar");
     AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment(),grammarName);
     adapter.generate(moduleList,hookList);
-    getLogger().log(Level.INFO, "Adapter generation succeeded");
+    getLogger().info("Adapter generation succeeded ("
+        + (System.currentTimeMillis()-startChrono)
+        + " ms)");
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 

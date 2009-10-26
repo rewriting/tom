@@ -105,14 +105,15 @@ public class BackendPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
-    getLogger().log(Level.INFO, "Start compilation");
+    long startChrono = System.currentTimeMillis();
+    getLogger().info("Start compilation");
     // make sure the environment has the correct streamManager
     getGomEnvironment().setStreamManager(getStreamManager());
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
     try {
-      if (tomHome == null) {
+      if (null == tomHome) {
         String xmlConfigFilename = getOptionStringValue("X");
         tomHome = new File(xmlConfigFilename).getParent();
       }
@@ -135,12 +136,14 @@ public class BackendPlugin extends GomGenericPlugin {
                   tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
                   getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
-    if(classList == null) {
+    if (null == classList) {
       getLogger().log(Level.SEVERE,
           GomMessage.generationIssue.getMessage(),
           getStreamManager().getInputFileName());
     } else {
-      getLogger().log(Level.INFO, "Code generation succeeds");
+      getLogger().info("Code generation succeeds ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
     

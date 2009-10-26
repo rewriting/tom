@@ -86,8 +86,9 @@ public class ExpanderPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start expanding");
+    getLogger().info("Start expanding");
     Expander expander = new Expander(getGomEnvironment());
     modules = expander.expand(module);
     // for the moment, the symbol table is only intialised for termgraph and freshgom
@@ -95,15 +96,16 @@ public class ExpanderPlugin extends GomGenericPlugin {
       getGomEnvironment().initSymbolTable(modules);
     }
     if(modules == null) {
-      getLogger().log(Level.SEVERE, 
-          GomMessage.expansionIssue.getMessage(),
+      getLogger().log(Level.SEVERE, GomMessage.expansionIssue.getMessage(),
           getStreamManager().getInputFileName());
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(modules,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Expansion succeeds");
+      getLogger().info("Expansion succeeds ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

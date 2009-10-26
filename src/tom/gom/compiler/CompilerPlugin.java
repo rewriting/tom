@@ -88,11 +88,12 @@ public class CompilerPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start compilation");
+    getLogger().info("Start compilation");
     Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
-    if(classList == null) {
+    if (null == classList) {
       getLogger().log(Level.SEVERE,
           GomMessage.compilationIssue.getMessage(),
           getStreamManager().getInputFileName());
@@ -101,7 +102,9 @@ public class CompilerPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Compiled Modules:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Compilation succeeds");
+      getLogger().info("Compilation succeeds ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
