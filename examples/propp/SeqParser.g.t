@@ -44,11 +44,11 @@ tokens {
 
 seq :
   l1=list_pred SEQ l2=list_pred END
-    -> ^(SEQ $l1 $l2)
+    -> ^(Seq $l1 $l2)
   ;
 list_pred :
-  head=pred (LIST tl=pred)*
-    -> ^(ConcPred $head ($tl)*)
+  pred (LIST pred)*
+    -> ^(ConcPred pred*)
   ;
 pred :
   left=andPred (IMPL right=andPred)?
@@ -56,19 +56,19 @@ pred :
     -> $left
   ;
 andPred :
-  left=orPred (AND right=orPred)*
-    -> {right!=null}? ^(Wedge $left ($right)*)
+  left=orPred (AND right=andPred)?
+    -> {right!=null}? ^(Wedge $left $right?)
     -> $left
   ;
 orPred :
-  left=atom (OR right=atom)*
-    -> {right!=null}? ^(Vee $left ($right)*)
+  left=atom (OR right=orPred)?
+    -> {right!=null}? ^(Vee $left $right?)
     -> $left
   ;
 atom :
   LPAREN pred RPAREN -> pred
   | NOT atom -> ^(Neg atom)
-  | ID
+  | ID -> ^(Pred ID)
 ;
 
 WS : (' '
@@ -92,9 +92,13 @@ NOT : '!'
   | '^'
   | '~';
 END : ';';
-
 ID : ('A'..'Z'
       |'a'..'n'
       |'p'..'z'
      )+
-;
+  ;
+SLCOMMENT : '#'
+  (~('\n'|'\r'))*
+  ('\n'|'\r'('\n')?)?
+  { $channel=HIDDEN; }
+  ;

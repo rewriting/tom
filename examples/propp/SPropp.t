@@ -491,14 +491,17 @@ class SPropp {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
 			SeqParser parser = new SeqParser(tokens);
 			// Parse the input expression
-			Tree t = (Tree) parser.seq().getTree();
-      query = (Sequent) SeqSeqAdaptor.getTerm(t);
-			System.out.println("Query : "+query);
+      Tree t = null;
+      do {
+        t = (Tree) parser.seq().getTree();
+        query = (Sequent) SeqSeqAdaptor.getTerm(t);
+        System.out.println("Query : "+query);
+        test.run(query);
+      } while (null != t);
 		} catch (Exception e) {
 			System.err.println("exception: "+e);
 			return;
 		}
-		test.run(query);
 	}
 	//}}}
 
