@@ -106,7 +106,6 @@ public class BackendPlugin extends GomGenericPlugin {
    */
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
-    getLogger().info("Start compilation");
     // make sure the environment has the correct streamManager
     getGomEnvironment().setStreamManager(getStreamManager());
     /* Try to guess tom.home */
@@ -141,7 +140,7 @@ public class BackendPlugin extends GomGenericPlugin {
           GomMessage.generationIssue.getMessage(),
           getStreamManager().getInputFileName());
     } else {
-      getLogger().info("Code generation succeeds ("
+      getLogger().info("GOM Code generation phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
     }

@@ -90,7 +90,6 @@ public class CompilerPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().info("Start compilation");
     Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
     if (null == classList) {
@@ -102,7 +101,7 @@ public class CompilerPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Compiled Modules:\n{0}",swriter);
-      getLogger().info("Compilation succeeds ("
+      getLogger().info("GOM Compilation phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
       if(intermediate) {

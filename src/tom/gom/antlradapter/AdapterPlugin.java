@@ -91,10 +91,6 @@ public class AdapterPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().info("Start adapter generation");
-    // make sure the environment has the correct streamManager
-    //environment().setStreamManager(getStreamManager());
-    //do not understand why the streamManager would not be correct. keep previous comment
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
@@ -110,7 +106,7 @@ public class AdapterPlugin extends GomGenericPlugin {
     String grammarName = (String) getOptionManager().getOptionValue("grammar");
     AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment(),grammarName);
     adapter.generate(moduleList,hookList);
-    getLogger().info("Adapter generation succeeded ("
+    getLogger().info("GOM Antlr Adapter generation phase ("
         + (System.currentTimeMillis()-startChrono)
         + " ms)");
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());

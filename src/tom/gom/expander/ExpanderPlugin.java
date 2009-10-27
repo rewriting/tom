@@ -88,7 +88,6 @@ public class ExpanderPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().info("Start expanding");
     Expander expander = new Expander(getGomEnvironment());
     modules = expander.expand(module);
     // for the moment, the symbol table is only intialised for termgraph and freshgom
@@ -103,7 +102,7 @@ public class ExpanderPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(modules,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
-      getLogger().info("Expansion succeeds ("
+      getLogger().info("GOM Expansion phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
       if(intermediate) {

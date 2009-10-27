@@ -110,7 +110,6 @@ public class GomParserPlugin extends GomGenericPlugin {
 		GomLanguageLexer lex = new GomLanguageLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    getLogger().info("Start parsing");
     try {
       // Parse the input expression
       Tree tree = (Tree) parser.module().getTree();
@@ -147,7 +146,7 @@ public class GomParserPlugin extends GomGenericPlugin {
         }
       }
     }
-    getLogger().info("Parsing succeeds ("
+    getLogger().info("GOM Parsing phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
     if(intermediate) {

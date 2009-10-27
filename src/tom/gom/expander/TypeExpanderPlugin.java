@@ -86,7 +86,6 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start typing");
     TypeExpander typer = new TypeExpander(getGomEnvironment());
     typedModuleList = typer.expand(moduleList);
     if (null == typedModuleList) {
@@ -98,7 +97,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Typed Modules:\n{0}",swriter);
-      getLogger().info("Type Expansion succeeds ("
+      getLogger().info("GOM Type Expansion phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
       if (intermediate) {
@@ -118,7 +117,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Typed Hooks:\n{0}",swriter);
-      getLogger().info("Hook expansion succeeds ("
+      getLogger().info("GOM Hook expansion phase ("
           + (System.currentTimeMillis()-startChrono)
           + " ms)");
       if (intermediate) {
