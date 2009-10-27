@@ -32,8 +32,8 @@ package propp;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import propp.seq.*;
-import propp.seq.types.*;
+import propp.Seq.*;
+import propp.Seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
@@ -55,19 +55,19 @@ public class TestPropp {
     test = new SPropp();
   }
 
-  %include { seq/Seq.tom }
+  %include { Seq/Seq.tom }
 
   @Test
 	public void testComparePair1() {
-		assertEquals("pair(3,\"something\") is greater than pair(2,\"anything\")",
+		assertEquals("Pair(3,\"something\") is greater than Pair(2,\"anything\")",
 								 1,
-								 test.comparePair(`pair(3,"something"),`pair(2,"anything")));
+								 test.comparePair(`Pair(3,"something"),`Pair(2,"anything")));
 	}
 
   @Test
 	public void testComparePair2() {
-		assertEquals("pair(4,\"something\") is greater than pair(8,\"anything\")",
+		assertEquals("Pair(4,\"something\") is greater than Pair(8,\"anything\")",
 								 -1,
-								 test.comparePair(`pair(4,"something"),`pair(8,"anything")));
+								 test.comparePair(`Pair(4,"something"),`Pair(8,"anything")));
 	}
 }

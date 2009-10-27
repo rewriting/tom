@@ -26,138 +26,75 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-header {
-package propp;
-
-import propp.seq.*;
-import propp.seq.types.*;
-}
-
-//{{{ class SeqParser extends Parser;
-class SeqParser extends Parser;
+grammar Seq;
 options {
-  buildAST = true;  // uses CommonAST by default
-  k = 1;
+  output=AST;
+  ASTLabelType=Tree;
 }
-{
-  %include { seq/Seq.tom }
+tokens {
+  %include { seq/SeqSeqTokenList.txt }
 }
 
-seq returns [Sequent s]
-{ 
-  s = null;
-  ListPred left = null;
-  ListPred right = null;
+@header {
+  package propp;
 }
-: left=list_pred SEQ^ right=list_pred END!
-{ s = `seq(left,right); }
-;
+@lexer::header {
+  package propp;
+}
 
-list_pred returns [ListPred l]
-{ 
-  l = `concPred();
-  Pred head = null;
-  Pred tl = null;
-}
-: head=pred {l = `concPred(head); } (LIST^ tl=pred { l=`concPred(l*,tl); })*
-;
-
-pred returns [Pred p]
-{ 
-  p = null;
-  Pred left = null;
-  Pred right = null;
-}
-: left=andpred (IMPL^ right=andpred)?
-{ 
-  if (right!=null) {
-    p = `impl(left,right);
-  } else {
-    p = left;
-  }
-}
-;
-
-andpred returns [Pred p]
-{ 
-  p = null;
-  Pred left = null;
-  Pred right = null;
-}
-: left=orpred { p = left; } 
-(AND^ right=orpred { p = `wedge(p,right); })*
-;
-
-orpred returns [Pred p]
-{ 
-  p = null;
-  Pred left = null;
-  Pred right = null;
-}
-: left=atom { p = left; }
-(OR^ right=atom { p = `wedge(p,right); })*
-;
-
-atom returns [Pred p]
-{ 
-  p = null;
-  Pred pred = null;
-}
-: LPAREN! pred=pred RPAREN! { p = pred; }
-  | NOT^ pred=atom { p = `neg(pred); }
-  | i:ID { p = Pred.fromTerm(
-      aterm.pure.SingletonFactory.getInstance().parse(
-        (String)String.valueOf(i.getText()))); }
+seq :
+  l1=list_pred SEQ l2=list_pred END
+    -> ^(SEQ $l1 $l2)
   ;
-
-///}}}
-
-//{{{ class SeqLexer extends Lexer;
-class SeqLexer extends Lexer;
-
-options {
-  k=4;
-}
-
-WS
-  : (' '
-    | '\t'
-    | '\n'
-    | '\r')
-    { _ttype = Token.SKIP; }
+list_pred :
+  head=pred (LIST tl=pred)*
+    -> ^(ConcPred $head ($tl)*)
   ;
-
-LPAREN  
-  : '(' ;
-RPAREN
-  : ')' ;
-SEQ     
-  : "|-";
-IMPL    
-  : "=>"
-  | "|=>"
+pred :
+  left=andPred (IMPL right=andPred)?
+    -> {right!=null}? ^(Impl $left $right)
+    -> $left
   ;
-OR
-  : "or"
-  | "\\/";
-AND
-  : "&&"
-  | "/\\";
-LIST
-  : ':' ;
-NOT 
-  : '!' 
+andPred :
+  left=orPred (AND right=orPred)*
+    -> {right!=null}? ^(Wedge $left ($right)*)
+    -> $left
+  ;
+orPred :
+  left=atom (OR right=atom)*
+    -> {right!=null}? ^(Vee $left ($right)*)
+    -> $left
+  ;
+atom :
+  LPAREN pred RPAREN -> pred
+  | NOT atom -> ^(Neg atom)
+  | ID
+;
+
+WS : (' '
+  | '\t'
+  | '\n'
+  | '\r')+
+  { $channel=HIDDEN; }
+;
+
+LPAREN : '(';
+RPAREN : ')';
+SEQ : '|-';
+IMPL : '=>'
+  | '|=>';
+OR : 'or'
+  | '\\/';
+AND : '&&'
+  | '/\\';
+LIST : ':';
+NOT : '!'
   | '^'
-  | '~'
-  ;
-END
-  : ';'
-  ;
+  | '~';
+END : ';';
 
-ID
-  : ('A'..'Z'
-    |'a'..'n'
-    |'p'..'z'
-    )+
-  ;
-//}}}   
+ID : ('A'..'Z'
+      |'a'..'n'
+      |'p'..'z'
+     )+
+;
