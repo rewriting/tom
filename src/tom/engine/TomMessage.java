@@ -230,11 +230,11 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TOM type checking phase ({0,number,integer} ms)");
   public static final TomMessage tomCompilationPhase =
       new TomMessage("TOM compilation phase ({0,number,integer} ms)");
-  public static final TomMessage tomOptimizationPhase  =
+  public static final TomMessage tomOptimizationPhase =
       new TomMessage("TOM optimization phase ({0,number,integer} ms)");
-  public static final TomMessage tomVerificationPhase  =
+  public static final TomMessage tomVerificationPhase =
       new TomMessage("TOM verification phase ({0,number,integer} ms)");
-  public static final TomMessage tomGenerationPhase    =
+  public static final TomMessage tomGenerationPhase =
       new TomMessage("TOM generation phase ({0,number,integer} ms)");
 
   // Main messages
