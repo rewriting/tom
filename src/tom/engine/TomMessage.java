@@ -216,25 +216,25 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("The verification cannot be performed when optimizing code with level>=2");
 
   // verbose messages
-  public static final TomMessage tomExec       =
+  public static final TomMessage tomExec =
       new TomMessage("TOM exec:  {0}");
-  public static final TomMessage tomParsingPhase       =
+  public static final TomMessage tomParsingPhase =
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
-  public static final TomMessage tomSyntaxCheckingPhase=
+  public static final TomMessage tomSyntaxCheckingPhase =
       new TomMessage("TOM syntax checking phase ({0,number,integer} ms)");
-  public static final TomMessage tomTypingPhase     =
+  public static final TomMessage tomTypingPhase =
       new TomMessage("TOM typing phase ({0,number,integer} ms)");
-  public static final TomMessage tomExpandingPhase     =
+  public static final TomMessage tomExpandingPhase =
       new TomMessage("TOM expanding phase ({0,number,integer} ms)");
-  public static final TomMessage tomTypeCheckingPhase  =
+  public static final TomMessage tomTypeCheckingPhase =
       new TomMessage("TOM type checking phase ({0,number,integer} ms)");
-  public static final TomMessage tomCompilationPhase   =
+  public static final TomMessage tomCompilationPhase =
       new TomMessage("TOM compilation phase ({0,number,integer} ms)");
-  public static final TomMessage tomOptimizationPhase  =
+  public static final TomMessage tomOptimizationPhase =
       new TomMessage("TOM optimization phase ({0,number,integer} ms)");
-  public static final TomMessage tomVerificationPhase  =
+  public static final TomMessage tomVerificationPhase =
       new TomMessage("TOM verification phase ({0,number,integer} ms)");
-  public static final TomMessage tomGenerationPhase    =
+  public static final TomMessage tomGenerationPhase =
       new TomMessage("TOM generation phase ({0,number,integer} ms)");
 
   // Main messages

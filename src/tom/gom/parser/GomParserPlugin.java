@@ -93,6 +93,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public synchronized void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     if (inputReader == null)
       return;
@@ -109,10 +110,9 @@ public class GomParserPlugin extends GomGenericPlugin {
 		GomLanguageLexer lex = new GomLanguageLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    getLogger().log(Level.INFO, "Start parsing");
     try {
       // Parse the input expression
-      Tree tree = (Tree)parser.module().getTree();
+      Tree tree = (Tree) parser.module().getTree();
       module = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
@@ -136,17 +136,19 @@ public class GomParserPlugin extends GomGenericPlugin {
           new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
     } finally {
-      if (inputReader != null){
+      if (null != inputReader) {
         try {
           inputReader.close();
-        } catch(java.io.IOException ioExcep){
+        } catch(java.io.IOException ioExcep) {
           // nothing to do
           getLogger().log(Level.INFO, GomMessage.unableToCloseReaderMessage.getMessage(),
               new Object[]{});
         }
       }
     }
-    getLogger().log(Level.INFO, "Parsing succeeds");
+    getLogger().info("GOM Parsing phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());

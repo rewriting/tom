@@ -91,9 +91,9 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    */
   public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("fresh")) {
+      long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
 
-      getLogger().log(Level.INFO, "Start expanding freshgom parts");
       FreshExpander expander = new FreshExpander(getGomEnvironment());
       result = expander.expand(modules, 
           (String) getOptionManager().getOptionValue("package"));
@@ -106,7 +106,9 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
         try { tom.library.utils.Viewer.toTree(result,swriter); }
         catch(java.io.IOException e) { e.printStackTrace(); }
         getLogger().log(Level.FINE, "Fresh expanded Modules:\n{0}",swriter);
-        getLogger().log(Level.INFO, "Expansion of freshgom parts succeeds");
+        getLogger().log(Level.INFO, "GOM Expansion of freshgom phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

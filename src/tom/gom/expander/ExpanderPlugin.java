@@ -86,11 +86,11 @@ public class ExpanderPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-    getLogger().log(Level.INFO, "Start expanding");
     Expander expander = new Expander(getGomEnvironment());
     modules = expander.expand(module);
-    // for the moment, the symbol table is only intialised for termgraph and freshgom
+    // for the moment, symbol table is only initialized for termgraph and freshgom
     if (getOptionBooleanValue("termgraph")
         || getOptionBooleanValue("termpointer")
         || getOptionBooleanValue("fresh")) {
@@ -105,7 +105,9 @@ public class ExpanderPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(modules,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Expansion succeeds");
+      getLogger().info("GOM Expansion phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

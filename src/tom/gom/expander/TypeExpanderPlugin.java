@@ -84,11 +84,11 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
+    long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start typing");
     TypeExpander typer = new TypeExpander(getGomEnvironment());
     typedModuleList = typer.expand(moduleList);
-    if(typedModuleList == null) {
+    if (null == typedModuleList) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
           getStreamManager().getInputFileName());
@@ -97,15 +97,18 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Typed Modules:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Expansion succeeds");
-      if(intermediate) {
+      getLogger().info("GOM Type Expansion phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
+      if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPED_SUFFIX, typedModuleList);
       }
     }
+    startChrono = System.currentTimeMillis();
     HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList,getGomEnvironment());
     typedHookList = hooktyper.expand(moduleList);
-    if(typedHookList == null) {
+    if (null == typedHookList) {
       getLogger().log(Level.SEVERE, 
           GomMessage.hookExpansionIssue.getMessage(),
           getStreamManager().getInputFileName());
@@ -114,8 +117,10 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Typed Hooks:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Hook expansion succeeds");
-      if(intermediate) {
+      getLogger().info("GOM Hook expansion phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
+      if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPEDHOOK_SUFFIX, typedHookList);
       }
