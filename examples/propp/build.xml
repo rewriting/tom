@@ -15,7 +15,7 @@
     <tom.preset outputfile="${examples.gen}/${example}/Seq.g"
                 import="${examples.gen}/${example}"
                 srcdir="${examples.dir}"> 
-      <include name="${example}/**/SeqParser.g.t"/>
+      <include name="${example}/**/Seq.g.t"/>
     </tom.preset>
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
