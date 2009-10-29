@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  *  - Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.  
+ *  notice, this list of conditions and the following disclaimer.
  *  - Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in the
  *  documentation and/or other materials provided with the distribution.
  *  - Neither the name of the INRIA nor the names of its
  *  contributors may be used to endorse or promote products derived from
  *  this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -55,7 +55,7 @@ public class StructureGom {
   }
 
   StructureGom() { }
-  
+
   public void run(Struc initStruc) {
 		//initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())), seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
     System.out.println("Starting with: " + prettyPrint(initStruc));
@@ -96,14 +96,14 @@ public class StructureGom {
       System.out.print("\tresult.size = " + result.size());
       System.out.println();
       c1 = c2;
-      
+
       if(c1.isEmpty()) {
         return false;
       } else if(c1.contains(end)) {
         return true;
       }
     }
-    return false; 
+    return false;
   }
 
   private final static int MAXLOCALITER = 1000000;
@@ -128,7 +128,7 @@ public class StructureGom {
               System.out.println("s1 = " + s1);
               System.out.println("s2 = " + s2);
               System.exit(0);
-            } 
+            }
 /*
               System.out.println("s1 = " + s1);
               System.out.println("s2 = " + s2);
@@ -158,7 +158,7 @@ public class StructureGom {
       Struc subject = (Struc) c1.first();
       c1.remove(subject);
       result.add(subject);
-     
+
       weight += weight(subject);
       weightMap.remove(subject); // memory optimization
 
@@ -209,7 +209,7 @@ public class StructureGom {
       }
     }
     //System.out.println("proof not found");
-    //return false; 
+    //return false;
   }
 
   public List<String> testOneStep(String input) {
@@ -279,7 +279,7 @@ public class StructureGom {
          [(R,T),U] -> ([T,U],R) */
       par(concPar(X1*,cop(concCop(R*,T*)),X2*,U,X3*)) -> {
 
-        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop() ) { 
+        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop() ) {
         } else {
           StrucPar context = `concPar(X1*,X2*,X3*);
 
@@ -303,7 +303,7 @@ public class StructureGom {
       /* [U,(R,T)] -> ([R,U],T)
          [U,(R,T)] -> ([T,U],R) */
       par(concPar(X1*,U,X2*,cop(concCop(R*,T*)),X3*)) -> {
-        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop()) { 
+        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop()) {
 
         } else {
           StrucPar context = `concPar(X1*,X2*,X3*);
@@ -422,7 +422,7 @@ public class StructureGom {
 
   //private WeakHashMap lengthCache = new WeakHashMap();
   public static int length(StructuresAbstractType t) {
-    
+
     //if(lengthCache.containsKey(t)) {
     //return ((Integer)lengthCache.get(t)).intValue();
     //}
@@ -509,7 +509,7 @@ public class StructureGom {
       }
     }
   }
-  
+
   /*
    * by default a formula is provable
    * but we can detect some un-provable formula
@@ -535,7 +535,7 @@ public class StructureGom {
         }
       }
     }
-    
+
     return true;
   }
 
@@ -569,7 +569,7 @@ public class StructureGom {
       s@cop(_) -> { return `s; }
       s@par(_) -> { return `s; }
       s@seq(_) -> { return `s; }
-      neg(s) -> { negative.add(`s); return `s; } 
+      neg(s) -> { negative.add(`s); return `s; }
       s -> { positive.add(`s); return `s; }
     }
   }
@@ -578,9 +578,9 @@ public class StructureGom {
   static StrucPar cop2par(StrucCop l) {
     %match(StrucCop l) {
       concCop() -> { return `concPar(); }
-      concCop(head,tail*) -> { 
+      concCop(head,tail*) -> {
         StrucPar ptail = cop2par(`tail*);
-        return `concPar(head,ptail*); 
+        return `concPar(head,ptail*);
       }
     }
     return null;
@@ -591,7 +591,7 @@ public class StructureGom {
       concSeq() -> { return `concPar(); }
       concSeq(head,tail*) -> {
         StrucPar ptail = seq2par(`tail*);
-        return `concPar(head,ptail*); 
+        return `concPar(head,ptail*);
       }
     }
     return null;
@@ -614,23 +614,23 @@ public class StructureGom {
         return prettyPrint(`head);
       }
       concCop(head,tail*) -> {
-        return prettyPrint(`head) + "," + prettyPrint(`tail*); 
+        return prettyPrint(`head) + "," + prettyPrint(`tail*);
       }
     }
     %match(StrucPar t) {
       concPar(head) -> {
         return prettyPrint(`head);
       }
-      concPar(head,tail*) -> { 
-        return prettyPrint(`head) + "," + prettyPrint(`tail*); 
+      concPar(head,tail*) -> {
+        return prettyPrint(`head) + "," + prettyPrint(`tail*);
       }
     }
     %match(StrucSeq t) {
       concSeq(head) -> {
         return prettyPrint(`head);
       }
-      concSeq(head,tail*) -> { 
-        return prettyPrint(`head) + ";" + prettyPrint(`tail*); 
+      concSeq(head,tail*) -> {
+        return prettyPrint(`head) + ";" + prettyPrint(`tail*);
       }
     }
     return t.toString();

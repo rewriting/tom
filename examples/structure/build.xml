@@ -3,7 +3,7 @@
   <import file="../common.xml"/>
   <property name="example" value="structure"/>
   <target name="build" depends="init">
-    <!-- build adt -->    
+    <!-- build adt -->
     <gombuild/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
@@ -15,7 +15,7 @@
     </tom.preset>
     <tom.preset outputfile="${examples.gen}/${example}/StructuresParser.g"
                 import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
+                srcdir="${examples.dir}">
       <include name="${example}/**/StructuresParser.g.t"/>
     </tom.preset>
     <!-- build parser -->
