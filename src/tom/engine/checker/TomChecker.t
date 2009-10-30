@@ -194,4 +194,4 @@ abstract public class TomChecker extends TomGenericPlugin {
     //Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
   
-}  //Class TomChecker
+}
