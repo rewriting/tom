@@ -1,82 +1,82 @@
 module structure.Structures
 abstract syntax
 
-Struc = o() | a() | a1() | a2()
-      | b() | b1() | b2()
-      | c() | c1() | c2()
-      | d() | d1() | d2()
-      | neg(a:Struc)
-      | cop(copl:StrucCop)
-      | par(parl:StrucPar)
-      | seq(seql:StrucSeq)
-cop:make(l) {
+Struc = O() | A() | A1() | A2()
+      | B() | B1() | B2()
+      | C() | C1() | C2()
+      | D() | D1() | D2()
+      | Neg(a:Struc)
+      | Cop(copl:StrucCop)
+      | Par(parl:StrucPar)
+      | Seq(seql:StrucSeq)
+Cop:make(l) {
   %match(StrucCop l) {
-    concCop() -> { return `o(); }
-    concCop(x)-> { return `x; }
+    ConcCop() -> { return `O(); }
+    ConcCop(x)-> { return `x; }
   }
 }
-par:make(l) {
+Par:make(l) {
   %match(StrucPar l) {
-    concPar() -> { return `o(); }
-    concPar(x)-> { return `x; }
+    ConcPar() -> { return `O(); }
+    ConcPar(x)-> { return `x; }
   }
 }
-seq:make(l) {
+Seq:make(l) {
   %match(StrucSeq l) {
-    concSeq()  -> { return `o(); }
-    concSeq(x) -> { return `x; }
+    ConcSeq()  -> { return `O(); }
+    ConcSeq(x) -> { return `x; }
   }
 }
 
-StrucPar = concPar( Struc* )
-StrucCop = concCop( Struc* )
-StrucSeq = concSeq( Struc* )
-concSeq:make_insert(e,l) {
+StrucPar = ConcPar( Struc* )
+StrucCop = ConcCop( Struc* )
+StrucSeq = ConcSeq( Struc* )
+ConcSeq:make_insert(e,l) {
   %match(Struc e) {
-    o()                 -> { return l; }
-    seq(concSeq(subL*)) -> { return `concSeq(subL*,l*); }
+    O()                 -> { return l; }
+    Seq(ConcSeq(subL*)) -> { return `ConcSeq(subL*,l*); }
   }
 }
 
-concCop:make_insert(e,l) {
+ConcCop:make_insert(e,l) {
   %match(Struc e) {
-    o() -> { return l; }
-    cop(concCop(L*)) -> { return `concCop(L*,l*); }
+    O() -> { return l; }
+    Cop(ConcCop(L*)) -> { return `ConcCop(L*,l*); }
   }
 
-  if(!l.isEmptyconcCop()) {
-    if (0 < e.compareToLPO(l.getHeadconcCop())) {
-      structure.structures.types.StrucCop newTail = l.getTailconcCop();
-      newTail = `concCop(e,newTail*);
-      return realMake(l.getHeadconcCop(), newTail);
+  if(!l.isEmptyConcCop()) {
+    if (0 < e.compareToLPO(l.getHeadConcCop())) {
+      structure.structures.types.StrucCop newTail = l.getTailConcCop();
+      newTail = `ConcCop(e,newTail*);
+      return realMake(l.getHeadConcCop(), newTail);
     } else {
       return realMake(e,l);
     }
   }
 }
 
-concPar:make_insert(e,l) {
+ConcPar:make_insert(e,l) {
   %match(Struc e) {
-    o() -> { return l; }
-    par(concPar(L*)) -> { return `concPar(L*,l*); }
+    O() -> { return l; }
+    Par(ConcPar(L*)) -> { return `ConcPar(L*,l*); }
   }
-  if(!l.isEmptyconcPar()) {
-    if(0 < e.compareToLPO(l.getHeadconcPar())) {
-      structure.structures.types.StrucPar newTail = l.getTailconcPar();
-      return realMake(l.getHeadconcPar(), `concPar(e,newTail*));
+  if(!l.isEmptyConcPar()) {
+    if(0 < e.compareToLPO(l.getHeadConcPar())) {
+      structure.structures.types.StrucPar newTail = l.getTailConcPar();
+      return realMake(l.getHeadConcPar(), `ConcPar(e,newTail*));
     } else {
       return realMake(e,l);
       }
   }
 }
-neg:make(a) {
+Neg:make(a) {
   %match(Struc a) {
-    neg(s) -> { return `s; }
-    par(concPar(h,t*)) -> {
-      return `cop(concCop(neg(h),neg(par(t*))));
+    Neg(s) -> { return `s; }
+    Par(ConcPar(h,t*)) -> {
+      return `Cop(ConcCop(Neg(h),Neg(Par(t*))));
     }
-    cop(concCop(h,t*)) -> {
-      return `par(concPar(neg(h),neg(cop(t*))));
+    Cop(ConcCop(h,t*)) -> {
+      return `Par(ConcPar(Neg(h),Neg(Cop(t*))));
     }
   }
 }

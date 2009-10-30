@@ -5,6 +5,15 @@
   <target name="build" depends="init">
     <!-- build adt -->
     <gombuild/>
+    <!--
+    <gomantlradapter.preset
+      srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      package="${example}"
+      grammar="Structures">
+      <include name="${example}/**/Structures.gom"/>
+    </gomantlradapter.preset>
+    -->
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
