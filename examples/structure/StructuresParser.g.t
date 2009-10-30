@@ -53,19 +53,19 @@ struc returns [Struc s]
 : (
   LPAR^ pl = list_par RPAR
 	{
-		s = `par(pl*);
+		s = `Par(pl*);
 	}
 	| LCOP^ cl = list_cop RCOP
 	{
-		s = `cop(cl*);
+		s = `Cop(cl*);
 	}
 	| LSEQ^ sl = list_seq RSEQ
 	{
-		s = `seq(sl*);
+		s = `Seq(sl*);
 	}
 	| NEG n = struc
 	{
-		s = `neg(n);
+		s = `Neg(n);
 	}
 	| n = atom
 	{
@@ -78,12 +78,12 @@ list_par returns [StrucPar s]
 {
 	Struc lhs = null;
 	StrucPar listOfLhs = null;
-	s = `concPar();
+	s = `ConcPar();
 }
 : 
-lhs = struc {listOfLhs = `concPar(lhs);}
+lhs = struc {listOfLhs = `ConcPar(lhs);}
 (SEP^ lhs = struc
-	{listOfLhs = `concPar(listOfLhs*,lhs);}
+	{listOfLhs = `ConcPar(listOfLhs*,lhs);}
 	)*
 {
 	s = listOfLhs;
@@ -94,11 +94,11 @@ list_cop returns [StrucCop s]
 {
 	Struc lhs = null;
 	StrucCop listOfLhs = null;
-	s = `concCop();
+	s = `ConcCop();
 }
-: lhs = struc {listOfLhs = `concCop(lhs);}
+: lhs = struc {listOfLhs = `ConcCop(lhs);}
 (SEP^ lhs = struc
-	{listOfLhs = `concCop(listOfLhs*,lhs);}
+	{listOfLhs = `ConcCop(listOfLhs*,lhs);}
 	)*
 {
 	s = listOfLhs;
@@ -109,11 +109,11 @@ list_seq returns [StrucSeq s]
 {
 	Struc lhs = null;
 	StrucSeq listOfLhs = null;
-	s = `concSeq();
+	s = `ConcSeq();
 }
-: lhs = struc {listOfLhs = `concSeq(lhs);}
+: lhs = struc {listOfLhs = `ConcSeq(lhs);}
 (SEQ^ lhs = struc
-	{listOfLhs = `concSeq(listOfLhs*,lhs);}
+	{listOfLhs = `ConcSeq(listOfLhs*,lhs);}
 	)*
 {
 	s = listOfLhs;
@@ -128,7 +128,7 @@ atom returns [Struc s]
 {
   s = Struc.fromTerm(
         aterm.pure.SingletonFactory.getInstance().parse(
-          (String)String.valueOf(i.getText())));
+          (String)String.valueOf(i.getText().toUpperCase())));
 }
 ;
 
