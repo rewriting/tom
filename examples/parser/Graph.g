@@ -3,10 +3,7 @@ grammar Graph;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { term/GraphTermTokenList.txt }
+  tokenVocab=GraphTermTokens;
 }
 
 @header {
