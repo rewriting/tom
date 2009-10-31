@@ -68,7 +68,7 @@ public class GomAntlrAdapterTask extends GomCommonTask {
   }
 
   protected String toPattern() {
-    return "\\1\\L\\3" + protectedFileSeparator + "\\3TokenList.txt";
+    return "\\1\\L\\3" + protectedFileSeparator + getGrammar() + "\\3Tokens.tokens";
   }
 
   protected void processAdditionalOptions(Java runner) {
