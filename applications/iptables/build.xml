@@ -36,25 +36,6 @@
     </tom.preset>
   </target>
   
-  <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset srcdir="${iptables.src}"
-        outputfile="${iptables.gen}/${iptables.grammarlist}.g">
-      <include name="${iptables.grammarlist}.g.t"/>
-      <tomincludedir>
-        <pathelement location="${iptables.gen}"/>
-        <pathelement location="${iptables.gen}/${iptables.package}"/>
-      </tomincludedir>
-    </tom.preset>
-    <tom.preset srcdir="${iptables.src}"
-        outputfile="${iptables.gen}/${iptables.grammarcmd}.g">
-      <include name="${iptables.grammarcmd}.g.t"/>
-      <tomincludedir>
-        <pathelement location="${iptables.gen}"/>
-        <pathelement location="${iptables.gen}/${iptables.package}"/>
-      </tomincludedir>
-    </tom.preset>
-  </target>
-  
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${iptables.src}"
                             destdir="${iptables.gen}"
@@ -77,10 +58,12 @@
     </gom.preset>
   </target>
   
-  <target name="antlr" depends="antlrtom">
-    <antlr3 target="${iptables.gen}/${iptables.grammarlist}.g"
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${iptables.src}/${iptables.grammarlist}.g"
+            libdirectory="${iptables.gen}/${iptables.package}/ast"
             outputdirectory="${iptables.gen}/${iptables.package}" />
-    <antlr3 target="${iptables.gen}/${iptables.grammarcmd}.g"
+    <antlr3 target="${iptables.src}/${iptables.grammarcmd}.g"
+            libdirectory="${iptables.gen}/${iptables.package}/ast"
             outputdirectory="${iptables.gen}/${iptables.package}" />
   </target>
   

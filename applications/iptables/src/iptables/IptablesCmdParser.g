@@ -2,10 +2,7 @@ grammar IptablesCmdParser;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-	%include { iptables/ast/IptablesCmdParserAstTokenList.txt }
+  tokenVocab=IptablesCmdParserAstTokens;
 }
 
 @header {
@@ -26,7 +23,7 @@ command:
 		-> ^(IptablesCmdPolicy target action STRING[str])
 	;
 
-action : 
+action :
 	'ACCEPT'	-> ^(Accept)
 	| 'DROP'	-> ^(Drop)
 	| 'REJECT'	-> ^(Reject)
@@ -48,7 +45,7 @@ opts:
 	;
 
 protoopt: OPT_PROTO proto -> ^(proto);
-proto : 
+proto :
 	'all'	-> ^(ProtoAny)
 	| 'tcp' -> ^(TCP)
 	| 'udp' -> ^(UDP)
@@ -69,7 +66,7 @@ addressopt:
 	;
 
 address	: 'anywhere' 	-> ^(AddrAnyRaw)
-	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost') 
+	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost')
 	| IPV4DOTDEC 	-> ^(AddrStringDotDecimal4 IPV4DOTDEC)
 	| IPV4CIDR 	-> ^(AddrStringCIDR4 IPV4CIDR)
 	| IPV6HEX	-> ^(AddrStringHexadecimal6 IPV6HEX)
@@ -80,7 +77,7 @@ portopt:
 	OPT_PORT_SRC INT	-> ^(IptablesCmdPortSrc INT)
 	| OPT_PORT_DEST INT	-> ^(IptablesCmdPortDest INT)
 	;
-	
+
 statesopt: '-m state' OPT_STATE state stateIter* -> ^(States state stateIter*);
 stateIter : ',' state -> ^(state);
 state : 'NEW'		-> ^(New)
@@ -88,7 +85,6 @@ state : 'NEW'		-> ^(New)
 	| 'ESTABLISHED'	-> ^(Established)
 	| 'INVALID'	-> ^(Invalid)
 	;
-
 
 OPTSHORT: '-';
 OPTLONG: '--';
@@ -123,4 +119,3 @@ STRING : (ESC|~('"'|'\\'|'\n'|'\r'))*;
 WS : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
 
 SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } ;
-

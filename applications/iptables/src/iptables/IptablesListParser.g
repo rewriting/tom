@@ -2,10 +2,7 @@ grammar IptablesListParser;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-	%include { iptables/ast/IptablesListParserAstTokenList.txt }
+  tokenVocab=IptablesListParserAstTokens;
 }
 
 @header {
@@ -16,7 +13,7 @@ tokens {
 }
 
 file :
-	(block)* EOF 
+	(block)* EOF
 		-> ^(FirewallRulesIptablesList ^(IptablesListBlocks (block)*));
 
 block:	'Chain' target '(policy' action ')'
@@ -29,14 +26,14 @@ rule:	action proto oopt a1=address a2=address opts { String str = $rule.text; } 
 		IptablesListRule action proto $a1 $a2 opts STRING[str]
 	);
 
-action : 
+action :
 	'ACCEPT'	-> ^(Accept)
 	| 'DROP'	-> ^(Drop)
 	| 'REJECT'	-> ^(Reject)
 	| 'LOG'		-> ^(Log)
 	;
 
-proto : 
+proto :
 	'all' 	-> ^(ProtoAny)
 	| 'tcp' -> ^(TCP)
 	| 'udp' -> ^(UDP)
@@ -53,7 +50,7 @@ target :
 	;
 
 address	: 'anywhere' 	-> ^(AddrAnyRaw)
-	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost') 
+	| 'localhost'	-> ^(AddrStringDotDecimal4 'localhost')
 	| IPV4DOTDEC 	-> ^(AddrStringDotDecimal4 IPV4DOTDEC)
 	| IPV4CIDR 	-> ^(AddrStringCIDR4 IPV4CIDR)
 	| IPV6HEX	-> ^(AddrStringHexadecimal6 IPV6HEX)
