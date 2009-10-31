@@ -19,20 +19,15 @@
       <include name="${example}/**/*.t"/>
       <exclude name="${example}/**/Structures.g.t"/>
     </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${example}/Structures.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}">
-      <include name="${example}/**/Structures.g.t"/>
-    </tom.preset>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <antlr3 target="${examples.gen}/${example}/Structures.g"
+    <antlr3 target="${examples.dir}/${example}/Structures.g"
             outputdirectory="${examples.gen}/${example}"
-            libdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/structures"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
