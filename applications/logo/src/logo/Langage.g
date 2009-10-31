@@ -22,10 +22,10 @@ instruction :
     LeveCrayon -> ^(LC)
   | BaisseCrayon -> ^(BC)
   | Avance e=expression -> ^(AV $e)
-//  | TourneGauche e=expression -> ^(TG $e)
-//  | TourneDroite e=expression -> ^(TD $e)
-//  | Recule e=expression -> ^(RE $e)
-//  | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
+  | TourneGauche e=expression -> ^(TG $e)
+  | TourneDroite e=expression -> ^(TD $e)
+  | Recule e=expression -> ^(RE $e)
+  | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
   ;
 
 expression :
