@@ -271,10 +271,12 @@ public class @grammarName+filename()@Adaptor {
     } catch (VisitFailure f) {
       throw new GomRuntimeException("CollectOperatorNames should not fail");
     }
+    int counter = 10;
     Iterator it = bag.iterator();
     while(it.hasNext()) {
       String op = (String) it.next();
-      writer.write(op + ";\n");
+      writer.write(op + "="+counter+"\n");
+      counter++;
     }
   }
 
@@ -356,7 +358,7 @@ public class @grammarName+filename()@Adaptor {
   protected File tokenFileToGenerate() {
     File output = new File(
         getStreamManager().getDestDir(),
-        fullFileName()+"TokenList.txt");
+        fullFileName()+"Tokens.tokens");
     return output;
   }
 
