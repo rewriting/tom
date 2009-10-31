@@ -12,19 +12,14 @@
       <include name="${example}/**/Seq.gom"/>
     </gomantlradapter.preset>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${example}/Seq.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-      <include name="${example}/**/Seq.g.t"/>
-    </tom.preset>
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <antlr3 target="${examples.gen}/${example}/Seq.g"
+    <antlr3 target="${examples.dir}/${example}/Seq.g"
             outputdirectory="${examples.gen}/${example}"
-            libdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/seq"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>

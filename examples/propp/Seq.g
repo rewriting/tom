@@ -30,9 +30,7 @@ grammar Seq;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-tokens {
-  %include { seq/SeqSeqTokenList.txt }
+  tokenVocab=SeqSeqTokens;
 }
 
 @header {
