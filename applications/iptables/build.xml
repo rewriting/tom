@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="javac" basedir=".">
-  
+
   <property environment="env"/>
   <property name="tom.home"        location="../../src/dist"/>
   <property name="iptables.dir"      location="."/>
@@ -14,28 +14,28 @@
   <property name="iptables.grammarcmdname"  value="IptablesCmdParser"/>
   <property name="iptables.grammarlist"  value="${iptables.package}/${iptables.grammarlistname}"/>
   <property name="iptables.grammarcmd"  value="${iptables.package}/${iptables.grammarcmdname}"/>
-  
+
   <import file="${tom.home}/lib/tom-common.xml"/>
-  
+
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
     <classpath refid="tom.classpath"/>
   </taskdef>
-  
-  <target name="init" depends="tom.init"> 
+
+  <target name="init" depends="tom.init">
     <mkdir dir="${iptables.build}"/>
     <mkdir dir="${iptables.gen}"/>
   </target>
-  
+
   <target name="tom" depends="gom">
     <tom.preset srcdir="${iptables.src}"
                 destdir="${iptables.gen}"
-                import="${iptables.gen}"> 
+                import="${iptables.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
-  
+
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${iptables.src}"
                             destdir="${iptables.gen}"
@@ -57,7 +57,7 @@
                 <include name="**/*.gom"/>
     </gom.preset>
   </target>
-  
+
   <target name="antlr" depends="gomantlradapter">
     <antlr3 target="${iptables.src}/${iptables.grammarlist}.g"
             libdirectory="${iptables.gen}/${iptables.package}/ast"
@@ -66,7 +66,7 @@
             libdirectory="${iptables.gen}/${iptables.package}/ast"
             outputdirectory="${iptables.gen}/${iptables.package}" />
   </target>
-  
+
   <target name="javac" depends="tom, antlr">
     <javac.preset destdir="${iptables.build}" >
       <!--<src path="${iptables.src}"/>-->
@@ -75,10 +75,10 @@
       <include name="**/*.java"/>
     </javac.preset>
   </target>
-  
+
   <target name="clean">
     <delete dir="${iptables.gen}"/>
     <delete dir="${iptables.build}"/>
   </target>
-  
+
 </project>

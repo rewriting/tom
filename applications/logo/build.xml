@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="javac" basedir=".">
-  
+
   <property environment="env"/>
   <property name="tom.home"        location="../../src/dist"/>
   <property name="logo.dir"      location="."/>
@@ -12,39 +12,28 @@
   <property name="logo.ast"      value="${logo.package}/Ast"/>
   <property name="logo.grammarname"  value="Langage"/>
   <property name="logo.grammar"  value="${logo.package}/${logo.grammarname}"/>
-  
+
   <import file="${tom.home}/lib/tom-common.xml"/>
-  
+
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
     <classpath refid="tom.classpath"/>
   </taskdef>
-  
+
   <target name="init" depends="tom.init">
     <mkdir dir="${logo.build}"/>
     <mkdir dir="${logo.gen}"/>
   </target>
-  
+
   <target name="tom" depends="gom">
     <tom.preset srcdir="${logo.src}"
                 destdir="${logo.gen}"
-                import="${logo.gen}"> 
+                import="${logo.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
-  
-  <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset srcdir="${logo.src}"
-        outputfile="${logo.gen}/${logo.grammar}.g">
-      <include name="${logo.grammar}.g.t"/>
-      <tomincludedir>
-        <pathelement location="${logo.gen}"/>
-        <pathelement location="${logo.gen}/${logo.package}"/>
-      </tomincludedir>
-    </tom.preset>
-  </target>
-  
+
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${logo.src}"
                             destdir="${logo.gen}"
@@ -60,13 +49,14 @@
       <include name="${logo.ast}.gom"/>
     </gom.preset>
   </target>
-  
-  <target name="antlr" depends="antlrtom">
-    <antlr3 target="${logo.gen}/${logo.grammar}.g"
+
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${logo.src}/${logo.grammar}.g"
+            libdirectory="${logo.gen}/${logo.package}/ast"
             outputdirectory="${logo.gen}/${logo.package}"
             />
   </target>
-  
+
   <target name="javac" depends="tom, antlr">
     <javac.preset destdir="${logo.build}" >
       <!--<src path="${logo.src}"/>-->
@@ -75,10 +65,10 @@
       <include name="**/*.java"/>
     </javac.preset>
   </target>
-  
+
   <target name="clean">
     <delete dir="${logo.gen}"/>
     <delete dir="${logo.build}"/>
   </target>
-  
+
 </project>

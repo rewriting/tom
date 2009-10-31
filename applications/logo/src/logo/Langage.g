@@ -3,10 +3,7 @@ grammar Langage;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { ast/LangageAstTokenList.txt }
+  tokenVocab=LangageAstTokens;
 }
 
 @header {
