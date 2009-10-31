@@ -3,10 +3,7 @@ grammar Langage;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { ast/LangageAstTokenList.txt }
+  tokenVocab=LangageAstTokens;
 }
 
 @header {
@@ -34,20 +31,21 @@ rule :
 ;
 
 policy :
-  'policy DROP'     -> ^(PolicyDrop)
-| 'policy ACCEPT'   -> ^(PolicyAccept)
+  'policy DROP'    -> ^(PolicyDrop)
+| 'policy ACCEPT'  -> ^(PolicyAccept)
 | INT 'references' -> ^(Ref INT)
 ;
 
-instruction : 
-  target protocol opt communication communication ID -> ^(Ins target protocol opt communication communication ^(Opts ID))
+instruction :
+  target protocol opt communication communication ID
+    -> ^(Ins target protocol opt communication communication ^(Opts ID))
 ;
 
-opt : 
+opt :
 	'--' -> ^(None)
 ;
 
-protocol : 
+protocol :
   'icmp' -> ^(Icmp)
 | 'all' -> ^(All_)
 | 'tcp' -> ^(Tcp)
@@ -86,17 +84,17 @@ target :
 | 'ULOG' -> ^(Ulog)
 | 'IPV40PTSSTRIP' -> ^(Ipv4OptSstRip)
 | 'SET' -> ^(Set)
-| 'TARPIT' -> ^(Tarpit)  
+| 'TARPIT' -> ^(Tarpit)
 //| ID -> ^(User_Rule) //TO MODIFY
 );
 
 
-opts : 
+opts :
 ID -> ^(None);
 
-communication : 
-	      	'anywhere' -> ^(Anywhere)
-	       |'localhost' -> ^(Localhost)
+communication :
+       'anywhere' -> ^(Anywhere)
+       |'localhost' -> ^(Localhost)
 //	       |IP -> ^(Ip_Addr IP)
 	      ;
 
