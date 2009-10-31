@@ -126,13 +126,14 @@ atom returns [Struc s]
 }
 : i:ID
 {
-  s = Struc.fromTerm(
-        aterm.pure.SingletonFactory.getInstance().parse(
-          (String)String.valueOf(i.getText().toUpperCase())));
+  String name = i.getText();
+  if ("O".equals(name)) {
+    s = `O();
+  } else {
+    s = `Atom(name);
+  }
 }
 ;
-
-
 
 class StructuresLexer extends Lexer;
 

@@ -588,15 +588,12 @@ public class StructureGom {
 
   public String prettyPrint(StructuresAbstractType t) {
     %match(Struc t) {
-      Neg(s) -> { return "-" + prettyPrint(`s);}
-      Par(l) -> { return "[" + prettyPrint(`l) + "]";}
-      Cop(l) -> { return "(" + prettyPrint(`l) + ")";}
-      Seq(l) -> { return "<" + prettyPrint(`l) + ">";}
-      x      -> {
-        String res = `x.toString();
-        /* constant, so remove the trailing () */
-        return res.substring(0,res.length()-2);
-      }
+      Neg(s)  -> { return "-" + prettyPrint(`s);}
+      Par(l)  -> { return "[" + prettyPrint(`l) + "]";}
+      Cop(l)  -> { return "(" + prettyPrint(`l) + ")";}
+      Seq(l)  -> { return "<" + prettyPrint(`l) + ">";}
+      Atom(n) -> { return `n;}
+      O()     -> { return "o";}
     }
     %match(StrucCop t) {
       ConcCop(head) -> {
