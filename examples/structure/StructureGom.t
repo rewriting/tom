@@ -38,6 +38,11 @@ import structure.structures.types.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
 
+import org.antlr.runtime.tree.Tree;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.ANTLRStringStream;
+
 public class StructureGom {
 
   private final static boolean optim = true;
@@ -225,9 +230,13 @@ public class StructureGom {
     try {
       while (true) {
         System.out.println("Enter a structure:");
-        StructuresLexer lexer = new StructuresLexer(new DataInputStream(System.in));
-        StructuresParser parser = new StructuresParser(lexer);
-        query = parser.struc();
+        StructuresLexer lexer =
+          new StructuresLexer(
+            new ANTLRInputStream(System.in));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        StructuresParser parser = new StructuresParser(tokens);
+        Tree t = (Tree) parser.new_struc().getTree();
+        query = (Struc) StructuresStructuresAdaptor.getTerm(t);
         test.run(query);
       }
     } catch (Exception e) {
@@ -239,9 +248,11 @@ public class StructureGom {
   public Struc strucFromPretty(String s) {
     Struc query= null;
     try {
-      StructuresLexer lexer = new StructuresLexer(new StringReader(s));
-      StructuresParser parser = new StructuresParser(lexer);
-      query = parser.struc();
+      StructuresLexer lexer = new StructuresLexer(new ANTLRStringStream(s));
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      StructuresParser parser = new StructuresParser(tokens);
+      Tree t = (Tree) parser.new_struc().getTree();
+      query = (Struc) StructuresStructuresAdaptor.getTerm(t);
       return query;
     } catch (Exception e) {
       System.out.println("Exiting because " + e);
