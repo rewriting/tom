@@ -52,7 +52,7 @@ public class Main {
       //parser.setTreeAdaptor(new CommonTreeAdaptor());
 
       Tree tree = (Tree) parser.compilationUnit().getTree();
-      CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);
+      CompilationUnit term = (CompilationUnit) JavaAstAdaptor.getTerm(tree);
 
       tom.library.utils.Viewer.toTree(term);
       //System.out.println(term);

@@ -33,14 +33,6 @@
     </tom.preset>
   </target>
   
-  <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset srcdir="${jparse.src}"
-                outputfile="${jparse.gen}/${jparse.grammar}.g"
-                import="${jparse.gen}"> 
-      <include name="${jparse.grammar}.g.t"/>
-    </tom.preset>
-  </target>
-  
   <target name="gom" depends="init">
     <gom.preset srcdir="${jparse.src}"
                 destdir="${jparse.gen}">
@@ -57,9 +49,10 @@
     </gomantlradapter.preset>
   </target>
   
-  <target name="antlr" depends="antlrtom">
-    <antlr3 target="${jparse.gen}/${jparse.grammar}.g"
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${jparse.src}/${jparse.grammar}.g"
             outputdirectory="${jparse.gen}/${jparse.parser}"
+            libdirectory="${jparse.gen}/${jparse.parser}/ast"
             />
   </target>
   
