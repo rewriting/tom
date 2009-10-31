@@ -6,6 +6,7 @@ import tom.library.sl.*;
 import java.util.HashMap;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.tree.Tree;
 import parser.expression.*;
 import java.io.*;
 
@@ -14,7 +15,7 @@ public class ExpressionEx {
   %include { expression/Expression.tom }
   %include { sl.tom }
   %include { java/util/HashMap.tom }
-  
+
   %strategy Evaluate(vars:HashMap) extends Identity() {
     visit Statement{
       Equal(Id(n),r) -> { vars.put(`n,`r); }
@@ -29,20 +30,19 @@ public class ExpressionEx {
   }
 
 
-  public static void main(String[] args) throws VisitFailure{    
+  public static void main(String[] args) throws VisitFailure {
     String exprCode = "a = 3; b=a+2-3;\n";
     try{
       // Initialize parser
       ExpressionLexer lexer = new ExpressionLexer(new ANTLRInputStream(new ByteArrayInputStream(exprCode.getBytes("utf-8"))));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       ExpressionParser parser = new ExpressionParser(tokens);
-      parser.setTreeAdaptor(new ExpressionAdaptor());
       // Parse the input expression
-      ExpressionTree b = (ExpressionTree) parser.ruleBase().getTree();
-      
+      Tree b = (Tree) parser.ruleBase().getTree();
+
       // apply evaluate strategy from leafs to root
       HashMap vars = new HashMap();
-      RuleBase rb = (RuleBase)b.getTerm();
+      RuleBase rb = (RuleBase) ExpressionExpressionAdaptor.getTerm(b);
       System.out.println("Result = " + rb);
       rb = (RuleBase) `BottomUp(Evaluate(vars)).visitLight(rb);
 

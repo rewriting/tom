@@ -33,14 +33,6 @@
     </tom.preset>
   </target>
   
-  <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset srcdir="${gaa.src}"
-                outputfile="${gaa.gen}/${gaa.grammar}.g"
-                options="-I ${gaa.gen}/${gaa.parser}"> 
-      <include name="${gaa.grammar}.g.t"/>
-    </tom.preset>
-  </target>
-  
   <target name="gom" depends="init">
     <gom.preset srcdir="${gaa.src}"
                 destdir="${gaa.gen}">
@@ -57,9 +49,10 @@
     </gomantlradapter.preset>
   </target>
   
-  <target name="antlr" depends="antlrtom">
-    <antlr3 target="${gaa.gen}/${gaa.grammar}.g"
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${gaa.src}/${gaa.grammar}.g"
             outputdirectory="${gaa.gen}/${gaa.parser}"
+            libdirectory="${gaa.gen}/${gaa.parser}/expression"
             />
   </target>
   
