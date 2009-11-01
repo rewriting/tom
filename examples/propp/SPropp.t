@@ -494,7 +494,7 @@ class SPropp {
       Tree t = null;
       do {
         t = (Tree) parser.seq().getTree();
-        query = (Sequent) SeqSeqAdaptor.getTerm(t);
+        query = (Sequent) SeqAdaptor.getTerm(t);
         System.out.println("Query : "+query);
         test.run(query);
       } while (null != t);

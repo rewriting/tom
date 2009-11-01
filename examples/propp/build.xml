@@ -7,8 +7,7 @@
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${example}"
-      grammar="Seq">
+      package="${example}">
       <include name="${example}/**/Seq.gom"/>
     </gomantlradapter.preset>
     <!-- build parser -->
