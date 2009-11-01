@@ -236,7 +236,7 @@ public class StructureGom {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         StructuresParser parser = new StructuresParser(tokens);
         Tree t = (Tree) parser.new_struc().getTree();
-        query = (Struc) StructuresStructuresAdaptor.getTerm(t);
+        query = (Struc) StructuresAdaptor.getTerm(t);
         test.run(query);
       }
     } catch (Exception e) {
@@ -252,7 +252,7 @@ public class StructureGom {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       StructuresParser parser = new StructuresParser(tokens);
       Tree t = (Tree) parser.new_struc().getTree();
-      query = (Struc) StructuresStructuresAdaptor.getTerm(t);
+      query = (Struc) StructuresAdaptor.getTerm(t);
       return query;
     } catch (Exception e) {
       System.out.println("Exiting because " + e);
