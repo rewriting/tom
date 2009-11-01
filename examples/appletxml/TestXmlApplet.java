@@ -52,7 +52,7 @@ public class TestXmlApplet {
   public void setUp() {
     test = new TomXMLAnalyser();
     try {
-    converter = new XMLConverter();
+      converter = new XMLConverter();
     } catch (java.awt.HeadlessException e) {
       isHeadLessEnv = true;
       Assert.assertTrue("HeadLessException, please run this test on a computer with an X display.",true);
@@ -71,13 +71,12 @@ public class TestXmlApplet {
   }
 
   @Test
-    public void testNonNullConvert() {
-      if(isHeadLessEnv) {
-        System.out.println("The environment is headless, please run this test on a computer with an X display.");
-      } else {
-        TNode term = new XmlTools().convertXMLToTNode(new ByteArrayInputStream(converter.defaultText.getBytes()));
-        Assert.assertNotNull(term);
-      }
+  public void testNonNullConvert() {
+    if(isHeadLessEnv) {
+      System.out.println("The environment is headless, please run this test on a computer with an X display.");
+    } else {
+      TNode term = new XmlTools().convertXMLToTNode(new ByteArrayInputStream(converter.defaultText.getBytes()));
+      Assert.assertNotNull(term);
     }
+  }
 }
-
