@@ -32,20 +32,20 @@
 package lambdaparallel;
 
 import lambdaparallel.parallellamterm.types.*;
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.Strategy;
 import jjtraveler.VisitFailure;
 import java.io.*;
 
 public class Parallellamcal{
 	private static int comptVariable = 0;	
-	%include { mustrategy.tom }
+	%include { sl.tom }
 	%include { parallellamterm/Parallellamterm.tom }
 	
 
 	public final static void main(String[] args) {
 		Parallellamterm subject = `var("undefined");
-		MuStrategy beta = `reductionRules();
-		MuStrategy print = `print();
+		Strategy beta = `reductionRules();
+		Strategy print = `print();
 		String s;
 		System.out.println(" ******************************************************************\n lambda Parallel\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
      ParallelllamcalLexer lexer = new ParallelllamcalLexer(System.in); // Create parser attached to lexer
@@ -62,7 +62,7 @@ public class Parallellamcal{
 			try{
 				System.out.println("After beta-normalisation: "+`Sequence(Innermost(beta),print).visit(subject));
 			} 
-			catch(VisitFailure e) {
+			catch(tom.library.sl.VisitFailure e) {
 				System.out.println("reduction failed on: " + subject);
 			}
 		}
