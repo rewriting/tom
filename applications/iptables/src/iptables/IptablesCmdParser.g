@@ -2,7 +2,7 @@ grammar IptablesCmdParser;
 options {
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=IptablesCmdParserAstTokens;
+  tokenVocab=AstTokens;
 }
 
 @header {

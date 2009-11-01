@@ -39,13 +39,11 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${iptables.src}"
                             destdir="${iptables.gen}"
-                            grammar="${iptables.grammarlistname}"
                             package="${iptables.package}">
       <include name="${iptables.ast}.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset srcdir="${iptables.src}"
                             destdir="${iptables.gen}"
-                            grammar="${iptables.grammarcmdname}"
                             package="${iptables.package}">
       <include name="${iptables.ast}.gom"/>
     </gomantlradapter.preset>
