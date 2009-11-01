@@ -218,7 +218,7 @@ public class @grammarName+filename()@Adaptor {
             SlotList sList = `slotList;
             int length = sList.length();
             String sCode = %[
-          if(tree.getChildCount()!=@length@) {
+          if (tree.getChildCount()!=@length@) {
             throw new RuntimeException("Node " + tree + ": @length@ child(s) expected, but " + tree.getChildCount() + " found");
           }
 ]%;
@@ -368,5 +368,4 @@ public class @grammarName+filename()@Adaptor {
         fullFileName()+"Adaptor.java");
     return output;
   }
-
 }
