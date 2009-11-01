@@ -169,7 +169,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=JavaAstTokens;
+  tokenVocab=AstTokens;
 }
 
 tokens {

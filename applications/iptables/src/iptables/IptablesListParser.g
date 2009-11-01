@@ -2,7 +2,7 @@ grammar IptablesListParser;
 options {
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=IptablesListParserAstTokens;
+  tokenVocab=AstTokens;
 }
 
 @header {

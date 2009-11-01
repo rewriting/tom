@@ -3,7 +3,7 @@ grammar Expression;
 options {
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=ExpressionExpressionTokens;
+  tokenVocab=ExpressionTokens;
 }
 
 @header {
@@ -25,12 +25,7 @@ lhs : idP=ID
     -> ^(Id $idP)
 ;
 
-rhs : (
-       num=NUM
-       | ex=expr
-      )
-     -> {num!=null}? ^(Num $num)
-     -> $ex
+rhs : expr
 ;
 
 expr  : op1=expr2 mo=MATHOP op2=expr

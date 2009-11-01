@@ -52,20 +52,11 @@ public class AdapterGenerator {
   // It is better to stay with one single model whatever class is used
   private GomEnvironment gomEnvironment;
   private String grammarPkg = "";
-  private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, GomEnvironment gomEnvironment, String grammar) {
+  AdapterGenerator(File tomHomePath, GomEnvironment gomEnvironment) {
     this.tomHomePath = tomHomePath;
     this.gomEnvironment = gomEnvironment;
-    int lastDot = grammar.lastIndexOf('.');
-    if (-1 != lastDot) {
-      // the grammar is in a package different from the gom file
-      this.grammarPkg = grammar.substring(0,lastDot);
-      this.grammarName = grammar.substring(lastDot+1,grammar.length());
-    } else {
-      this.grammarPkg = getStreamManager().getDefaultPackagePath();
-      this.grammarName = grammar;
-    }
+    this.grammarPkg = getStreamManager().getDefaultPackagePath();
   }
 
   public GomEnvironment getGomEnvironment() {
@@ -88,18 +79,24 @@ public class AdapterGenerator {
   }
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
-    writeTokenFile(moduleList);
-    writeAdapterFile(moduleList);
-    //writeTreeFile(moduleList);
+    Map<OperatorDecl,Integer> operatormap = new HashMap<OperatorDecl,Integer>();
+    IntRef intref = new IntRef(10);
+    try {
+      `TopDown(CollectOperators(operatormap, intref)).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("CollectOperators should not fail");
+    }
+    writeTokenFile(operatormap);
+    writeAdapterFile(operatormap);
   }
 
-  public int writeTokenFile(ModuleList moduleList) {
+  public int writeTokenFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = tokenFileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-       generateTokenFile(moduleList, writer);
+       generateTokenFile(operatormap, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -109,7 +106,7 @@ public class AdapterGenerator {
     return 0;
   }
 
-  public int writeAdapterFile(ModuleList moduleList) {
+  public int writeAdapterFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = adaptorFileToGenerate();
        // make sure the directory exists
@@ -118,7 +115,7 @@ public class AdapterGenerator {
          new BufferedWriter(
              new OutputStreamWriter(
                new FileOutputStream(output)));
-       generateAdapterFile(moduleList, writer);
+       generateAdapterFile(operatormap, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -133,14 +130,8 @@ public class AdapterGenerator {
     return ((packagePrefix=="")?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
-  public void generateAdapterFile(ModuleList moduleList, Writer writer)
+  public void generateAdapterFile(Map<OperatorDecl,Integer> operatormap, Writer writer)
     throws java.io.IOException {
-    Collection operatorset = new HashSet();
-    try {
-      `TopDown(CollectOperators(operatorset)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperators should not fail");
-    }
     writer.write(
     %[
 package @adapterPkg()@;
@@ -150,11 +141,10 @@ import org.antlr.runtime.tree.Tree;
 ]%);
     if (!"".equals(grammarPkg)) {
     writer.write(%[
-import @grammarPkg@.@grammarName@Parser;
 ]%);
     }
     writer.write(%[
-public class @grammarName+filename()@Adaptor {
+public class @filename()@Adaptor {
   public static shared.SharedObject getTerm(Tree tree) {
     shared.SharedObject res = null;
     if(tree.isNil()) {
@@ -167,17 +157,17 @@ public class @grammarName+filename()@Adaptor {
     switch (tree.getType()) {
 ]%);
 
-    Iterator it = operatorset.iterator();
-    while(it.hasNext()) {
-      OperatorDecl opDecl = (OperatorDecl) it.next();
+    for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
+      OperatorDecl opDecl = entry.getKey();
+      String opkey = entry.getValue().toString();
       %match(opDecl) {
 
-        op@OperatorDecl[Name=opName,Prod=Variadic[Sort=domainSort]] -> {
+        op@OperatorDecl[Prod=Variadic[Sort=domainSort]] -> {
           Code cast = genGetTerm(`domainSort,"tree.getChild(i)");
           Code code =
             `CodeList(
-                Code("      case "+grammarName+"Parser."),
-                Code(opName),
+                Code("      case "),
+                Code(opkey),
                 Code(":\n"),
                 Code("        {\n"),
                 /* create empty list */
@@ -204,11 +194,11 @@ public class @grammarName+filename()@Adaptor {
           CodeGen.generateCode(code,writer);
         }
 
-      op@OperatorDecl[Name=opName,Prod=prod@!Variadic[]] -> {
+      op@OperatorDecl[Prod=prod@!Variadic[]] -> {
         Code code =
           `CodeList(
-              Code("      case "+grammarName+"Parser."),
-              Code(opName),
+              Code("      case "),
+              Code(opkey),
               Code(":\n"),
               Code("        {\n")
               );
@@ -263,35 +253,31 @@ public class @grammarName+filename()@Adaptor {
 ]%);
   }
 
-  public void generateTokenFile(ModuleList moduleList, Writer writer)
+  public void generateTokenFile(Map<OperatorDecl,Integer> operatormap, Writer writer)
     throws java.io.IOException {
-    Collection bag = new HashSet();
-    try {
-      `TopDown(CollectOperatorNames(bag)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperatorNames should not fail");
-    }
-    int counter = 10;
-    Iterator it = bag.iterator();
-    while(it.hasNext()) {
-      String op = (String) it.next();
-      writer.write(op + "="+counter+"\n");
-      counter++;
-    }
-  }
-
-  %strategy CollectOperators(bag:Collection) extends Identity() {
-    visit OperatorDecl {
-      op@OperatorDecl[] -> {
-        bag.add(`op);
+    for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
+      final OperatorDecl decl = entry.getKey();
+      %match(OperatorDecl decl) {
+        OperatorDecl[Name=name] -> {
+          writer.write(`name + "="+entry.getValue().intValue()+"\n");
+        }
       }
     }
   }
 
-  %strategy CollectOperatorNames(bag:Collection) extends Identity() {
+  static class IntRef {
+    IntRef(int val) {
+      intValue = val;
+    }
+    public int intValue;
+  }
+  %typeterm IntRef { implement { IntRef } }
+  %typeterm OperatorsMap { implement { Map<OperatorDecl,Integer> } }
+  %strategy CollectOperators(bag:OperatorsMap,intref:IntRef) extends Identity() {
     visit OperatorDecl {
-      OperatorDecl[Name=name] -> {
-        bag.add(`name);
+      op@OperatorDecl[] -> {
+        bag.put(`op,Integer.valueOf(intref.intValue));
+        intref.intValue++;
       }
     }
   }
@@ -303,7 +289,7 @@ public class @grammarName+filename()@Adaptor {
         code = `CodeList(code,
             Code("("),
             FullSortClass(sort),
-            Code(")" + grammarName+filename() + "Adaptor.getTerm(" + tree + ")"));
+            Code(")" + filename() + "Adaptor.getTerm(" + tree + ")"));
       }
       BuiltinSortDecl[Name=name] -> {
         if("int".equals(`name)) {
@@ -343,7 +329,7 @@ public class @grammarName+filename()@Adaptor {
   }
 
   protected String fullFileName() {
-    return (adapterPkg() + "." + grammarName+filename()).replace('.',File.separatorChar);
+    return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
   }
 
   protected String filename() {

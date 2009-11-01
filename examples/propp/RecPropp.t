@@ -180,7 +180,7 @@ public class RecPropp extends SPropp {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
 			SeqParser parser = new SeqParser(tokens);
 			Tree t = (Tree) parser.seq().getTree();
-      query = (Sequent) SeqSeqAdaptor.getTerm(t);
+      query = (Sequent) SeqAdaptor.getTerm(t);
 			System.out.println("Query : "+query);
 		} catch (Exception e) {
 			System.err.println("exception: "+e);

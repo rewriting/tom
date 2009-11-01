@@ -30,7 +30,7 @@ grammar Structures;
 options {
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=StructuresStructuresTokens;
+  tokenVocab=StructuresTokens;
 }
 @header {
   package structure;

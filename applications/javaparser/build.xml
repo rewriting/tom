@@ -43,7 +43,6 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${jparse.src}"
                             destdir="${jparse.gen}"
-                            grammar="${jparse.grammar}"
                             package="${jparse.parser}">
       <include name="${jparse.ast}.gom"/>
     </gomantlradapter.preset>

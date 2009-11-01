@@ -4,12 +4,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 import iptables.analyser.types.*;
-/*
-import iptables.analyser.AnalyserAdaptor;
-import iptables.iptables.IptablesAdaptor;
-*/
-import iptables.ast.IptablesListParserAstAdaptor;
-import iptables.ast.IptablesCmdParserAstAdaptor;
+import iptables.ast.AstAdaptor;
 import iptables.iptableslist.types.*;
 import iptables.iptablescmd.types.*;
 import iptables.firewall.types.*;
@@ -76,7 +71,7 @@ public class Main {
 				new IptablesListParserParser(tokens);
 			Tree b1 = (Tree) ruleParser.file().getTree();
 			FirewallRules inst = 
-				(FirewallRules) IptablesListParserAstAdaptor.getTerm(b1);
+				(FirewallRules) AstAdaptor.getTerm(b1);
 			if (options.debug)
 				System.out.println("***inst = " + inst + "\n");
 

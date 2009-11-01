@@ -8,8 +8,7 @@
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${example}"
-      grammar="Structures">
+      package="${example}">
       <include name="${example}/**/Structures.gom"/>
     </gomantlradapter.preset>
     <!-- build tom -->

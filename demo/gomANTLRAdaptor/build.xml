@@ -43,7 +43,6 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${gaa.src}"
                             destdir="${gaa.gen}"
-                            grammar="${gaa.grammar}"
                             package="${gaa.parser}">
       <include name="${gaa.ast}.gom"/>
     </gomantlradapter.preset>
