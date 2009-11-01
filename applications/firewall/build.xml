@@ -37,7 +37,6 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${firewall.src}"
                             destdir="${firewall.gen}"
-                            grammar="${firewall.grammarname}"
                             package="${firewall.package}">
       <include name="${firewall.ast}.gom"/>
     </gomantlradapter.preset>
