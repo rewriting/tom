@@ -37,7 +37,6 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${logo.src}"
                             destdir="${logo.gen}"
-                            grammar="${logo.grammarname}"
                             package="${logo.package}">
       <include name="${logo.ast}.gom"/>
     </gomantlradapter.preset>
