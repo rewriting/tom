@@ -52,20 +52,11 @@ public class AdapterGenerator {
   // It is better to stay with one single model whatever class is used
   private GomEnvironment gomEnvironment;
   private String grammarPkg = "";
-  private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, GomEnvironment gomEnvironment, String grammar) {
+  AdapterGenerator(File tomHomePath, GomEnvironment gomEnvironment) {
     this.tomHomePath = tomHomePath;
     this.gomEnvironment = gomEnvironment;
-    int lastDot = grammar.lastIndexOf('.');
-    if (-1 != lastDot) {
-      // the grammar is in a package different from the gom file
-      this.grammarPkg = grammar.substring(0,lastDot);
-      this.grammarName = grammar.substring(lastDot+1,grammar.length());
-    } else {
-      this.grammarPkg = getStreamManager().getDefaultPackagePath();
-      this.grammarName = grammar;
-    }
+    this.grammarPkg = getStreamManager().getDefaultPackagePath();
   }
 
   public GomEnvironment getGomEnvironment() {
@@ -150,11 +141,10 @@ import org.antlr.runtime.tree.Tree;
 ]%);
     if (!"".equals(grammarPkg)) {
     writer.write(%[
-import @grammarPkg@.@grammarName@Parser;
 ]%);
     }
     writer.write(%[
-public class @grammarName+filename()@Adaptor {
+public class @filename()@Adaptor {
   public static shared.SharedObject getTerm(Tree tree) {
     shared.SharedObject res = null;
     if(tree.isNil()) {
@@ -299,7 +289,7 @@ public class @grammarName+filename()@Adaptor {
         code = `CodeList(code,
             Code("("),
             FullSortClass(sort),
-            Code(")" + grammarName+filename() + "Adaptor.getTerm(" + tree + ")"));
+            Code(")" + filename() + "Adaptor.getTerm(" + tree + ")"));
       }
       BuiltinSortDecl[Name=name] -> {
         if("int".equals(`name)) {
@@ -339,7 +329,7 @@ public class @grammarName+filename()@Adaptor {
   }
 
   protected String fullFileName() {
-    return (adapterPkg() + "." + grammarName+filename()).replace('.',File.separatorChar);
+    return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
   }
 
   protected String filename() {

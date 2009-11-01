@@ -117,11 +117,6 @@
         description="Path for include"
         value=""
         attrName="path"/>
-      <string name="grammar"
-        altName="g"
-        description="Antlr grammar name"
-        value=""
-        attrName="grammarName"/>
       <string name='intermediateName'
         altName='iname'
         description='specify the prefix of intermediate files'

@@ -41,7 +41,6 @@ import org.apache.tools.ant.taskdefs.Java;
  * <li>termgraph</li>
  * <li>fresh</li>
  * <li>pointer</li>
- * <li>grammar</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -53,29 +52,8 @@ import org.apache.tools.ant.taskdefs.Java;
 
 public class GomAntlrAdapterTask extends GomCommonTask {
 
-  private String grammar = "";
-
-  /**
-   * Set the grammar name
-   * @param grammarName the grammar name
-   */
-  public void setGrammar(String grammarName) {
-    this.grammar = grammarName;
-  }
-
-  public String getGrammar() {
-    return grammar;
-  }
-
   protected String toPattern() {
-    return "\\1\\L\\3" + protectedFileSeparator + getGrammar() + "\\3Tokens.tokens";
-  }
-
-  protected void processAdditionalOptions(Java runner) {
-    if(getGrammar() != null && getGrammar().length() > 0) {
-      runner.createArg().setValue("--grammar");
-      runner.createArg().setValue(getGrammar());
-    }
+    return "\\1\\L\\3" + protectedFileSeparator + "\\3Tokens.tokens";
   }
 
   protected String defaultConfigName() {
