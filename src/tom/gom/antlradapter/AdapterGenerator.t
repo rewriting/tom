@@ -88,18 +88,24 @@ public class AdapterGenerator {
   }
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
-    writeTokenFile(moduleList);
-    writeAdapterFile(moduleList);
-    //writeTreeFile(moduleList);
+    Map<OperatorDecl,Integer> operatormap = new HashMap<OperatorDecl,Integer>();
+    IntRef intref = new IntRef(10);
+    try {
+      `TopDown(CollectOperators(operatormap, intref)).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("CollectOperators should not fail");
+    }
+    writeTokenFile(operatormap);
+    writeAdapterFile(operatormap);
   }
 
-  public int writeTokenFile(ModuleList moduleList) {
+  public int writeTokenFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = tokenFileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-       generateTokenFile(moduleList, writer);
+       generateTokenFile(operatormap, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -109,7 +115,7 @@ public class AdapterGenerator {
     return 0;
   }
 
-  public int writeAdapterFile(ModuleList moduleList) {
+  public int writeAdapterFile(Map<OperatorDecl,Integer> operatormap) {
     try {
        File output = adaptorFileToGenerate();
        // make sure the directory exists
@@ -118,7 +124,7 @@ public class AdapterGenerator {
          new BufferedWriter(
              new OutputStreamWriter(
                new FileOutputStream(output)));
-       generateAdapterFile(moduleList, writer);
+       generateAdapterFile(operatormap, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -133,14 +139,8 @@ public class AdapterGenerator {
     return ((packagePrefix=="")?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
-  public void generateAdapterFile(ModuleList moduleList, Writer writer)
+  public void generateAdapterFile(Map<OperatorDecl,Integer> operatormap, Writer writer)
     throws java.io.IOException {
-    Collection operatorset = new HashSet();
-    try {
-      `TopDown(CollectOperators(operatorset)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperators should not fail");
-    }
     writer.write(
     %[
 package @adapterPkg()@;
@@ -167,9 +167,8 @@ public class @grammarName+filename()@Adaptor {
     switch (tree.getType()) {
 ]%);
 
-    Iterator it = operatorset.iterator();
-    while(it.hasNext()) {
-      OperatorDecl opDecl = (OperatorDecl) it.next();
+    for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
+      OperatorDecl opDecl = entry.getKey();
       %match(opDecl) {
 
         op@OperatorDecl[Name=opName,Prod=Variadic[Sort=domainSort]] -> {
@@ -263,35 +262,31 @@ public class @grammarName+filename()@Adaptor {
 ]%);
   }
 
-  public void generateTokenFile(ModuleList moduleList, Writer writer)
+  public void generateTokenFile(Map<OperatorDecl,Integer> operatormap, Writer writer)
     throws java.io.IOException {
-    Collection bag = new HashSet();
-    try {
-      `TopDown(CollectOperatorNames(bag)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperatorNames should not fail");
-    }
-    int counter = 10;
-    Iterator it = bag.iterator();
-    while(it.hasNext()) {
-      String op = (String) it.next();
-      writer.write(op + "="+counter+"\n");
-      counter++;
-    }
-  }
-
-  %strategy CollectOperators(bag:Collection) extends Identity() {
-    visit OperatorDecl {
-      op@OperatorDecl[] -> {
-        bag.add(`op);
+    for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
+      final OperatorDecl decl = entry.getKey();
+      %match(OperatorDecl decl) {
+        OperatorDecl[Name=name] -> {
+          writer.write(`name + "="+entry.getValue().intValue()+"\n");
+        }
       }
     }
   }
 
-  %strategy CollectOperatorNames(bag:Collection) extends Identity() {
+  static class IntRef {
+    IntRef(int val) {
+      intValue = val;
+    }
+    public int intValue;
+  }
+  %typeterm IntRef { implement { IntRef } }
+  %typeterm OperatorsMap { implement { Map<OperatorDecl,Integer> } }
+  %strategy CollectOperators(bag:OperatorsMap,intref:IntRef) extends Identity() {
     visit OperatorDecl {
-      OperatorDecl[Name=name] -> {
-        bag.add(`name);
+      op@OperatorDecl[] -> {
+        bag.put(`op,Integer.valueOf(intref.intValue));
+        intref.intValue++;
       }
     }
   }
