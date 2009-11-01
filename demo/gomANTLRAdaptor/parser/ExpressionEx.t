@@ -42,7 +42,7 @@ public class ExpressionEx {
 
       // apply evaluate strategy from leafs to root
       HashMap vars = new HashMap();
-      RuleBase rb = (RuleBase) ExpressionExpressionAdaptor.getTerm(b);
+      RuleBase rb = (RuleBase) ExpressionAdaptor.getTerm(b);
       System.out.println("Result = " + rb);
       rb = (RuleBase) `BottomUp(Evaluate(vars)).visitLight(rb);
 
