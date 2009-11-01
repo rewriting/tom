@@ -70,16 +70,18 @@ public class AdapterPlugin extends GomGenericPlugin {
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
+    if (arg.length < 3
+        || (arg[0] instanceof ModuleList
+          && arg[1] instanceof HookDeclList
+          && arg[2] instanceof GomEnvironment)) {
       moduleList = (ModuleList) arg[0];
       hookList = (HookDeclList) arg[1];
-      //setStreamManager((GomStreamManager) arg[2]);
       setGomEnvironment((GomEnvironment) arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{
-            "AntlrAdapter", "[ModuleList,HookDeclList,GomStreamManager]",
+            "AntlrAdapter", "[ModuleList,HookDeclList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
