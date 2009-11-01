@@ -169,14 +169,15 @@ public class @grammarName+filename()@Adaptor {
 
     for (Map.Entry<OperatorDecl,Integer> entry : operatormap.entrySet()) {
       OperatorDecl opDecl = entry.getKey();
+      String opkey = entry.getValue().toString();
       %match(opDecl) {
 
-        op@OperatorDecl[Name=opName,Prod=Variadic[Sort=domainSort]] -> {
+        op@OperatorDecl[Prod=Variadic[Sort=domainSort]] -> {
           Code cast = genGetTerm(`domainSort,"tree.getChild(i)");
           Code code =
             `CodeList(
-                Code("      case "+grammarName+"Parser."),
-                Code(opName),
+                Code("      case "),
+                Code(opkey),
                 Code(":\n"),
                 Code("        {\n"),
                 /* create empty list */
@@ -203,11 +204,11 @@ public class @grammarName+filename()@Adaptor {
           CodeGen.generateCode(code,writer);
         }
 
-      op@OperatorDecl[Name=opName,Prod=prod@!Variadic[]] -> {
+      op@OperatorDecl[Prod=prod@!Variadic[]] -> {
         Code code =
           `CodeList(
-              Code("      case "+grammarName+"Parser."),
-              Code(opName),
+              Code("      case "),
+              Code(opkey),
               Code(":\n"),
               Code("        {\n")
               );
