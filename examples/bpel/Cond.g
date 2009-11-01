@@ -3,26 +3,13 @@ grammar Cond;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  WfgNode;
-  Activity;
-  ConcWfg;
-  EmptyWfg;
-  And;
-  Or;
-  Xor;
-  Cond;
-  Label;
-  NoCond;
-
+  tokenVocab=WfgTokens;
 }
 
 @header {
   package bpel;
   import bpel.wfg.types.*;
-  import bpel.wfg.CondWfgAdaptor;
+  import bpel.wfg.WfgAdaptor;
   import org.antlr.runtime.tree.Tree;
 }
 @lexer::header {
@@ -38,7 +25,7 @@ tokens {
 
       // Parse the input expression
       Tree tree = (Tree) parser.cond().getTree();
-      return (Condition) CondWfgAdaptor.getTerm(tree);
+      return (Condition) WfgAdaptor.getTerm(tree);
     } catch(Exception e ) {
       throw new RuntimeException(e);
     }
