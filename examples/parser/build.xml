@@ -15,16 +15,14 @@
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${example}"
-      grammar="Rule">
+      package="${example}">
       <include name="${example}/**/Rule.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
       package="${example}"
-      termgraph="true" 
-      grammar="Graph">
+      termgraph="true">
       <include name="${example}/**/Term.gom"/>
     </gomantlradapter.preset>
     <tomcompile/>
