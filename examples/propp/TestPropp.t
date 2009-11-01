@@ -32,8 +32,8 @@ package propp;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import propp.Seq.*;
-import propp.Seq.types.*;
+import propp.seq.*;
+import propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
@@ -55,7 +55,7 @@ public class TestPropp {
     test = new SPropp();
   }
 
-  %include { Seq/Seq.tom }
+  %include { seq/Seq.tom }
 
   @Test
 	public void testComparePair1() {
