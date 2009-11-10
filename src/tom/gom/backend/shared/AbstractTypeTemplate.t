@@ -64,7 +64,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    
+
     writer.write(
 %[
 package @getPackage()@;
@@ -72,7 +72,7 @@ package @getPackage()@;
 
 /**
   * This class provides a skeletal implementation of <i>terms</i>
-  * When implementing the interface <tt>shared.SharedObjectWithID</tt>, 
+  * When implementing the interface <tt>shared.SharedObjectWithID</tt>,
   * the objects are immutable and can be compared in constant time, using
   * <tt>==</tt>.
   */
@@ -88,14 +88,14 @@ package @getPackage()@;
 %[
 public abstract class @className()@ implements @implementsInterface@ @generateInterface()@ {
   /**
-   * Sole constructor.  (For invocation by subclass 
+   * Sole constructor.  (For invocation by subclass
    * constructors, typically implicit.)
    */
   protected @className()@() {}
 ]%);
 
     if(hooks.containsTomCode()) {
-      mapping.generate(writer); 
+      mapping.generate(writer);
     }
     writer.write(
 %[

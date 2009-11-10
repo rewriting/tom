@@ -1,26 +1,26 @@
 header {
   /*
    * Gom
-   * 
+   *
    * Copyright (c) 2009, INRIA
    * Nancy, France.
-   * 
+   *
    * This program is free software; you can redistribute it and/or modify
    * it under the terms of the GNU General Public License as published by
    * the Free Software Foundation; either version 2 of the License, or
    * (at your option) any later version.
-   * 
+   *
    * This program is distributed in the hope that it will be useful,
    * but WITHOUT ANY WARRANTY; without even the implied warranty of
    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    * GNU General Public License for more details.
-   * 
+   *
    * You should have received a copy of the GNU General Public License
    * along with this program; if not, write to the Free Software
    * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-   * 
+   *
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
-   * 
+   *
    **/
   package tom.gom.parser;
 }
@@ -62,13 +62,13 @@ options {
 block returns [String block]
 { block = "?"; }
 :
- LBRACE { /* Verify there was nothing more than only a LBRACE in the input */ 
+ LBRACE { /* Verify there was nothing more than only a LBRACE in the input */
    if (!lexer.target.toString().trim().equals("{"))
     throw new RecognitionException("Expecting \"{\", found \""+lexer.target.toString()+"\"");
-} 
+}
   rawblocklist
-  RBRACE 
-{ 
+  RBRACE
+{
   block = lexer.target.toString();
   lexer.clearTarget();
 }
@@ -110,24 +110,24 @@ options {
 
 
 // basic tokens
-LBRACE 
-: '{' 
+LBRACE
+: '{'
 {
   target.append($getText);
-}  
+}
 ;
-RBRACE  
-: '}' 
+RBRACE
+: '}'
 {
   target.append($getText);
-}  
+}
 ;
 
 STRING
   : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
             target.append($getText);
-        } 
+        }
   ;
 
 protected
@@ -181,21 +181,21 @@ WS  : ( ' '
       )
       { newline(); }
     )
-        {  
+        {
             target.append($getText);
             $setType(Token.SKIP);
         }
     ;
 
 // comments
-//COMMENT 
+//COMMENT
 //:
 //( SL_COMMENT | ML_COMMENT )
 //{ $setType(Token.SKIP);}
 //;
 
 protected
-SL_COMMENT 
+SL_COMMENT
 :
 "//"
 ( ~('\n'|'\r') )*
@@ -209,16 +209,16 @@ SL_COMMENT
  )
 {
   target.append($getText);
-  newline(); 
+  newline();
   $setType(Token.SKIP);
 }
 ;
 
 protected
-ML_COMMENT 
+ML_COMMENT
 :
-"/*"        
-( { LA(2)!='/' }? '*' 
+"/*"
+( { LA(2)!='/' }? '*'
   |
   )
 (
@@ -238,7 +238,7 @@ ML_COMMENT
 ;
 
 // the rule for the filter: just append the text to the buffer
-protected 
+protected
 TARGET
 :
 ( . )

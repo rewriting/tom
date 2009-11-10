@@ -52,16 +52,8 @@ public class Expander {
   %include { ../adt/gom/Gom.tom}
 
   private GomEnvironment gomEnvironment;
-  
-  public Expander(GomStreamManager streamManager) {
-    this.gomEnvironment.setStreamManager(streamManager);
-  }
 
   public Expander(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
-  public Expander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
   }
 
@@ -69,16 +61,8 @@ public class Expander {
     return this.gomEnvironment;
   }
 
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
   public GomStreamManager getStreamManager() {
     return this.gomEnvironment.getStreamManager();
-  }
-
-  public void setStreamManager(GomStreamManager streamManager) {
-    this.gomEnvironment.setStreamManager(streamManager);
   }
 
   /*
@@ -98,18 +82,18 @@ public class Expander {
       for (GomModuleName moduleNameName : moduleToAnalyse) {
         String moduleName = moduleNameName.getName();
 
-        if(!getGomEnvironment().isBuiltin(moduleName)) {
-          if(!alreadyParsedModule.contains(moduleNameName)) {
+        if (!getGomEnvironment().isBuiltin(moduleName)) {
+          if (!alreadyParsedModule.contains(moduleNameName)) {
             GomModule importedModule = parse(moduleName);
-            if(importedModule == null) {
+            if (null == importedModule) {
               return null;
             }
             result = `ConcGomModule(result*, importedModule);
             alreadyParsedModule.add(moduleNameName);
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
-	  }
+          }
         } else {
-          getGomEnvironment().markUsedBuiltin(moduleName); 
+          getGomEnvironment().markUsedBuiltin(moduleName);
         }
       }
       moduleToAnalyse = newModuleToAnalyse;
@@ -130,7 +114,6 @@ public class Expander {
       }
       importedModules = importedModules.getTailConcImportedModule();
     }
-    //System.out.println("*** generateModuleToAnalyseSet = " + moduleToAnalyse);
     return moduleToAnalyse;
   }
 
@@ -163,7 +146,7 @@ public class Expander {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
     try {
-      Tree tree = (Tree)parser.module().getTree();
+      Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
@@ -180,7 +163,7 @@ public class Expander {
   private File findModuleFile(String moduleName) {
     String extendedModuleName = moduleName+".gom";
     File f = new File(extendedModuleName);
-    if(f.exists()) {
+    if (f.exists()) {
       return f;
     }
     return getStreamManager().findModuleFile(extendedModuleName);
