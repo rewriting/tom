@@ -202,7 +202,7 @@ public class RuleExpander {
             String varname = "_";
             %match(var) {
                 VarStar(name) -> { varname = `name; }
-            } 
+            }
             getLogger().log(Level.WARNING, GomMessage.variadicRuleStartingWithStar.getMessage(),
                     new Object[]{`(listOp),varname});
         }
@@ -386,7 +386,7 @@ public class RuleExpander {
     return ref.val;
   }
   static class OpRef { OperatorDecl val; }
-  %typeterm OpRef { 
+  %typeterm OpRef {
     implement { OpRef }
     is_sort(t) { ($t instanceof OpRef) }
   }

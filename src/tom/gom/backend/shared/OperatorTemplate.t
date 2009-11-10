@@ -137,7 +137,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 }
 
   if (hooks.containsTomCode()) {
-    mapping.generate(writer); 
+    mapping.generate(writer);
   }
   generateMembers(writer);
   generateBody(writer);
@@ -168,7 +168,7 @@ if (maximalsharing) {
 writer.write(%[
   /**
    * Initializes attributes and hashcode of the class
-   * 
+   *
    * @@param @childListOnePerLine(slotList)@
    * @@param hashCode hashCode of @className()@
    */
@@ -181,7 +181,7 @@ writer.write(%[
 
   /**
    * Initializes attributes and hashcode of the class
-   * 
+   *
    * @@param @childListOnePerLine(slotList)@
    */
   private void initHashCode(@childListWithType(slotList)@) {
@@ -196,9 +196,9 @@ writer.write(%[
 writer.write(%[
   /* name and arity */
 
-  /** 
+  /**
    * Returns the name of the symbol
-   * 
+   *
    * @@return the name of the symbol
    */
   @@Override
@@ -206,9 +206,9 @@ writer.write(%[
     return "@className()@";
   }
 
-  /** 
+  /**
    * Returns the arity of the symbol
-   * 
+   *
    * @@return the arity of the symbol
    */
   private int getArity() {
@@ -219,9 +219,9 @@ writer.write(%[
 
 if (maximalsharing) {
   writer.write(%[
-  /** 
+  /**
    * Copy the object and returns the copy
-   * 
+   *
    * @@return a clone of the SharedObject
    */]%);
 if(multithread) {
@@ -246,10 +246,10 @@ if(multithread) {
     // case: constant
 writer.write(%[
   /* name and arity */
-  
-  /** 
+
+  /**
    * Returns the name of the symbol
-   * 
+   *
    * @@return the name of the symbol
    */
   @@Override
@@ -257,10 +257,10 @@ writer.write(%[
     return "@className()@";
   }
 
-  /** 
+  /**
    * Returns the arity of the symbol
-   * 
-   * @@return arity of the symbol 
+   *
+   * @@return arity of the symbol
    */
   private static int getArity() {
     return 0;
@@ -270,9 +270,9 @@ writer.write(%[
 
 if (maximalsharing) {
 writer.write(%[
-  /** 
+  /**
    * Copy the object and returns the copy
-   * 
+   *
    * @@return a clone of the SharedObject
    */
   public shared.SharedObject duplicate() {
@@ -308,7 +308,7 @@ writer.write(%[
 
   /**
    * Compares two terms. This functions implements a total lexicographic path ordering.
-   * 
+   *
    * @@param o object to which this term is compared
    * @@return a negative integer, zero, or a positive integer as this
    *         term is less than, equal to, or greater than the argument
@@ -359,7 +359,7 @@ writer.write(%[
     if (ao == this)
       return 0;
     /* use the hash values to discriminate */
-    
+
     if(hashCode != ao.hashCode())
       return (hashCode < ao.hashCode())?-1:1;
 
@@ -373,9 +373,9 @@ writer.write(%[
   }
 
  //shared.SharedObject
-  /** 
+  /**
    * Returns hashCode
-   * 
+   *
    * @@return hashCode
    */
   @@Override
@@ -383,9 +383,9 @@ writer.write(%[
     return hashCode;
   }
 
-  /** 
+  /**
    * Checks if a SharedObject is equivalent to the current object
-   * 
+   *
    * @@param obj SharedObject to test
    * @@return true if obj is a @className()@ and its members are equal, else false
    */
@@ -411,12 +411,12 @@ writer.write(%[
    */
   @@Override
   public int compareTo(Object o) {
-    throw new UnsupportedOperationException("Unable to compare"); 
+    throw new UnsupportedOperationException("Unable to compare");
   }
 
-  /** 
+  /**
    * Clones the object
-   * 
+   *
    * @@return the copy
    */
   @@Override
@@ -456,9 +456,9 @@ writer.write(");\n}");
 }
 
 writer.write(%[
-  /** 
+  /**
    * Checks if an object is strictly equal to the current object
-   * 
+   *
    * @@param o object to compare
    * @@return true if each member is equal, else false
    */
@@ -512,7 +512,7 @@ writer.write(%[
 
 writer.write(%[
    //@className(sortName)@ interface
-  /** 
+  /**
    * Returns true if the term is rooted by the symbol @className.getName()@
    *
    * @@return true, because this is rooted by @className.getName()@
@@ -527,9 +527,9 @@ generateGetters(writer);
 
     writer.write(%[
   /* AbstractType */
-  /** 
+  /**
    * Returns an ATerm representation of this term.
-   * 
+   *
    * @@return an ATerm representation of this term.
    */
   @@Override
@@ -544,9 +544,9 @@ generateGetters(writer);
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
-  /** 
+  /**
    * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
-   * 
+   *
    * @@param trm ATerm to convert into a Gom term
    * @@param atConv ATerm Converter used to convert the ATerm
    * @@return the Gom term
@@ -567,18 +567,18 @@ generateGetters(writer);
 
     writer.write(%[
   /* Visitable */
-  /** 
+  /**
    * Returns the number of childs of the term
-   * 
+   *
    * @@return the number of childs of the term
    */
   public int getChildCount() {
     return @visitableCount()@;
   }
 
-  /** 
+  /**
    * Returns the child at the specified index
-   * 
+   *
    * @@param index index of the child to return; must be
              nonnegative and less than the childCount
    * @@return the child at the specified index
@@ -590,11 +590,11 @@ generateGetters(writer);
       default: throw new IndexOutOfBoundsException();
     }
   }
-  
-  /** 
+
+  /**
    * Set the child at the specified index
-   * 
-   * @@param index index of the child to set; must be 
+   *
+   * @@param index index of the child to set; must be
              nonnegative and less than the childCount
    * @@param v child to set at the specified index
    * @@return the child which was just set
@@ -607,9 +607,9 @@ generateGetters(writer);
     }
   }
 
-  /** 
+  /**
    * Set children to the term
-   * 
+   *
    * @@param childs array of children to set
    * @@return an array of children which just were set
    * @@throws IndexOutOfBoundsException if length of "childs" is different than @slotList.length()@
@@ -623,9 +623,9 @@ generateGetters(writer);
     }
   }
 
-  /** 
+  /**
    * Returns the whole children of the term
-   * 
+   *
    * @@return the children of the term
    */
   public tom.library.sl.Visitable[] getChildren() {
@@ -637,7 +637,7 @@ if(maximalsharing) {
   // OLD VERSION
     writer.write(%[
     /**
-     * Compute a hashcode for this term.  
+     * Compute a hashcode for this term.
      * (for internal use)
      *
      * @@return a hash value
@@ -669,12 +669,12 @@ writer.write(%[
 }
 
 if(false && maximalsharing) {
-  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c 
+  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c
   // seems to be a bit slower than the OLD version
   int length = slotList.length();
     writer.write(%[
     /**
-     * Compute a hashcode for this term.  
+     * Compute a hashcode for this term.
      * (for internal use)
      *
      * @@return a hash value
@@ -682,8 +682,8 @@ if(false && maximalsharing) {
   protected@((length==0)?" static":"")@ int hashFunction() {
     int a, b, c;
     /* Set up the internal state */
-    a = b = c = 
-    0xdeadbeef + (getArity()<<2) + 
+    a = b = c =
+    0xdeadbeef + (getArity()<<2) +
     (@shared.HashFunctions.stringHashFunction(fullClassName(),length)@<<8);
     /* -------------------------------------- handle most of the key */
     /* ------------------------------------ handle the last 11 bytes */
@@ -692,13 +692,13 @@ generateHashArgsLookup3(writer);
   if(length>0 && (length%3)>0 ) {
 writer.write(%[
     // final(a,b,c)
-    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14)))); 
-    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11)))); 
-    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25)))); 
-    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16)))); 
-    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));  
-    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14)))); 
-    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24)))); 
+    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14))));
+    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11))));
+    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25))));
+    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16))));
+    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));
+    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14))));
+    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24))));
 ]%);
   }
 
@@ -753,19 +753,19 @@ writer.write(%[
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
       writer.write(%[
-  /** 
+  /**
    * Returns the attribute @slotDomain(head)@
-   * 
+   *
    * @@return the attribute @slotDomain(head)@
    */
   @@Override
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getName())@;
   }
-  
+
   /**
    * Sets and returns the attribute @fullClassName(sortName)@
-   * 
+   *
    * @@param set_arg the argument to set
    * @@return the attribute @slotDomain(head)@ which just has been set
    */]%);
@@ -780,7 +780,7 @@ writer.write(%[
         writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
-    @fieldName(head.getName())@ = set_arg; 
+    @fieldName(head.getName())@ = set_arg;
     return this;
   }]%);
       }
@@ -839,9 +839,9 @@ writer.write(%[
     return "_"+fieldName;
   }
 
-  /** 
+  /**
    * This method is used to generate a part of comments of init method
-   * 
+   *
    * @param slots fields of the class being generated
    * @return a String composed of one line per field
    */
@@ -998,7 +998,7 @@ writer.write(%[
 
 
   private String visitableCount() {
-    if(className().equals("ConsPath"+sortName.getName())) { 
+    if(className().equals("ConsPath"+sortName.getName())) {
       return "0";
     } else {
       return ""+slotList.length();
@@ -1134,7 +1134,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              || `domain.equals(`ClassName("","long"))
              || `domain.equals(`ClassName("","double"))
              || `domain.equals(`ClassName("","float"))
-             || `domain.equals(`ClassName("","char"))) { 
+             || `domain.equals(`ClassName("","char"))) {
            res.append(%[
     if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
@@ -1149,7 +1149,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
-             
+
 ]%);
          } else if (`domain.equals(`ClassName("aterm","ATerm"))
              ||`domain.equals(`ClassName("aterm","ATermList"))) {
@@ -1167,7 +1167,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
-]%); 
+]%);
         }
       }
     }
@@ -1258,12 +1258,12 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         if(k % 3 == 0) {
           writer.write(%[
     // mix(a,b,c)
-    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b; 
-    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c; 
-    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a; 
-    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b; 
-    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c; 
-    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a; 
+    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b;
+    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c;
+    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a;
+    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b;
+    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c;
+    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a;
 ]%);
         }
         index--;
@@ -1277,7 +1277,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
       /* If there is at least one MakeHook */
 lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
       hasHooks = true;
-      writer.write(%[    
+      writer.write(%[
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
@@ -1288,7 +1288,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         break lbl;
       }
     }
-    
+
     String makeName = "make";
     String visibility = "public";
     if (hasHooks) {
@@ -1298,7 +1298,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
     writer.write(%[
   @visibility@ static @className()@ @makeName@(@childListWithType(slotList)@) {
 ]%);
-    
+
     if (! maximalsharing) {
         writer.write(%[
     return new @className()@(@childList(slotList)@);

@@ -66,8 +66,7 @@ pattern:
 ;
 term:
   pattern
-/*  | ID -> ^(Var ID)*/
-  | ID (s=STAR)? -> {null==s}? ^(Var ID) ->^(VarStar ID)
+  | var
   | builtin
 ;
 builtin:
@@ -82,10 +81,12 @@ labelledpattern:
 ;
 graphpattern:
   constructor
-/*  | ID -> ^(Var ID)*/
-  | ID (s=STAR)? -> {null==s}? ^(Var ID) ->^(VarStar ID)
+  | var
   | builtin
   | ref
+;
+var:
+  ID (s=STAR)? -> {null==s}? ^(Var ID) ->^(VarStar ID)
 ;
 ref:
   AMPERCENT ID -> ^(RefTerm ID)

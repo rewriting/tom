@@ -84,7 +84,7 @@ public class GraphRuleExpander {
   }
 
   public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
-    this.sortname = sortname; 
+    this.sortname = sortname;
     %match(sdecl) {
       CutSort[Sort=SortDecl[ModuleDecl=ModuleDecl(GomModuleName(moduleName),pkgName)]] -> {
         this.moduleName = `moduleName;
@@ -110,10 +110,10 @@ public class GraphRuleExpander {
   public HookDeclList expandFirstGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
     HookDeclList expandedrules = expandGraphRules(sortname,stratname,defaultstrat,ruleCode, sdecl);
     HookDeclList commonpart = expandFirst(sdecl);
-    return `ConcHookDecl(commonpart*,expandedrules*);  
+    return `ConcHookDecl(commonpart*,expandedrules*);
   }
 
-  //add the common methods, includes and imports for all graphrule strategies of a sort 
+  //add the common methods, includes and imports for all graphrule strategies of a sort
   protected HookDeclList expandFirst(Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
     ClassName visitor = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"Visitor");
@@ -125,12 +125,12 @@ public class GraphRuleExpander {
 %include { java/util/ArrayList.tom}
 %typeterm tom_StringList {
   implement      { java.util.List<String> }
-  is_sort(t)     { $t instanceof java.util.List }  
+  is_sort(t)     { $t instanceof java.util.List }
   equals(l1,l2)  { $l1.equals($l2) }
 }
 %typeterm tom_StringPositionMap {
   implement      { java.util.Map<String,Position> }
-  is_sort(t)      { $t instanceof java.util.Map }  
+  is_sort(t)      { $t instanceof java.util.Map }
   equals(l1,l2)  { $l1.equals($l2) }
 }
 
@@ -162,7 +162,7 @@ static class SharedLabel {
 }
 
 static class Subst extends @fullClassName(abstractType)@ {
-    
+
   @fullClassName(abstractType)@ substitution,globalterm;
 
   public Subst(@fullClassName(abstractType)@ globalterm, @fullClassName(abstractType)@ substitution) {
@@ -172,7 +172,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 
   //abstract methods from the abstractType which are trivially implemented
   //they must never be used
-  
+
   public aterm.ATerm toATerm() {
     return null;
   }
@@ -230,10 +230,10 @@ static class Subst extends @fullClassName(abstractType)@ {
       case 1: return new Subst(globalterm,(@fullClassName(abstractType)@)child);
       default: throw new IndexOutOfBoundsException();
     }
-  } 
+  }
 
-    public int getChildCount() { 
-      return 2; 
+    public int getChildCount() {
+      return 2;
     }
 
 }
@@ -262,19 +262,19 @@ static class Subst extends @fullClassName(abstractType)@ {
       Var@`name@(name) -> {
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
-        Position wwl = (Position) (Position.makeFromArray(new int[]{1})).add(omega).add(wl); 
-        Position wwr = (Position) (Position.makeFromArray(new int[]{2})).add(wr); 
+        Position wwl = (Position) (Position.makeFromArray(new int[]{1})).add(omega).add(wl);
+        Position wwr = (Position) (Position.makeFromArray(new int[]{2})).add(wr);
         Position res = (Position) wwl.sub(wwr);
         return Path@`name@.make(res);
       }
-    }      
+    }
 ]%);
       }
   }
 
   output.append(%[
   }
-  
+
   private static Position getVarPos(@fullClassName(abstractType)@ term, String varname) {
     ArrayList<Position> list = new ArrayList<Position>();
     try {
@@ -293,17 +293,17 @@ static class Subst extends @fullClassName(abstractType)@ {
  output.append(
         %[
     visit @`name@ {
-      v@@Var@`name@(name) -> { 
-        if(`name.equals(varname)) { 
+      v@@Var@`name@(name) -> {
+        if(`name.equals(varname)) {
           l.add(Position.makeFromPath(getEnvironment().getPosition()));
-          return `v; 
-        } 
-      } 
+          return `v;
+        }
+      }
     }
    ]%);
    }
- } 
-  
+ }
+
   output.append(%[
   }
 ]%);
@@ -330,7 +330,7 @@ static class Subst extends @fullClassName(abstractType)@ {
         }
         getEnvironment().followPath(((Path)`p1).inverse());
       }
-   }      
+   }
 ]%);
     }
   }
@@ -350,7 +350,7 @@ ConcModule(_*,Module[MDecl=ModuleDecl(GomModuleName(_),pkg),Sorts=ConcSort(_*,So
 
   String prefix = ((`pkg=="")?"":`pkg+".")+moduleName.toLowerCase();
   imports += %[
-import @prefix@.types.@`name.toLowerCase()@.Path@`name@; 
+import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   ]%;
     }
   }
@@ -360,7 +360,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
- 
+
     StringBuilder output = new StringBuilder();
     output.append(%[
   public static Strategy @stratname@() {
@@ -373,7 +373,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
         %match(rulelist) {
           RuleList(_*,(Rule|ConditionalRule)[lhs=lhs,rhs=rhs],_*) -> {
-            //TODO: verify that the lhs of the rules are of the good sort  
+            //TODO: verify that the lhs of the rules are of the good sort
             //TODO: verify the linearity of lhs and rhs
             output.append(%[
                 @genTerm(`lhs)@ -> {
@@ -386,12 +386,12 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
                 /* 2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
-                @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();             
+                @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();
 
                 /* 2. construct at compile-time the lhs and rhs */
                 @fullClassName(abstractType)@ labelledLhs = `@genTermWithExplicitVar(`lhs,"root",0)@.normalizeWithLabels();
                 @fullClassName(abstractType)@ labelledRhs = `@genTermWithExplicitVar(`rhs,"root",0)@.normalizeWithLabels();
-                
+
                /* 3. construct t = SubstTerm(subject',r') */
                 @fullClassName(abstractType)@ rhs = labelledRhs.label2path();
                 @fullClassName(abstractType)@ lhs = labelledLhs.label2path();
@@ -406,7 +406,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
                 //compute the list of all shared labels
                 java.util.List<SharedLabel> sharedlabels = getSharedLabels(labelledLhs,labelledRhs);
-                
+
                 //redirect paths for shared labels
                 for (SharedLabel sharedlabel: sharedlabels) {
                   Position l = (Position) newomega.add(sharedlabel.posLhs);
@@ -415,7 +415,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 }
 
                 /* 4. set the global term to swap(t,1.w,2) */
-                t = t.swap(newomega,posRhs); 
+                t = t.swap(newomega,posRhs);
 
                 /* 5. set the global term to swap(t,1.w,2) */
                 t = t.normalize();
@@ -518,7 +518,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       Var(name) -> {
         //the variable must be replaced by a meta representation of the var
         //in the signature of the corresponding  sort
-        //test if the variable is not at the root position 
+        //test if the variable is not at the root position
         if(omega!=0) {
           String sortvar = getGomEnvironment().getSymbolTable().getChildSort(fathersymbol,omega);
           output.append("Var"+sortvar+"(\""+`name+"\")");
@@ -588,7 +588,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
           }
           else {
             //do not return a ref and stop to collect
-            return `term;  
+            return `term;
           }
         }
       }
@@ -603,8 +603,8 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
           Position rootpos = Position.make();
           Info info = new Info();
           info.omegaRef = old;
-          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           
-          `OnceTopDown(CollectSubterm(label,info)).visit(getEnvironment());            
+          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
+          `OnceTopDown(CollectSubterm(label,info)).visit(getEnvironment());
           getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
           //test if is is not a ref to a cycle
           if (info.sharedTerm!=null) {
@@ -625,7 +625,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       return `Sequence(RepeatId(OnceTopDownId(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
-    }  
+    }
   }
 
   %strategy CollectLabels(map:HashMap) extends Identity(){
@@ -643,7 +643,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       PathTerm(-1,tail*) -> {
         return `PathForPattern().visit(`tail);
       }
-      
+
       //detect rises into a TermList comb and remove it
       PathTerm(sublist@!PathTerm(_*,!-2,_*),-1,tail*) && (!PathTerm()<<sublist)-> {
         //TODO: avoid the compilation warning
@@ -660,7 +660,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
         Term newtail = `PathForPattern().visit(`tail*);
         return `PathTerm(-downcount,newtail*);
       }
-      
+
       //detect descents into a TermList comb and remove it
       PathTerm(sublist@!PathTerm(_*,!2,_*),1,tail*) && (!PathTerm()<<sublist)-> {
         int downcount = `sublist.length();

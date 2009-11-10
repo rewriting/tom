@@ -85,7 +85,7 @@ adtgrammar :
   ;
 
 syntax :
-  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)* 
+  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)*
     -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr4)* ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
@@ -96,7 +96,7 @@ String startLine = ""+input.LT(1).getLine();
   ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
   ;
 
-atomdecl : 
+atomdecl :
   ATOM atom=ID -> ^(AtomDecl ID[atom])
   ;
 
@@ -107,16 +107,16 @@ typedecl :
       -> ^(SortType ^(GomType ^(PatternType) $ptypename) $b $palts)
   ;
 
-atoms : 
+atoms :
   (atom+=ID)+ -> ^(ConcAtom ($atom)+)
   ;
 
 alternatives[Token typename] :
-  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?) 
-  opdecl[typename,jd1] 
+  ((jd1=JAVADOC ALT) | (ALT jd1=JAVADOC) | jd1=JAVADOC | (ALT)?)
+  opdecl[typename,jd1]
   (
-   ((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT {jd2=null;}) 
-   opdecl[typename,jd2] 
+   ((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT {jd2=null;})
+   opdecl[typename,jd2]
   )* (SEMI)?
   -> ^(ConcProduction (opdecl)+)
   ;
@@ -175,7 +175,7 @@ pattern_field:
   ;
 
 arglist:
-  (LPAREN (arg (COMMA arg)* )? RPAREN)? 
+  (LPAREN (arg (COMMA arg)* )? RPAREN)?
   -> ^(ConcArg (arg)*)
   ;
 

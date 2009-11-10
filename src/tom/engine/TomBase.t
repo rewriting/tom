@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -62,18 +62,18 @@ public final class TomBase {
   %include { ./adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
   %include { ../platform/adt/platformoption/PlatformOption.tom }
-  
+
   %typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { ($t instanceof java.util.Collection) }
   }
 
-  public final static String DEFAULT_MODULE_NAME = "default"; 
-  //size of cache 
+  public final static String DEFAULT_MODULE_NAME = "default";
+  //size of cache
   private final static int LRUCACHE_SIZE = 5000;
- 
+
   /** shortcut */
- 
+
   /**
    * Returns the name of a <code>TomType</code>
    */
@@ -119,7 +119,7 @@ public final class TomBase {
     } else {
       return `EmptyType();
     }
-  }   
+  }
 
   /**
    * Returns the domain of a given symbol
@@ -133,7 +133,7 @@ public final class TomBase {
   }
 
   private static LRUCache<TomNumberList,String> tomNumberListToStringMap =
-    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE); 
+    new LRUCache<TomNumberList,String>(LRUCACHE_SIZE);
   public static String tomNumberListToString(TomNumberList numberList) {
     String result = tomNumberListToStringMap.get(numberList);
     if(result == null) {
@@ -415,7 +415,7 @@ public final class TomBase {
       concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
     }
     return false;
-  } 
+  }
 
   public static TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
@@ -444,14 +444,14 @@ public final class TomBase {
       TomName name = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
       // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
-        return index; 
+        return index;
       }
       nameList.add(name.getString());
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
     throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
-        + slotName.getString() + "' but expected one of the following names: " 
+        + slotName.getString() + "' but expected one of the following names: "
         + Arrays.toString(nameList.toArray()) + ".");
     //return -1;
   }
@@ -551,10 +551,10 @@ public final class TomBase {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
-          tomName = ((AntiName)`headName).getName().getString(); 
+          tomName = ((AntiName)`headName).getName().getString();
         } else {
           tomName = ((TomName)`headName).getString();
-        }        
+        }
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         if(tomSymbol!=null) {
           return tomSymbol.getTypesToType().getCodomain();
@@ -563,12 +563,12 @@ public final class TomBase {
         }
       }
 
-      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> { 
-        return `type; 
+      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> {
+        return `type;
       }
 
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
-      
+
     }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
@@ -577,8 +577,8 @@ public final class TomBase {
 
   public static TomType getTermType(BQTerm t, SymbolTable symbolTable) {
     %match(t) {
-      (BQVariable|BQVariableStar)[AstType=type] -> { 
-        return `type; 
+      (BQVariable|BQVariableStar)[AstType=type] -> {
+        return `type;
       }
 
       FunctionCall[AstType=type] -> { return `type; }
@@ -586,7 +586,7 @@ public final class TomBase {
       ExpressionToBQTerm(expr) -> { return getTermType(`expr,symbolTable); }
 
       ListHead[Codomain=type] -> { return `type; }
-      
+
       ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
 
       Subterm(Name(name), slotName, _) -> {
@@ -604,15 +604,15 @@ public final class TomBase {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
         String tomName = null;
         if(`(headName) instanceof AntiName) {
-          tomName = ((AntiName)`headName).getName().getString(); 
+          tomName = ((AntiName)`headName).getName().getString();
         } else {
           tomName = ((TomName)`headName).getString();
-        }        
+        }
         return symbolTable.getSymbolFromName(tomName);
       }
 
-      (Variable|VariableStar)[AstName=Name(tomName)] -> { 
-        return symbolTable.getSymbolFromName(`tomName); 
+      (Variable|VariableStar)[AstName=Name(tomName)] -> {
+        return symbolTable.getSymbolFromName(`tomName);
       }
 
       AntiTerm(term) -> { return getSymbolFromTerm(`term,symbolTable);}
@@ -622,8 +622,8 @@ public final class TomBase {
 
   public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
     %match(t) {
-      (BQVariable|BQVariableStar)[AstName=Name(tomName)] -> { 
-        return symbolTable.getSymbolFromName(`tomName); 
+      (BQVariable|BQVariableStar)[AstName=Name(tomName)] -> {
+        return symbolTable.getSymbolFromName(`tomName);
       }
 
       FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
@@ -652,10 +652,10 @@ public final class TomBase {
   public static SlotList tomListToSlotList(TomList tomList, int index) {
     %match(tomList) {
       concTomTerm() -> { return `concSlot(); }
-      concTomTerm(head,tail*) -> { 
+      concTomTerm(head,tail*) -> {
         TomName slotName = `PositionName(concTomNumber(Position(index)));
         SlotList sl = tomListToSlotList(`tail,index+1);
-        return `concSlot(PairSlotAppl(slotName,head),sl*); 
+        return `concSlot(PairSlotAppl(slotName,head),sl*);
       }
     }
     throw new TomRuntimeException("tomListToSlotList: " + tomList);
@@ -663,12 +663,12 @@ public final class TomBase {
 
   public static SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
     %match(tomList, SlotList slotList) {
-      concTomTerm(), concSlot() -> { 
-        return `concSlot(); 
+      concTomTerm(), concSlot() -> {
+        return `concSlot();
       }
-      concTomTerm(head,tail*), concSlot(PairSlotAppl[SlotName=slotName],tailSlotList*) -> { 
+      concTomTerm(head,tail*), concSlot(PairSlotAppl[SlotName=slotName],tailSlotList*) -> {
         SlotList sl = mergeTomListWithSlotList(`tail,`tailSlotList);
-        return `concSlot(PairSlotAppl(slotName,head),sl*); 
+        return `concSlot(PairSlotAppl(slotName,head),sl*);
       }
     }
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
@@ -691,7 +691,7 @@ public final class TomBase {
     } else {
       return ((Collection) symbol.getPairNameDeclList()).size();
     }
-  } 
+  }
 
   /**
    * builds a BQVariable from a TomTerm Variable

@@ -40,7 +40,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected List importList;
   protected TemplateClass mapping;
   protected OptionManager optionManager;
- 
+
   public TemplateHookedClass(GomClass gomClass,
                              OptionManager manager,
                              File tomHomePath,
@@ -64,7 +64,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
-    HookList h = `ConcHook(hooks*);   
+    HookList h = `ConcHook(hooks*);
     %match(h) {
       ConcHook(_*,BlockHook[Code=code],_*) -> {
         res.append(CodeGen.generateCode(`code));
@@ -76,7 +76,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
-    HookList h = `ConcHook(hooks*);   
+    HookList h = `ConcHook(hooks*);
     %match(h) {
       ConcHook(_*,ImportHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
@@ -88,7 +88,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
-    HookList h = `ConcHook(hooks*);   
+    HookList h = `ConcHook(hooks*);
     %match(h) {
       ConcHook(_*,InterfaceHook(code),_*) -> {
         res.append(",");
@@ -118,7 +118,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
 
-      ArrayList<String> tomParams = new ArrayList<String>();      
+      ArrayList<String> tomParams = new ArrayList<String>();
 
       try {
         Iterator it = importList.iterator();

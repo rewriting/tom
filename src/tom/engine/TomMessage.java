@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -45,8 +45,8 @@ public class TomMessage implements PlatformMessage {
     this.message = message;
     this.formatter = new BasicFormatter();
   }
-    
-  public static final TomMessage loggingInitializationFailure = 
+
+  public static final TomMessage loggingInitializationFailure =
     new TomMessage("Error during Tom logging module initialization:{0}");
 
   public static final TomMessage simpleMessage         =
@@ -84,7 +84,7 @@ public class TomMessage implements PlatformMessage {
   // Warnings
   public static final TomMessage optimizerModifiesLineNumbers              =
     new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
-                " Please disable the optimizer if you need correct line numbers.");  
+                " Please disable the optimizer if you need correct line numbers.");
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =
@@ -160,8 +160,7 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
-    
- 
+
   // checker.TomChecker
   public static final TomMessage findOTL               =
     new TomMessage("{0}: findOriginTrackingLine : not found (TomChecker)");
@@ -178,12 +177,12 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Expecting an already declared variable in WHERE condition instead of ''{0}''");
   public static final TomMessage unknownRuleRhsVariable=
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
-  
+
   public static final TomMessage illegalAnnotationInAntiPattern =
       new TomMessage("It is forbidden to make annotations under an anti symbol");
   public static final TomMessage freeVarNotPresentInOr =
     new TomMessage("Any variable used in the action should be found in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
-  
+
   // compiler
   public static final TomMessage errorMissingSlotDecl =
       new TomMessage("In symbol ''{0}'', get_slot for {1} is missing.");
@@ -192,7 +191,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage circularReferences =
       new TomMessage("A circular reference was detected for the variable ''{0}''. For instance x << Context[x] is a circular reference.");
 
-  
+
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =
     new TomMessage("optimization of type ''{0}''");
@@ -271,11 +270,11 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage badMakeDefinition       =
       new TomMessage("Bad number of arguments in ''make(...)'' macro-function: {0,number,integer} arguments found but {1,number,integer} expected in symbol definition");
   public static final TomMessage listSymbolDomainError   =
-      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");  
+      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");
   public static final TomMessage termOrVariableNumericLeft   =
     new TomMessage("The left hand side of a boolean constraint should be a variable or a term (implicit notation with ''[]'' is forbidden): ''{0}''");
   public static final TomMessage termOrVariableNumericRight   =
-    new TomMessage("The right hand side of a boolean constraint should be a variable or a term (implicit notation with ''[]'' is forbidden): ''{0}''");  
+    new TomMessage("The right hand side of a boolean constraint should be a variable or a term (implicit notation with ''[]'' is forbidden): ''{0}''");
   public static final TomMessage invalidTypesNumeric   =
     new TomMessage("Found type ''{0}'' for symbol ''{1}'' and ''{2}'' for symbol ''{3}''. The two symbols should have the same type.");
   public static final TomMessage inconsistentTypes   =
@@ -285,11 +284,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage forbiddenAnonymousInNumeric   =
     new TomMessage("Anonymous symbols are forbidden in boolean constraints: ''{0}''");
   public static final TomMessage forbiddenImplicitNumeric   =
-    new TomMessage("Implicit notation with ''[]'' is forbidden in boolean constraints: ''{0}''");  
+    new TomMessage("Implicit notation with ''[]'' is forbidden in boolean constraints: ''{0}''");
   public static final TomMessage forbiddenAnnotationsNumeric   =
     new TomMessage("Annotations are forbidden in boolean constraints: ''{0}''");
-   
-  
+
   // Error messages linked to slot declaration during parsing
   public static final TomMessage badSlotName             =
       new TomMessage("Slot Name ''{0}'' is not correct for symbol ''{1}''. Possible slot names are : {2}");
@@ -347,7 +345,7 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Visited Type ''{0}'' is unknown.");
   public static final TomMessage emptyStrategy =
       new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
-  
+
   // rule
   public static final TomMessage incorrectRuleLHSClass   =
       new TomMessage("''{0}'': Impossible in rule left hand side");
@@ -387,8 +385,8 @@ public class TomMessage implements PlatformMessage {
   // Message level
   public static final int TOM_INFO = 0;
   // Default error line
-  public static final int DEFAULT_ERROR_LINE_NUMBER = 1; 
-  
+  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
+
   public String getMessage() {
     return message;
   }

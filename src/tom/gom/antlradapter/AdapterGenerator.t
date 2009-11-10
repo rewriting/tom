@@ -153,7 +153,7 @@ public class @filename()@Adaptor {
     if(tree.getType()==Token.INVALID_TOKEN_TYPE) {
       throw new RuntimeException("bad type");
     }
-    
+
     switch (tree.getType()) {
 ]%);
 

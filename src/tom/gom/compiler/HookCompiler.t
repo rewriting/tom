@@ -45,7 +45,7 @@ public class HookCompiler {
   %include { ../../library/mapping/java/sl.tom }
 
     %typeterm HookCompiler { implement { tom.gom.compiler.HookCompiler } }
-    
+
   // myadd-begin
   private GomEnvironment gomEnvironment;
 
@@ -121,7 +121,7 @@ public class HookCompiler {
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
-            }     
+            }
           }
           CutFutureOperator(odecl,consornil) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
@@ -130,13 +130,13 @@ public class HookCompiler {
               FutureNil() -> { prefix = "Empty"; }
               FutureCons() -> { prefix = "Cons"; }
             }
-            clsName = clsName.setName(prefix + clsName.getName()); 
+            clsName = clsName.setName(prefix + clsName.getName());
             try {
               classes = `TopDown(AttachOperatorHook(clsName,hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
-            }     
+            }
           }
         }
       }
@@ -212,7 +212,7 @@ public class HookCompiler {
                 newobj = newobj.setCons(newCons);
                 return `newobj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
                 //return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
-              } else {                
+              } else {
                 return
                   `obj.setHooks(`ConcHook(hc.makeHooksFromHookDecl(hook),oldHooks*));
                   //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
