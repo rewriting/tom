@@ -3,10 +3,7 @@ grammar Rule;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-%include { rule/RuleRuleTokenList.txt }
+  tokenVocab=RuleTokens;
 }
 
 @header {

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-09-18 08:02:10
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-11-10 20:03:42
 
 package tom.gom.parser;
 
@@ -9,135 +9,135 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GomLanguageLexer extends Lexer {
-    public static final int Arg=4;
-    public static final int OptionList=6;
-    public static final int STAR=117;
-    public static final int Cons=8;
-    public static final int Hook=9;
-    public static final int Origin=11;
-    public static final int Module=12;
-    public static final int AbstractTypeClass=13;
-    public static final int Empty=15;
-    public static final int GomModule=16;
-    public static final int ExpressionType=17;
-    public static final int SLCOMMENT=130;
-    public static final int EQUALS=109;
-    public static final int Inner=21;
-    public static final int PatternType=23;
-    public static final int Slot=25;
-    public static final int ATOM=108;
+    public static final int COMMA=121;
+    public static final int GomType=43;
+    public static final int Sort=70;
+    public static final int CutSort=79;
+    public static final int ImportHook=22;
+    public static final int BINDS=116;
+    public static final int Slots=96;
+    public static final int ABSTRACT=111;
+    public static final int KindSort=102;
+    public static final int CutFutureOperator=77;
+    public static final int ShortSortClass=30;
+    public static final int InterfaceHookDecl=65;
+    public static final int KindModule=103;
+    public static final int ConcModuleDecl=61;
+    public static final int ConcField=60;
+    public static final int DOT=108;
+    public static final int LDIPLE=124;
+    public static final int FullOperatorClass=29;
+    public static final int PRIVATE=133;
+    public static final int Compare=28;
+    public static final int SLCOMMENT=136;
+    public static final int HookKind=37;
+    public static final int Slot=105;
+    public static final int AtomType=82;
+    public static final int CutOperator=78;
+    public static final int SlotField=20;
+    public static final int ConcGrammar=97;
+    public static final int ConcSlot=57;
+    public static final int MODULE=106;
+    public static final int ConcClassName=11;
+    public static final int RPAREN=122;
+    public static final int PatternType=84;
+    public static final int MappingHook=21;
+    public static final int ConcProduction=81;
+    public static final int BlockHookDecl=66;
+    public static final int ATOM=114;
+    public static final int SortClass=17;
+    public static final int NEUTRAL=129;
+    public static final int MappingHookDecl=63;
+    public static final int ConcGomClass=12;
+    public static final int ConcImportedModule=71;
+    public static final int Production=49;
+    public static final int ConcArg=104;
+    public static final int IsEmpty=35;
+    public static final int None=76;
+    public static final int Import=42;
+    public static final int ConcHookDecl=92;
+    public static final int FutureNil=55;
+    public static final int InterfaceHook=23;
+    public static final int WS=135;
+    public static final int Outer=74;
+    public static final int Details=38;
+    public static final int Imports=87;
+    public static final int Code=36;
+    public static final int TomMapping=14;
+    public static final int SORT=131;
+    public static final int CodeList=27;
+    public static final int ConcGomType=85;
+    public static final int SEMI=119;
+    public static final int EQUALS=115;
+    public static final int AbstractTypeClass=18;
+    public static final int BuiltinSortDecl=68;
+    public static final int COLON=126;
+    public static final int SYNTAX=112;
+    public static final int VariadicOperatorClass=15;
+    public static final int OptionList=40;
+    public static final int ClassName=13;
+    public static final int ConcSortDecl=91;
+    public static final int Grammar=59;
+    public static final int ExpressionType=83;
+    public static final int PUBLIC=110;
+    public static final int ConcSlotField=19;
+    public static final int ImportHookDecl=64;
+    public static final int ARROW=113;
+    public static final int FullSortClass=31;
+    public static final int MakeBeforeHook=25;
+    public static final int OperatorClass=16;
+    public static final int SortType=47;
+    public static final int INNER=127;
+    public static final int JAVADOC=117;
+    public static final int Origin=41;
+    public static final int ConcOperator=93;
+    public static final int ConcHook=10;
+    public static final int Arg=53;
+    public static final int ModHookPair=88;
+    public static final int ConcModule=44;
+    public static final int ConcGomModule=99;
+    public static final int LBRACE=130;
+    public static final int RBRACE=134;
+    public static final int Module=62;
+    public static final int MLCOMMENT=137;
+    public static final int ALT=118;
+    public static final int ModuleDecl=45;
+    public static final int Variadic=95;
+    public static final int Cons=32;
+    public static final int KindFutureOperator=100;
+    public static final int LPAREN=120;
+    public static final int IMPORTS=109;
+    public static final int RDIPLE=125;
+    public static final int OPERATOR=132;
+    public static final int HasTomCode=39;
+    public static final int OUTER=128;
+    public static final int ID=107;
+    public static final int ConcSort=56;
+    public static final int FutureCons=54;
+    public static final int IsCons=34;
+    public static final int SortDecl=69;
+    public static final int AtomDecl=46;
+    public static final int Hook=48;
+    public static final int Public=86;
+    public static final int ConcAtom=98;
+    public static final int MakeHookDecl=67;
+    public static final int NamedField=50;
+    public static final int CutModule=80;
+    public static final int GomModule=89;
+    public static final int MakeHook=26;
+    public static final int Inner=75;
+    public static final int Empty=33;
     public static final int EOF=-1;
-    public static final int ImportHookDecl=27;
-    public static final int ClassName=32;
-    public static final int OperatorClass=33;
-    public static final int FullOperatorClass=34;
-    public static final int BINDS=110;
-    public static final int ConcImportedModule=37;
-    public static final int ModuleDecl=39;
-    public static final int ImportHook=40;
-    public static final int RPAREN=116;
-    public static final int ConcArg=41;
-    public static final int Neutral=44;
-    public static final int SortClass=46;
-    public static final int StarredField=48;
-    public static final int ConcHookDecl=53;
-    public static final int ConcAtom=54;
-    public static final int MLCOMMENT=131;
-    public static final int ConcGomModule=58;
-    public static final int GomType=57;
-    public static final int ConcSection=62;
-    public static final int Details=64;
-    public static final int RBRACE=128;
-    public static final int Sorts=65;
-    public static final int PRIVATE=127;
-    public static final int CodeList=66;
-    public static final int Compare=68;
-    public static final int Code=71;
-    public static final int BlockHookDecl=73;
-    public static final int NEUTRAL=123;
-    public static final int SlotField=77;
-    public static final int None=78;
-    public static final int ConcHook=79;
-    public static final int ConcSlot=85;
-    public static final int WS=129;
-    public static final int BuiltinSortDecl=86;
-    public static final int BlockHook=87;
-    public static final int IsEmpty=90;
-    public static final int AtomType=91;
-    public static final int Outer=95;
-    public static final int IMPORTS=103;
-    public static final int ConcField=96;
-    public static final int ShortSortClass=98;
-    public static final int LDIPLE=118;
-    public static final int ConcOperator=5;
-    public static final int GomModuleName=7;
-    public static final int INNER=121;
-    public static final int ConcSortDecl=10;
-    public static final int LBRACE=124;
-    public static final int KindModule=14;
-    public static final int ConcModuleDecl=18;
-    public static final int NamedField=19;
-    public static final int SortDecl=20;
-    public static final int ABSTRACT=105;
-    public static final int AtomDecl=22;
-    public static final int CutModule=26;
-    public static final int ConcModule=24;
-    public static final int ID=101;
-    public static final int ConcSlotField=28;
-    public static final int CutOperator=29;
-    public static final int LPAREN=114;
-    public static final int Grammar=31;
-    public static final int FullSortClass=30;
-    public static final int TomMapping=36;
-    public static final int InterfaceHookDecl=35;
-    public static final int SYNTAX=106;
-    public static final int Sort=38;
-    public static final int MakeHook=43;
-    public static final int Variadic=42;
-    public static final int ALT=112;
-    public static final int MappingHook=45;
-    public static final int COMMA=115;
-    public static final int CutSort=47;
-    public static final int IsCons=49;
-    public static final int ConcGomType=50;
-    public static final int KindSort=51;
-    public static final int ConcGomClass=52;
-    public static final int DOT=102;
-    public static final int HasTomCode=55;
-    public static final int ConcClassName=56;
-    public static final int FutureCons=60;
-    public static final int OperatorDecl=59;
-    public static final int OUTER=122;
-    public static final int MakeHookDecl=61;
-    public static final int Import=63;
-    public static final int JAVADOC=111;
-    public static final int ConcProduction=67;
-    public static final int RDIPLE=119;
-    public static final int OPERATOR=126;
-    public static final int InterfaceHook=70;
-    public static final int ConcSort=69;
-    public static final int ModHookPair=72;
-    public static final int SORT=125;
-    public static final int CutFutureOperator=74;
-    public static final int FutureNil=75;
-    public static final int Imports=76;
-    public static final int MODULE=100;
-    public static final int SEMI=113;
-    public static final int ConcGrammar=81;
-    public static final int Public=80;
-    public static final int MakeBeforeHook=83;
-    public static final int MappingHookDecl=82;
-    public static final int COLON=120;
-    public static final int VariadicOperatorClass=84;
-    public static final int Refresh=88;
-    public static final int Slots=89;
-    public static final int SortType=92;
-    public static final int HookKind=93;
-    public static final int KindOperator=94;
-    public static final int ARROW=107;
-    public static final int Production=97;
-    public static final int PUBLIC=104;
-    public static final int KindFutureOperator=99;
+    public static final int GomModuleName=52;
+    public static final int KindOperator=101;
+    public static final int BlockHook=24;
+    public static final int StarredField=51;
+    public static final int ConcSection=94;
+    public static final int STAR=123;
+    public static final int Neutral=73;
+    public static final int Sorts=58;
+    public static final int OperatorDecl=90;
+    public static final int Refresh=72;
 
     // delegates
     // delegators
@@ -150,15 +150,15 @@ public class GomLanguageLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g"; }
+    public String getGrammarFileName() { return "/Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g"; }
 
     // $ANTLR start "MODULE"
     public final void mMODULE() throws RecognitionException {
         try {
             int _type = MODULE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:10: ( 'module' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:12: 'module'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:10: ( 'module' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:200:12: 'module'
             {
             match("module"); 
 
@@ -178,8 +178,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = IMPORTS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:10: ( 'imports' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:12: 'imports'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:201:10: ( 'imports' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:201:12: 'imports'
             {
             match("imports"); 
 
@@ -199,8 +199,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = PUBLIC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:10: ( 'public' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:12: 'public'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:10: ( 'public' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:202:12: 'public'
             {
             match("public"); 
 
@@ -220,8 +220,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = PRIVATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:10: ( 'private' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:12: 'private'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:10: ( 'private' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:203:12: 'private'
             {
             match("private"); 
 
@@ -241,8 +241,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ABSTRACT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:10: ( 'abstract' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:12: 'abstract'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:10: ( 'abstract' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:204:12: 'abstract'
             {
             match("abstract"); 
 
@@ -262,8 +262,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SYNTAX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:10: ( 'syntax' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:12: 'syntax'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:10: ( 'syntax' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:205:12: 'syntax'
             {
             match("syntax"); 
 
@@ -283,8 +283,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SORT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:10: ( 'sort' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:12: 'sort'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:10: ( 'sort' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:206:12: 'sort'
             {
             match("sort"); 
 
@@ -304,8 +304,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = OPERATOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:10: ( 'operator' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:12: 'operator'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:10: ( 'operator' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:207:12: 'operator'
             {
             match("operator"); 
 
@@ -325,8 +325,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ATOM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:10: ( 'atom' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:12: 'atom'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:10: ( 'atom' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:208:12: 'atom'
             {
             match("atom"); 
 
@@ -346,8 +346,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = INNER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:10: ( 'inner' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:12: 'inner'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:10: ( 'inner' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:209:12: 'inner'
             {
             match("inner"); 
 
@@ -367,8 +367,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = OUTER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:10: ( 'outer' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:213:12: 'outer'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:10: ( 'outer' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:210:12: 'outer'
             {
             match("outer"); 
 
@@ -388,8 +388,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = NEUTRAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:10: ( 'neutral' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:12: 'neutral'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:10: ( 'neutral' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:211:12: 'neutral'
             {
             match("neutral"); 
 
@@ -409,8 +409,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = BINDS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:10: ( 'binds' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:12: 'binds'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:10: ( 'binds' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:212:12: 'binds'
             {
             match("binds"); 
 
@@ -430,8 +430,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:10: ( '->' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:12: '->'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:10: ( '->' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:214:12: '->'
             {
             match("->"); 
 
@@ -451,8 +451,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:10: ( ':' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:12: ':'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:10: ( ':' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:215:12: ':'
             {
             match(':'); 
 
@@ -471,8 +471,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:10: ( ',' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:12: ','
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:10: ( ',' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:216:12: ','
             {
             match(','); 
 
@@ -491,8 +491,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:10: ( '.' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:12: '.'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:10: ( '.' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:217:12: '.'
             {
             match('.'); 
 
@@ -511,8 +511,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:10: ( '(' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:12: '('
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:10: ( '(' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:218:12: '('
             {
             match('('); 
 
@@ -531,8 +531,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:10: ( ')' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:12: ')'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:10: ( ')' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:219:12: ')'
             {
             match(')'); 
 
@@ -551,8 +551,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:10: ( '*' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:12: '*'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:10: ( '*' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:220:12: '*'
             {
             match('*'); 
 
@@ -571,8 +571,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:10: ( '=' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:12: '='
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:10: ( '=' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:221:12: '='
             {
             match('='); 
 
@@ -591,8 +591,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ALT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:10: ( '|' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:12: '|'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:10: ( '|' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:222:12: '|'
             {
             match('|'); 
 
@@ -611,8 +611,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SEMI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:10: ( ';;' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:226:12: ';;'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:10: ( ';;' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:223:12: ';;'
             {
             match(";;"); 
 
@@ -632,8 +632,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LDIPLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:10: ( '<' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:12: '<'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:10: ( '<' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:224:12: '<'
             {
             match('<'); 
 
@@ -652,8 +652,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RDIPLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:228:10: ( '>' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:228:12: '>'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:10: ( '>' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:225:12: '>'
             {
             match('>'); 
 
@@ -672,8 +672,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:230:7: ( '{' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:230:9: '{'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:7: ( '{' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:227:9: '{'
             {
             match('{'); 
 
@@ -698,8 +698,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:239:7: ( '}' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:239:9: '}'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:236:7: ( '}' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:236:9: '}'
             {
             match('}'); 
 
@@ -718,10 +718,10 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:4: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:4: ( ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:6: ( ' ' | '\\t' | ( '\\r\\n' | '\\n' | '\\r' ) )
             int alt2=3;
             switch ( input.LA(1) ) {
             case ' ':
@@ -749,23 +749,23 @@ public class GomLanguageLexer extends Lexer {
 
             switch (alt2) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:8: ' '
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:238:8: ' '
                     {
                     match(' '); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:10: '\\t'
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:239:10: '\\t'
                     {
                     match('\t'); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:10: ( '\\r\\n' | '\\n' | '\\r' )
                     {
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:10: ( '\\r\\n' | '\\n' | '\\r' )
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:10: ( '\\r\\n' | '\\n' | '\\r' )
                     int alt1=3;
                     int LA1_0 = input.LA(1);
 
@@ -789,7 +789,7 @@ public class GomLanguageLexer extends Lexer {
                     }
                     switch (alt1) {
                         case 1 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:243:12: '\\r\\n'
+                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:240:12: '\\r\\n'
                             {
                             match("\r\n"); 
 
@@ -797,14 +797,14 @@ public class GomLanguageLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:244:14: '\\n'
+                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:241:14: '\\n'
                             {
                             match('\n'); 
 
                             }
                             break;
                         case 3 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:245:14: '\\r'
+                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:242:14: '\\r'
                             {
                             match('\r'); 
 
@@ -836,12 +836,12 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = SLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:251:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:248:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:3: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:8: (~ ( '\\n' | '\\r' ) )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:8: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
@@ -854,7 +854,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:9: ~ ( '\\n' | '\\r' )
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:9: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -874,7 +874,7 @@ public class GomLanguageLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:24: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:24: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -886,17 +886,17 @@ public class GomLanguageLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:25: '\\n'
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:25: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:30: '\\r' ( '\\n' )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:30: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:34: ( '\\n' )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:34: ( '\\n' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -905,7 +905,7 @@ public class GomLanguageLexer extends Lexer {
                     }
                     switch (alt4) {
                         case 1 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:252:35: '\\n'
+                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:249:35: '\\n'
                             {
                             match('\n'); 
 
@@ -937,8 +937,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = MLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:256:11: ( '/*' ~ '*' ( . )* '*/' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:3: '/*' ~ '*' ( . )* '*/'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:253:11: ( '/*' ~ '*' ( . )* '*/' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:254:3: '/*' ~ '*' ( . )* '*/'
             {
             match("/*"); 
 
@@ -951,7 +951,7 @@ public class GomLanguageLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:12: ( . )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:254:12: ( . )*
             loop6:
             do {
                 int alt6=2;
@@ -976,7 +976,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:257:12: .
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:254:12: .
             	    {
             	    matchAny(); 
 
@@ -1007,12 +1007,12 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = JAVADOC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:261:9: ( '/**' ( . )* '*/' )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:3: '/**' ( . )* '*/'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:258:9: ( '/**' ( . )* '*/' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:259:3: '/**' ( . )* '*/'
             {
             match("/**"); 
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:9: ( . )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:259:9: ( . )*
             loop7:
             do {
                 int alt7=2;
@@ -1037,7 +1037,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:9: .
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:259:9: .
             	    {
             	    matchAny(); 
 
@@ -1067,8 +1067,8 @@ public class GomLanguageLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:4: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:265:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:4: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:262:6: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1079,7 +1079,7 @@ public class GomLanguageLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:266:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:263:6: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             loop8:
             do {
                 int alt8=2;
@@ -1092,7 +1092,7 @@ public class GomLanguageLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:
             	    {
             	    if ( input.LA(1)=='-'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1124,229 +1124,229 @@ public class GomLanguageLexer extends Lexer {
     // $ANTLR end "ID"
 
     public void mTokens() throws RecognitionException {
-        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:8: ( MODULE | IMPORTS | PUBLIC | PRIVATE | ABSTRACT | SYNTAX | SORT | OPERATOR | ATOM | INNER | OUTER | NEUTRAL | BINDS | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LDIPLE | RDIPLE | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | JAVADOC | ID )
+        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:8: ( MODULE | IMPORTS | PUBLIC | PRIVATE | ABSTRACT | SYNTAX | SORT | OPERATOR | ATOM | INNER | OUTER | NEUTRAL | BINDS | ARROW | COLON | COMMA | DOT | LPAREN | RPAREN | STAR | EQUALS | ALT | SEMI | LDIPLE | RDIPLE | LBRACE | RBRACE | WS | SLCOMMENT | MLCOMMENT | JAVADOC | ID )
         int alt9=32;
         alt9 = dfa9.predict(input);
         switch (alt9) {
             case 1 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:10: MODULE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:10: MODULE
                 {
                 mMODULE(); 
 
                 }
                 break;
             case 2 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:17: IMPORTS
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:17: IMPORTS
                 {
                 mIMPORTS(); 
 
                 }
                 break;
             case 3 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:25: PUBLIC
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:25: PUBLIC
                 {
                 mPUBLIC(); 
 
                 }
                 break;
             case 4 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:32: PRIVATE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:32: PRIVATE
                 {
                 mPRIVATE(); 
 
                 }
                 break;
             case 5 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:40: ABSTRACT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:40: ABSTRACT
                 {
                 mABSTRACT(); 
 
                 }
                 break;
             case 6 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:49: SYNTAX
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:49: SYNTAX
                 {
                 mSYNTAX(); 
 
                 }
                 break;
             case 7 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:56: SORT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:56: SORT
                 {
                 mSORT(); 
 
                 }
                 break;
             case 8 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:61: OPERATOR
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:61: OPERATOR
                 {
                 mOPERATOR(); 
 
                 }
                 break;
             case 9 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:70: ATOM
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:70: ATOM
                 {
                 mATOM(); 
 
                 }
                 break;
             case 10 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:75: INNER
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:75: INNER
                 {
                 mINNER(); 
 
                 }
                 break;
             case 11 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:81: OUTER
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:81: OUTER
                 {
                 mOUTER(); 
 
                 }
                 break;
             case 12 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:87: NEUTRAL
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:87: NEUTRAL
                 {
                 mNEUTRAL(); 
 
                 }
                 break;
             case 13 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:95: BINDS
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:95: BINDS
                 {
                 mBINDS(); 
 
                 }
                 break;
             case 14 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:101: ARROW
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:101: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 15 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:107: COLON
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:107: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
             case 16 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:113: COMMA
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:113: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
             case 17 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:119: DOT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:119: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
             case 18 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:123: LPAREN
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:123: LPAREN
                 {
                 mLPAREN(); 
 
                 }
                 break;
             case 19 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:130: RPAREN
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:130: RPAREN
                 {
                 mRPAREN(); 
 
                 }
                 break;
             case 20 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:137: STAR
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:137: STAR
                 {
                 mSTAR(); 
 
                 }
                 break;
             case 21 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:142: EQUALS
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:142: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
             case 22 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:149: ALT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:149: ALT
                 {
                 mALT(); 
 
                 }
                 break;
             case 23 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:153: SEMI
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:153: SEMI
                 {
                 mSEMI(); 
 
                 }
                 break;
             case 24 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:158: LDIPLE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:158: LDIPLE
                 {
                 mLDIPLE(); 
 
                 }
                 break;
             case 25 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:165: RDIPLE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:165: RDIPLE
                 {
                 mRDIPLE(); 
 
                 }
                 break;
             case 26 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:172: LBRACE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:172: LBRACE
                 {
                 mLBRACE(); 
 
                 }
                 break;
             case 27 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:179: RBRACE
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:179: RBRACE
                 {
                 mRBRACE(); 
 
                 }
                 break;
             case 28 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:186: WS
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:186: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 29 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:189: SLCOMMENT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:189: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 
                 }
                 break;
             case 30 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:199: MLCOMMENT
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:199: MLCOMMENT
                 {
                 mMLCOMMENT(); 
 
                 }
                 break;
             case 31 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:209: JAVADOC
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:209: JAVADOC
                 {
                 mJAVADOC(); 
 
                 }
                 break;
             case 32 :
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:217: ID
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:1:217: ID
                 {
                 mID(); 
 

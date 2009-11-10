@@ -26,10 +26,7 @@ grammar GomLanguage;
 options {
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { gom/GomLanguageGomTokenList.txt }
+  tokenVocab=GomTokens;
 }
 
 @header {
