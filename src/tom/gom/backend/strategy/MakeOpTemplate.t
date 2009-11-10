@@ -189,7 +189,7 @@ private String genGetSlot(int count, String arg) {
   }
   return out.toString();
 }
-  
+
 private String genStratArgs(SlotFieldList slots,String arg) {
     StringBuilder args = new StringBuilder();
     int i = 0;
@@ -312,7 +312,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
     }
     return res;
   }
-  
+
   /**
     * Generate the child list to be used as function parameter declaration
     * Each non builtin child has type VisitableVisitor
@@ -354,7 +354,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
     if (! (tmp@fieldName(`fieldName)@ instanceof @fullClassName(`domain)@)) {
       throw new tom.library.sl.VisitFailure();
     }
-    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) tmp@fieldName(`fieldName)@; 
+    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) tmp@fieldName(`fieldName)@;
 ]%;
         }
       }

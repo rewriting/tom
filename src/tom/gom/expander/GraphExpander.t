@@ -84,11 +84,11 @@ public class GraphExpander {
   public boolean getForTermgraph() {
     return forTermgraph;
   }
-  
+
   public void setForTermgraph(boolean forTermgraph) {
     this.forTermgraph = forTermgraph;
   }
-  
+
   public GomEnvironment getGomEnvironment() {
     return gomEnvironment;
   }
@@ -135,18 +135,18 @@ public class GraphExpander {
   %strategy ExpandSort(hookList:ArrayList,ge:GraphExpander) extends Identity() {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],OperatorDecls=ops] -> {
-         
+
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
-        // for now, we need also to fill the symbol table 
+        // for now, we need also to fill the symbol table
         OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()),Slot("term"+sortname,sortdecl))),Details("/** labOp */"));
-        ge.getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
+        ge.getSymbolTable().addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone())));
         OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))),Details("/** refOp */"));
-        ge.getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        ge.getSymbolTable().addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone())));
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(ge.getIntSortDecl()),Details("/** pathOp */"));
         ge.getSymbolTable().addVariadicConstructor("Path"+`sortname,"int",`sortname);
         OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,ge.getStringSortDecl()))),Details("/** varOp */"));
-        ge.getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        ge.getSymbolTable().addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone())));
         hookList.add(ge.pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
@@ -232,7 +232,7 @@ public class GraphExpander {
     }
     ]%;
 
-    return 
+    return
       `ConcHookDecl(
           ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
           InterfaceHookDecl(CutOperator(opDecl),
@@ -269,7 +269,7 @@ public class GraphExpander {
     %include{sl.tom}
 
     static int freshlabel =0; //to unexpand termgraphs
-    
+
     %typeterm tom_Info {
       implement { Info }
       is_sort(t) { ($t instanceof Info) }
@@ -345,7 +345,7 @@ public class GraphExpander {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
-    
+
     public java.util.HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels() {
       java.util.HashMap<String,Position> map = new java.util.HashMap<String,Position>();
       try {
@@ -368,7 +368,7 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ normalize() {
       try {
-        return `InnermostIdSeq(Normalize()).visit(this); 
+        return `InnermostIdSeq(Normalize()).visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -376,14 +376,14 @@ public class GraphExpander {
 
     public @fullAbstractTypeClassName@ applyGlobalRedirection(Position p1,Position p2) {
       try {
-         return globalRedirection(p1,p2).visit(this); 
+         return globalRedirection(p1,p2).visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
-  
+
     public static Strategy globalRedirection(Position p1,Position p2) {
-        return `TopDown(GlobalRedirection(p1,p2)); 
+        return `TopDown(GlobalRedirection(p1,p2));
     }
 
     public @fullAbstractTypeClassName@ swap(Position p1, Position p2) {
@@ -392,7 +392,7 @@ public class GraphExpander {
         @fullAbstractTypeClassName@ subterm_p1 = p1.getSubterm().visit(updatedSubject);
         @fullAbstractTypeClassName@ subterm_p2 = p2.getSubterm().visit(updatedSubject);
         return `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
-      } catch (VisitFailure e) { 
+      } catch (VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
@@ -405,13 +405,13 @@ public class GraphExpander {
  codeBlockTermGraph += %[
         visit @`sortname@ {
           p@@Path@`sortname@(_*) -> {
-            Position current = getEnvironment().getPosition(); 
+            Position current = getEnvironment().getPosition();
             Position dest = (Position) current.add((Path)`p).getCanonicalPath();
             if(current.compare(dest)== -1) {
                 getEnvironment().followPath((Path)`p);
-                Position realDest = getEnvironment().getPosition(); 
+                Position realDest = getEnvironment().getPosition();
             if(!realDest.equals(dest)) {
-                //the subterm pointed was a pos (in case of previous switch) 
+                //the subterm pointed was a pos (in case of previous switch)
                 //and we must only update the relative position
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
                 return Path@`sortname@.make(realDest.sub(current));
@@ -421,16 +421,16 @@ public class GraphExpander {
                 // 1. construct the new relative position
                 @`sortname@ relref = Path@`sortname@.make(current.sub(dest));
 
-                // 2. update the part to change 
+                // 2. update the part to change
                 `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
 
-                // 3. save the subterm updated 
-                @`sortname@ subterm = (@`sortname@) getEnvironment().getSubject(); 
+                // 3. save the subterm updated
+                @`sortname@ subterm = (@`sortname@) getEnvironment().getSubject();
 
                 // 4. replace at dest the subterm by the new relative pos
                 getEnvironment().setSubject(relref);
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-                return subterm; 
+                return subterm;
             }
           }
         }
@@ -451,7 +451,7 @@ public class GraphExpander {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {
-              Position current = getEnvironment().getPosition(); 
+              Position current = getEnvironment().getPosition();
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               //relative pos from the source to the external
               if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
@@ -461,7 +461,7 @@ public class GraphExpander {
 
               //relative pos from the external to the source
               if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){
-                dest = dest.changePrefix(source,target); 
+                dest = dest.changePrefix(source,target);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
@@ -473,7 +473,7 @@ public class GraphExpander {
 
               //relative pos from the external to the target
               if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){
-                dest = dest.changePrefix(target,source); 
+                dest = dest.changePrefix(target,source);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
@@ -490,7 +490,7 @@ public class GraphExpander {
                 dest = dest.changePrefix(source,target);
                 return Path@`sortname@.make(dest.sub(current));
               }
-   
+
             }
           }
     ]%;
@@ -508,7 +508,7 @@ public class GraphExpander {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {
-              Position current = getEnvironment().getPosition(); 
+              Position current = getEnvironment().getPosition();
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               if(dest.equals(source)) {
                 return Path@`sortname@.make(target.sub(current));
@@ -596,7 +596,7 @@ public class GraphExpander {
 
     %match(sorts) {
       ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
-  
+
         strategiesCode.append(%[
 
     %typeterm tom_Info@`sortName@ {
@@ -620,7 +620,7 @@ public class GraphExpander {
         }
       }
         ]%);
-        
+
         // generate the code for the CollectAndRemoveLabels strategy
         CollectAndRemoveLabelsCode.append(%[
       visit @`sortName@{
@@ -675,7 +675,7 @@ public class GraphExpander {
         }
       }
    ]%);
-   
+
         // generate the code for the AddLabel strategy
         AddLabelCode.append(%[
     visit @`sortName@ {
@@ -696,8 +696,8 @@ public class GraphExpander {
             Position rootpos = Position.make();
             Info@`sortName@ info = new Info@`sortName@();
             info.omegaRef = old;
-            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           
-            `OnceTopDown(CollectSubterm@`sortName@(label,info)).visit(getEnvironment());            
+            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
+            `OnceTopDown(CollectSubterm@`sortName@(label,info)).visit(getEnvironment());
             getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
             //test if it is not a ref to a cycle
             if (info.sharedTerm!=null) {
@@ -727,7 +727,7 @@ public class GraphExpander {
             }
             else {
               //do not return a ref and stop to collect
-              return `term;  
+              return `term;
             }
           }
         }
@@ -750,7 +750,7 @@ public class GraphExpander {
     Label2PathCode.append(%[
   }
   ]%);
- 
+
     CollectRefCode.append(%[
   }
   ]%);

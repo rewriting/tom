@@ -145,7 +145,6 @@ public class BackendPlugin extends GomGenericPlugin {
           + " ms)");
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
-    
   }
 
   /**

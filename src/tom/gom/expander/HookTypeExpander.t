@@ -118,7 +118,7 @@ public class HookTypeExpander {
               hook@Hook[NameType=KindFutureOperator(fut),Name=oname] -> {
                 OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
                 if(odecl!=null) {
-                  HookDeclList newDeclList = 
+                  HookDeclList newDeclList =
                     makeHookDeclList(`hook,`CutFutureOperator(odecl,fut));
                   hookList = `ConcHookDecl(newDeclList*,hookList*);
                 }
@@ -468,7 +468,7 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for normalizing rules 
+   * generate hooks for normalizing rules
    */
   private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
     RuleExpander rexpander = new RuleExpander(moduleList);
@@ -476,7 +476,7 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for term-graph rules 
+   * generate hooks for term-graph rules
    */
   private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl sdecl, String scode) {
     %match(args) {
@@ -638,7 +638,7 @@ public class HookTypeExpander {
       auHooks = `ConcHookDecl(
           MakeHookDecl(mdecl,ConcSlot(),Code("return "+userNeutral+";"),HookKind("AU"),true()),
           auHooks*);
-      /* 
+      /*
        * Remove neutral:
        * if(<head> == makeNeutral) { return <tail>; }
        * if(<tail> == makeNeutral) { return <head>; }

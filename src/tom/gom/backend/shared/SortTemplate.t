@@ -80,12 +80,12 @@ public class SortTemplate extends TemplateHookedClass {
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
-package @getPackage()@;        
+package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
   /**
-   * Sole constructor.  (For invocation by subclass 
+   * Sole constructor.  (For invocation by subclass
    * constructors, typically implicit.)
    */
   protected @className()@() {}
@@ -151,9 +151,9 @@ writer.write(%[
     writer.write(%[
   protected static tom.library.utils.IdConverter idConv = new tom.library.utils.IdConverter();
 
-  /** 
+  /**
    * Returns an ATerm representation of this term.
-   * 
+   *
    * @@return null to indicate to sub-classes that they have to work
    */
   public aterm.ATerm toATerm() {
@@ -161,9 +161,9 @@ writer.write(%[
     return null;
   }
 
-  /** 
+  /**
    * Returns a @fullClassName()@ from an ATerm without any conversion
-   * 
+   *
    * @@param trm ATerm to handle to retrieve a Gom term
    * @@return the term from the ATerm
    */
@@ -171,9 +171,9 @@ writer.write(%[
     return fromTerm(trm,idConv);
   }
 
-  /** 
+  /**
    * Returns a @fullClassName()@ from a String without any conversion
-   * 
+   *
    * @@param s String containing the ATerm
    * @@return the term from the String
    */
@@ -181,9 +181,9 @@ writer.write(%[
     return fromTerm(atermFactory.parse(s),idConv);
   }
 
-  /** 
+  /**
    * Returns a @fullClassName()@ from a Stream without any conversion
-   * 
+   *
    * @@param stream stream containing the ATerm
    * @@return the term from the Stream
    * @@throws java.io.IOException if a problem occurs with the stream
@@ -192,12 +192,12 @@ writer.write(%[
     return fromTerm(atermFactory.readFromFile(stream),idConv);
   }
 
-  /** 
+  /**
    * Apply a conversion on the ATerm and returns a @fullClassName()@
-   * 
+   *
    * @@param trm ATerm to convert into a Gom term
    * @@param atConv ATermConverter used to convert the ATerm
-   * @@return the Gom term 
+   * @@return the Gom term
    * @@throws IllegalArgumentException
    */
   public static @fullClassName()@ fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {
@@ -228,9 +228,9 @@ writer.write(%[
     }
   }
 
-  /** 
+  /**
    * Apply a conversion on the ATerm contained in the String and returns a @fullClassName()@ from it
-   * 
+   *
    * @@param s String containing the ATerm
    * @@param atConv ATerm Converter used to convert the ATerm
    * @@return the Gom term
@@ -239,9 +239,9 @@ writer.write(%[
     return fromTerm(atermFactory.parse(s),atConv);
   }
 
-  /** 
+  /**
    * Apply a conversion on the ATerm contained in the Stream and returns a @fullClassName()@ from it
-   * 
+   *
    * @@param stream stream containing the ATerm
    * @@param atConv ATerm Converter used to convert the ATerm
    * @@return the Gom term
@@ -251,26 +251,25 @@ writer.write(%[
   }
 ]%);
 
-    
     /* abstract method to compare two terms represented by objects without maximal sharing */
     /* used in the mapping */
     if(!maximalsharing) {
       writer.write(%[
-  /** 
+  /**
    * Abstract method to compare two terms represented by objects without maximal sharing
-   * 
+   *
    * @@param o Object used to compare
    * @@return true if the two objects are equal
    */
   public abstract boolean deepEquals(Object o);
 ]%);
-    } 
+    }
 
     /* length and reverse prototypes, only usable on lists */
     writer.write(%[
-  /** 
+  /**
    * Returns the length of the list
-   * 
+   *
    * @@return the length of the list
    * @@throws IllegalArgumentException if the term is not a list
    */
@@ -279,9 +278,9 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 
-  /** 
+  /**
    * Returns an inverted term
-   * 
+   *
    * @@return the inverted list
    * @@throws IllegalArgumentException if the term is not a list
    */
@@ -307,9 +306,9 @@ writer.write(%[
         if(slot.getName().equals("Head" + varopName)) {
           String domainClassName = fullClassName(slot.getDomain());
           writer.write(%[
-  /** 
+  /**
    * Returns a Collection extracted from the term
-   * 
+   *
    * @@return the collection
    * @@throws UnsupportedOperationException if the term is not a list
    */
@@ -346,7 +345,7 @@ matchblock: {
     }
   */
     if(hooks.containsTomCode()) {
-      mapping.generate(writer); 
+      mapping.generate(writer);
     }
   }
 

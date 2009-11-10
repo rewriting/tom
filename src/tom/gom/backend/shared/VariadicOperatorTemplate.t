@@ -92,7 +92,7 @@ writer.write(%[
   protected String generateInterface() {
     String domainClassName = fullClassName(
         cons.getSlotFields().getHeadConcSlotField().getDomain());
-    return 
+    return
       %[implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> @super.generateInterface()@]%;
   }
 
@@ -101,9 +101,9 @@ writer.write(%[
     String domainClassName = fullClassName(
         cons.getSlotFields().getHeadConcSlotField().getDomain());
     writer.write(%[
-  /** 
+  /**
    * Returns the number of arguments of the variadic operator
-   * 
+   *
    * @@return the number of arguments of the variadic operator
    */
   @@Override
@@ -128,9 +128,9 @@ writer.write(%[
     return res;
   }
 
-  /** 
+  /**
    * Inverses the term if it is a list
-   * 
+   *
    * @@return the inverted term if it is a list, otherwise the term itself
    */
   @@Override
@@ -145,7 +145,7 @@ writer.write(%[
 ]%);
     if(fullClassName(sortName).equals(domainClassName)) { /* domain = codomain */
       writer.write(%[
-      if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
         rev = @fullClassName(cons.getClassName())@.make(cur,rev);
       }
 ]%);
@@ -157,9 +157,9 @@ writer.write(%[
     }
   }
 
-  /** 
+  /**
    * Appends an element
-   * 
+   *
    * @@param element element which has to be added
    * @@return the term with the added element
    */
@@ -212,9 +212,9 @@ writer.write(%[
     buffer.append(")");
   }
 
-  /** 
+  /**
    * Returns an ATerm representation of this term.
-   * 
+   *
    * @@return an ATerm representation of this term.
    */
   public aterm.ATerm toATerm() {
@@ -222,13 +222,13 @@ writer.write(%[
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tail = this.getTail@className()@();
       res = atermFactory.makeList(@toATermHead()@,(aterm.ATermList)tail.toATerm());
-    } 
+    }
     return res;
   }
 
-  /** 
+  /**
    * Apply a conversion on the ATerm contained in the String and returns a @fullClassName(sortName)@ from it
-   * 
+   *
    * @@param trm ATerm to convert into a Gom term
    * @@param atConv ATerm Converter used to convert the ATerm
    * @@return the Gom term
@@ -270,7 +270,7 @@ writer.write(%[
 
   /*
    * Checks if the Collection contains all elements of the parameter Collection
-   * 
+   *
    * @@param c the Collection of elements to check
    * @@return true if the Collection contains all elements of the parameter, otherwise false
    */
@@ -284,9 +284,9 @@ writer.write(%[
     return true;
   }
 
-  /** 
+  /**
    * Checks if @fullClassName(sortName)@ contains a specified object
-   * 
+   *
    * @@param o object whose presence is tested
    * @@return true if @fullClassName(sortName)@ contains the object, otherwise false
    */
@@ -300,7 +300,7 @@ writer.write(%[
         }
         cur = cur.getTail@className()@();
       }
-      if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
         if( o.equals(cur) ) {
           return true;
         }
@@ -313,9 +313,9 @@ writer.write(%[
 
   //public int hashCode() { return hashCode(); }
 
-  /** 
+  /**
    * Checks the emptiness
-   * 
+   *
    * @@return true if empty, otherwise false
    */
   public boolean isEmpty() { return isEmpty@className()@() ; }
@@ -376,16 +376,16 @@ writer.write(%[
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
 
-  /** 
+  /**
    * Returns the size of the collection
-   * 
+   *
    * @@return the size of the collection
    */
   public int size() { return length(); }
 
-  /** 
-   * Returns an array containing the elements of the collection 
-   * 
+  /**
+   * Returns an array containing the elements of the collection
+   *
    * @@return an array of elements
    */
   public Object[] toArray() {
@@ -449,7 +449,7 @@ writer.write(%[
     private @className()@ list;
 
     public @className()@ get@className(sortName)@() {
-      return list; 
+      return list;
     }
 
     public Collection@className()@(@className()@ list) {
@@ -468,9 +468,9 @@ writer.write(%[
     return modified;
   }
 
-  /** 
+  /**
    * Checks if the collection contains an element
-   * 
+   *
    * @@param o element whose presence has to be checked
    * @@return true if the element is found, otherwise false
    */
@@ -478,9 +478,9 @@ writer.write(%[
     return get@className(sortName)@().contains(o);
   }
 
-  /** 
+  /**
    * Checks if the collection contains elements given as parameter
-   * 
+   *
    * @@param c elements whose presence has to be checked
    * @@return true all the elements are found, otherwise false
    */
@@ -488,28 +488,28 @@ writer.write(%[
     return get@className(sortName)@().containsAll(c);
   }
 
-  /** 
+  /**
    * Checks if an object is equal
-   * 
+   *
    * @@param o object which is compared
    * @@return true if objects are equal, false otherwise
    */
   @@Override
-  public boolean equals(Object o) { 
-    return get@className(sortName)@().equals(o); 
+  public boolean equals(Object o) {
+    return get@className(sortName)@().equals(o);
   }
 
-  /** 
+  /**
    * Returns the hashCode
-   * 
+   *
    * @@return the hashCode
    */
   @@Override
   public int hashCode() {
-    return get@className(sortName)@().hashCode(); 
+    return get@className(sortName)@().hashCode();
   }
 
-  /** 
+  /**
    * Returns an iterator over the elements in the collection
    *
    * @@return an iterator over the elements in the collection
@@ -518,27 +518,27 @@ writer.write(%[
     return get@className(sortName)@().iterator();
   }
 
-  /** 
+  /**
    * Return the size of the collection
    *
    * @@return the size of the collection
    */
-  public int size() { 
-    return get@className(sortName)@().size(); 
+  public int size() {
+    return get@className(sortName)@().size();
   }
 
-  /** 
+  /**
    * Returns an array containing all of the elements in this collection.
-   * 
+   *
    * @@return an array of elements
    */
   public Object[] toArray() {
     return get@className(sortName)@().toArray();
   }
 
-  /** 
+  /**
    * Returns an array containing all of the elements in this collection.
-   * 
+   *
    * @@param array array which will contain the result
    * @@return an array of elements
    */
@@ -565,7 +565,7 @@ writer.write(%[
      * Collection
      */
 
-    /** 
+    /**
      * Adds an element to the collection
      *
      * @@param o element to add to the collection
@@ -576,20 +576,20 @@ writer.write(%[
       return true;
     }
 
-    /** 
+    /**
      * Removes all of the elements from this collection
      */
     public void clear() {
       list = (@className()@)@fullClassName(empty.getClassName())@.make();
     }
 
-    /** 
+    /**
      * Tests the emptiness of the collection
-     * 
+     *
      * @@return true if the collection is empty
      */
-    public boolean isEmpty() { 
-      return list.isEmpty@className()@(); 
+    public boolean isEmpty() {
+      return list.isEmpty@className()@();
     }
 
     public boolean remove(Object o) {
@@ -608,7 +608,7 @@ writer.write(%[
 
 ]%);
     if (hooks.containsTomCode()) {
-      mapping.generate(writer); 
+      mapping.generate(writer);
     }
 
   }
@@ -642,7 +642,7 @@ writer.write(%[
         CodeGen.generateCode(`code,writer);
         hasHook = true;
         // if there is a mapping hook we stop here
-        return; 
+        return;
       }
     }
 

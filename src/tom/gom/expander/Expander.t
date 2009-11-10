@@ -52,7 +52,7 @@ public class Expander {
   %include { ../adt/gom/Gom.tom}
 
   private GomEnvironment gomEnvironment;
-  
+
   public Expander(GomStreamManager streamManager) {
     this.gomEnvironment.setStreamManager(streamManager);
   }
@@ -107,9 +107,9 @@ public class Expander {
             result = `ConcGomModule(result*, importedModule);
             alreadyParsedModule.add(moduleNameName);
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
-	  }
+          }
         } else {
-          getGomEnvironment().markUsedBuiltin(moduleName); 
+          getGomEnvironment().markUsedBuiltin(moduleName);
         }
       }
       moduleToAnalyse = newModuleToAnalyse;

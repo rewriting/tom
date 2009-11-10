@@ -45,7 +45,7 @@ public class TypeExpander {
   public TypeExpander(GomStreamManager streamManager) {
     this.gomEnvironment.setStreamManager(streamManager);
   }
-  
+
   public TypeExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
   }
@@ -194,7 +194,7 @@ public class TypeExpander {
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
 ///
         OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, Details("")); //default case, when no comment is present
-        if (`options.isConsOptionList()) { // usual case : 
+        if (`options.isConsOptionList()) { // usual case :
           Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)`options).toArray();
           for (int i=0;i<`options.length();i++) {
             if (opts[i] instanceof tom.gom.adt.gom.types.option.Details) {
@@ -232,7 +232,7 @@ public class TypeExpander {
         }
       }
     }
-    
+
     getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
         new Object[]{typename});
     /* If the sort is not known, assume it is a builtin */
@@ -411,7 +411,7 @@ public class TypeExpander {
         Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
-          importsModuleDeclList = 
+          importsModuleDeclList =
             `ConcModuleDecl(ModuleDecl(importedModuleName,getStreamManager().getPackagePath(importedModuleName.getName())),
                 importsModuleDeclList*);
         }
