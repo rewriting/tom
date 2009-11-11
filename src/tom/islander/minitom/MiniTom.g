@@ -16,7 +16,7 @@ options {
   package minitom;
 }
 
-// my temporary starting point 
+// my temporary starting point
 compilationUnit
   : blockList* EOF -> ^(CompilationUnit ^(BlockList blockList* ));
 
@@ -281,7 +281,7 @@ operator
     -> ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
-/*keywords for %op*/ 
+/*keywords for %op*/
 keywordsOp
   : keywordIsFsym
   | keywordMake
@@ -324,12 +324,12 @@ keywordIsFsym
   : KW_ISFSYM LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
   ;
 
-keywordMake 
+keywordMake
   : KW_MAKE LPAREN /*nameList*/ l=(ID ( COMMA ID )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
 //  | KW_MAKE LPAREN RPAREN -> ^(Make ^(TomNameList ) goalLanguageBlock)
   ;
 
-keywordGetSlot 
+keywordGetSlot
   : KW_GETSLOT LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(GetSlot ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
@@ -369,7 +369,7 @@ keywordMakeAppend
   : KW_MKAPPEND LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(MakeAppend ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
-// 
+//
 //  : ID -> ^(TomNameList ^(Name ID ))
 //  | LPAREN ID (ALTERNATIVE ID)* RPAREN -> ^(TomNameList ^(Name ID )+)
 //nameList
@@ -522,12 +522,12 @@ STRING:
   ;*/
 
 MATCH_CONSTRAINT  : '<<';
-LESSOREQUAL_CONSTRAINT  : '<=';  
-GREATEROREQUAL_CONSTRAINT  : '>=';  
+LESSOREQUAL_CONSTRAINT  : '<=';
+GREATEROREQUAL_CONSTRAINT  : '>=';
 DIFFERENT_CONSTRAINT  : '!=';
 //LESS_CONSTRAINT  : '<:';
 //GREATER_CONSTRAINT  : ':>';
-  
+
 AND_CONNECTOR  : '&&';
 OR_CONNECTOR  : '||';
 
@@ -544,12 +544,12 @@ fragment
 INT:(DIGIT)+;*/
 
 //fragment
-/*ID: 
+/*ID:
   ('_')? LETTER
-  ( 
+  (
    options{greedy = true;}:
    ( LETTER | DIGIT | '_' | '.' )
-  )* 
+  )*
   ;*/
 
 
