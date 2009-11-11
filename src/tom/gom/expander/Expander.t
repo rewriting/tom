@@ -46,7 +46,7 @@ import org.antlr.runtime.tree.*;
 
 import tom.gom.parser.GomLanguageLexer;
 import tom.gom.parser.GomLanguageParser;
-import tom.gom.adt.gom.GomLanguageGomAdaptor;
+import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
   %include { ../adt/gom/Gom.tom}
@@ -147,7 +147,7 @@ public class Expander {
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
     try {
       Tree tree = (Tree) parser.module().getTree();
-      result = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
+      result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,

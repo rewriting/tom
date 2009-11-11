@@ -64,9 +64,9 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    
+
     writer.write(
-"\npackage "+getPackage()+";\n"+generateImport()+"\n\n/**\n  * This class provides a skeletal implementation of <i>terms</i>\n  * When implementing the interface <tt>shared.SharedObjectWithID</tt>, \n  * the objects are immutable and can be compared in constant time, using\n  * <tt>==</tt>.\n  */\n"
+"\npackage "+getPackage()+";\n"+generateImport()+"\n\n/**\n  * This class provides a skeletal implementation of <i>terms</i>\n  * When implementing the interface <tt>shared.SharedObjectWithID</tt>,\n  * the objects are immutable and can be compared in constant time, using\n  * <tt>==</tt>.\n  */\n"
 
 
 
@@ -85,7 +85,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
       implementsInterface = "tom.library.sl.Visitable, Cloneable, Comparable";
     }
     writer.write(
-"\npublic abstract class "+className()+" implements "+implementsInterface+" "+generateInterface()+" {\n  /**\n   * Sole constructor.  (For invocation by subclass \n   * constructors, typically implicit.)\n   */\n  protected "+className()+"() {}\n"
+"\npublic abstract class "+className()+" implements "+implementsInterface+" "+generateInterface()+" {\n  /**\n   * Sole constructor.  (For invocation by subclass\n   * constructors, typically implicit.)\n   */\n  protected "+className()+"() {}\n"
 
 
 
@@ -95,7 +95,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 );
 
     if(hooks.containsTomCode()) {
-      mapping.generate(writer); 
+      mapping.generate(writer);
     }
     writer.write(
 "\n"+generateBlock()+"\n"

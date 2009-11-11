@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2009-09-18 08:02:10
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g 2009-11-11 11:08:13
 
 package tom.gom.parser;
 import tom.gom.GomStreamManager;
@@ -14,137 +14,137 @@ import org.antlr.runtime.tree.*;
 
 public class GomLanguageParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "Arg", "ConcOperator", "OptionList", "GomModuleName", "Cons", "Hook", "ConcSortDecl", "Origin", "Module", "AbstractTypeClass", "KindModule", "Empty", "GomModule", "ExpressionType", "ConcModuleDecl", "NamedField", "SortDecl", "Inner", "AtomDecl", "PatternType", "ConcModule", "Slot", "CutModule", "ImportHookDecl", "ConcSlotField", "CutOperator", "FullSortClass", "Grammar", "ClassName", "OperatorClass", "FullOperatorClass", "InterfaceHookDecl", "TomMapping", "ConcImportedModule", "Sort", "ModuleDecl", "ImportHook", "ConcArg", "Variadic", "MakeHook", "Neutral", "MappingHook", "SortClass", "CutSort", "StarredField", "IsCons", "ConcGomType", "KindSort", "ConcGomClass", "ConcHookDecl", "ConcAtom", "HasTomCode", "ConcClassName", "GomType", "ConcGomModule", "OperatorDecl", "FutureCons", "MakeHookDecl", "ConcSection", "Import", "Details", "Sorts", "CodeList", "ConcProduction", "Compare", "ConcSort", "InterfaceHook", "Code", "ModHookPair", "BlockHookDecl", "CutFutureOperator", "FutureNil", "Imports", "SlotField", "None", "ConcHook", "Public", "ConcGrammar", "MappingHookDecl", "MakeBeforeHook", "VariadicOperatorClass", "ConcSlot", "BuiltinSortDecl", "BlockHook", "Refresh", "Slots", "IsEmpty", "AtomType", "SortType", "HookKind", "KindOperator", "Outer", "ConcField", "Production", "ShortSortClass", "KindFutureOperator", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ARROW", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ConcHook", "ConcClassName", "ConcGomClass", "ClassName", "TomMapping", "VariadicOperatorClass", "OperatorClass", "SortClass", "AbstractTypeClass", "ConcSlotField", "SlotField", "MappingHook", "ImportHook", "InterfaceHook", "BlockHook", "MakeBeforeHook", "MakeHook", "CodeList", "Compare", "FullOperatorClass", "ShortSortClass", "FullSortClass", "Cons", "Empty", "IsCons", "IsEmpty", "Code", "HookKind", "Details", "HasTomCode", "OptionList", "Origin", "Import", "GomType", "ConcModule", "ModuleDecl", "AtomDecl", "SortType", "Hook", "Production", "NamedField", "StarredField", "GomModuleName", "Arg", "FutureCons", "FutureNil", "ConcSort", "ConcSlot", "Sorts", "Grammar", "ConcField", "ConcModuleDecl", "Module", "MappingHookDecl", "ImportHookDecl", "InterfaceHookDecl", "BlockHookDecl", "MakeHookDecl", "BuiltinSortDecl", "SortDecl", "Sort", "ConcImportedModule", "Refresh", "Neutral", "Outer", "Inner", "None", "CutFutureOperator", "CutOperator", "CutSort", "CutModule", "ConcProduction", "AtomType", "ExpressionType", "PatternType", "ConcGomType", "Public", "Imports", "ModHookPair", "GomModule", "OperatorDecl", "ConcSortDecl", "ConcHookDecl", "ConcOperator", "ConcSection", "Variadic", "Slots", "ConcGrammar", "ConcAtom", "ConcGomModule", "KindFutureOperator", "KindOperator", "KindSort", "KindModule", "ConcArg", "Slot", "MODULE", "ID", "DOT", "IMPORTS", "PUBLIC", "ABSTRACT", "SYNTAX", "ARROW", "ATOM", "EQUALS", "BINDS", "JAVADOC", "ALT", "SEMI", "LPAREN", "COMMA", "RPAREN", "STAR", "LDIPLE", "RDIPLE", "COLON", "INNER", "OUTER", "NEUTRAL", "LBRACE", "SORT", "OPERATOR", "PRIVATE", "RBRACE", "WS", "SLCOMMENT", "MLCOMMENT"
     };
-    public static final int Arg=4;
-    public static final int STAR=117;
-    public static final int OptionList=6;
-    public static final int Cons=8;
-    public static final int Hook=9;
-    public static final int Origin=11;
-    public static final int Module=12;
-    public static final int AbstractTypeClass=13;
-    public static final int Empty=15;
-    public static final int GomModule=16;
-    public static final int ExpressionType=17;
-    public static final int SLCOMMENT=130;
-    public static final int EQUALS=109;
-    public static final int Inner=21;
-    public static final int PatternType=23;
-    public static final int ATOM=108;
-    public static final int Slot=25;
+    public static final int COMMA=121;
+    public static final int GomType=43;
+    public static final int Sort=70;
+    public static final int CutSort=79;
+    public static final int ImportHook=22;
+    public static final int BINDS=116;
+    public static final int Slots=96;
+    public static final int ABSTRACT=111;
+    public static final int KindSort=102;
+    public static final int CutFutureOperator=77;
+    public static final int ShortSortClass=30;
+    public static final int InterfaceHookDecl=65;
+    public static final int KindModule=103;
+    public static final int ConcModuleDecl=61;
+    public static final int ConcField=60;
+    public static final int LDIPLE=124;
+    public static final int DOT=108;
+    public static final int PRIVATE=133;
+    public static final int FullOperatorClass=29;
+    public static final int SLCOMMENT=136;
+    public static final int Compare=28;
+    public static final int HookKind=37;
+    public static final int AtomType=82;
+    public static final int Slot=105;
+    public static final int SlotField=20;
+    public static final int CutOperator=78;
+    public static final int ConcGrammar=97;
+    public static final int ConcSlot=57;
+    public static final int MODULE=106;
+    public static final int ConcClassName=11;
+    public static final int RPAREN=122;
+    public static final int PatternType=84;
+    public static final int MappingHook=21;
+    public static final int BlockHookDecl=66;
+    public static final int ConcProduction=81;
+    public static final int ATOM=114;
+    public static final int NEUTRAL=129;
+    public static final int SortClass=17;
+    public static final int ConcGomClass=12;
+    public static final int MappingHookDecl=63;
+    public static final int ConcImportedModule=71;
+    public static final int Production=49;
+    public static final int ConcArg=104;
+    public static final int IsEmpty=35;
+    public static final int None=76;
+    public static final int Import=42;
+    public static final int ConcHookDecl=92;
+    public static final int FutureNil=55;
+    public static final int InterfaceHook=23;
+    public static final int WS=135;
+    public static final int Outer=74;
+    public static final int Details=38;
+    public static final int Imports=87;
+    public static final int Code=36;
+    public static final int TomMapping=14;
+    public static final int SORT=131;
+    public static final int CodeList=27;
+    public static final int ConcGomType=85;
+    public static final int SEMI=119;
+    public static final int EQUALS=115;
+    public static final int AbstractTypeClass=18;
+    public static final int BuiltinSortDecl=68;
+    public static final int COLON=126;
+    public static final int SYNTAX=112;
+    public static final int VariadicOperatorClass=15;
+    public static final int OptionList=40;
+    public static final int ClassName=13;
+    public static final int ConcSortDecl=91;
+    public static final int Grammar=59;
+    public static final int ExpressionType=83;
+    public static final int PUBLIC=110;
+    public static final int ConcSlotField=19;
+    public static final int ImportHookDecl=64;
+    public static final int ARROW=113;
+    public static final int FullSortClass=31;
+    public static final int MakeBeforeHook=25;
+    public static final int OperatorClass=16;
+    public static final int SortType=47;
+    public static final int INNER=127;
+    public static final int JAVADOC=117;
+    public static final int Origin=41;
+    public static final int ConcOperator=93;
+    public static final int ConcHook=10;
+    public static final int Arg=53;
+    public static final int ModHookPair=88;
+    public static final int ConcModule=44;
+    public static final int ConcGomModule=99;
+    public static final int LBRACE=130;
+    public static final int RBRACE=134;
+    public static final int Module=62;
+    public static final int MLCOMMENT=137;
+    public static final int ALT=118;
+    public static final int ModuleDecl=45;
+    public static final int Variadic=95;
+    public static final int Cons=32;
+    public static final int KindFutureOperator=100;
+    public static final int LPAREN=120;
+    public static final int RDIPLE=125;
+    public static final int IMPORTS=109;
+    public static final int OPERATOR=132;
+    public static final int OUTER=128;
+    public static final int HasTomCode=39;
+    public static final int ID=107;
+    public static final int ConcSort=56;
+    public static final int FutureCons=54;
+    public static final int IsCons=34;
+    public static final int SortDecl=69;
+    public static final int AtomDecl=46;
+    public static final int Hook=48;
+    public static final int Public=86;
+    public static final int ConcAtom=98;
+    public static final int MakeHookDecl=67;
+    public static final int NamedField=50;
+    public static final int CutModule=80;
+    public static final int MakeHook=26;
+    public static final int GomModule=89;
+    public static final int Inner=75;
     public static final int EOF=-1;
-    public static final int ImportHookDecl=27;
-    public static final int ClassName=32;
-    public static final int OperatorClass=33;
-    public static final int BINDS=110;
-    public static final int FullOperatorClass=34;
-    public static final int ConcImportedModule=37;
-    public static final int ModuleDecl=39;
-    public static final int RPAREN=116;
-    public static final int ImportHook=40;
-    public static final int ConcArg=41;
-    public static final int Neutral=44;
-    public static final int SortClass=46;
-    public static final int StarredField=48;
-    public static final int ConcHookDecl=53;
-    public static final int ConcAtom=54;
-    public static final int MLCOMMENT=131;
-    public static final int GomType=57;
-    public static final int ConcGomModule=58;
-    public static final int ConcSection=62;
-    public static final int RBRACE=128;
-    public static final int Details=64;
-    public static final int Sorts=65;
-    public static final int PRIVATE=127;
-    public static final int CodeList=66;
-    public static final int Compare=68;
-    public static final int Code=71;
-    public static final int BlockHookDecl=73;
-    public static final int NEUTRAL=123;
-    public static final int SlotField=77;
-    public static final int None=78;
-    public static final int ConcHook=79;
-    public static final int ConcSlot=85;
-    public static final int WS=129;
-    public static final int BuiltinSortDecl=86;
-    public static final int BlockHook=87;
-    public static final int IsEmpty=90;
-    public static final int AtomType=91;
-    public static final int Outer=95;
-    public static final int IMPORTS=103;
-    public static final int ConcField=96;
-    public static final int ShortSortClass=98;
-    public static final int LDIPLE=118;
-    public static final int ConcOperator=5;
-    public static final int GomModuleName=7;
-    public static final int INNER=121;
-    public static final int ConcSortDecl=10;
-    public static final int LBRACE=124;
-    public static final int KindModule=14;
-    public static final int ConcModuleDecl=18;
-    public static final int NamedField=19;
-    public static final int SortDecl=20;
-    public static final int ABSTRACT=105;
-    public static final int AtomDecl=22;
-    public static final int CutModule=26;
-    public static final int ConcModule=24;
-    public static final int ID=101;
-    public static final int ConcSlotField=28;
-    public static final int CutOperator=29;
-    public static final int LPAREN=114;
-    public static final int Grammar=31;
-    public static final int FullSortClass=30;
-    public static final int TomMapping=36;
-    public static final int InterfaceHookDecl=35;
-    public static final int SYNTAX=106;
-    public static final int Sort=38;
-    public static final int MakeHook=43;
-    public static final int Variadic=42;
-    public static final int ALT=112;
-    public static final int MappingHook=45;
-    public static final int COMMA=115;
-    public static final int CutSort=47;
-    public static final int IsCons=49;
-    public static final int ConcGomType=50;
-    public static final int KindSort=51;
-    public static final int ConcGomClass=52;
-    public static final int DOT=102;
-    public static final int HasTomCode=55;
-    public static final int ConcClassName=56;
-    public static final int OperatorDecl=59;
-    public static final int FutureCons=60;
-    public static final int OUTER=122;
-    public static final int MakeHookDecl=61;
-    public static final int Import=63;
-    public static final int JAVADOC=111;
-    public static final int RDIPLE=119;
-    public static final int ConcProduction=67;
-    public static final int OPERATOR=126;
-    public static final int ConcSort=69;
-    public static final int InterfaceHook=70;
-    public static final int ModHookPair=72;
-    public static final int SORT=125;
-    public static final int CutFutureOperator=74;
-    public static final int FutureNil=75;
-    public static final int MODULE=100;
-    public static final int Imports=76;
-    public static final int SEMI=113;
-    public static final int Public=80;
-    public static final int ConcGrammar=81;
-    public static final int COLON=120;
-    public static final int MappingHookDecl=82;
-    public static final int MakeBeforeHook=83;
-    public static final int VariadicOperatorClass=84;
-    public static final int Refresh=88;
-    public static final int Slots=89;
-    public static final int HookKind=93;
-    public static final int SortType=92;
-    public static final int ARROW=107;
-    public static final int KindOperator=94;
-    public static final int Production=97;
-    public static final int PUBLIC=104;
-    public static final int KindFutureOperator=99;
+    public static final int Empty=33;
+    public static final int GomModuleName=52;
+    public static final int StarredField=51;
+    public static final int BlockHook=24;
+    public static final int KindOperator=101;
+    public static final int STAR=123;
+    public static final int ConcSection=94;
+    public static final int Sorts=58;
+    public static final int Neutral=73;
+    public static final int OperatorDecl=90;
+    public static final int Refresh=72;
 
     // delegates
     // delegators
@@ -168,7 +168,7 @@ public class GomLanguageParser extends Parser {
     }
 
     public String[] getTokenNames() { return GomLanguageParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g"; }
+    public String getGrammarFileName() { return "/Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g"; }
 
 
       private GomStreamManager streamManager;
@@ -184,7 +184,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "module"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:52:1: module : MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:49:1: module : MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) ;
     public final GomLanguageParser.module_return module() throws RecognitionException {
         GomLanguageParser.module_return retval = new GomLanguageParser.module_return();
         retval.start = input.LT(1);
@@ -202,25 +202,25 @@ public class GomLanguageParser extends Parser {
 
         Tree MODULE1_tree=null;
         Tree EOF4_tree=null;
-        RewriteRuleTokenStream stream_MODULE=new RewriteRuleTokenStream(adaptor,"token MODULE");
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
+        RewriteRuleTokenStream stream_MODULE=new RewriteRuleTokenStream(adaptor,"token MODULE");
         RewriteRuleSubtreeStream stream_modulename=new RewriteRuleSubtreeStream(adaptor,"rule modulename");
         RewriteRuleSubtreeStream stream_imports=new RewriteRuleSubtreeStream(adaptor,"rule imports");
         RewriteRuleSubtreeStream stream_section=new RewriteRuleSubtreeStream(adaptor,"rule section");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:52:8: ( MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:53:2: MODULE modulename (imps= imports )? section EOF
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:49:8: ( MODULE modulename (imps= imports )? section EOF -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) ) -> ^( GomModule modulename ^( ConcSection section ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:50:2: MODULE modulename (imps= imports )? section EOF
             {
-            MODULE1=(Token)match(input,MODULE,FOLLOW_MODULE_in_module349);  
+            MODULE1=(Token)match(input,MODULE,FOLLOW_MODULE_in_module60);  
             stream_MODULE.add(MODULE1);
 
-            pushFollow(FOLLOW_modulename_in_module351);
+            pushFollow(FOLLOW_modulename_in_module62);
             modulename2=modulename();
 
             state._fsp--;
 
             stream_modulename.add(modulename2.getTree());
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:53:20: (imps= imports )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:50:20: (imps= imports )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -229,9 +229,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:53:21: imps= imports
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:50:21: imps= imports
                     {
-                    pushFollow(FOLLOW_imports_in_module356);
+                    pushFollow(FOLLOW_imports_in_module67);
                     imps=imports();
 
                     state._fsp--;
@@ -243,19 +243,19 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_section_in_module360);
+            pushFollow(FOLLOW_section_in_module71);
             section3=section();
 
             state._fsp--;
 
             stream_section.add(section3.getTree());
-            EOF4=(Token)match(input,EOF,FOLLOW_EOF_in_module362);  
+            EOF4=(Token)match(input,EOF,FOLLOW_EOF_in_module73);  
             stream_EOF.add(EOF4);
 
 
 
             // AST REWRITE
-            // elements: imports, section, modulename, section, modulename
+            // elements: section, modulename, section, modulename, imports
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -265,15 +265,15 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 54:3: -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) )
+            // 51:3: -> {imps!=null}? ^( GomModule modulename ^( ConcSection imports section ) )
             if (imps!=null) {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:54:20: ^( GomModule modulename ^( ConcSection imports section ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:51:20: ^( GomModule modulename ^( ConcSection imports section ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModule, "GomModule"), root_1);
 
                 adaptor.addChild(root_1, stream_modulename.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:54:43: ^( ConcSection imports section )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:51:43: ^( ConcSection imports section )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcSection, "ConcSection"), root_2);
@@ -288,15 +288,15 @@ public class GomLanguageParser extends Parser {
                 }
 
             }
-            else // 55:3: -> ^( GomModule modulename ^( ConcSection section ) )
+            else // 52:3: -> ^( GomModule modulename ^( ConcSection section ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:55:6: ^( GomModule modulename ^( ConcSection section ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:52:6: ^( GomModule modulename ^( ConcSection section ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModule, "GomModule"), root_1);
 
                 adaptor.addChild(root_1, stream_modulename.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:55:29: ^( ConcSection section )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:52:29: ^( ConcSection section )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcSection, "ConcSection"), root_2);
@@ -338,7 +338,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "modulename"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:58:1: modulename : (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:55:1: modulename : (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) ;
     public final GomLanguageParser.modulename_return modulename() throws RecognitionException {
         GomLanguageParser.modulename_return retval = new GomLanguageParser.modulename_return();
         retval.start = input.LT(1);
@@ -359,10 +359,10 @@ public class GomLanguageParser extends Parser {
           StringBuilder packagePrefix = new StringBuilder("");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:61:3: ( (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:62:3: (mod= ID DOT )* moduleName= ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:58:3: ( (mod= ID DOT )* moduleName= ID -> ^( GomModuleName $moduleName) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )* moduleName= ID
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:62:3: (mod= ID DOT )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:59:3: (mod= ID DOT )*
             loop2:
             do {
                 int alt2=2;
@@ -381,12 +381,12 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:62:4: mod= ID DOT
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:59:4: mod= ID DOT
             	    {
-            	    mod=(Token)match(input,ID,FOLLOW_ID_in_modulename419);  
+            	    mod=(Token)match(input,ID,FOLLOW_ID_in_modulename130);  
             	    stream_ID.add(mod);
 
-            	    DOT5=(Token)match(input,DOT,FOLLOW_DOT_in_modulename421);  
+            	    DOT5=(Token)match(input,DOT,FOLLOW_DOT_in_modulename132);  
             	    stream_DOT.add(DOT5);
 
             	     packagePrefix.append((mod!=null?mod.getText():null)+"."); 
@@ -399,7 +399,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            moduleName=(Token)match(input,ID,FOLLOW_ID_in_modulename431);  
+            moduleName=(Token)match(input,ID,FOLLOW_ID_in_modulename142);  
             stream_ID.add(moduleName);
 
 
@@ -424,9 +424,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 72:3: -> ^( GomModuleName $moduleName)
+            // 69:3: -> ^( GomModuleName $moduleName)
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:72:6: ^( GomModuleName $moduleName)
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:69:6: ^( GomModuleName $moduleName)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModuleName, "GomModuleName"), root_1);
@@ -465,7 +465,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "imports"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:75:1: imports : IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:72:1: imports : IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) ;
     public final GomLanguageParser.imports_return imports() throws RecognitionException {
         GomLanguageParser.imports_return retval = new GomLanguageParser.imports_return();
         retval.start = input.LT(1);
@@ -480,13 +480,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_IMPORTS=new RewriteRuleTokenStream(adaptor,"token IMPORTS");
         RewriteRuleSubtreeStream stream_importedModuleName=new RewriteRuleSubtreeStream(adaptor,"rule importedModuleName");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:75:9: ( IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:3: IMPORTS ( importedModuleName )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:72:9: ( IMPORTS ( importedModuleName )* -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:3: IMPORTS ( importedModuleName )*
             {
-            IMPORTS6=(Token)match(input,IMPORTS,FOLLOW_IMPORTS_in_imports459);  
+            IMPORTS6=(Token)match(input,IMPORTS,FOLLOW_IMPORTS_in_imports170);  
             stream_IMPORTS.add(IMPORTS6);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:11: ( importedModuleName )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:11: ( importedModuleName )*
             loop3:
             do {
                 int alt3=2;
@@ -499,9 +499,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:12: importedModuleName
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:12: importedModuleName
             	    {
-            	    pushFollow(FOLLOW_importedModuleName_in_imports462);
+            	    pushFollow(FOLLOW_importedModuleName_in_imports173);
             	    importedModuleName7=importedModuleName();
 
             	    state._fsp--;
@@ -529,19 +529,19 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 76:33: -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
+            // 73:33: -> ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:36: ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:36: ^( Imports ^( ConcImportedModule ( importedModuleName )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Imports, "Imports"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:46: ^( ConcImportedModule ( importedModuleName )* )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:46: ^( ConcImportedModule ( importedModuleName )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcImportedModule, "ConcImportedModule"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:76:67: ( importedModuleName )*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:73:67: ( importedModuleName )*
                 while ( stream_importedModuleName.hasNext() ) {
                     adaptor.addChild(root_2, stream_importedModuleName.nextTree());
 
@@ -583,7 +583,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "importedModuleName"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:78:1: importedModuleName : ID -> ^( Import ^( GomModuleName ID ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:75:1: importedModuleName : ID -> ^( Import ^( GomModuleName ID ) ) ;
     public final GomLanguageParser.importedModuleName_return importedModuleName() throws RecognitionException {
         GomLanguageParser.importedModuleName_return retval = new GomLanguageParser.importedModuleName_return();
         retval.start = input.LT(1);
@@ -596,10 +596,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:78:20: ( ID -> ^( Import ^( GomModuleName ID ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:79:3: ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:75:20: ( ID -> ^( Import ^( GomModuleName ID ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:76:3: ID
             {
-            ID8=(Token)match(input,ID,FOLLOW_ID_in_importedModuleName491);  
+            ID8=(Token)match(input,ID,FOLLOW_ID_in_importedModuleName202);  
             stream_ID.add(ID8);
 
 
@@ -615,14 +615,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 79:6: -> ^( Import ^( GomModuleName ID ) )
+            // 76:6: -> ^( Import ^( GomModuleName ID ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:79:9: ^( Import ^( GomModuleName ID ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:76:9: ^( Import ^( GomModuleName ID ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Import, "Import"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:79:18: ^( GomModuleName ID )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:76:18: ^( GomModuleName ID )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomModuleName, "GomModuleName"), root_2);
@@ -664,7 +664,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "section"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:82:1: section : ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:79:1: section : ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) ;
     public final GomLanguageParser.section_return section() throws RecognitionException {
         GomLanguageParser.section_return retval = new GomLanguageParser.section_return();
         retval.start = input.LT(1);
@@ -679,10 +679,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_PUBLIC=new RewriteRuleTokenStream(adaptor,"token PUBLIC");
         RewriteRuleSubtreeStream stream_adtgrammar=new RewriteRuleSubtreeStream(adaptor,"rule adtgrammar");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:82:9: ( ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:83:3: ( PUBLIC )? adtgrammar
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:79:9: ( ( PUBLIC )? adtgrammar -> ^( Public adtgrammar ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )? adtgrammar
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:83:3: ( PUBLIC )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:80:3: ( PUBLIC )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -691,9 +691,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:83:4: PUBLIC
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:80:4: PUBLIC
                     {
-                    PUBLIC9=(Token)match(input,PUBLIC,FOLLOW_PUBLIC_in_section517);  
+                    PUBLIC9=(Token)match(input,PUBLIC,FOLLOW_PUBLIC_in_section228);  
                     stream_PUBLIC.add(PUBLIC9);
 
 
@@ -702,7 +702,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_adtgrammar_in_section521);
+            pushFollow(FOLLOW_adtgrammar_in_section232);
             adtgrammar10=adtgrammar();
 
             state._fsp--;
@@ -721,9 +721,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 83:24: -> ^( Public adtgrammar )
+            // 80:24: -> ^( Public adtgrammar )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:83:27: ^( Public adtgrammar )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:80:27: ^( Public adtgrammar )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Public, "Public"), root_1);
@@ -762,7 +762,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "adtgrammar"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:86:1: adtgrammar : (gr+= syntax )+ -> $gr;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:83:1: adtgrammar : (gr+= syntax )+ -> $gr;
     public final GomLanguageParser.adtgrammar_return adtgrammar() throws RecognitionException {
         GomLanguageParser.adtgrammar_return retval = new GomLanguageParser.adtgrammar_return();
         retval.start = input.LT(1);
@@ -774,10 +774,10 @@ public class GomLanguageParser extends Parser {
          gr = null;
         RewriteRuleSubtreeStream stream_syntax=new RewriteRuleSubtreeStream(adaptor,"rule syntax");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:86:12: ( (gr+= syntax )+ -> $gr)
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:87:3: (gr+= syntax )+
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:83:12: ( (gr+= syntax )+ -> $gr)
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )+
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:87:3: (gr+= syntax )+
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:84:3: (gr+= syntax )+
             int cnt5=0;
             loop5:
             do {
@@ -791,9 +791,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:87:4: gr+= syntax
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:84:4: gr+= syntax
             	    {
-            	    pushFollow(FOLLOW_syntax_in_adtgrammar545);
+            	    pushFollow(FOLLOW_syntax_in_adtgrammar256);
             	    gr=syntax();
 
             	    state._fsp--;
@@ -828,7 +828,7 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
             RewriteRuleSubtreeStream stream_gr=new RewriteRuleSubtreeStream(adaptor,"token gr",list_gr);
             root_0 = (Tree)adaptor.nil();
-            // 87:17: -> $gr
+            // 84:17: -> $gr
             {
                 adaptor.addChild(root_0, stream_gr.nextTree());
 
@@ -861,7 +861,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "syntax"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:90:1: syntax : ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )* -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:87:1: syntax : ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )* -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) ) ;
     public final GomLanguageParser.syntax_return syntax() throws RecognitionException {
         GomLanguageParser.syntax_return retval = new GomLanguageParser.syntax_return();
         retval.start = input.LT(1);
@@ -884,23 +884,23 @@ public class GomLanguageParser extends Parser {
          gr4 = null;
         Tree ABSTRACT11_tree=null;
         Tree SYNTAX12_tree=null;
-        RewriteRuleTokenStream stream_SYNTAX=new RewriteRuleTokenStream(adaptor,"token SYNTAX");
         RewriteRuleTokenStream stream_ABSTRACT=new RewriteRuleTokenStream(adaptor,"token ABSTRACT");
+        RewriteRuleTokenStream stream_SYNTAX=new RewriteRuleTokenStream(adaptor,"token SYNTAX");
+        RewriteRuleSubtreeStream stream_atomdecl=new RewriteRuleSubtreeStream(adaptor,"rule atomdecl");
         RewriteRuleSubtreeStream stream_hookConstruct=new RewriteRuleSubtreeStream(adaptor,"rule hookConstruct");
         RewriteRuleSubtreeStream stream_typedecl=new RewriteRuleSubtreeStream(adaptor,"rule typedecl");
-        RewriteRuleSubtreeStream stream_atomdecl=new RewriteRuleSubtreeStream(adaptor,"rule atomdecl");
         RewriteRuleSubtreeStream stream_production=new RewriteRuleSubtreeStream(adaptor,"rule production");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:90:8: ( ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )* -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:3: ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:87:8: ( ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )* -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:3: ABSTRACT SYNTAX (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
             {
-            ABSTRACT11=(Token)match(input,ABSTRACT,FOLLOW_ABSTRACT_in_syntax565);  
+            ABSTRACT11=(Token)match(input,ABSTRACT,FOLLOW_ABSTRACT_in_syntax276);  
             stream_ABSTRACT.add(ABSTRACT11);
 
-            SYNTAX12=(Token)match(input,SYNTAX,FOLLOW_SYNTAX_in_syntax567);  
+            SYNTAX12=(Token)match(input,SYNTAX,FOLLOW_SYNTAX_in_syntax278);  
             stream_SYNTAX.add(SYNTAX12);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:19: (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:19: (gr1+= production | gr2+= hookConstruct | gr3+= typedecl | gr4+= atomdecl )*
             loop6:
             do {
                 int alt6=5;
@@ -946,9 +946,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:20: gr1+= production
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:20: gr1+= production
             	    {
-            	    pushFollow(FOLLOW_production_in_syntax572);
+            	    pushFollow(FOLLOW_production_in_syntax283);
             	    gr1=production();
 
             	    state._fsp--;
@@ -961,9 +961,9 @@ public class GomLanguageParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:38: gr2+= hookConstruct
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:38: gr2+= hookConstruct
             	    {
-            	    pushFollow(FOLLOW_hookConstruct_in_syntax578);
+            	    pushFollow(FOLLOW_hookConstruct_in_syntax289);
             	    gr2=hookConstruct();
 
             	    state._fsp--;
@@ -976,9 +976,9 @@ public class GomLanguageParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:59: gr3+= typedecl
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:59: gr3+= typedecl
             	    {
-            	    pushFollow(FOLLOW_typedecl_in_syntax584);
+            	    pushFollow(FOLLOW_typedecl_in_syntax295);
             	    gr3=typedecl();
 
             	    state._fsp--;
@@ -991,9 +991,9 @@ public class GomLanguageParser extends Parser {
             	    }
             	    break;
             	case 4 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:91:75: gr4+= atomdecl
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:88:75: gr4+= atomdecl
             	    {
-            	    pushFollow(FOLLOW_atomdecl_in_syntax590);
+            	    pushFollow(FOLLOW_atomdecl_in_syntax301);
             	    gr4=atomdecl();
 
             	    state._fsp--;
@@ -1014,55 +1014,55 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: gr3, gr1, gr2, gr4
+            // elements: gr4, gr3, gr2, gr1
             // token labels: 
             // rule labels: retval
             // token list labels: 
-            // rule list labels: gr2, gr1, gr4, gr3
+            // rule list labels: gr3, gr4, gr1, gr2
             // wildcard labels: 
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-            RewriteRuleSubtreeStream stream_gr2=new RewriteRuleSubtreeStream(adaptor,"token gr2",list_gr2);
-            RewriteRuleSubtreeStream stream_gr1=new RewriteRuleSubtreeStream(adaptor,"token gr1",list_gr1);
-            RewriteRuleSubtreeStream stream_gr4=new RewriteRuleSubtreeStream(adaptor,"token gr4",list_gr4);
             RewriteRuleSubtreeStream stream_gr3=new RewriteRuleSubtreeStream(adaptor,"token gr3",list_gr3);
+            RewriteRuleSubtreeStream stream_gr4=new RewriteRuleSubtreeStream(adaptor,"token gr4",list_gr4);
+            RewriteRuleSubtreeStream stream_gr1=new RewriteRuleSubtreeStream(adaptor,"token gr1",list_gr1);
+            RewriteRuleSubtreeStream stream_gr2=new RewriteRuleSubtreeStream(adaptor,"token gr2",list_gr2);
             root_0 = (Tree)adaptor.nil();
-            // 92:5: -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) )
+            // 89:5: -> ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:8: ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:8: ^( ConcGrammar ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcGrammar, "ConcGrammar"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:22: ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:22: ^( Grammar ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* ) )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Grammar, "Grammar"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:32: ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:32: ^( ConcProduction ( $gr4)* ( $gr1)* ( $gr2)* ( $gr3)* )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcProduction, "ConcProduction"), root_3);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:49: ( $gr4)*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:49: ( $gr4)*
                 while ( stream_gr4.hasNext() ) {
                     adaptor.addChild(root_3, stream_gr4.nextTree());
 
                 }
                 stream_gr4.reset();
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:57: ( $gr1)*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:57: ( $gr1)*
                 while ( stream_gr1.hasNext() ) {
                     adaptor.addChild(root_3, stream_gr1.nextTree());
 
                 }
                 stream_gr1.reset();
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:65: ( $gr2)*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:65: ( $gr2)*
                 while ( stream_gr2.hasNext() ) {
                     adaptor.addChild(root_3, stream_gr2.nextTree());
 
                 }
                 stream_gr2.reset();
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:92:73: ( $gr3)*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:89:73: ( $gr3)*
                 while ( stream_gr3.hasNext() ) {
                     adaptor.addChild(root_3, stream_gr3.nextTree());
 
@@ -1107,7 +1107,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "production"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:95:1: production : ID fieldlist ARROW type -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:92:1: production : ID fieldlist ARROW type -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) ) ;
     public final GomLanguageParser.production_return production() throws RecognitionException {
         GomLanguageParser.production_return retval = new GomLanguageParser.production_return();
         retval.start = input.LT(1);
@@ -1131,22 +1131,22 @@ public class GomLanguageParser extends Parser {
         String startLine = ""+input.LT(1).getLine();
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:98:3: ( ID fieldlist ARROW type -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:99:3: ID fieldlist ARROW type
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:95:3: ( ID fieldlist ARROW type -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:96:3: ID fieldlist ARROW type
             {
-            ID13=(Token)match(input,ID,FOLLOW_ID_in_production653);  
+            ID13=(Token)match(input,ID,FOLLOW_ID_in_production363);  
             stream_ID.add(ID13);
 
-            pushFollow(FOLLOW_fieldlist_in_production655);
+            pushFollow(FOLLOW_fieldlist_in_production365);
             fieldlist14=fieldlist();
 
             state._fsp--;
 
             stream_fieldlist.add(fieldlist14.getTree());
-            ARROW15=(Token)match(input,ARROW,FOLLOW_ARROW_in_production657);  
+            ARROW15=(Token)match(input,ARROW,FOLLOW_ARROW_in_production367);  
             stream_ARROW.add(ARROW15);
 
-            pushFollow(FOLLOW_type_in_production659);
+            pushFollow(FOLLOW_type_in_production369);
             type16=type();
 
             state._fsp--;
@@ -1155,7 +1155,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: type, fieldlist, ID, ID
+            // elements: ID, fieldlist, type, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1165,9 +1165,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 99:27: -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) )
+            // 96:27: -> ^( Production ID fieldlist type ^( Origin ID[startLine] ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:99:30: ^( Production ID fieldlist type ^( Origin ID[startLine] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:96:30: ^( Production ID fieldlist type ^( Origin ID[startLine] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Production, "Production"), root_1);
@@ -1175,7 +1175,7 @@ public class GomLanguageParser extends Parser {
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_fieldlist.nextTree());
                 adaptor.addChild(root_1, stream_type.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:99:61: ^( Origin ID[startLine] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:96:61: ^( Origin ID[startLine] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -1217,7 +1217,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "atomdecl"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:102:1: atomdecl : ATOM atom= ID -> ^( AtomDecl ID[atom] ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:99:1: atomdecl : ATOM atom= ID -> ^( AtomDecl ID[atom] ) ;
     public final GomLanguageParser.atomdecl_return atomdecl() throws RecognitionException {
         GomLanguageParser.atomdecl_return retval = new GomLanguageParser.atomdecl_return();
         retval.start = input.LT(1);
@@ -1233,13 +1233,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:102:10: ( ATOM atom= ID -> ^( AtomDecl ID[atom] ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:103:3: ATOM atom= ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:99:10: ( ATOM atom= ID -> ^( AtomDecl ID[atom] ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:100:3: ATOM atom= ID
             {
-            ATOM17=(Token)match(input,ATOM,FOLLOW_ATOM_in_atomdecl692);  
+            ATOM17=(Token)match(input,ATOM,FOLLOW_ATOM_in_atomdecl401);  
             stream_ATOM.add(ATOM17);
 
-            atom=(Token)match(input,ID,FOLLOW_ID_in_atomdecl696);  
+            atom=(Token)match(input,ID,FOLLOW_ID_in_atomdecl405);  
             stream_ID.add(atom);
 
 
@@ -1255,9 +1255,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 103:16: -> ^( AtomDecl ID[atom] )
+            // 100:16: -> ^( AtomDecl ID[atom] )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:103:19: ^( AtomDecl ID[atom] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:100:19: ^( AtomDecl ID[atom] )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(AtomDecl, "AtomDecl"), root_1);
@@ -1296,7 +1296,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "typedecl"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:106:1: typedecl : (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) );
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:103:1: typedecl : (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) );
     public final GomLanguageParser.typedecl_return typedecl() throws RecognitionException {
         GomLanguageParser.typedecl_return retval = new GomLanguageParser.typedecl_return();
         retval.start = input.LT(1);
@@ -1321,13 +1321,13 @@ public class GomLanguageParser extends Parser {
         Tree BINDS19_tree=null;
         Tree EQUALS20_tree=null;
         RewriteRuleTokenStream stream_EQUALS=new RewriteRuleTokenStream(adaptor,"token EQUALS");
-        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleTokenStream stream_BINDS=new RewriteRuleTokenStream(adaptor,"token BINDS");
+        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_atoms=new RewriteRuleSubtreeStream(adaptor,"rule atoms");
-        RewriteRuleSubtreeStream stream_alternatives=new RewriteRuleSubtreeStream(adaptor,"rule alternatives");
         RewriteRuleSubtreeStream stream_pattern_alternatives=new RewriteRuleSubtreeStream(adaptor,"rule pattern_alternatives");
+        RewriteRuleSubtreeStream stream_alternatives=new RewriteRuleSubtreeStream(adaptor,"rule alternatives");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:106:10: (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:103:10: (typename= ID EQUALS alts= alternatives[typename] -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts) | ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename] -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts) )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -1355,15 +1355,15 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:107:5: typename= ID EQUALS alts= alternatives[typename]
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:104:5: typename= ID EQUALS alts= alternatives[typename]
                     {
-                    typename=(Token)match(input,ID,FOLLOW_ID_in_typedecl722);  
+                    typename=(Token)match(input,ID,FOLLOW_ID_in_typedecl431);  
                     stream_ID.add(typename);
 
-                    EQUALS18=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl724);  
+                    EQUALS18=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl433);  
                     stream_EQUALS.add(EQUALS18);
 
-                    pushFollow(FOLLOW_alternatives_in_typedecl728);
+                    pushFollow(FOLLOW_alternatives_in_typedecl437);
                     alts=alternatives(typename);
 
                     state._fsp--;
@@ -1372,31 +1372,31 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typename, alts
+                    // elements: alts, typename
                     // token labels: typename
-                    // rule labels: retval, alts
+                    // rule labels: alts, retval
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
                     RewriteRuleTokenStream stream_typename=new RewriteRuleTokenStream(adaptor,"token typename",typename);
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
                     RewriteRuleSubtreeStream stream_alts=new RewriteRuleSubtreeStream(adaptor,"rule alts",alts!=null?alts.tree:null);
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 108:7: -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
+                    // 105:7: -> ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:108:10: ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:105:10: ^( SortType ^( GomType ^( ExpressionType ) $typename) ^( ConcAtom ) $alts)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(SortType, "SortType"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:108:21: ^( GomType ^( ExpressionType ) $typename)
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:105:21: ^( GomType ^( ExpressionType ) $typename)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:108:31: ^( ExpressionType )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:105:31: ^( ExpressionType )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -1407,7 +1407,7 @@ public class GomLanguageParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:108:60: ^( ConcAtom )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:105:60: ^( ConcAtom )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAtom, "ConcAtom"), root_2);
@@ -1425,24 +1425,24 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:109:6: ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename]
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:106:6: ptypename= ID BINDS b= atoms EQUALS palts= pattern_alternatives[ptypename]
                     {
-                    ptypename=(Token)match(input,ID,FOLLOW_ID_in_typedecl768);  
+                    ptypename=(Token)match(input,ID,FOLLOW_ID_in_typedecl477);  
                     stream_ID.add(ptypename);
 
-                    BINDS19=(Token)match(input,BINDS,FOLLOW_BINDS_in_typedecl770);  
+                    BINDS19=(Token)match(input,BINDS,FOLLOW_BINDS_in_typedecl479);  
                     stream_BINDS.add(BINDS19);
 
-                    pushFollow(FOLLOW_atoms_in_typedecl774);
+                    pushFollow(FOLLOW_atoms_in_typedecl483);
                     b=atoms();
 
                     state._fsp--;
 
                     stream_atoms.add(b.getTree());
-                    EQUALS20=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl776);  
+                    EQUALS20=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_typedecl485);  
                     stream_EQUALS.add(EQUALS20);
 
-                    pushFollow(FOLLOW_pattern_alternatives_in_typedecl780);
+                    pushFollow(FOLLOW_pattern_alternatives_in_typedecl489);
                     palts=pattern_alternatives(ptypename);
 
                     state._fsp--;
@@ -1451,32 +1451,32 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: palts, b, ptypename
+                    // elements: b, palts, ptypename
                     // token labels: ptypename
-                    // rule labels: retval, b, palts
+                    // rule labels: retval, palts, b
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
                     RewriteRuleTokenStream stream_ptypename=new RewriteRuleTokenStream(adaptor,"token ptypename",ptypename);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-                    RewriteRuleSubtreeStream stream_b=new RewriteRuleSubtreeStream(adaptor,"rule b",b!=null?b.tree:null);
                     RewriteRuleSubtreeStream stream_palts=new RewriteRuleSubtreeStream(adaptor,"rule palts",palts!=null?palts.tree:null);
+                    RewriteRuleSubtreeStream stream_b=new RewriteRuleSubtreeStream(adaptor,"rule b",b!=null?b.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 110:7: -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
+                    // 107:7: -> ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:110:10: ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:107:10: ^( SortType ^( GomType ^( PatternType ) $ptypename) $b $palts)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(SortType, "SortType"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:110:21: ^( GomType ^( PatternType ) $ptypename)
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:107:21: ^( GomType ^( PatternType ) $ptypename)
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:110:31: ^( PatternType )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:107:31: ^( PatternType )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_3);
@@ -1524,7 +1524,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "atoms"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:113:1: atoms : (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:110:1: atoms : (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) ;
     public final GomLanguageParser.atoms_return atoms() throws RecognitionException {
         GomLanguageParser.atoms_return retval = new GomLanguageParser.atoms_return();
         retval.start = input.LT(1);
@@ -1538,10 +1538,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:113:7: ( (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:114:3: (atom+= ID )+
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:110:7: ( (atom+= ID )+ -> ^( ConcAtom ( $atom)+ ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:111:3: (atom+= ID )+
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:114:3: (atom+= ID )+
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:111:3: (atom+= ID )+
             int cnt8=0;
             loop8:
             do {
@@ -1555,9 +1555,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:114:4: atom+= ID
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:111:4: atom+= ID
             	    {
-            	    atom=(Token)match(input,ID,FOLLOW_ID_in_atoms827);  
+            	    atom=(Token)match(input,ID,FOLLOW_ID_in_atoms535);  
             	    stream_ID.add(atom);
 
             	    if (list_atom==null) list_atom=new ArrayList();
@@ -1590,9 +1590,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 114:15: -> ^( ConcAtom ( $atom)+ )
+            // 111:15: -> ^( ConcAtom ( $atom)+ )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:114:18: ^( ConcAtom ( $atom)+ )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:111:18: ^( ConcAtom ( $atom)+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcAtom, "ConcAtom"), root_1);
@@ -1638,7 +1638,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "alternatives"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:117:1: alternatives[Token typename] : ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcProduction ( opdecl )+ ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:114:1: alternatives[Token typename] : ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcProduction ( opdecl )+ ) ;
     public final GomLanguageParser.alternatives_return alternatives(Token typename) throws RecognitionException {
         GomLanguageParser.alternatives_return retval = new GomLanguageParser.alternatives_return();
         retval.start = input.LT(1);
@@ -1668,15 +1668,15 @@ public class GomLanguageParser extends Parser {
         Tree ALT26_tree=null;
         Tree ALT27_tree=null;
         Tree SEMI29_tree=null;
+        RewriteRuleTokenStream stream_SEMI=new RewriteRuleTokenStream(adaptor,"token SEMI");
         RewriteRuleTokenStream stream_ALT=new RewriteRuleTokenStream(adaptor,"token ALT");
         RewriteRuleTokenStream stream_JAVADOC=new RewriteRuleTokenStream(adaptor,"token JAVADOC");
-        RewriteRuleTokenStream stream_SEMI=new RewriteRuleTokenStream(adaptor,"token SEMI");
         RewriteRuleSubtreeStream stream_opdecl=new RewriteRuleSubtreeStream(adaptor,"rule opdecl");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:117:30: ( ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcProduction ( opdecl )+ ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:114:30: ( ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )? -> ^( ConcProduction ( opdecl )+ ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? ) opdecl[typename,jd1] ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )* ( SEMI )?
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:3: ( (jd1= JAVADOC ALT ) | ( ALT jd1= JAVADOC ) | jd1= JAVADOC | ( ALT )? )
             int alt10=4;
             switch ( input.LA(1) ) {
             case JAVADOC:
@@ -1729,15 +1729,15 @@ public class GomLanguageParser extends Parser {
 
             switch (alt10) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:4: (jd1= JAVADOC ALT )
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:4: (jd1= JAVADOC ALT )
                     {
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:4: (jd1= JAVADOC ALT )
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:5: jd1= JAVADOC ALT
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:4: (jd1= JAVADOC ALT )
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:5: jd1= JAVADOC ALT
                     {
-                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives859);  
+                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives567);  
                     stream_JAVADOC.add(jd1);
 
-                    ALT21=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives861);  
+                    ALT21=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives569);  
                     stream_ALT.add(ALT21);
 
 
@@ -1747,15 +1747,15 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:24: ( ALT jd1= JAVADOC )
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:24: ( ALT jd1= JAVADOC )
                     {
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:24: ( ALT jd1= JAVADOC )
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:25: ALT jd1= JAVADOC
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:24: ( ALT jd1= JAVADOC )
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:25: ALT jd1= JAVADOC
                     {
-                    ALT22=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives867);  
+                    ALT22=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives575);  
                     stream_ALT.add(ALT22);
 
-                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives871);  
+                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives579);  
                     stream_JAVADOC.add(jd1);
 
 
@@ -1765,18 +1765,18 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:44: jd1= JAVADOC
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:44: jd1= JAVADOC
                     {
-                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives878);  
+                    jd1=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives586);  
                     stream_JAVADOC.add(jd1);
 
 
                     }
                     break;
                 case 4 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:58: ( ALT )?
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:58: ( ALT )?
                     {
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:58: ( ALT )?
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:58: ( ALT )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -1785,9 +1785,9 @@ public class GomLanguageParser extends Parser {
                     }
                     switch (alt9) {
                         case 1 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:118:59: ALT
+                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:115:59: ALT
                             {
-                            ALT23=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives883);  
+                            ALT23=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives591);  
                             stream_ALT.add(ALT23);
 
 
@@ -1802,13 +1802,13 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_opdecl_in_alternatives891);
+            pushFollow(FOLLOW_opdecl_in_alternatives598);
             opdecl24=opdecl(typename, jd1);
 
             state._fsp--;
 
             stream_opdecl.add(opdecl24.getTree());
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:120:3: ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:117:3: ( ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2] )*
             loop12:
             do {
                 int alt12=2;
@@ -1821,9 +1821,9 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt12) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2]
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT ) opdecl[typename,jd2]
             	    {
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT )
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:4: ( (jd2= JAVADOC ALT ) | ( ALT jd2= JAVADOC ) | ALT )
             	    int alt11=3;
             	    int LA11_0 = input.LA(1);
 
@@ -1854,15 +1854,15 @@ public class GomLanguageParser extends Parser {
             	    }
             	    switch (alt11) {
             	        case 1 :
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:5: (jd2= JAVADOC ALT )
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:5: (jd2= JAVADOC ALT )
             	            {
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:5: (jd2= JAVADOC ALT )
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:6: jd2= JAVADOC ALT
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:5: (jd2= JAVADOC ALT )
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:6: jd2= JAVADOC ALT
             	            {
-            	            jd2=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives906);  
+            	            jd2=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives612);  
             	            stream_JAVADOC.add(jd2);
 
-            	            ALT25=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives908);  
+            	            ALT25=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives614);  
             	            stream_ALT.add(ALT25);
 
 
@@ -1872,15 +1872,15 @@ public class GomLanguageParser extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:25: ( ALT jd2= JAVADOC )
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:25: ( ALT jd2= JAVADOC )
             	            {
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:25: ( ALT jd2= JAVADOC )
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:26: ALT jd2= JAVADOC
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:25: ( ALT jd2= JAVADOC )
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:26: ALT jd2= JAVADOC
             	            {
-            	            ALT26=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives914);  
+            	            ALT26=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives620);  
             	            stream_ALT.add(ALT26);
 
-            	            jd2=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives918);  
+            	            jd2=(Token)match(input,JAVADOC,FOLLOW_JAVADOC_in_alternatives624);  
             	            stream_JAVADOC.add(jd2);
 
 
@@ -1890,9 +1890,9 @@ public class GomLanguageParser extends Parser {
             	            }
             	            break;
             	        case 3 :
-            	            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:121:45: ALT
+            	            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:118:45: ALT
             	            {
-            	            ALT27=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives923);  
+            	            ALT27=(Token)match(input,ALT,FOLLOW_ALT_in_alternatives629);  
             	            stream_ALT.add(ALT27);
 
             	            jd2=null;
@@ -1902,7 +1902,7 @@ public class GomLanguageParser extends Parser {
 
             	    }
 
-            	    pushFollow(FOLLOW_opdecl_in_alternatives932);
+            	    pushFollow(FOLLOW_opdecl_in_alternatives637);
             	    opdecl28=opdecl(typename, jd2);
 
             	    state._fsp--;
@@ -1917,7 +1917,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:123:6: ( SEMI )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:120:6: ( SEMI )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -1926,9 +1926,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt13) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:123:7: SEMI
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:120:7: SEMI
                     {
-                    SEMI29=(Token)match(input,SEMI,FOLLOW_SEMI_in_alternatives942);  
+                    SEMI29=(Token)match(input,SEMI,FOLLOW_SEMI_in_alternatives646);  
                     stream_SEMI.add(SEMI29);
 
 
@@ -1950,9 +1950,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 124:3: -> ^( ConcProduction ( opdecl )+ )
+            // 121:3: -> ^( ConcProduction ( opdecl )+ )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:124:6: ^( ConcProduction ( opdecl )+ )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:121:6: ^( ConcProduction ( opdecl )+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcProduction, "ConcProduction"), root_1);
@@ -1998,7 +1998,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_alternatives"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:128:1: pattern_alternatives[Token typename] : ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcProduction ( pattern_opdecl )+ ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:125:1: pattern_alternatives[Token typename] : ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcProduction ( pattern_opdecl )+ ) ;
     public final GomLanguageParser.pattern_alternatives_return pattern_alternatives(Token typename) throws RecognitionException {
         GomLanguageParser.pattern_alternatives_return retval = new GomLanguageParser.pattern_alternatives_return();
         retval.start = input.LT(1);
@@ -2016,14 +2016,14 @@ public class GomLanguageParser extends Parser {
         Tree ALT30_tree=null;
         Tree ALT32_tree=null;
         Tree SEMI34_tree=null;
-        RewriteRuleTokenStream stream_ALT=new RewriteRuleTokenStream(adaptor,"token ALT");
         RewriteRuleTokenStream stream_SEMI=new RewriteRuleTokenStream(adaptor,"token SEMI");
+        RewriteRuleTokenStream stream_ALT=new RewriteRuleTokenStream(adaptor,"token ALT");
         RewriteRuleSubtreeStream stream_pattern_opdecl=new RewriteRuleSubtreeStream(adaptor,"rule pattern_opdecl");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:128:38: ( ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcProduction ( pattern_opdecl )+ ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:3: ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:125:38: ( ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )? -> ^( ConcProduction ( pattern_opdecl )+ ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:3: ( ALT )? pattern_opdecl[typename] ( ALT pattern_opdecl[typename] )* ( SEMI )?
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:3: ( ALT )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:3: ( ALT )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -2032,9 +2032,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt14) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:4: ALT
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:4: ALT
                     {
-                    ALT30=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives974);  
+                    ALT30=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives678);  
                     stream_ALT.add(ALT30);
 
 
@@ -2043,13 +2043,13 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives978);
+            pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives682);
             pattern_opdecl31=pattern_opdecl(typename);
 
             state._fsp--;
 
             stream_pattern_opdecl.add(pattern_opdecl31.getTree());
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:35: ( ALT pattern_opdecl[typename] )*
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:35: ( ALT pattern_opdecl[typename] )*
             loop15:
             do {
                 int alt15=2;
@@ -2062,12 +2062,12 @@ public class GomLanguageParser extends Parser {
 
                 switch (alt15) {
             	case 1 :
-            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:36: ALT pattern_opdecl[typename]
+            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:36: ALT pattern_opdecl[typename]
             	    {
-            	    ALT32=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives982);  
+            	    ALT32=(Token)match(input,ALT,FOLLOW_ALT_in_pattern_alternatives686);  
             	    stream_ALT.add(ALT32);
 
-            	    pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives984);
+            	    pushFollow(FOLLOW_pattern_opdecl_in_pattern_alternatives688);
             	    pattern_opdecl33=pattern_opdecl(typename);
 
             	    state._fsp--;
@@ -2082,7 +2082,7 @@ public class GomLanguageParser extends Parser {
                 }
             } while (true);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:67: ( SEMI )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:67: ( SEMI )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -2091,9 +2091,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:129:68: SEMI
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:126:68: SEMI
                     {
-                    SEMI34=(Token)match(input,SEMI,FOLLOW_SEMI_in_pattern_alternatives990);  
+                    SEMI34=(Token)match(input,SEMI,FOLLOW_SEMI_in_pattern_alternatives694);  
                     stream_SEMI.add(SEMI34);
 
 
@@ -2115,9 +2115,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 130:3: -> ^( ConcProduction ( pattern_opdecl )+ )
+            // 127:3: -> ^( ConcProduction ( pattern_opdecl )+ )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:130:6: ^( ConcProduction ( pattern_opdecl )+ )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:127:6: ^( ConcProduction ( pattern_opdecl )+ )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcProduction, "ConcProduction"), root_1);
@@ -2163,7 +2163,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "opdecl"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:133:1: opdecl[Token type, Token JAVADOC] : ID fieldlist -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:130:1: opdecl[Token type, Token JAVADOC] : ID fieldlist -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.opdecl_return opdecl(Token type, Token JAVADOC) throws RecognitionException {
         GomLanguageParser.opdecl_return retval = new GomLanguageParser.opdecl_return();
         retval.start = input.LT(1);
@@ -2178,13 +2178,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_fieldlist=new RewriteRuleSubtreeStream(adaptor,"rule fieldlist");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:133:35: ( ID fieldlist -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:134:2: ID fieldlist
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:130:35: ( ID fieldlist -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) ) -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:131:2: ID fieldlist
             {
-            ID35=(Token)match(input,ID,FOLLOW_ID_in_opdecl1018);  
+            ID35=(Token)match(input,ID,FOLLOW_ID_in_opdecl722);  
             stream_ID.add(ID35);
 
-            pushFollow(FOLLOW_fieldlist_in_opdecl1020);
+            pushFollow(FOLLOW_fieldlist_in_opdecl724);
             fieldlist36=fieldlist();
 
             state._fsp--;
@@ -2193,7 +2193,7 @@ public class GomLanguageParser extends Parser {
 
 
             // AST REWRITE
-            // elements: fieldlist, fieldlist, ID, ID, ID, ID, ID, ID, ID
+            // elements: ID, fieldlist, ID, ID, ID, fieldlist, ID, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2203,21 +2203,21 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 135:3: -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
+            // 132:3: -> {JAVADOC!=null}? ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
             if (JAVADOC!=null) {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:135:23: ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:132:23: ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Production, "Production"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_fieldlist.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:135:49: ^( GomType ^( ExpressionType ) ID[type] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:132:49: ^( GomType ^( ExpressionType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:135:59: ^( ExpressionType )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:132:59: ^( ExpressionType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -2228,12 +2228,12 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:136:7: ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:133:7: ^( OptionList ^( Origin ID[\"\"+input.LT(1).getLine()] ) ^( Details ID[JAVADOC] ) )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(OptionList, "OptionList"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:136:20: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:133:20: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_3);
@@ -2242,7 +2242,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_2, root_3);
                 }
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:136:59: ^( Details ID[JAVADOC] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:133:59: ^( Details ID[JAVADOC] )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Details, "Details"), root_3);
@@ -2259,21 +2259,21 @@ public class GomLanguageParser extends Parser {
                 }
 
             }
-            else // 137:3: -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+            else // 134:3: -> ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:137:6: ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:134:6: ^( Production ID fieldlist ^( GomType ^( ExpressionType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Production, "Production"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_fieldlist.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:137:32: ^( GomType ^( ExpressionType ) ID[type] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:134:32: ^( GomType ^( ExpressionType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:137:42: ^( ExpressionType )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:134:42: ^( ExpressionType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_3);
@@ -2284,7 +2284,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:138:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:135:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -2326,7 +2326,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_opdecl"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:142:1: pattern_opdecl[Token type] : ID pattern_fieldlist -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:139:1: pattern_opdecl[Token type] : ID pattern_fieldlist -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.pattern_opdecl_return pattern_opdecl(Token type) throws RecognitionException {
         GomLanguageParser.pattern_opdecl_return retval = new GomLanguageParser.pattern_opdecl_return();
         retval.start = input.LT(1);
@@ -2341,13 +2341,13 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_pattern_fieldlist=new RewriteRuleSubtreeStream(adaptor,"rule pattern_fieldlist");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:142:28: ( ID pattern_fieldlist -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:143:2: ID pattern_fieldlist
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:139:28: ( ID pattern_fieldlist -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:140:2: ID pattern_fieldlist
             {
-            ID37=(Token)match(input,ID,FOLLOW_ID_in_pattern_opdecl1120);  
+            ID37=(Token)match(input,ID,FOLLOW_ID_in_pattern_opdecl824);  
             stream_ID.add(ID37);
 
-            pushFollow(FOLLOW_pattern_fieldlist_in_pattern_opdecl1122);
+            pushFollow(FOLLOW_pattern_fieldlist_in_pattern_opdecl826);
             pattern_fieldlist38=pattern_fieldlist();
 
             state._fsp--;
@@ -2366,21 +2366,21 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 144:3: -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+            // 141:3: -> ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:144:6: ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:141:6: ^( Production ID pattern_fieldlist ^( GomType ^( PatternType ) ID[type] ) ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Production, "Production"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
                 adaptor.addChild(root_1, stream_pattern_fieldlist.nextTree());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:144:40: ^( GomType ^( PatternType ) ID[type] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:141:40: ^( GomType ^( PatternType ) ID[type] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_2);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:144:50: ^( PatternType )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:141:50: ^( PatternType )
                 {
                 Tree root_3 = (Tree)adaptor.nil();
                 root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_3);
@@ -2391,7 +2391,7 @@ public class GomLanguageParser extends Parser {
 
                 adaptor.addChild(root_1, root_2);
                 }
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:145:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:142:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -2433,7 +2433,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "fieldlist"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:148:1: fieldlist : LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:145:1: fieldlist : LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) ;
     public final GomLanguageParser.fieldlist_return fieldlist() throws RecognitionException {
         GomLanguageParser.fieldlist_return retval = new GomLanguageParser.fieldlist_return();
         retval.start = input.LT(1);
@@ -2451,18 +2451,18 @@ public class GomLanguageParser extends Parser {
         Tree LPAREN39_tree=null;
         Tree COMMA41_tree=null;
         Tree RPAREN43_tree=null;
-        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
+        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_field=new RewriteRuleSubtreeStream(adaptor,"rule field");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:148:11: ( LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:3: LPAREN ( field ( COMMA field )* )? RPAREN
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:145:11: ( LPAREN ( field ( COMMA field )* )? RPAREN -> ^( ConcField ( field )* ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:3: LPAREN ( field ( COMMA field )* )? RPAREN
             {
-            LPAREN39=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_fieldlist1171);  
+            LPAREN39=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_fieldlist875);  
             stream_LPAREN.add(LPAREN39);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:10: ( field ( COMMA field )* )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:10: ( field ( COMMA field )* )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -2471,15 +2471,15 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:11: field ( COMMA field )*
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:11: field ( COMMA field )*
                     {
-                    pushFollow(FOLLOW_field_in_fieldlist1174);
+                    pushFollow(FOLLOW_field_in_fieldlist878);
                     field40=field();
 
                     state._fsp--;
 
                     stream_field.add(field40.getTree());
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:17: ( COMMA field )*
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:17: ( COMMA field )*
                     loop17:
                     do {
                         int alt17=2;
@@ -2492,12 +2492,12 @@ public class GomLanguageParser extends Parser {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:18: COMMA field
+                    	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:18: COMMA field
                     	    {
-                    	    COMMA41=(Token)match(input,COMMA,FOLLOW_COMMA_in_fieldlist1177);  
+                    	    COMMA41=(Token)match(input,COMMA,FOLLOW_COMMA_in_fieldlist881);  
                     	    stream_COMMA.add(COMMA41);
 
-                    	    pushFollow(FOLLOW_field_in_fieldlist1179);
+                    	    pushFollow(FOLLOW_field_in_fieldlist883);
                     	    field42=field();
 
                     	    state._fsp--;
@@ -2518,7 +2518,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            RPAREN43=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_fieldlist1186);  
+            RPAREN43=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_fieldlist890);  
             stream_RPAREN.add(RPAREN43);
 
 
@@ -2534,14 +2534,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 149:42: -> ^( ConcField ( field )* )
+            // 146:42: -> ^( ConcField ( field )* )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:45: ^( ConcField ( field )* )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:45: ^( ConcField ( field )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcField, "ConcField"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:149:57: ( field )*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:146:57: ( field )*
                 while ( stream_field.hasNext() ) {
                     adaptor.addChild(root_1, stream_field.nextTree());
 
@@ -2580,7 +2580,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_fieldlist"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:152:1: pattern_fieldlist : LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:149:1: pattern_fieldlist : LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) ;
     public final GomLanguageParser.pattern_fieldlist_return pattern_fieldlist() throws RecognitionException {
         GomLanguageParser.pattern_fieldlist_return retval = new GomLanguageParser.pattern_fieldlist_return();
         retval.start = input.LT(1);
@@ -2598,18 +2598,18 @@ public class GomLanguageParser extends Parser {
         Tree LPAREN44_tree=null;
         Tree COMMA46_tree=null;
         Tree RPAREN48_tree=null;
-        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
+        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_pattern_field=new RewriteRuleSubtreeStream(adaptor,"rule pattern_field");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:152:19: ( LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:3: LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:149:19: ( LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN -> ^( ConcField ( pattern_field )* ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:3: LPAREN ( pattern_field ( COMMA pattern_field )* )? RPAREN
             {
-            LPAREN44=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_pattern_fieldlist1210);  
+            LPAREN44=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_pattern_fieldlist914);  
             stream_LPAREN.add(LPAREN44);
 
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:10: ( pattern_field ( COMMA pattern_field )* )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:10: ( pattern_field ( COMMA pattern_field )* )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -2618,15 +2618,15 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt20) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:11: pattern_field ( COMMA pattern_field )*
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:11: pattern_field ( COMMA pattern_field )*
                     {
-                    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1213);
+                    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist917);
                     pattern_field45=pattern_field();
 
                     state._fsp--;
 
                     stream_pattern_field.add(pattern_field45.getTree());
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:25: ( COMMA pattern_field )*
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:25: ( COMMA pattern_field )*
                     loop19:
                     do {
                         int alt19=2;
@@ -2639,12 +2639,12 @@ public class GomLanguageParser extends Parser {
 
                         switch (alt19) {
                     	case 1 :
-                    	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:26: COMMA pattern_field
+                    	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:26: COMMA pattern_field
                     	    {
-                    	    COMMA46=(Token)match(input,COMMA,FOLLOW_COMMA_in_pattern_fieldlist1216);  
+                    	    COMMA46=(Token)match(input,COMMA,FOLLOW_COMMA_in_pattern_fieldlist920);  
                     	    stream_COMMA.add(COMMA46);
 
-                    	    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist1218);
+                    	    pushFollow(FOLLOW_pattern_field_in_pattern_fieldlist922);
                     	    pattern_field47=pattern_field();
 
                     	    state._fsp--;
@@ -2665,7 +2665,7 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            RPAREN48=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_pattern_fieldlist1225);  
+            RPAREN48=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_pattern_fieldlist929);  
             stream_RPAREN.add(RPAREN48);
 
 
@@ -2681,14 +2681,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 153:58: -> ^( ConcField ( pattern_field )* )
+            // 150:58: -> ^( ConcField ( pattern_field )* )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:61: ^( ConcField ( pattern_field )* )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:61: ^( ConcField ( pattern_field )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcField, "ConcField"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:153:73: ( pattern_field )*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:150:73: ( pattern_field )*
                 while ( stream_pattern_field.hasNext() ) {
                     adaptor.addChild(root_1, stream_pattern_field.nextTree());
 
@@ -2727,7 +2727,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "type"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:155:1: type : ID -> ^( GomType ^( ExpressionType ) ID ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:152:1: type : ID -> ^( GomType ^( ExpressionType ) ID ) ;
     public final GomLanguageParser.type_return type() throws RecognitionException {
         GomLanguageParser.type_return retval = new GomLanguageParser.type_return();
         retval.start = input.LT(1);
@@ -2740,10 +2740,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:155:5: ( ID -> ^( GomType ^( ExpressionType ) ID ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:156:3: ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:152:5: ( ID -> ^( GomType ^( ExpressionType ) ID ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:153:3: ID
             {
-            ID49=(Token)match(input,ID,FOLLOW_ID_in_type1246);  
+            ID49=(Token)match(input,ID,FOLLOW_ID_in_type950);  
             stream_ID.add(ID49);
 
 
@@ -2759,14 +2759,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 156:6: -> ^( GomType ^( ExpressionType ) ID )
+            // 153:6: -> ^( GomType ^( ExpressionType ) ID )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:156:9: ^( GomType ^( ExpressionType ) ID )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:153:9: ^( GomType ^( ExpressionType ) ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:156:19: ^( ExpressionType )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:153:19: ^( ExpressionType )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ExpressionType, "ExpressionType"), root_2);
@@ -2807,7 +2807,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_type"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:160:1: pattern_type : ID -> ^( GomType ^( PatternType ) ID ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:157:1: pattern_type : ID -> ^( GomType ^( PatternType ) ID ) ;
     public final GomLanguageParser.pattern_type_return pattern_type() throws RecognitionException {
         GomLanguageParser.pattern_type_return retval = new GomLanguageParser.pattern_type_return();
         retval.start = input.LT(1);
@@ -2820,10 +2820,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:160:13: ( ID -> ^( GomType ^( PatternType ) ID ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:3: ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:157:13: ( ID -> ^( GomType ^( PatternType ) ID ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:158:3: ID
             {
-            ID50=(Token)match(input,ID,FOLLOW_ID_in_pattern_type1272);  
+            ID50=(Token)match(input,ID,FOLLOW_ID_in_pattern_type976);  
             stream_ID.add(ID50);
 
 
@@ -2839,14 +2839,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 161:6: -> ^( GomType ^( PatternType ) ID )
+            // 158:6: -> ^( GomType ^( PatternType ) ID )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:9: ^( GomType ^( PatternType ) ID )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:158:9: ^( GomType ^( PatternType ) ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(GomType, "GomType"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:161:19: ^( PatternType )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:158:19: ^( PatternType )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(PatternType, "PatternType"), root_2);
@@ -2887,7 +2887,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "field"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:164:1: field : ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ^( None ) ID type ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ^( Refresh ) ID pattern_type ) );
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:161:1: field : ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ^( None ) ID type ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ^( Refresh ) ID pattern_type ) );
     public final GomLanguageParser.field_return field() throws RecognitionException {
         GomLanguageParser.field_return retval = new GomLanguageParser.field_return();
         retval.start = input.LT(1);
@@ -2924,14 +2924,14 @@ public class GomLanguageParser extends Parser {
         Tree LDIPLE62_tree=null;
         Tree RDIPLE64_tree=null;
         RewriteRuleTokenStream stream_COLON=new RewriteRuleTokenStream(adaptor,"token COLON");
+        RewriteRuleTokenStream stream_RDIPLE=new RewriteRuleTokenStream(adaptor,"token RDIPLE");
         RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleTokenStream stream_LDIPLE=new RewriteRuleTokenStream(adaptor,"token LDIPLE");
-        RewriteRuleTokenStream stream_RDIPLE=new RewriteRuleTokenStream(adaptor,"token RDIPLE");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_pattern_type=new RewriteRuleSubtreeStream(adaptor,"rule pattern_type");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:164:6: ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ^( None ) ID type ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ^( Refresh ) ID pattern_type ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:161:6: ( type STAR -> ^( StarredField type ^( None ) ) | LDIPLE pattern_type RDIPLE STAR -> ^( StarredField pattern_type ^( Refresh ) ) | ID COLON type -> ^( NamedField ^( None ) ID type ) | ID COLON LDIPLE pattern_type RDIPLE -> ^( NamedField ^( Refresh ) ID pattern_type ) )
             int alt21=4;
             int LA21_0 = input.LA(1);
 
@@ -2975,15 +2975,15 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt21) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:5: type STAR
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:162:5: type STAR
                     {
-                    pushFollow(FOLLOW_type_in_field1298);
+                    pushFollow(FOLLOW_type_in_field1002);
                     type51=type();
 
                     state._fsp--;
 
                     stream_type.add(type51.getTree());
-                    STAR52=(Token)match(input,STAR,FOLLOW_STAR_in_field1300);  
+                    STAR52=(Token)match(input,STAR,FOLLOW_STAR_in_field1004);  
                     stream_STAR.add(STAR52);
 
 
@@ -2999,15 +2999,15 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 165:15: -> ^( StarredField type ^( None ) )
+                    // 162:15: -> ^( StarredField type ^( None ) )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:18: ^( StarredField type ^( None ) )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:162:18: ^( StarredField type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_type.nextTree());
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:165:38: ^( None )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:162:38: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3024,21 +3024,21 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:166:5: LDIPLE pattern_type RDIPLE STAR
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:163:5: LDIPLE pattern_type RDIPLE STAR
                     {
-                    LDIPLE53=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1318);  
+                    LDIPLE53=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1022);  
                     stream_LDIPLE.add(LDIPLE53);
 
-                    pushFollow(FOLLOW_pattern_type_in_field1320);
+                    pushFollow(FOLLOW_pattern_type_in_field1024);
                     pattern_type54=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type54.getTree());
-                    RDIPLE55=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1322);  
+                    RDIPLE55=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1026);  
                     stream_RDIPLE.add(RDIPLE55);
 
-                    STAR56=(Token)match(input,STAR,FOLLOW_STAR_in_field1324);  
+                    STAR56=(Token)match(input,STAR,FOLLOW_STAR_in_field1028);  
                     stream_STAR.add(STAR56);
 
 
@@ -3054,15 +3054,15 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 166:37: -> ^( StarredField pattern_type ^( Refresh ) )
+                    // 163:37: -> ^( StarredField pattern_type ^( Refresh ) )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:166:40: ^( StarredField pattern_type ^( Refresh ) )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:163:40: ^( StarredField pattern_type ^( Refresh ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:166:68: ^( Refresh )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:163:68: ^( Refresh )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Refresh, "Refresh"), root_2);
@@ -3079,15 +3079,15 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:167:5: ID COLON type
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:164:5: ID COLON type
                     {
-                    ID57=(Token)match(input,ID,FOLLOW_ID_in_field1342);  
+                    ID57=(Token)match(input,ID,FOLLOW_ID_in_field1046);  
                     stream_ID.add(ID57);
 
-                    COLON58=(Token)match(input,COLON,FOLLOW_COLON_in_field1344);  
+                    COLON58=(Token)match(input,COLON,FOLLOW_COLON_in_field1048);  
                     stream_COLON.add(COLON58);
 
-                    pushFollow(FOLLOW_type_in_field1346);
+                    pushFollow(FOLLOW_type_in_field1050);
                     type59=type();
 
                     state._fsp--;
@@ -3106,14 +3106,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 167:19: -> ^( NamedField ^( None ) ID type )
+                    // 164:19: -> ^( NamedField ^( None ) ID type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:167:22: ^( NamedField ^( None ) ID type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:164:22: ^( NamedField ^( None ) ID type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:167:35: ^( None )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:164:35: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3132,24 +3132,24 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:168:5: ID COLON LDIPLE pattern_type RDIPLE
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:165:5: ID COLON LDIPLE pattern_type RDIPLE
                     {
-                    ID60=(Token)match(input,ID,FOLLOW_ID_in_field1366);  
+                    ID60=(Token)match(input,ID,FOLLOW_ID_in_field1070);  
                     stream_ID.add(ID60);
 
-                    COLON61=(Token)match(input,COLON,FOLLOW_COLON_in_field1368);  
+                    COLON61=(Token)match(input,COLON,FOLLOW_COLON_in_field1072);  
                     stream_COLON.add(COLON61);
 
-                    LDIPLE62=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1370);  
+                    LDIPLE62=(Token)match(input,LDIPLE,FOLLOW_LDIPLE_in_field1074);  
                     stream_LDIPLE.add(LDIPLE62);
 
-                    pushFollow(FOLLOW_pattern_type_in_field1372);
+                    pushFollow(FOLLOW_pattern_type_in_field1076);
                     pattern_type63=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type63.getTree());
-                    RDIPLE64=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1374);  
+                    RDIPLE64=(Token)match(input,RDIPLE,FOLLOW_RDIPLE_in_field1078);  
                     stream_RDIPLE.add(RDIPLE64);
 
 
@@ -3165,14 +3165,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 168:41: -> ^( NamedField ^( Refresh ) ID pattern_type )
+                    // 165:41: -> ^( NamedField ^( Refresh ) ID pattern_type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:168:44: ^( NamedField ^( Refresh ) ID pattern_type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:165:44: ^( NamedField ^( Refresh ) ID pattern_type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:168:57: ^( Refresh )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:165:57: ^( Refresh )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Refresh, "Refresh"), root_2);
@@ -3216,7 +3216,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "pattern_field"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:172:1: pattern_field : ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ^( Inner ) ID type ) | OUTER ID COLON type -> ^( NamedField ^( Outer ) ID type ) | NEUTRAL ID COLON type -> ^( NamedField ^( Neutral ) ID type ) | ID COLON pattern_type -> ^( NamedField ^( None ) ID pattern_type ) );
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:169:1: pattern_field : ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ^( Inner ) ID type ) | OUTER ID COLON type -> ^( NamedField ^( Outer ) ID type ) | NEUTRAL ID COLON type -> ^( NamedField ^( Neutral ) ID type ) | ID COLON pattern_type -> ^( NamedField ^( None ) ID pattern_type ) );
     public final GomLanguageParser.pattern_field_return pattern_field() throws RecognitionException {
         GomLanguageParser.pattern_field_return retval = new GomLanguageParser.pattern_field_return();
         retval.start = input.LT(1);
@@ -3258,16 +3258,16 @@ public class GomLanguageParser extends Parser {
         Tree COLON77_tree=null;
         Tree ID79_tree=null;
         Tree COLON80_tree=null;
-        RewriteRuleTokenStream stream_COLON=new RewriteRuleTokenStream(adaptor,"token COLON");
-        RewriteRuleTokenStream stream_OUTER=new RewriteRuleTokenStream(adaptor,"token OUTER");
-        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_INNER=new RewriteRuleTokenStream(adaptor,"token INNER");
-        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
+        RewriteRuleTokenStream stream_COLON=new RewriteRuleTokenStream(adaptor,"token COLON");
+        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_NEUTRAL=new RewriteRuleTokenStream(adaptor,"token NEUTRAL");
+        RewriteRuleTokenStream stream_OUTER=new RewriteRuleTokenStream(adaptor,"token OUTER");
+        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_pattern_type=new RewriteRuleSubtreeStream(adaptor,"rule pattern_type");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:172:14: ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ^( Inner ) ID type ) | OUTER ID COLON type -> ^( NamedField ^( Outer ) ID type ) | NEUTRAL ID COLON type -> ^( NamedField ^( Neutral ) ID type ) | ID COLON pattern_type -> ^( NamedField ^( None ) ID pattern_type ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:169:14: ( pattern_type STAR -> ^( StarredField pattern_type ^( None ) ) | INNER ID COLON type -> ^( NamedField ^( Inner ) ID type ) | OUTER ID COLON type -> ^( NamedField ^( Outer ) ID type ) | NEUTRAL ID COLON type -> ^( NamedField ^( Neutral ) ID type ) | ID COLON pattern_type -> ^( NamedField ^( None ) ID pattern_type ) )
             int alt22=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -3312,15 +3312,15 @@ public class GomLanguageParser extends Parser {
 
             switch (alt22) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:5: pattern_type STAR
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:170:5: pattern_type STAR
                     {
-                    pushFollow(FOLLOW_pattern_type_in_pattern_field1404);
+                    pushFollow(FOLLOW_pattern_type_in_pattern_field1108);
                     pattern_type65=pattern_type();
 
                     state._fsp--;
 
                     stream_pattern_type.add(pattern_type65.getTree());
-                    STAR66=(Token)match(input,STAR,FOLLOW_STAR_in_pattern_field1406);  
+                    STAR66=(Token)match(input,STAR,FOLLOW_STAR_in_pattern_field1110);  
                     stream_STAR.add(STAR66);
 
 
@@ -3336,15 +3336,15 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 173:23: -> ^( StarredField pattern_type ^( None ) )
+                    // 170:23: -> ^( StarredField pattern_type ^( None ) )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:26: ^( StarredField pattern_type ^( None ) )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:170:26: ^( StarredField pattern_type ^( None ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(StarredField, "StarredField"), root_1);
 
                         adaptor.addChild(root_1, stream_pattern_type.nextTree());
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:173:54: ^( None )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:170:54: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3361,18 +3361,18 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:174:5: INNER ID COLON type
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:171:5: INNER ID COLON type
                     {
-                    INNER67=(Token)match(input,INNER,FOLLOW_INNER_in_pattern_field1424);  
+                    INNER67=(Token)match(input,INNER,FOLLOW_INNER_in_pattern_field1128);  
                     stream_INNER.add(INNER67);
 
-                    ID68=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1426);  
+                    ID68=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1130);  
                     stream_ID.add(ID68);
 
-                    COLON69=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1428);  
+                    COLON69=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1132);  
                     stream_COLON.add(COLON69);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1430);
+                    pushFollow(FOLLOW_type_in_pattern_field1134);
                     type70=type();
 
                     state._fsp--;
@@ -3381,7 +3381,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, type
+                    // elements: type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3391,14 +3391,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 174:25: -> ^( NamedField ^( Inner ) ID type )
+                    // 171:25: -> ^( NamedField ^( Inner ) ID type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:174:28: ^( NamedField ^( Inner ) ID type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:171:28: ^( NamedField ^( Inner ) ID type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:174:41: ^( Inner )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:171:41: ^( Inner )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Inner, "Inner"), root_2);
@@ -3417,18 +3417,18 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:175:5: OUTER ID COLON type
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:172:5: OUTER ID COLON type
                     {
-                    OUTER71=(Token)match(input,OUTER,FOLLOW_OUTER_in_pattern_field1450);  
+                    OUTER71=(Token)match(input,OUTER,FOLLOW_OUTER_in_pattern_field1154);  
                     stream_OUTER.add(OUTER71);
 
-                    ID72=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1452);  
+                    ID72=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1156);  
                     stream_ID.add(ID72);
 
-                    COLON73=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1454);  
+                    COLON73=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1158);  
                     stream_COLON.add(COLON73);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1456);
+                    pushFollow(FOLLOW_type_in_pattern_field1160);
                     type74=type();
 
                     state._fsp--;
@@ -3437,7 +3437,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, ID
+                    // elements: ID, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3447,14 +3447,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 175:25: -> ^( NamedField ^( Outer ) ID type )
+                    // 172:25: -> ^( NamedField ^( Outer ) ID type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:175:28: ^( NamedField ^( Outer ) ID type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:172:28: ^( NamedField ^( Outer ) ID type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:175:41: ^( Outer )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:172:41: ^( Outer )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Outer, "Outer"), root_2);
@@ -3473,18 +3473,18 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:5: NEUTRAL ID COLON type
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:173:5: NEUTRAL ID COLON type
                     {
-                    NEUTRAL75=(Token)match(input,NEUTRAL,FOLLOW_NEUTRAL_in_pattern_field1476);  
+                    NEUTRAL75=(Token)match(input,NEUTRAL,FOLLOW_NEUTRAL_in_pattern_field1180);  
                     stream_NEUTRAL.add(NEUTRAL75);
 
-                    ID76=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1478);  
+                    ID76=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1182);  
                     stream_ID.add(ID76);
 
-                    COLON77=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1480);  
+                    COLON77=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1184);  
                     stream_COLON.add(COLON77);
 
-                    pushFollow(FOLLOW_type_in_pattern_field1482);
+                    pushFollow(FOLLOW_type_in_pattern_field1186);
                     type78=type();
 
                     state._fsp--;
@@ -3493,7 +3493,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ID, type
+                    // elements: type, ID
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3503,14 +3503,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 176:27: -> ^( NamedField ^( Neutral ) ID type )
+                    // 173:27: -> ^( NamedField ^( Neutral ) ID type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:30: ^( NamedField ^( Neutral ) ID type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:173:30: ^( NamedField ^( Neutral ) ID type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:176:43: ^( Neutral )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:173:43: ^( Neutral )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Neutral, "Neutral"), root_2);
@@ -3529,15 +3529,15 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:177:5: ID COLON pattern_type
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:174:5: ID COLON pattern_type
                     {
-                    ID79=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1502);  
+                    ID79=(Token)match(input,ID,FOLLOW_ID_in_pattern_field1206);  
                     stream_ID.add(ID79);
 
-                    COLON80=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1504);  
+                    COLON80=(Token)match(input,COLON,FOLLOW_COLON_in_pattern_field1208);  
                     stream_COLON.add(COLON80);
 
-                    pushFollow(FOLLOW_pattern_type_in_pattern_field1506);
+                    pushFollow(FOLLOW_pattern_type_in_pattern_field1210);
                     pattern_type81=pattern_type();
 
                     state._fsp--;
@@ -3546,7 +3546,7 @@ public class GomLanguageParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: pattern_type, ID
+                    // elements: ID, pattern_type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3556,14 +3556,14 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 177:27: -> ^( NamedField ^( None ) ID pattern_type )
+                    // 174:27: -> ^( NamedField ^( None ) ID pattern_type )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:177:30: ^( NamedField ^( None ) ID pattern_type )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:174:30: ^( NamedField ^( None ) ID pattern_type )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(NamedField, "NamedField"), root_1);
 
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:177:43: ^( None )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:174:43: ^( None )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(None, "None"), root_2);
@@ -3607,7 +3607,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "arglist"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:180:1: arglist : ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:177:1: arglist : ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) ;
     public final GomLanguageParser.arglist_return arglist() throws RecognitionException {
         GomLanguageParser.arglist_return retval = new GomLanguageParser.arglist_return();
         retval.start = input.LT(1);
@@ -3625,15 +3625,15 @@ public class GomLanguageParser extends Parser {
         Tree LPAREN82_tree=null;
         Tree COMMA84_tree=null;
         Tree RPAREN86_tree=null;
-        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
+        RewriteRuleTokenStream stream_RPAREN=new RewriteRuleTokenStream(adaptor,"token RPAREN");
         RewriteRuleTokenStream stream_LPAREN=new RewriteRuleTokenStream(adaptor,"token LPAREN");
         RewriteRuleSubtreeStream stream_arg=new RewriteRuleSubtreeStream(adaptor,"rule arg");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:180:8: ( ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:177:8: ( ( LPAREN ( arg ( COMMA arg )* )? RPAREN )? -> ^( ConcArg ( arg )* ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:3: ( LPAREN ( arg ( COMMA arg )* )? RPAREN )?
             int alt25=2;
             int LA25_0 = input.LA(1);
 
@@ -3642,12 +3642,12 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt25) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:4: LPAREN ( arg ( COMMA arg )* )? RPAREN
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:4: LPAREN ( arg ( COMMA arg )* )? RPAREN
                     {
-                    LPAREN82=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_arglist1533);  
+                    LPAREN82=(Token)match(input,LPAREN,FOLLOW_LPAREN_in_arglist1237);  
                     stream_LPAREN.add(LPAREN82);
 
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:11: ( arg ( COMMA arg )* )?
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:11: ( arg ( COMMA arg )* )?
                     int alt24=2;
                     int LA24_0 = input.LA(1);
 
@@ -3656,15 +3656,15 @@ public class GomLanguageParser extends Parser {
                     }
                     switch (alt24) {
                         case 1 :
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:12: arg ( COMMA arg )*
+                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:12: arg ( COMMA arg )*
                             {
-                            pushFollow(FOLLOW_arg_in_arglist1536);
+                            pushFollow(FOLLOW_arg_in_arglist1240);
                             arg83=arg();
 
                             state._fsp--;
 
                             stream_arg.add(arg83.getTree());
-                            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:16: ( COMMA arg )*
+                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:16: ( COMMA arg )*
                             loop23:
                             do {
                                 int alt23=2;
@@ -3677,12 +3677,12 @@ public class GomLanguageParser extends Parser {
 
                                 switch (alt23) {
                             	case 1 :
-                            	    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:181:17: COMMA arg
+                            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:178:17: COMMA arg
                             	    {
-                            	    COMMA84=(Token)match(input,COMMA,FOLLOW_COMMA_in_arglist1539);  
+                            	    COMMA84=(Token)match(input,COMMA,FOLLOW_COMMA_in_arglist1243);  
                             	    stream_COMMA.add(COMMA84);
 
-                            	    pushFollow(FOLLOW_arg_in_arglist1541);
+                            	    pushFollow(FOLLOW_arg_in_arglist1245);
                             	    arg85=arg();
 
                             	    state._fsp--;
@@ -3703,7 +3703,7 @@ public class GomLanguageParser extends Parser {
 
                     }
 
-                    RPAREN86=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_arglist1548);  
+                    RPAREN86=(Token)match(input,RPAREN,FOLLOW_RPAREN_in_arglist1252);  
                     stream_RPAREN.add(RPAREN86);
 
 
@@ -3725,14 +3725,14 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 182:3: -> ^( ConcArg ( arg )* )
+            // 179:3: -> ^( ConcArg ( arg )* )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:182:6: ^( ConcArg ( arg )* )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:179:6: ^( ConcArg ( arg )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConcArg, "ConcArg"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:182:16: ( arg )*
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:179:16: ( arg )*
                 while ( stream_arg.hasNext() ) {
                     adaptor.addChild(root_1, stream_arg.nextTree());
 
@@ -3771,7 +3771,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "arg"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:185:1: arg : ID -> ^( Arg ID ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:182:1: arg : ID -> ^( Arg ID ) ;
     public final GomLanguageParser.arg_return arg() throws RecognitionException {
         GomLanguageParser.arg_return retval = new GomLanguageParser.arg_return();
         retval.start = input.LT(1);
@@ -3784,10 +3784,10 @@ public class GomLanguageParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:185:5: ( ID -> ^( Arg ID ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:185:7: ID
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:182:5: ( ID -> ^( Arg ID ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:182:7: ID
             {
-            ID87=(Token)match(input,ID,FOLLOW_ID_in_arg1575);  
+            ID87=(Token)match(input,ID,FOLLOW_ID_in_arg1278);  
             stream_ID.add(ID87);
 
 
@@ -3803,9 +3803,9 @@ public class GomLanguageParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 185:10: -> ^( Arg ID )
+            // 182:10: -> ^( Arg ID )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:185:13: ^( Arg ID )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:182:13: ^( Arg ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Arg, "Arg"), root_1);
@@ -3844,7 +3844,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "hookConstruct"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:187:1: hookConstruct : (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:184:1: hookConstruct : (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) ;
     public final GomLanguageParser.hookConstruct_return hookConstruct() throws RecognitionException {
         GomLanguageParser.hookConstruct_return retval = new GomLanguageParser.hookConstruct_return();
         retval.start = input.LT(1);
@@ -3865,15 +3865,15 @@ public class GomLanguageParser extends Parser {
         Tree COLON88_tree=null;
         Tree LBRACE90_tree=null;
         RewriteRuleTokenStream stream_COLON=new RewriteRuleTokenStream(adaptor,"token COLON");
-        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleTokenStream stream_LBRACE=new RewriteRuleTokenStream(adaptor,"token LBRACE");
-        RewriteRuleSubtreeStream stream_arglist=new RewriteRuleSubtreeStream(adaptor,"rule arglist");
+        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_hookScope=new RewriteRuleSubtreeStream(adaptor,"rule hookScope");
+        RewriteRuleSubtreeStream stream_arglist=new RewriteRuleSubtreeStream(adaptor,"rule arglist");
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:187:15: ( (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:188:3: (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:184:15: ( (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:185:3: (hscope= hookScope )? pointCut= ID COLON hookType= ID arglist LBRACE
             {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:188:3: (hscope= hookScope )?
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:185:3: (hscope= hookScope )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -3882,9 +3882,9 @@ public class GomLanguageParser extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:188:4: hscope= hookScope
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:185:4: hscope= hookScope
                     {
-                    pushFollow(FOLLOW_hookScope_in_hookConstruct1596);
+                    pushFollow(FOLLOW_hookScope_in_hookConstruct1299);
                     hscope=hookScope();
 
                     state._fsp--;
@@ -3896,50 +3896,50 @@ public class GomLanguageParser extends Parser {
 
             }
 
-            pointCut=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1602);  
+            pointCut=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1305);  
             stream_ID.add(pointCut);
 
-            COLON88=(Token)match(input,COLON,FOLLOW_COLON_in_hookConstruct1604);  
+            COLON88=(Token)match(input,COLON,FOLLOW_COLON_in_hookConstruct1307);  
             stream_COLON.add(COLON88);
 
-            hookType=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1608);  
+            hookType=(Token)match(input,ID,FOLLOW_ID_in_hookConstruct1311);  
             stream_ID.add(hookType);
 
-            pushFollow(FOLLOW_arglist_in_hookConstruct1610);
+            pushFollow(FOLLOW_arglist_in_hookConstruct1313);
             arglist89=arglist();
 
             state._fsp--;
 
             stream_arglist.add(arglist89.getTree());
-            LBRACE90=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_hookConstruct1612);  
+            LBRACE90=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_hookConstruct1315);  
             stream_LBRACE.add(LBRACE90);
 
 
 
             // AST REWRITE
-            // elements: LBRACE, hookType, pointCut, pointCut, hscope, LBRACE, arglist, ID, ID, arglist, hookType
-            // token labels: hookType, pointCut
-            // rule labels: retval, hscope
+            // elements: ID, pointCut, arglist, LBRACE, pointCut, ID, hookType, arglist, hscope, hookType, LBRACE
+            // token labels: pointCut, hookType
+            // rule labels: hscope, retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
-            RewriteRuleTokenStream stream_hookType=new RewriteRuleTokenStream(adaptor,"token hookType",hookType);
             RewriteRuleTokenStream stream_pointCut=new RewriteRuleTokenStream(adaptor,"token pointCut",pointCut);
-            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+            RewriteRuleTokenStream stream_hookType=new RewriteRuleTokenStream(adaptor,"token hookType",hookType);
             RewriteRuleSubtreeStream stream_hscope=new RewriteRuleSubtreeStream(adaptor,"rule hscope",hscope!=null?hscope.tree:null);
+            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 189:3: -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+            // 186:3: -> {hscope!=null}? ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             if (hscope!=null) {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:22: ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:186:22: ^( Hook $hscope $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Hook, "Hook"), root_1);
 
                 adaptor.addChild(root_1, stream_hscope.nextTree());
                 adaptor.addChild(root_1, stream_pointCut.nextNode());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:189:47: ^( HookKind $hookType)
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:186:47: ^( HookKind $hookType)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(HookKind, "HookKind"), root_2);
@@ -3950,7 +3950,7 @@ public class GomLanguageParser extends Parser {
                 }
                 adaptor.addChild(root_1, stream_arglist.nextTree());
                 adaptor.addChild(root_1, stream_LBRACE.nextNode());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:190:24: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:187:24: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -3964,14 +3964,14 @@ public class GomLanguageParser extends Parser {
                 }
 
             }
-            else // 191:3: -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+            else // 188:3: -> ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
             {
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:6: ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:188:6: ^( Hook ^( KindOperator ) $pointCut ^( HookKind $hookType) arglist LBRACE ^( Origin ID[\"\"+input.LT(1).getLine()] ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Hook, "Hook"), root_1);
 
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:13: ^( KindOperator )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:188:13: ^( KindOperator )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindOperator, "KindOperator"), root_2);
@@ -3979,7 +3979,7 @@ public class GomLanguageParser extends Parser {
                 adaptor.addChild(root_1, root_2);
                 }
                 adaptor.addChild(root_1, stream_pointCut.nextNode());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:191:39: ^( HookKind $hookType)
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:188:39: ^( HookKind $hookType)
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(HookKind, "HookKind"), root_2);
@@ -3990,7 +3990,7 @@ public class GomLanguageParser extends Parser {
                 }
                 adaptor.addChild(root_1, stream_arglist.nextTree());
                 adaptor.addChild(root_1, stream_LBRACE.nextNode());
-                // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:192:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
+                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:189:7: ^( Origin ID[\"\"+input.LT(1).getLine()] )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Origin, "Origin"), root_2);
@@ -4032,7 +4032,7 @@ public class GomLanguageParser extends Parser {
     };
 
     // $ANTLR start "hookScope"
-    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:196:1: hookScope : ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) );
+    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:193:1: hookScope : ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) );
     public final GomLanguageParser.hookScope_return hookScope() throws RecognitionException {
         GomLanguageParser.hookScope_return retval = new GomLanguageParser.hookScope_return();
         retval.start = input.LT(1);
@@ -4046,12 +4046,12 @@ public class GomLanguageParser extends Parser {
         Tree SORT91_tree=null;
         Tree MODULE92_tree=null;
         Tree OPERATOR93_tree=null;
+        RewriteRuleTokenStream stream_OPERATOR=new RewriteRuleTokenStream(adaptor,"token OPERATOR");
         RewriteRuleTokenStream stream_SORT=new RewriteRuleTokenStream(adaptor,"token SORT");
         RewriteRuleTokenStream stream_MODULE=new RewriteRuleTokenStream(adaptor,"token MODULE");
-        RewriteRuleTokenStream stream_OPERATOR=new RewriteRuleTokenStream(adaptor,"token OPERATOR");
 
         try {
-            // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:196:11: ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) )
+            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:193:11: ( SORT -> ^( KindSort ) | MODULE -> ^( KindModule ) | OPERATOR -> ^( KindOperator ) )
             int alt27=3;
             switch ( input.LA(1) ) {
             case SORT:
@@ -4078,9 +4078,9 @@ public class GomLanguageParser extends Parser {
 
             switch (alt27) {
                 case 1 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:197:3: SORT
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:194:3: SORT
                     {
-                    SORT91=(Token)match(input,SORT,FOLLOW_SORT_in_hookScope1725);  
+                    SORT91=(Token)match(input,SORT,FOLLOW_SORT_in_hookScope1428);  
                     stream_SORT.add(SORT91);
 
 
@@ -4096,9 +4096,9 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 197:8: -> ^( KindSort )
+                    // 194:8: -> ^( KindSort )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:197:11: ^( KindSort )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:194:11: ^( KindSort )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindSort, "KindSort"), root_1);
@@ -4112,9 +4112,9 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:198:5: MODULE
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:195:5: MODULE
                     {
-                    MODULE92=(Token)match(input,MODULE,FOLLOW_MODULE_in_hookScope1737);  
+                    MODULE92=(Token)match(input,MODULE,FOLLOW_MODULE_in_hookScope1440);  
                     stream_MODULE.add(MODULE92);
 
 
@@ -4130,9 +4130,9 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 198:12: -> ^( KindModule )
+                    // 195:12: -> ^( KindModule )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:198:15: ^( KindModule )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:195:15: ^( KindModule )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindModule, "KindModule"), root_1);
@@ -4146,9 +4146,9 @@ public class GomLanguageParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:199:5: OPERATOR
+                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:196:5: OPERATOR
                     {
-                    OPERATOR93=(Token)match(input,OPERATOR,FOLLOW_OPERATOR_in_hookScope1749);  
+                    OPERATOR93=(Token)match(input,OPERATOR,FOLLOW_OPERATOR_in_hookScope1452);  
                     stream_OPERATOR.add(OPERATOR93);
 
 
@@ -4164,9 +4164,9 @@ public class GomLanguageParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 199:14: -> ^( KindOperator )
+                    // 196:14: -> ^( KindOperator )
                     {
-                        // /Users/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g:199:17: ^( KindOperator )
+                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/parser/GomLanguage.g:196:17: ^( KindOperator )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(KindOperator, "KindOperator"), root_1);
@@ -4204,121 +4204,121 @@ public class GomLanguageParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_MODULE_in_module349 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_modulename_in_module351 = new BitSet(new long[]{0x0000000000000000L,0x0000038000000000L});
-    public static final BitSet FOLLOW_imports_in_module356 = new BitSet(new long[]{0x0000000000000000L,0x0000038000000000L});
-    public static final BitSet FOLLOW_section_in_module360 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_module362 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_modulename419 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
-    public static final BitSet FOLLOW_DOT_in_modulename421 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_modulename431 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IMPORTS_in_imports459 = new BitSet(new long[]{0x0000000000000002L,0x0000002000000000L});
-    public static final BitSet FOLLOW_importedModuleName_in_imports462 = new BitSet(new long[]{0x0000000000000002L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_importedModuleName491 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PUBLIC_in_section517 = new BitSet(new long[]{0x0000000000000000L,0x0000038000000000L});
-    public static final BitSet FOLLOW_adtgrammar_in_section521 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_syntax_in_adtgrammar545 = new BitSet(new long[]{0x0000000000000002L,0x0000038000000000L});
-    public static final BitSet FOLLOW_ABSTRACT_in_syntax565 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
-    public static final BitSet FOLLOW_SYNTAX_in_syntax567 = new BitSet(new long[]{0x0000000000000002L,0x6000103000000000L});
-    public static final BitSet FOLLOW_production_in_syntax572 = new BitSet(new long[]{0x0000000000000002L,0x6000103000000000L});
-    public static final BitSet FOLLOW_hookConstruct_in_syntax578 = new BitSet(new long[]{0x0000000000000002L,0x6000103000000000L});
-    public static final BitSet FOLLOW_typedecl_in_syntax584 = new BitSet(new long[]{0x0000000000000002L,0x6000103000000000L});
-    public static final BitSet FOLLOW_atomdecl_in_syntax590 = new BitSet(new long[]{0x0000000000000002L,0x6000103000000000L});
-    public static final BitSet FOLLOW_ID_in_production653 = new BitSet(new long[]{0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_fieldlist_in_production655 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
-    public static final BitSet FOLLOW_ARROW_in_production657 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_type_in_production659 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ATOM_in_atomdecl692 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_atomdecl696 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_typedecl722 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
-    public static final BitSet FOLLOW_EQUALS_in_typedecl724 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_alternatives_in_typedecl728 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_typedecl768 = new BitSet(new long[]{0x0000000000000000L,0x0000400000000000L});
-    public static final BitSet FOLLOW_BINDS_in_typedecl770 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_atoms_in_typedecl774 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
-    public static final BitSet FOLLOW_EQUALS_in_typedecl776 = new BitSet(new long[]{0x0000000000000000L,0x0001002000000000L});
-    public static final BitSet FOLLOW_pattern_alternatives_in_typedecl780 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_atoms827 = new BitSet(new long[]{0x0000000000000002L,0x0000002000000000L});
-    public static final BitSet FOLLOW_JAVADOC_in_alternatives859 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives861 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives867 = new BitSet(new long[]{0x0000000000000000L,0x0000800000000000L});
-    public static final BitSet FOLLOW_JAVADOC_in_alternatives871 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_JAVADOC_in_alternatives878 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives883 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_opdecl_in_alternatives891 = new BitSet(new long[]{0x0000000000000002L,0x0003800000000000L});
-    public static final BitSet FOLLOW_JAVADOC_in_alternatives906 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives908 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives914 = new BitSet(new long[]{0x0000000000000000L,0x0000800000000000L});
-    public static final BitSet FOLLOW_JAVADOC_in_alternatives918 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_ALT_in_alternatives923 = new BitSet(new long[]{0x0000000000000000L,0x0001802000000000L});
-    public static final BitSet FOLLOW_opdecl_in_alternatives932 = new BitSet(new long[]{0x0000000000000002L,0x0003800000000000L});
-    public static final BitSet FOLLOW_SEMI_in_alternatives942 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ALT_in_pattern_alternatives974 = new BitSet(new long[]{0x0000000000000000L,0x0001002000000000L});
-    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives978 = new BitSet(new long[]{0x0000000000000002L,0x0003000000000000L});
-    public static final BitSet FOLLOW_ALT_in_pattern_alternatives982 = new BitSet(new long[]{0x0000000000000000L,0x0001002000000000L});
-    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives984 = new BitSet(new long[]{0x0000000000000002L,0x0003000000000000L});
-    public static final BitSet FOLLOW_SEMI_in_pattern_alternatives990 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_opdecl1018 = new BitSet(new long[]{0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_fieldlist_in_opdecl1020 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_opdecl1120 = new BitSet(new long[]{0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_pattern_fieldlist_in_pattern_opdecl1122 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_fieldlist1171 = new BitSet(new long[]{0x0000000000000000L,0x0050002000000000L});
-    public static final BitSet FOLLOW_field_in_fieldlist1174 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_fieldlist1177 = new BitSet(new long[]{0x0000000000000000L,0x0040002000000000L});
-    public static final BitSet FOLLOW_field_in_fieldlist1179 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_fieldlist1186 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_pattern_fieldlist1210 = new BitSet(new long[]{0x0000000000000000L,0x0E10002000000000L});
-    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1213 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_pattern_fieldlist1216 = new BitSet(new long[]{0x0000000000000000L,0x0E00002000000000L});
-    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist1218 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_pattern_fieldlist1225 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_type1246 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_type1272 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_field1298 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_STAR_in_field1300 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LDIPLE_in_field1318 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_field1320 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_RDIPLE_in_field1322 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_STAR_in_field1324 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_field1342 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_field1344 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_type_in_field1346 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_field1366 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_field1368 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_LDIPLE_in_field1370 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_field1372 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_RDIPLE_in_field1374 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_pattern_type_in_pattern_field1404 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_STAR_in_pattern_field1406 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INNER_in_pattern_field1424 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1426 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1428 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1430 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OUTER_in_pattern_field1450 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1452 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1454 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1456 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NEUTRAL_in_pattern_field1476 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1478 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1480 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_type_in_pattern_field1482 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_pattern_field1502 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_pattern_field1504 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_pattern_type_in_pattern_field1506 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_arglist1533 = new BitSet(new long[]{0x0000000000000000L,0x0010002000000000L});
-    public static final BitSet FOLLOW_arg_in_arglist1536 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_COMMA_in_arglist1539 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_arg_in_arglist1541 = new BitSet(new long[]{0x0000000000000000L,0x0018000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_arglist1548 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_arg1575 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_hookScope_in_hookConstruct1596 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_hookConstruct1602 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_hookConstruct1604 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_ID_in_hookConstruct1608 = new BitSet(new long[]{0x0000000000000000L,0x1004000000000000L});
-    public static final BitSet FOLLOW_arglist_in_hookConstruct1610 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_LBRACE_in_hookConstruct1612 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SORT_in_hookScope1725 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_MODULE_in_hookScope1737 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OPERATOR_in_hookScope1749 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MODULE_in_module60 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_modulename_in_module62 = new BitSet(new long[]{0x0000000000000000L,0x0000E00000000000L});
+    public static final BitSet FOLLOW_imports_in_module67 = new BitSet(new long[]{0x0000000000000000L,0x0000E00000000000L});
+    public static final BitSet FOLLOW_section_in_module71 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_module73 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_modulename130 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_DOT_in_modulename132 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_modulename142 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IMPORTS_in_imports170 = new BitSet(new long[]{0x0000000000000002L,0x0000080000000000L});
+    public static final BitSet FOLLOW_importedModuleName_in_imports173 = new BitSet(new long[]{0x0000000000000002L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_importedModuleName202 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_PUBLIC_in_section228 = new BitSet(new long[]{0x0000000000000000L,0x0000E00000000000L});
+    public static final BitSet FOLLOW_adtgrammar_in_section232 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_syntax_in_adtgrammar256 = new BitSet(new long[]{0x0000000000000002L,0x0000E00000000000L});
+    public static final BitSet FOLLOW_ABSTRACT_in_syntax276 = new BitSet(new long[]{0x0000000000000000L,0x0001000000000000L});
+    public static final BitSet FOLLOW_SYNTAX_in_syntax278 = new BitSet(new long[]{0x0000000000000002L,0x00040C0000000000L,0x0000000000000018L});
+    public static final BitSet FOLLOW_production_in_syntax283 = new BitSet(new long[]{0x0000000000000002L,0x00040C0000000000L,0x0000000000000018L});
+    public static final BitSet FOLLOW_hookConstruct_in_syntax289 = new BitSet(new long[]{0x0000000000000002L,0x00040C0000000000L,0x0000000000000018L});
+    public static final BitSet FOLLOW_typedecl_in_syntax295 = new BitSet(new long[]{0x0000000000000002L,0x00040C0000000000L,0x0000000000000018L});
+    public static final BitSet FOLLOW_atomdecl_in_syntax301 = new BitSet(new long[]{0x0000000000000002L,0x00040C0000000000L,0x0000000000000018L});
+    public static final BitSet FOLLOW_ID_in_production363 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
+    public static final BitSet FOLLOW_fieldlist_in_production365 = new BitSet(new long[]{0x0000000000000000L,0x0002000000000000L});
+    public static final BitSet FOLLOW_ARROW_in_production367 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_type_in_production369 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ATOM_in_atomdecl401 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_atomdecl405 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_typedecl431 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_EQUALS_in_typedecl433 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_alternatives_in_typedecl437 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_typedecl477 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_BINDS_in_typedecl479 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_atoms_in_typedecl483 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_EQUALS_in_typedecl485 = new BitSet(new long[]{0x0000000000000000L,0x0040080000000000L});
+    public static final BitSet FOLLOW_pattern_alternatives_in_typedecl489 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_atoms535 = new BitSet(new long[]{0x0000000000000002L,0x0000080000000000L});
+    public static final BitSet FOLLOW_JAVADOC_in_alternatives567 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives569 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives575 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
+    public static final BitSet FOLLOW_JAVADOC_in_alternatives579 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_JAVADOC_in_alternatives586 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives591 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_opdecl_in_alternatives598 = new BitSet(new long[]{0x0000000000000002L,0x00E0000000000000L});
+    public static final BitSet FOLLOW_JAVADOC_in_alternatives612 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives614 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives620 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
+    public static final BitSet FOLLOW_JAVADOC_in_alternatives624 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_ALT_in_alternatives629 = new BitSet(new long[]{0x0000000000000000L,0x0060080000000000L});
+    public static final BitSet FOLLOW_opdecl_in_alternatives637 = new BitSet(new long[]{0x0000000000000002L,0x00E0000000000000L});
+    public static final BitSet FOLLOW_SEMI_in_alternatives646 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ALT_in_pattern_alternatives678 = new BitSet(new long[]{0x0000000000000000L,0x0040080000000000L});
+    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives682 = new BitSet(new long[]{0x0000000000000002L,0x00C0000000000000L});
+    public static final BitSet FOLLOW_ALT_in_pattern_alternatives686 = new BitSet(new long[]{0x0000000000000000L,0x0040080000000000L});
+    public static final BitSet FOLLOW_pattern_opdecl_in_pattern_alternatives688 = new BitSet(new long[]{0x0000000000000002L,0x00C0000000000000L});
+    public static final BitSet FOLLOW_SEMI_in_pattern_alternatives694 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_opdecl722 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
+    public static final BitSet FOLLOW_fieldlist_in_opdecl724 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_opdecl824 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L});
+    public static final BitSet FOLLOW_pattern_fieldlist_in_pattern_opdecl826 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_fieldlist875 = new BitSet(new long[]{0x0000000000000000L,0x1400080000000000L});
+    public static final BitSet FOLLOW_field_in_fieldlist878 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_fieldlist881 = new BitSet(new long[]{0x0000000000000000L,0x1000080000000000L});
+    public static final BitSet FOLLOW_field_in_fieldlist883 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_fieldlist890 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_pattern_fieldlist914 = new BitSet(new long[]{0x0000000000000000L,0x8400080000000000L,0x0000000000000003L});
+    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist917 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_pattern_fieldlist920 = new BitSet(new long[]{0x0000000000000000L,0x8000080000000000L,0x0000000000000003L});
+    public static final BitSet FOLLOW_pattern_field_in_pattern_fieldlist922 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_pattern_fieldlist929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_type950 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_type976 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_field1002 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L});
+    public static final BitSet FOLLOW_STAR_in_field1004 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LDIPLE_in_field1022 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_field1024 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L});
+    public static final BitSet FOLLOW_RDIPLE_in_field1026 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L});
+    public static final BitSet FOLLOW_STAR_in_field1028 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_field1046 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_field1048 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_type_in_field1050 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_field1070 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_field1072 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_LDIPLE_in_field1074 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_field1076 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L});
+    public static final BitSet FOLLOW_RDIPLE_in_field1078 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_pattern_type_in_pattern_field1108 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L});
+    public static final BitSet FOLLOW_STAR_in_pattern_field1110 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INNER_in_pattern_field1128 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1130 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1132 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1134 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OUTER_in_pattern_field1154 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1156 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1158 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1160 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NEUTRAL_in_pattern_field1180 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1182 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1184 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_type_in_pattern_field1186 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_pattern_field1206 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_pattern_field1208 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_pattern_type_in_pattern_field1210 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_arglist1237 = new BitSet(new long[]{0x0000000000000000L,0x0400080000000000L});
+    public static final BitSet FOLLOW_arg_in_arglist1240 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_COMMA_in_arglist1243 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_arg_in_arglist1245 = new BitSet(new long[]{0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_arglist1252 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_arg1278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_hookScope_in_hookConstruct1299 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_hookConstruct1305 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_COLON_in_hookConstruct1307 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    public static final BitSet FOLLOW_ID_in_hookConstruct1311 = new BitSet(new long[]{0x0000000000000000L,0x0100000000000000L,0x0000000000000004L});
+    public static final BitSet FOLLOW_arglist_in_hookConstruct1313 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    public static final BitSet FOLLOW_LBRACE_in_hookConstruct1315 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SORT_in_hookScope1428 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MODULE_in_hookScope1440 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OPERATOR_in_hookScope1452 = new BitSet(new long[]{0x0000000000000002L});
 
 }

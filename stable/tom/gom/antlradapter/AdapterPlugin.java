@@ -70,16 +70,18 @@ public class AdapterPlugin extends GomGenericPlugin {
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
+    if (arg.length < 3
+        || (arg[0] instanceof ModuleList
+          && arg[1] instanceof HookDeclList
+          && arg[2] instanceof GomEnvironment)) {
       moduleList = (ModuleList) arg[0];
       hookList = (HookDeclList) arg[1];
-      //setStreamManager((GomStreamManager) arg[2]);
       setGomEnvironment((GomEnvironment) arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{
-            "AntlrAdapter", "[ModuleList,HookDeclList,GomStreamManager]",
+            "AntlrAdapter", "[ModuleList,HookDeclList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -89,16 +91,13 @@ public class AdapterPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start adapter generation");
-    // make sure the environment has the correct streamManager
-    //environment().setStreamManager(getStreamManager());
-    //do not understand why the streamManager would not be correct. keep previous comment
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
     try {
-      if(tomHome == null) {
+      if (null == tomHome) {
         String xmlConfigFilename = getOptionStringValue("X");
         tomHome = new File(xmlConfigFilename).getParent();
       }
@@ -106,10 +105,11 @@ public class AdapterPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-    String grammarName = (String)getOptionManager().getOptionValue("grammar");
-    AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment(),grammarName);
+    AdapterGenerator adapter = new AdapterGenerator(tomHomePath, getGomEnvironment());
     adapter.generate(moduleList,hookList);
-    getLogger().log(Level.INFO, "Adapter generation succeeded");
+    getLogger().info("GOM Antlr Adapter generation phase ("
+        + (System.currentTimeMillis()-startChrono)
+        + " ms)");
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 

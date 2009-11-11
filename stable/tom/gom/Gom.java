@@ -102,22 +102,22 @@ public class Gom {
     List<String> wholeInputToCompileList =
       initConfigurationManager.getOptionManager().getInputToCompileList();
     int res=0;
-    
+
     //multi thread
     //List<Thread> threadsList = new ArrayList<Thread>();
-    
+
     /* Create the group of the new threads pool :
      * the new group name is obtained with the current thread ID
      * Therefore, groups created by differents threads have different name
      */
-    /*ThreadGroup gomThreadGroup = new ThreadGroup(Long.toString(Thread.currentThread().getId()));    
+    /*ThreadGroup gomThreadGroup = new ThreadGroup(Long.toString(Thread.currentThread().getId()));
     int i;
-    // Begin the creation/launching thread loop 
+    // Begin the creation/launching thread loop
     for (i=0;i<wholeInputToCompileList.size();i++) {
       // Create a PluginPlatform, using only one element of the wholeInputToCompileList
       // subList is used in order to be able to adapt the number of given files for one thread
       PluginPlatform platform =
-        PluginPlatformFactory.getInstance().create(commandLine,Gom.LOGRADICAL,wholeInputToCompileList.subList(i,i+1),informationTracker); 
+        PluginPlatformFactory.getInstance().create(commandLine,Gom.LOGRADICAL,wholeInputToCompileList.subList(i,i+1),informationTracker);
       if(platform == null) {
         return 1;
       }
@@ -141,7 +141,7 @@ public class Gom {
     // But strangely, this method give the exact number when concerning a Thread and not a ThreadGroup
     // cf. Java API
     // The stop condition could be changed ?
-    
+
     // Parent Thread is waiting that no child thread is active
     /*while(gomThreadGroup.activeCount()>0) {
       try {

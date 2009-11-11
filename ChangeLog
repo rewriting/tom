@@ -1,3 +1,7 @@
+2009-11-11 tonio
+ * bootstrap
+ * tom src adapted to use the new gomantlradaptor
+
 2009-10-31 tonio
  * gomantlradapter now generates a .tokens file instead of a TokenList.txt
    It is now possible to avoid using tom only to include the tokens.

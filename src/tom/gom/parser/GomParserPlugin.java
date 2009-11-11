@@ -41,7 +41,7 @@ import tom.gom.tools.GomEnvironment;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
-import tom.gom.adt.gom.GomLanguageGomAdaptor;
+import tom.gom.adt.gom.GomAdaptor;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
@@ -113,7 +113,7 @@ public class GomParserPlugin extends GomGenericPlugin {
     try {
       // Parse the input expression
       Tree tree = (Tree) parser.module().getTree();
-      module = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
+      module = (GomModule) GomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
       getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);

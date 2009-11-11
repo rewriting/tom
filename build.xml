@@ -282,8 +282,6 @@
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
-      <!-- needs to generate mappings first -->
-      <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -303,16 +301,6 @@
       outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
-    </tomcompile>
-    <tomcompile srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
-      import="${src.gen}/tom/gom/adt">
-      <include name="tom/gom/expander/rule/Rule.g.t"/>
-    </tomcompile>
-    <tomcompile srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/gom/parser/GomLanguage.g"
-      import="${src.gen}/tom/gom/adt">
-      <include name="tom/gom/parser/GomLanguage.g.t"/>
     </tomcompile>
   </target>
 
@@ -370,9 +358,9 @@
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
-    <antlr3 target="${gen.destination}/tom/gom/parser/GomLanguage.g"
+    <antlr3 target="${src.src}/tom/gom/parser/GomLanguage.g"
             outputdirectory="${gen.destination}/tom/gom/parser"
-            libdirectory="${gen.destination}/tom/gom/parser"
+            libdirectory="${gen.destination}/tom/gom/adt/gom"
             multithreaded="true">
       <classpath refid="stable.classpath"/>
     </antlr3>
@@ -384,9 +372,9 @@
     </antlr3>
 
     <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
-    <antlr3 target="${gen.destination}/tom/gom/expander/rule/Rule.g"
+    <antlr3 target="${src.src}/tom/gom/expander/rule/Rule.g"
             outputdirectory="${gen.destination}/tom/gom/expander/rule"
-            libdirectory="${gen.destination}/tom/gom/expander/rule"
+            libdirectory="${gen.destination}/tom/gom/adt/rule"
             multithreaded="true">
       <classpath refid="stable.classpath"/>
     </antlr3>
@@ -463,13 +451,11 @@
     </gomcompile>
     <gomantlradaptercompile srcdir="${src.src}"
       package="tom.gom.adt"
-      grammar="tom.gom.parser.GomLanguage"
       destdir="${src.gen}">
       <include name="tom/gom/adt/Gom.gom"/>
     </gomantlradaptercompile>
     <gomantlradaptercompile srcdir="${src.src}"
       package="tom.gom.adt"
-      grammar="tom.gom.expander.rule.Rule"
       destdir="${src.gen}">
       <include name="tom/gom/adt/Rule.gom"/>
     </gomantlradaptercompile>

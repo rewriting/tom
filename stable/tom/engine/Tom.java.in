@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -52,10 +52,10 @@ import tom.platform.ConfigurationManager;
  * Main Tom project class
  */
 public class Tom {
-  
+
   /** The current version of the TOM compiler. */
   public final static String VERSION = "@TOM_VERSION@";
-  
+
   /** Log radical string*/
   public final static String LOG_RADICAL = "tom.engine";
 			
@@ -73,15 +73,15 @@ public class Tom {
 
   /** The root logger */
   private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL);
-  
+
   /** the console handler those level can be changed dynamically */
   private static Handler consoleHandler = null;
-  
+
   public static void main(String[] args) {
     int errno = exec(args);
     System.exit(errno);
   }
- 
+
   public static int exec(String[] args) {
     try {
       initializeLogging();
@@ -123,13 +123,13 @@ public class Tom {
        */
       ThreadGroup tomThreadGroup = new ThreadGroup(Long.toString(Thread.currentThread().getId()));
       int i;
-      // Begin the creation/launching thread loop 
+      // Begin the creation/launching thread loop
       for (i=0;i<wholeInputToCompileList.size();i++) {
         // Create a PluginPlatform, using only one element of the wholeInputToCompileList
         // subList is used in order to be able to adapt the number of given files for one thread, but it's not optimal for a single file
         PluginPlatform platform =
-          PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,Arrays.asList(wholeInputToCompileList.get(i))); 
-          //PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,wholeInputToCompileList.subList(i,i+1)); 
+          PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,Arrays.asList(wholeInputToCompileList.get(i)));
+          //PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL,wholeInputToCompileList.subList(i,i+1));
         if(platform == null) {
           return 1;
         }
@@ -140,7 +140,7 @@ public class Tom {
         // add the thread in the threads list
         threadsList.add(thread);
       }
-    
+
       // Launching created threads
       for(i=0;i<threadsList.size();i++) {
         //System.out.println("(TomDebug) Thread #"+i+" starts (threadId="+threadsList.get(i).getId()+")");
@@ -153,14 +153,14 @@ public class Tom {
       // But strangely, this method give the exact number when concerning a Thread and not a ThreadGroup
       // cf. Java API
       // The stop condition could be changed ?
-    
+
       // Parent Thread is waiting that no child thread is active
       while(tomThreadGroup.activeCount()>0) {
         try {
         // Here, we use yield() (method which temporarly gives ressources to other running threads
         // seems that we lose perf with this loop : not a real passive wait
         // we should find an other solution
-          
+
           Thread.yield();
           //Thread.sleep(1);
         } catch (Exception e) {
@@ -188,18 +188,18 @@ public class Tom {
     return platform.getRunResult();
     }
   }
-  
+
   /**
    * This method should be used to change the Level of logging, instead of
    * directly accessing to the logger via Logger.getLogger("tom.engine").
    * Indeed, this method respect the fact that the logger's Level should
-   * never ever be set higher than Level.WARNING, because it would cause the 
+   * never ever be set higher than Level.WARNING, because it would cause the
    * StatusHandler to malfunction.
    *
    * @param newLevel the Level to which we want to set the log output
    */
   public static void changeLogLevel(Level newLevel) {
-    /* 
+    /*
      * IMPORTANT: the rootLogger's Level can be lowered but shouldn't be risen.
      * Indeed, if it is higher than Level.WARNING, the StatusHandler won't
      * see warnings that's why the noWarning option is handled by changing the
@@ -208,7 +208,7 @@ public class Tom {
      */
     if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
-    } 
+    }
 
     if(consoleHandler != null) {
       // if we've found a global console handler
@@ -216,7 +216,7 @@ public class Tom {
       // warnings are no more printed, but still seen by the StatusHandler
     }
   }
- 
+
   private static void initializeLogging()
     throws IOException, InstantiationException, ClassNotFoundException,
            IllegalAccessException {
@@ -237,7 +237,7 @@ public class Tom {
       refreshTopLoggerHandlers();
     }
   }
-  
+
   /**
    * initTomRootLogger set thee useParentHandlers flad and
    * remove all pre-existing handlers that might exist from prior uses
@@ -250,7 +250,7 @@ public class Tom {
       logger.removeHandler(handlers[i]);
     }
   }
-  
+
   private static void refreshTopLoggerHandlers()
     throws InstantiationException, ClassNotFoundException,
            IllegalAccessException {
