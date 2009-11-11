@@ -9,7 +9,7 @@ import org.antlr.runtime.tree.Tree;
 
 import minijava.ast.*;
 import minijava.ast.types.*;
-import minijava.ast.MiniJavaAstAdaptor;
+import minijava.ast.AstAdaptor;
 
 public class MainMiniJava {
 
@@ -29,13 +29,12 @@ public class MainMiniJava {
       MiniJavaParser parser = new MiniJavaParser(tokens);
 
       Tree tree = (Tree) parser.compilationUnit().getTree();
-      CompilationUnit term = (CompilationUnit) MiniJavaAstAdaptor.getTerm(tree);
+      CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);
       tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
-      //System.err.println("exception: " + e);
       e.printStackTrace();
     }
-  } //main
+  }
 
-}//class
+}

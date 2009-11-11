@@ -34,21 +34,9 @@
     </tom.preset>
   </target>
   
-  <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset srcdir="${v3.src}"
-        outputfile="${v3.gen}/${v3.grammar}.g">
-      <include name="${v3.grammar}.g.t"/>
-      <tomincludedir>
-        <pathelement location="${v3.gen}"/>
-        <pathelement location="${v3.gen}/${v3.package}"/>
-      </tomincludedir>
-    </tom.preset>
-  </target>
-  
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${v3.src}"
                             destdir="${v3.gen}"
-                            grammar="MiniJava"
                             package="${v3.package}">
       <include name="${v3.ast}.gom"/>
     </gomantlradapter.preset>
@@ -61,8 +49,9 @@
     </gom.preset>
   </target>
   
-  <target name="antlr" depends="antlrtom">
-    <antlr3 target="${v3.gen}/${v3.grammar}.g"
+  <target name="antlr" depends="gomantlradapter">
+    <antlr3 target="${v3.src}/${v3.grammar}.g"
+	    libdirectory="${v3.gen}/${v3.package}/ast"
             outputdirectory="${v3.gen}/${v3.package}"
             />
   </target>

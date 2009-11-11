@@ -4,10 +4,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { ast/MiniTomAstTokenList.txt }
+  tokenVocab=AstTokens;
 }
 
 @header {
@@ -19,7 +16,7 @@ tokens {
   package minitom;
 }
 
-// my temporary starting point 
+// my temporary starting point
 compilationUnit
   : blockList* EOF -> ^(CompilationUnit ^(BlockList blockList* ));
 
@@ -156,11 +153,11 @@ type
   : ID -> ^(Type ID)
   ;
 
-term //why 'ID? ID' and '?ID ID STAR' do not work fine ???
+term /* why 'ID? ID' and '?ID ID STAR' do not work fine ??? */
   : t1=ID n1=ID STAR -> ^(VariableStar ^(Name $n1 ) ^(Type $t1) )
   | n2=ID STAR -> ^(VariableStar ^(Name $n2 ) ^(EmptyType ) )
   | t3=ID n3=ID -> ^(Variable ^(Name $n3 ) ^(Type $t3) )
-  | n4=ID (LPAREN RPAREN)? -> ^(Variable ^(Name $n4 ) ^(EmptyType )) // '(LPAREN RPAREN)?' in order to regognize correctly a()
+  | n4=ID (LPAREN RPAREN)? -> ^(Variable ^(Name $n4 ) ^(EmptyType )) // '(LPAREN RPAREN)?' in order to regognize correctly a()
   | name=ID LPAREN termList RPAREN -> ^(NamedTermList ^(Name $name ) termList)
   ;
 /*term[Token type]
@@ -284,7 +281,7 @@ operator
     -> ^(Operator ^(Name $n) ^(Type $t) slotList? /*keywordIsFsym*/ ^(OperatorList ))
   ;
 
-/*keywords for %op*/ 
+/*keywords for %op*/
 keywordsOp
   : keywordIsFsym
   | keywordMake
@@ -327,12 +324,12 @@ keywordIsFsym
   : KW_ISFSYM LPAREN name=ID RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
   ;
 
-keywordMake 
+keywordMake
   : KW_MAKE LPAREN /*nameList*/ l=(ID ( COMMA ID )* )? RPAREN goalLanguageBlock -> ^(Make /*nameList*/ ^(TomNameList $l? ) goalLanguageBlock)
 //  | KW_MAKE LPAREN RPAREN -> ^(Make ^(TomNameList ) goalLanguageBlock)
   ;
 
-keywordGetSlot 
+keywordGetSlot
   : KW_GETSLOT LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(GetSlot ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
@@ -372,7 +369,7 @@ keywordMakeAppend
   : KW_MKAPPEND LPAREN n1=ID COMMA n2=ID RPAREN goalLanguageBlock -> ^(MakeAppend ^(Name $n1) ^(Name $n2) goalLanguageBlock)
   ;
 
-// 
+//
 //  : ID -> ^(TomNameList ^(Name ID ))
 //  | LPAREN ID (ALTERNATIVE ID)* RPAREN -> ^(TomNameList ^(Name ID )+)
 //nameList
@@ -525,12 +522,12 @@ STRING:
   ;*/
 
 MATCH_CONSTRAINT  : '<<';
-LESSOREQUAL_CONSTRAINT  : '<=';  
-GREATEROREQUAL_CONSTRAINT  : '>=';  
+LESSOREQUAL_CONSTRAINT  : '<=';
+GREATEROREQUAL_CONSTRAINT  : '>=';
 DIFFERENT_CONSTRAINT  : '!=';
 //LESS_CONSTRAINT  : '<:';
 //GREATER_CONSTRAINT  : ':>';
-  
+
 AND_CONNECTOR  : '&&';
 OR_CONNECTOR  : '||';
 
@@ -547,12 +544,12 @@ fragment
 INT:(DIGIT)+;*/
 
 //fragment
-/*ID: 
+/*ID:
   ('_')? LETTER
-  ( 
+  (
    options{greedy = true;}:
    ( LETTER | DIGIT | '_' | '.' )
-  )* 
+  )*
   ;*/
 
 
