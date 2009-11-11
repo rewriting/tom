@@ -48,7 +48,6 @@
   <target name="gomantlradapter" depends="init">
     <gomantlradapter.preset srcdir="${v3.src}"
                             destdir="${v3.gen}"
-                            grammar="MiniJava"
                             package="${v3.package}">
       <include name="${v3.ast}.gom"/>
     </gomantlradapter.preset>
@@ -63,6 +62,7 @@
   
   <target name="antlr" depends="antlrtom">
     <antlr3 target="${v3.gen}/${v3.grammar}.g"
+	    libdirectory="${v3.gen}/${v3.package}/ast"
             outputdirectory="${v3.gen}/${v3.package}"
             />
   </target>

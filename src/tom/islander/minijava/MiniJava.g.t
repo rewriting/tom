@@ -169,10 +169,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { ast/MiniJavaAstTokenList.txt }
+  tokenVocab=AstTokens;
 }
 
 @header {
