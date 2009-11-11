@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-11-10 20:03:44
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-11-11 00:54:01
 
 package tom.gom.expander.rule;
 
@@ -1770,42 +1770,38 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "term"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:1: term : ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin );
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:1: term : ( pattern | var | builtin );
     public final RuleParser.term_return term() throws RecognitionException {
         RuleParser.term_return retval = new RuleParser.term_return();
         retval.start = input.LT(1);
 
         Tree root_0 = null;
 
-        Token s=null;
-        Token ID40=null;
         RuleParser.pattern_return pattern39 = null;
+
+        RuleParser.var_return var40 = null;
 
         RuleParser.builtin_return builtin41 = null;
 
 
-        Tree s_tree=null;
-        Tree ID40_tree=null;
-        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
-        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: ( pattern | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin )
-            int alt15=3;
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:67:5: ( pattern | var | builtin )
+            int alt14=3;
             switch ( input.LA(1) ) {
             case ID:
                 {
-                int LA15_1 = input.LA(2);
+                int LA14_1 = input.LA(2);
 
-                if ( (LA15_1==LPAR||LA15_1==AT) ) {
-                    alt15=1;
+                if ( (LA14_1==LPAR||LA14_1==AT) ) {
+                    alt14=1;
                 }
-                else if ( (LA15_1==EOF||(LA15_1>=IF && LA15_1<=MATCH)||(LA15_1>=RPAR && LA15_1<=COMA)||(LA15_1>=UNDERSCORE && LA15_1<=STRING)||LA15_1==AMPERCENT) ) {
-                    alt15=2;
+                else if ( (LA14_1==EOF||(LA14_1>=IF && LA14_1<=MATCH)||(LA14_1>=RPAR && LA14_1<=COMA)||(LA14_1>=UNDERSCORE && LA14_1<=STRING)||LA14_1==AMPERCENT) ) {
+                    alt14=2;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 15, 1, input);
+                        new NoViableAltException("", 14, 1, input);
 
                     throw nvae;
                 }
@@ -1814,23 +1810,23 @@ public class RuleParser extends Parser {
             case UNDERSCORE:
             case NOT:
                 {
-                alt15=1;
+                alt14=1;
                 }
                 break;
             case INT:
             case STRING:
                 {
-                alt15=3;
+                alt14=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 15, 0, input);
+                    new NoViableAltException("", 14, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt15) {
+            switch (alt14) {
                 case 1 :
                     // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:68:3: pattern
                     {
@@ -1846,80 +1842,25 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:5: ID (s= STAR )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:69:5: var
                     {
-                    ID40=(Token)match(input,ID,FOLLOW_ID_in_term727);  
-                    stream_ID.add(ID40);
-
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:8: (s= STAR )?
-                    int alt14=2;
-                    int LA14_0 = input.LA(1);
-
-                    if ( (LA14_0==STAR) ) {
-                        alt14=1;
-                    }
-                    switch (alt14) {
-                        case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:9: s= STAR
-                            {
-                            s=(Token)match(input,STAR,FOLLOW_STAR_in_term732);  
-                            stream_STAR.add(s);
-
-
-                            }
-                            break;
-
-                    }
-
-
-
-                    // AST REWRITE
-                    // elements: ID, ID
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
                     root_0 = (Tree)adaptor.nil();
-                    // 70:18: -> {null==s}? ^( Var ID )
-                    if (null==s) {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:32: ^( Var ID )
-                        {
-                        Tree root_1 = (Tree)adaptor.nil();
-                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
 
-                        adaptor.addChild(root_1, stream_ID.nextNode());
+                    pushFollow(FOLLOW_var_in_term725);
+                    var40=var();
 
-                        adaptor.addChild(root_0, root_1);
-                        }
+                    state._fsp--;
 
-                    }
-                    else // 70:42: -> ^( VarStar ID )
-                    {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:44: ^( VarStar ID )
-                        {
-                        Tree root_1 = (Tree)adaptor.nil();
-                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
+                    adaptor.addChild(root_0, var40.getTree());
 
-                        adaptor.addChild(root_1, stream_ID.nextNode());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;
                     }
                     break;
                 case 3 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:71:5: builtin
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:70:5: builtin
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_builtin_in_term757);
+                    pushFollow(FOLLOW_builtin_in_term731);
                     builtin41=builtin();
 
                     state._fsp--;
@@ -1954,7 +1895,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "builtin"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:72:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
     public final RuleParser.builtin_return builtin() throws RecognitionException {
         RuleParser.builtin_return retval = new RuleParser.builtin_return();
         retval.start = input.LT(1);
@@ -1970,27 +1911,27 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_STRING=new RewriteRuleTokenStream(adaptor,"token STRING");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
-            int alt16=2;
-            int LA16_0 = input.LA(1);
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:72:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
+            int alt15=2;
+            int LA15_0 = input.LA(1);
 
-            if ( (LA16_0==INT) ) {
-                alt16=1;
+            if ( (LA15_0==INT) ) {
+                alt15=1;
             }
-            else if ( (LA16_0==STRING) ) {
-                alt16=2;
+            else if ( (LA15_0==STRING) ) {
+                alt15=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 16, 0, input);
+                    new NoViableAltException("", 15, 0, input);
 
                 throw nvae;
             }
-            switch (alt16) {
+            switch (alt15) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:74:3: INT
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:3: INT
                     {
-                    INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin766);  
+                    INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin740);  
                     stream_INT.add(INT42);
 
 
@@ -2006,9 +1947,9 @@ public class RuleParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 74:7: -> ^( BuiltinInt INT )
+                    // 73:7: -> ^( BuiltinInt INT )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:74:10: ^( BuiltinInt INT )
+                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:73:10: ^( BuiltinInt INT )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinInt, "BuiltinInt"), root_1);
@@ -2024,9 +1965,9 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:5: STRING
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:74:5: STRING
                     {
-                    STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin780);  
+                    STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin754);  
                     stream_STRING.add(STRING43);
 
 
@@ -2042,9 +1983,9 @@ public class RuleParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
-                    // 75:12: -> ^( BuiltinString STRING )
+                    // 74:12: -> ^( BuiltinString STRING )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:75:15: ^( BuiltinString STRING )
+                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:74:15: ^( BuiltinString STRING )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinString, "BuiltinString"), root_1);
@@ -2085,7 +2026,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "labelledpattern"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:77:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
     public final RuleParser.labelledpattern_return labelledpattern() throws RecognitionException {
         RuleParser.labelledpattern_return retval = new RuleParser.labelledpattern_return();
         retval.start = input.LT(1);
@@ -2103,28 +2044,28 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_graphpattern=new RewriteRuleSubtreeStream(adaptor,"rule graphpattern");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:3: (namelabel= ID COLON )? p= graphpattern
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:77:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )? p= graphpattern
             {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:3: (namelabel= ID COLON )?
-            int alt17=2;
-            int LA17_0 = input.LA(1);
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )?
+            int alt16=2;
+            int LA16_0 = input.LA(1);
 
-            if ( (LA17_0==ID) ) {
-                int LA17_1 = input.LA(2);
+            if ( (LA16_0==ID) ) {
+                int LA16_1 = input.LA(2);
 
-                if ( (LA17_1==COLON) ) {
-                    alt17=1;
+                if ( (LA16_1==COLON) ) {
+                    alt16=1;
                 }
             }
-            switch (alt17) {
+            switch (alt16) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:4: namelabel= ID COLON
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:78:4: namelabel= ID COLON
                     {
-                    namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern801);  
+                    namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern775);  
                     stream_ID.add(namelabel);
 
-                    COLON44=(Token)match(input,COLON,FOLLOW_COLON_in_labelledpattern803);  
+                    COLON44=(Token)match(input,COLON,FOLLOW_COLON_in_labelledpattern777);  
                     stream_COLON.add(COLON44);
 
 
@@ -2133,7 +2074,7 @@ public class RuleParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_graphpattern_in_labelledpattern809);
+            pushFollow(FOLLOW_graphpattern_in_labelledpattern783);
             p=graphpattern();
 
             state._fsp--;
@@ -2142,7 +2083,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: namelabel, p, p
+            // elements: p, p, namelabel
             // token labels: namelabel
             // rule labels: p, retval
             // token list labels: 
@@ -2154,9 +2095,9 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 80:3: -> {$namelabel!=null}? ^( LabTerm $namelabel $p)
+            // 79:3: -> {$namelabel!=null}? ^( LabTerm $namelabel $p)
             if (namelabel!=null) {
-                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:80:26: ^( LabTerm $namelabel $p)
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:79:26: ^( LabTerm $namelabel $p)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(LabTerm, "LabTerm"), root_1);
@@ -2168,7 +2109,7 @@ public class RuleParser extends Parser {
                 }
 
             }
-            else // 81:3: -> $p
+            else // 80:3: -> $p
             {
                 adaptor.addChild(root_0, stream_p.nextTree());
 
@@ -2201,44 +2142,40 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "graphpattern"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:1: graphpattern : ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref );
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:1: graphpattern : ( constructor | var | builtin | ref );
     public final RuleParser.graphpattern_return graphpattern() throws RecognitionException {
         RuleParser.graphpattern_return retval = new RuleParser.graphpattern_return();
         retval.start = input.LT(1);
 
         Tree root_0 = null;
 
-        Token s=null;
-        Token ID46=null;
         RuleParser.constructor_return constructor45 = null;
+
+        RuleParser.var_return var46 = null;
 
         RuleParser.builtin_return builtin47 = null;
 
         RuleParser.ref_return ref48 = null;
 
 
-        Tree s_tree=null;
-        Tree ID46_tree=null;
-        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
-        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:13: ( constructor | ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) | builtin | ref )
-            int alt19=4;
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:82:13: ( constructor | var | builtin | ref )
+            int alt17=4;
             switch ( input.LA(1) ) {
             case ID:
                 {
-                int LA19_1 = input.LA(2);
+                int LA17_1 = input.LA(2);
 
-                if ( (LA19_1==LPAR) ) {
-                    alt19=1;
+                if ( (LA17_1==LPAR) ) {
+                    alt17=1;
                 }
-                else if ( (LA19_1==EOF||(LA19_1>=ARROW && LA19_1<=IF)||(LA19_1>=RPAR && LA19_1<=COMA)||LA19_1==STAR||(LA19_1>=INT && LA19_1<=STRING)||LA19_1==AMPERCENT) ) {
-                    alt19=2;
+                else if ( (LA17_1==EOF||(LA17_1>=ARROW && LA17_1<=IF)||(LA17_1>=RPAR && LA17_1<=COMA)||LA17_1==STAR||(LA17_1>=INT && LA17_1<=STRING)||LA17_1==AMPERCENT) ) {
+                    alt17=2;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 19, 1, input);
+                        new NoViableAltException("", 17, 1, input);
 
                     throw nvae;
                 }
@@ -2247,28 +2184,28 @@ public class RuleParser extends Parser {
             case INT:
             case STRING:
                 {
-                alt19=3;
+                alt17=3;
                 }
                 break;
             case AMPERCENT:
                 {
-                alt19=4;
+                alt17=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 19, 0, input);
+                    new NoViableAltException("", 17, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt19) {
+            switch (alt17) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:84:3: constructor
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:83:3: constructor
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_constructor_in_graphpattern841);
+                    pushFollow(FOLLOW_constructor_in_graphpattern815);
                     constructor45=constructor();
 
                     state._fsp--;
@@ -2278,80 +2215,25 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:5: ID (s= STAR )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:84:5: var
                     {
-                    ID46=(Token)match(input,ID,FOLLOW_ID_in_graphpattern849);  
-                    stream_ID.add(ID46);
-
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:8: (s= STAR )?
-                    int alt18=2;
-                    int LA18_0 = input.LA(1);
-
-                    if ( (LA18_0==STAR) ) {
-                        alt18=1;
-                    }
-                    switch (alt18) {
-                        case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:9: s= STAR
-                            {
-                            s=(Token)match(input,STAR,FOLLOW_STAR_in_graphpattern854);  
-                            stream_STAR.add(s);
-
-
-                            }
-                            break;
-
-                    }
-
-
-
-                    // AST REWRITE
-                    // elements: ID, ID
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
                     root_0 = (Tree)adaptor.nil();
-                    // 86:18: -> {null==s}? ^( Var ID )
-                    if (null==s) {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:32: ^( Var ID )
-                        {
-                        Tree root_1 = (Tree)adaptor.nil();
-                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
 
-                        adaptor.addChild(root_1, stream_ID.nextNode());
+                    pushFollow(FOLLOW_var_in_graphpattern821);
+                    var46=var();
 
-                        adaptor.addChild(root_0, root_1);
-                        }
+                    state._fsp--;
 
-                    }
-                    else // 86:42: -> ^( VarStar ID )
-                    {
-                        // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:44: ^( VarStar ID )
-                        {
-                        Tree root_1 = (Tree)adaptor.nil();
-                        root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
+                    adaptor.addChild(root_0, var46.getTree());
 
-                        adaptor.addChild(root_1, stream_ID.nextNode());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;
                     }
                     break;
                 case 3 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:87:5: builtin
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:85:5: builtin
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_builtin_in_graphpattern879);
+                    pushFollow(FOLLOW_builtin_in_graphpattern827);
                     builtin47=builtin();
 
                     state._fsp--;
@@ -2361,11 +2243,11 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:5: ref
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:5: ref
                     {
                     root_0 = (Tree)adaptor.nil();
 
-                    pushFollow(FOLLOW_ref_in_graphpattern885);
+                    pushFollow(FOLLOW_ref_in_graphpattern833);
                     ref48=ref();
 
                     state._fsp--;
@@ -2394,36 +2276,145 @@ public class RuleParser extends Parser {
     }
     // $ANTLR end "graphpattern"
 
+    public static class var_return extends ParserRuleReturnScope {
+        Tree tree;
+        public Object getTree() { return tree; }
+    };
+
+    // $ANTLR start "var"
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:1: var : ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) ;
+    public final RuleParser.var_return var() throws RecognitionException {
+        RuleParser.var_return retval = new RuleParser.var_return();
+        retval.start = input.LT(1);
+
+        Tree root_0 = null;
+
+        Token s=null;
+        Token ID49=null;
+
+        Tree s_tree=null;
+        Tree ID49_tree=null;
+        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
+        RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
+
+        try {
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:4: ( ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:3: ID (s= STAR )?
+            {
+            ID49=(Token)match(input,ID,FOLLOW_ID_in_var842);  
+            stream_ID.add(ID49);
+
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:6: (s= STAR )?
+            int alt18=2;
+            int LA18_0 = input.LA(1);
+
+            if ( (LA18_0==STAR) ) {
+                alt18=1;
+            }
+            switch (alt18) {
+                case 1 :
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:7: s= STAR
+                    {
+                    s=(Token)match(input,STAR,FOLLOW_STAR_in_var847);  
+                    stream_STAR.add(s);
+
+
+                    }
+                    break;
+
+            }
+
+
+
+            // AST REWRITE
+            // elements: ID, ID
+            // token labels: 
+            // rule labels: retval
+            // token list labels: 
+            // rule list labels: 
+            // wildcard labels: 
+            retval.tree = root_0;
+            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+
+            root_0 = (Tree)adaptor.nil();
+            // 89:16: -> {null==s}? ^( Var ID )
+            if (null==s) {
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:30: ^( Var ID )
+                {
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
+
+                adaptor.addChild(root_1, stream_ID.nextNode());
+
+                adaptor.addChild(root_0, root_1);
+                }
+
+            }
+            else // 89:40: -> ^( VarStar ID )
+            {
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:42: ^( VarStar ID )
+                {
+                Tree root_1 = (Tree)adaptor.nil();
+                root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
+
+                adaptor.addChild(root_1, stream_ID.nextNode());
+
+                adaptor.addChild(root_0, root_1);
+                }
+
+            }
+
+            retval.tree = root_0;
+            }
+
+            retval.stop = input.LT(-1);
+
+            retval.tree = (Tree)adaptor.rulePostProcessing(root_0);
+            adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+    	retval.tree = (Tree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+
+        }
+        finally {
+        }
+        return retval;
+    }
+    // $ANTLR end "var"
+
     public static class ref_return extends ParserRuleReturnScope {
         Tree tree;
         public Object getTree() { return tree; }
     };
 
     // $ANTLR start "ref"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
     public final RuleParser.ref_return ref() throws RecognitionException {
         RuleParser.ref_return retval = new RuleParser.ref_return();
         retval.start = input.LT(1);
 
         Tree root_0 = null;
 
-        Token AMPERCENT49=null;
-        Token ID50=null;
+        Token AMPERCENT50=null;
+        Token ID51=null;
 
-        Tree AMPERCENT49_tree=null;
-        Tree ID50_tree=null;
+        Tree AMPERCENT50_tree=null;
+        Tree ID51_tree=null;
         RewriteRuleTokenStream stream_AMPERCENT=new RewriteRuleTokenStream(adaptor,"token AMPERCENT");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:3: AMPERCENT ID
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:3: AMPERCENT ID
             {
-            AMPERCENT49=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref894);  
-            stream_AMPERCENT.add(AMPERCENT49);
+            AMPERCENT50=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref875);  
+            stream_AMPERCENT.add(AMPERCENT50);
 
-            ID50=(Token)match(input,ID,FOLLOW_ID_in_ref896);  
-            stream_ID.add(ID50);
+            ID51=(Token)match(input,ID,FOLLOW_ID_in_ref877);  
+            stream_ID.add(ID51);
 
 
 
@@ -2438,9 +2429,9 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 91:16: -> ^( RefTerm ID )
+            // 92:16: -> ^( RefTerm ID )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:19: ^( RefTerm ID )
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:19: ^( RefTerm ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RefTerm, "RefTerm"), root_1);
@@ -2479,88 +2470,88 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "constructor"
-    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
+    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
     public final RuleParser.constructor_return constructor() throws RecognitionException {
         RuleParser.constructor_return retval = new RuleParser.constructor_return();
         retval.start = input.LT(1);
 
         Tree root_0 = null;
 
-        Token ID51=null;
-        Token LPAR52=null;
-        Token COMA54=null;
-        Token RPAR56=null;
-        RuleParser.labelledpattern_return labelledpattern53 = null;
+        Token ID52=null;
+        Token LPAR53=null;
+        Token COMA55=null;
+        Token RPAR57=null;
+        RuleParser.labelledpattern_return labelledpattern54 = null;
 
-        RuleParser.labelledpattern_return labelledpattern55 = null;
+        RuleParser.labelledpattern_return labelledpattern56 = null;
 
 
-        Tree ID51_tree=null;
-        Tree LPAR52_tree=null;
-        Tree COMA54_tree=null;
-        Tree RPAR56_tree=null;
+        Tree ID52_tree=null;
+        Tree LPAR53_tree=null;
+        Tree COMA55_tree=null;
+        Tree RPAR57_tree=null;
         RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_labelledpattern=new RewriteRuleSubtreeStream(adaptor,"rule labelledpattern");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
             {
-            ID51=(Token)match(input,ID,FOLLOW_ID_in_constructor913);  
-            stream_ID.add(ID51);
+            ID52=(Token)match(input,ID,FOLLOW_ID_in_constructor894);  
+            stream_ID.add(ID52);
 
-            LPAR52=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor915);  
-            stream_LPAR.add(LPAR52);
+            LPAR53=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor896);  
+            stream_LPAR.add(LPAR53);
 
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:11: ( labelledpattern ( COMA labelledpattern )* )?
-            int alt21=2;
-            int LA21_0 = input.LA(1);
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:11: ( labelledpattern ( COMA labelledpattern )* )?
+            int alt20=2;
+            int LA20_0 = input.LA(1);
 
-            if ( (LA21_0==ID||(LA21_0>=INT && LA21_0<=STRING)||LA21_0==AMPERCENT) ) {
-                alt21=1;
+            if ( (LA20_0==ID||(LA20_0>=INT && LA20_0<=STRING)||LA20_0==AMPERCENT) ) {
+                alt20=1;
             }
-            switch (alt21) {
+            switch (alt20) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:12: labelledpattern ( COMA labelledpattern )*
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:12: labelledpattern ( COMA labelledpattern )*
                     {
-                    pushFollow(FOLLOW_labelledpattern_in_constructor918);
-                    labelledpattern53=labelledpattern();
+                    pushFollow(FOLLOW_labelledpattern_in_constructor899);
+                    labelledpattern54=labelledpattern();
 
                     state._fsp--;
 
-                    stream_labelledpattern.add(labelledpattern53.getTree());
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:28: ( COMA labelledpattern )*
-                    loop20:
+                    stream_labelledpattern.add(labelledpattern54.getTree());
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:28: ( COMA labelledpattern )*
+                    loop19:
                     do {
-                        int alt20=2;
-                        int LA20_0 = input.LA(1);
+                        int alt19=2;
+                        int LA19_0 = input.LA(1);
 
-                        if ( (LA20_0==COMA) ) {
-                            alt20=1;
+                        if ( (LA19_0==COMA) ) {
+                            alt19=1;
                         }
 
 
-                        switch (alt20) {
+                        switch (alt19) {
                     	case 1 :
-                    	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:29: COMA labelledpattern
+                    	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:29: COMA labelledpattern
                     	    {
-                    	    COMA54=(Token)match(input,COMA,FOLLOW_COMA_in_constructor921);  
-                    	    stream_COMA.add(COMA54);
+                    	    COMA55=(Token)match(input,COMA,FOLLOW_COMA_in_constructor902);  
+                    	    stream_COMA.add(COMA55);
 
-                    	    pushFollow(FOLLOW_labelledpattern_in_constructor923);
-                    	    labelledpattern55=labelledpattern();
+                    	    pushFollow(FOLLOW_labelledpattern_in_constructor904);
+                    	    labelledpattern56=labelledpattern();
 
                     	    state._fsp--;
 
-                    	    stream_labelledpattern.add(labelledpattern55.getTree());
+                    	    stream_labelledpattern.add(labelledpattern56.getTree());
 
                     	    }
                     	    break;
 
                     	default :
-                    	    break loop20;
+                    	    break loop19;
                         }
                     } while (true);
 
@@ -2570,13 +2561,13 @@ public class RuleParser extends Parser {
 
             }
 
-            RPAR56=(Token)match(input,RPAR,FOLLOW_RPAR_in_constructor929);  
-            stream_RPAR.add(RPAR56);
+            RPAR57=(Token)match(input,RPAR,FOLLOW_RPAR_in_constructor910);  
+            stream_RPAR.add(RPAR57);
 
 
 
             // AST REWRITE
-            // elements: labelledpattern, ID
+            // elements: ID, labelledpattern
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2586,20 +2577,20 @@ public class RuleParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Tree)adaptor.nil();
-            // 95:3: -> ^( Appl ID ^( TermList ( labelledpattern )* ) )
+            // 96:3: -> ^( Appl ID ^( TermList ( labelledpattern )* ) )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
-                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:16: ^( TermList ( labelledpattern )* )
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:16: ^( TermList ( labelledpattern )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_2);
 
-                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:27: ( labelledpattern )*
+                // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:27: ( labelledpattern )*
                 while ( stream_labelledpattern.hasNext() ) {
                     adaptor.addChild(root_2, stream_labelledpattern.nextTree());
 
@@ -2698,26 +2689,26 @@ public class RuleParser extends Parser {
     public static final BitSet FOLLOW_NOT_in_pattern700 = new BitSet(new long[]{0x0029000000000000L});
     public static final BitSet FOLLOW_pattern_in_pattern702 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_pattern_in_term719 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_term727 = new BitSet(new long[]{0x0010000000000002L});
-    public static final BitSet FOLLOW_STAR_in_term732 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_builtin_in_term757 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_builtin766 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_builtin780 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_labelledpattern801 = new BitSet(new long[]{0x0100000000000000L});
-    public static final BitSet FOLLOW_COLON_in_labelledpattern803 = new BitSet(new long[]{0x02E9000000000000L});
-    public static final BitSet FOLLOW_graphpattern_in_labelledpattern809 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_constructor_in_graphpattern841 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_graphpattern849 = new BitSet(new long[]{0x0010000000000002L});
-    public static final BitSet FOLLOW_STAR_in_graphpattern854 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_builtin_in_graphpattern879 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ref_in_graphpattern885 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_AMPERCENT_in_ref894 = new BitSet(new long[]{0x0001000000000000L});
-    public static final BitSet FOLLOW_ID_in_ref896 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_constructor913 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_LPAR_in_constructor915 = new BitSet(new long[]{0x02E9800000000000L});
-    public static final BitSet FOLLOW_labelledpattern_in_constructor918 = new BitSet(new long[]{0x0002800000000000L});
-    public static final BitSet FOLLOW_COMA_in_constructor921 = new BitSet(new long[]{0x02E9000000000000L});
-    public static final BitSet FOLLOW_labelledpattern_in_constructor923 = new BitSet(new long[]{0x0002800000000000L});
-    public static final BitSet FOLLOW_RPAR_in_constructor929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_var_in_term725 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_builtin_in_term731 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_builtin740 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_builtin754 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_labelledpattern775 = new BitSet(new long[]{0x0100000000000000L});
+    public static final BitSet FOLLOW_COLON_in_labelledpattern777 = new BitSet(new long[]{0x02E9000000000000L});
+    public static final BitSet FOLLOW_graphpattern_in_labelledpattern783 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_constructor_in_graphpattern815 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_var_in_graphpattern821 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_builtin_in_graphpattern827 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ref_in_graphpattern833 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_var842 = new BitSet(new long[]{0x0010000000000002L});
+    public static final BitSet FOLLOW_STAR_in_var847 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_AMPERCENT_in_ref875 = new BitSet(new long[]{0x0001000000000000L});
+    public static final BitSet FOLLOW_ID_in_ref877 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_constructor894 = new BitSet(new long[]{0x0000400000000000L});
+    public static final BitSet FOLLOW_LPAR_in_constructor896 = new BitSet(new long[]{0x02E9800000000000L});
+    public static final BitSet FOLLOW_labelledpattern_in_constructor899 = new BitSet(new long[]{0x0002800000000000L});
+    public static final BitSet FOLLOW_COMA_in_constructor902 = new BitSet(new long[]{0x02E9000000000000L});
+    public static final BitSet FOLLOW_labelledpattern_in_constructor904 = new BitSet(new long[]{0x0002800000000000L});
+    public static final BitSet FOLLOW_RPAR_in_constructor910 = new BitSet(new long[]{0x0000000000000002L});
 
 }

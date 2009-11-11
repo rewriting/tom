@@ -52,16 +52,8 @@ public class Expander {
          private static   tom.gom.adt.gom.types.GomModuleList  tom_append_list_ConcGomModule( tom.gom.adt.gom.types.GomModuleList l1,  tom.gom.adt.gom.types.GomModuleList  l2) {     if( l1.isEmptyConcGomModule() ) {       return l2;     } else if( l2.isEmptyConcGomModule() ) {       return l1;     } else if(  l1.getTailConcGomModule() .isEmptyConcGomModule() ) {       return  tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make( l1.getHeadConcGomModule() ,l2) ;     } else {       return  tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make( l1.getHeadConcGomModule() ,tom_append_list_ConcGomModule( l1.getTailConcGomModule() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.GomModuleList  tom_get_slice_ConcGomModule( tom.gom.adt.gom.types.GomModuleList  begin,  tom.gom.adt.gom.types.GomModuleList  end, tom.gom.adt.gom.types.GomModuleList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcGomModule()  ||  (end== tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make( begin.getHeadConcGomModule() ,( tom.gom.adt.gom.types.GomModuleList )tom_get_slice_ConcGomModule( begin.getTailConcGomModule() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.SectionList  tom_append_list_ConcSection( tom.gom.adt.gom.types.SectionList l1,  tom.gom.adt.gom.types.SectionList  l2) {     if( l1.isEmptyConcSection() ) {       return l2;     } else if( l2.isEmptyConcSection() ) {       return l1;     } else if(  l1.getTailConcSection() .isEmptyConcSection() ) {       return  tom.gom.adt.gom.types.sectionlist.ConsConcSection.make( l1.getHeadConcSection() ,l2) ;     } else {       return  tom.gom.adt.gom.types.sectionlist.ConsConcSection.make( l1.getHeadConcSection() ,tom_append_list_ConcSection( l1.getTailConcSection() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.SectionList  tom_get_slice_ConcSection( tom.gom.adt.gom.types.SectionList  begin,  tom.gom.adt.gom.types.SectionList  end, tom.gom.adt.gom.types.SectionList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcSection()  ||  (end== tom.gom.adt.gom.types.sectionlist.EmptyConcSection.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.sectionlist.ConsConcSection.make( begin.getHeadConcSection() ,( tom.gom.adt.gom.types.SectionList )tom_get_slice_ConcSection( begin.getTailConcSection() ,end,tail)) ;   }      private static   tom.gom.adt.gom.types.ImportList  tom_append_list_ConcImportedModule( tom.gom.adt.gom.types.ImportList l1,  tom.gom.adt.gom.types.ImportList  l2) {     if( l1.isEmptyConcImportedModule() ) {       return l2;     } else if( l2.isEmptyConcImportedModule() ) {       return l1;     } else if(  l1.getTailConcImportedModule() .isEmptyConcImportedModule() ) {       return  tom.gom.adt.gom.types.importlist.ConsConcImportedModule.make( l1.getHeadConcImportedModule() ,l2) ;     } else {       return  tom.gom.adt.gom.types.importlist.ConsConcImportedModule.make( l1.getHeadConcImportedModule() ,tom_append_list_ConcImportedModule( l1.getTailConcImportedModule() ,l2)) ;     }   }   private static   tom.gom.adt.gom.types.ImportList  tom_get_slice_ConcImportedModule( tom.gom.adt.gom.types.ImportList  begin,  tom.gom.adt.gom.types.ImportList  end, tom.gom.adt.gom.types.ImportList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyConcImportedModule()  ||  (end== tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.gom.adt.gom.types.importlist.ConsConcImportedModule.make( begin.getHeadConcImportedModule() ,( tom.gom.adt.gom.types.ImportList )tom_get_slice_ConcImportedModule( begin.getTailConcImportedModule() ,end,tail)) ;   }    
 
   private GomEnvironment gomEnvironment;
-  
-  public Expander(GomStreamManager streamManager) {
-    this.gomEnvironment.setStreamManager(streamManager);
-  }
 
   public Expander(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
-  public Expander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
   }
 
@@ -69,16 +61,8 @@ public class Expander {
     return this.gomEnvironment;
   }
 
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
   public GomStreamManager getStreamManager() {
     return this.gomEnvironment.getStreamManager();
-  }
-
-  public void setStreamManager(GomStreamManager streamManager) {
-    this.gomEnvironment.setStreamManager(streamManager);
   }
 
   /*
@@ -98,18 +82,18 @@ public class Expander {
       for (GomModuleName moduleNameName : moduleToAnalyse) {
         String moduleName = moduleNameName.getName();
 
-        if(!getGomEnvironment().isBuiltin(moduleName)) {
-          if(!alreadyParsedModule.contains(moduleNameName)) {
+        if (!getGomEnvironment().isBuiltin(moduleName)) {
+          if (!alreadyParsedModule.contains(moduleNameName)) {
             GomModule importedModule = parse(moduleName);
-            if(importedModule == null) {
+            if (null == importedModule) {
               return null;
             }
             result = tom_append_list_ConcGomModule(result, tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make(importedModule, tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule.make() ) );
             alreadyParsedModule.add(moduleNameName);
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
-	  }
+          }
         } else {
-          getGomEnvironment().markUsedBuiltin(moduleName); 
+          getGomEnvironment().markUsedBuiltin(moduleName);
         }
       }
       moduleToAnalyse = newModuleToAnalyse;
@@ -130,7 +114,6 @@ public class Expander {
       }
       importedModules = importedModules.getTailConcImportedModule();
     }
-    //System.out.println("*** generateModuleToAnalyseSet = " + moduleToAnalyse);
     return moduleToAnalyse;
   }
 
@@ -163,7 +146,7 @@ public class Expander {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
     try {
-      Tree tree = (Tree)parser.module().getTree();
+      Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
@@ -180,7 +163,7 @@ public class Expander {
   private File findModuleFile(String moduleName) {
     String extendedModuleName = moduleName+".gom";
     File f = new File(extendedModuleName);
-    if(f.exists()) {
+    if (f.exists()) {
       return f;
     }
     return getStreamManager().findModuleFile(extendedModuleName);
@@ -193,10 +176,10 @@ public class Expander {
 
   public ImportList getImportList(GomModule module) {
     ImportList imports =  tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ;
-    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch1_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( ((tomMatch1_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch1_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch1__end__7=tomMatch1_2;do {{if (!( tomMatch1__end__7.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch1_11= tomMatch1__end__7.getHeadConcSection() ;if ( (tomMatch1_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
+    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch456_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( ((tomMatch456_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch456_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch456__end__7=tomMatch456_2;do {{if (!( tomMatch456__end__7.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch456_11= tomMatch456__end__7.getHeadConcSection() ;if ( (tomMatch456_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
 
-        imports = tom_append_list_ConcImportedModule( tomMatch1_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
-      }}if ( tomMatch1__end__7.isEmptyConcSection() ) {tomMatch1__end__7=tomMatch1_2;} else {tomMatch1__end__7= tomMatch1__end__7.getTailConcSection() ;}}} while(!( (tomMatch1__end__7==tomMatch1_2) ));}}}}}
+        imports = tom_append_list_ConcImportedModule( tomMatch456_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
+      }}if ( tomMatch456__end__7.isEmptyConcSection() ) {tomMatch456__end__7=tomMatch456_2;} else {tomMatch456__end__7= tomMatch456__end__7.getTailConcSection() ;}}} while(!( (tomMatch456__end__7==tomMatch456_2) ));}}}}}
 
     return imports;
   }

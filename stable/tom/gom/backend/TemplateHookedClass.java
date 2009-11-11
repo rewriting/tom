@@ -40,7 +40,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected List importList;
   protected TemplateClass mapping;
   protected OptionManager optionManager;
- 
+
   public TemplateHookedClass(GomClass gomClass,
                              OptionManager manager,
                              File tomHomePath,
@@ -64,7 +64,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
-    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
+    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch380__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch380__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch380_8= tomMatch380__end__4.getHeadConcHook() ;if ( (tomMatch380_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
 
         res.append(CodeGen.generateCode( tomMatch380_8.getCode() ));
@@ -76,7 +76,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
-    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
+    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch381__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch381__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch381_8= tomMatch381__end__4.getHeadConcHook() ;if ( (tomMatch381_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
 
         res.append(CodeGen.generateCode( tomMatch381_8.getCode() ));
@@ -88,7 +88,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
-    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );   
+    HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
     {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch382__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch382__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch382_8= tomMatch382__end__4.getHeadConcHook() ;if ( (tomMatch382_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
 
         res.append(",");
@@ -118,7 +118,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
 
-      ArrayList<String> tomParams = new ArrayList<String>();      
+      ArrayList<String> tomParams = new ArrayList<String>();
 
       try {
         Iterator it = importList.iterator();

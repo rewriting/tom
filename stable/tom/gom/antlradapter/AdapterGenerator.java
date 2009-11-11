@@ -143,7 +143,7 @@ public class AdapterGenerator {
     writer.write("\n"
 );
     }
-    writer.write("\npublic class "+filename()+"Adaptor {\n  public static shared.SharedObject getTerm(Tree tree) {\n    shared.SharedObject res = null;\n    if(tree.isNil()) {\n      throw new RuntimeException(\"nil term\");\n    }\n    if(tree.getType()==Token.INVALID_TOKEN_TYPE) {\n      throw new RuntimeException(\"bad type\");\n    }\n    \n    switch (tree.getType()) {\n"
+    writer.write("\npublic class "+filename()+"Adaptor {\n  public static shared.SharedObject getTerm(Tree tree) {\n    shared.SharedObject res = null;\n    if(tree.isNil()) {\n      throw new RuntimeException(\"nil term\");\n    }\n    if(tree.getType()==Token.INVALID_TOKEN_TYPE) {\n      throw new RuntimeException(\"bad type\");\n    }\n\n    switch (tree.getType()) {\n"
 
 
 

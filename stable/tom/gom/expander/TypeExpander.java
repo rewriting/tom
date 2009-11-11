@@ -45,7 +45,7 @@ public class TypeExpander {
   public TypeExpander(GomStreamManager streamManager) {
     this.gomEnvironment.setStreamManager(streamManager);
   }
-  
+
   public TypeExpander(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
   }
@@ -194,7 +194,7 @@ public class TypeExpander {
         TypedProduction domainSorts = typedProduction( (( tom.gom.adt.gom.types.Production )prod).getDomainList() ,sortDeclList);
 ///
         OperatorDecl decl =  tom.gom.adt.gom.types.operatordecl.OperatorDecl.make(tom_name, codomainSort, domainSorts,  tom.gom.adt.gom.types.option.Details.make("") ) ; //default case, when no comment is present
-        if (tom_options.isConsOptionList()) { // usual case : 
+        if (tom_options.isConsOptionList()) { // usual case :
           Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)tom_options).toArray();
           for (int i=0;i<tom_options.length();i++) {
             if (opts[i] instanceof tom.gom.adt.gom.types.option.Details) {
@@ -232,7 +232,7 @@ public class TypeExpander {
         }
       }}if ( tomMatch497__end__4.isEmptyConcSortDecl() ) {tomMatch497__end__4=(( tom.gom.adt.gom.types.SortDeclList )sortDeclList);} else {tomMatch497__end__4= tomMatch497__end__4.getTailConcSortDecl() ;}}} while(!( (tomMatch497__end__4==(( tom.gom.adt.gom.types.SortDeclList )sortDeclList)) ));}}}}
 
-    
+
     getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
         new Object[]{typename});
     /* If the sort is not known, assume it is a builtin */
@@ -411,7 +411,7 @@ public class TypeExpander {
         Iterator it = getTransitiveClosureImports( tomMatch507__end__4.getHeadConcGomModule() ,moduleList).iterator();
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
-          importsModuleDeclList = 
+          importsModuleDeclList =
              tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl.make( tom.gom.adt.gom.types.moduledecl.ModuleDecl.make(importedModuleName, getStreamManager().getPackagePath(importedModuleName.getName())) ,tom_append_list_ConcModuleDecl(importsModuleDeclList, tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl.make() )) 
 ;
         }

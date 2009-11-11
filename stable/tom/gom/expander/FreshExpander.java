@@ -1,25 +1,25 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.expander;
@@ -90,7 +90,6 @@ public class FreshExpander {
       throw new GomRuntimeException("Should never happen");
     }
   }
-  
 
   /* -- export, convert and alpha maps argument lists -- */
 
@@ -102,7 +101,7 @@ public class FreshExpander {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(",tom.library.freshgom.AlphaMap<"+aid+"> "+a+"OuterMap");
           buf.append(",tom.library.freshgom.AlphaMap<"+aid+"> "+a+"InnerMap");
-        } else 
+        } else
           buf.append(",tom.library.freshgom.AlphaMap<"+aid+"> "+a+"Map");
       } else {
         buf.append(",tom.library.freshgom.AlphaMap<"+aid+"> "+a+"Map");
@@ -116,7 +115,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       String aid = st.getFullSortClassName(a);
       buf.append(",new tom.library.freshgom.AlphaMap<"+aid+">()");
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
         buf.append(",new tom.library.freshgom.AlphaMap<"+aid+">()");
     }
     return buf.toString();
@@ -124,7 +123,7 @@ public class FreshExpander {
 
   private String exportmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    boolean first = true; 
+    boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
@@ -133,7 +132,7 @@ public class FreshExpander {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append("tom.library.freshgom.ExportMap<"+aid+"> "+a+"OuterMap");
           buf.append(",tom.library.freshgom.ExportMap<"+aid+"> "+a+"InnerMap");
-        } else 
+        } else
           buf.append("tom.library.freshgom.ExportMap<"+aid+"> "+a+"Map");
       } else {
         buf.append("tom.library.freshgom.ExportMap<"+aid+"> "+a+"Map");
@@ -144,13 +143,13 @@ public class FreshExpander {
 
   private String newExportmapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    boolean first = true; 
+    boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
       String aid = st.getFullSortClassName(a);
       buf.append("new tom.library.freshgom.ExportMap<"+aid+">()");
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
         buf.append(",new tom.library.freshgom.ExportMap<"+aid+">()");
     }
     return buf.toString();
@@ -158,7 +157,7 @@ public class FreshExpander {
 
   private String convertmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    boolean first = true; 
+    boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
@@ -167,7 +166,7 @@ public class FreshExpander {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append("tom.library.freshgom.ConvertMap<"+aid+"> "+a+"OuterMap");
           buf.append(",tom.library.freshgom.ConvertMap<"+aid+"> "+a+"InnerMap");
-        } else 
+        } else
           buf.append("tom.library.freshgom.ConvertMap<"+aid+"> "+a+"Map");
       } else {
         buf.append("tom.library.freshgom.ConvertMap<"+aid+"> "+a+"Map");
@@ -178,13 +177,13 @@ public class FreshExpander {
 
   private String newConvertmapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    boolean first = true; 
+    boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
       if(!first) buf.append(", ");
       else first = false;
       String aid = st.getFullSortClassName(a);
       buf.append("new tom.library.freshgom.ConvertMap<"+aid+">()");
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
         buf.append(",new tom.library.freshgom.ConvertMap<"+aid+">()");
     }
     return buf.toString();
@@ -214,7 +213,7 @@ public class FreshExpander {
   private String alphaRecCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(st.getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a))
         buf.append(","+a+"InnerMap");
       else
         buf.append(","+a+"Map");
@@ -226,7 +225,7 @@ public class FreshExpander {
   private String alphaRecCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(st.getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a))
         buf.append(","+a+"OuterMap");
       else
         buf.append(","+a+"Map");
@@ -287,12 +286,10 @@ public class FreshExpander {
   private String recCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
-    // for(String a: st.getAccessibleAtoms(tosort)) {
     for(String a: st.getAccessibleAtoms(tosort)) {
       if(!first) buf.append(",");
       else first = false;
-      // if(st.getBoundAtoms(fromsort).contains(a)) 
-      if(st.getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a))
         buf.append(""+a+"InnerMap");
       else
         buf.append(""+a+"Map");
@@ -307,7 +304,7 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(tosort)) {
       if(!first) buf.append(",");
       else first = false;
-      if(st.getBoundAtoms(fromsort).contains(a)) 
+      if(st.getBoundAtoms(fromsort).contains(a))
         buf.append(""+a+"OuterMap");
       else
         buf.append(""+a+"Map");
@@ -415,7 +412,7 @@ public class FreshExpander {
   public static class AddHook extends tom.library.sl.AbstractStrategyBasic {private  String  sort;private  tom.gom.adt.gom.types.Production  hook;public AddHook( String  sort,  tom.gom.adt.gom.types.Production  hook) {super(( new tom.library.sl.Fail() ));this.sort=sort;this.hook=hook;}public  String  getsort() {return sort;}public  tom.gom.adt.gom.types.Production  gethook() {return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.ProductionList  visit_ProductionList( tom.gom.adt.gom.types.ProductionList  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.ProductionList) ) {if ( (((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ((( tom.gom.adt.gom.types.ProductionList )tom__arg) instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) ) {if (!( (( tom.gom.adt.gom.types.ProductionList )tom__arg).isEmptyConcProduction() )) { tom.gom.adt.gom.types.Production  tomMatch457_5= (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() ;if ( (tomMatch457_5 instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch457_4= tomMatch457_5.getType() ;if ( (tomMatch457_4 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) {
 
 
-        if( tomMatch457_4.getName() .equals(sort)) 
+        if( tomMatch457_4.getName() .equals(sort))
           return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getHeadConcProduction() , tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(hook,tom_append_list_ConcProduction( (( tom.gom.adt.gom.types.ProductionList )tom__arg).getTailConcProduction() , tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
       }}}}}}}return _visit_ProductionList(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.ProductionList  _visit_ProductionList( tom.gom.adt.gom.types.ProductionList  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.ProductionList )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.ProductionList) ) {return ((T)visit_ProductionList((( tom.gom.adt.gom.types.ProductionList )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_AddHook( String  t0,  tom.gom.adt.gom.types.Production  t1) { return new AddHook(t0,t1);}
 
@@ -424,11 +421,11 @@ public class FreshExpander {
   /* add the hook next to sort declaration */
   private GomModuleList addSortBlockHook
     (GomModuleList ml, String sort, String code) {
-      Production hook = 
+      Production hook =
          tom.gom.adt.gom.types.production.Hook.make( tom.gom.adt.gom.types.idkind.KindSort.make() , sort,  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
-      try { 
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml); 
+      try {
+        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
       }
       catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
@@ -441,17 +438,17 @@ public class FreshExpander {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(st.isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
-      } else if (st.isGeneratedNil(cons)) { 
+      } else if (st.isGeneratedNil(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureNil.make() ) ;
         cons = st.getBaseName(cons);
       }
       Production hook =  tom.gom.adt.gom.types.production.Hook.make(kind, cons,  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
-      try { 
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml); 
+      try {
+        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
       } catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
       }
@@ -463,20 +460,20 @@ public class FreshExpander {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(st.isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
-      } else if (st.isGeneratedNil(cons)) { 
+      } else if (st.isGeneratedNil(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureNil.make() ) ;
         cons = st.getBaseName(cons);
       }
-      Production hook = 
+      Production hook =
          tom.gom.adt.gom.types.production.Hook.make(kind, st.rawCons(cons),  tom.gom.adt.gom.types.hookkind.HookKind.make("javablock") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
-      try { 
-        return tom_make_OnceTopDown(tom_make_AddHook(st.rawCons(sort),hook)).visitLight(ml); 
+      try {
+        return tom_make_OnceTopDown(tom_make_AddHook(st.rawCons(sort),hook)).visitLight(ml);
       }
-      catch (VisitFailure e) { 
+      catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
       }
     }
@@ -484,13 +481,13 @@ public class FreshExpander {
   /* add the hook next to the sort declaration */
   private GomModuleList addSortInterfaceHook
     (GomModuleList ml, String sort, String code) {
-      Production hook = 
+      Production hook =
          tom.gom.adt.gom.types.production.Hook.make( tom.gom.adt.gom.types.idkind.KindSort.make() , sort,  tom.gom.adt.gom.types.hookkind.HookKind.make("interface") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
-      try { 
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml); 
+      try {
+        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
       }
-      catch (VisitFailure e) { 
+      catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
       }
     }
@@ -501,18 +498,18 @@ public class FreshExpander {
       String sort = st.getSort(cons);
       IdKind kind =  tom.gom.adt.gom.types.idkind.KindOperator.make() ;
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if(st.isGeneratedCons(cons)) { 
+      if(st.isGeneratedCons(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureCons.make() ) ;
         cons = st.getBaseName(cons);
-      } else if (st.isGeneratedNil(cons)) { 
+      } else if (st.isGeneratedNil(cons)) {
         kind =  tom.gom.adt.gom.types.idkind.KindFutureOperator.make( tom.gom.adt.gom.types.future.FutureNil.make() ) ;
         cons = st.getBaseName(cons);
       }
       Production hook =  tom.gom.adt.gom.types.production.Hook.make(kind, cons,  tom.gom.adt.gom.types.hookkind.HookKind.make("mapping") ,  tom.gom.adt.gom.types.arglist.EmptyConcArg.make() , code,  tom.gom.adt.gom.types.option.EmptyOptionList.make() ) 
 ;
-      try { 
-        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml); 
-      } catch (VisitFailure e) { 
+      try {
+        return tom_make_OnceTopDown(tom_make_AddHook(sort,hook)).visitLight(ml);
+      } catch (VisitFailure e) {
         throw new GomRuntimeException("Should never happen");
       }
     }
@@ -520,7 +517,7 @@ public class FreshExpander {
   /* -- sort hooks -- */
 
   private GomModuleList addSortHooks(GomModuleList ml) {
-    for(String s: st.getSorts()) 
+    for(String s: st.getSorts())
       if(st.isExpressionType(s) || st.isPatternType(s))
         ml = addSortBlockHook(ml,s,sortBlockHookString(s));
     return ml;
@@ -537,13 +534,13 @@ public class FreshExpander {
     String res = "{";
     for(String a: st.getAccessibleAtoms(sort)) {
       String aid = st.getFullSortClassName(a);
-      res += " \n        public abstract "+sortid+" \n          rename"+a+"(java.util.Hashtable<"+aid+","+aid+"> map); \n      "
+      res += "\n        public abstract "+sortid+"\n          rename"+a+"(java.util.Hashtable<"+aid+","+aid+"> map);\n      "
 
 
 ;
     }
 
-    res += "\n     /**\n      * alpha equivalence \n      */\n      public boolean equals("+sortid+" o) {\n        try { \n          alpha(o "+newalphamaps+"); \n          return true;\n        } catch (tom.library.freshgom.AlphaMap.AlphaException e) {\n          return false;\n        }\n      }\n\n      public abstract void alpha ("+sortid+" o "+alphamapargs+")\n        throws tom.library.freshgom.AlphaMap.AlphaException;\n\n     /**\n      * exportation (term -> raw term) \n      */\n      public "+rawsortid+" export() {\n        return _export("+newexportmaps+");\n      }\n\n      public abstract "+rawsortid+" _export("+exportmapargs+");\n    "
+    res += "\n     /**\n      * alpha equivalence\n      */\n      public boolean equals("+sortid+" o) {\n        try {\n          alpha(o "+newalphamaps+");\n          return true;\n        } catch (tom.library.freshgom.AlphaMap.AlphaException e) {\n          return false;\n        }\n      }\n\n      public abstract void alpha ("+sortid+" o "+alphamapargs+")\n        throws tom.library.freshgom.AlphaMap.AlphaException;\n\n     /**\n      * exportation (term -> raw term)\n      */\n      public "+rawsortid+" export() {\n        return _export("+newexportmaps+");\n      }\n\n      public abstract "+rawsortid+" _export("+exportmapargs+");\n    "
 
 
 
@@ -572,7 +569,7 @@ public class FreshExpander {
     if(st.isPatternType(sort)) {
       String newhashtables = newHashtableList(sort);
       String hashtableargs = hashtableArgList(sort);
-      res += " \n        public "+sortid+" refresh() {\n          return _refresh("+newhashtables+");\n        }\n\n        public abstract "+sortid+" _refresh("+hashtableargs+"); \n      "
+      res += "\n        public "+sortid+" refresh() {\n          return _refresh("+newhashtables+");\n        }\n\n        public abstract "+sortid+" _refresh("+hashtableargs+");\n      "
 
 
 
@@ -582,7 +579,7 @@ public class FreshExpander {
 
       for(String a: st.getBoundAtoms(sort)) {
         String aid = st.getFullSortClassName(a);
-        res += "\n          public java.util.Set<"+aid+"> getBound"+a+"() {\n            java.util.HashSet<"+aid+"> res = new java.util.HashSet<"+aid+">();\n            getBound"+a+"(res);\n            return res;\n          }\n\n          public abstract void getBound"+a+"(java.util.Set<"+aid+"> atoms); \n\n          public abstract void getBound"+a+"2(\n              "+sortid+" o, tom.library.freshgom.AlphaMap<"+aid+"> m)\n              throws tom.library.freshgom.AlphaMap.AlphaException;\n \n        "
+        res += "\n          public java.util.Set<"+aid+"> getBound"+a+"() {\n            java.util.HashSet<"+aid+"> res = new java.util.HashSet<"+aid+">();\n            getBound"+a+"(res);\n            return res;\n          }\n\n          public abstract void getBound"+a+"(java.util.Set<"+aid+"> atoms);\n\n          public abstract void getBound"+a+"2(\n              "+sortid+" o, tom.library.freshgom.AlphaMap<"+aid+"> m)\n              throws tom.library.freshgom.AlphaMap.AlphaException;\n\n        "
 
 
 
@@ -605,7 +602,7 @@ public class FreshExpander {
   /* -- raw sort hooks -- */
 
   private GomModuleList addRawSortHooks(GomModuleList ml) {
-    for(String s: st.getSorts()) 
+    for(String s: st.getSorts())
       if(st.isExpressionType(s) || st.isPatternType(s))
         ml = addSortBlockHook(ml,st.rawSort(s),rawSortBlockHookString(s));
     return ml;
@@ -617,7 +614,7 @@ public class FreshExpander {
     String newconvertmaps = newConvertmapList(sort);
     String sortid = st.getFullSortClassName(sort);
 
-    String res = "{\n     /**\n      * importation (raw term -> term) \n      */\n      public "+sortid+" convert() {\n        return _convert("+newconvertmaps+");\n      }\n\n      public abstract "+sortid+" _convert("+convertmapargs+");\n    "
+    String res = "{\n     /**\n      * importation (raw term -> term)\n      */\n      public "+sortid+" convert() {\n        return _convert("+newconvertmaps+");\n      }\n\n      public abstract "+sortid+" _convert("+convertmapargs+");\n    "
 
 
 
@@ -631,7 +628,7 @@ public class FreshExpander {
     if(st.isPatternType(sort)) {
       for(String a: st.getBoundAtoms(sort)) {
         String aid = st.getFullSortClassName(a);
-        res += "\n          public tom.library.freshgom.ConvertMap<"+aid+"> getBound"+a+"Map() {\n            tom.library.freshgom.ConvertMap<"+aid+"> res = \n              new tom.library.freshgom.ConvertMap<"+aid+">();\n            getBound"+a+"Map(res);\n            return res;\n          }\n\n          public abstract void \n            getBound"+a+"Map(tom.library.freshgom.ConvertMap<"+aid+"> m);\n        "
+        res += "\n          public tom.library.freshgom.ConvertMap<"+aid+"> getBound"+a+"Map() {\n            tom.library.freshgom.ConvertMap<"+aid+"> res =\n              new tom.library.freshgom.ConvertMap<"+aid+">();\n            getBound"+a+"Map(res);\n            return res;\n          }\n\n          public abstract void\n            getBound"+a+"Map(tom.library.freshgom.ConvertMap<"+aid+"> m);\n        "
 
 
 
@@ -650,7 +647,7 @@ public class FreshExpander {
   /* -- non variadic constructor hooks -- */
 
   private GomModuleList addConstructorHooks(GomModuleList ml) {
-    for(String s: st.getSorts()) 
+    for(String s: st.getSorts())
       if(st.isExpressionType(s) || st.isPatternType(s))
         for(String c: st.getConstructors(s))
           if(! st.isVariadic(c))
@@ -660,14 +657,14 @@ public class FreshExpander {
 
   private String renameRecursiveCalls(String c, String atomSort) {
     String sortid = st.getFullSortClassName(st.getSort(c));
-    String res = ""+sortid+" res = this;"; 
+    String res = ""+sortid+" res = this;";
     String atomSortId = st.getFullSortClassName(atomSort);
     for(String f: st.getFields(c)) {
       String fsort = st.getSort(c,f);
       if (gomEnvironment.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort))
-          res += " \n            "+atomSortId+" n_"+f+" = map.get(get"+f+"());\n        if (n_"+f+" != null) res = res.set"+f+"(n_"+f+"); \n        "
+          res += "\n            "+atomSortId+" n_"+f+" = map.get(get"+f+"());\n        if (n_"+f+" != null) res = res.set"+f+"(n_"+f+");\n        "
 
 
 ;
@@ -682,7 +679,7 @@ public class FreshExpander {
   private String refreshRecursiveCalls(String c) {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
-    String res = ""+sortid+" res = this;"; 
+    String res = ""+sortid+" res = this;";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
       if (gomEnvironment.isBuiltin(fsort)) continue;
@@ -699,7 +696,7 @@ public class FreshExpander {
 
 ;
       } else {
-        String arglist = hashtableRecursiveCall(sort); 
+        String arglist = hashtableRecursiveCall(sort);
         res += "res = res.set"+f+"(get"+f+"()._refresh("+arglist+"));";
       }
     }
@@ -717,14 +714,14 @@ public class FreshExpander {
   private String alphaRecursiveCalls(String c) {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
-    String res = ""; 
+    String res = "";
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (gomEnvironment.isBuiltin(fsort)) {
-          res += "\n            if (get"+f+"() != o.get"+f+"()) \n              throw new tom.library.freshgom.AlphaMap.AlphaException();\n           "
+          res += "\n            if (get"+f+"() != o.get"+f+"())\n              throw new tom.library.freshgom.AlphaMap.AlphaException();\n           "
 
 
 ;
@@ -746,7 +743,7 @@ public class FreshExpander {
 ;
             for(String a: st.getBoundAtoms(fsort)) {
               String aid = st.getFullSortClassName(a);
-              res += "\n                tom.library.freshgom.AlphaMap<"+aid+"> "+f+"_bound"+a+"\n                  = new tom.library.freshgom.AlphaMap<"+aid+">();\n                "+f+".getBound"+a+"2(o_"+f+", "+f+"_bound"+a+");\n                tom.library.freshgom.AlphaMap<"+aid+"> "+a+"InnerMap \n                  = "+a+"Map.combine("+f+"_bound"+a+");\n              "
+              res += "\n                tom.library.freshgom.AlphaMap<"+aid+"> "+f+"_bound"+a+"\n                  = new tom.library.freshgom.AlphaMap<"+aid+">();\n                "+f+".getBound"+a+"2(o_"+f+", "+f+"_bound"+a+");\n                tom.library.freshgom.AlphaMap<"+aid+"> "+a+"InnerMap\n                  = "+a+"Map.combine("+f+"_bound"+a+");\n              "
 
 
 
@@ -760,13 +757,13 @@ public class FreshExpander {
         }
       }
     /* if c is a constructor in pattern position --
-       the args are of the form 
+       the args are of the form
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
         if (gomEnvironment.isBuiltin(fsort)) {
-          res += "\n            if (get"+f+"() != o.get"+f+"()) \n              throw new tom.library.freshgom.AlphaMap.AlphaException();\n          "
+          res += "\n            if (get"+f+"() != o.get"+f+"())\n              throw new tom.library.freshgom.AlphaMap.AlphaException();\n          "
 
 
 ;
@@ -774,7 +771,7 @@ public class FreshExpander {
           String fsortid = st.getFullSortClassName(fsort);
           String rawfsortid = st.qualifiedRawSortId(fsort);
           if (st.isAtomType(fsort)) {
-            if (st.isBound(c,f)) 
+            if (st.isBound(c,f))
               res += "\n                if (!"+fsort+"InnerMap.equal(get"+f+"(),o.get"+f+"()))\n                  throw new tom.library.freshgom.AlphaMap.AlphaException();\n            "
 
 
@@ -802,7 +799,7 @@ public class FreshExpander {
   private String exportRecursiveCalls(String c) {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
-    String res = ""; 
+    String res = "";
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
     if(st.isExpressionType(sort)) {
@@ -814,7 +811,7 @@ public class FreshExpander {
         if (st.isAtomType(fsort)) {
           res += "String raw_"+f+" = "+fsort+"Map.get(get"+f+"());";
         } else if (st.isExpressionType(fsort)) {
-          res += ""+rawfsortid+" raw_"+f+" \n            = get"+f+"()._export("+recCall1(fsort)+");"
+          res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall1(fsort)+");"
 ;
         } else if (st.isPatternType(fsort)) {
           res += "\n            /* declaration before scoping */\n            "+rawfsortid+" raw_"+f+" = null; "
@@ -824,7 +821,7 @@ public class FreshExpander {
           res += ""+fsortid+" "+f+" = get"+f+"();";
           for(String a: st.getBoundAtoms(fsort)) {
             String aid = st.getFullSortClassName(a);
-            res += "\n              java.util.Set<"+aid+"> "+f+"_bound"+a+" = "+f+".getBound"+a+"();\n              tom.library.freshgom.ExportMap<"+aid+"> "+a+"InnerMap \n                = "+a+"Map.addSet("+f+"_bound"+a+");\n            "
+            res += "\n              java.util.Set<"+aid+"> "+f+"_bound"+a+" = "+f+".getBound"+a+"();\n              tom.library.freshgom.ExportMap<"+aid+"> "+a+"InnerMap\n                = "+a+"Map.addSet("+f+"_bound"+a+");\n            "
 
 
 
@@ -835,7 +832,7 @@ public class FreshExpander {
         }
       }
     /* if c is a constructor in pattern position --
-       the args are of the form 
+       the args are of the form
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
@@ -849,16 +846,16 @@ public class FreshExpander {
           else
             res += "String raw_"+f+" = "+fsort+"Map.get(get"+f+"());";
         } else if (st.isInner(c,f)) /* must be expression type */ {
-          res += ""+rawfsortid+" raw_"+f+" \n            = get"+f+"()._export("+recCall3(fsort,sort)+");"
+          res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall3(fsort,sort)+");"
 ;
         } else if (st.isOuter(c,f)) /* must be expression type */ {
-          res += ""+rawfsortid+" raw_"+f+" \n            = get"+f+"()._export("+recCall4(fsort,sort)+");"
+          res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall4(fsort,sort)+");"
 ;
         } else if (st.isNeutral(c,f)) /* must be expression type */ {
-          res += ""+rawfsortid+" raw_"+f+" \n            = get"+f+"()._export("+recCall5(fsort)+");"
+          res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall5(fsort)+");"
 ;
         } else /* must be pattern type */ {
-          res += ""+rawfsortid+" raw_"+f+" \n            = get"+f+"()._export("+recCall6(fsort)+");"
+          res += ""+rawfsortid+" raw_"+f+"\n            = get"+f+"()._export("+recCall6(fsort)+");"
 ;
         }
       }
@@ -869,7 +866,7 @@ public class FreshExpander {
   private String getBoundRecursiveCalls(String c, String atomSort) {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
-    String res = ""; 
+    String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
       if (gomEnvironment.isBuiltin(fsort)) continue;
@@ -888,7 +885,7 @@ public class FreshExpander {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
     String aid = st.getFullSortClassName(a);
-    String res = ""; 
+    String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
       if (gomEnvironment.isBuiltin(fsort)) continue;
@@ -922,7 +919,7 @@ public class FreshExpander {
 ;
     }
 
-    res += "\n      /**\n       * alpha equivalence \n       */\n      public void alpha ("+sortid+" o "+alphamapargs+") \n        throws tom.library.freshgom.AlphaMap.AlphaException {\n          if (! (o instanceof "+cid+"))\n            throw new tom.library.freshgom.AlphaMap.AlphaException();\n          "+alphaRecursiveCalls(c)+"\n        };\n\n    /**\n     * exportation (term -> raw term) \n     */\n    public "+rawsortid+" _export("+exportmapargs+") {\n      "+exportRecursiveCalls(c)+"\n    }\n    "
+    res += "\n      /**\n       * alpha equivalence\n       */\n      public void alpha ("+sortid+" o "+alphamapargs+")\n        throws tom.library.freshgom.AlphaMap.AlphaException {\n          if (! (o instanceof "+cid+"))\n            throw new tom.library.freshgom.AlphaMap.AlphaException();\n          "+alphaRecursiveCalls(c)+"\n        };\n\n    /**\n     * exportation (term -> raw term)\n     */\n    public "+rawsortid+" _export("+exportmapargs+") {\n      "+exportRecursiveCalls(c)+"\n    }\n    "
 
 
 
@@ -942,7 +939,7 @@ public class FreshExpander {
 ;
 
     if(st.isPatternType(sort)) {
-      res += " \n        public "+sortid+" _refresh("+hashtableArgList(sort)+") {\n          "+refreshRecursiveCalls(c)+"\n        }\n      "
+      res += "\n        public "+sortid+" _refresh("+hashtableArgList(sort)+") {\n          "+refreshRecursiveCalls(c)+"\n        }\n      "
 
 
 
@@ -950,7 +947,7 @@ public class FreshExpander {
 
       for(String a: st.getBoundAtoms(sort)) {
         String aid = st.getFullSortClassName(a);
-        res += " \n          public void getBound"+a+"(java.util.Set<"+aid+"> atoms) {\n            "+getBoundRecursiveCalls(c,a)+"\n          }\n\n          public void getBound"+a+"2(\n              "+sortid+" o, tom.library.freshgom.AlphaMap<"+aid+"> m) \n              throws tom.library.freshgom.AlphaMap.AlphaException {\n                if (! (o instanceof "+cid+"))\n                  throw new tom.library.freshgom.AlphaMap.AlphaException();\n                "+getBound2RecursiveCalls(c,a)+"\n              }\n\n        "
+        res += "\n          public void getBound"+a+"(java.util.Set<"+aid+"> atoms) {\n            "+getBoundRecursiveCalls(c,a)+"\n          }\n\n          public void getBound"+a+"2(\n              "+sortid+" o, tom.library.freshgom.AlphaMap<"+aid+"> m)\n              throws tom.library.freshgom.AlphaMap.AlphaException {\n                if (! (o instanceof "+cid+"))\n                  throw new tom.library.freshgom.AlphaMap.AlphaException();\n                "+getBound2RecursiveCalls(c,a)+"\n              }\n\n        "
 
 
 
@@ -973,7 +970,7 @@ public class FreshExpander {
   /* -- non variadic raw constructor hooks -- */
 
   private GomModuleList addRawConstructorHooks(GomModuleList ml) {
-    for(String s: st.getSorts()) 
+    for(String s: st.getSorts())
       if(st.isExpressionType(s) || st.isPatternType(s))
         for(String c: st.getConstructors(s))
           if(! st.isVariadic(c))
@@ -986,7 +983,7 @@ public class FreshExpander {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
     String aid = st.getFullSortClassName(atomSort);
-    String res = ""; 
+    String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
       if (gomEnvironment.isBuiltin(fsort)) continue;
@@ -1008,7 +1005,7 @@ public class FreshExpander {
     String sort = st.getSort(c);
     String sortid = st.getFullSortClassName(sort);
     String opid = st.getFullConstructorClassName(c);
-    String res = ""; 
+    String res = "";
     /* if c is a constructor in expression position
        the args are of the form atomsort1Map, atomsort2Map .. */
     if(st.isExpressionType(sort)) {
@@ -1020,7 +1017,7 @@ public class FreshExpander {
         if (st.isAtomType(fsort)) {
           res += ""+fsortid+" "+f+" = "+fsort+"Map.get("+st.rawGetter(c,f)+");";
         } else if (st.isExpressionType(fsort)) {
-          res += ""+fsortid+" "+f+" \n            = "+st.rawGetter(c,f)+"._convert("+recCall1(fsort)+");"
+          res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall1(fsort)+");"
 ;
         } else if (st.isPatternType(fsort)) {
           res += "\n            /* declaration before scoping */\n            "+fsortid+" "+f+" = null;\n          "
@@ -1031,7 +1028,7 @@ public class FreshExpander {
           res += ""+rawfsortid+" raw_"+f+" = "+st.rawGetter(c,f)+";";
           for(String a: st.getBoundAtoms(fsort)) {
             String aid = st.getFullSortClassName(a);
-            res += "\n              tom.library.freshgom.ConvertMap<"+aid+"> raw_"+f+"_bound"+a+" \n                = raw_"+f+".getBound"+a+"Map();\n              tom.library.freshgom.ConvertMap<"+aid+"> "+a+"InnerMap \n                = "+a+"Map.combine(raw_"+f+"_bound"+a+");\n            "
+            res += "\n              tom.library.freshgom.ConvertMap<"+aid+"> raw_"+f+"_bound"+a+"\n                = raw_"+f+".getBound"+a+"Map();\n              tom.library.freshgom.ConvertMap<"+aid+"> "+a+"InnerMap\n                = "+a+"Map.combine(raw_"+f+"_bound"+a+");\n            "
 
 
 
@@ -1043,7 +1040,7 @@ public class FreshExpander {
         }
       }
     /* if c is a constructor in pattern position --
-       the args are of the form 
+       the args are of the form
         as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
@@ -1056,16 +1053,16 @@ public class FreshExpander {
           else
             res += ""+fsortid+" "+f+" = "+fsort+"Map.get("+st.rawGetter(c,f)+");";
         } else if (st.isInner(c,f)) /* must be expression type */ {
-          res += ""+fsortid+" "+f+" \n            = "+st.rawGetter(c,f)+"._convert("+recCall3(fsort,sort)+");"
+          res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall3(fsort,sort)+");"
 ;
         } else if (st.isOuter(c,f)) /* must be expression type */ {
-          res += ""+fsortid+" "+f+" \n            = "+st.rawGetter(c,f)+"._convert("+recCall4(fsort,sort)+");"
+          res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall4(fsort,sort)+");"
 ;
         } else if (st.isNeutral(c,f)) /* must be expression type */ {
-          res += ""+fsortid+" "+f+" \n            = "+st.rawGetter(c,f)+"._convert("+recCall5(fsort)+");"
+          res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall5(fsort)+");"
 ;
         } else /* must be pattern type */ {
-          res += ""+fsortid+" "+f+" \n            = "+st.rawGetter(c,f)+"._convert("+recCall6(fsort)+");"
+          res += ""+fsortid+" "+f+"\n            = "+st.rawGetter(c,f)+"._convert("+recCall6(fsort)+");"
 ;
         }
       }
@@ -1078,7 +1075,7 @@ public class FreshExpander {
     String convertmapargs = convertmapArgList(sort);
     String sortid = st.getFullSortClassName(sort);
 
-    String res = "{\n      /**\n       * importation (raw term -> term) \n       */\n      public "+sortid+" _convert("+convertmapargs+") {\n        "+convertRecursiveCalls(c)+"\n      }\n    "
+    String res = "{\n      /**\n       * importation (raw term -> term)\n       */\n      public "+sortid+" _convert("+convertmapargs+") {\n        "+convertRecursiveCalls(c)+"\n      }\n    "
 
 
 
@@ -1090,7 +1087,7 @@ public class FreshExpander {
     if(st.isPatternType(sort)) {
       for(String a: st.getBoundAtoms(sort)) {
         String aid = st.getFullSortClassName(a);
-        res += "\n          public void \n            getBound"+a+"Map(tom.library.freshgom.ConvertMap<"+aid+"> m) {\n              "+getBoundMapRecursiveCalls(c,a)+";\n            }\n        "
+        res += "\n          public void\n            getBound"+a+"Map(tom.library.freshgom.ConvertMap<"+aid+"> m) {\n              "+getBoundMapRecursiveCalls(c,a)+";\n            }\n        "
 
 
 
@@ -1114,7 +1111,7 @@ public class FreshExpander {
 
   private String atomBlockHookString(String sort) {
     String sortid = st.getFullSortClassName(sort);
-    return "{\n      private static int counter = 0;\n\n      public static "+sortid+" \n        fresh"+sort+"("+sortid+" hint) { \n          return fresh"+sort+"(hint.gethint()); \n        }\n\n      public static "+sortid+" \n        fresh"+sort+"(String hint) { \n          return "+st.getFullConstructorClassName(sort)+".make(++counter,hint.split(\"[0-9]\")[0]); \n        }\n\n      public boolean equals("+sort+" o) {\n        return this.getn() == o.getn();\n      }\n\n      public String getRepresentation(int n) {\n        return gethint() + (n==0 ? \"\" : n);\n      }\n    }"
+    return "{\n      private static int counter = 0;\n\n      public static "+sortid+"\n        fresh"+sort+"("+sortid+" hint) {\n          return fresh"+sort+"(hint.gethint());\n        }\n\n      public static "+sortid+"\n        fresh"+sort+"(String hint) {\n          return "+st.getFullConstructorClassName(sort)+".make(++counter,hint.split(\"[0-9]\")[0]);\n        }\n\n      public boolean equals("+sort+" o) {\n        return this.getn() == o.getn();\n      }\n\n      public String getRepresentation(int n) {\n        return gethint() + (n==0 ? \"\" : n);\n      }\n    }"
 
 
 
@@ -1137,30 +1134,30 @@ public class FreshExpander {
 ;
   }
 
-  private static final String atomInterfaceHookString 
+  private static final String atomInterfaceHookString
     = "{ tom.library.freshgom.Atom }";
 
   /* -- rawification -- */
 
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
     try { return tom_make_TopDown(tom_make_AddRaw(st,this)).visitLight(res); }
-    catch(VisitFailure e) { 
+    catch(VisitFailure e) {
       throw new GomRuntimeException("Should never happen");
     }
   }
 
   public static class AddRaw extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.SymbolTable  st;private  tom.gom.expander.FreshExpander  fe;public AddRaw( tom.gom.SymbolTable  st,  tom.gom.expander.FreshExpander  fe) {super(( new tom.library.sl.Identity() ));this.st=st;this.fe=fe;}public  tom.gom.SymbolTable  getst() {return st;}public  tom.gom.expander.FreshExpander  getfe() {return fe;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.Grammar  visit_Grammar( tom.gom.adt.gom.types.Grammar  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Grammar) ) {if ( ((( tom.gom.adt.gom.types.Grammar )tom__arg) instanceof tom.gom.adt.gom.types.grammar.Grammar) ) {
 
- 
-        return (( tom.gom.adt.gom.types.Grammar )tom__arg).setProductionList(fe.addRaw(st, (( tom.gom.adt.gom.types.Grammar )tom__arg).getProductionList() )); 
+
+        return (( tom.gom.adt.gom.types.Grammar )tom__arg).setProductionList(fe.addRaw(st, (( tom.gom.adt.gom.types.Grammar )tom__arg).getProductionList() ));
       }}}}return _visit_Grammar(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.Grammar  _visit_Grammar( tom.gom.adt.gom.types.Grammar  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.gom.adt.gom.types.Grammar )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.gom.adt.gom.types.Grammar) ) {return ((T)visit_Grammar((( tom.gom.adt.gom.types.Grammar )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_AddRaw( tom.gom.SymbolTable  t0,  tom.gom.expander.FreshExpander  t1) { return new AddRaw(t0,t1);}
 
 
 
   /**
    * match pl with
-   *  | p::ps -> if fresh p && (not atom p) 
-   *             then p::(rawify p)::(addraw pl) 
+   *  | p::ps -> if fresh p && (not atom p)
+   *             then p::(rawify p)::(addraw pl)
    *             else p::(addraw pl)
    *  | [] -> []
    **/
@@ -1170,7 +1167,7 @@ public class FreshExpander {
         ProductionList nps = addRaw(st, (( tom.gom.adt.gom.types.ProductionList )pl).getTailConcProduction() );
         {{if ( (tom_p instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )tom_p) instanceof tom.gom.adt.gom.types.production.SortType) ) { tom.gom.adt.gom.types.GomType  tomMatch460_1= (( tom.gom.adt.gom.types.Production )tom_p).getType() ;if ( (tomMatch460_1 instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { String  tom_n= tomMatch460_1.getName() ;
 
-            if (st.isFreshType(tom_n) && !st.isAtomType(tom_n)) 
+            if (st.isFreshType(tom_n) && !st.isAtomType(tom_n))
               return  tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(tom_p, tom.gom.adt.gom.types.productionlist.ConsConcProduction.make(rawify(tom_p,st),tom_append_list_ConcProduction(nps, tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() )) ) ;
           }}}}}
 
@@ -1183,7 +1180,7 @@ public class FreshExpander {
 
   public static class Rawify extends tom.library.sl.AbstractStrategyBasic {private  tom.gom.SymbolTable  st;private  tom.gom.expander.FreshExpander  fe;public Rawify( tom.gom.SymbolTable  st,  tom.gom.expander.FreshExpander  fe) {super(( new tom.library.sl.Identity() ));this.st=st;this.fe=fe;}public  tom.gom.SymbolTable  getst() {return st;}public  tom.gom.expander.FreshExpander  getfe() {return fe;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.GomType  visit_GomType( tom.gom.adt.gom.types.GomType  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.GomType) ) {if ( ((( tom.gom.adt.gom.types.GomType )tom__arg) instanceof tom.gom.adt.gom.types.gomtype.GomType) ) { String  tom_n= (( tom.gom.adt.gom.types.GomType )tom__arg).getName() ; tom.gom.adt.gom.types.GomType  tom_gt=(( tom.gom.adt.gom.types.GomType )tom__arg);
 
- 
+
         if (st.isAtomType(tom_n)) return tom_gt.setName("String");
         else if (!fe.getGomEnvironment().isBuiltin(tom_n)) return tom_gt.setName(st.rawSort(tom_n));
       }}}}return _visit_GomType(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.gom.adt.gom.types.Production  visit_Production( tom.gom.adt.gom.types.Production  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.gom.adt.gom.types.Production) ) {if ( ((( tom.gom.adt.gom.types.Production )tom__arg) instanceof tom.gom.adt.gom.types.production.Production) ) {
@@ -1195,7 +1192,7 @@ public class FreshExpander {
 
   private Production rawify(Production p, SymbolTable st) {
     try { return tom_make_TopDown(tom_make_Rawify(st,this)).visitLight(p); }
-    catch(VisitFailure f) { 
+    catch(VisitFailure f) {
       throw new GomRuntimeException("Should never happen");
     }
   }
@@ -1203,8 +1200,8 @@ public class FreshExpander {
   /* -- tweaked mappings generation */
 
   private GomModuleList addMappingHooks(GomModuleList ml) {
-    for(String c: st.getFreshConstructors()) 
-      if(st.containsRefreshPoint(c)) 
+    for(String c: st.getFreshConstructors())
+      if(st.containsRefreshPoint(c))
         ml = addConstructorMappingHook(ml,c,mappingString(c));
     return ml;
   }

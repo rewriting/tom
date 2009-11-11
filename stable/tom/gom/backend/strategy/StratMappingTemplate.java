@@ -49,7 +49,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
-  
+
   public GomEnvironment getGomEnvironment() {
     return this.gomEnvironment;
   }

@@ -137,7 +137,7 @@ if (maximalsharing) {
 }
 
   if (hooks.containsTomCode()) {
-    mapping.generate(writer); 
+    mapping.generate(writer);
   }
   generateMembers(writer);
   generateBody(writer);
@@ -165,7 +165,7 @@ generateConstructor(writer);
 if(slotList.length()>0) {
 
 if (maximalsharing) {
-writer.write("\n  /**\n   * Initializes attributes and hashcode of the class\n   * \n   * @param "+childListOnePerLine(slotList)+"\n   * @param hashCode hashCode of "+className()+"\n   */\n  private void init("+childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") +"int hashCode) {\n"
+writer.write("\n  /**\n   * Initializes attributes and hashcode of the class\n   *\n   * @param "+childListOnePerLine(slotList)+"\n   * @param hashCode hashCode of "+className()+"\n   */\n  private void init("+childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") +"int hashCode) {\n"
 
 
 
@@ -175,7 +175,7 @@ writer.write("\n  /**\n   * Initializes attributes and hashcode of the class\n  
 
 );
 generateMembersInit(writer);
-writer.write("\n    this.hashCode = hashCode;\n  }\n\n  /**\n   * Initializes attributes and hashcode of the class\n   * \n   * @param "+childListOnePerLine(slotList)+"\n   */\n  private void initHashCode("+childListWithType(slotList)+") {\n"
+writer.write("\n    this.hashCode = hashCode;\n  }\n\n  /**\n   * Initializes attributes and hashcode of the class\n   *\n   * @param "+childListOnePerLine(slotList)+"\n   */\n  private void initHashCode("+childListWithType(slotList)+") {\n"
 
 
 
@@ -193,7 +193,7 @@ writer.write("\n    this.hashCode = hashFunction();\n  }\n"
 );
 }
 
-writer.write("\n  /* name and arity */\n\n  /** \n   * Returns the name of the symbol\n   * \n   * @return the name of the symbol\n   */\n  @Override\n  public String symbolName() {\n    return \""+className()+"\";\n  }\n\n  /** \n   * Returns the arity of the symbol\n   * \n   * @return the arity of the symbol\n   */\n  private int getArity() {\n    return "+slotList.length()+";\n  }\n"
+writer.write("\n  /* name and arity */\n\n  /**\n   * Returns the name of the symbol\n   *\n   * @return the name of the symbol\n   */\n  @Override\n  public String symbolName() {\n    return \""+className()+"\";\n  }\n\n  /**\n   * Returns the arity of the symbol\n   *\n   * @return the arity of the symbol\n   */\n  private int getArity() {\n    return "+slotList.length()+";\n  }\n"
 
 
 
@@ -218,7 +218,7 @@ writer.write("\n  /* name and arity */\n\n  /** \n   * Returns the name of the s
 
 
 if (maximalsharing) {
-  writer.write("\n  /** \n   * Copy the object and returns the copy\n   * \n   * @return a clone of the SharedObject\n   */"
+  writer.write("\n  /**\n   * Copy the object and returns the copy\n   *\n   * @return a clone of the SharedObject\n   */"
 
 
 
@@ -244,7 +244,7 @@ if(multithread) {
 
 } else {
     // case: constant
-writer.write("\n  /* name and arity */\n  \n  /** \n   * Returns the name of the symbol\n   * \n   * @return the name of the symbol\n   */\n  @Override\n  public String symbolName() {\n    return \""+className()+"\";\n  }\n\n  /** \n   * Returns the arity of the symbol\n   * \n   * @return arity of the symbol \n   */\n  private static int getArity() {\n    return 0;\n  }\n\n"
+writer.write("\n  /* name and arity */\n\n  /**\n   * Returns the name of the symbol\n   *\n   * @return the name of the symbol\n   */\n  @Override\n  public String symbolName() {\n    return \""+className()+"\";\n  }\n\n  /**\n   * Returns the arity of the symbol\n   *\n   * @return arity of the symbol\n   */\n  private static int getArity() {\n    return 0;\n  }\n\n"
 
 
 
@@ -269,7 +269,7 @@ writer.write("\n  /* name and arity */\n  \n  /** \n   * Returns the name of the
 );
 
 if (maximalsharing) {
-writer.write("\n  /** \n   * Copy the object and returns the copy\n   * \n   * @return a clone of the SharedObject\n   */\n  public shared.SharedObject duplicate() {\n    // the proto is a constant object: no need to clone it\n    return this;\n    //return new "+className()+"();\n  }\n"
+writer.write("\n  /**\n   * Copy the object and returns the copy\n   *\n   * @return a clone of the SharedObject\n   */\n  public shared.SharedObject duplicate() {\n    // the proto is a constant object: no need to clone it\n    return this;\n    //return new "+className()+"();\n  }\n"
 
 
 
@@ -304,7 +304,7 @@ writer.write("\n  /**\n   * Appends a string representation of this term to the 
 );
   }
 
-writer.write("\n\n  /**\n   * Compares two terms. This functions implements a total lexicographic path ordering.\n   * \n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareToLPO(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this)\n      return 0;\n    /* compare the symbols */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0)\n      return symbCmp;\n    /* compare the childs */\n    "+genCompareChilds("ao","compareToLPO")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n"
+writer.write("\n\n  /**\n   * Compares two terms. This functions implements a total lexicographic path ordering.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareToLPO(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this)\n      return 0;\n    /* compare the symbols */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0)\n      return symbCmp;\n    /* compare the childs */\n    "+genCompareChilds("ao","compareToLPO")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n"
 
 
 
@@ -337,7 +337,7 @@ writer.write("\n\n  /**\n   * Compares two terms. This functions implements a to
 );
 
 if (maximalsharing) {
-writer.write("\n /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this)\n      return 0;\n    /* use the hash values to discriminate */\n    \n    if(hashCode != ao.hashCode())\n      return (hashCode < ao.hashCode())?-1:1;\n\n    /* If not, compare the symbols : back to the normal order */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0)\n      return symbCmp;\n    /* last resort: compare the childs */\n    "+genCompareChilds("ao","compareTo")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n\n //shared.SharedObject\n  /** \n   * Returns hashCode\n   * \n   * @return hashCode\n   */\n  @Override\n  public final int hashCode() {\n    return hashCode;\n  }\n\n  /** \n   * Checks if a SharedObject is equivalent to the current object\n   * \n   * @param obj SharedObject to test\n   * @return true if obj is a "+className()+" and its members are equal, else false\n   */\n  public final boolean equivalent(shared.SharedObject obj) {\n    if(obj instanceof "+className()+") {\n"+generateMembersEqualityTest("peer")+"\n    }\n    return false;\n  }\n\n"
+writer.write("\n /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    /*\n     * We do not want to compare with any object, only members of the module\n     * In case of invalid argument, throw a ClassCastException, as the java api\n     * asks for it\n     */\n    "+fullClassName(abstractType)+" ao = ("+fullClassName(abstractType)+") o;\n    /* return 0 for equality */\n    if (ao == this)\n      return 0;\n    /* use the hash values to discriminate */\n\n    if(hashCode != ao.hashCode())\n      return (hashCode < ao.hashCode())?-1:1;\n\n    /* If not, compare the symbols : back to the normal order */\n    int symbCmp = this.symbolName().compareTo(ao.symbolName());\n    if (symbCmp != 0)\n      return symbCmp;\n    /* last resort: compare the childs */\n    "+genCompareChilds("ao","compareTo")+"\n    throw new RuntimeException(\"Unable to compare\");\n  }\n\n //shared.SharedObject\n  /**\n   * Returns hashCode\n   *\n   * @return hashCode\n   */\n  @Override\n  public final int hashCode() {\n    return hashCode;\n  }\n\n  /**\n   * Checks if a SharedObject is equivalent to the current object\n   *\n   * @param obj SharedObject to test\n   * @return true if obj is a "+className()+" and its members are equal, else false\n   */\n  public final boolean equivalent(shared.SharedObject obj) {\n    if(obj instanceof "+className()+") {\n"+generateMembersEqualityTest("peer")+"\n    }\n    return false;\n  }\n\n"
 
 
 
@@ -399,7 +399,7 @@ writer.write("\n /**\n   * Compares two terms. This functions implements a total
 );
 } else {
   //XXX: compareTo must be correctly implemented
-writer.write("\n  /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    throw new UnsupportedOperationException(\"Unable to compare\"); \n  }\n\n  /** \n   * Clones the object\n   * \n   * @return the copy\n   */\n  @Override\n  public Object clone() {\n"
+writer.write("\n  /**\n   * Compares two terms. This functions implements a total order.\n   *\n   * @param o object to which this term is compared\n   * @return a negative integer, zero, or a positive integer as this\n   *         term is less than, equal to, or greater than the argument\n   * @throws ClassCastException in case of invalid arguments\n   * @throws RuntimeException if unable to compare childs\n   */\n  @Override\n  public int compareTo(Object o) {\n    throw new UnsupportedOperationException(\"Unable to compare\");\n  }\n\n  /**\n   * Clones the object\n   *\n   * @return the copy\n   */\n  @Override\n  public Object clone() {\n"
 
 
 
@@ -455,7 +455,7 @@ while(!slots.isEmptyConcSlotField()) {
 writer.write(");\n}");
 }
 
-writer.write("\n  /** \n   * Checks if an object is strictly equal to the current object\n   * \n   * @param o object to compare\n   * @return true if each member is equal, else false\n   */\n  @Override\n  public final boolean deepEquals(Object o) {\n    if (o instanceof "+className()+") {\n      "+className()+" typed_o = ("+className()+") o;\n"
+writer.write("\n  /**\n   * Checks if an object is strictly equal to the current object\n   *\n   * @param o object to compare\n   * @return true if each member is equal, else false\n   */\n  @Override\n  public final boolean deepEquals(Object o) {\n    if (o instanceof "+className()+") {\n      "+className()+" typed_o = ("+className()+") o;\n"
 
 
 
@@ -510,7 +510,7 @@ writer.write("\n    }\n    return false;\n    }\n  "
 );
 }
 
-writer.write("\n   //"+className(sortName)+" interface\n  /** \n   * Returns true if the term is rooted by the symbol "+className.getName()+"\n   *\n   * @return true, because this is rooted by "+className.getName()+"\n   */\n  @Override\n  public boolean "+isOperatorMethod(className)+"() {\n    return true;\n  }\n  "
+writer.write("\n   //"+className(sortName)+" interface\n  /**\n   * Returns true if the term is rooted by the symbol "+className.getName()+"\n   *\n   * @return true, because this is rooted by "+className.getName()+"\n   */\n  @Override\n  public boolean "+isOperatorMethod(className)+"() {\n    return true;\n  }\n  "
 
 
 
@@ -525,7 +525,7 @@ writer.write("\n   //"+className(sortName)+" interface\n  /** \n   * Returns tru
 
 generateGetters(writer);
 
-    writer.write("\n  /* AbstractType */\n  /** \n   * Returns an ATerm representation of this term.\n   * \n   * @return an ATerm representation of this term.\n   */\n  @Override\n  public aterm.ATerm toATerm() {\n    aterm.ATerm res = super.toATerm();\n    if(res != null) {\n      // the super class has produced an ATerm (may be a variadic operator)\n      return res;\n    }\n    return atermFactory.makeAppl(\n      atermFactory.makeAFun(symbolName(),getArity(),false),\n      new aterm.ATerm[] {"+generateToATermChilds()+"});\n  }\n\n  /** \n   * Apply a conversion on the ATerm contained in the String and returns a "+fullClassName(sortName)+" from it\n   * \n   * @param trm ATerm to convert into a Gom term\n   * @param atConv ATerm Converter used to convert the ATerm\n   * @return the Gom term\n   */\n  public static "+fullClassName(sortName)+" fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {\n    trm = atConv.convert(trm);\n    if(trm instanceof aterm.ATermAppl) {\n      aterm.ATermAppl appl = (aterm.ATermAppl) trm;\n      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {\n        return make(\n"+generatefromATermChilds("appl","atConv")+"\n        );\n      }\n    }\n    return null;\n  }\n"
+    writer.write("\n  /* AbstractType */\n  /**\n   * Returns an ATerm representation of this term.\n   *\n   * @return an ATerm representation of this term.\n   */\n  @Override\n  public aterm.ATerm toATerm() {\n    aterm.ATerm res = super.toATerm();\n    if(res != null) {\n      // the super class has produced an ATerm (may be a variadic operator)\n      return res;\n    }\n    return atermFactory.makeAppl(\n      atermFactory.makeAFun(symbolName(),getArity(),false),\n      new aterm.ATerm[] {"+generateToATermChilds()+"});\n  }\n\n  /**\n   * Apply a conversion on the ATerm contained in the String and returns a "+fullClassName(sortName)+" from it\n   *\n   * @param trm ATerm to convert into a Gom term\n   * @param atConv ATerm Converter used to convert the ATerm\n   * @return the Gom term\n   */\n  public static "+fullClassName(sortName)+" fromTerm(aterm.ATerm trm, tom.library.utils.ATermConverter atConv) {\n    trm = atConv.convert(trm);\n    if(trm instanceof aterm.ATermAppl) {\n      aterm.ATermAppl appl = (aterm.ATermAppl) trm;\n      if(symbolName.equals(appl.getName()) && !appl.getAFun().isQuoted()) {\n        return make(\n"+generatefromATermChilds("appl","atConv")+"\n        );\n      }\n    }\n    return null;\n  }\n"
 
 
 
@@ -565,7 +565,7 @@ generateGetters(writer);
 
 );
 
-    writer.write("\n  /* Visitable */\n  /** \n   * Returns the number of childs of the term\n   * \n   * @return the number of childs of the term\n   */\n  public int getChildCount() {\n    return "+visitableCount()+";\n  }\n\n  /** \n   * Returns the child at the specified index\n   * \n   * @param index index of the child to return; must be\n             nonnegative and less than the childCount\n   * @return the child at the specified index\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable getChildAt(int index) {\n    switch(index) {\n"+getCases()+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n  \n  /** \n   * Set the child at the specified index\n   * \n   * @param index index of the child to set; must be \n             nonnegative and less than the childCount\n   * @param v child to set at the specified index\n   * @return the child which was just set\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {\n    switch(index) {\n"+makeCases("v")+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /** \n   * Set children to the term\n   * \n   * @param childs array of children to set\n   * @return an array of children which just were set\n   * @throws IndexOutOfBoundsException if length of \"childs\" is different than "+slotList.length()+"\n   */\n  @SuppressWarnings(\"unchecked\")\n  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {\n    if (childs.length == "+slotList.length()+" "+arrayCheck("childs")+") {\n      return "+arrayMake("childs")+";\n    } else {\n      throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /** \n   * Returns the whole children of the term\n   * \n   * @return the children of the term\n   */\n  public tom.library.sl.Visitable[] getChildren() {\n    return new tom.library.sl.Visitable[] { "+visitableList(slotList)+" };\n  }\n"
+    writer.write("\n  /* Visitable */\n  /**\n   * Returns the number of childs of the term\n   *\n   * @return the number of childs of the term\n   */\n  public int getChildCount() {\n    return "+visitableCount()+";\n  }\n\n  /**\n   * Returns the child at the specified index\n   *\n   * @param index index of the child to return; must be\n             nonnegative and less than the childCount\n   * @return the child at the specified index\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable getChildAt(int index) {\n    switch(index) {\n"+getCases()+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set the child at the specified index\n   *\n   * @param index index of the child to set; must be\n             nonnegative and less than the childCount\n   * @param v child to set at the specified index\n   * @return the child which was just set\n   * @throws IndexOutOfBoundsException if the index out of range\n   */\n  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {\n    switch(index) {\n"+makeCases("v")+"\n      default: throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Set children to the term\n   *\n   * @param childs array of children to set\n   * @return an array of children which just were set\n   * @throws IndexOutOfBoundsException if length of \"childs\" is different than "+slotList.length()+"\n   */\n  @SuppressWarnings(\"unchecked\")\n  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {\n    if (childs.length == "+slotList.length()+" "+arrayCheck("childs")+") {\n      return "+arrayMake("childs")+";\n    } else {\n      throw new IndexOutOfBoundsException();\n    }\n  }\n\n  /**\n   * Returns the whole children of the term\n   *\n   * @return the children of the term\n   */\n  public tom.library.sl.Visitable[] getChildren() {\n    return new tom.library.sl.Visitable[] { "+visitableList(slotList)+" };\n  }\n"
 
 
 
@@ -635,7 +635,7 @@ generateGetters(writer);
 
 if(maximalsharing) {
   // OLD VERSION
-    writer.write("\n    /**\n     * Compute a hashcode for this term.  \n     * (for internal use)\n     *\n     * @return a hash value\n     */\n  protected"+((slotList.length()==0)?" static":"")+" int hashFunction() {\n    int a, b, c;\n    /* Set up the internal state */\n    a = 0x9e3779b9; /* the golden ratio; an arbitrary value */\n    b = ("+shared.HashFunctions.stringHashFunction(fullClassName(),slotList.length())+"<<8);\n    c = getArity();\n    /* -------------------------------------- handle most of the key */\n    /* ------------------------------------ handle the last 11 bytes */\n"
+    writer.write("\n    /**\n     * Compute a hashcode for this term.\n     * (for internal use)\n     *\n     * @return a hash value\n     */\n  protected"+((slotList.length()==0)?" static":"")+" int hashFunction() {\n    int a, b, c;\n    /* Set up the internal state */\n    a = 0x9e3779b9; /* the golden ratio; an arbitrary value */\n    b = ("+shared.HashFunctions.stringHashFunction(fullClassName(),slotList.length())+"<<8);\n    c = getArity();\n    /* -------------------------------------- handle most of the key */\n    /* ------------------------------------ handle the last 11 bytes */\n"
 
 
 
@@ -669,10 +669,10 @@ writer.write("\n    a -= b; a -= c; a ^= (c >> 13);\n    b -= c; b -= a; b ^= (a
 }
 
 if(false && maximalsharing) {
-  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c 
+  // NEW VERSION: http://burtleburtle.net/bob/c/lookup3.c
   // seems to be a bit slower than the OLD version
   int length = slotList.length();
-    writer.write("\n    /**\n     * Compute a hashcode for this term.  \n     * (for internal use)\n     *\n     * @return a hash value\n     */\n  protected"+((length==0)?" static":"")+" int hashFunction() {\n    int a, b, c;\n    /* Set up the internal state */\n    a = b = c = \n    0xdeadbeef + (getArity()<<2) + \n    ("+shared.HashFunctions.stringHashFunction(fullClassName(),length)+"<<8);\n    /* -------------------------------------- handle most of the key */\n    /* ------------------------------------ handle the last 11 bytes */\n"
+    writer.write("\n    /**\n     * Compute a hashcode for this term.\n     * (for internal use)\n     *\n     * @return a hash value\n     */\n  protected"+((length==0)?" static":"")+" int hashFunction() {\n    int a, b, c;\n    /* Set up the internal state */\n    a = b = c =\n    0xdeadbeef + (getArity()<<2) +\n    ("+shared.HashFunctions.stringHashFunction(fullClassName(),length)+"<<8);\n    /* -------------------------------------- handle most of the key */\n    /* ------------------------------------ handle the last 11 bytes */\n"
 
 
 
@@ -690,7 +690,7 @@ if(false && maximalsharing) {
 );
 generateHashArgsLookup3(writer);
   if(length>0 && (length%3)>0 ) {
-writer.write("\n    // final(a,b,c)\n    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14)))); \n    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11)))); \n    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25)))); \n    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16)))); \n    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));  \n    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14)))); \n    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24)))); \n"
+writer.write("\n    // final(a,b,c)\n    c ^= b; c -= (((b)<<(14)) | ((b)>>(32-(14))));\n    a ^= c; a -= (((c)<<(11)) | ((c)>>(32-(11))));\n    b ^= a; b -= (((a)<<(25)) | ((a)>>(32-(25))));\n    c ^= b; c -= (((b)<<(16)) | ((b)>>(32-(16))));\n    a ^= c; a -= (((c)<<(4)) | ((c)>>(32-(4))));\n    b ^= a; b -= (((a)<<(14)) | ((a)>>(32-(14))));\n    c ^= b; c -= (((b)<<(24)) | ((b)>>(32-(24))));\n"
 
 
 
@@ -752,7 +752,7 @@ writer.write("\n    /* ------------------------------------------- report the re
     while(!slots.isEmptyConcSlotField()) {
       SlotField head = slots.getHeadConcSlotField();
       slots = slots.getTailConcSlotField();
-      writer.write("\n  /** \n   * Returns the attribute "+slotDomain(head)+"\n   * \n   * @return the attribute "+slotDomain(head)+"\n   */\n  @Override\n  public "+slotDomain(head)+" "+getMethod(head)+"() {\n    return "+fieldName(head.getName())+";\n  }\n  \n  /**\n   * Sets and returns the attribute "+fullClassName(sortName)+"\n   * \n   * @param set_arg the argument to set\n   * @return the attribute "+slotDomain(head)+" which just has been set\n   */"
+      writer.write("\n  /**\n   * Returns the attribute "+slotDomain(head)+"\n   *\n   * @return the attribute "+slotDomain(head)+"\n   */\n  @Override\n  public "+slotDomain(head)+" "+getMethod(head)+"() {\n    return "+fieldName(head.getName())+";\n  }\n\n  /**\n   * Sets and returns the attribute "+fullClassName(sortName)+"\n   *\n   * @param set_arg the argument to set\n   * @return the attribute "+slotDomain(head)+" which just has been set\n   */"
 
 
 
@@ -777,7 +777,7 @@ writer.write("\n    /* ------------------------------------------- report the re
 
 );
       } else {
-        writer.write("\n  @Override\n  public "+fullClassName(sortName)+" "+setMethod(head)+"("+slotDomain(head)+" set_arg) {\n    "+fieldName(head.getName())+" = set_arg; \n    return this;\n  }"
+        writer.write("\n  @Override\n  public "+fullClassName(sortName)+" "+setMethod(head)+"("+slotDomain(head)+" set_arg) {\n    "+fieldName(head.getName())+" = set_arg;\n    return this;\n  }"
 
 
 
@@ -839,9 +839,9 @@ writer.write("\n    /* ------------------------------------------- report the re
     return "_"+fieldName;
   }
 
-  /** 
+  /**
    * This method is used to generate a part of comments of init method
-   * 
+   *
    * @param slots fields of the class being generated
    * @return a String composed of one line per field
    */
@@ -998,7 +998,7 @@ writer.write("\n    /* ------------------------------------------- report the re
 
 
   private String visitableCount() {
-    if(className().equals("ConsPath"+sortName.getName())) { 
+    if(className().equals("ConsPath"+sortName.getName())) {
       return "0";
     } else {
       return ""+slotList.length();
@@ -1134,7 +1134,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
              || tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "long") )
              || tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "double") )
              || tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "float") )
-             || tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) { 
+             || tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "char") )) {
            res.append("\n    if( this."+fieldName(tom_slotName)+" != "+other+"."+fieldName(tom_slotName)+")\n      return (this."+fieldName(tom_slotName)+" < "+other+"."+fieldName(tom_slotName)+")?-1:1;\n"
 
 
@@ -1145,7 +1145,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 );
          } else if (tom_domain.equals( tom.gom.adt.objects.types.classname.ClassName.make("", "String") )) {
-           res.append("\n    int "+fieldName(tom_slotName)+"Cmp = (this."+fieldName(tom_slotName)+").compareTo("+other+"."+fieldName(tom_slotName)+");\n    if("+fieldName(tom_slotName)+"Cmp != 0)\n      return "+fieldName(tom_slotName)+"Cmp;\n             \n"
+           res.append("\n    int "+fieldName(tom_slotName)+"Cmp = (this."+fieldName(tom_slotName)+").compareTo("+other+"."+fieldName(tom_slotName)+");\n    if("+fieldName(tom_slotName)+"Cmp != 0)\n      return "+fieldName(tom_slotName)+"Cmp;\n\n"
 
 
 
@@ -1167,7 +1167,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 
 
-); 
+);
         }
       }}if ( tomMatch403__end__4.isEmptyConcSlotField() ) {tomMatch403__end__4=(( tom.gom.adt.objects.types.SlotFieldList )slotList);} else {tomMatch403__end__4= tomMatch403__end__4.getTailConcSlotField() ;}}} while(!( (tomMatch403__end__4==(( tom.gom.adt.objects.types.SlotFieldList )slotList)) ));}}}}
 
@@ -1256,7 +1256,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         }
         writer.write(");\n");
         if(k % 3 == 0) {
-          writer.write("\n    // mix(a,b,c)\n    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b; \n    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c; \n    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a; \n    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b; \n    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c; \n    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a; \n"
+          writer.write("\n    // mix(a,b,c)\n    a -= c;  a ^= (((c)<<(4))  | ((c)>>(32-(4))));  c += b;\n    b -= a;  b ^= (((a)<<(6))  | ((a)>>(32-(6))));  a += c;\n    c -= b;  c ^= (((b)<<(8))  | ((b)>>(32-(8))));  b += a;\n    a -= c;  a ^= (((c)<<(16)) | ((c)>>(32-(16)))); c += b;\n    b -= a;  b ^= (((a)<<(19)) | ((a)>>(32-(19)))); a += c;\n    c -= b;  c ^= (((b)<<(4))  | ((b)>>(32-(4))));  b += a;\n"
 
 
 
@@ -1277,7 +1277,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
 
 
       hasHooks = true;
-      writer.write("    \n    public static "+fullClassName(sortName)+" make("+unprotectedChildListWithType( tomMatch406_8.getHookArguments() )+") {\n  "
+      writer.write("\n    public static "+fullClassName(sortName)+" make("+unprotectedChildListWithType( tomMatch406_8.getHookArguments() )+") {\n  "
 
 );
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
@@ -1288,7 +1288,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         break lbl;
       }}if ( tomMatch406__end__4.isEmptyConcHook() ) {tomMatch406__end__4=(( tom.gom.adt.objects.types.HookList )hooks);} else {tomMatch406__end__4= tomMatch406__end__4.getTailConcHook() ;}}} while(!( (tomMatch406__end__4==(( tom.gom.adt.objects.types.HookList )hooks)) ));}}}}}
 
-    
+
     String makeName = "make";
     String visibility = "public";
     if (hasHooks) {
@@ -1298,7 +1298,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     writer.write("\n  "+visibility+" static "+className()+" "+makeName+"("+childListWithType(slotList)+") {\n"
 
 );
-    
+
     if (! maximalsharing) {
         writer.write("\n    return new "+className()+"("+childList(slotList)+");\n    "
 

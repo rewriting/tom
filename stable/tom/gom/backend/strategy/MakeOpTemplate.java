@@ -189,7 +189,7 @@ private String genGetSlot(int count, String arg) {
   }
   return out.toString();
 }
-  
+
 private String genStratArgs(SlotFieldList slots,String arg) {
     StringBuilder args = new StringBuilder();
     int i = 0;
@@ -312,7 +312,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
 
     return res;
   }
-  
+
   /**
     * Generate the child list to be used as function parameter declaration
     * Each non builtin child has type VisitableVisitor
@@ -349,7 +349,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
     {{if ( (slots instanceof tom.gom.adt.objects.types.SlotFieldList) ) {if ( (((( tom.gom.adt.objects.types.SlotFieldList )slots) instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ((( tom.gom.adt.objects.types.SlotFieldList )slots) instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) ) { tom.gom.adt.objects.types.SlotFieldList  tomMatch427__end__4=(( tom.gom.adt.objects.types.SlotFieldList )slots);do {{if (!( tomMatch427__end__4.isEmptyConcSlotField() )) { tom.gom.adt.objects.types.SlotField  tomMatch427_9= tomMatch427__end__4.getHeadConcSlotField() ;if ( (tomMatch427_9 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) { String  tom_fieldName= tomMatch427_9.getName() ; tom.gom.adt.objects.types.ClassName  tom_domain= tomMatch427_9.getDomain() ;
 
         if (!getGomEnvironment().isBuiltinClass(tom_domain)) {
-          res += "\n    Object tmp"+fieldName(tom_fieldName)+" = "+fieldName(tom_fieldName)+".visit("+argName+","+introspectorName+");\n    if (! (tmp"+fieldName(tom_fieldName)+" instanceof "+fullClassName(tom_domain)+")) {\n      throw new tom.library.sl.VisitFailure();\n    }\n    "+fullClassName(tom_domain)+" new"+fieldName(tom_fieldName)+" = ("+fullClassName(tom_domain)+") tmp"+fieldName(tom_fieldName)+"; \n"
+          res += "\n    Object tmp"+fieldName(tom_fieldName)+" = "+fieldName(tom_fieldName)+".visit("+argName+","+introspectorName+");\n    if (! (tmp"+fieldName(tom_fieldName)+" instanceof "+fullClassName(tom_domain)+")) {\n      throw new tom.library.sl.VisitFailure();\n    }\n    "+fullClassName(tom_domain)+" new"+fieldName(tom_fieldName)+" = ("+fullClassName(tom_domain)+") tmp"+fieldName(tom_fieldName)+";\n"
 
 
 

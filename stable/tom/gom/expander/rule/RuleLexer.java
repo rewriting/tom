@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-11-10 20:03:45
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2009-11-11 00:54:01
 
 package tom.gom.expander.rule;
 
@@ -80,8 +80,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:7: ( '->' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:9: '->'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:7: ( '->' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:9: '->'
             {
             match("->"); 
 
@@ -101,8 +101,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AMPERCENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:11: ( '&' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:13: '&'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:11: ( '&' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:13: '&'
             {
             match('&'); 
 
@@ -121,8 +121,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:12: ( '_' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:14: '_'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:12: ( '_' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:14: '_'
             {
             match('_'); 
 
@@ -141,8 +141,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:6: ( '*' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:8: '*'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: ( '*' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:8: '*'
             {
             match('*'); 
 
@@ -161,8 +161,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:4: ( '@' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: '@'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:4: ( '@' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:6: '@'
             {
             match('@'); 
 
@@ -181,8 +181,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: ( ':' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:9: ':'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:7: ( ':' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:9: ':'
             {
             match(':'); 
 
@@ -201,8 +201,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( '(' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:8: '('
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: ( '(' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:8: '('
             {
             match('('); 
 
@@ -221,8 +221,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = RPAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: ( ')' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:8: ')'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:6: ( ')' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: ')'
             {
             match(')'); 
 
@@ -241,8 +241,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = COMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:6: ( ',' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: ','
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:6: ( ',' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:8: ','
             {
             match(','); 
 
@@ -261,8 +261,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:5: ( '&&' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:7: '&&'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:5: ( '&&' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:7: '&&'
             {
             match("&&"); 
 
@@ -282,8 +282,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:4: ( '||' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:6: '||'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:4: ( '||' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: '||'
             {
             match("||"); 
 
@@ -303,8 +303,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = NOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:5: ( '!' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:7: '!'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:5: ( '!' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:7: '!'
             {
             match('!'); 
 
@@ -323,8 +323,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:8: ( '==' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:10: '=='
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:8: ( '==' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:10: '=='
             {
             match("=="); 
 
@@ -344,8 +344,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = NOTEQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:11: ( '!=' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:13: '!='
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:11: ( '!=' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:13: '!='
             {
             match("!="); 
 
@@ -365,8 +365,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:5: ( '<=' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:7: '<='
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:5: ( '<=' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:7: '<='
             {
             match("<="); 
 
@@ -386,8 +386,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = MATCH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:7: ( '<<' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:9: '<<'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:7: ( '<<' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:9: '<<'
             {
             match("<<"); 
 
@@ -407,8 +407,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = LT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:4: ( '<' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:6: '<'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:4: ( '<' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:6: '<'
             {
             match('<'); 
 
@@ -427,8 +427,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = GEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:5: ( '>=' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:7: '>='
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:5: ( '>=' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:7: '>='
             {
             match(">="); 
 
@@ -448,8 +448,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = GT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:4: ( '>' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:6: '>'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:4: ( '>' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:6: '>'
             {
             match('>'); 
 
@@ -468,8 +468,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = IF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:4: ( 'if' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:6: 'if'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:4: ( 'if' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:6: 'if'
             {
             match("if"); 
 
@@ -489,10 +489,10 @@ public class RuleLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:5: ( ( '0' .. '9' )+ )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:7: ( '0' .. '9' )+
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:5: ( ( '0' .. '9' )+ )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
             {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:7: ( '0' .. '9' )+
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
@@ -506,7 +506,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:8: '0' .. '9'
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -538,8 +538,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = ESC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:5: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:5: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -567,11 +567,11 @@ public class RuleLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:8: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:8: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop2:
             do {
                 int alt2=3;
@@ -587,14 +587,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:15: ESC
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -631,8 +631,8 @@ public class RuleLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -643,7 +643,7 @@ public class RuleLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -692,10 +692,10 @@ public class RuleLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:4: ( ( ' ' | '\\t' | '\\n' )+ )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:4: ( ( ' ' | '\\t' | '\\n' )+ )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
             {
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:6: ( ' ' | '\\t' | '\\n' )+
             int cnt4=0;
             loop4:
             do {
@@ -750,12 +750,12 @@ public class RuleLexer extends Lexer {
         try {
             int _type = SLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:18: (~ ( '\\n' | '\\r' ) )*
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:18: (~ ( '\\n' | '\\r' ) )*
             loop5:
             do {
                 int alt5=2;
@@ -768,7 +768,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:19: ~ ( '\\n' | '\\r' )
+            	    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -788,7 +788,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:34: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt7=3;
             int LA7_0 = input.LA(1);
 
@@ -800,17 +800,17 @@ public class RuleLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:35: '\\n'
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:35: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:40: '\\r' ( '\\n' )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:40: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:44: ( '\\n' )?
+                    // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:44: ( '\\n' )?
                     int alt6=2;
                     int LA6_0 = input.LA(1);
 
@@ -819,7 +819,7 @@ public class RuleLexer extends Lexer {
                     }
                     switch (alt6) {
                         case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:45: '\\n'
+                            // /Users/tonio/Documents/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:45: '\\n'
                             {
                             match('\n'); 
 

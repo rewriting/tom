@@ -45,7 +45,7 @@ public class HookCompiler {
 
 
 
-    
+
   // myadd-begin
   private GomEnvironment gomEnvironment;
 
@@ -121,7 +121,7 @@ public class HookCompiler {
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
-            }     
+            }
           }}}{if ( (decl instanceof tom.gom.adt.gom.types.Decl) ) {if ( ((( tom.gom.adt.gom.types.Decl )decl) instanceof tom.gom.adt.gom.types.decl.CutFutureOperator) ) { tom.gom.adt.gom.types.Future  tom_consornil= (( tom.gom.adt.gom.types.Decl )decl).getConsOrNil() ;
 
             ClassName clsName = (ClassName) declToClassName.get( (( tom.gom.adt.gom.types.Decl )decl).getODecl() );
@@ -130,13 +130,13 @@ public class HookCompiler {
  prefix = "Empty"; }}}{if ( (tom_consornil instanceof tom.gom.adt.gom.types.Future) ) {if ( ((( tom.gom.adt.gom.types.Future )tom_consornil) instanceof tom.gom.adt.gom.types.future.FutureCons) ) {
  prefix = "Cons"; }}}}
 
-            clsName = clsName.setName(prefix + clsName.getName()); 
+            clsName = clsName.setName(prefix + clsName.getName());
             try {
               classes = tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom_hook,this)).visit(classes);
                 //`TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
-            }     
+            }
           }}}}
 
       }if ( tomMatch448__end__4.isEmptyConcHookDecl() ) {tomMatch448__end__4=(( tom.gom.adt.gom.types.HookDeclList )declList);} else {tomMatch448__end__4= tomMatch448__end__4.getTailConcHookDecl() ;}}} while(!( (tomMatch448__end__4==(( tom.gom.adt.gom.types.HookDeclList )declList)) ));}}}}
@@ -212,7 +212,7 @@ public class HookCompiler {
                 newobj = newobj.setCons(newCons);
                 return newobj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom_oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                 //return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
-              } else {                
+              } else {
                 return
                   tom_obj.setHooks( tom.gom.adt.objects.types.hooklist.ConsConcHook.make(hc.makeHooksFromHookDecl(hook),tom_append_list_ConcHook(tom_oldHooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() )) );
                   //`obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));

@@ -118,7 +118,7 @@ public class HookTypeExpander {
 
                 OperatorDecl odecl = getOperatorDecl( (( tom.gom.adt.gom.types.Production )tom_prod).getName() ,tom_moduleName,moduleList);
                 if(odecl!=null) {
-                  HookDeclList newDeclList = 
+                  HookDeclList newDeclList =
                     makeHookDeclList((( tom.gom.adt.gom.types.Production )tom_prod), tom.gom.adt.gom.types.decl.CutFutureOperator.make(odecl,  tomMatch474_18.getConsOrNil() ) );
                   hookList = tom_append_list_ConcHookDecl(newDeclList,tom_append_list_ConcHookDecl(hookList, tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() ));
                 }
@@ -468,7 +468,7 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for normalizing rules 
+   * generate hooks for normalizing rules
    */
   private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
     RuleExpander rexpander = new RuleExpander(moduleList);
@@ -476,7 +476,7 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for term-graph rules 
+   * generate hooks for term-graph rules
    */
   private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl sdecl, String scode) {
     {{if ( (args instanceof tom.gom.adt.gom.types.ArgList) ) {if ( (((( tom.gom.adt.gom.types.ArgList )args) instanceof tom.gom.adt.gom.types.arglist.ConsConcArg) || ((( tom.gom.adt.gom.types.ArgList )args) instanceof tom.gom.adt.gom.types.arglist.EmptyConcArg)) ) {if (!( (( tom.gom.adt.gom.types.ArgList )args).isEmptyConcArg() )) { tom.gom.adt.gom.types.Arg  tomMatch492_5= (( tom.gom.adt.gom.types.ArgList )args).getHeadConcArg() ;if ( (tomMatch492_5 instanceof tom.gom.adt.gom.types.arg.Arg) ) { String  tom_stratname= tomMatch492_5.getName() ; tom.gom.adt.gom.types.ArgList  tomMatch492_2= (( tom.gom.adt.gom.types.ArgList )args).getTailConcArg() ;if (!( tomMatch492_2.isEmptyConcArg() )) { tom.gom.adt.gom.types.Arg  tomMatch492_7= tomMatch492_2.getHeadConcArg() ;if ( (tomMatch492_7 instanceof tom.gom.adt.gom.types.arg.Arg) ) { String  tom_defaultstrat= tomMatch492_7.getName() ;if (  tomMatch492_2.getTailConcArg() .isEmptyConcArg() ) {
@@ -641,7 +641,7 @@ public class HookTypeExpander {
       auHooks =  tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make( tom.gom.adt.gom.types.hookdecl.MakeHookDecl.make(mdecl,  tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() ,  tom.gom.adt.code.types.code.Code.make("return "+userNeutral+";") ,  tom.gom.adt.gom.types.hookkind.HookKind.make("AU") ,  true ) ,tom_append_list_ConcHookDecl(auHooks, tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() )) 
 
 ;
-      /* 
+      /*
        * Remove neutral:
        * if(<head> == makeNeutral) { return <tail>; }
        * if(<tail> == makeNeutral) { return <head>; }
