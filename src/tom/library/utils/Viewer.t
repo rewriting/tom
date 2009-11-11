@@ -47,14 +47,14 @@ public class Viewer {
   %include { ../mapping/java/aterm.tom }
 
   /* -------- dot part --------- */
-  /** 
+  /**
    * Give a dot representation of a visitable term on the writer stream
-   * 
+   *
    * @param v the visitable term to visualize
    * @param w the writer stream
    * @throws RuntimeException in case of visit failure
    */
-  public static void toDot(tom.library.sl.Visitable v, Writer w) 
+  public static void toDot(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
       if ( v instanceof tom.library.sl.Strategy ) {
         Strategy subj = (tom.library.sl.Strategy) v;
@@ -78,15 +78,15 @@ public class Viewer {
       }
     }
 
- /** 
+ /**
   * Give a dot representation of a visitable term on the standard output stream
-  * 
+  *
   * @param v the visitable term to visualize
   * @throws RuntimeException in case of visit failure
   */
  public static void toDot(tom.library.sl.Visitable v) {
     try {
-      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+      Writer w = new BufferedWriter(new OutputStreamWriter(System.out));
       toDot(v,w);
       w.write('\n');
       w.flush();
@@ -97,9 +97,9 @@ public class Viewer {
     implement {Writer}
   }
 
-  /** 
+  /**
    * Return a term node from a specified position
-   * 
+   *
    * @param p position of the node to return
    * @return a string representation of the node at the specified position
    */
@@ -125,8 +125,8 @@ public class Viewer {
       this.w=w;
     }
 
-    /** 
-     * Visits the subject any in a light way by providing the introspector 
+    /**
+     * Visits the subject any in a light way by providing the introspector
      *
      * @param any the subject to visit
      * @param i the introspector
@@ -134,11 +134,11 @@ public class Viewer {
      */
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
-    } 
+    }
 
-    /** 
+    /**
      * Visit the subject by providing an introspector
-     * 
+     *
      * @param introspector the introspector
      */
     public int visit(Introspector introspector) {
@@ -173,9 +173,9 @@ public class Viewer {
     }
   }
 
-  /** 
+  /**
    * Give a GUI display to visualize a visitable term
-   * 
+   *
    * @param vv the visitable term to visualize
    */
   public static void display(Visitable vv) {
@@ -189,7 +189,7 @@ public class Viewer {
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec("dot");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      Viewer.toDot(v, out); 
+      Viewer.toDot(v, out);
       out.close();
       Parser parser = new Parser(pr.getInputStream());
       parser.parse();
@@ -199,7 +199,7 @@ public class Viewer {
       frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
       frame.pack();
       frame.setVisible(true);
-      synchronized(v){  
+      synchronized(v){
         v.wait();
       }
     } catch (Exception e) {
@@ -208,24 +208,24 @@ public class Viewer {
   }
 
   /* -------- pstree-like part --------- */
-  /** 
+  /**
    * Give a pstree-like representation of a visitable term on the standard output stream
-   * 
+   *
    * @param v the visitable term to visualize
    * @throws RuntimeException in case of visit failure
    */
   public static void toTree(tom.library.sl.Visitable v) {
     try {
-      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+      Writer w = new BufferedWriter(new OutputStreamWriter(System.out));
       toTree(v,w);
       w.write('\n');
       w.flush();
     } catch(java.io.IOException e) {}
   }
 
-  /** 
+  /**
    * Give a pstree-like representation of a visitable term on the writer stream
-   * 
+   *
    * @param v the visitable term to visualize
    * @param w the writer stream
    * @throws RuntimeException in case of visit failure
@@ -237,7 +237,7 @@ public class Viewer {
       ATermToTree(at, w, new Stack<Integer>(), 0);
     }
 
-  private static void writeContext(Writer w, Stack<Integer> context, int deep) 
+  private static void writeContext(Writer w, Stack<Integer> context, int deep)
     throws java.io.IOException {
       for(int i=0; i<deep; i++) {
         if (context.contains(i)) {
@@ -248,15 +248,15 @@ public class Viewer {
       }
     }
 
-  /** 
+  /**
    * Return a tree representation of an ATerm, by providing a writer, a context and depth
-   * 
+   *
    * @param term the ATerm to represent as a tree
    * @param w the writer
    * @param context the context
    * @param deep the depth
    */
-  private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
+  private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep)
     throws java.io.IOException {
       %match(term) {
         ATermAppl(AFun[name=name],list) -> {
@@ -275,7 +275,7 @@ public class Viewer {
               (first,l*,last) -> {
                 // first child
                 w.write("─" + `name + "─┬");
-                context.push(ndeep-1); 
+                context.push(ndeep-1);
                 ATermToTree(`first,w,context,ndeep);
                 context.pop();
                 w.write('\n');
@@ -304,11 +304,11 @@ public class Viewer {
 
 
   /* -------- strategy part --------- */
-  private static int counter = 0;  
+  private static int counter = 0;
 
-  /** 
+  /**
    * Replaces characters '.' '$' and '@' by '_' in a string
-   * 
+   *
    * @param s the string to process
    * @return a string where '.' '$' and '@' by '_' have been replaced
    */
@@ -319,7 +319,7 @@ public class Viewer {
     return s;
   }
 
-  %strategy RemoveMu() extends Identity() { 
+  %strategy RemoveMu() extends Identity() {
     visit Strategy {
       Mu[s2=strat] -> {
         return `strat;
@@ -343,8 +343,8 @@ public class Viewer {
       this.w=w;
     }
 
-    /** 
-     * Visits the subject any in a light way by providing the introspector 
+    /**
+     * Visits the subject any in a light way by providing the introspector
      *
      * @param any the subject to visit
      * @param i the introspector
@@ -354,15 +354,15 @@ public class Viewer {
       throw new VisitFailure();
     }
 
-    /** 
+    /**
      * Visit the subject by providing an introspector
-     * 
+     *
      * @param introspector the introspector
      */
     public int visit(Introspector introspector) {
       Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
-      List<Object> stack = getEnvironment().getCurrentStack(); 
+      List<Object> stack = getEnvironment().getCurrentStack();
       try {
         //test if it is a pointer due to an expanded MuVar
         if (stack.contains(v)) {
@@ -370,7 +370,7 @@ public class Viewer {
           Position dest = (Position) current.clone();
           for(int i=current.length();i>index;i--) {
             dest = dest.up();
-          } 
+          }
           Position father = current.up();
           w.write(%[
               @getNodeFromPos(father)@ -> @getNodeFromPos(dest)@; ]%);
