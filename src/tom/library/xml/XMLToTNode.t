@@ -72,45 +72,45 @@ public class XMLToTNode {
     convert(filename);
   }
 
-  /** 
+  /**
    * Get the nodeTerm attribute
-   * 
+   *
    * @return nodeTerm
    */
   public TNode getTNode() {
     return nodeTerm;
   }
 
-  /** 
+  /**
    * Set up nodeTerm by providing a filename
-   * 
+   *
    * @param filename the filename
    */
   public void convert(String filename) {
     nodeTerm = xmlToTNode(convertToNode(filename));
   }
 
-  /** 
+  /**
    * Set up nodeTerm by providing an InputStream
-   * 
+   *
    * @param is the InputStream
    */
   public void convert(InputStream is) {
     nodeTerm = xmlToTNode(convertToNode(is));
   }
 
-  /** 
+  /**
    * Set up nodeTerm by providing a Node
-   * 
+   *
    * @param node the Node
    */
   public void convert(Node node) {
     nodeTerm = xmlToTNode(node);
   }
 
-  /** 
+  /**
    * Returns an XML file to a Node representation
-   * 
+   *
    * @param filename the file to convert
    * @return a Node representation of the XML file
    */
@@ -136,7 +136,7 @@ public class XMLToTNode {
     return null;
   }
 
-  /** 
+  /**
    * Returns a Node by providing an input stream
    *
    * @param is the input stream
@@ -162,7 +162,7 @@ public class XMLToTNode {
     return null;
   }
 
-  /** 
+  /**
    * Returns an ATerm representation of a NodeList
    *
    * @param list the NodeList
@@ -179,7 +179,7 @@ public class XMLToTNode {
     return res;
   }
 
-  /** 
+  /**
    * Returns an ATerm representation of a NamedNodeMap
    *
    * @param list the NamedNodeMap
@@ -196,9 +196,9 @@ public class XMLToTNode {
     return res;
   }
 
-  /** 
+  /**
    * Returns a TNode by providing a Node
-   * 
+   *
    * @param node the Node to normalize and convert
    * @return a TNode obtained from the Node
    */
