@@ -33,7 +33,7 @@
  *  and some nasty looking enums from 1.5, but have not really
  *  tested for 1.5 compatibility.
  *
- *  I built this with: java -Xmx100M org.antlr.Tool java.g 
+ *  I built this with: java -Xmx100M org.antlr.Tool java.g
  *  and got two errors that are ok (for now):
  *  java.g:691:9: Decision can match input such as
  *    "'0'..'9'{'E', 'e'}{'+', '-'}'0'..'9'{'D', 'F', 'd', 'f'}"
@@ -68,9 +68,9 @@
  *      Factored out an annotationName rule and used it in the annotation rule.
  *          Not sure why, but typeName wasn't recognizing references to inner
  *          annotations (e.g. @InterfaceName.InnerAnnotation())
- *      Factored out the elementValue section of an annotation reference.  Created 
- *          elementValuePair and elementValuePairs rules, then used them in the 
- *          annotation rule.  Allows it to recognize annotation references with 
+ *      Factored out the elementValue section of an annotation reference.  Created
+ *          elementValuePair and elementValuePairs rules, then used them in the
+ *          annotation rule.  Allows it to recognize annotation references with
  *          multiple, comma separated attributes.
  *      Updated elementValueArrayInitializer so that it allows multiple elements.
  *          (It was only allowing 0 or 1 element).
@@ -78,15 +78,15 @@
  *          doesn't appear to indicate this is legal, but it does work as of at least
  *          JDK 1.5.0_06.
  *      Moved the Identifier portion of annotationTypeElementRest to annotationMethodRest.
- *          Because annotationConstantRest already references variableDeclarator which 
- *          has the Identifier portion in it, the parser would fail on constants in 
- *          annotation definitions because it expected two identifiers.  
+ *          Because annotationConstantRest already references variableDeclarator which
+ *          has the Identifier portion in it, the parser would fail on constants in
+ *          annotation definitions because it expected two identifiers.
  *      Added optional trailing ';' to the alternatives in annotationTypeElementRest.
  *          Wouldn't handle an inner interface that has a trailing ';'.
- *      Swapped the expression and type rule reference order in castExpression to 
+ *      Swapped the expression and type rule reference order in castExpression to
  *          make it check for genericized casts first.  It was failing to recognize a
  *          statement like  "Class<Byte> TYPE = (Class<Byte>)...;" because it was seeing
- *          'Class<Byte' in the cast expression as a less than expression, then failing 
+ *          'Class<Byte' in the cast expression as a less than expression, then failing
  *          on the '>'.
  *      Changed createdName to use typeArguments instead of nonWildcardTypeArguments.
  *          Again, JLS doesn't seem to allow this, but java.lang.Class has an example of
@@ -95,7 +95,7 @@
  *          just 'arguments'.  The case it couldn't handle was a call to an explicit
  *          generic method invocation (e.g. this.<E>doSomething()).  Using identifierSuffix
  *          may be overly aggressive--perhaps should create a more constrained thisSuffix rule?
- *      
+ *
  *  Version 1.0.4 -- Hiroaki Nakamura, May 3, 2007
  *
  *  Fixed formalParameterDecls, localVariableDeclaration, forInit,
@@ -107,13 +107,13 @@
  *  Version 1.0.6 -- John Ridgway, March 17, 2008
  *      Made "assert" a switchable keyword like "enum".
  *      Fixed compilationUnit to disallow "annotation importDeclaration ...".
- *      Changed "Identifier ('.' Identifier)*" to "qualifiedName" in more 
+ *      Changed "Identifier ('.' Identifier)*" to "qualifiedName" in more
  *          places.
  *      Changed modifier* and/or variableModifier* to classOrInterfaceModifiers,
  *          modifiers or variableModifiers, as appropriate.
  *      Renamed "bound" to "typeBound" to better match language in the JLS.
- *      Added "memberDeclaration" which rewrites to methodDeclaration or 
- *      fieldDeclaration and pulled type into memberDeclaration.  So we parse 
+ *      Added "memberDeclaration" which rewrites to methodDeclaration or
+ *      fieldDeclaration and pulled type into memberDeclaration.  So we parse
  *          type and then move on to decide whether we're dealing with a field
  *          or a method.
  *      Modified "constructorDeclaration" to use "constructorBody" instead of
@@ -122,15 +122,15 @@
  *          out of expressions allowed me to simplify "primary".
  *      Changed variableDeclarator to simplify it.
  *      Changed type to use classOrInterfaceType, thus simplifying it; of course
- *          I then had to add classOrInterfaceType, but it is used in several 
+ *          I then had to add classOrInterfaceType, but it is used in several
  *          places.
  *      Fixed annotations, old version allowed "@X(y,z)", which is illegal.
  *      Added optional comma to end of "elementValueArrayInitializer"; as per JLS.
- *      Changed annotationTypeElementRest to use normalClassDeclaration and 
- *          normalInterfaceDeclaration rather than classDeclaration and 
+ *      Changed annotationTypeElementRest to use normalClassDeclaration and
+ *          normalInterfaceDeclaration rather than classDeclaration and
  *          interfaceDeclaration, thus getting rid of a couple of grammar ambiguities.
  *      Split localVariableDeclaration into localVariableDeclarationStatement
- *          (includes the terminating semi-colon) and localVariableDeclaration.  
+ *          (includes the terminating semi-colon) and localVariableDeclaration.
  *          This allowed me to use localVariableDeclaration in "forInit" clauses,
  *           simplifying them.
  *      Changed switchBlockStatementGroup to use multiple labels.  This adds an
@@ -140,7 +140,7 @@
  *      Added semantic predicates to test for shift operations rather than other
  *          things.  Thus, for instance, the string "< <" will never be treated
  *          as a left-shift operator.
- *      In "creator" we rule out "nonWildcardTypeArguments" on arrayCreation, 
+ *      In "creator" we rule out "nonWildcardTypeArguments" on arrayCreation,
  *          which are illegal.
  *      Moved "nonWildcardTypeArguments into innerCreator.
  *      Removed 'super' superSuffix from explicitGenericInvocation, since that
@@ -152,15 +152,15 @@
  *      Lexer -- removed "Exponent?" from FloatingPointLiteral choice 4, since it
  *          led to an ambiguity.
  *
- *      This grammar successfully parses every .java file in the JDK 1.5 source 
+ *      This grammar successfully parses every .java file in the JDK 1.5 source
  *          tree (excluding those whose file names include '-', which are not
  *          valid Java compilation units).
  *
  *  Known remaining problems:
  *      "Letter" and "JavaIDDigit" are wrong.  The actual specification of
  *      "Letter" should be "a character for which the method
- *      Character.isJavaIdentifierStart(int) returns true."  A "Java 
- *      letter-or-digit is a character for which the method 
+ *      Character.isJavaIdentifierStart(int) returns true."  A "Java
+ *      letter-or-digit is a character for which the method
  *      Character.isJavaIdentifierPart(int) returns true."
  */
 grammar MiniJava;
@@ -187,7 +187,7 @@ options {
 }
 
 // starting point for parsing a 'MiniJava' file (temporary starting point)
-// 
+//
 compilationUnit
     :  'return'? res=expression? ';' -> ^(CompilationUnit $res)
     ;
@@ -203,7 +203,7 @@ type
         ->  ^(ClassOrInterfaceType classOrInterfaceType) // NOT CORRECT
     |   primitiveType ('[' ']')* -> primitiveType // NOT CORRECT
     ;
-  
+
 classOrInterfaceType
     :    Identifier typeArguments? ('.' Identifier typeArguments? )*
          ->  ^(IndependentType Identifier ^(TypeArgumentList ))
@@ -221,7 +221,7 @@ primitiveType
     |   'double'  -> Double
     ;
 
-literal 
+literal
     :   integerLiteral
     |   l=FloatingPointLiteral -> ^(FloatingPointLiteral $l)
     |   l=CharacterLiteral -> ^(CharacterLiteral $l)
@@ -271,7 +271,7 @@ typeArgument
 parExpression
     :   '('! expression ')'!
     ;
-    
+
 expressionList
     :   expression (',' expression)* -> ^(ExpressionList expression+)
     ;
@@ -281,7 +281,7 @@ expression
         -> {o==null}? conditionalExpression
         ->            ^(Assignment $o conditionalExpression expression)
     ;
-    
+
 assignmentOperator
     :   '='  -> Assign
     |   '+=' -> PlusAssign
@@ -292,24 +292,24 @@ assignmentOperator
     |   '|=' -> OrAssign
     |   '^=' -> XOrAssign
     |   '%=' -> ModAssign
-    |   ('<' '<' '=')=> t1='<' t2='<' t3='=' 
+    |   ('<' '<' '=')=> t1='<' t2='<' t3='='
         { $t1.getLine() == $t2.getLine() &&
-          $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() && 
-          $t2.getLine() == $t3.getLine() && 
+          $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
+          $t2.getLine() == $t3.getLine() &&
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
         -> LeftShiftAssign
     |   ('>' '>' '>' '=')=> t1='>' t2='>' t3='>' t4='='
-        { $t1.getLine() == $t2.getLine() && 
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
-          $t2.getLine() == $t3.getLine() && 
+          $t2.getLine() == $t3.getLine() &&
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() &&
-          $t3.getLine() == $t4.getLine() && 
+          $t3.getLine() == $t4.getLine() &&
           $t3.getCharPositionInLine() + 1 == $t4.getCharPositionInLine() }?
         -> UnsignedRightShiftAssign
     |   ('>' '>' '=')=> t1='>' t2='>' t3='='
-        { $t1.getLine() == $t2.getLine() && 
-          $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() && 
-          $t2.getLine() == $t3.getLine() && 
+        { $t1.getLine() == $t2.getLine() &&
+          $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
+          $t2.getLine() == $t3.getLine() &&
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
         -> SignedRightShiftAssign
     ;
@@ -347,7 +347,7 @@ andExpression
 
 equalityExpression
     :   (a=instanceOfExpression -> $a) ( ( '==' b=instanceOfExpression -> ^(BinaryEqual $equalityExpression $b))
-        | '!=' b=instanceOfExpression -> ^(BinaryNotEqual $equalityExpression $b) )* 
+        | '!=' b=instanceOfExpression -> ^(BinaryNotEqual $equalityExpression $b) )*
     ;
 
 instanceOfExpression
@@ -361,14 +361,14 @@ relationalExpression
         -> {o==null}? shiftExpression
         ->            ^(AssociativeOperation relationalOp ^(ExpressionList shiftExpression+))
     ;
-    
+
 relationalOp
-    :   ('<' '=')=> t1='<' t2='=' 
-        { $t1.getLine() == $t2.getLine() && 
+    :   ('<' '=')=> t1='<' t2='='
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
         -> LowerOrEqual
-    |   ('>' '=')=> t1='>' t2='=' 
-        { $t1.getLine() == $t2.getLine() && 
+    |   ('>' '=')=> t1='>' t2='='
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
         -> GreaterOrEqual
     |   '<' -> Lower
@@ -382,31 +382,31 @@ shiftExpression
     ;
 
 shiftOp
-    :   ('<' '<')=> t1='<' t2='<' 
-        { $t1.getLine() == $t2.getLine() && 
+    :   ('<' '<')=> t1='<' t2='<'
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
         -> LeftShift
-    |   ('>' '>' '>')=> t1='>' t2='>' t3='>' 
-        { $t1.getLine() == $t2.getLine() && 
+    |   ('>' '>' '>')=> t1='>' t2='>' t3='>'
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
-          $t2.getLine() == $t3.getLine() && 
+          $t2.getLine() == $t3.getLine() &&
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
         -> UnsignedRightShift
     |   ('>' '>')=> t1='>' t2='>'
-        { $t1.getLine() == $t2.getLine() && 
+        { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
         -> SignedRightShift
     ;
 
 additiveExpression
     :   (a=multiplicativeExpression -> $a) ( ( '+' b=multiplicativeExpression -> ^(BinaryPlus $additiveExpression $b))
-    |   '-' b=multiplicativeExpression -> ^(BinaryMinus $additiveExpression $b) )* 
+    |   '-' b=multiplicativeExpression -> ^(BinaryMinus $additiveExpression $b) )*
     ;
 
 multiplicativeExpression
     :   (a=unaryExpression -> $a) ( ( '*' b=unaryExpression -> ^(BinaryMult $multiplicativeExpression $b))
     |   '/' b=unaryExpression -> ^(BinaryDiv $multiplicativeExpression $b)
-    |   '%' b=unaryExpression -> ^(BinaryModulo $multiplicativeExpression $b) )* 
+    |   '%' b=unaryExpression -> ^(BinaryModulo $multiplicativeExpression $b) )*
     ;
 
 unaryExpression
@@ -490,7 +490,7 @@ createdName
     :   classOrInterfaceType -> ^(ClassOrInterfaceType classOrInterfaceType)
     |   primitiveType
     ;
-    
+
 arrayCreatorRest[Tree type]
     :   '['
         (   ']' ('[' ']')* arrayInitializer
@@ -584,12 +584,12 @@ UnicodeEscape
 
 ENUM:   'enum' {if (!enumIsKeyword) $type=Identifier;}
     ;
-    
+
 ASSERT
     :   'assert' {if (!assertIsKeyword) $type=Identifier;}
     ;
-    
-Identifier 
+
+Identifier
     :   Letter (Letter|JavaIDDigit)*
     ;
 
