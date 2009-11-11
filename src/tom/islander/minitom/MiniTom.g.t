@@ -4,10 +4,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-}
-
-tokens {
-  %include { ast/MiniTomAstTokenList.txt }
+  tokenVocab=AstTokens;
 }
 
 @header {
@@ -156,11 +153,11 @@ type
   : ID -> ^(Type ID)
   ;
 
-term //why 'ID? ID' and '?ID ID STAR' do not work fine ???
+term /* why 'ID? ID' and '?ID ID STAR' do not work fine ??? */
   : t1=ID n1=ID STAR -> ^(VariableStar ^(Name $n1 ) ^(Type $t1) )
   | n2=ID STAR -> ^(VariableStar ^(Name $n2 ) ^(EmptyType ) )
   | t3=ID n3=ID -> ^(Variable ^(Name $n3 ) ^(Type $t3) )
-  | n4=ID (LPAREN RPAREN)? -> ^(Variable ^(Name $n4 ) ^(EmptyType )) // '(LPAREN RPAREN)?' in order to regognize correctly a()
+  | n4=ID (LPAREN RPAREN)? -> ^(Variable ^(Name $n4 ) ^(EmptyType )) // '(LPAREN RPAREN)?' in order to regognize correctly a()
   | name=ID LPAREN termList RPAREN -> ^(NamedTermList ^(Name $name ) termList)
   ;
 /*term[Token type]
