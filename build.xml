@@ -304,11 +304,6 @@
       import="${src.gen}/tom/engine/adt">
       <include name="tom/engine/parser/BackQuoteLanguage.g.t"/>
     </tomcompile>
-    <tomcompile srcdir="${src.src}"
-      outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
-      import="${src.gen}/tom/gom/adt">
-      <include name="tom/gom/expander/rule/Rule.g.t"/>
-    </tomcompile>
   </target>
 
   <!-- compile tom files in src.src with tom.stable -->
@@ -379,7 +374,7 @@
     </antlr3>
 
     <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
-    <antlr3 target="${gen.destination}/tom/gom/expander/rule/Rule.g"
+    <antlr3 target="${src.src}/tom/gom/expander/rule/Rule.g"
             outputdirectory="${gen.destination}/tom/gom/expander/rule"
             libdirectory="${gen.destination}/tom/gom/adt/rule"
             multithreaded="true">
