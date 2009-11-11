@@ -282,8 +282,6 @@
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/islander/**/*.g.t"/>
-      <!-- needs to generate mappings first -->
-      <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
