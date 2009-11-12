@@ -7,9 +7,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 
-import minijava.ast.*;
-import minijava.ast.types.*;
-import minijava.ast.AstAdaptor;
+import minijava.minijavaast.*;
+import minijava.minijavaast.types.*;
+import minijava.minijavaast.MiniJavaMinijavaAstAdaptor;
 
 public class MainMiniJava {
 
@@ -28,13 +28,14 @@ public class MainMiniJava {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       MiniJavaParser parser = new MiniJavaParser(tokens);
 
-      Tree tree = (Tree) parser.compilationUnit().getTree();
-      CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);
+      Tree tree = (Tree) parser.javaCompilationUnit().getTree();
+      JavaCompilationUnit term = (JavaCompilationUnit) MiniJavaMinijavaAstAdaptor.getTerm(tree);
       tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
+      //System.err.println("exception: " + e);
       e.printStackTrace();
     }
-  }
+  } //main
 
-}
+}//class

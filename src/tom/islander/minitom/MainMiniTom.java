@@ -7,9 +7,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.CommonTree;
-import minitom.ast.*;
-import minitom.ast.types.*;
-import minitom.ast.AstAdaptor;
+import minitom.minitomast.*;
+import minitom.minitomast.types.*;
+import minitom.minitomast.MiniTomMinitomAstAdaptor;
 
 public class MainMiniTom {
 
@@ -32,13 +32,15 @@ public class MainMiniTom {
       //System.out.println("(DEBUG) tree =\n" + tree);
       //System.out.println("(DEBUG) tree.getText() = " + tree.getText() + " / tree.getType() = " + tree.getType());
       //System.out.println("(DEBUG) tree.getChild(0) = " + tree.getChild(0));
-      CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);
+      //BlockList term = (BlockList) MiniTomAstAdaptor.getTerm(tree);
+      CompilationUnit term = (CompilationUnit) MiniTomMinitomAstAdaptor.getTerm(tree);
       System.out.println("\nterm =\n\n" + term + "\n");
       tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
+      //System.err.println("exception: " + e);
       e.printStackTrace();
     }
-  }
+  } //main
 
-}
+}//class
