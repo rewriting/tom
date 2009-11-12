@@ -1,0 +1,6 @@
+%include{ File1.tom }
+%include{ File2.tom }
+
+rule int package.class.method(T x, int y) {
+  h(e) << s -> { return some.Composite.Term; }
+}
