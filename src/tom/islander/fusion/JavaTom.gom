@@ -1,0 +1,16 @@
+module fusion.JavaTom
+imports MinitomAst MinijavaAst
+abstract syntax
+
+/*
+CompilationUnit = TomCompilationUnit(BlockList*)
+		| JavaCompilationUnit(expression:Expression)
+		| CompositeUnit(CompilationUnit*)
+*/
+
+/*
+UnitList = UnitsList(Unit*)
+
+Unit = TomUnit(BlockList*)
+     | JavaUnit(expression:Expression
+)*/
