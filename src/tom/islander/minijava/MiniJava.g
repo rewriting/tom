@@ -169,7 +169,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=AstTokens;
+  tokenVocab=MinijavaTokens;//AstTokens;
 }
 
 @header {
@@ -188,8 +188,8 @@ options {
 
 // starting point for parsing a 'MiniJava' file (temporary starting point)
 //
-compilationUnit
-    :  'return'? res=expression? ';' -> ^(CompilationUnit $res)
+javaCompilationUnit
+    :  'return'? res=expression? ';' -> ^(JavaCompilationUnit $res)
     ;
 
 /* */

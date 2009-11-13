@@ -4,7 +4,7 @@ options {
   memoize=true;
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=AstTokens;
+  tokenVocab=MinitomAst;//Tokens;
 }
 
 @header {

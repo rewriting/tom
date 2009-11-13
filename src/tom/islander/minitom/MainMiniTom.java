@@ -33,7 +33,7 @@ public class MainMiniTom {
       //System.out.println("(DEBUG) tree.getText() = " + tree.getText() + " / tree.getType() = " + tree.getType());
       //System.out.println("(DEBUG) tree.getChild(0) = " + tree.getChild(0));
       //BlockList term = (BlockList) MiniTomAstAdaptor.getTerm(tree);
-      CompilationUnit term = (CompilationUnit) MiniTomMinitomAstAdaptor.getTerm(tree);
+      CompilationUnit term = (CompilationUnit) /*MiniTom*/ MinitomAstAdaptor.getTerm(tree);
       System.out.println("\nterm =\n\n" + term + "\n");
       tom.library.utils.Viewer.toTree(term);
 

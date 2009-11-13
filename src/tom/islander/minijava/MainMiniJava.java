@@ -29,7 +29,7 @@ public class MainMiniJava {
       MiniJavaParser parser = new MiniJavaParser(tokens);
 
       Tree tree = (Tree) parser.javaCompilationUnit().getTree();
-      JavaCompilationUnit term = (JavaCompilationUnit) MiniJavaMinijavaAstAdaptor.getTerm(tree);
+      JavaCompilationUnit term = (JavaCompilationUnit) /*MiniJava*/ MinijavaAstAdaptor.getTerm(tree);
       tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
