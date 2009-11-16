@@ -161,17 +161,17 @@ pattern_type:
 field:
     type STAR -> ^(StarredField type ^(None))
   | LDIPLE pattern_type RDIPLE STAR -> ^(StarredField pattern_type ^(Refresh))
-  | ID COLON type -> ^(NamedField ^(None) ID type)
-  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(Refresh) ID pattern_type)
+  | ID COLON type -> ^(NamedField ID type ^(None))
+  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ID pattern_type ^(Refresh))
   ;
 
 /* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_field:
     pattern_type STAR -> ^(StarredField pattern_type ^(None))
-  | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
-  | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
-  | NEUTRAL ID COLON type -> ^(NamedField ^(Neutral) ID type)
-  | ID COLON pattern_type -> ^(NamedField ^(None) ID pattern_type)
+  | INNER ID COLON type -> ^(NamedField ID type ^(Inner))
+  | OUTER ID COLON type -> ^(NamedField ID type ^(Outer))
+  | NEUTRAL ID COLON type -> ^(NamedField ID type ^(Neutral))
+  | ID COLON pattern_type -> ^(NamedField ID pattern_type ^(None))
   ;
 
 arglist:
