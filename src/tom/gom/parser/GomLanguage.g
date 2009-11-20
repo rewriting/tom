@@ -86,7 +86,7 @@ adtgrammar :
 
 syntax :
   ABSTRACT SYNTAX (gr1+=hookConstruct | gr2+=typedecl | gr3+=atomdecl)*
-    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr3)* ($gr1)* ($gr1)* ($gr2)*)))
+    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
 atomdecl :
