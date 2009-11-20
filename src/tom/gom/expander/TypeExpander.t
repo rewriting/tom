@@ -257,7 +257,7 @@ public class TypeExpander {
       ConcField() -> {
         return `ConcSlot();
       }
-      ConcField(NamedField(_,name,GomType(_,typename)),tail*) -> {
+      ConcField(NamedField(name,GomType(_,typename),_),tail*) -> {
         SlotList newtail = typedSlotList(`tail,sortDeclList);
         return `ConcSlot(Slot(name,declFromTypename(typename,sortDeclList)),newtail*);
       }
