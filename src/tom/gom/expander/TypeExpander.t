@@ -169,7 +169,7 @@ public class TypeExpander {
   }
 
   /*
-   * Get an OperatorDecl from a Production, using the list of sort declarations
+   * Get an OperatorDecl from an Alternative, using the list of sort declarations
    * XXX: There is huge room for efficiency improvement, as we could use a map
    * sortName -> sortDeclList instead of a simple list
    */
@@ -204,7 +204,7 @@ public class TypeExpander {
 
     }
     throw new GomRuntimeException(
-        "TypeExpander::getOperatorDecl: wrong Production?");
+        "TypeExpander::getOperatorDecl: wrong Alternative?");
   }
 
   private SortDecl declFromTypename(String typename,
@@ -236,7 +236,7 @@ public class TypeExpander {
       }
     }
     // the error message could be more refined
-    throw new GomRuntimeException("TypeExpander::typedProduction: illformed Production");
+    throw new GomRuntimeException("TypeExpander::typedProduction: illformed Alternative");
   }
 
   private SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
@@ -295,25 +295,6 @@ public class TypeExpander {
    */
   private Collection<SortDecl> getSortDeclarationInCodomain(GomModule module) {
     Collection<SortDecl> result = new HashSet<SortDecl>();
-    %match(module) {
-      GomModule(
-          moduleName,
-          ConcSection(_*,
-            Public(
-              ConcGrammar(_*,
-                Grammar(
-                  ConcProduction(_*,
-                    Production(_,_,GomType(_,typeName),_option),
-                    _*)),
-                _*)),
-            _*)) -> {
-        if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          result.add(getGomEnvironment().builtinSort(`typeName));
-        } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
-        }
-      }
-    }
     %match(module) {
       GomModule(
           moduleName,

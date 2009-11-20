@@ -85,15 +85,8 @@ adtgrammar :
   ;
 
 syntax :
-  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)*
-    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr4)* ($gr1)* ($gr2)* ($gr3)*)))
-  ;
-
-production
-@init {
-String startLine = ""+input.LT(1).getLine();
-} :
-  ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
+  ABSTRACT SYNTAX (gr1+=hookConstruct | gr2+=typedecl | gr3+=atomdecl)*
+    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr3)* ($gr1)* ($gr1)* ($gr2)*)))
   ;
 
 atomdecl :
