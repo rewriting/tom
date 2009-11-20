@@ -1307,7 +1307,7 @@ public class FreshExpander {
         return `SortType(
             GomType(AtomType(),name),
             ConcAtom(),
-            ConcProduction(Production(
+            ConcAlternative(Alternative(
                 name,
                 ConcField(
                   NamedField("n",GomType(ExpressionType(),"int"),None()),

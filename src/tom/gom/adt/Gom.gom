@@ -22,9 +22,12 @@ Production = Production(Name:String, DomainList:FieldList,
                         Codomain:GomType, Option:Option)
            | Hook(NameType:IdKind, Name:String, HookType:HookKind,
                   Args:ArgList, StringCode:String,Option:Option)
-           | SortType(Type:GomType,Binds:AtomList,ProductionList:ProductionList)
+           | SortType(Type:GomType,Binds:AtomList,AlternativeList:AlternativeList)
            | AtomDecl(Name:String)
 ProductionList = ConcProduction(Production*)
+AlternativeList = ConcAlternative(Alternative*)
+Alternative = Alternative(Name:String, DomainList:FieldList,
+                        Codomain:GomType, Option:Option)
 HookKind = HookKind(kind:String)
 IdKind = KindModule()
        | KindSort()

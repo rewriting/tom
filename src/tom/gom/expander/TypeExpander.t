@@ -130,18 +130,9 @@ public class TypeExpander {
       // iterate through the productions
       %match(module) {
         GomModule(_,ConcSection(_*,
-              Public(ConcGrammar(_*,Grammar(ConcProduction(_*,prod@Production[],_*)),_*)),
-              _*)) -> {
-          // we may want to pass moduleName to help resolve ambiguities with modules
-          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
-
-        }
-      }
-      %match(module) {
-        GomModule(_,ConcSection(_*,
               Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
-                SortType[ProductionList=ConcProduction(_*,
-                prod@Production[],_*)],
+                SortType[AlternativeList=ConcAlternative(_*,
+                prod@Alternative[],_*)],
               _*)),_*)),
               _*)) -> {
           // we may want to pass moduleName to help resolve ambiguities with modules
@@ -182,17 +173,14 @@ public class TypeExpander {
    * XXX: There is huge room for efficiency improvement, as we could use a map
    * sortName -> sortDeclList instead of a simple list
    */
-  private OperatorDecl getOperatorDecl(Production prod,
+  private OperatorDecl getOperatorDecl(Alternative alt,
       SortDeclList sortDeclList,
       Map<SortDecl,OperatorDeclList> operatorsForSort) {
 
-    %match(prod) {
-      //Production(name,domain,GomType(_,codomain)) -> {
-      //Production(name,domain,GomType(_,codomain),OptionList(_,opt@Details[Comments=comment])) -> {
-      Production(name,domain,GomType(_,codomain),options) -> {
+    %match(alt) {
+      Alternative(name,domain,GomType(_,codomain),options) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
-///
         OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, Details("")); //default case, when no comment is present
         if (`options.isConsOptionList()) { // usual case :
           Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)`options).toArray();
@@ -205,7 +193,6 @@ public class TypeExpander {
         } else if (`options.isDetails()) { // just in case, but for moment, it shouldn't be possible to have it
           decl = `OperatorDecl(name,codomainSort, domainSorts, options);
         }
-///
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort,`ConcOperator(decl,list*));
@@ -334,8 +321,8 @@ public class TypeExpander {
             Public(
               ConcGrammar(_*,
                 Grammar(ConcProduction(_*,
-                  SortType[ProductionList=ConcProduction(_*,
-                    Production(_,_,GomType(_,typeName),_option),
+                  SortType[AlternativeList=ConcAlternative(_*,
+                    Alternative(_,_,GomType(_,typeName),_option),
                     _*)],_*)),
                 _*)),
             _*)) -> {
