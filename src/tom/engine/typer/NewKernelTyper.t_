@@ -1,0 +1,100 @@
+/*
+ *
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2009, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Cláudia Tavares  e-mail: Claudia.Tavares@loria.fr
+ *
+ **/
+
+
+//TODO
+
+package tom.engine.typer;
+
+
+public class NewKernelTyper {
+
+  %typeterm NewKernelTyper {
+    implement { NewKernelTyper }
+    is_sort(t) { ($t instanceof NewKernelTyper) }
+  }
+
+  private TypeConstraintList constraintsToTypeVariable = `concTypeConstraint();
+  private SymbolTable symbolTable;
+  private int freshTypeVarCounter = 0;
+
+  public NewKernelTyper() {
+    super();
+  }
+
+  public SymbolTable getSymbolTable() {
+    return this.symbolTable;
+  }
+
+  public void setSymbolTable(SymbolTable newSymbolTable) {
+    this.symbolTable = newSymbolTable;
+  }
+
+
+
+
+
+public void typeVariableList() {}
+public void inferNumMatch() {}
+public void inferTerm() {}
+public void inferCond() {}
+
+public void inferBlock() {
+  //initGlobal()
+  //collectSubjectVariables()
+}
+
+public void inferRule(Instruction instr, ArrayList<TomTerm> localContext) {
+//  %match(instr) {
+ //   Instruction(cond, action) -> {
+    //initLocal()
+    //inferCond()
+    //propagate()
+   // }
+//  }
+}
+
+public void addConstraint(TypeConstraint constraint) {
+  TypeConstraintList auxList = this.constraintsToTypeVariable;
+  this.constraintsToTypeVariable = `concTypeConstraint(constraint,auxList*);
+}
+
+public void initGlobal(ArrayList<TomTerm> globalVar){
+  //for each element of globalVar, find it in the ST and replace its type by a freshVar
+
+}
+
+%strategy collectSubjectVariables(nkt:NewKernelTyper) extends Fail() {
+  //Match(p,s,t) addConstraint()
+}
+
+%strategy collectPatternVariables(nkt:NewKernelTyper) extends Fail() {
+  //Match(p,s,t) addConstraint()
+}
+
+%strategy propagate(nkt:NewKernelTyper) extends Fail() {}
+
+
+} // NewKernelTyper
