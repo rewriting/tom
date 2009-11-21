@@ -34,6 +34,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.gom.types.gommodulelist.ConcGomModule;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class TypeExpander {
@@ -66,7 +67,11 @@ public class TypeExpander {
     * We try here to get full sort definitions for each constructs
     * Once the structure is correctly build, we can attach the hooks
     */
-  public ModuleList expand(GomModuleList moduleList) {
+  public ModuleList expand(GomModuleList gomModuleList) {
+    if (!(gomModuleList instanceof ConcGomModule)) {
+      throw new RuntimeException("A GomModuleList should be a list");
+    }
+    ConcGomModule moduleList = (ConcGomModule) gomModuleList;
 
     /* put a map giving all imported modules for each module in the path */
     buildDependencyMap(moduleList);
@@ -76,11 +81,7 @@ public class TypeExpander {
     /* The sorts declared in each module */
     Map<ModuleDecl,SortDeclList> sortsForModule =
       new HashMap<ModuleDecl,SortDeclList>();
-    GomModuleList consum = moduleList;
-    while(!consum.isEmptyConcGomModule()) {
-      GomModule module = consum.getHeadConcGomModule();
-      consum = consum.getTailConcGomModule();
-
+    for (GomModule module : moduleList) {
       Collection<SortDecl> decls = getSortDeclarations(module);
 
       Collection<SortDecl> implicitdecls = getSortDeclarationInCodomain(module);
@@ -122,11 +123,7 @@ public class TypeExpander {
     Map<SortDecl,OperatorDeclList> operatorsForSort =
       new HashMap<SortDecl,OperatorDeclList>();
     Map hooksForSort = new HashMap();
-    consum = moduleList;
-    while(!consum.isEmptyConcGomModule()) {
-      GomModule module = consum.getHeadConcGomModule();
-      consum = consum.getTailConcGomModule();
-
+    for (GomModule module : moduleList) {
       // iterate through the productions
       %match(module) {
         GomModule(_,ConcSection(_*,
