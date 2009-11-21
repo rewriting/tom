@@ -257,19 +257,6 @@ public class TypeExpander {
     Collection<SortDecl> result = new HashSet<SortDecl>();
     %match(module) {
       GomModule(moduleName,ConcSection(_*,
-            Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(_,typeName),_*)),_*)),
-            _*)) -> {
-        if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
-            new Object[]{(`typeName)});
-          result.add(getGomEnvironment().builtinSort(`typeName));
-        } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
-        }
-      }
-    }
-    %match(module) {
-      GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
                 SortType[Type=GomType(_,typeName)],
             _*)),_*)),

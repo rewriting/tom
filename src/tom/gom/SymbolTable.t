@@ -292,7 +292,6 @@ public class SymbolTable {
 
   private void fillFromGrammar(String moduleName, Grammar g) {
     %match(g) {
-      //Sorts[TypeList=(_*,ty,_*)] -> { `fill(moduleName,ty); }
       Grammar[ProductionList=(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
     }
   }

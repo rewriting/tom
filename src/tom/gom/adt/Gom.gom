@@ -16,7 +16,6 @@ SectionList = ConcSection(Section*)
 ImportedModule = Import(ModuleName:GomModuleName)
 ImportList = ConcImportedModule(ImportedModule*)
 Grammar = Grammar(ProductionList:ProductionList)
-        | Sorts(TypeList:GomTypeList)
 GrammarList = ConcGrammar(Grammar*)
 Production = Hook(NameType:IdKind, Name:String, HookType:HookKind,
                   Args:ArgList, StringCode:String,Option:Option)
