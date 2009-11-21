@@ -122,18 +122,17 @@ public class TypeExpander {
     /* now get all operators for each sort */
     Map<SortDecl,OperatorDeclList> operatorsForSort =
       new HashMap<SortDecl,OperatorDeclList>();
-    Map hooksForSort = new HashMap();
     for (GomModule module : moduleList) {
       // iterate through the productions
       %match(module) {
         GomModule(_,ConcSection(_*,
               Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
                 SortType[AlternativeList=ConcAlternative(_*,
-                prod@Alternative[],_*)],
+                alt@Alternative[],_*)],
               _*)),_*)),
               _*)) -> {
           // we may want to pass moduleName to help resolve ambiguities with modules
-          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
+          getOperatorDecl(`alt,sortDeclList,operatorsForSort);
 
         }
       }
