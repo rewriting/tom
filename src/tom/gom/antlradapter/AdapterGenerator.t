@@ -79,7 +79,7 @@ public class AdapterGenerator {
   }
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
-    Map<OperatorDecl,Integer> operatormap = new HashMap<OperatorDecl,Integer>();
+    final Map<OperatorDecl,Integer> operatormap = new HashMap<OperatorDecl,Integer>();
     IntRef intref = new IntRef(10);
     try {
       `TopDown(CollectOperators(operatormap, intref)).visitLight(moduleList);
@@ -147,10 +147,10 @@ import org.antlr.runtime.tree.Tree;
 public class @filename()@Adaptor {
   public static shared.SharedObject getTerm(Tree tree) {
     shared.SharedObject res = null;
-    if(tree.isNil()) {
+    if (tree.isNil()) {
       throw new RuntimeException("nil term");
     }
-    if(tree.getType()==Token.INVALID_TOKEN_TYPE) {
+    if (tree.getType()==Token.INVALID_TOKEN_TYPE) {
       throw new RuntimeException("bad type");
     }
 
@@ -292,10 +292,10 @@ public class @filename()@Adaptor {
             Code(")" + filename() + "Adaptor.getTerm(" + tree + ")"));
       }
       BuiltinSortDecl[Name=name] -> {
-        if("int".equals(`name)) {
+        if ("int".equals(`name)) {
           code = `CodeList(code,
               Code("Integer.parseInt(" + tree + ".getText())"));
-        } else if("long".equals(`name)) {
+        } else if ("long".equals(`name)) {
           code = `CodeList(code,
               Code("Long.parseLong(" + tree + ".getText())"));
         } else if ("String".equals(`name)) {
@@ -315,12 +315,12 @@ public class @filename()@Adaptor {
   protected String genArgsList(SlotList slots) {
     String res = "";
     SlotList sList = slots;
-    int idx=0;
-    while(sList.isConsConcSlot()) {
+    int idx = 0;
+    while (sList.isConsConcSlot()) {
       Slot slot = sList.getHeadConcSlot();
       sList = sList.getTailConcSlot();
       res += "field" + idx;
-      if(sList.isConsConcSlot()) {
+      if (sList.isConsConcSlot()) {
         res += ", ";
       }
       idx++;
@@ -335,7 +335,7 @@ public class @filename()@Adaptor {
   protected String filename() {
     String filename = (new File(getStreamManager().getOutputFileName())).getName();
     int dotidx = filename.indexOf('.');
-    if(-1 != dotidx) {
+    if (-1 != dotidx) {
       filename = filename.substring(0,dotidx);
     }
     return filename;
