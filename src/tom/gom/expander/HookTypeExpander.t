@@ -150,7 +150,7 @@ public class HookTypeExpander {
         String emptyCode = "{}";
         Production hook = `Hook(KindOperator(),opName,HookKind("FL"),ConcArg(),emptyCode,OptionList());
         OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
-        if(odecl!=null) {
+        if (odecl!=null) {
           HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
           hookList = `ConcHookDecl(newDeclList*,hookList*);
         }
@@ -159,7 +159,7 @@ public class HookTypeExpander {
       Alternative(opName,ConcField(StarredField(codomain,_)),codomain,_),
       /* check there is a make_insert or a rule hooks and no theory associated */
       ConcHookDecl(_*,MakeHookDecl[HookType=HookKind[kind="make_insert"|"make_empty"|"rules"]],_*) -> {
-        if(! examinedOps.contains(`opName)) {
+        if (!examinedOps.contains(`opName)) {
           examinedOps.add(`opName);
           %match(hookList) {
             /* check there is no associated theory */
@@ -215,7 +215,8 @@ public class HookTypeExpander {
                   MakeHookDecl(mdecl,typedArgs,Code(scode),kind,true()));
             }
             HookKind("Free") -> {
-              /* Even there is no code associated, we generate a MakeHook to prevent FL hooks to be automatically generated */
+              /* Even there is no code associated, we generate a MakeHook to
+               * prevent FL hooks to be automatically generated */
               return `ConcHookDecl(
                   MakeHookDecl(mdecl,ConcSlot(),Code(""),HookKind("Free"),false()));
             }
@@ -286,15 +287,15 @@ public class HookTypeExpander {
   private SortDecl getSortDecl(String sname, String modName, ModuleList moduleList) {
     %match(String modName, moduleList) {
       mname,
-        ConcModule(_*,
-            Module[
-            MDecl=ModuleDecl[ModuleName=GomModuleName[Name=mname]],
-            Sorts=ConcSort(_*,Sort[Decl=sdecl@SortDecl[Name=sortName]],_*)],
-            _*) -> {
-          if (`sortName.equals(sname)) {
-            return `sdecl;
-          }
+      ConcModule(_*,
+          Module[
+          MDecl=ModuleDecl[ModuleName=GomModuleName[Name=mname]],
+          Sorts=ConcSort(_*,Sort[Decl=sdecl@SortDecl[Name=sortName]],_*)],
+          _*) -> {
+        if (`sortName.equals(sname)) {
+          return `sdecl;
         }
+      }
     }
     throw new GomRuntimeException(
         "HookTypeExpander: Sort not found: "+`sname);
