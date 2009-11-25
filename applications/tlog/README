@@ -1,0 +1,23 @@
+-----------VERSION ACTUELLE----------
+
+Librairie dynamique Prolog.
+Algorithme SLD-Resolution naïf.
+
+Sources :
+
+Terms.gom : Termes TOM utilisés.
+Context.t : Représente un contexte PROLOG dans lequel on peut ajouter des règles et des faits; et sur lequel on peut demander de résoudre une liste de faits.
+Unification.t : Permet de tenter d'unifier un fait avec un but d'une règle. Si l'unification réussit, on peut récupérer les sustitutions.
+
+Exemples :
+
+Arcs.t : exemple de construction d'un contexte.
+
+
+
+------------A VOIR-------------
+
+* Ajouter les fonctions dans les termes
+* Etudier les implementations actuelles de PROLOG en JAVA
+* Etudier la possibilité d'améliorer l'algorithme
+
