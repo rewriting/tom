@@ -1,3 +1,6 @@
+2009-11-25 tonio
+ * remove the "production rule" syntax support for gom, and the sorts section
+
 2009-11-11 tonio
  * bootstrap
  * tom src adapted to use the new gomantlradaptor

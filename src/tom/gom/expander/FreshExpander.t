@@ -1185,8 +1185,8 @@ public class FreshExpander {
         else if (!fe.getGomEnvironment().isBuiltin(`n)) return `gt.setName(st.rawSort(`n));
       }
     }
-    visit Production {
-      p@Production[Name=n] -> { return `p.setName(st.rawCons(`n)); }
+    visit Alternative {
+      p@Alternative[Name=n] -> { return `p.setName(st.rawCons(`n)); }
     }
   }
 
@@ -1307,7 +1307,7 @@ public class FreshExpander {
         return `SortType(
             GomType(AtomType(),name),
             ConcAtom(),
-            ConcProduction(Production(
+            ConcAlternative(Alternative(
                 name,
                 ConcField(
                   NamedField("n",GomType(ExpressionType(),"int"),None()),

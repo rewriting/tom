@@ -292,15 +292,14 @@ public class SymbolTable {
 
   private void fillFromGrammar(String moduleName, Grammar g) {
     %match(g) {
-      //Sorts[TypeList=(_*,ty,_*)] -> { `fill(moduleName,ty); }
       Grammar[ProductionList=(_*,p,_*)] -> { `fillFromProduction(moduleName,p); }
     }
   }
 
-  private static StringList getConstructors(ProductionList pl) {
+  private static StringList getConstructors(AlternativeList al) {
     StringList res = `StringList();
-    %match(pl) {
-      ConcProduction(_*,Production[Name=n],_*) -> {
+    %match(al) {
+      ConcAlternative(_*,Alternative[Name=n],_*) -> {
         res = `ConsStringList(n,res);
       }
     }
@@ -396,9 +395,9 @@ public class SymbolTable {
   private void fillFromProduction(String moduleName, Production p) {
     %match(p) {
       SortType[Type=GomType[Specialization=spe,Name=n],
-        Binds=boundAtoms,ProductionList=pl] -> {
+        Binds=boundAtoms,AlternativeList=al] -> {
           // filling sorts (except AccessibleAtoms)
-          StringList cons = `getConstructors(pl);
+          StringList cons = `getConstructors(al);
           StringList bound = `convertBoundAtoms(boundAtoms);
           StringList empty = `StringList();
           FreshSortInfo info = null;
@@ -409,16 +408,16 @@ public class SymbolTable {
           }
           sorts.put(`n,`SortDescription(cons,moduleName,info));
           // filling constructors
-          %match(pl) {
-            ConcProduction(_*,pr,_*) -> { `fillCons(n,pr); }
+          %match(al) {
+            ConcAlternative(_*,alt,_*) -> { `fillCons(n,alt); }
           }
         }
     }
   }
 
-  private void fillCons(String codom, Production p)  {
+  private void fillCons(String codom, Alternative p)  {
     %match(p) {
-      Production[Name=n,DomainList=dl] -> {
+      Alternative[Name=n,DomainList=dl] -> {
         %match(dl) {
           ConcField(StarredField[
               FieldType=GomType[Name=dom],

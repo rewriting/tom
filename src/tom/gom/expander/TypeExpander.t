@@ -34,6 +34,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.gom.types.gommodulelist.ConcGomModule;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class TypeExpander {
@@ -66,7 +67,11 @@ public class TypeExpander {
     * We try here to get full sort definitions for each constructs
     * Once the structure is correctly build, we can attach the hooks
     */
-  public ModuleList expand(GomModuleList moduleList) {
+  public ModuleList expand(GomModuleList gomModuleList) {
+    if (!(gomModuleList instanceof ConcGomModule)) {
+      throw new RuntimeException("A GomModuleList should be a list");
+    }
+    ConcGomModule moduleList = (ConcGomModule) gomModuleList;
 
     /* put a map giving all imported modules for each module in the path */
     buildDependencyMap(moduleList);
@@ -76,11 +81,7 @@ public class TypeExpander {
     /* The sorts declared in each module */
     Map<ModuleDecl,SortDeclList> sortsForModule =
       new HashMap<ModuleDecl,SortDeclList>();
-    GomModuleList consum = moduleList;
-    while(!consum.isEmptyConcGomModule()) {
-      GomModule module = consum.getHeadConcGomModule();
-      consum = consum.getTailConcGomModule();
-
+    for (GomModule module : moduleList) {
       Collection<SortDecl> decls = getSortDeclarations(module);
 
       Collection<SortDecl> implicitdecls = getSortDeclarationInCodomain(module);
@@ -121,31 +122,17 @@ public class TypeExpander {
     /* now get all operators for each sort */
     Map<SortDecl,OperatorDeclList> operatorsForSort =
       new HashMap<SortDecl,OperatorDeclList>();
-    Map hooksForSort = new HashMap();
-    consum = moduleList;
-    while(!consum.isEmptyConcGomModule()) {
-      GomModule module = consum.getHeadConcGomModule();
-      consum = consum.getTailConcGomModule();
-
+    for (GomModule module : moduleList) {
       // iterate through the productions
       %match(module) {
         GomModule(_,ConcSection(_*,
-              Public(ConcGrammar(_*,Grammar(ConcProduction(_*,prod@Production[],_*)),_*)),
-              _*)) -> {
-          // we may want to pass moduleName to help resolve ambiguities with modules
-          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
-
-        }
-      }
-      %match(module) {
-        GomModule(_,ConcSection(_*,
               Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
-                SortType[ProductionList=ConcProduction(_*,
-                prod@Production[],_*)],
+                SortType[AlternativeList=ConcAlternative(_*,
+                alt@Alternative[],_*)],
               _*)),_*)),
               _*)) -> {
           // we may want to pass moduleName to help resolve ambiguities with modules
-          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
+          getOperatorDecl(`alt,sortDeclList,operatorsForSort);
 
         }
       }
@@ -178,34 +165,20 @@ public class TypeExpander {
   }
 
   /*
-   * Get an OperatorDecl from a Production, using the list of sort declarations
+   * Get an OperatorDecl from an Alternative, using the list of sort declarations
    * XXX: There is huge room for efficiency improvement, as we could use a map
    * sortName -> sortDeclList instead of a simple list
    */
-  private OperatorDecl getOperatorDecl(Production prod,
+  private OperatorDecl getOperatorDecl(Alternative alt,
       SortDeclList sortDeclList,
       Map<SortDecl,OperatorDeclList> operatorsForSort) {
 
-    %match(prod) {
-      //Production(name,domain,GomType(_,codomain)) -> {
-      //Production(name,domain,GomType(_,codomain),OptionList(_,opt@Details[Comments=comment])) -> {
-      Production(name,domain,GomType(_,codomain),options) -> {
+    %match(alt) {
+      Alternative(name,domain,GomType(_,codomain),options) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
-///
-        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, Details("")); //default case, when no comment is present
-        if (`options.isConsOptionList()) { // usual case :
-          Object[] opts = ((tom.gom.adt.gom.types.option.OptionList)`options).toArray();
-          for (int i=0;i<`options.length();i++) {
-            if (opts[i] instanceof tom.gom.adt.gom.types.option.Details) {
-              decl = `OperatorDecl(name,codomainSort, domainSorts, (tom.gom.adt.gom.types.option.Details)opts[i]);
-              break;
-            }
-          }
-        } else if (`options.isDetails()) { // just in case, but for moment, it shouldn't be possible to have it
-          decl = `OperatorDecl(name,codomainSort, domainSorts, options);
-        }
-///
+
+        OperatorDecl decl = `OperatorDecl(name,codomainSort,domainSorts,options);
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort,`ConcOperator(decl,list*));
@@ -217,7 +190,7 @@ public class TypeExpander {
 
     }
     throw new GomRuntimeException(
-        "TypeExpander::getOperatorDecl: wrong Production?");
+        "TypeExpander::getOperatorDecl: wrong Alternative?");
   }
 
   private SortDecl declFromTypename(String typename,
@@ -249,7 +222,7 @@ public class TypeExpander {
       }
     }
     // the error message could be more refined
-    throw new GomRuntimeException("TypeExpander::typedProduction: illformed Production");
+    throw new GomRuntimeException("TypeExpander::typedProduction: illformed Alternative");
   }
 
   private SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
@@ -272,19 +245,6 @@ public class TypeExpander {
    */
   private Collection<SortDecl> getSortDeclarations(GomModule module) {
     Collection<SortDecl> result = new HashSet<SortDecl>();
-    %match(module) {
-      GomModule(moduleName,ConcSection(_*,
-            Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(_,typeName),_*)),_*)),
-            _*)) -> {
-        if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
-            new Object[]{(`typeName)});
-          result.add(getGomEnvironment().builtinSort(`typeName));
-        } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
-        }
-      }
-    }
     %match(module) {
       GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
@@ -314,28 +274,9 @@ public class TypeExpander {
           ConcSection(_*,
             Public(
               ConcGrammar(_*,
-                Grammar(
-                  ConcProduction(_*,
-                    Production(_,_,GomType(_,typeName),_option),
-                    _*)),
-                _*)),
-            _*)) -> {
-        if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          result.add(getGomEnvironment().builtinSort(`typeName));
-        } else {
-          result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
-        }
-      }
-    }
-    %match(module) {
-      GomModule(
-          moduleName,
-          ConcSection(_*,
-            Public(
-              ConcGrammar(_*,
                 Grammar(ConcProduction(_*,
-                  SortType[ProductionList=ConcProduction(_*,
-                    Production(_,_,GomType(_,typeName),_option),
+                  SortType[AlternativeList=ConcAlternative(_*,
+                    Alternative(_,_,GomType(_,typeName),_option),
                     _*)],_*)),
                 _*)),
             _*)) -> {

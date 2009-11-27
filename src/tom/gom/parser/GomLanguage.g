@@ -85,15 +85,8 @@ adtgrammar :
   ;
 
 syntax :
-  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl | gr4+=atomdecl)*
-    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr4)* ($gr1)* ($gr2)* ($gr3)*)))
-  ;
-
-production
-@init {
-String startLine = ""+input.LT(1).getLine();
-} :
-  ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
+  ABSTRACT SYNTAX (gr1+=hookConstruct | gr2+=typedecl | gr3+=atomdecl)*
+    -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
 atomdecl :
@@ -118,27 +111,27 @@ alternatives[Token typename] :
    ((jd2=JAVADOC ALT) | (ALT jd2=JAVADOC) | ALT {jd2=null;})
    opdecl[typename,jd2]
   )* (SEMI)?
-  -> ^(ConcProduction (opdecl)+)
+  -> ^(ConcAlternative (opdecl)+)
   ;
 
 /* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_alternatives[Token typename] :
   (ALT)? pattern_opdecl[typename] (ALT pattern_opdecl[typename])* (SEMI)?
-  -> ^(ConcProduction (pattern_opdecl)+)
+  -> ^(ConcAlternative (pattern_opdecl)+)
   ;
 
 opdecl[Token type, Token JAVADOC] :
  ID fieldlist
-  -> {JAVADOC!=null}? ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+  -> {JAVADOC!=null}? ^(Alternative ID fieldlist ^(GomType ^(ExpressionType) ID[type])
       ^(OptionList ^(Origin ID[""+input.LT(1).getLine()]) ^(Details ID[JAVADOC])))
-  -> ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+  -> ^(Alternative ID fieldlist ^(GomType ^(ExpressionType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 
 /* Used by Freshgom, as all rules beginning by "pattern" */
 pattern_opdecl[Token type] :
  ID pattern_fieldlist
-  -> ^(Production ID pattern_fieldlist ^(GomType ^(PatternType) ID[type])
+  -> ^(Alternative ID pattern_fieldlist ^(GomType ^(PatternType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 

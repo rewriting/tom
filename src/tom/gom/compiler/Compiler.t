@@ -130,8 +130,9 @@ public class Compiler {
               opdecl@OperatorDecl[Name=opname,
               Sort=SortDecl[Name=sortName],
               Prod=typedproduction,
-              Option=Details[Comments=comments]],
+              Option=option],
               _*) -> {
+            String comments = getCommentsFromOption(`option);
             String sortNamePackage = `sortName.toLowerCase();
             ClassName operatorClassName =
               `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
@@ -362,5 +363,18 @@ public class Compiler {
       }
     }
     return importedList;
+  }
+
+  private static String getCommentsFromOption(Option option) {
+    String comments = "";
+    %match(option) {
+      Details[Comments=cts] -> {
+        comments = `cts;
+      }
+      OptionList(_*,Details[Comments=cts],_*) -> {
+        comments += `cts;
+      }
+    }
+    return comments;
   }
 }
