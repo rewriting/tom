@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Cláudia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
  *
  **/
 
@@ -105,14 +106,25 @@ public class NewKernelTyper {
 
 //=====
 
-  public void initGlobal(ArrayList<TomSymbol> globalVar){
-    //for each element of globalVar, find it in the SymbolTable and replace its type by a freshVar
-    for(TomSymbol symb:globalVar) {
-      symbolTable.putType(symb.getAstName(), getFreshTypeVar());
+  private Code inferTypeCode(Code code) {
+    try {
+      TomType contextType = `EmptyType();
+      Code result =
+        `TopDownStopOnSuccess(splitConstraintInstruction(contextType,this)).visitLight(code);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
   }
 
-  public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
+  %strategy splitConstraintInstruction(contextType:TomType,nkt:NewKernelTyper) extends Fail() {
+    visit Instruction {
+      Match(constraintInstructionList,options) -> {
+        return `Match(nkt.inferConstraintInstructionList(contextType,constraintInstructionList),options);
+      }
+    } 
+  }
+
+   public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
     if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
       %match(slist) {
         //concSlot(fs, s*) -> {//suppr
@@ -131,6 +143,7 @@ public class NewKernelTyper {
               break;
             }
             /*RecordAppl(_,concTomName(Name(tn),_*),_,_)-> {*/ concSlot(RecordAppl(_,concTomName(Name(tn),_*),_,_), s*) -> {
+              /*
                 fdom = getSimpleDom();
                 syme = findSymblo(tn, fdom);
                 if(syme!= symb) {
@@ -140,6 +153,7 @@ public class NewKernelTyper {
                 } else {
                   inferTerm(fs, te);
                 }
+                */
                 typeVariableList(symb, domain, te, s);
                 break;
             }
@@ -169,7 +183,7 @@ public class NewKernelTyper {
   public void inferTerm(TomTerm e, TomType te) {
     %match(e) {
       (Variable|VariableStar)(_,type) -> { addConstraint(`Equation(type,te)); }
-      RecordAppl(optionList, nameList=NameList(headName,_*), slotList, constraintList) -> {
+      RecordAppl(optionList, NameList(headName,_*), slotList, constraintList) -> {
         String name = null;
         TomType t;
         if(`(headName) instanceof AntiName) {
