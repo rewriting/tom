@@ -70,7 +70,8 @@ public class NewKernelTyper {
     is_sort(t) { ($t instanceof NewKernelTyper) }
   }
 
-  private TypeConstraintList constraintsToTypeVariable = `concTypeConstraint();
+  %typeterm SubstitutionList { implement { HashMap<TomType,TomType> } }
+
   private SymbolTable symbolTable;
   private int freshTypeVarCounter = 0;
 
@@ -108,57 +109,77 @@ public class NewKernelTyper {
 
   private Code inferTypeCode(Code code) {
     try {
-      TomType contextType = `EmptyType();
+      // List for variables of pattern (match constraints)
+      TomList varPatternList = `concTomTerm();
+      // List for variables of subject and of numeric constraints
+      BQTermList varList = `concBQTerm();
+      TypeConstraintList typeConstraints = `concTypeConstraint();
       Code result =
-        `TopDownStopOnSuccess(splitConstraintInstruction(contextType,this)).visitLight(code);
+        `TopDownStopOnSuccess(splitConstraintInstruction(varPatternList,varList,typeConstraints)).visitLight(code);
+      SubstitutionList substitutions = new HashMap<TomType,TomType>();
+      substitutions = solveConstraints(substitutions,typeConstraints);
+      return replaceInCode(substitutions,result);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
   }
 
-  %strategy splitConstraintInstruction(contextType:TomType,nkt:NewKernelTyper) extends Fail() {
+  %strategy splitConstraintInstruction(varPList:TomList,varList:BQTermList,typeConstraints:TypeConstraintList) extends Fail() {
     visit Instruction {
       Match(constraintInstructionList,options) -> {
-        return `Match(nkt.inferConstraintInstructionList(contextType,constraintInstructionList),options);
+       return
+          `Match(nkt.inferConstraintInstructionList(constraintInstructionList,varPList,varList,typeConstraints),options);
       }
     } 
   }
 
+  private ConstraintInstructionList
+    inferConstraintInstructionList(ConstraintInstructionList cilist,
+        TomList varPList, BQTermList varList,
+        TypeConstraintList typeConstraints) {
+    %match(cilist) {
+      concConstraintInstruction() -> { return cilist; }
+      concConstraintInstruction(head_cilist@ConstraintInstruction(constraint,action,option),tail_cilist*) -> {
+               `TopDownCollect(CollectVars(varPList,varList)).visitLight(`head_cilist);
+
+      }
+    }
+  }
+
+  %strategy CollectVars(varPList:TomList,varList:BQTermList) extends Identity() {
+    visit ConstraintInstruction {} 
+  } 
+
+/*
    public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
     if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
       %match(slist) {
-        //concSlot(fs, s*) -> {//suppr
-          //%match(fs) {//suppr
-            /*VariableStar(n, t) -> {*/ concSlot(VariableStar(n, t), s*) -> {
+        concSlot(VariableStar(n, t), s*) -> {
               //inferTerm(fs, t);
               addConstraint(`Equation(t,te));
               typeVariableList(symb, domain, te, s*);
               break;
             }
-            /*Variable(n, t) -> {*/ concSlot(Variable(n, t), s*) -> {
+            concSlot(Variable(n, t), s*) -> {
               TomType tt = getFreshTypeVar();
               //inferTerm(,);
               addConstraint(`Equation(t,tt));
               typeVariableList();
               break;
             }
-            /*RecordAppl(_,concTomName(Name(tn),_*),_,_)-> {*/ concSlot(RecordAppl(_,concTomName(Name(tn),_*),_,_), s*) -> {
-              /*
-                fdom = getSimpleDom();
-                syme = findSymblo(tn, fdom);
-                if(syme!= symb) {
-                tt = getFreshTypeVar();
-                addConstraint(`Equation(tt, fdom));
-                inferTerm(fs, tt);
-                } else {
-                  inferTerm(fs, te);
-                }
-                */
+            concSlot(RecordAppl(_,concTomName(Name(tn),_*),_,_), s*) -> {
+                //fdom = getSimpleDom();
+                //syme = findSymblo(tn, fdom);
+                //if(syme!= symb) {
+                //tt = getFreshTypeVar();
+                //addConstraint(`Equation(tt, fdom));
+                //inferTerm(fs, tt);
+                //} else {
+                //  inferTerm(fs, te);
+                //}
                 typeVariableList(symb, domain, te, s);
                 break;
             }
-          //}
-        //}
       }
     } else {
       while(!domain.isEmptyconcTomType()) {
@@ -171,7 +192,7 @@ public class NewKernelTyper {
       }
     } 
   }
-
+*/
   public void inferNumMatch(TomTerm e1, TomTerm e2) {
     TomType t1 = getFreshTypeVar();
     TomType t2 = getFreshTypeVar();
@@ -219,7 +240,7 @@ public class NewKernelTyper {
     //collectSubjectVariables()
   }
 
-  public void inferRule(Instruction instr, ArrayList<TomTerm> localContext) {
+  public void inferRule(Instruction instr, TomList localContext) {
     //  %match(instr) {
     //   Instruction(cond, action) -> {
     //initLocal()
@@ -229,19 +250,20 @@ public class NewKernelTyper {
     //  }
   }
 
-  public void addConstraint(TypeConstraint constraint) {
-    TypeConstraintList auxList = this.constraintsToTypeVariable;
-    this.constraintsToTypeVariable = `concTypeConstraint(constraint,auxList*);
+  public TypeConstraintList addConstraint(TypeConstraint constraint, TypeConstraintList
+      constraintList) {
+    return `concTypeConstraint(constraint,constraintList);
   }
 
-  // cf. TomBase.collectVariable ?
-  %strategy collectSubjectVariables(nkt:NewKernelTyper) extends Fail() {
-    //Match(p,s,t) addConstraint()
-
+  // TODO
+  private SubstitutionList solveConstraints(SubstitutionList 
+      substitutions,TypeConstraintList typeConstraints) {
+    return substitutions;
   }
 
-  %strategy collectPatternVariables(nkt:NewKernelTyper) extends Fail() {
-    //Match(p,s,t) addConstraint()
+  // TODO
+  private Code replaceInCode(SubstitutionList substitutions, Code code) {
+    return code;
   }
 
   %strategy propagate(nkt:NewKernelTyper) extends Fail() {
