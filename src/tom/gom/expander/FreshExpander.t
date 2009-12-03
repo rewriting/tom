@@ -84,7 +84,6 @@ public class FreshExpander {
     } catch (SortException e) {
       e.printStackTrace();
       throw new GomRuntimeException("Should never happen");
-    //} catch (SymbolTable.ConstructorException e) {
     } catch (ConstructorException e) {
       e.printStackTrace();
       throw new GomRuntimeException("Should never happen");
