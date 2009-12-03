@@ -148,40 +148,63 @@ public class NewKernelTyper {
     } 
   }
 
-  // TODO: réécrire tout ici
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
-      concConstraintInstruction(head_cilist@ConstraintInstruction(constraint,action,option),tail_cilist*) -> {
+      concConstraintInstruction(headCilist@ConstraintInstruction(constraint,action,_),tailCilist*) -> {
         try {
           // Collect variables and type them with fresh type variables
-          // Rename variables of pattern that already exist in varPList
-          `TopDownCollect(CollectVars()).visitLight(`head_cilist);
+          // Rename variables of pattern that already exist in varPatternList
+          ConstraintInstruction typedHead =
+            `TopDownCollect(CollectVars()).visitLight(`headCilist);
           inferConstraint(`constraint);
-          // Dans inferAction on peut appeler cette methode
+          // In inferInstruction we can call this method
           // inferConstraintInstructionList 
           inferInstruction(`action);
-
-          ConstraintInstructionList typedTail = `inferConstraintInstructionList(tail_cilist);
-          // old version
-          //return `concConstraintInstruction(typedConstraint, typedTail);
-          //TODO : temporary return in order to be  able to compile
-          return `concConstraintInstruction(head_cilist, typedTail*);
+          ConstraintInstructionList typedTail =
+            `inferConstraintInstructionList(tailCilist);
+          return `concConstraintInstruction(typedHead, typedTail*);
 
         } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + cilist);
+          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCilist);
 
         }
       }
     }
-    // TODO
-    return cilist;
+    throw new TomRuntimeException("inferConstraintInstructionList: should not be here.");
+  }
+
+  private ConstraintInstruction typeConstraintInstruction(ConstraintInstruction ci) {
+    
   }
 
   //TODO
-  %strategy CollectVars() extends Identity() {
-    visit ConstraintInstruction {
-    } 
+  %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      var -> {
+        %match(var,nkt.varPatternList) {
+          // If the variable already exists in varPatternList
+          Variable[Option=option,AstName=name,AstType=_,Constraints=cilist], 
+          concTomTerm(_*,Variable(_,name,type2,_),_*) -> {
+            return `Variable(option,name,type2,cilist);
+          }
+          Variable[Option=option,AstName=name1,AstType=type1,Constraints=cilist], 
+          concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
+            TomTerm newVar = `var;
+            if(`type1 == SymbolTable.TYPE_UNKNOWN) {
+              TomType freshType = nkt.getFreshTypeVar();
+              newVar = `Variable(option,name1,freshType,cilist);
+            }
+            nkt.varPatternList = `ConsconcTomTerm(newVar,nkt.varPatternList);
+            return newVar;
+          }
+        }
+      }
+    }
+
+    visit BQTerm {
+    
+    }
   } 
 
   //TODO
