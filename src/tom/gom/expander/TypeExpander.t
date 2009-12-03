@@ -221,7 +221,6 @@ public class TypeExpander {
         return `Slots(typedSlotList(fieldList,sortDeclList));
       }
     }
-    // the error message could be more refined
     throw new GomRuntimeException("TypeExpander::typedProduction: illformed Alternative");
   }
 
@@ -235,7 +234,8 @@ public class TypeExpander {
         return `ConcSlot(Slot(name,declFromTypename(typename,sortDeclList)),newtail*);
       }
     }
-    getLogger().log(Level.SEVERE, GomMessage.malformedProduction.getMessage(),
+    getLogger().log(Level.SEVERE,
+        GomMessage.malformedProduction.getMessage(),
         new Object[]{fields.toString()});
     return `ConcSlot();
   }
@@ -252,8 +252,9 @@ public class TypeExpander {
             _*)),_*)),
             _*)) -> {
         if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
-            new Object[]{(`typeName)});
+          getLogger().log(Level.SEVERE,
+              GomMessage.operatorOnBuiltin.getMessage(),
+              new Object[]{(`typeName)});
           result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
           result.add(`SortDecl(typeName,ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName()))));
@@ -335,7 +336,7 @@ public class TypeExpander {
     imported.addAll(getImportedModules(module));
 
     Set<GomModuleName> newSet = new HashSet<GomModuleName>();
-    while(!newSet.equals(imported)) {
+    while (!newSet.equals(imported)) {
       newSet.addAll(imported);
       imported.addAll(newSet);
       for (GomModuleName modname : imported) {
@@ -349,15 +350,19 @@ public class TypeExpander {
     %match(moduleList) {
       ConcGomModule(_*,module@GomModule[ModuleName=moduleName],_*) -> {
         ModuleDeclList importsModuleDeclList = `ConcModuleDecl();
-        Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
-        while(it.hasNext()) {
-          GomModuleName importedModuleName = (GomModuleName) it.next();
+        for (GomModuleName importedModuleName :
+            getTransitiveClosureImports(`module,moduleList)) {
           importsModuleDeclList =
-            `ConcModuleDecl(ModuleDecl(importedModuleName,getStreamManager().getPackagePath(importedModuleName.getName())),
+            `ConcModuleDecl(
+                ModuleDecl(importedModuleName,
+                  getStreamManager().getPackagePath(
+                    importedModuleName.getName())),
                 importsModuleDeclList*);
         }
         getGomEnvironment().addModuleDependency(
-            `ModuleDecl(moduleName,getStreamManager().getPackagePath(moduleName.getName())),importsModuleDeclList);
+            `ModuleDecl(moduleName,
+              getStreamManager().getPackagePath(moduleName.getName())),
+            importsModuleDeclList);
       }
     }
   }
@@ -373,7 +378,7 @@ public class TypeExpander {
             Slot[Name=slotName,Sort=slotSort],
             _*)]],
           _*)] -> {
-        if(!mapNameType.containsKey(`slotName)) {
+        if (!mapNameType.containsKey(`slotName)) {
           mapNameType.put(`slotName,`slotSort);
         } else {
           SortDecl prevSort = mapNameType.get(`slotName);
