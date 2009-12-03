@@ -391,17 +391,14 @@ public class TypeExpander {
   }
 
   private String showSortList(Collection<SortDecl> decls) {
-    String sorts = "";
-    Iterator<SortDecl> it = decls.iterator();
-    if(it.hasNext()) {
-      SortDecl decl = it.next();
-      sorts += decl.getName();
+    StringBuilder sorts = new StringBuilder();
+    for (SortDecl decl : decls) {
+      if (0==sorts.length()) {
+        sorts.append(", ");
+      }
+      sorts.append(decl.getName());
     }
-    while(it.hasNext()) {
-      SortDecl decl = it.next();
-      sorts += ", "+decl.getName();
-    }
-    return sorts;
+    return sorts.toString();
   }
 
   private Logger getLogger() {
