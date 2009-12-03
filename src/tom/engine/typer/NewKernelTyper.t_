@@ -114,7 +114,7 @@ public class NewKernelTyper {
   }
 
   protected void addConstraint(TypeConstraint constraint) {
-    this.typeConstraints = `concTypeConstraint(constraint,typeConstraints);
+    this.typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
   }
 
 //=====
@@ -141,7 +141,7 @@ public class NewKernelTyper {
         nkt.init();
         // Generate type constraints for a %match
         ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
-        substitutions = nkt.solveConstraints();
+        nkt.solveConstraints();
         result = nkt.replaceInConstraintInstructionList(`result);
         return `Match(result,options);
       }
@@ -157,25 +157,21 @@ public class NewKernelTyper {
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPList
           `TopDownCollect(CollectVars()).visitLight(`head_cilist);
-          typeConstraints =
-            `concTypeConstraint(inferConstraint(constraint),typeConstraints);
+          inferConstraint(`constraint);
           // Dans inferAction on peut appeler cette methode
           // inferConstraintInstructionList 
-          typeConstraints =
-            `concTypeConstraint(inferInstruction(action),typeConstraints);
+          inferInstruction(`action);
 
           ConstraintInstructionList typedTail = `inferConstraintInstructionList(tail_cilist);
           // old version
           //return `concConstraintInstruction(typedConstraint, typedTail);
           //TODO : temporary return in order to be  able to compile
-          return `concConstraintInstruction(head_cilist, typedTail);
+          return `concConstraintInstruction(head_cilist, typedTail*);
 
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("inferConstraintInstructionList: failure on " + cilist);
 
         }
-          // TODO
-        return cilist;
       }
     }
     // TODO
@@ -189,13 +185,13 @@ public class NewKernelTyper {
   } 
 
   //TODO
-  private Instruction inferInstruction(Instruction action) {
-    return `action;
+  private void inferInstruction(Instruction action) {
+    // addTypeConstraints
   }
 
   //TODO
-  private Constraint inferConstraint(Constraint constraint){
-    return `constraint;
+  private void inferConstraint(Constraint constraint){
+    // addTypeConstraints
   }
 /*
    public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
@@ -304,8 +300,8 @@ public class NewKernelTyper {
   }
 */
   // TODO
-  private HashMap<TomType,TomType> solveConstraints() {
-    return substitutions;
+  private void solveConstraints() {
+    // Add a new substitution in "substitutions"
   }
 
   // TODO
