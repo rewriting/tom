@@ -114,7 +114,7 @@ public class NewKernelTyper {
   }
 
   protected void addConstraint(TypeConstraint constraint) {
-    `concTypeConstraint(constraint,typeConstraints);
+    this.typeConstraints = `concTypeConstraint(constraint,typeConstraints);
   }
 
 //=====
@@ -128,7 +128,7 @@ public class NewKernelTyper {
 
   private Code inferTypeCode(Code code) {
     try {
-      Code result =
+//      Code result =
        return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
@@ -140,9 +140,9 @@ public class NewKernelTyper {
       Match(constraintInstructionList,options) -> {
         nkt.init();
         // Generate type constraints for a %match
-        ConstraintInstructionList result = nkt.inferConstraintInstructionList(constraintInstructionList);
+        ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
         substitutions = nkt.solveConstraints();
-        result = nkt.replaceInConstraintInstructionList(result);
+        result = nkt.replaceInConstraintInstructionList(`result);
         return `Match(result,options);
       }
     } 
@@ -158,14 +158,18 @@ public class NewKernelTyper {
           // Rename variables of pattern that already exist in varPList
           `TopDownCollect(CollectVars()).visitLight(`head_cilist);
           typeConstraints =
-            concTypeConstraint(inferConstraint(`constraint),typeConstraints);
+            `concTypeConstraint(inferConstraint(constraint),typeConstraints);
           // Dans inferAction on peut appeler cette methode
           // inferConstraintInstructionList 
           typeConstraints =
-            concTypeConstraint(inferInstruction(`action,varPList,varList),typeConstraints);
+            `concTypeConstraint(inferInstruction(action),typeConstraints);
 
-          ConstraintInstructionList typedTail = `inferConstraintInstructionList(tail_list, varPList, varList, typeConstraints);
-          return concConstraintInstruction(typedConstraint, typedTail);
+          ConstraintInstructionList typedTail = `inferConstraintInstructionList(tail_cilist);
+          // old version
+          //return `concConstraintInstruction(typedConstraint, typedTail);
+          //TODO : temporary return in order to be  able to compile
+          return `concConstraintInstruction(head_cilist, typedTail);
+
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("inferConstraintInstructionList: failure on " + cilist);
 
@@ -178,14 +182,19 @@ public class NewKernelTyper {
     return cilist;
   }
 
-  %strategy CollectVars(varPList:TomList,varList:BQTermList) extends Identity() {
+  //TODO
+  %strategy CollectVars() extends Identity() {
     visit ConstraintInstruction {
-    
     } 
   } 
 
+  //TODO
+  private Instruction inferInstruction(Instruction action) {
+    return `action;
+  }
+
+  //TODO
   private Constraint inferConstraint(Constraint constraint){
-    // TODO
     return `constraint;
   }
 /*
@@ -304,7 +313,13 @@ public class NewKernelTyper {
       cilist) {
     return cilist;
   }
-  
+
+  //TODO
+  private ConstraintInstructionList replaceInConstraintInstructionList(ConstraintInstructionList cil) {
+    return `cil;
+  }
+
+
 /*
   %strategy propagate(nkt:NewKernelTyper) extends Fail() {
   }
