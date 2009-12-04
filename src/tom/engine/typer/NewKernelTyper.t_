@@ -47,6 +47,7 @@ import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
 import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqtermlist.concBQTerm;
 
 import tom.engine.adt.typeconstraints.*;
 import tom.engine.adt.typeconstraints.types.*;
@@ -117,9 +118,17 @@ public class NewKernelTyper {
     this.typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
   }
 
+  protected void addTomTerm(TomTerm term) {
+    ((`concTomTerm) varPatternList).append(term);
+  }
+
+  protected void addBQTerm(BQTerm term) {
+    ((`concBQTerm) varList).append(term);
+  }
+
 //=====
 
-  private void init(){
+  private void init() {
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
     typeConstraints = `concTypeConstraint();
@@ -151,12 +160,12 @@ public class NewKernelTyper {
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
-      concConstraintInstruction(headCilist@ConstraintInstruction(constraint,action,_),tailCilist*) -> {
+      concConstraintInstruction(headCIlist@ConstraintInstruction(constraint,action,_),tailCilist*) -> {
         try {
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPatternList
           ConstraintInstruction typedHead =
-            `TopDownCollect(CollectVars()).visitLight(`headCilist);
+            `TopDownCollect(CollectVars(this)).visitLight(`headCIlist);
           inferConstraint(`constraint);
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
@@ -166,7 +175,7 @@ public class NewKernelTyper {
           return `concConstraintInstruction(typedHead, typedTail*);
 
         } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCilist);
+          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIlist);
 
         }
       }
@@ -174,11 +183,56 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferConstraintInstructionList: should not be here.");
   }
 
+  //TODO
   private ConstraintInstruction typeConstraintInstruction(ConstraintInstruction ci) {
-    
+    return ci;
+  }
+
+  // Strategy : we split collect and replacement
+//////////TODO
+  %strategy CollectVariables(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      var -> {
+        %match(var,nkt.varPatternList) {
+          Variable[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
+            nkt.addTomTerm(`var);
+          }
+          VariableStar[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,VariableStar(_,name2@!name1,_,_),_*) -> {
+            nkt.addTomTerm(`var);
+          }
+
+        }
+      }
+    }
+
+    visit BQTerm {
+      bqvar -> {
+        %match(bqvar,nkt.varList) {
+          BQVariable[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariable(_,name2@!name1,_),_*) -> {
+            nkt.addBQTerm(`bqvar);
+          }
+          BQVariableStar[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariableStar(_,name2@!name1,_),_*) -> {
+            nkt.addBQTerm(`bqvar);
+          }
+        }
+      }
+    }
   }
 
   //TODO
+  %strategy ReplaceTypes(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      // remplacement dans le cas : type = SymbolTable.TYPE_UNKNOWN
+     }
+
+    visit BQTerm {
+    }
+  }
+
+//////////
+
+
+  //TODO : and VariableStar ? Need to add a similar case
   %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       var -> {
