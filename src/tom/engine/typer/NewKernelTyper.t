@@ -47,6 +47,7 @@ import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
 import tom.engine.adt.code.types.*;
+import tom.engine.adt.code.types.bqtermlist.concBQTerm;
 
 import tom.engine.adt.typeconstraints.*;
 import tom.engine.adt.typeconstraints.types.*;
@@ -117,9 +118,17 @@ public class NewKernelTyper {
     this.typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
   }
 
+  protected void addTomTerm(TomTerm term) {
+    ((`concTomTerm) varPatternList).append(term);
+  }
+
+  protected void addBQTerm(BQTerm term) {
+    ((`concBQTerm) varList).append(term);
+  }
+
 //=====
 
-  private void init(){
+  private void init() {
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
     typeConstraints = `concTypeConstraint();
@@ -148,40 +157,161 @@ public class NewKernelTyper {
     } 
   }
 
-  // TODO: réécrire tout ici
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
-      concConstraintInstruction(head_cilist@ConstraintInstruction(constraint,action,option),tail_cilist*) -> {
+      concConstraintInstruction(headCIlist@ConstraintInstruction(constraint,action,_),tailCilist*) -> {
         try {
           // Collect variables and type them with fresh type variables
-          // Rename variables of pattern that already exist in varPList
-          `TopDownCollect(CollectVars()).visitLight(`head_cilist);
+          // Rename variables of pattern that already exist in varPatternList
+          ConstraintInstruction typedHead =
+            `TopDownCollect(CollectVars(this)).visitLight(`headCIlist);
           inferConstraint(`constraint);
-          // Dans inferAction on peut appeler cette methode
+          // In inferInstruction we can call this method
           // inferConstraintInstructionList 
           inferInstruction(`action);
-
-          ConstraintInstructionList typedTail = `inferConstraintInstructionList(tail_cilist);
-          // old version
-          //return `concConstraintInstruction(typedConstraint, typedTail);
-          //TODO : temporary return in order to be  able to compile
-          return `concConstraintInstruction(head_cilist, typedTail*);
+          ConstraintInstructionList typedTail =
+            `inferConstraintInstructionList(tailCilist);
+          return `concConstraintInstruction(typedHead, typedTail*);
 
         } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + cilist);
+          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIlist);
 
         }
       }
     }
-    // TODO
-    return cilist;
+    throw new TomRuntimeException("inferConstraintInstructionList: should not be here.");
   }
 
   //TODO
-  %strategy CollectVars() extends Identity() {
-    visit ConstraintInstruction {
-    } 
+  private ConstraintInstruction typeConstraintInstruction(ConstraintInstruction ci) {
+    return ci;
+  }
+
+  // Strategy : we split collect and replacement
+//////////TODO
+  %strategy CollectVariables(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      var -> {
+        %match(var,nkt.varPatternList) {
+          Variable[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
+            nkt.addTomTerm(`var);
+          }
+          VariableStar[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,VariableStar(_,name2@!name1,_,_),_*) -> {
+            nkt.addTomTerm(`var);
+          }
+        }
+      }
+    }
+
+    visit BQTerm {
+      bqvar -> {
+        %match(bqvar,nkt.varList) {
+          BQVariable[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariable(_,name2@!name1,_),_*) -> {
+            nkt.addBQTerm(`bqvar);
+          }
+          BQVariableStar[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariableStar(_,name2@!name1,_),_*) -> {
+            nkt.addBQTerm(`bqvar);
+          }
+        }
+      }
+    }
+  }
+
+  //TODO
+  %strategy ReplaceTypes(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+     }
+
+    visit BQTerm {
+    }
+  }
+
+//////////
+
+
+  //TODO : and VariableStar ? Need to add a similar case
+  %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      var -> {
+        %match(var,nkt.varPatternList) {
+          // Case of Variable
+          // If the variable already exists in varPatternList
+          Variable[Option=option,AstName=name,AstType=_,Constraints=cilist], 
+          concTomTerm(_*,Variable(_,name,type2,_),_*) -> {
+            return `Variable(option,name,type2,cilist);
+          }
+          Variable[Option=option,AstName=name1,AstType=type1,Constraints=cilist], 
+          concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
+            TomTerm newVar = `var;
+            if(`type1 == SymbolTable.TYPE_UNKNOWN) {
+              TomType freshType = nkt.getFreshTypeVar();
+              newVar = `Variable(option,name1,freshType,cilist);
+            }
+            //nkt.varPatternList = `ConsconcTomTerm(newVar,nkt.varPatternList);
+            nkt.addTomTerm(newVar);
+            return newVar;
+          }
+
+          // Case of VariableStar
+          VariableStar[Option=option,AstName=name,AstType=_,Constraints=cilist], 
+          concTomTerm(_*,VariableStar(_,name,type2,_),_*) -> {
+            return `VariableStar(option,name,type2,cilist);
+          }
+          VariableStar[Option=option,AstName=name1,AstType=type1,Constraints=cilist], 
+          concTomTerm(_*,VariableStar(_,name2@!name1,_,_),_*) -> {
+            TomTerm newVar = `var;
+            if(`type1 == SymbolTable.TYPE_UNKNOWN) {
+              TomType freshType = nkt.getFreshTypeVar();
+              newVar = `VariableStar(option,name1,freshType,cilist);
+            }
+            //nkt.varPatternList = `ConsconcTomTerm(newVar,nkt.varPatternList);
+            nkt.addTomTerm(newVar);
+            return newVar;
+          }
+        }
+      }
+    }
+    visit BQTerm {
+      bqvar -> {
+        %match(bqvar,nkt.varList) {
+          // Case of Variable
+          // If the variable already exists in varPatternList
+          BQVariable[Option=option,AstName=name,AstType=_], 
+          concBQTerm(_*,BQVariable(_,name,type2),_*) -> {
+            return `BQVariable(option,name,type2);
+          }
+          BQVariable[Option=option,AstName=name1,AstType=type1], 
+          concBQTerm(_*,BQVariable(_,name2@!name1,_),_*) -> {
+            BQTerm newVar = `bqvar;
+            if(`type1 == SymbolTable.TYPE_UNKNOWN) {
+              TomType freshType = nkt.getFreshTypeVar();
+              newVar = `BQVariable(option,name1,freshType);
+            }
+            //nkt.varList = `ConsconcBQTerm(newVar,nkt.varList);
+            nkt.addBQTerm(newVar);
+            return newVar;
+          }
+
+          // Case of VariableStar
+          BQVariableStar[Option=option,AstName=name,AstType=_], 
+          concBQTerm(_*,BQVariableStar(_,name,type2),_*) -> {
+            return `BQVariableStar(option,name,type2);
+          }
+          BQVariableStar[Option=option,AstName=name1,AstType=type1], 
+          concBQTerm(_*,BQVariableStar(_,name2@!name1,_),_*) -> {
+            BQTerm newVar = `bqvar;
+            if(`type1 == SymbolTable.TYPE_UNKNOWN) {
+              TomType freshType = nkt.getFreshTypeVar();
+              newVar = `BQVariableStar(option,name1,freshType);
+            }
+            //nkt.varList = `ConsconcBQTerm(newVar,nkt.varList);
+            nkt.addBQTerm(newVar);
+            return newVar;
+          }
+        }
+      }
+    }
   } 
 
   //TODO
