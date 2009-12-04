@@ -126,7 +126,32 @@ public class NewKernelTyper {
     ((`concBQTerm) varList).append(term);
   }
 
-//=====
+  //Before resetting varPatternList, we need to check if varList contains
+  //a corresponding BQTerm, and also remove it from varList
+  protected void initTomTerm() {
+    try {
+      `TopDown(removeFromVarList(this)).visitLight(varList);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("initTomTerm: failure on " + varList);
+    }
+    varPatternList = `concTomTerm();
+  }
+
+  protected void initBQTerm() {
+    varList = `concBQTerm();
+  }
+
+  %strategy removeFromVarList(nkt:NewKernelTyper) extends Identity() {
+    visit BQTermList {
+      list -> {
+        %match(nkt.varPatternList,list) {
+          concTomTerm(_*,(Variable|VariableStar)[AstName=name],_*),concBQTerm(x*,BQVariable[AstName=name],y*) -> {
+            return `concBQTerm(x*,y*);
+          }
+        }
+      }
+    }
+  }
 
   private void init() {
     varPatternList = `concTomTerm();
@@ -183,89 +208,45 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferConstraintInstructionList: should not be here.");
   }
 
-  //TODO
-  private ConstraintInstruction typeConstraintInstruction(ConstraintInstruction ci) {
-    return ci;
-  }
-
-  // Strategy : we split collect and replacement
-//////////TODO
-  %strategy CollectVariables(nkt:NewKernelTyper) extends Identity() {
-    visit TomTerm {
-      var -> {
-        %match(var,nkt.varPatternList) {
-          Variable[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
-            nkt.addTomTerm(`var);
-          }
-          VariableStar[Option=option,AstName=name1,AstType=type,Constraints=cilist], concTomTerm(_*,VariableStar(_,name2@!name1,_,_),_*) -> {
-            nkt.addTomTerm(`var);
-          }
-        }
-      }
-    }
-
-    visit BQTerm {
-      bqvar -> {
-        %match(bqvar,nkt.varList) {
-          BQVariable[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariable(_,name2@!name1,_),_*) -> {
-            nkt.addBQTerm(`bqvar);
-          }
-          BQVariableStar[Option=option,AstName=name1,AstType=type], concBQTerm(_*,BQVariableStar(_,name2@!name1,_),_*) -> {
-            nkt.addBQTerm(`bqvar);
-          }
-        }
-      }
-    }
-  }
-
-  //TODO
-  %strategy ReplaceTypes(nkt:NewKernelTyper) extends Identity() {
-    visit TomTerm {
-     }
-
-    visit BQTerm {
-    }
-  }
-
-//////////
-
-
-  //TODO : and VariableStar ? Need to add a similar case
   %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       var -> {
         %match(var,nkt.varPatternList) {
           // Case of Variable
           // If the variable already exists in varPatternList
-          Variable[Option=option,AstName=name,AstType=_,Constraints=cilist], 
-          concTomTerm(_*,Variable(_,name,type2,_),_*) -> {
+          Variable[Option=option,AstName=name,AstType=type1,Constraints=cilist], 
+          concTomTerm(_*,(Variable|VariableStar)(_,name,type2,_),_*) -> {
+            if(`type1 != SymbolTable.TYPE_UNKNOWN) {
+              nkt.addConstraint(`Equation(type1,type2));
+            }
             return `Variable(option,name,type2,cilist);
           }
           Variable[Option=option,AstName=name1,AstType=type1,Constraints=cilist], 
-          concTomTerm(_*,Variable(_,name2@!name1,_,_),_*) -> {
+          concTomTerm(_*,(Variable|VariableStar)(_,name2@!name1,_,_),_*) -> {
             TomTerm newVar = `var;
             if(`type1 == SymbolTable.TYPE_UNKNOWN) {
               TomType freshType = nkt.getFreshTypeVar();
               newVar = `Variable(option,name1,freshType,cilist);
             }
-            //nkt.varPatternList = `ConsconcTomTerm(newVar,nkt.varPatternList);
             nkt.addTomTerm(newVar);
             return newVar;
           }
 
           // Case of VariableStar
-          VariableStar[Option=option,AstName=name,AstType=_,Constraints=cilist], 
-          concTomTerm(_*,VariableStar(_,name,type2,_),_*) -> {
+          VariableStar[Option=option,AstName=name,AstType=type1,Constraints=cilist], 
+          concTomTerm(_*,(Variable|VariableStar)(_,name,type2,_),_*) -> {
+            if(`type1 != SymbolTable.TYPE_UNKNOWN) {
+              nkt.addConstraint(`Equation(type1,type2));
+            }
             return `VariableStar(option,name,type2,cilist);
           }
           VariableStar[Option=option,AstName=name1,AstType=type1,Constraints=cilist], 
-          concTomTerm(_*,VariableStar(_,name2@!name1,_,_),_*) -> {
+          concTomTerm(_*,(Variable|VariableStar)(_,name2@!name1,_,_),_*) -> {
             TomTerm newVar = `var;
             if(`type1 == SymbolTable.TYPE_UNKNOWN) {
               TomType freshType = nkt.getFreshTypeVar();
               newVar = `VariableStar(option,name1,freshType,cilist);
             }
-            //nkt.varPatternList = `ConsconcTomTerm(newVar,nkt.varPatternList);
             nkt.addTomTerm(newVar);
             return newVar;
           }
