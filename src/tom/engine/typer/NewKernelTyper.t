@@ -35,6 +35,7 @@ import java.util.HashMap;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -110,6 +111,29 @@ public class NewKernelTyper {
     return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
 
+  protected TomType getType(TomTerm term) {
+    %match(term) {
+      (Variable|VariableStar)[AstType=type] -> {
+        return `type;
+      }
+      RecordAppl[NameList=(Name(name),_*)] -> {
+        if(`name.equals("")) {
+          // Maybe we need to discover the symbol using the context type
+          // information (i.e. the type of subject)
+          throw new TomRuntimeException("No symbol found because there is no name.");
+        }
+        TomSymbol tomSymbol = getSymbolFromName(`name);
+        return TomBase.getSymbolCodomain(tomSymbol);
+      }
+    } 
+    throw new TomRuntimeException("getType: should not be here.");
+  }
+
+  // TODO
+  protected TomType getType(BQTerm term) {
+    return `EmptyType(); 
+  }
+
   protected TomType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
   }
@@ -128,11 +152,11 @@ public class NewKernelTyper {
 
   //Before resetting varPatternList, we need to check if varList contains
   //a corresponding BQTerm, and also remove it from varList
-  protected void initTomTerm() {
+  protected void resetVarPatternList() {
     try {
       `TopDown(removeFromVarList(this)).visitLight(varList);
     } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("initTomTerm: failure on " + varList);
+      throw new TomRuntimeException("resetVarPatternList: failure on " + varList);
     }
     varPatternList = `concTomTerm();
   }
@@ -145,7 +169,7 @@ public class NewKernelTyper {
     visit BQTermList {
       list -> {
         %match(nkt.varPatternList,list) {
-          concTomTerm(_*,(Variable|VariableStar)[AstName=name],_*),concBQTerm(x*,BQVariable[AstName=name],y*) -> {
+          concTomTerm(_*,(Variable|VariableStar)[AstName=name],_*),concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=name],y*) -> {
             return `concBQTerm(x*,y*);
           }
         }
@@ -185,22 +209,23 @@ public class NewKernelTyper {
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
-      concConstraintInstruction(headCIlist@ConstraintInstruction(constraint,action,_),tailCilist*) -> {
+      concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,_),tailCIList*) -> {
         try {
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPatternList
           ConstraintInstruction typedHead =
-            `TopDownCollect(CollectVars(this)).visitLight(`headCIlist);
-          inferConstraint(`constraint);
+            `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
+          `TopDown(inferConstraint(this)).visitLight(`constraint);
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
           inferInstruction(`action);
+          resetVarPatternList();
           ConstraintInstructionList typedTail =
-            `inferConstraintInstructionList(tailCilist);
+            `inferConstraintInstructionList(tailCIList);
           return `concConstraintInstruction(typedHead, typedTail*);
 
         } catch(tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIlist);
+          throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIList);
 
         }
       }
@@ -258,35 +283,39 @@ public class NewKernelTyper {
         %match(bqvar,nkt.varList) {
           // Case of Variable
           // If the variable already exists in varPatternList
-          BQVariable[Option=option,AstName=name,AstType=_], 
-          concBQTerm(_*,BQVariable(_,name,type2),_*) -> {
+          BQVariable[Option=option,AstName=name,AstType=type1], 
+          concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,type2),_*) -> {
+            if(`type1 != SymbolTable.TYPE_UNKNOWN) {
+              nkt.addConstraint(`Equation(type1,type2));
+            }
             return `BQVariable(option,name,type2);
           }
           BQVariable[Option=option,AstName=name1,AstType=type1], 
-          concBQTerm(_*,BQVariable(_,name2@!name1,_),_*) -> {
+          concBQTerm(_*,(BQVariable|BQVariableStar)(_,name2@!name1,_),_*) -> {
             BQTerm newVar = `bqvar;
             if(`type1 == SymbolTable.TYPE_UNKNOWN) {
               TomType freshType = nkt.getFreshTypeVar();
               newVar = `BQVariable(option,name1,freshType);
             }
-            //nkt.varList = `ConsconcBQTerm(newVar,nkt.varList);
             nkt.addBQTerm(newVar);
             return newVar;
           }
 
           // Case of VariableStar
-          BQVariableStar[Option=option,AstName=name,AstType=_], 
-          concBQTerm(_*,BQVariableStar(_,name,type2),_*) -> {
+          BQVariableStar[Option=option,AstName=name,AstType=type1], 
+          concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,type2),_*) -> {
+            if(`type1 != SymbolTable.TYPE_UNKNOWN) {
+              nkt.addConstraint(`Equation(type1,type2));
+            }
             return `BQVariableStar(option,name,type2);
           }
           BQVariableStar[Option=option,AstName=name1,AstType=type1], 
-          concBQTerm(_*,BQVariableStar(_,name2@!name1,_),_*) -> {
+          concBQTerm(_*,(BQVariable|BQVariableStar)(_,name2@!name1,_),_*) -> {
             BQTerm newVar = `bqvar;
             if(`type1 == SymbolTable.TYPE_UNKNOWN) {
               TomType freshType = nkt.getFreshTypeVar();
               newVar = `BQVariableStar(option,name1,freshType);
             }
-            //nkt.varList = `ConsconcBQTerm(newVar,nkt.varList);
             nkt.addBQTerm(newVar);
             return newVar;
           }
@@ -295,16 +324,44 @@ public class NewKernelTyper {
     }
   } 
 
-  //TODO
-  private void inferInstruction(Instruction action) {
-    // addTypeConstraints
-  }
+  %strategy inferConstraint(nkt:NewKernelTyper) extends Identity() {
+    visit Constraint {
+      constraint -> {
+        %match {
+          MatchConstraint(pattern,subject) << constraint &&
+          concTomTerm(_*,pattern,_*) << nkt.varPatternList &&
+          concBQTerm(_*,subject,_*) << nkt.varList -> {
+            TomType freshType1 = nkt.getFreshTypeVar();
+            TomType freshType2 = nkt.getFreshTypeVar();
+            nkt.addConstraint(`Equation(freshType1,nkt.getType(pattern)));
+            nkt.addConstraint(`Equation(freshType2,nkt.getType(subject)));
+            nkt.inferTomTerm(`pattern,freshType1);
+            nkt.inferBQTerm(`subject,freshType2);
+          }
+          NumericConstraint(left,right,_) << constraint &&
+          concBQTerm(_*,left,_*) << nkt.varList &&
+          concBQTerm(_*,right,_*) << nkt.varList -> {
+            TomType freshType1 = nkt.getFreshTypeVar();
+            TomType freshType2 = nkt.getFreshTypeVar();
+            // It will be useful for subtyping
+            // TomType freshType3 = nkt.getFreshTypeVar();
+            nkt.addConstraint(`Equation(freshType1,nkt.getType(left)));
+            nkt.addConstraint(`Equation(freshType2,nkt.getType(right)));
+            nkt.addConstraint(`Equation(freshType1,freshType2));
+            nkt.inferBQTerm(`left,freshType1);
+            nkt.inferBQTerm(`right,freshType2);
 
-  //TODO
-  private void inferConstraint(Constraint constraint){
-    // addTypeConstraints
-  }
-/*
+          }
+        }
+      }
+    }  
+  } 
+
+  private void inferTomTerm(TomTerm term, TomType type) {}
+
+  private void inferBQTerm(BQTerm term, TomType type) {}
+
+  /*
    public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
     if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
       %match(slist) {
@@ -347,6 +404,13 @@ public class NewKernelTyper {
     } 
   }
 */
+
+  //TODO
+  private void inferInstruction(Instruction action) {
+    // addTypeConstraints
+  }
+
+
   /*
   public void inferNumMatch(TomTerm e1, TomTerm e2) {
     TomType t1 = getFreshTypeVar();
