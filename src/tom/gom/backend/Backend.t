@@ -84,11 +84,11 @@ public class Backend {
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
         MappingTemplateClass mapping = null;
-        if(generateStratMapping>0) { // generate congruence strategies
+        if (generateStratMapping > 0) { // generate congruence strategies
           ClassName smappingclass = `ClassName(pkg,"_"+name);
           GomClass nGomClass = `gomclass.setClassName(smappingclass);
           TemplateClass stratMapping = new tom.gom.backend.strategy.StratMappingTemplate(nGomClass,getGomEnvironment(),generateStratMapping);
-          if(generateStratMapping==1) {
+          if (1 == generateStratMapping) {
             // classical mode: generate extra-mapping in file.tom
             mapping = templatefactory.makeTomMappingTemplate(`gomclass,stratMapping,getGomEnvironment());
           } else {
@@ -111,14 +111,12 @@ public class Backend {
       errno += generateClass(gomclass,generators);
     }
     /* The mappings may need to access generators */
-    Iterator<MappingTemplateClass> it = mappingSet.iterator();
-    while (it.hasNext()) {
-      it.next().addTemplates(generators);
+    for(final MappingTemplateClass templateClass : mappingSet) {
+      templateClass.addTemplates(generators);
     }
 
-    Iterator<ClassName> itc = generators.keySet().iterator();
-    while (itc.hasNext()) {
-      generators.get(itc.next()).generateFile();
+    for (final ClassName clsName : generators.keySet()) {
+      generators.get(clsName).generateFile();
     }
     return 1;
   }
