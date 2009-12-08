@@ -1,0 +1,149 @@
+//let R1 = { f(x) -> x } in 
+//let R2 = { b() -> c() } in 
+//R1;(R1<+R2);R1
+
+//let r1 = { a() -> b() } in mu x .((r1;x) <+ identity)
+//let r1 = { a() -> b() } in 
+//let r2 = { b() -> c() } in 
+//mu x .(((r1<+r2);x) <+ identity)
+
+
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a() -> b() } in one(r1)
+
+// repeat(obu(r1))
+  let S=signature {a:0, b:0, f:2} in
+  let r1 = { f(x,x) -> f(b(),a()) } in 
+  let obu = mu y.(one(y)<+r1) in
+  mu x .((obu;x) <+ identity)
+
+// repeat(otd(r1))
+//let S=signature {a:0, b:0, f:1, g:2, h1:2, h2:2, h3:2, h4:4, h5:5, h6:6, h7:7, h8:8, h9:9} in
+// let S=signature {a:0, b:0, f:1} in
+// let r1 = { b() -> f(b()) } in 
+// let otd = mu y.(r1<+one(y)) in
+// mu x .((otd;x) <+ identity)
+
+
+// let S=signature {a:0, b:0, c:0, f:1, g:2} in
+// let R1 = { f(x) -> x } in 
+// let R2 = { b() -> c() } in 
+// (R1<+R2)
+
+// td(try(r1))
+//let S=signature {a:0, b:0, f:1, g:2} in
+//leet r1 = { a() -> f(b()) } in 
+//let td = mu y.((r1<+identity);all(y)) in
+//let bu = mu y.(all(y);(r1<+identity)) in
+//bu
+//td
+
+// innermost(r1)
+//  let S=signature {a:0, b:0, f:1, g:2} in				
+//  let r1 = { a() -> g(b(),b()) } in 
+//  let innermost = mu x.(all(x);((r1;x)<+identity)) in
+//  let td = mu y.((innermost<+identity);all(y)) in
+//   innermost
+// td
+
+// innermost(r1)
+// let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { f(b()) -> a() } in 
+// let innermost = mu x.(all(x);((r1;x)<+identity)) in
+// let td = mu y.(r1;all(y)) in
+//  innermost
+// td
+
+// repeat(r1)
+//let S=signature {a:0, b:0, f:1, g:2} in
+//let r1 = { a() -> f(b()) } in 
+//let repeat = mu y.(r1;y)<+identity in
+//repeat
+
+
+// (r1))
+//let S=signature {a:0, b:0, f:1, g:2} in
+// let r1 = { a()->b(), f(a())->a(), g(a(),a()) -> b() } in 
+//let r1 = { a()->b(), f(f(X))->X, g(a(),a()) -> b() } in 
+//let r1 = { a()->b(), f(X)->X, g(a(),a()) -> b() } in 
+//r1
+
+//Germain
+// let S=signature {a:0, b:0, c:0,f:1} in
+// let S=signature {a:0, b:0, c:0,f:2} in
+// let r1 = { a() -> c() } in
+// let r2 = { b() -> c() } in
+//r1
+// one(r1)
+// all(r1)
+// let r2 = { b() -> c() } in
+// r1 <+ r2
+// mu y.(r1;r2;y)
+
+
+// let S=signature {a:0, b:0, c:0, f:2, g:1} in
+// let r1 = { a() -> c() } in
+// let r2 = { f(x,f(x,y)) -> x } in
+// r1 <+ r2
+// r2
+// f(a(),f(a(),b()))
+
+
+// Example for rules that shouldn't be added
+// let S=signature {a:0, b:0,f:1,g:2} in
+// let r1 = { g(f(a()),x) -> f(b()) } in
+// r1
+
+
+
+
+// repeat(oncebu(r1)) could be proven (NG)
+// repeat(oncebu(r3)) could be proven (NG)
+// repeat(oncebu(r1)) ; repeat(oncebu(r3)) could not be shown (NG)
+// repeat(oncebu(r1)) ; identity could be proven (G)
+// innermost1 ; innermost3  could be proven (G)
+// innermost12 ; innermost34  could be proven (G)
+
+// let S=signature {times:2, plus:2, zero:0, suc:1} in
+// let r1 = { times(plus(x,y),z) -> plus(times(x,z),times(y,z)) } in
+// let r2 = { times(z,plus(x,y)) -> plus(times(z,x),times(z,y)) } in
+// let r3 = { plus(times(x,z),times(y,z)) -> times(plus(x,y),z) } in
+// let r4 = { plus(times(z,x),times(z,y)) -> times(z,plus(x,y)) } in
+// let r12 =  r1 <+ r2 in
+// let r34 =  r3 <+ r4 in
+// let obu12 = mu y.(one(y)<+r1) in
+// // let rep12 = mu x .((obu12;x) <+ identity) in
+// // let innermost1 = mu x.(all(x);((r12;x)<+identity)) in
+// let obu34 = mu y.(one(y)<+r3) in
+// let rep34 = mu x .((obu34;x) <+ identity) in
+// // let innermost3 = mu x.(all(x);((r34;x)<+identity)) in
+// rep12 <+ rep34
+// // innermost1 <+ innermost3
+// // innermost1 ; innermost3
+
+
+
+
+
+// let S=signature {a:0, b:0, c:0} in
+// let r1 = { a() -> b() } in
+// let r2 = { b() -> a() } in
+// let r = r1 <+ r2
+// // let innermost = mu x.(all(x);((r;x)<+identity)) in
+// // innermost
+// let obu = mu y.(one(y)<+r) in
+// mu x .((obu;x) <+ identity)
+
+// let S=signature {f:1, g:1, a:0} in
+// let r1 = { f(x) -> g(x) } in
+// let r2 = { g(x) -> f(x) } in
+// // let r = r1 <+ r2 in
+// // let innermost = mu x.(all(x);((r;x)<+identity)) in
+// // innermost
+// let obu1 = mu y.(one(y)<+r1) in
+// let rep1 = mu x .((obu1;x) <+ identity) in
+// let obu2 = mu y.(one(y)<+r2) in
+// let rep2 = mu x .((obu2;x) <+ identity) in
+// rep1; rep2
+// // let obu = mu y.(one(y)<+r) in
+// // mu x .((obu;x) <+ identity)

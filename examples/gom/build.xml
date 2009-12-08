@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the gom example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="gom"/>
+  <target name="build" depends="init">
+    <gom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.gom"/>
+      <exclude name="${example}/**/Elist.gom"/>
+    </gom.preset>
+    <gom.preset srcdir="${examples.dir}"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/Elist.gom"/>
+    </gom.preset>
+    <tom.preset srcdir="${examples.dir}"
+      options="--genIntrospector"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/TestCarre.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${examples.dir}"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/TestCarre.t"/>
+    </tom.preset> 
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

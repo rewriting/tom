@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the fib bench" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <target name="clean" description="Cleans bench directory">
+    <delete dir="${bench.gen}/fib"/>
+    <delete dir="${bench.build}/fib"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="fib"/>
+    <javacompile example="fib"/>
+  </target>
+</project>

@@ -1,0 +1,14 @@
+A completion procedure to recover the cut admissibility in deduction modulo
+
+Also implement TaMed
+
+
+If the compilation fails with
+
+     [exec] Could not find the .cmi file for interface comp.mli.
+     [exec] make: *** [comp.cmx] Error 2
+ 
+please run ant a second time.
+
+
+For program usage, type comp --help

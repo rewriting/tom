@@ -1,0 +1,66 @@
+module sdfgom.mept
+imports String int ATerm
+abstract syntax
+ParseTree = parsetree(Top:Tree, Amb_cnt:int) 
+
+Tree = appl(Prod:Production, Args:Args) 
+     | cycle(Symbol:Symbol,Cycle_length:int)
+     | amb(Args:Args) 
+     | my_char(Character:int) 
+     | removedTree()
+Args = listTree(Tree*) 
+
+listTree:make_insert(e,l) {
+  %match(e) {
+    removedTree() -> { return `l; }
+  }
+}
+
+Production = prod(Lhs:Symbols, Rhs:Symbol, Attributes:Attributes) 
+	   | list(Rhs:Symbol) 
+
+Attributes = no_attrs()
+	   | attrs(Attrs:Attrs)
+Attrs = listAttr(Attr*)
+
+Attr = assoc(Assoc:Associativity) 
+     | term(Value:ATerm)
+     | id(Module_name:String) 
+     | bracket() 
+     | reject() 
+     | prefer() 
+     | avoid() 
+     | cons(Const:String) 
+
+Associativity = left() 
+	      | right() 
+	      | my_assoc() 
+	      | non_assoc()
+
+Symbol = lit(String:String) 
+       | cilit(String:String) 
+       | cf(Symbol:Symbol) 
+       | lex(Symbol:Symbol) 
+       | empty() 
+       | seq(Symbols:Symbols) 
+       | opt(Symbol:Symbol) 
+       | alt(Lhs:Symbol, Rhs:Symbol) 
+       | tuple(Head:Symbol, Rest:Symbols) 
+       | my_sort(String:String) // sort is forbidden
+       | iter(Symbol:Symbol) 
+       | iter_sep(Symbol:Symbol, Separator:Symbol) 
+       | iter_n(Symbol:Symbol, Number:int) 
+       | iter_sep_n(Symbol:Symbol, Separator:Symbol, Number:int) 
+       | iter_star(Symbol:Symbol) 
+       | iter_star_sep(Symbol:Symbol, Separator:Symbol) 
+       | func(Symbols:Symbols, Symbol:Symbol) 
+       | parameterized_sort(Sort:String, Parameters:Symbols) 
+       | strategy(Lhs:Symbol, Rhs:Symbol) 
+       | varsym(Symbol:Symbol) 
+       | layout() 
+       | char_class(Ranges:CharRanges)
+Symbols = listSymbol(Symbol*) 
+
+CharRange = character(Start:int) 
+	  | range(Start:int, End:int)
+CharRanges = listCharRange(CharRange*)

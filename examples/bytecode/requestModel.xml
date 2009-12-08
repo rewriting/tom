@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Request>
+  <Subject>
+    <AnySubject />
+  </Subject>
+  <Resource>
+    <Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id" DataType="http://www.w3.org/2001/XMLSchema#string">
+      <AttributeValue>filename</AttributeValue>
+    </Attribute>
+  </Resource>
+  <Action>
+    <Attribute AttributeId="FileAction" DataType="http://www.w3.org/2001/XMLSchema#string">
+      <AttributeValue>read</AttributeValue>
+    </Attribute>
+  </Action>
+</Request>

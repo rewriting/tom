@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+use diagnostics;
+
+# arguments: [-p package] module
+# generating visitorclass
+my $package="";
+my $module=shift;
+my $visitorclass=lc($module).".".$module."Visitor";
+if($module eq "-p") {
+  $package=shift;
+  $module=shift;
+  $visitorclass=$package.".".$visitorclass;
+}
+
+# filter to be applied on submodule Visitor java file
+
+while(<>) {
+  if(/public interface/) {
+    s/\{/extends $visitorclass {/;
+  }
+  print;
+}

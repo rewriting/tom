@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the pico bench" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <target name="clean" description="Cleans bench directory">
+    <delete dir="${bench.gen}/pico"/>
+    <delete dir="${bench.build}/pico"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="pico"/>
+    <javacompile example="pico"/>
+  </target>
+</project>

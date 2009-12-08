@@ -1,0 +1,11 @@
+Context(SigOf("plus",Composed(TyList(Atom("int"),Atom("int")),Atom("int"))),
+        SigOf("uminus",Composed(TyList(Atom("nat")),Atom("int"))),
+        SigOf("square",Composed(TyList(Atom("int")),Atom("nat"))),
+        SigOf("x",Atom("int"))),
+
+CList(Subtype("nat","int"),Subtype("nat","nat"),Subtype("int","int")),
+
+Fun("plus",TeList(Fun("square",TeList(Var("x"))),Var("x"))),
+
+Atom("int")
+

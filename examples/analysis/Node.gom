@@ -1,0 +1,11 @@
+module Node 
+imports Ast 
+abstract syntax
+Node = 	beginIf(expr:Expression)
+     |	affect(var:Variable,t:Term)
+     |	free(var:Variable)
+     |	endIf()
+     |	beginWhile(expr:Expression)
+     |	endWhile()
+     |  failWhile()
+     |  nil()

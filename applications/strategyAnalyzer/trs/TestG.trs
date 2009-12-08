@@ -1,0 +1,64 @@
+(VAR Z Z0 Z1 Z2 x x1 x2)
+(RULES
+
+        choice10(x) -> choice11(seq8(x),x)
+        choice11(Bottom(Z),x) -> id9(Z) 
+        choice11(a(),x) -> seq8(x)
+        choice11(b(),x) -> seq8(x)
+        choice11(f(Z1),x) -> seq8(x)
+        choice11(g(Z1,Z2),x) -> seq8(x)
+
+        choice6(x) -> choice7(one4(x),x)
+        choice7(Bottom(Z),x) -> rule5(Z)  
+        choice7(a(),x) -> one4(x)
+        choice7(b(),x) -> one4(x)
+        choice7(f(Z1),x) -> one4(x)
+        choice7(g(Z1,Z2),x) -> one4(x)
+
+        id9(x) -> x
+
+        mu0(x) -> mu1(x,x)
+        mu1(Bottom(Z),x) -> Bottom(Z)
+        mu1(a(),x) -> choice10(x)
+        mu1(b(),x) -> choice10(x)
+        mu1(f(Z1),x) -> choice10(x)
+        mu1(g(Z1,Z2),x) -> choice10(x)
+
+        mu2(x) -> mu3(x,x)
+        mu3(Bottom(Z),x) -> Bottom(Z)
+        mu3(a(),x) -> choice6(x)
+        mu3(b(),x) -> choice6(x)
+        mu3(f(Z1),x) -> choice6(x)
+        mu3(g(Z1,Z2),x) -> choice6(x)
+
+        one4(a()) -> Bottom(a())
+        one4(b()) -> Bottom(b())
+        one4(f(x1)) -> one4_1(mu2(x1))
+        one4(g(x1,x2)) -> one4_2_1(mu2(x1),x2)
+
+        one4_1(Bottom(Z)) -> Bottom(f(Z))
+        one4_1(a()) -> f(a())
+        one4_1(b()) -> f(b())
+        one4_1(f(Z1)) -> f(f(Z1))
+        one4_1(g(Z1,Z2)) -> f(g(Z1,Z2))
+
+        one4_2_1(Bottom(Z0),x2) -> one4_2_2(Bottom(Z0),mu2(x2))
+        one4_2_1(a(),x2) -> g(a(),x2)
+        one4_2_1(b(),x2) -> g(b(),x2)
+        one4_2_1(f(Z1),x2) -> g(f(Z1),x2)
+        one4_2_1(g(Z1,Z2),x2) -> g(g(Z1,Z2),x2)
+
+        one4_2_2(Bottom(Z0),Bottom(Z1)) -> Bottom(g(Z0,Z1))
+        one4_2_2(Bottom(Z0),a()) -> g(Z0,a())
+        one4_2_2(Bottom(Z0),b()) -> g(Z0,b())
+        one4_2_2(Bottom(Z0),f(Z1)) -> g(Z0,f(Z1))
+        one4_2_2(Bottom(Z0),g(Z1,Z2)) -> g(Z0,g(Z1,Z2))
+
+        rule5(Bottom(Z)) -> Bottom(Z)
+        rule5(a()) -> f(b())
+        rule5(b()) -> Bottom(b())
+        rule5(f(Z1)) -> Bottom(f(Z1))
+        rule5(g(Z1,Z2)) -> Bottom(g(Z1,Z2))
+
+        seq8(x) -> mu0(choice6(x))
+)

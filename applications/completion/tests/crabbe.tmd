@@ -1,0 +1,11 @@
+rules A --> B /\ -A
+
+tab -B
+
+comp
+
+comp
+
+tab -B
+
+

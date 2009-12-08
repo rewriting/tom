@@ -1,0 +1,28 @@
+module testgen.TinyJava
+imports String 
+abstract syntax
+
+Prog = Prog(PackageNode*)
+
+PackageNode = PackageNode(packageName:Name,classes:ClassDeclList)
+
+ClassDeclList = ConcClassDecl(ClassDecl*)
+
+ClassDecl = ClassDecl(name:Name,super:Name,bodyDecl:BodyDeclList)
+
+BodyDeclList = ConcBodyDecl(BodyDecl*)
+
+BodyDecl = FieldDecl(FieldType:Name,name:Name,expr:Name)
+         | MemberClassDecl(innerClass:ClassDecl)
+         | Initializer(body:Stmt)
+
+Stmt = Block(Stmt*)
+     | LocalVariableDecl(VarType:Name,name:Name,expr:Name)
+     | SuperCall(ref:Name) // for call of type ref.super()
+
+Name = Name(name:String)
+     | Dot(Name*)
+     | Undefined()
+
+Dot : FL() {}
+Block : Free() {}

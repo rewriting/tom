@@ -1,0 +1,333 @@
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+termrule pred(0) -> 0.
+termrule pred(succ(x)) -> x.
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> x * y + y.
+
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+proprule in(l,fN(t)) -> N(appl(t,l)).
+rule eq(x,y) -> forall A, in(cons(x,nil()),A) => in(cons(y,nil()),A).
+rule N(n) -> forall A, in(cons(0,nil()),A) => ( forall y,in(cons(y,nil()),A) => in(cons(succ(y),nil()),A) ) => in(cons(n,nil()),A) .
+hered.
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+
+
+rule Pair(0) -> True.
+rule Pair(succ(n)) -> Impair(n).
+rule Impair(succ(n)) -> Pair(n).
+
+proprule in(l,fPair(t)) -> Pair(appl(t,l)).
+proprule in(l,fImpair(t)) -> Impair(appl(t,l)).
+
+
+
+proof zisnat: N(0).
+rule. 
+axiom.
+
+proof oneisnat: N(1).
+rule.
+focus h2. rule. 0.
+axiom. axiom.
+
+proof ind: forall n, N(n) => N(succ(n)).
+auto.
+focus h3. rule. inter(fN(one()),A()).
+next.
+reduce.
+intro.
+axiom.
+theorem zisnat. axiom.
+reduce.
+intros.
+focus h4. rule. n().
+axiom.
+axiom.
+rule. reduce.
+intros.
+focus h4. rule. y().
+axiom.
+axiom.
+focus h4. rule. n().
+axiom.
+focus h5. rule. A().
+axiom.
+axiom.
+axiom.
+
+proof eqrefl: forall x,eq(x,x).
+auto.
+
+proof succisafun: forall x y, eq(x,y) => eq(succ(x),succ(y)).
+intros.
+focus h1. rule. fEq(S(succ(x())),succ(one())).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. succ(x()). axiom.
+
+proof natcase: forall n, N(n) => (Null(n) \/ (exists m, N(m) /\ eq(n,succ(m)))).
+intros.
+focus h1. rule. inter(fN(one()),union(fNull(one()),P(inter(fN(one()),fEq(S(one()),succ(one())))))).
+reduce.
+intros.
+focus c2. intro. n1. 
+intros.
+focus h1. remove. focus c2. remove. focus c2. remove.
+rule. reduce.
+intros.
+focus c2. intro. succ(n()).
+intros.
+theorem succisafun.
+focus h4. intro. y(). focus h4. intro. succ(n()).
+intros.
+theorem ind.
+focus h4. intro. n().
+intros.
+focus c2. intro. y().
+auto.
+theorem ind.
+focus h4. intro. y().
+intros.
+theorem ind.
+focus h3. intro. y().
+intros.
+reduce.
+intro. intro. 
+rule.
+theorem zisnat. axiom.
+
+proof predsucc: forall n, N(n) => ~Null(n) => eq(pred(succ(n)), succ(pred(n))).
+intros.
+focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
+reduce.
+intros.
+autoreduce.
+autoreduce.
+
+proof discriminate: forall n, ~eq(0,succ(n)).
+intros.
+focus h1. rule. fNull(one()).
+autoreduce.
+autoreduce.
+
+
+proof pair2n : (forall x y, eq(x+y,y+x)) => forall n, N(n) => Pair(2*n).
+reduce.
+intros.
+focus h2. rule. fPair(one()+one()).
+autoreduce.
+rule.
+autoreduce.
+focus h2. intro. succ(y()).
+focus h2. intro. y().
+focus h2. rule. fImpair(one()).
+reduce.
+axiom.
+reduce.
+rule.
+axiom.
+autoreduce.
+
+proof eqsym: forall x y, eq(x,y) => eq(y,x).
+intros.
+focus h1. rule. fEq(one(),S(x())).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. x(). axiom.
+
+proof eqtrans:  forall x y z, eq(x,y) => (eq(y,z) => eq(x,z)).
+auto.
+focus h2. rule. A().
+focus h4. rule. A().
+axiom.
+axiom.
+axiom.
+
+
+proof nplus0:   forall n, N(n) => eq(n+0,n).
+intros.
+focus h1. rule. fEq(one()+S(0),one()).
+reduce. axiom.
+rule.
+reduce.
+theorem succisafun.
+focus h3. intro. (y()+0). focus h3. intro. (y()).
+intros.
+reduce.
+theorem eqrefl.
+focus h2. intro. 0.
+axiom.
+
+proof plusassoc:   forall x y z, N(x) => eq( x+(y+z) , (x+y)+z ).
+intros.
+focus h1. rule. fEq( one()+(S(y())+S(z())) , one()+S(y())+S(z()) ).
+reduce. axiom.
+rule.
+reduce.
+theorem succisafun.
+focus h3. intro. y0()+(y()+z()). focus h3. intro. (y0()+y())+z(). 
+intros.
+reduce. 
+theorem eqrefl.
+focus h2. intro. y()+z(). axiom.
+
+
+proof plusnSm:  forall n m, N(n) => eq(succ(n+m),n+succ(m)).
+intros.
+focus h1. rule. fEq(succ(one()+S(m())),one()+succ(S(m()))).
+reduce. axiom.
+rule.
+reduce.
+theorem succisafun.
+focus h3. intro. succ(y()+m()). focus h3. intro. y()+succ(m()).
+intros.
+reduce.
+theorem eqrefl.
+focus h2. intro. succ(m()). axiom.
+
+proof pluscommut:  forall n m, N(n)=>(N(m)=>eq(n+m,m+n)).
+intros.
+focus h1. rule. fEq(one()+S(m()),S(m())+one()).
+reduce. axiom.
+next.
+reduce.
+theorem nplus0.
+focus h3. intro. m().
+intros.
+theorem eqsym.
+focus h4. intro. m()+0.
+focus h4. intro. m().
+intros.
+rule. reduce.
+theorem plusnSm.
+focus h4. intro. m().
+focus h4. intro. y().
+intros.
+theorem succisafun.
+focus h5. intro. y()+m(). focus h5. intro. m()+y(). 
+intros.
+theorem eqtrans.
+focus h6. intro. succ(y()+m()).
+focus h6. intro. succ(m()+y()).
+focus h6. intro. m()+succ(y()).
+intros.
+
+proof multn0:  forall n, N(n) => eq(0,n*0).
+intros.
+focus h1. rule. fEq(S(0),one()*S(0)).
+reduce. axiom.
+rule. reduce.
+focus h1. rule. fEq(S(0),one()+S(0)).
+reduce. axiom.
+reduce.
+theorem eqrefl.
+focus h3. intro. 0. axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. 0. axiom.
+
+
+/*
+
+rule le(0,n) -> \T.
+rule le(succ(n),0) -> \B.
+proprule le(succ(n),succ(m)) ->  le(n,m).
+proprule in(l,fLe(n1,n2)) -> le(appl(n1,l),appl(n2,l)).
+
+
+proof lerefl : \A n.(N(n) => le(n,n)).
+intros.
+focus h1. rule. fLe(one(),one()).
+reduce. rule.
+rule. reduce.
+axiom.
+reduce. axiom.
+
+
+
+proof letrans : forall n,(forall m,(forall p,( N(n) => N(m) => N(p) => le(n,m) => le(m,p) => le(n,p)))).
+intro.intro.intro. intro.intro.intro.
+focus h1. rule. supset(fLe(one(),S(m0)),supset(fLe(S(m0),S(p0)),fLe(one(),S(p0)))).
+next. reduce. axiom.
+reduce.
+intros. rule.
+rule. reduce.
+focus h3. rule. supset( supset(fLe(S(y0),one()),supset(fLe(one(),S(p0)),fLe(S(y0),S(p0)))),
+                        supset(fLe(S(succ(y0)),one()),supset(fLe(one(),S(p0)),fLe(S(succ(y0)),S(p0))))        ).
+next. reduce. axiom.
+reduce.
+
+
+termrule fib(0) -> 1.
+termrule fib(1) -> 1.
+termrule fib(succ(succ(n))) -> fib(succ(n)) + fib(n).
+
+termrule appl(fib(n),l) -> fib(appl(n,l)).
+
+
+proof ltnsm: forall n,(forall m,(N(n) => N(m) => lt(n,m) => lt(n,succ(m)))).
+intro. intro. intro. intro.
+focus h1. rule. supset(fLt(one(),S(m0)),fLt(one(),S(succ(m0)))).
+reduce.
+intros.
+rule.
+next.
+reduce. axiom.
+rule. reduce.
+
+pas fini
+
+
+
+
+proof plusmonoton: forall n,(forall m,(N(n) => N(m) => lt(0,n) => lt(0,m) => lt(0,n+m))).
+focus h1. rule. supset(fLt(S(0),one()),fLt(S(0),plus(one(),S(m0)))).
+reduce. intros.
+next.
+reduce. intros.
+rule. reduce.
+intros.
+
+pas fini
+
+
+
+proof fibmonoton: forall x,(forall y,(N(x) => N(y) => lt(x,y) => lt(fib(x),fib(y)))).
+intro.intro.intro.intro.
+focus h1. rule. supset(fLt(one(),S(y0)),fLt(fib(one()),fib(S(y0)))).
+next. reduce. axiom.
+reduce.
+focus h2. rule. supset(fLt(S(0),one()),fLt(fib(S(1)),fib(one()))).
+reduce. intros.
+next. next. 
+reduce. axiom.
+rule. reduce.
+
+*/
+
+
+
+
+
+

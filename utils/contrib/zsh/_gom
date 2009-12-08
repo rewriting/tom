@@ -1,0 +1,15 @@
+#compdef gom gom.src
+#
+
+_arguments -C -s \
+	'-X[Defines an alternate XML configuration file]:include path:_files -/' \
+	{-h,--help} \
+	{-V,--version}'[Print version]' \
+	{-v,--verbose}'[Set verbose mode on]' \
+	{-vv,--debug}'[Outputs more debug info]' \
+	{-i,--intermediate}'[Generate intermediate files]' \
+	{-W,--wall}'[Print all warnings]' \
+	{-I,--import}'[Path for included modules]:include path:_files -/' \
+	'*:gom file:_files -g "*.gom"'
+
+return 0

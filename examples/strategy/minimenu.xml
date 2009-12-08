@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu>
+ <section>
+  <title_fr>Actualités</title_fr>
+  <title_en>Events</title_en>
+  <link>events</link>
+  <subsection>
+   <title_fr>Archives</title_fr>
+   <title_en>Past</title_en>
+   <link>events_past</link>
+  </subsection>
+ </section>
+</menu>

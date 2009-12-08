@@ -1,0 +1,6 @@
+The kit is created using Inno Setup (http://www.jrsoftware.org/isinfo.php)
+
+To create a new install kit for TOM, just open the script file "tomInstallScript.iss" 
+with Inno IDE, modify it for the new version (the first 3 lines of the script give more 
+explanations) and click on the compile button. This will generate the new ".exe" file 
+for instaling TOM.

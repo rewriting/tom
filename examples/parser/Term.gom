@@ -1,0 +1,20 @@
+module parser.Term
+imports String int
+abstract syntax
+
+UId = Uid( uid:String, name:String )
+
+Node = Node( id:UId, pList:Ports )
+Nodes = NList( Node* )
+
+State = B() | V() | H()
+Port = Port( name:String, neighlist:Neighbours, state:State )
+Ports = PList( Port* )
+
+Neighbour = Neighbour( node:Node, ports:Ports )
+Neighbours = NeighList( Neighbour* )
+
+Structure = Struct( Nodes* )	
+
+NodeSubstitution = NodeSubstitution( before:Node, after:Nodes)
+NodeSubstitutions = NodeSubstitutionList( NodeSubstitution* )

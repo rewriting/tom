@@ -1,0 +1,15 @@
+TomTypeAlias : ClassDecl ::= ConcreteTypeAccess:Access TomTypeAliasBody:BodyDecl* /BodyDecl*/;
+BackQuoteExpr : Expr ::= Expr;
+
+MethodMappings : BodyDecl ::= MethodDecl*;
+
+MethodMapping : MethodDecl;
+MakeMapping : MethodMapping ::= <ConstructorName:String> TomTypedParameter:ParameterDeclaration*;
+TomParameter : ParameterDeclaration;
+GetSlotMapping : MethodMapping ::= <SlotName:String> TomTypedParameter:ParameterDeclaration*;
+
+OperatorMapping : BodyDecl ::= Access <Name:String> TomTypedParameter:ParameterDeclaration*;
+
+MatchStmt : Stmt ::= [TypeAccess:Access] Expr Rule*;
+
+Rule ::= Expr Stmt;

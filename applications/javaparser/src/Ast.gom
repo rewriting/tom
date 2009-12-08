@@ -1,0 +1,367 @@
+module parser.Ast
+
+imports int String
+
+abstract syntax
+
+/* 
+ * Names in conflict with keywords used followed by a '_':
+ *
+ * Sorts names:
+ *  - Boolean
+ *  - Super
+ *
+ * Operator names:
+ * - Try
+ *
+ * Slots names:
+ * - class
+ * - else
+ * - extends
+ * - finally
+ * - if
+ * - implements
+ * - import
+ * - package
+ * - super
+ *
+ */
+
+CompilationUnit = CompilationUnit( annotations:AnnotationList, package_:QualifiedName, import_:ImportList, types:TypeDeclList )
+
+ImportList = ImportList( Import_* )
+
+Import_ = Import( name:QualifiedName, modifier:Modifier, wholepackage:Boolean_ )
+
+TypeDeclList = TypeDeclList( TypeDecl* )
+
+TypeDeclList:make_insert(h, t) {
+  %match (h) {
+    EmptyTypeDecl() -> { return t; }
+  }
+}
+
+TypeDecl =
+ | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, extends_:Type, implements_:TypeList, classbody:Body )
+ | EnumClass      ( name:String, modifiers:ModifierList, implements_:TypeList, enumbody:EnumBody )
+ | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:Body )
+ | AnnotationType ( name:String, modifiers:ModifierList, annotationbody:AnnotationTypeBody )
+ | EmptyTypeDecl()
+
+ModifierList = ModifierList( Modifier* )
+
+ModifierList:make_insert(h, t) {
+  %match (h) {
+    EmptyModifier() -> { return t; }
+  }
+}
+
+TypeParameterList = TypeParameterList( TypeParameter* )
+
+TypeParameter = TypeParameter( name:String, extends_:TypeList )
+
+EnumBody = EnumBody( constants:EnumConstantList, bodydecls:Body )
+
+EnumConstantList = EnumConstantList( EnumConstant* )
+
+EnumConstant = EnumConstant( name:String, annotations:AnnotationList, arguments:ExpressionList, classbody:Body )
+
+TypeList = TypeList( Type* )
+
+Body = BodyDeclList( BodyDecl* )
+
+BodyDeclList:make_insert(h, t) {
+  %match (h) {
+    EmptyBodyDecl() -> { return t; }
+  }
+}
+
+BodyDecl =
+ | BlockToBodyDecl( block:Block, modifier:Modifier )
+ | FieldDecl( modifiers:ModifierList, decls:VariableDeclList )
+ | MethodDecl( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
+ | ConstructorDecl( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
+ | TypeDeclToBodyDecl( decl:TypeDecl )
+ | EmptyBodyDecl()
+
+VariableDeclList = VariableDeclList( VariableDecl* )
+
+VariableDecl = VariableDecl( type:Type, name:String, initializer:VariableInitializer )
+
+VariableInitializer =
+ | ArrayInitializer( VariableInitializer* )
+ | ExpressionToVariableInitializer( value:Expression )
+ | EmptyVariableInitializer()
+
+Modifier =
+ | AnnotationToModifier( annotation:Annotation )
+ | Public()
+ | Protected()
+ | Private()
+ | Abstract()
+ | Static()
+ | Final()
+ | StrictFP()
+ | Native()
+ | Synchronized()
+ | Transient()
+ | Volatile()
+ | EmptyModifier()
+
+Type =
+ | ArrayType           ( type:Type, dimensions:int )
+ | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
+ | Boolean()
+ | Char()
+ | Byte()
+ | Short()
+ | Int()
+ | Long()
+ | Float()
+ | Double()
+ | Void()
+
+ClassOrInterfaceType =
+ | IndependentType( name:String, arguments:TypeArgumentList )
+ | NestedType( outername:String, outerarguments:TypeArgumentList, innertype:ClassOrInterfaceType )
+
+TypeArgumentList = TypeArgumentList( TypeArgument* )
+
+TypeArgument =
+ | ExplicitTypeArgument( type:Type )
+ | ExtendTypeArgument( type:Type )
+ | SuperTypeArgument( type:Type )
+ | WildCardTypeArgument()
+
+QualifiedNameList = QualifiedNameList( QualifiedName* )
+
+FormalParameterDeclList = FormalParameterDeclList( FormalParameterDecl* )
+
+FormalParameterDecl = FormalParameterDecl( modifiers:ModifierList, type:Type, name:String, variablenumber:Boolean_ )
+
+ConstructorBody = ConstructorBody( constructorinvocation:ExplicitConstructorInvocation, block:Block )
+
+ExplicitConstructorInvocation =
+ | ThisInvocation        ( typearguments:TypeList, argument:ExpressionList )
+ | SuperInvocation       ( typearguments:TypeList, argument:ExpressionList )
+ | PrimarySuperInvocation( primary:Primary, typearguments:TypeList, argument:ExpressionList )
+ | EmptyExplicitConstructorInvocation()
+
+QualifiedName =
+ | QualifiedName( String* )
+
+Boolean_ =
+ | True()
+ | False()
+
+// ANNOTATIONS
+
+AnnotationList = AnnotationList( Annotation* )
+
+Annotation =
+ | Element( name:QualifiedName, value:ElementValue )
+ | Pairs( name:QualifiedName, pairs:ElementValuePairList )
+ | NameToAnnotation( name:QualifiedName )
+
+ElementValuePairList = ElementValuePairList( ElementValuePair* )
+
+ElementValuePair = ElementValuePair( name:String, value:ElementValue )
+
+ElementValue =
+ | ExpressionToElementValue( expression:Expression )
+ | AnnotationToElementValue( annotation:Annotation )
+ | ElementValueArrayInitializer( ElementValue* )
+ | EmptyElementValue()
+
+AnnotationTypeBody = AnnotationTypeBody( AnnotationTypeElementDecl* )
+
+AnnotationTypeElementDecl =
+ | AnnotationMethod  ( modifiers:ModifierList, type:Type, name:String, defaultvalue:ElementValue )
+ | AnnotationConstant( modifiers:ModifierList, type:Type, decls:VariableDeclList )
+ | TypeDeclToAnnotationElement( decl:TypeDecl )
+
+// STATEMENTS / BLOCKS
+
+Block = BlockStatementList( BlockStatement* )
+
+BlockStatementList:make_insert(h, t) {
+  %match (h) {
+    Statement(EmptyStatement()) -> { return t; }
+  }
+}
+
+BlockStatement =
+ | FieldDeclToBlockStatement( fielddecl:BodyDecl )
+ | TypeDeclToBlockStatement( typedecl:TypeDecl )
+ | Statement( statement:Statement )
+
+Statement =
+ | BlockToStatement( block:Block )
+ | Assert( expression:Expression, value:Expression )
+ | If( test:Expression, then:Statement, else_:Statement )
+ | For    ( control:ForControl, statementbody:Statement )
+ | While  ( test:Expression, statementbody:Statement )
+ | DoWhile( statementbody:Statement, test:Expression )
+ | TryCatchFinally( blockbody:Block, catches:CatchClauseList, finally_:Block )
+ | Switch( expression:Expression, groups:SwitchBlockStatementGroupList )
+ | SynchronizedStatement( object:Expression, blockbody:Block )
+ | Return( result:Expression )
+ | Throw ( exception:Expression )
+ | Break   ( label:String )
+ | Continue( label:String )
+ | EmptyStatement()
+ | ExpressionToStatement( expression:Expression )
+ | Label( name:String, statementbody:Statement )
+
+CatchClauseList = CatchClauseList( CatchClause* )
+
+CatchClause = CatchClause( parameter:FormalParameter, body:Block )
+
+FormalParameter = FormalParameter( modifiers:ModifierList, type:Type, name:String )
+
+SwitchBlockStatementGroupList = SwitchBlockStatementGroupList( SwitchBlockStatementGroup* )
+
+SwitchBlockStatementGroup = SwitchBlockStatementGroup( labels:SwitchLabelList, body:Block )
+
+SwitchLabelList = SwitchLabelList( SwitchLabel* )
+
+SwitchLabel =
+ | ConstantExpressionToSwitchLabel( expression:Expression )
+ | EnumConstantNameToSwitchLabel  ( name:String )
+ | Default()
+
+ForControl =
+ | EnhancedForControl( modifiers:ModifierList, type:Type, variable:String, items:Expression )
+ | StandardForControl( init:ForInit, test:Expression, update:ExpressionList )
+
+ForInit =
+ | FieldDeclToForInit( decl:BodyDecl )
+ | ExpressionListToForInit( Expression* )
+ | EmptyForInit()
+
+// EXPRESSIONS
+
+ExpressionList = ExpressionList( Expression* )
+
+ExpressionList:make_insert(h, t) {
+  %match (h) {
+    EmptyExpression() -> { return t; }
+  }
+}
+
+Expression =
+ | Assignment( bop:AssignmentOperator, lhs:Expression, rhs:Expression )
+ | ConditionalExpression( if_:Expression, then:Expression, else_:Expression )
+ | AssociativeOperation( nop:AssociativeOperator, operands:ExpressionList )
+ | InstanceOf( expression:Expression, type:Type )
+ | UnaryOperation( uop:UnaryOperator, operand:Expression )
+ | TypeCast( casttype:Type, expression:Expression )
+ | ExpressionCast( castexpression:Expression, expression:Expression ) // semantics ?
+ | Primary( primary:Primary, selectors:SuffixList )
+ | EmptyExpression()
+ | Cons( nop:AssociativeOperator, lhs:Expression, rhs:Expression )
+ | BinaryAnd( lhs:Expression, rhs:Expression )
+ | BinaryEqual( lhs:Expression, rhs:Expression )
+ | BinaryNotEqual( lhs:Expression, rhs:Expression )
+ | BinaryPlus( lhs:Expression, rhs:Expression )
+ | BinaryMinus( lhs:Expression, rhs:Expression )
+ | BinaryMult( lhs:Expression, rhs:Expression )
+ | BinaryDiv( lhs:Expression, rhs:Expression )
+ | BinaryModulo( lhs:Expression, rhs:Expression )
+
+AssociativeOperation:make(op, ops) {
+  %match(ExpressionList ops) {
+    ExpressionList(e) -> { return `e; }
+  }
+  realMake(op, ops);
+}
+
+AssignmentOperator =
+ | Assign()
+ | PlusAssign ()
+ | MinusAssign()
+ | TimesAssign()
+ | DivAssign  ()
+ | AndAssign  ()
+ | OrAssign   ()
+ | XOrAssign  ()
+ | ModAssign  ()
+ | LeftShiftAssign         ()
+ | UnsignedRightShiftAssign()
+ | SignedRightShiftAssign  ()
+
+AssociativeOperator =
+ | ConditionalOr ()
+ | ConditionalAnd()
+ | InclusiveOr   ()
+ | ExclusiveOr   ()
+ | And           ()
+ | Equal   ()
+ | NotEqual()
+ | LowerOrEqual  ()
+ | GreaterOrEqual()
+ | Lower         ()
+ | Greater       ()
+ | LeftShift         ()
+ | UnsignedRightShift()
+ | SignedRightShift  ()
+ | Plus ()
+ | Minus()
+ | Times()
+ | Div  ()
+ | Mod  ()
+
+UnaryOperator =
+ | UPlus ()
+ | UMinus()
+ | PreInc ()
+ | PreDec ()
+ | PostInc()
+ | PostDec()
+ | BitwiseNot()
+ | LogicalNot()
+
+Primary =
+ | ExpressionToPrimary( expression:Expression )
+ | This( nested:QualifiedName, suffix:Suffix )
+ | Super( super_:Super_ )
+ | HexLiteral          ( stringvalue:String )
+ | OctalLiteral        ( stringvalue:String )
+ | DecimalLiteral      ( stringvalue:String )
+ | FloatingPointLiteral( stringvalue:String )
+ | CharacterLiteral    ( stringvalue:String )
+ | StringLiteral       ( stringvalue:String )
+ | BooleanLiteral      ( booleanvalue:Boolean_ )
+ | Null                ()
+ | ClassCreator              ( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )
+ | InitializedArrayCreator   ( type:Type, initializer:VariableInitializer )
+ | NonInitializedArrayCreator( fixedlengths:ExpressionList, nonfixeddimensions:int )
+ | QualifiedNameToPrimary( name:QualifiedName, suffix:Suffix )
+ | Class( type:Type )
+
+SuffixList = SuffixList( Suffix* )
+
+SuffixList:make_insert(h, t) {
+  %match (h) {
+    EmptySuffix() -> { return t; }
+  }
+}
+
+// "identifierSuffix" and "selector" included
+
+Suffix =
+ | ArrayClassSuffix( dimension:int )
+ | ArgumentsSuffix( arguments:ExpressionList )
+ | VariableAccessSuffix( name:String )
+ | CallSuffix( method:String, arguments:ExpressionList )
+ | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
+ | ThisSuffix()
+ | SuperSuffix( super_:Super_ )
+ | InnerCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )
+ | ArrayIndexSuffix( position:ExpressionList )
+ | EmptySuffix()
+
+Super_ =
+ | SuperConstruction( arguments:ExpressionList )
+ | SuperVariableAccess( name:String )
+ | SuperCall( name:String, arguments:ExpressionList )

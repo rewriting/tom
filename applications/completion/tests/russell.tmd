@@ -1,0 +1,9 @@
+rules in(R.,R.) --> ALL y. (ALL x. in(y,x) => in(R.,x)) => (in(y,R.) => C) 
+
+tab C
+
+deep 1
+
+comp
+
+tab C

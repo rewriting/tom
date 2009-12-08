@@ -1,0 +1,48 @@
+
+%include { boolean.tom }
+
+%include { string.tom }
+
+%include { float.tom }
+
+%include { Long.tom }
+
+%typeterm MessageList {
+  implement { java.util.List }
+  is_sort(t) { t instanceof java.util.List }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%oparray MessageList messList(Message*) {
+  is_fsym(t) { t instanceof java.util.List  }
+  make_empty(n) { new java.util.ArrayList(n) }
+  make_append(e,l) { myAdd(e,(ArrayList)l)  }
+  get_element(l,n) { (Message)l.get(n)        }
+  get_size(l)      { l.size()                }
+}
+
+%typeterm Message {
+  implement { hello.Message }
+  is_sort(t) { t instanceof hello.Message }
+  equals(t1,t2) { t1.equals(t2) } 
+}
+
+%op Message Message(id:long, text:String, nextMessage: Message) {
+  is_fsym(t) { t instanceof hello.Message }
+  get_slot(text, t) { t.getText() }
+  get_slot(id, t) { t.getId() }
+  get_slot(nextMessage, t) { t.getNextMessage() }
+}
+
+private static Message makeMessage(Long id, String text, Message nextMess){
+	Message mes = new Message();
+	mes.setText(text);
+	mes.setId(id);
+	mes.setNextMessage(nextMess);
+	return mes;
+}
+
+private static ArrayList myAdd(Message e,ArrayList l) {
+  l.add(e);
+  return l;
+}

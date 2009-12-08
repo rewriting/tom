@@ -1,0 +1,345 @@
+Basic Demo of 15 minutes
+
+* use font size 18
+* start with a file Term.t:
+
+import term.term.types.*;
+class Term {
+
+  %gom {
+    module Term
+    imports String
+    abstract syntax
+
+    T = | a()
+        | b()
+        | c()
+        | f(x1:T, x2:T) 
+        | g(x1:T) 
+
+  }
+
+  public final static void main(String[] args) {
+    T s = `a();
+    System.out.println("s = " + s );  
+  }
+}
+
+* introduce %gom, backquote, and run it
+
+* replace `a() by `f(a(),g(b()))
+
+* introduce access by replacing s by s.getx1() in the print statement
+
+* matching can be used to retrieve information, add:
+%match(s) {
+  f(a(),x) -> { System.out.println("x = " + `x); }
+}
+
+* in addition, rewrite rule can be described, add in %gom:
+module Term:rules() {
+  f(a(),x) -> x
+}
+
+* run the code and explain that s is in normal form by construction
+  the %match does no longer matches
+
+* introduce associative operator: L = conc ( T* )
+
+* replace T s = ... by L s = `conc(a(),b(),c());
+
+* there is an error, explain the type inference of the %match
+
+* replace the pattern by conc(_*,x,_*) and explain non-unitary
+
+* explain that Tom can be used on any data-structure
+  in particular String can be seen as list of characters
+  
+* replace L s = ... by String s = "abc";
+
+* replace conc by concString
+
+* we can use Java operations: String s = "abc" + "a";
+
+* show that it matches again
+
+* introduce non-linearity: conc(_*,x,_*,x,_*)
+
+* end of the first part
+
+-------
+
+* switch to the file Strategy.t:
+import strategy.term.types.*;
+import java.util.*;
+import tom.library.sl.*;
+
+class Strategy {
+  %include { sl.tom }
+  %gom {
+    module Term
+    abstract syntax
+
+    T = | f(x1:T, x2:T) 
+        | g(x1:T) 
+        | a()
+        | b()
+        | c()
+  }
+
+  public final static void main(String[] args) {
+    T s = `a();
+
+    try {
+    
+      T result = (T) `ReplaceAB().visit(s); 
+      System.out.println("result = " + result);
+
+    } catch(VisitFailure e) {
+      System.out.println("failure on " + s);
+    }
+  }
+  
+  // Replace a by b
+  %strategy ReplaceAB() extends Fail() {
+    visit T {
+      a() -> { return `b(); }
+    }
+  }
+}
+
+* introduce the notion of labeled rule: ReplaceAB
+
+* show that it should be explicitly applied, run it
+
+* replace s = `a() by s = `g(a())
+
+* run and explain the failure
+
+* introduce OnceBottomUp(ReplaceAB())
+
+* replace g(a()) by f(a(),g(a()))
+
+* introduce Repeat(OnceBottomUp(ReplaceAB()))
+
+* add a new rule b -> c
+
+----
+
+* Optionnal:
+  presented basic.tom and composed.tom
+  show the behavior of One and All 
+  show the code for OnceBottomUp
+  
+* add a new strategy:
+
+  %strategy Collect(c:Collection) extends Identity() {
+    visit T {
+      g(x) -> { c.add(`x); }
+    }
+  }
+
+* and:
+      t = `f(g(a()),g(b()));
+      Collection bag = new HashSet();
+      `TopDown(Collect(bag)).visitLight(t);
+      System.out.println("bag = " + bag);
+  
+  ----
+* switch to Optimizer.t
+
+import optimizer.term.types.*;
+import java.util.*;
+import tom.library.sl.*;
+
+class Optimizer {
+  %include { sl.tom }
+  %include { java/util/types/Collection.tom }
+
+  %gom {
+    module Term
+    imports int String
+    abstract syntax
+    Bool =
+         | True()
+         | False()
+         | Eq(e1:Expr, e2:Expr)
+         | Symb(name:String)
+
+    Expr = 
+         | Var(name:String) 
+         | Let(var:Expr, e:Expr, body:Expr) 
+         | If(cond:Bool, e1:Expr, e2:Expr)
+         | a()
+         | b()
+         | Seq( Expr* )
+         | Nop()
+         | Sub(n:int)
+         | Code1() | Code2() | Code3()
+
+    module Term:rules() {
+      Seq(Nop(),x) -> x
+      Seq(x,Nop()) -> x
+    }
+  }
+
+  public final static void main(String[] args) {
+    try {
+      Expr prg;
+      // f(x,b) -> a()
+      Expr pattern1 = `If(Symb("f"),Let(Var("x"),Sub(1),If(Symb("b"),Code1(),Nop())),Nop());
+      // g(b) -> b()
+      Expr pattern2 = `If(Symb("g"),If(Symb("b"),Code2(),Nop()),Nop());
+      // f(a,b) -> c()
+      Expr pattern3 = `If(Symb("f"),If(Symb("a"),If(Symb("b"),Code3(),Nop()),Nop()),Nop());
+
+      prg = `pattern1;
+      System.out.println("prg = " + prg);
+      prg = (Expr) `TopDown(RenameVar("x","z")).visitLight(prg);
+      System.out.println("renaming = " + prg);
+
+      //Collection bag = new HashSet();
+      //`TopDown(CollectVar(bag)).visitLight(prg);
+      //System.out.println("bag = " + bag);
+      //System.out.println("prg = " + pretty(prg));
+      //System.out.println("use x = " + use("x",prg));
+           
+      //prg = `Seq(pattern1, pattern2, pattern3);
+      //prg = (Expr) `TopDown(RemoveLet()).visitLight(prg);
+      //prg = (Expr) `TopDown(Permutation()).visitLight(prg);
+      //prg = (Expr) `TopDown(IfFusion()).visitLight(prg);
+	  //prg = (Expr) `TopDown(Interleaving()).visitLight(prg);
+      System.out.println("new prg =\n" + pretty(prg));
+      
+    } catch(VisitFailure e) {
+      System.out.println("failure");
+    }
+  }
+  
+   // Renaming
+  %strategy RenameVar(n1:String,n2:String) extends Identity() {
+    visit Expr {
+      Var(n) -> { if(`n==n1) return `Var(n2); }
+    }
+  }
+
+  // Collect variable
+  %strategy CollectVar(c:Collection) extends Identity() {
+    visit Expr {
+      Var(n) -> { c.add(`n); }
+    }
+  }
+
+  private static int use(String varName, Expr body) {  
+    try {
+      Collection<String> bag = new ArrayList();
+      `TopDown(CollectVar(bag)).visitLight(body);
+      int nb = 0;
+      for(String x:bag) {
+        if(x==varName) nb++;
+      }
+      System.out.println("collected var = " + bag);
+      return nb;
+    } catch(VisitFailure e) {
+      System.out.println("failure on " + body);
+    }
+    return -1;
+  }
+
+  // Optimize
+  %strategy RemoveLet() extends Identity() {
+    visit Expr {
+      Let(Var(n),expr,body) -> { 
+        if(use(`n,`body) == 0) {
+	      // if Var(n) is not used
+          return `body;
+	    }
+      }
+    }
+  }
+
+  /** LetFusion
+   *
+   *  Let(var,e1,b1) ; Let(var,e2,b2) -> Let(var,e1, b1;b2) IF e1~e2
+   */
+  %strategy LetFusion() extends Identity() {
+    visit Expr {
+      Seq(C1*,Let(var,expr1,body1),Let(var,expr2,body2),C2*) -> { 
+        if(equiv(`expr1,`expr2)) {
+          return `Seq(C1*,Let(var,expr1,Seq(body1,body2)),C2*);
+	    }
+      }
+    }
+  }
+
+ /** IfFusion
+   *
+   *  If(c1,t1,e1) ; If(c2,t2,e2) -> If(c1, t1;t2 , e1;e2) IF c1~c2
+   */
+  %strategy IfFusion() extends Identity() {
+    visit Expr {
+      Seq(C1*,If(cond1,then1,else1),If(cond2,then2,else2),C2*) -> { 
+        if(equivCond(`cond1,`cond2)) {
+          return `Seq(C1*,If(cond1,Seq(then1,then2),Seq(else1,else2)),C2*);
+	    }
+      }
+    }
+  }
+
+ /** Interleaving
+   *
+   *  If(c1,t1,e1) ; If(c2,t2,nop) -> If(c1, t1;nop , e1;If(c2,t2,nop)) IF c1!c2
+   */
+  %strategy Interleaving() extends Identity() {
+    visit Expr {
+      Seq(C1*,If(cond1,then1,else1),If(cond2,then2,Nop()),C2*) -> { 
+        if(!compatible(`cond1,`cond2)) {
+          return `Seq(C1*,If(cond1,Seq(then1,Nop()),Seq(else1,If(cond2,then2,Nop()))),C2*);
+	    }
+      }
+    }
+  }
+
+ /** Permutation
+   *
+   *  If(c1,t1,nop) ; If(c2,t2,nop) -> If(c2,t2,nop) ; If(c1,t1,nop) IF c1!c2
+   */
+  %strategy Permutation() extends Identity() {
+    visit Expr {
+      Seq(C1*,If(cond1,then1,Nop()),If(cond2,then2,Nop()),C2*) -> { 
+        if(!compatible(`cond1,`cond2)) {
+          return `Seq(C1*,If(cond2,then2,Nop()),If(cond1,then1,Nop()),C2*);
+	    }
+      }
+    }
+  }
+
+  private static boolean equiv(Expr e1, Expr e2) { return e1==e2; }
+  private static boolean equivCond(Bool c1, Bool c2) { return c1==c2; }
+  private static boolean compatible(Bool c1, Bool c2) { return c1==c2; }
+
+  public static String pretty(Object e) { return pretty(0,e); }
+  public static String pretty(int indent, Object e) {
+    String w = "";
+    for(int i=0;i<indent;i++) w+="  ";
+    %match(e) { 
+      Var(name) -> { return `name; }
+      Nop() -> { return "nop"; }
+      Let(var,expr,body) -> { return w+"let " + pretty(`var) +
+                                     " <- " + pretty(`expr) + 
+                                     " in\n" + pretty(indent+1,`body); }
+      If(c,t,Nop()) -> { return w+"if " + pretty(`c) + " then\n" + pretty(indent+1,`t) + "\n"+w+"endif"; }
+      If(c,t,e) -> { return w+"if " + pretty(`c) + " then\n" + pretty(indent+1,`t) + 
+                       "\n"+w+"else\n" + pretty(indent+1,`e) + 
+                       "\n"+w+"endif"; }
+      
+      Seq(x*) -> { String s=""; while(!`x.isEmptySeq()) { s+=pretty(indent,`x.getHeadSeq())+";\n"; `x=`x.getTailSeq(); } return s;  }
+    } 
+    %match(e) {
+      Symb(name) -> { return "'" + `name + "'"; }
+    } 
+    return w+e.toString();
+  }
+ 
+}
+  

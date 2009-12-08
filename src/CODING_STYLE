@@ -1,0 +1,19 @@
+* use Java coding conventions
+
+* do not use abbreviations in names (variables, functions, files, etc.)
+
+* always use braces:
+  if(c) {
+    then part
+  } else {
+    else part
+  }
+
+* use space between ')' and '{':
+  %match(s) {
+    p -> { ... }
+  }
+
+* use 2 spaces (not tabulation) for indenting
+
+* TO BE COMPLETED -- PLEASE CONTRIBUTE

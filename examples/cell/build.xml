@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the cell example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="cell"/>
+  <target name="build" depends="common.build">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

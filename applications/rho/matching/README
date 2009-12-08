@@ -1,0 +1,1 @@
+This is an implementation of the higher-order matching modulo super-developments in the (untyped) lambda-calculus. The main ideas of this work come from G. Sittampalam's Ph.D. but is presented here in a new fashion (using transformation rules).

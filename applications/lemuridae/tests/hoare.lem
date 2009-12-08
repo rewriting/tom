@@ -1,0 +1,291 @@
+/* ----- hoare logic -----*/
+
+rule Hoare(P,skip(),P) -> True.
+rule Hoare(P,seq(e1,e2),Q) -> exists R, Hoare(P,e1,R) /\ Hoare(R,e2,Q).
+rule Hoare(substitute(P,x,e),affect(x,e),Q) -> True.
+rule Hoare(P,while(b,s),and(not(raise(b)),P)) -> Hoare(and(P,raise(b)),s,P).
+rule Hoare(P1,s,Q) -> exists P, (eps(P1) => eps(P)) /\ Hoare(P,s,Q) .
+rule Hoare(P,s,Q1) -> exists Q, Hoare(P,s,Q) /\ (eps(Q) => eps(Q1)).
+
+/* ----- epsilon ---------*/
+
+proprule eps(not(p)) -> eps(p) => False.
+proprule eps(and(p1,p2)) -> eps(p1) /\ eps(p2).
+proprule eps(predappl(peq(),arg_cons(x,arg_cons(y,arg_nil())))) -> eq(x,y).
+proprule eps(predappl(plt(),arg_cons(x,arg_cons(y,arg_nil())))) -> lt(x,y).
+proprule eps(predappl(ple(),arg_cons(x,arg_cons(y,arg_nil())))) -> le(x,y).
+termrule raise(beq(x,y)) -> predappl(peq(),arg_cons(raise(x),arg_cons(raise(y),arg_nil()))).
+termrule raise(blt(x,y)) -> predappl(plt(),arg_cons(raise(x),arg_cons(raise(y),arg_nil()))).
+termrule raise(ble(x,y)) -> predappl(ple(),arg_cons(raise(x),arg_cons(raise(y),arg_nil()))).
+termrule raise(band(x,y)) -> and(raise(x),raise(y)).
+termrule raise(bnot(x)) -> not(raise(x)).
+termrule raise(var(x)) -> var(x).
+termrule raise(succ(x)) -> succ(raise(x)).
+termrule raise(0) -> 0.
+
+/* ----- substitution -----*/
+
+termrule substitute(predappl(p,l),x,e) -> predappl(p,substitute(l,x,e)).
+termrule substitute(not(p),x,e) -> not(substitute(p,x,e)).
+termrule substitute(and(a,b),x,e) -> and(substitute(a,x,e),substitute(b,x,e)).
+termrule substitute(raise(b),x,e) -> raise(substitute(b,x,e)).
+
+termrule substitute(beq(e1,e2),x,e) -> beq(substitute(e1,x,e),substitute(e2,x,e)).
+termrule substitute(bnot(p),x,e) -> bnot(substitute(p,x,e)).
+termrule substitute(band(a,b),x,e) -> band(substitute(a,x,e),substitute(b,x,e)).
+
+// ici on ne respecte pas la signature mais zut...
+termrule substitute(var(v),var(x),e) -> if_then_else(dec_eq(v,x),e,v).
+termrule substitute(succ(n),x,e) -> succ(n).
+termrule substitute(0,x,e) -> 0.
+termrule substitute(plus(e1,e2),x,e) -> plus(substitute(e1,x,e),substitute(e2,x,e)).
+termrule substitute(mult(e1,e2),x,e) -> mult(substitute(e1,x,e),substitute(e2,x,e)).
+
+termrule substitute(arg_cons(h,t),x,e) -> arg_cons(substitute(h,x,e),substitute(t,x,e)).
+termrule substitute(arg_nil(),x,e) -> arg_nil().
+
+/* ----- if then else ----*/
+
+termrule if_then_else(true(),a,b) -> a.
+termrule if_then_else(false(),a,b) -> b.
+
+/* ----- decidable equality ----- */
+
+termrule dec_eq(x(),x()) -> true().
+termrule dec_eq(x(),y()) -> false().
+termrule dec_eq(x(),z()) -> false().
+termrule dec_eq(y(),x()) -> false().
+termrule dec_eq(y(),y()) -> true().
+termrule dec_eq(y(),z()) -> false().
+termrule dec_eq(z(),x()) -> false().
+termrule dec_eq(z(),y()) -> false().
+termrule dec_eq(z(),z()) -> true().
+
+/* ----- arithmetic ----- */
+
+termrule 0 + y -> y.
+termrule succ(x)+y -> succ(x+y).
+termrule 0 * y -> 0.
+termrule succ(x) * y -> x * y + y.
+
+proprule eq(0,0) -> True.
+proprule eq(0,succ(x)) -> False.
+proprule eq(succ(x),0) -> False.
+proprule eq(succ(x),succ(y)) -> eq(x,y).
+
+proprule lt(0,succ(x)) -> True.
+proprule lt(x,0) -> False.
+proprule lt(succ(x),succ(y)) -> lt(x,y).
+
+proprule le(0,x) -> True.
+proprule le(succ(x),0) -> False.
+proprule le(succ(x),succ(y)) -> le(x,y).
+
+/* --- induction sur les entiers et egalite de leibniz --- */
+rule eq(x,y) -> forall P, in(cons(y,nil()),P) => in(cons(x,nil()),P).
+rule nat(n) -> forall P, in(cons(0,nil()),P) => (forall y, nat(y) => in(cons(y,nil()),P) => in(cons(succ(y),nil()),P) ) => in(cons(n,nil()),P) .
+nat_rec.
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
+
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+proprule in(l,fLt(t1,t2)) -> lt( appl(t1,l), appl(t2,l) ).
+proprule in(l,fLe(t1,t2)) -> le( appl(t1,l), appl(t2,l) ).
+proprule in(l,fnat(t)) -> nat(appl(t,l)).
+
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+
+
+/* ------- lemmes utiles ------ */
+
+
+proof rew11: forall x, nat(x) => nat(succ(x)).
+intros.
+rule.
+focus h2. showrules.
+rule. x0.
+axiom.
+focus h3. rule. P0.
+axiom.
+axiom.
+axiom.
+axiom.
+
+// peut-on trouver un invariant plus simple ??
+proof rew12: forall x, nat(succ(x)) => nat(x).
+intros.
+focus h1. rule. union( P(inter(fEq(S(one()),succ(one())),fnat(one()))) , fNull(one()) ).
+reduce.
+next.
+reduce.
+intros.
+focus c2. rule.
+next.
+rule.
+reduce.
+intros.
+intro. y0.
+intros.
+rule. axiom.
+intro. succ(n0).
+intros.
+focus h2. rule. fEq(S(succ(n0)),one()).
+reduce.
+focus h1.
+rule. fnat(one()).
+reduce.
+axiom.
+reduce.
+axiom.
+reduce.
+rule. axiom.
+focus h1.
+intros.
+focus h1. rule.
+focus h1. rule. fnat(one()).
+reduce.
+axiom.
+reduce. axiom.
+
+proof rew1 : forall x, nat(succ(x)) <=> nat(x).
+intro.
+theorem rew11. theorem rew12.
+focus h1. intro. x0.
+focus h2. intro. x0.
+intros.
+
+// on transforme ca en la regle nat(succ(x)) -> nat(x)
+proprule rew1.
+
+proof rew2 : forall x, nat(0) <=> True.
+intros.
+rule. axiom.
+
+// on transforme ca en la regle nat(0) -> True
+proprule rew2.
+
+proof l1: forall x y, nat(x) => nat(y) => lt(x,succ(y)) => le(x,y).
+intro. intro. intro.
+focus h1. rule. C(supset(fnat(one()),supset(fLt(S(one()),succ(one())), fLe(S(one()),one())))).
+reduce.
+focus h1. intro. y0.
+intros.
+next.
+autoreduce.
+rule.
+reduce.
+intro. intro.
+focus h4. rule. supset(fLt(S(y1),one()), fLe(S(succ(y1)),one())).
+reduce. axiom.
+next.
+autoreduce.
+rule.
+reduce.
+focus h4. intro. y2. intros.
+
+
+proof l2: forall x y, nat(x) => nat(y) => le(x,y) => (lt(x,y) \/ eq(x,y)).
+intro. intro. intro. intro.
+focus h1. rule. C(supset(fnat(one()),supset(fLe(S(one()),one()), union(fLt(S(one()),one()),fEq(S(one()),one()))))).
+reduce.
+focus h1. intro. y0.
+intros.
+next.
+reduce.
+intro. intro. intro.
+focus h3.
+rule. union(fLt(S(0),one()),fEq(S(0),one())).
+reduce. axiom.
+next.next.
+reduce.
+intros.
+rule.
+reduce.intros.
+rule.
+reduce.
+intro. intro.
+focus h5.
+rule. supset(fLe(S(succ(y1)),one()), union(fLt(S(succ(y1)),one()),fEq(S(succ(y1)),one()))).
+reduce.
+axiom.
+next.
+reduce.
+intros.
+rule.
+reduce.
+focus h4. intro. y2. intros.
+
+
+/* ----- lemme 1 :  {x=1} x := 1+x {x=2}  ----- */
+
+termrule X() -> var(x()).
+termrule myeq(x,y) -> predappl(peq(),arg_cons(x,arg_cons(y,arg_nil()))).
+
+proof lemm1 : Hoare(myeq(X(),1),affect(X(),1+X()),myeq(X(),2)).
+rule 8. substitute(myeq(X(), 2),X(),1+X()).
+rule 4.
+reduce.
+axiom.
+
+
+/* ----- lemme 2 :  {x=1} while x != 3 do x := 1+x done {x=3}  ----- */
+
+termrule p_1(x,y) -> predappl(ple(),arg_cons(x,arg_cons(y,arg_nil()))).
+
+
+proof lemm2 : nat(X()) => Hoare(myeq(X(),1),while(blt(X(),3),affect(X(),1+X())),myeq(X(),3)).
+intro.
+showrules. rule 8. p_1(X(),3).
+rule 10. and(not(raise(blt(X(),3))),p_1(X(),3)).
+next.next.
+showrules.
+focus c2. remove.
+focus c2. remove.
+rule 6.
+showrules.
+rule 8. substitute(p_1(X(),3),X(),1+X()).
+focus c2. remove.
+showrules.
+rule 4.
+focus c2. remove.
+reduce.
+next.
+reduce.
+focus h1. 
+showrules.
+rule. fLe(one(),S(3)).
+reduce.
+axiom.
+reduce.
+intro.
+focus h1. intro.
+focus h1. remove.
+focus h2.
+theorem l1.
+focus h3. intro. X().
+focus h3. intro. 2.
+reduce.
+intros.
+reduce.
+intros.
+focus c3. remove. focus c3. remove.
+theorem l2.
+focus h3. intro. X(). focus h3. intro. 3.
+reduce.
+intros.
+
+

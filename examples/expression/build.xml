@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the expression example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="expression"/>
+  <target name="build" depends="init">
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}"
+                import="${tom.home}/share/jtom --lazyType"
+                options="--lazyType">
+      <include name="${example}/**/Record.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
+      <include name="${example}/**/RecordStrict.t"/>
+    </tom.preset>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

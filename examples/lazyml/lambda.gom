@@ -1,0 +1,120 @@
+module lambda
+imports int char String
+abstract syntax
+
+/* pure calculus */
+
+atom LVar
+atom TVar
+
+LType = Atom(n:String)
+      | Arrow(t1:LType,t2:LType)
+      | TypeVar(a:TVar)
+      | Forall(fa:<Fa>)
+      | TyConstr(c:String,tys:TyList)
+
+TyList = TyList(LType*)
+
+Fa binds TVar = Fa(a:TVar, inner ty:LType)
+
+LTerm = App(t1:LTerm,t2:LTerm)
+      | Abs(a:<Lam>)
+      | Let(b:<Letin>)
+      | Fix(c:<Fixpoint>)
+      | Var(x:LVar)
+      | Constr(f:String, children:LTermList)
+      | Case(subject:LTerm,rules:Rules)
+      | Lit(i:int)
+      | Str(s:String)
+      | Chr(ch:char)
+      | PrimFun(f:String,children:LTermList)
+      | Error(s:String)
+
+Rules = RList(<Clause>*)
+
+Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
+
+Pattern binds LVar = PFun(neutral f:String, children:PatternList)
+                   | PVar(x:LVar)
+
+LTermList = LTList(LTerm*) 
+
+PatternList binds LVar = PList(Pattern*)
+
+Lam binds LVar = lam(x:LVar, inner t:LTerm)
+Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
+			Fixpoint binds LVar = fixpoint(x:LVar, inner t:LTerm)
+
+/* typed version */
+
+FTerm = FApp(t1:FTerm,t2:FTerm)
+      | FTApp(t:FTerm,ty:LType)
+      | FAbs(a:<FLam>)
+      | FTAbs(b:<FTLam>)
+      | FFix(c:<FFixpoint>)
+      | FVar(x:LVar)
+      | FConstr(f:String,tys:TyList,children:FTermList)
+      | FCase(subject:FTerm,rules:FRules)
+      | FLet(let:<FLetin>)
+      | FLit(i:int)
+      | FChr(ch:char)
+      | FStr(s:String)
+      | FPrimFun(f:String,children:FTermList)
+      | FError(s:String)
+
+FTermList = FTermList(FTerm*) 
+FRules = FRList(<FClause>*)
+FClause binds LVar = FRule(p:FPattern, inner t:FTerm) 
+FPattern binds LVar = FPFun(neutral f:String, children:FPVarList)
+                    | FDefault()
+FPVarList binds LVar = FPVarList(FPVar*)
+FPVar binds LVar = FPVar(v:LVar, neutral t:LType)
+
+FLam binds LVar = FLam(x:LVar, neutral ty:LType, inner t:FTerm)
+FTLam binds TVar = FTLam(a:TVar, inner t:FTerm)
+FLetin binds LVar = FLetin(x:LVar, neutral ty:LType, outer u:FTerm, inner t:FTerm)
+FFixpoint binds LVar = FFixpoint(x:LVar, neutral ty:LType, inner t:FTerm)
+
+
+/* type reconstruction */
+TVarList = TVarList(TVar*)
+instanciateForallsResult = Pair4(vs:TVarList, res:LType)
+Constraint = Constraint(ty1:LType,ty2:LType)
+ConstraintList = CList(Constraint*)
+ReconResult = RR(t:FTerm,ty:LType,cl:ConstraintList)
+TypeOfResult = Pair(t:FTerm,ty:LType)
+ReconChildrenResult = Pair2(tl:FTermList,cl:ConstraintList)
+ReconRulesResult = Triple(rls:FRules,ty:LType,cl:ConstraintList)
+ReconClauseResult = Pair3(c:FClause,cl:ConstraintList)
+ReconPatternResult = 
+  Quadruple(c:Context,p:FPattern,ty:LType,cl:ConstraintList)
+ReconPatternListResult = 
+  Triple2(c:Context,pl:FPVarList,cl:ConstraintList)
+Domain = Domain(LType*)
+Range = Range(ra:<Ra>)
+Ra binds TVar = Ra(vars:BVarList, inner dom:Domain, inner codom:LType)
+BVarList binds TVar = BVarList(TVar*)
+Jugement = Jugement(v:LVar,ty:LType)
+         | RangeOf(c:String,r:Range)
+Context = Context(Jugement*)
+Mapping = MapsTo(v:TVar,ty:LType)
+Substitution = MList(Mapping*)
+
+/* compilation */
+FixVars = FixVarList(LVar*)
+FrozenVars = FrozenVarList(String*)
+Lets = Lets(prelude:String,conclusion:FTerm)
+
+
+/* parsing */
+NameAndDomain = NameAndDomain(name:String,dom:Domain)
+
+/* unfolding */
+Equation = Equation(pl:PatternList,e:LTerm)
+Equations = Equations(Equation*)
+PVarList = PVarList(LVar*)
+Partition = Part(same:Equations,rem:Equations)
+CtorList = CtorList(String*)
+
+/* utils */
+LVarList = LVarList(LVar*)

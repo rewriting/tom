@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <property environment="env"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <import file="${tom.common.path}/tom-common.xml"/>
+
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
+  <!-- some used directory location -->
+  <property name="bench.dir"   location="."/>
+
+  <property name="bench.lib"   value="lib"/>
+
+  <!-- where the bench a build: javac destDir -->
+  <property name="bench.gen"   location="gen"/>
+  <property name="bench.build" location="build"/>
+
+  <target name="init" depends="tom.init">
+    <!-- to have something correct, check tom.home is defined to something meaningful
+    <fail unless="TOM_HOME"
+          message="TOM_HOME has to be defined in your environment, 
+          to find the Tom classes"/>-->
+    <mkdir dir="${bench.build}"/>
+    <mkdir dir="${bench.gen}"/>
+    <path id="tom.bench.classpath">
+      <fileset dir="${bench.dir}/${bench.lib}">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${tom.classpath}"/>
+    </path>
+
+    <macrodef name="tomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <tom.preset srcdir="${bench.dir}"
+                    destdir="${bench.gen}">          
+          <include name="@{example}/**/*.t"/>
+          <exclude name="@{example}/**/*.g.t"/>
+        </tom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="adtcompile">
+      <attribute name="example"/>
+      <attribute name="factory"/>
+      <sequential>
+        <adt srcdir="${bench.dir}"
+             name="@{factory}" 
+             package="@{example}" 
+             visitable="${visitable}"
+             destdir="${bench.gen}">
+          <include name="@{example}/**/*.adt"/>
+        </adt>
+      </sequential>
+    </macrodef>
+    <macrodef name="vascompile">
+      <attribute name="example"/>
+      <sequential>
+        <vas config="${vasconfigfile}"
+             srcdir="${bench.dir}"
+             package="@{example}" 
+             destdir="${bench.gen}">
+          <include name="@{example}/**/*.vas"/>
+        </vas>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <gom.preset srcdir="${bench.dir}"
+                    package="@{example}" 
+                    destdir="${bench.gen}">
+          <include name="@{example}/**/*.gom"/>
+        </gom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="javacompile">
+      <attribute name="example"/>
+      <sequential>
+        <javac.preset destdir="${bench.build}">
+          <src path="${bench.dir}"/>
+          <src path="${bench.gen}"/>
+          <classpath refid="tom.bench.classpath"/>
+          <include name="@{example}/**/*.java"/>
+        </javac.preset>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="prepare.bench">
+    <!-- Things to do before build -->
+  </target>
+  
+  <!-- target debug to help finding properties problems -->
+  <target name="debug"> 
+    <echoproperties/>
+  </target>
+  
+  <target name="clean.bench" description="Cleans bench directory">
+    <delete dir="${bench.gen}"/>
+    <delete dir="${bench.build}"/>
+  </target>
+
+  <target name="clean.dist" description="Mr proper" depends="clean">
+    <delete dir="${bench.dist}"/>
+  </target>
+</project>

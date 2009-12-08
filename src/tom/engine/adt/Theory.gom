@@ -1,0 +1,10 @@
+module Theory
+abstract syntax
+ElementaryTheory =
+  | Syntactic()
+  | Associative()
+  | Unitary()
+  | AC()
+  | AU()
+
+Theory = concElementaryTheory(ElementaryTheory*)

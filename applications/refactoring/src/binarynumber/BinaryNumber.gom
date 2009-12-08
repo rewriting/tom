@@ -1,0 +1,21 @@
+module binarynumber.BinaryNumber
+imports String 
+abstract syntax
+
+BinaryNumber = IntegralNumber(IntegralPart:BitList)
+             | RationalNumber(IntegralPart:BitList,FractionalPart:BitList)
+
+BitList = SingularBitList(Bit:Bit)
+        | PluralBitList(BitList:BitList,Bit:Bit)
+
+Bit = Zero()
+    | OneB()
+
+module BinaryNumber : block() {
+
+  public double value;
+  public int scale;
+  public int length;
+
+
+}

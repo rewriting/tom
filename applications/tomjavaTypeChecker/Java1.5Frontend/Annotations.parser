@@ -1,0 +1,93 @@
+TypeDecl type_declaration =
+  annotation_type_declaration.i {:  return i;  :}
+  ;
+  
+BodyDecl interface_member_declaration =
+  annotation_type_declaration.i {:  return new MemberInterfaceDecl(i);  :}
+  ;
+
+BodyDecl class_member_declaration =
+  annotation_type_declaration.i {:  return new MemberInterfaceDecl(i);  :}
+  ;
+
+// a comment
+AnnotationDecl annotation_type_declaration =
+  modifiers.m? AT INTERFACE IDENTIFIER annotation_type_body.b 
+  {:  return new AnnotationDecl(new Modifiers(m), IDENTIFIER, b); :}
+  ;
+
+List annotation_type_body =
+  LBRACE annotation_type_element_declarations.i? RBRACE {: return i; :}
+  ;
+
+List annotation_type_element_declarations =
+     annotation_type_element_declaration.i {:  return new List().add(i); :}
+  |  annotation_type_element_declarations.l annotation_type_element_declaration.i {:  return l.add(i);  :};
+
+BodyDecl annotation_type_element_declaration =
+    modifiers.m? type.t IDENTIFIER LPAREN RPAREN default_value? SEMICOLON
+    {: return new AnnotationMethodDecl(new Modifiers(m), t, IDENTIFIER, new List(), new List(), new Opt(), default_value); :}
+  | constant_declaration
+  | class_declaration {: return new MemberClassDecl(class_declaration); :}
+  | interface_declaration {: return new MemberInterfaceDecl(interface_declaration); :}
+  | enum_declaration {: return new MemberClassDecl(enum_declaration); :}
+  | annotation_type_declaration {: return new MemberInterfaceDecl(annotation_type_declaration); :}
+  | SEMICOLON {: return new StaticInitializer(new Block()); :}
+  ;
+
+ElementValue default_value =
+  DEFAULT element_value {: return element_value; :}
+  ;
+
+
+Modifier modifier =
+  annotation
+  ;
+
+Annotation annotation =
+    normal_annotation
+  | marker_annotation
+  | single_element_annotation
+  ;
+
+Modifier normal_annotation =
+  AT type LPAREN element_value_pairs? RPAREN {: return new Annotation("annotation", type, element_value_pairs); :}
+  ;
+
+List element_value_pairs =
+    element_value_pair {: return new List().add(element_value_pair); :}
+  | element_value_pairs COMMA element_value_pair {: return element_value_pairs.add(element_value_pair); :}
+  ;
+
+ElementValuePair element_value_pair =
+  IDENTIFIER EQ element_value {: return new ElementValuePair(IDENTIFIER, element_value); :}
+  ;
+
+ElementValue element_value =
+  conditional_expression              {: return new ElementConstantValue(conditional_expression); :}
+  | annotation                        {: return new ElementAnnotationValue(annotation); :}
+  | element_value_array_initializer.e {: return e; :}
+  ;
+
+ElementArrayValue element_value_array_initializer =
+  LBRACE element_values? COMMA? RBRACE {: return new ElementArrayValue(element_values); :}
+  ;
+
+List element_values =
+    element_value {: return new List().add(element_value); :}
+  | element_values COMMA element_value {: return element_values.add(element_value); :}
+  ;
+  
+Modifier marker_annotation =
+  AT type {: return new Annotation("annotation", type, new List()); :}
+  ;
+  
+Modifier single_element_annotation =
+  AT type LPAREN element_value RPAREN {: return new Annotation("annotation", type, new List().add(new ElementValuePair("value", element_value))); :}
+  ;
+  
+
+CompilationUnit compilation_unit =
+  modifiers.a package_declaration.p import_declarations.i? type_declarations.t?
+    {: return new AnnotatedCompilationUnit(p.getID(), i, t, new Modifiers(a)); :}
+  ;

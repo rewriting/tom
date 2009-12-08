@@ -1,0 +1,9 @@
+module gom.term
+abstract syntax
+Term = a()
+     | b()
+     | c()
+     | d()
+     | f(arg1:Term)
+     | g(arg1:Term, arg2:Term)
+     | h(arg1:Term, arg2:Term, arg3:Term)

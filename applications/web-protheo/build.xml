@@ -1,0 +1,98 @@
+<project name="ProtheoWebsite" default="dist" basedir=".">
+  <description>
+    The Protheo team website
+    
+    Please create a copy of local.properties_template to file
+    local.properties and complete it with valid information.
+
+    To use this build file, install ant,
+    and just run ./build.sh in the current directory.
+  </description>
+
+  <property environment="env"/>
+  <property name="tom.home"     value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <!-- some used directory location -->
+  <property name="web-protheo.src"   location="src"/>
+  <property name="web-protheo.gen"   location="gen"/>
+  <property name="web-protheo.lib"   location="lib"/>
+  <property name="web-protheo.build" location="build"/>
+  <property name="web-protheo.dist"  location="dist"/>
+
+  <target name="init" depends="tom.init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${web-protheo.gen}"/>
+    <mkdir dir="${web-protheo.build}"/>
+    <path id="build.classpath">
+      <path refid="tom.classpath"/>
+    </path>
+  </target>
+
+  <target name="tom" depends="init"
+        description="compile the Tom source " >
+    <tom.preset srcdir="${web-protheo.src}"
+                destdir="${web-protheo.gen}">
+      <include name="*.t"/>
+    </tom.preset>
+  </target>
+
+  <target name="javac" depends="tom"
+        description="compile the Java source " >
+        <javac.preset destdir="${web-protheo.build}">
+          <src path="${web-protheo.src}"/>
+          <src path="${web-protheo.gen}"/>
+          <include name="*.java"/>
+          <classpath refid="build.classpath"/>
+        </javac.preset>
+  </target>
+
+  <target name="dist" depends="javac"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${web-protheo.dist}/"/>
+    <path id="tnode.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="TNode*.jar"/>
+      </fileset>
+    </path>
+    <property name="tnode.jar" refid="tnode.path"/>
+    <path id="tom-library.path"> <!-- ugly hack to find the TNode jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-library*.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-library.jar" refid="tom-library.path"/>
+    <!-- Put everything in ${build} into the web-protheo.jar file -->
+    <jar jarfile="${web-protheo.dist}/web-protheo.jar">
+      <fileset dir="${web-protheo.build}">
+        <include name="**/*.class"/>
+      </fileset> 
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/sl/**/*"/>  
+      <zipfileset src="${tnode.jar}"/>
+      <manifest>
+        <attribute name="Main-Class" value="Mk"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <target name="clean"
+          description="clean up" >
+    <!-- Delete the ${gen} and ${build} directory trees -->
+    <delete dir="${web-protheo.gen}"/>
+  </target>
+
+  <target name="dist.clean"
+          description="clean up dist dir" >
+    <delete>
+     <fileset dir="${web-protheo.dist}" includes="*.*"/>
+    </delete>
+  </target>
+
+</project>

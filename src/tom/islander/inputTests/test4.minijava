@@ -1,0 +1,3 @@
+return (new Aaa(1,a,titi));
+//res=a-5*(b);
+//return (toto?a:b);

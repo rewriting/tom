@@ -1,0 +1,121 @@
+package ast;
+
+import ast.AST.*;
+
+import java.util.*;
+
+aspect ErrorCollector {
+  syn String Grammar.astErrors() {
+    return collectAstErrors();
+  }
+  
+  syn String Grammar.collectAstErrors() {
+    StringBuffer result = new StringBuffer();
+    for(int i = 0; i < getNumTypeDecl(); i++) {
+      result.append(getTypeDecl(i).collectAstErrors());
+    }
+    
+    ArrayList l = roots();
+    if(l.isEmpty())
+      result.append("No root node available\n");
+    /*
+    if(l.size() > 1) {
+      result.append("Multiple root nodes: ");
+      Iterator iter = l.iterator();
+      result.append(((ASTDecl)iter.next()).name());
+      while(iter.hasNext())
+        result.append(", " + ((ASTDecl)iter.next()).name());
+      result.append("\n");
+    }*/
+
+    return result.toString();
+  }
+  
+  syn ArrayList Grammar.roots() {
+    ArrayList l = new ArrayList();
+    for(int i = 0; i < getNumTypeDecl(); i++) {
+      if(getTypeDecl(i) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(i);
+        if(decl.isRootNode())
+          l.add(decl);
+      }
+    }
+    return l;
+  }
+  syn boolean TypeDecl.isRootNode() = false;
+  eq ASTDecl.isRootNode() = !hasAbstract() && !name().equals("ASTNode") && !name().equals("Opt") && !name().equals("List") && fathers().isEmpty();
+  
+  syn String TypeDecl.collectAstErrors() = astError();
+  
+  syn String ASTDecl.collectAstErrors() {
+    StringBuffer result = new StringBuffer();
+    result.append(astError());
+    for(int i = 0; i < getNumComponents(); i++) {
+      result.append(getComponents(i).astError());
+    }
+    return result.toString();
+  }
+}
+
+
+aspect Errorcheck {
+  syn String TypeDecl.astError() {
+    StringBuffer result = new StringBuffer();
+    
+    if(env().lookup(name()) != this) {
+      //result.append(getFileName() + ":" + getStartLine() + " "); TODO: FIXME
+      result.append("Multiple production rule for non-terminal " +
+          name() + "\n");
+    }
+    return result.toString();
+  }
+  
+  syn String ASTDecl.astError() {
+    StringBuffer result = new StringBuffer();
+    
+    if(env().lookup(name()) != this) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append("Multiple production rule for non-terminal " +
+          name() + "\n");
+    }
+    
+    if(isCircular()) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append(name() + " causes circular inheritance\n");
+    }
+    else if(hasSuperClass() && superClass() == null) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append(name() + " inherits from undeclared class " +
+          getSuperClass().name() + "\n");
+    }
+
+      
+    return result.toString();
+  }
+
+  syn String Components.astError() {
+    StringBuffer result = new StringBuffer();
+
+    if(hostClass().lookupComponents(name()) != this) {
+      result.append(hostClass().getFileName() + ":" + hostClass().getStartLine() + " ");
+      result.append("Component name " + name() + " is not unique in " +
+          "production rule for " + hostClass().name() + "\n");
+    }
+
+    if(!declared()) {
+      result.append(hostClass().getFileName() + ":" + hostClass().getStartLine() + " ");
+      result.append("Type " + type() + " of component " + name() +
+          " in production " + hostClass().name() + " is not declared\n");
+    }
+    return result.toString();
+  }
+  
+  public boolean Components.declared() {
+    return env().lookup(type()) != null;
+  }
+
+  public boolean TokenComponent.declared() {
+    return true;
+  }
+}
+

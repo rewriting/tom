@@ -1,0 +1,48 @@
+Tom Developper Guide
+--------------------
+
+This file explains how the compiler works and should help to understand in
+which part of the compiler particular treatment is done
+
+
+* AC Matching
+-------------
+The compilation of AC Matching is done in a simple way. The complex pattern is
+transformed into a conjunction of simpler patterns (possibility associative
+patterns instead of associative-commutative patterns). The terminal case is
+implemented by an AC pattern which has the following form: f_AC(X*,Y*) << t
+
+The transformation of AC patterns into simpler AC patterns and A patterns is
+performed in compiler/propagator/ACPropagator.t
+
+The generation of auxillary functions (getMultiplicities, etc.) is done in
+compiler/Compiler.t
+
+* Inlining
+----------
+This option improves the quality of the generated code by eliminating auxillary
+functions that come from the mapping definition. The body of these functions is
+directly inlined in the code that corresponds to the compilation of pattern
+matching.
+
+The implementation of Inlining is quite tricky because it should also be
+compatible with mapping which are not inlining-compatible (i.e. which do not
+use the $ sign to identify variables)
+
+In backend/TomBackend.t, a mark phase traverses the AST to mark all the mapping
+declaration which are used. In the same time, the mapping definition are
+insterted in the SymbolTable.
+This table will be later used in TomGenericGenerator and TomCFamillyGenerator
+to retrieve the template associated to a given construct (call to getIsFsym for instance).
+The template is used by the method instantiateTemplate to know whether some
+code (its instance) has to be generated, whether a call to the function ha to
+be generated (i.e. non inlining).
+
+The Declaration are also inserted in the SymbolTable during this phase.
+When a SymbolDecl is encounter, the Symbol is extracted from the SymbolTable
+and its fields (i.e. the Declaration) are traversed again to be inserted into
+the mapInliner.
+
+
+
+

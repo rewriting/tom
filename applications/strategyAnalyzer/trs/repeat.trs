@@ -1,0 +1,24 @@
+(STRATEGY INNERMOST)
+(VAR Z0,Z1,x)
+(RULES
+        phi0(x) -> phi1(x,x)
+        phi1(Bottom,x) -> Bottom
+        phi1(a,x) -> phi3(x)
+        phi1(b,x) -> phi3(x)
+        phi1(f(Z0),x) -> phi3(x)
+        phi1(g(Z1,Z0),x) -> phi3(x)
+        phi2(Bottom) -> Bottom
+        phi2(a) -> f(b)
+        phi2(b) -> Bottom
+        phi2(f(Z0)) -> Bottom
+        phi2(g(Z1,Z0)) -> Bottom
+        phi3(x) -> phi0(phi2(x))
+        phi4(x) -> x
+        phi5(x) -> phi6(phi3(x),x)
+        phi6(Bottom,x) -> phi4(x)
+        phi6(a,x) -> phi3(x)
+        phi6(b,x) -> phi3(x)
+        phi6(f(Z0),x) -> phi3(x)
+        phi6(g(Z1,Z0),x) -> phi3(x)
+)
+

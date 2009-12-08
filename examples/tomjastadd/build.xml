@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the tomjastadd example" default="build" basedir="..">
+
+  <import file="../common.xml"/>
+
+  <property name="example" value="tomjastadd"/>
+
+  <!-- "package" is the directory where generated files will be stored -->
+  <property name="package" value="tomjastadd.AST"/>
+
+  <!-- "jastadd" is an ant task class in jastadd2.jar -->
+  <taskdef name="jastadd" classname="jastadd.JastAddTask" classpath="lib/jastadd2.jar"/>
+
+  <!-- generate compiler source files -->
+  <macrodef name="jastaddcompile">
+    <sequential>
+      <!-- create AST node types and weave aspect modules -->
+      <echo message = "Running JastAdd"/>
+      <jastadd package="${package}" rewrite="true" beaver="true" novisitcheck="true" lazyMaps="true" outdir="${examples.gen}">
+        <fileset dir=".">
+          <include name="${example}/**/*.ast"/>
+          <include name="${example}/**/*.jrag"/>
+          <include name="${example}/**/*.jadd"/>
+        </fileset>
+      </jastadd>
+    </sequential>
+  </macrodef>
+
+  <target name="build" depends="init">
+    <jastaddcompile/>
+    <tom.preset srcdir="${examples.dir}"
+      options="--genIntrospector --pretty"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+    </tom.preset> 
+    <javacompile/>
+  </target>
+
+  <property name="distribute" value="yes"/>
+
+</project>

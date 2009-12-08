@@ -1,0 +1,127 @@
+
+%include { int.tom }
+
+%typeterm T2 {
+  implement { mi.data.types.T2 }
+  is_sort(t) { ($t instanceof mi.data.types.T2) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm T1 {
+  implement { mi.data.types.T1 }
+  is_sort(t) { ($t instanceof mi.data.types.T1) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op T2 b() {
+  is_fsym(t) { ($t instanceof mi.data.types.t2.b) }
+  make() { mi.data.types.t2.b.make() }
+}
+
+%op T2 g(s2:T2) {
+  is_fsym(t) { ($t instanceof mi.data.types.t2.g) }
+  get_slot(s2, t) { $t.gets2() }
+  make(t0) { mi.data.types.t2.g.make($t0) }
+}
+
+%op T1 a() {
+  is_fsym(t) { ($t instanceof mi.data.types.t1.a) }
+  make() { mi.data.types.t1.a.make() }
+}
+
+%op T1 f(s1:T1, s2:T2) {
+  is_fsym(t) { ($t instanceof mi.data.types.t1.f) }
+  get_slot(s1, t) { $t.gets1() }
+  get_slot(s2, t) { $t.gets2() }
+  make(t0, t1) { mi.data.types.t1.f.make($t0, $t1) }
+}
+
+  %include { sl.tom }
+  %op Strategy _b() {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t2._b))}
+    
+    make() { new mi.data.strategy.t2._b() }
+  }
+  
+  %op Strategy When_b(s:Strategy) {
+    make(s) { `Sequence(Is_b(),s) }
+  }
+
+  %op Strategy Is_b() {
+    make() { new mi.data.strategy.t2.Is_b()}
+  }
+  
+  %op Strategy Make_b() {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t2.Make_b)) }
+
+    make() { new mi.data.strategy.t2.Make_b() }
+  }
+
+  %op Strategy _g(arg0:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t2._g))}
+    
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((mi.data.strategy.t2._g)$t).getChildAt(0) }
+    make(arg0) { new mi.data.strategy.t2._g($arg0) }
+  }
+  
+  %op Strategy When_g(s:Strategy) {
+    make(s) { `Sequence(Is_g(),s) }
+  }
+
+  %op Strategy Is_g() {
+    make() { new mi.data.strategy.t2.Is_g()}
+  }
+  
+  %op Strategy Make_g(arg0:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t2.Make_g)) }
+
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((mi.data.strategy.t2.Make_g)$t).getChildAt(0) }
+    make( new_s2) { new mi.data.strategy.t2.Make_g( $new_s2) }
+  }
+
+  %op Strategy _a() {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t1._a))}
+    
+    make() { new mi.data.strategy.t1._a() }
+  }
+  
+  %op Strategy When_a(s:Strategy) {
+    make(s) { `Sequence(Is_a(),s) }
+  }
+
+  %op Strategy Is_a() {
+    make() { new mi.data.strategy.t1.Is_a()}
+  }
+  
+  %op Strategy Make_a() {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t1.Make_a)) }
+
+    make() { new mi.data.strategy.t1.Make_a() }
+  }
+
+  %op Strategy _f(arg0:Strategy, arg1:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t1._f))}
+    
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((mi.data.strategy.t1._f)$t).getChildAt(0) }
+        get_slot(arg1, t) { (tom.library.sl.Strategy)((mi.data.strategy.t1._f)$t).getChildAt(1) }
+    make(arg0, arg1) { new mi.data.strategy.t1._f($arg0, $arg1) }
+  }
+  
+  %op Strategy When_f(s:Strategy) {
+    make(s) { `Sequence(Is_f(),s) }
+  }
+
+  %op Strategy Is_f() {
+    make() { new mi.data.strategy.t1.Is_f()}
+  }
+  
+  %op Strategy Make_f(arg0:Strategy, arg1:Strategy) {
+    is_fsym(t) { (($t!=null) && ($t instanceof mi.data.strategy.t1.Make_f)) }
+
+        get_slot(arg0, t) { (tom.library.sl.Strategy)((mi.data.strategy.t1.Make_f)$t).getChildAt(0) }
+        get_slot(arg1, t) { (tom.library.sl.Strategy)((mi.data.strategy.t1.Make_f)$t).getChildAt(1) }
+    make( new_s1,  new_s2) { new mi.data.strategy.t1.Make_f( $new_s1,  $new_s2) }
+  }

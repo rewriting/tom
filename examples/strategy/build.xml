@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the strategy example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="strategy"/>
+  <target name="build" depends="init">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+    <gombuild/>
+    <tom.preset srcdir="${examples.dir}"
+	              options="--genIntrospector"
+                destdir="${examples.gen}">          
+       <include name="${example}/**/HandWrittenStrat.t"/>
+       <include name="${example}/**/HandWrittenStrat2.t"/>
+    </tom.preset>
+	<tom.preset srcdir="${examples.dir}"
+	                destdir="${examples.gen}">          
+	       <include name="${example}/**/*.t"/>
+	       <exclude name="${example}/**/*.g.t"/>
+		   <exclude name="${example}/**/HandWrittenStrat.t"/>
+		   <exclude name="${example}/**/HandWrittenStrat2.t"/>
+	</tom.preset> 
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

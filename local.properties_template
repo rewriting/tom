@@ -1,0 +1,26 @@
+# This file predefines some properties:
+# None of them are mantatory, but defining them will enable some features,
+# mainly in the examples
+
+# To build the C examples, you have to install the aterm library, and the cpl
+# library for the nqueens examples (located in integerc)
+aterm.home={ATERM_PREFIX}
+cpl.home={CPL_PREFIX}
+# camlc.bin contains the path to the caml compiler to use (camlc or camlopt)
+camlc.bin={CAMLC_BIN}
+# zvtov.bin contains the path to the zvtov utility (from focal, install zvtov
+# and zenon)
+zvtov.bin={ZVTOV_BIIN}
+
+# plugin.workspace.dir contains the path to the eclipse workspace used to
+# build the plugin. Usually, ${HOME}/workspace
+plugin.workspace.dir={WORKSPACE}
+
+# home of the findbugs installation: mandatory to use the findbugs target
+findbugs.home=<WORKSPACE>/findbugs/
+
+# home of the clover installation
+clover.home=<WORKSPACE>/clover-ant/
+
+# enable xml reports for junit test results
+test.xmlreport=yes

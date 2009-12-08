@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="EMF" basedir="." default="compile">
+  <description>
+    Ant script for using EMF with Tom
+  </description>
+
+  <!-- Initializing Tom and Gom -->
+  <property environment="env" />
+  <property name="tom.home" value="${env.TOM_HOME}" />
+  <import file="${tom.home}/lib/tom-common.xml" />
+
+  <!-- Defining folders -->
+  <property name="tomtest" value="tom" />
+  <property name="src.dir" value="src" />
+  <property name="gen.dir" value="gen" />
+  <property name="build.dir" value="bin" />
+  <property name="mapping.dir" value="${gen.dir}/${tomtest}/${tomtest}" />
+
+  <property name="genIntrospector"  value="on"/>
+  <property name="javacDebug"  value="true"/>
+  <property file="local.properties"/>
+
+  <target name="init" depends="tom.init" description="Initialization">
+    <mkdir dir="${gen.dir}" />
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <target name="compile" depends="init" description="To compile all programs">
+    <!-- Compiling Tom programs -->
+    <tom.preset config="${tomconfigfile}" srcdir="${src.dir}" destdir="${gen.dir}" options="-I ${mapping.dir}" genIntrospector="on" pretty="on">
+      <include name="*.t" />
+    </tom.preset>
+
+    <!-- Compiling Java programs -->
+    <javac.preset srcdir="${src.dir}" destdir="${build.dir}">
+      <compilerarg value="-Xlint:all,-cast,-unchecked"/>
+      <classpath>
+        <pathelement path="${build.dir}" />
+        <fileset dir="${env.ECLIPSE_HOME}">
+          <include name="plugins/org.eclipse.emf*.jar" />
+        </fileset>
+      </classpath>
+      <include name="*.java" />
+    </javac.preset>
+
+    <!-- Compiling Tom program generated files -->
+    <javac.preset srcdir="${gen.dir}" destdir="${build.dir}">
+      <compilerarg value="-Xlint:all,-cast,-unchecked"/>
+      <classpath>
+        <pathelement path="${build.dir}" />
+        <fileset dir="${env.ECLIPSE_HOME}">
+          <include name="plugins/org.eclipse.emf*.jar" />
+        </fileset>
+      </classpath>
+      <include name="*.java" />
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="To remove generated code">
+    <delete dir="${gen.dir}" />
+    <delete dir="${build.dir}" />
+  </target>
+</project>
+

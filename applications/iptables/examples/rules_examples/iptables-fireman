@@ -1,0 +1,9 @@
+Chain INPUT (policy DROP)
+target     prot opt source               destination
+REJECT	   tcp  --  10.1.1.0/25		 anywhere
+ACCEPT	   udp  --  anywhere             192.168.1.0/24
+REJECT	   tcp  --  10.1.1.128/25	 anywhere
+REJECT	   udp  --  172.16.1.0/24        192.168.1.0/24
+ACCEPT	   tcp  --  10.1.1.0/24		 anywhere
+REJECT	   udp  --  10.1.1.0/24		 192.168.0.0/16
+ACCEPT	   udp  --  172.16.1.0/24	 anywhere

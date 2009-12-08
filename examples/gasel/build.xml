@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the gasel example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="gasel"/>
+</project>

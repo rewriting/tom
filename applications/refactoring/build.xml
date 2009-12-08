@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="refactoring" default="build" basedir=".">
+  <description>
+    Tests generator for refactoring tools 
+  </description>
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+  <property name="optimize"   value="off"/> 
+  <property name="optimize2"   value="off"/>
+  <property name="inline"   value="on"/>
+
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="refactoring.dir"      location="."/>
+  <property name="refactoring.src"      location="src"/>
+  <property name="refactoring.gen"      location="gen"/>
+  <property name="refactoring.build"    location="build"/>
+
+  <macrodef name="gomwithoutmaxsharing">
+    <attribute name="gomfile"/>
+    <sequential>
+      <gom.preset srcdir="${refactoring.src}"
+        nosharing="true"
+        destdir="${refactoring.gen}">
+        <include name = "@{gomfile}"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${refactoring.build}"/>
+    <mkdir dir="${refactoring.gen}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <gom config="${gomconfigfile}"
+      srcdir="${refactoring.src}"
+      destdir="${refactoring.gen}"
+      >
+      <include name="**/*.gom"/>
+      <exclude name="binarynumber/BinaryNumber.gom"/>
+    </gom>
+
+    <gomwithoutmaxsharing gomfile="binarynumber/BinaryNumber.gom"/>
+
+    <tom.preset srcdir="${refactoring.src}"
+      destdir="${refactoring.gen}">
+      <include name="**/*.t"/>
+    </tom.preset>
+
+    <javac.preset destdir="${refactoring.build}" fork="yes">
+      <src path="${refactoring.src}"/>
+      <src path="${refactoring.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${refactoring.gen}"/>
+    <delete dir="${refactoring.build}"/>
+  </target>
+</project>

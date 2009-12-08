@@ -1,0 +1,102 @@
+module TomTerm
+imports TomSignature TomName int
+abstract syntax
+
+TomTerm =
+  /**
+   * <code>TermAppl</code> application of a symbol to a list of subterms
+   *
+   * @param Option a list of options
+   * @param NameList a list of head symbol names (more than one in case of a disjunction)
+   * @param Args a list of subterms
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
+  /**
+   * <code>RecordAppl</code> application of a symbol to a list of pairs (slot,subterm)
+   *
+   * @param Option a list of options
+   * @param NameList a list of head symbol names
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
+  /**
+   * <code>XMLAppl</code> application of a xml-symbol to a list of attributes and a list of subterms
+   *
+   * @param Option a list of options
+   * @param NameList a list of head symbol names
+   * @param Args a list of subterms
+   * @param Slots a list of pairs (slot,subterm)
+   * @param Constraints a list of constraints
+   */
+    | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
+  /** 
+   * <code>Variable</code> a variable
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | Variable(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>VariableStar</code> a list-variable
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>UnamedVariable</code> a variable without name
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+  /** 
+   * <code>UnamedVariableStar</code> a list-variable without name
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+
+  /**
+   * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
+   */
+    | TomSymbolToTomTerm(AstSymbol:TomSymbol)
+    | OptionToTomTerm(Option:OptionList)
+    //| DeclarationToTomTerm(AstDeclaration:Declaration)
+    //| TargetLanguageToTomTerm(Tl:TargetLanguage)
+    //| InstructionToTomTerm(AstInstruction:Instruction)
+
+    | AntiTerm(TomTerm:TomTerm)
+
+    | Automata(Option:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
+
+  /**
+   * <code>TestVar</code> instead of generating an assignment, this generates an equality test
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | TestVar(Variable:TomTerm)
+
+  /** 
+   * add builtin constucts for patterns 
+   * */
+    | TruePattern()
+    | FalsePattern()
+    | IntegerPattern(value:int)
+
+TomList = concTomTerm(TomTerm*)

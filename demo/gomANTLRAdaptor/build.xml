@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="gaa.dir"      location="."/>
+  <property name="gaa.src"      location="${gaa.dir}/parser"/>
+  <property name="gaa.gen"      location="${gaa.dir}/gen"/>
+  <property name="gaa.build"    location="${gaa.dir}/build"/>
+  <property name="gaa.ast"      value="Expression"/>
+  <property name="gaa.grammar"  value="Expression"/>
+  <property name="gaa.parser"   value="parser"/>
+  
+  <import file="${env.TOM_HOME}/lib/tom-common.xml"/>
+  
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="tom.classpath"/>
+  </taskdef>
+  
+  <target name="init" depends="tom.init">
+    <mkdir dir="${gaa.build}"/>
+    <mkdir dir="${gaa.gen}"/>
+    <mkdir dir="${gaa.gen}/${gaa.parser}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${gaa.src}"
+                destdir="${gaa.gen}"
+                options="-I ${gaa.gen}"> 
+      <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="antlrtom" depends="gomantlradapter">
+    <tom.preset srcdir="${gaa.src}"
+                outputfile="${gaa.gen}/${gaa.grammar}.g"
+                options="-I ${gaa.gen}/${gaa.parser}"> 
+      <include name="${gaa.grammar}.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${gaa.src}"
+                destdir="${gaa.gen}">
+      <include name="${gaa.ast}.gom"/>
+    </gom.preset>
+  </target>
+  
+  <target name="gomantlradapter" depends="init">
+    <gomantlradapter.preset srcdir="${gaa.src}"
+                            destdir="${gaa.gen}"
+                            grammar="${gaa.grammar}"
+                            package="${gaa.parser}">
+      <include name="${gaa.ast}.gom"/>
+    </gomantlradapter.preset>
+  </target>
+  
+  <target name="antlr" depends="antlrtom">
+    <antlr3 target="${gaa.gen}/${gaa.grammar}.g"
+            outputdirectory="${gaa.gen}/${gaa.parser}"
+            />
+  </target>
+  
+  <target name="javac" depends="tom, antlr">
+    <javac.preset destdir="${gaa.build}" >
+      <src path="${gaa.src}"/>
+      <src path="${gaa.gen}"/>
+      <include name="**/*.java"/>
+      <classpath refid="tom.classpath"/>
+    </javac.preset>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${gaa.gen}"/>
+    <delete dir="${gaa.build}"/>
+  </target>
+  
+</project>

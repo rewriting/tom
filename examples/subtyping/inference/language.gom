@@ -1,0 +1,76 @@
+module subtyping.Language
+imports String int
+abstract syntax
+
+Input = Input(ctx: Context, consSub: ConstraintList, tests: TomInstructionList)
+
+TomType = Type(name: String)
+        | TypeVar(index: int)
+
+TomTypeList = TTyList(TomType*)
+
+TomTerm = Var(name: String, type: TomType)
+        | ListVar(name: String, type: TomType) // like x*
+        | Fun(name: String, args: TomTermList)
+        | List(name: String, elems: TomTermList)
+
+TomTermList = TTeList(TomTerm*)
+
+TomInstruction = Match(rule: Clause)
+/* TODO: après faire marcher pour un seule règle, ajouter plusieures règles:
+                 Match(rules: Rules)
+
+Rules = RList(Clause*)
+*/
+TomInstructionList = TIList(TomInstruction*)
+
+Clause = Rule(condition: Condition, result: TomTermList)
+
+Condition = Matching(pattern: TomTerm, subject: TomTerm, type: TomType)
+          | Conjunction(conds: ConditionList)
+          | Disjunction(conds: ConditionList)
+          | Equality(term1: TomTerm, term2: TomTerm)
+          | Inequality(term1: TomTerm, term2: TomTerm)
+          | Greater(term1: TomTerm, term2: TomTerm)
+          | GreaterEq(term1: TomTerm, term2: TomTerm)
+          | Less(term1: TomTerm, term2: TomTerm)
+          | LessEq(term1: TomTerm, term2: TomTerm)
+
+ConditionList = CondList(Condition*)
+
+/* Type Reconstruction */
+Constraint = Equation(type1: TomType, type2: TomType)
+           | Subtype(type1: TomType, type2: TomType)
+           | CommSubtype(type1: TomType, type2: TomType)
+
+ConstraintList = CList(Constraint*)
+               | False()
+               | True()
+
+ReconResult = Pair(type: TomType, constraints: ConstraintList)
+
+ReconResultList = RRList(ReconResult*)
+
+Domain = Domain(TomType*)
+       | VariadicDomain(type: TomType)
+
+Signature = Sig(dom: Domain, codom: TomType)
+
+Jugement = Jugement(var: String, type: TomType)
+         | SigOf(fun: String, sig: Signature)
+
+Context = Context(Jugement*)
+
+Mapping = MapsTo(tvar: TomType, type: TomType)
+
+Substitution = MList(Mapping*)
+
+SubstitutionList = SList(Substitution*)
+
+ContextAndResult = CRPair(ctx: Context, res: ReconResult)
+
+ContextAndResultList = CRLPair(ctx: Context, rlist: ReconResultList)
+
+ContextAndConstraints = CCPair(ctx: Context, constraints: ConstraintList)
+
+

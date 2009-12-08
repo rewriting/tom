@@ -1,0 +1,470 @@
+options {
+  MULTI=true;
+  VISITOR=true;
+  NODE_DEFAULT_VOID=true;
+  NODE_PACKAGE="ast.AST";
+  STATIC=false;
+  NODE_SCOPE_HOOK= true;	//added!
+}
+
+PARSER_BEGIN(Ast)
+
+package ast.AST;
+
+import java.util.*;
+
+public class Ast {
+
+  private LinkedList errorList = new LinkedList();
+  public String fileName;
+  
+  public Iterator getErrors() {
+    return errorList.iterator();
+  }
+
+  public Collection parseErrors() {
+    return errorList;
+  }
+  
+  private void error_skipto(int kind) {
+    ParseException e = generateParseException();
+
+    StringBuffer msg = new StringBuffer();
+    
+    msg.append(Integer.toString(e.currentToken.next.beginLine));
+    msg.append(";");
+    msg.append(Integer.toString(e.currentToken.next.beginColumn));
+    msg.append(";");
+
+    /*
+
+    StringBuffer expected = new StringBuffer();
+    int maxSize = 0;
+    for(int i = 0; i < e.expectedTokenSequences.length; i++) {
+      if(maxSize < e.expectedTokenSequences[i].length) {
+        maxSize = e.expectedTokenSequences[i].length;
+      }
+      for(int j = 0; j < e.expectedTokenSequences[i].length; j++) {
+        expected.append(e.tokenImage[e.expectedTokenSequences[i][j]] + " ");
+      }
+      if(e.expectedTokenSequences[i][e.expectedTokenSequences[i].length - 1] != 0) {
+        expected.append("...");
+      }
+      expected.append(", ");
+    }
+
+    Token prev = e.currentToken;
+    Token tok = e.currentToken.next;
+    for(int i = 0; i < maxSize; i++) {
+      prev = tok;
+      if(tok.kind == 0) {
+        break;
+      }
+      tok = tok.next;
+    }
+
+    msg.append(Integer.toString(prev.endLine));
+    msg.append(";");
+    msg.append(Integer.toString(prev.endColumn));
+    msg.append(";");
+
+    msg.append(expected.toString());
+    */
+
+    msg.append(Integer.toString(e.currentToken.next.endLine));
+    msg.append(";");
+    msg.append(Integer.toString(e.currentToken.next.endColumn));
+    msg.append(";");
+    msg.append("Syntax error");
+    errorList.add(msg.toString());
+    
+    //System.err.println(e.toString());
+    Token t;
+    do {
+      t = getNextToken();
+    } while(t.kind != AstConstants.EOF && t.kind != kind);
+  }
+
+  /* ------ Added methods for NODE_SCOPE_HOOKS ---------*/
+  public  void jjtreeOpenNodeScope(Node n) {
+    ((SimpleNode) n).firstToken = getToken(1);
+  }
+
+  public void jjtreeCloseNodeScope(Node n) {
+    ((SimpleNode) n).lastToken = getToken(0);
+  }
+
+}
+
+PARSER_END(Ast)
+/* WHITE SPACE */
+
+SPECIAL_TOKEN :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/*
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+*/
+
+TOKEN : /* Reserved words */
+{
+  < ABSTRACT: "abstract" >
+  | < SEMICOLON: ";" >
+  | < BOOLEAN: "boolean" >
+  | < CHAR: "char" >
+  | < BYTE: "byte" >
+  | < SHORT: "short" >
+  | < INT: "int" >
+  | < LONG: "long" >
+  | < FLOAT: "float" >
+  | < DOUBLE: "double" >
+  | < SUPER: "super" >
+  | < EXTENDS: "extends" >
+}
+
+TOKEN : /* Literals */
+{ < ID: <LETTER> (<LETTER>|<DIGIT>)* >
+| < #LETTER: ["_","a"-"z","A"-"Z"] >
+| < #DIGIT: ["0"-"9"] >
+}
+
+Grammar Grammar() #Grammar: {}
+{
+  ClassList()
+  { return jjtThis; }
+}
+
+void ClassList() #List: {}
+{
+  (
+  try {
+    Class()
+  } catch(ParseException e) {
+  }
+  )*
+  //  (Class())*
+}
+
+void Class() #ASTDecl : { Token first = null, last; }
+{
+  try {
+  ((Abstract() { first = token; } #Opt(1)) | ({} #Opt(0)))
+//  [Abstract() { first = token; }] #Opt
+  IdDecl() { if(first == null)  first = token; }
+  OptSuperClass() ComponentsList() Attributes()
+  <SEMICOLON> {
+    last = token;
+    jjtThis.setFileName(fileName);
+    jjtThis.setStartLine(first.beginLine);
+    jjtThis.setEndLine(last.endLine);
+    jjtThis.setComment(jjtThis.unparseComment());
+  }
+  } catch(ParseException e) {
+    error_skipto(SEMICOLON);
+    throw e;
+//    jjtree.clearNodeScope(jjtThis);
+//    jjtc000 = false;
+  }
+}
+
+void Attributes() : {}
+{
+  {} #List(0) // SynAttrDecl
+  {} #List(0) // SynEq
+  {} #List(0) // InhAttrDecl
+  {} #List(0) // InhEq
+  {} #List(0) // ClassBodyDecl
+  {} #List(0) // Rewrite
+  {} #List(0) // CollDecl
+  {} #List(0) // CollEq
+}
+
+void OptAbstract() #Opt: {}
+{ [Abstract()]
+}
+
+void Abstract() #Abstract: {}
+{ "abstract"
+}
+
+void OptSuperClass() #Opt: {}
+{ [":" IdUse()]
+}
+
+void ComponentsList() #List: {}
+{ [ "::=" (Components())* ]
+}
+
+void Components(): {}
+{
+  
+  LOOKAHEAD(OptName() IdUse() "*")
+  ListComponents()
+| OptionalComponent()
+| TokenComponent()
+| AggregateComponents()
+| LOOKAHEAD("/" OptName() IdUse() "*")
+  ListComponentsNTA()
+| LOOKAHEAD("/" "[")
+  OptionalComponentNTA()
+| LOOKAHEAD("/" "<")
+  TokenComponentNTA()
+| AggregateComponentsNTA()
+}
+
+void ListComponents() #ListComponents: {}
+{ Id() "*"
+}
+
+void ListComponentsNTA() #ListComponentsNTA: {}
+{ "/" Id() "*" "/"
+}
+
+void OptionalComponent() #OptionalComponent: {}
+{ "[" Id() "]"
+}
+
+void OptionalComponentNTA() #OptionalComponentNTA: {}
+{ "/" "[" Id() "]" "/"
+}
+
+void TokenComponent() #TokenComponent:{}
+{ "<" TokenId() ">"
+}
+
+void TokenComponentNTA() #TokenComponentNTA:{}
+{ "/" "<" TokenId() ">" "/"
+}
+
+void AggregateComponents() #AggregateComponents:{}
+{ Id()
+}
+
+void AggregateComponentsNTA() #AggregateComponentsNTA:{}
+{ "/" Id() "/"
+}
+
+void Id() #Id: {}
+{ OptName() IdUse()
+}
+
+void OptName() #Opt: {}
+{ [LOOKAHEAD(NameNode() ":") NameNode() ":"]
+}
+
+void NameNode() #NameNode:
+{ Token t;
+}
+{ t = <ID>
+  {
+    jjtThis.setID(t.image);
+  }
+}
+
+void IdUse() #IdUse():
+{ Token t;
+}
+{ t = <ID>
+  {
+    jjtThis.setID(t.image);
+  }
+}
+
+void IdDecl() #IdDecl():
+{ Token t;
+}
+{ t = <ID>
+  { jjtThis.setID(t.image);
+  }
+}
+
+
+void TokenId() #TokenId():
+{ Token t;
+  String type = null;
+  boolean hasType = false;
+}
+{ t = <ID> [ ":" type = Type() { hasType = true; } ]
+// Default type is String for backward compability
+  { jjtThis.setID(t.image);
+    jjtThis.setTYPE(hasType ? type : "String");
+  }
+}
+/*Changed to return string */
+String Type():
+{ String s; }
+{
+ (
+   LOOKAHEAD(2) s = ReferenceType()
+ |
+   s = PrimitiveType()
+ )
+ { return s; }
+}
+
+String ReferenceType():
+{ String s; }
+{
+  (
+   s = PrimitiveType() ( LOOKAHEAD(2) "[" "]" { s += "[]"; } )+
+  |
+   ( s = ClassOrInterfaceType() ) ( LOOKAHEAD(2) "[" "]" { s += "[]"; } )*
+  )
+  { return s; }
+}
+
+String ClassOrInterfaceType():
+{ Token t; String s; String u; }
+{
+  t = <ID> { s = t.image; } [ LOOKAHEAD(2) u = TypeArguments() { s += u; } ]
+  ( LOOKAHEAD(2) "." t = <ID> { s += "." + t.image; } [ LOOKAHEAD(2) u = TypeArguments() { s += u; } ] )*
+  { return s; }
+}
+
+String TypeArguments():
+{ String s; String t; }
+{
+   "<" { s = "<"; } t = TypeArgument() { s += t; } ( "," { s += ","; } t = TypeArgument() { s += t; } )* ">" { s+=">"; }
+   { return s; }
+}
+
+String TypeArgument():
+{ String s; String t; }
+{
+ (
+   s = ReferenceType()
+ |
+   "?" { s = "?"; } [ t = WildcardBounds() { s += t; } ]
+ )
+ { return s; }
+}
+
+String WildcardBounds():
+{ String s; String t; }
+{
+ (
+   "extends" t = ReferenceType() { s = " extends " + t; }
+ |
+   "super" t = ReferenceType() { s = " super " + t; }
+ )
+ { return s; }
+}
+
+String PrimitiveType():
+{ Token t; }
+{
+(
+  t = "boolean"
+|
+  t = "char"
+|
+  t = "byte"
+|
+  t = "short"
+|
+  t = "int"
+|
+  t = "long"
+|
+  t = "float"
+|
+  t = "double"
+)
+{ return t.image; }
+}
+
+/*
+String Type() :
+{
+  String t;
+  StringBuffer b = new StringBuffer();
+}
+{
+  (( t = PrimitiveType() | t = Name() ) { b.append(t); }  ( "[" "]" { b.append("[]");} )*)
+{return b.toString();}
+
+}
+
+String PrimitiveType() :
+{Token t;}
+{
+  (t = "boolean"
+|
+  t = "char"
+|
+  t = "byte"
+|
+  t = "short"
+|
+  t = "int"
+|
+  t = "long"
+|
+  t = "float"
+|
+  t = "double")
+{return t.image; }
+}
+*/
+
+/* Changed to return token */
+String  Name() :
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+{Token t; StringBuffer s = new StringBuffer();}
+{
+  t = <ID> { s.append(t.image); }
+  ( LOOKAHEAD(2) "." t = <ID> { s.append("." + t.image); }
+  )*
+{ return s.toString();}
+}
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the strategycompiler example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="strategycompiler"/>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/*.t"/>
+        <include name="${example}/*.tom"/>
+        <include name="${example}/*.java"/>
+        <include name="${example}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

@@ -1,0 +1,420 @@
+aspect Checking {
+
+  public void TomTypeAlias.nameCheck() {
+    super.nameCheck();
+    for(BodyDecl d : getTomTypeAliasBodyList()) {
+      if(d instanceof MethodDecl) {
+        MethodDecl m = (MethodDecl)d;
+        if(m.name().equals("is_sort")) {
+          if(m.getNumParameter() != 1)
+            m.error("is_sort takes 1 parameter");
+        }
+        else if(m.name().equals("equals")) {
+          if(m.getNumParameter() != 2)
+            m.error("equals takes 2 parameters");
+        }
+        else
+          m.error("unknown name " + m.name());
+      }
+    }
+  }
+
+
+  eq TomTypeAlias.getConcreteTypeAccess().nameType() = NameType.TYPE_NAME;
+  eq MatchStmt.getTypeAccess().nameType() = NameType.TYPE_NAME;
+
+  public boolean TomTypeAlias.hasSuperclass() {
+    return true;
+  }
+
+  public ClassDecl TomTypeAlias.superclass() {
+    return (ClassDecl)(getConcreteTypeAccess().type().isClassDecl() ? 
+    getConcreteTypeAccess().type() : typeObject());
+  }
+
+  public Iterator TomTypeAlias.interfacesIterator() {
+   return new Iterator() {
+      boolean visit = false;
+      public boolean hasNext() {
+        return !visit && getConcreteTypeAccess().type().isInterfaceDecl();
+      }
+      public Object next() {
+        visit = true;
+        return getConcreteTypeAccess().type();
+      }
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  eq TomTypeAlias.instanceOf(TypeDecl type) = getConcreteTypeAccess().type().instanceOf(type);
+  eq TomTypeAlias.supertypeClassDecl(ClassDecl type) =
+    getConcreteTypeAccess().type().supertypeClassDecl(type);
+  eq TomTypeAlias.supertypeInterfaceDecl(InterfaceDecl type) =
+    getConcreteTypeAccess().type().supertypeInterfaceDecl(type);
+
+  eq TomTypeAlias.isAbstract() = getConcreteTypeAccess().type().isAbstract() ||
+    getConcreteTypeAccess().type().isInterfaceDecl();
+  eq TomTypeAlias.isPrivate() = true;
+  eq TomTypeAlias.isStatic() = true;
+
+  eq TomTypeAlias.name() = "#" + super.name(); 
+
+  eq BackQuoteExpr.getExpr().lookupMethod(String name) {
+    OperatorMapping m = lookupOperatorMapping(name);
+    if(m != null)
+      return m.make();
+    return lookupMethod(name);
+  }
+  eq Rule.getExpr().lookupMethod(String name) {
+    OperatorMapping m = lookupOperatorMapping(name);
+    if(m != null)
+      return m.make();
+    return Collections.EMPTY_LIST;
+  }
+
+  inh OperatorMapping BackQuoteExpr.lookupOperatorMapping(String name);
+  inh OperatorMapping Rule.lookupOperatorMapping(String name);
+  syn OperatorMapping TypeDecl.localOperatorMapping(String name) {
+    for(BodyDecl d : getBodyDecls()) {
+      if(d instanceof OperatorMapping && ((OperatorMapping)d).getName().equals(name))
+        return (OperatorMapping)d;
+    }
+    return null;
+  }
+  eq TypeDecl.getChild().lookupOperatorMapping(String name) =
+    localOperatorMapping(name);
+  eq Program.getChild().lookupOperatorMapping(String name) = null;
+
+  syn lazy Collection OperatorMapping.make() {
+    Collection c = lookupMethod("make#" + getName());
+    if(!c.isEmpty())
+      return c;
+    c = new ArrayList();
+    c.add(fakeMake());
+    return c;
+  }
+  syn nta MethodDecl OperatorMapping.fakeMake() {
+    return new MethodMapping(
+      new Modifiers(new List()),
+      getAccess().type().createQualifiedAccess(),
+      getName(),
+      (List)getTomTypedParameterList().fullCopy(),
+      new List(),
+      new Opt()
+    );
+  }
+
+  refine TypeHierarchyCheck public void MethodAccess.nameCheck() {
+    if(!inMatchStmt())
+      TypeHierarchyCheck.MethodAccess.nameCheck();
+  }
+
+  refine MethodSignature public void MethodAccess.typeCheck() {
+    MethodSignature.MethodAccess.typeCheck();
+    if(decl() instanceof MethodMapping) {
+      if(getNumArg() != decl().getNumParameter())
+        error(decl().getNumParameter() + " arguments required");
+      else {
+        for(int i = 0; i < getNumArg(); i++)
+          if(!getArg(i).type().subtype(decl().getParameter(i).type()))
+            getArg(i).error(" is not a subtype of " + decl().getParameter(i).type().typeName());
+      }
+    }
+  }
+
+
+  
+  refine MethodSignature eq MethodAccess.potentiallyApplicable(MethodDecl m) {
+    if(!m.accessibleFrom(hostType()))
+      return false;
+    if(m.isVariableArity() && !(arity() >= m.arity()-1))
+      return false;
+    if(!m.isVariableArity() && !(m.arity() == arity()))
+      return false;
+    if(m instanceof GenericMethodDecl) {
+      GenericMethodDecl gm = (GenericMethodDecl)m;
+      ArrayList list = typeArguments(m);
+      if(list.size() != 0) {
+        if(gm.getNumTypeParameter() != list.size())
+          return false;
+        for(int i = 0; i < gm.getNumTypeParameter(); i++)
+          if(!((TypeDecl)list.get(i)).subtype(gm.original().getTypeParameter(i)))
+            return false;
+      }
+    }
+    return true;
+  }
+  refine MethodSignature eq MethodAccess.decls() {
+    SimpleSet potentiallyApplicable = SimpleSet.emptySet;
+    // select potentially applicable methods
+    for(Iterator iter = lookupMethod(name()).iterator(); iter.hasNext(); ) {
+      MethodDecl decl = (MethodDecl)iter.next();
+      if(decl instanceof MethodMapping) {
+        potentiallyApplicable = potentiallyApplicable.add(decl);
+      }
+    }
+    if(!potentiallyApplicable.isEmpty())
+      return potentiallyApplicable;
+    return MethodSignature.MethodAccess.decls();
+  }
+
+  refine LookupVariable eq MethodAccess.getArg().lookupVariable(String name) {
+    if(inMatchStmt()) {
+      TypeDecl type = childIndex < decl().getNumParameter() ? decl().getParameter(childIndex).type() : unknownType();
+      return lookupImplicitVariable(name, type);
+    }
+    return LookupVariable.MethodAccess.getArg().lookupVariable(name);
+  }
+
+  inh SimpleSet MethodAccess.lookupImplicitVariable(String name, TypeDecl type);
+
+  eq Program.getChild().lookupImplicitVariable(String name, TypeDecl type) {
+    return SimpleSet.emptySet;
+  }
+
+  syn nta VariableDeclaration Rule.buildVariableDeclaration(String name, TypeDecl type) {
+    return new VariableDeclaration(new Modifiers(new List()), new TypeAccess(type.name()), "#" + name, new Opt(new NullLiteral()));
+  }
+
+  inh boolean MethodAccess.inMatchStmt();
+  eq Rule.getExpr().inMatchStmt() = true;
+  eq Program.getChild().inMatchStmt() = false;
+
+  eq  Rule.getExpr().lookupImplicitVariable(String name, TypeDecl type) =
+    SimpleSet.emptySet.add(buildVariableDeclaration(name, type));
+
+  syn lazy HashSet Rule.implicitVariables() {
+    HashSet set = new HashSet();
+    getExpr().collectImplicitVariables(set);
+    return set;
+  }
+  public void ASTNode.collectImplicitVariables(HashSet set) {
+    for(int i = 0; i < getNumChild(); i++)
+      getChild(i).collectImplicitVariables(set);
+  }
+  public void VarAccess.collectImplicitVariables(HashSet set) {
+    if(decl() instanceof VariableDeclaration && decl().name().startsWith("#"))
+      set.add(decl());
+    super.collectImplicitVariables(set);
+  }
+
+  eq Rule.getStmt().lookupVariable(String name) {
+    // if implicit variable named name exists
+    // then return implicit
+    // otherwise delegate to enclosing context
+    for(Iterator iter = implicitVariables().iterator(); iter.hasNext(); ) {
+      VariableDeclaration d = (VariableDeclaration)iter.next();
+      if(d.name().equals(name))
+        return SimpleSet.emptySet.add(d);
+    }
+    return lookupVariable(name);
+  }
+
+  eq Rule.getChild().isDAbefore(Variable v) = 
+    v.name().startsWith("#") || isDAbefore(v);
+  inh boolean Rule.isDAbefore(Variable v);
+
+  eq BackQuoteExpr.getExpr().lookupVariable(String name) {
+    SimpleSet set = lookupVariable("#" + name);
+    if(!set.isEmpty())
+      return set;
+    return lookupVariable(name);
+  }
+  inh SimpleSet Rule.lookupVariable(String name);
+
+  eq MatchStmt.getTypeAccess().lookupType(String name) =
+    lookupType("#" + name);
+
+  syn TypeDecl MatchStmt.inferredExprType() {
+    if(hasTypeAccess())
+      return getTypeAccess().type();
+    for(int i = 0; i < getNumRule(); i++) {
+      Rule r = getRule(i);
+      if(r.getExpr() instanceof MethodAccess)
+        return r.getExpr().type();
+    }
+    return unknownType();
+  }
+  inh TypeDecl MatchStmt.unknownType();
+
+  public void MatchStmt.typeCheck() {
+    super.typeCheck();
+    if(!hasTypeAccess()) {
+      boolean foundConstructor = false;
+      for(int i = 0; i < getNumRule(); i++) {
+        Rule r = getRule(i);
+        if(r.getExpr() instanceof MethodAccess)
+          foundConstructor = true;
+      }
+      if(!foundConstructor)
+        error("type of subject must be explicitly specified");
+    }
+    else if(!getExpr().type().subtype(inferredExprType()))
+      error("expected type for the subject is " + inferredExprType().typeName());
+  }
+
+  inh TypeDecl Rule.expectedType();
+  eq MatchStmt.getRule().expectedType() = inferredExprType();
+
+  eq BackQuoteExpr.type() = getExpr().type();
+
+  inh boolean BackQuoteExpr.nestedInQuote();
+  eq BackQuoteExpr.getExpr().nestedInQuote() = true;
+  eq Program.getChild().nestedInQuote() = false;
+
+  public void BackQuoteExpr.nameCheck() {
+    super.nameCheck();
+    if(nestedInQuote())
+      error("nested quotes not allowed");
+  }
+   
+  inh TypeDecl TomParameter.type();
+  eq MakeMapping.getParameter(int index).type() {
+    if(index < getNumTomTypedParameter())
+      return getTomTypedParameter(index).type();
+    return unknownType();
+  }
+  inh TypeDecl MethodMapping.unknownType();
+
+  eq Program.getChild().type() = null;
+
+  eq MakeMapping.getTomTypedParameter(int index).lookupVariable(String name) {
+    for(int i = 0; i < getNumTomTypedParameter(); i++)
+      if(getTomTypedParameter(i).name().equals(name))
+        return SimpleSet.emptySet.add(getTomTypedParameter(i));
+    return SimpleSet.emptySet;
+  }
+
+  eq GetSlotMapping.getTomTypedParameter(int index).lookupVariable(String name) {
+    for(int i = 0; i < getNumTomTypedParameter(); i++)
+      if(getTomTypedParameter(i).name().equals(name))
+        return SimpleSet.emptySet.add(getTomTypedParameter(i));
+    return SimpleSet.emptySet;
+  }
+
+  eq OperatorMapping.getTomTypedParameter(int index).lookupVariable(String name) {
+    for(int i = 0; i < getNumTomTypedParameter(); i++)
+      if(getTomTypedParameter(i).name().equals(name))
+        return SimpleSet.emptySet.add(getTomTypedParameter(i));
+    return SimpleSet.emptySet;
+  }
+
+  eq GetSlotMapping.type() {
+    for(int i = 0; i < getNumTomTypedParameter(); i++)
+      if(getTomTypedParameter(i).name().equals(getSlotName()))
+        return getTomTypedParameter(i).type();
+    return unknownType();
+  }
+
+  public void GetSlotMapping.typeCheck() {
+    super.typeCheck();
+    if(type().isUnknown())
+      error("could not find parameter " + getSlotName());
+  }
+
+  public void MakeMapping.nameCheck() {
+    super.nameCheck();
+    if(getNumTomTypedParameter() != getNumParameter())
+      error("requires " + getNumTomTypedParameter() + " parameters");
+  }
+
+  public void OperatorMapping.nameCheck() {
+    super.nameCheck();
+    for(ParameterDeclaration p : getTomTypedParameters()) {
+      if(lookupMethod("get_slot_" + p.name() + "#" + getName()).isEmpty())
+        error("missing get_slot for " + p.name()); 
+    }
+    if(lookupMethod("make#" + getName()).isEmpty())
+      error("missing make for " + getName());
+    if(lookupMethod("is_fsym#" + getName()).isEmpty())
+      error("missing is_fsym for " + getName());
+  }
+
+
+  public void Rule.typeCheck() {
+    super.typeCheck();
+    Expr e = getExpr().nonTomConstruct();
+    if(e != null) {
+      if(e instanceof MethodAccess) {
+        MethodAccess m = (MethodAccess)e;
+        if(m.decl().type().isUnknown())
+          e.error("missing node constructor " + m.name());
+        else
+          e.error("method " + m.decl().name() + " is not a node constructor");
+      }
+      else
+        e.error("only tom constructs allowed in pattern");
+    }
+    if(getExpr() instanceof MethodAccess && getExpr().type() != expectedType())
+      error("node constructor of type " + expectedType().typeName() + " required");
+  }
+
+  syn Expr ASTNode.nonTomConstruct() {
+    Expr e = null;
+    for(int i = 0; i < getNumChild(); i++) {
+      e = getChild(i).nonTomConstruct();
+      if(e != null) return e;
+    }
+    return e;
+  }
+  eq Expr.nonTomConstruct() = this;
+  eq MethodAccess.nonTomConstruct() {
+    if(decl() instanceof MethodMapping) {
+      Expr e = null;
+      for(int i = 0; i < getNumChild(); i++) {
+        e = getChild(i).nonTomConstruct();
+        if(e != null) return e;
+      }
+      return e;
+    }
+    else
+      return this;
+  }
+  eq VarAccess.nonTomConstruct() = null;
+
+  
+
+
+  syn lazy List TomTypeAlias.getBodyDeclList() {
+    List list = new List();
+    if(!superclass().isObject()) {
+      ConstructorDecl c = (ConstructorDecl)superclass().constructors().iterator().next();
+
+      ConstructorDecl constructor = new ConstructorDecl();
+      constructor.setModifiers(new Modifiers(new List()));
+      constructor.setID("<init>");
+      List parameterList = new List();
+      for(int i = 0; i < c.getNumParameter(); i++) {
+        parameterList.add(
+          new ParameterDeclaration(
+            c.getParameter(i).type().createQualifiedAccess(),
+            c.getParameter(i).name()
+          )
+        );
+      }
+      constructor.setParameterList(parameterList);
+      
+      List argList = new List();
+      for(int i = 0; i < c.getNumParameter(); i++)
+        argList.add(new VarAccess(c.getParameter(i).name()));
+      constructor.setConstructorInvocation(
+        new ExprStmt(
+          new SuperConstructorAccess("super", argList)
+        )
+      );
+      constructor.setBlock(new Block());
+      list.add(constructor);
+    }
+    for (int i=0 ; i < getNumTomTypeAliasBody(); i++) {
+      list.add(getTomTypeAliasBody(i));
+    }
+    return list;
+  }
+
+  rewrite MethodMappings in TypeDecl.getBodyDecl() {
+    to List getMethodDeclList();
+  }
+
+}

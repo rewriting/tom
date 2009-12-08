@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the skel example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="poly"/>
+  <property name="distribute" value="yes"/>
+  <target name="dist" depends="common.dist" if="distrib.zip">
+    <zip destfile="${distrib.zip}" update="yes">
+         <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+           <include name="${example}/Poly.signature"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

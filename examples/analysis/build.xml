@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the analysis example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="analysis"/>
+  <target name="build" depends="init">
+    <gompointercompile/>
+    <tomcompile/>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

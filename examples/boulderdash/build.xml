@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the boulderdash example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="boulderdash"/>
+  <target name="build" depends="init">
+    <gomcompile/>
+    <!--
+    <tomcompile/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+      options="--noStatic"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+    </tom.preset>
+    <javacompile/>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.gif"/>
+        <include name="*.html"/>
+      </fileset>
+    </copy>
+    <!-- Create a jar for the applet -->
+    <jar jarfile="${examples.build}/${example}/boulder.jar">
+      <fileset dir="${examples.build}">
+        <include name="${example}/**/*.class"/>
+        <include name="${example}/**/*.gif"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/tom-runtime-full.jar">
+        <include name="shared/**/*.class"/>
+        <include name="tom/library/sl/Visitable.class"/>
+        <include name="tom/library/sl/VisitFailure.class"/>
+        <include name="aterm/**/*.class"/>
+        <include name="tom/library/utils/*Converter.class"/>
+        <include name="jjtraveler/Visitable.class"/>
+        <include name="jjtraveler/VisitFailure.class"/>
+      </zipfileset>
+    </jar>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

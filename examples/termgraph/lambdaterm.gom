@@ -1,0 +1,40 @@
+module termgraph.lambdaterm
+imports String
+abstract syntax
+LambdaTerm =
+     | app(arg1:LambdaTerm,arg2:LambdaTerm)
+     | abs(var:LambdaTerm,arg:LambdaTerm)
+     | abs3(var:LambdaTerm,arg:LambdaTerm)
+     | abs2(arg:LambdaTerm)
+     | var(name:String)
+
+
+abs:import() { import tom.library.sl.Position; }
+abs:block() {
+%include { sl.tom }
+
+%strategy ToDeBruinj(var:LambdaTerm) extends Identity(){
+  visit LambdaTerm{
+    v@var[] -> {
+      if(`v.equals(var)){
+        return `PathLambdaTerm(getEnvironment().getPosition().length()+1);
+      }
+    }
+  }
+}
+
+}
+
+abs:make(var,arg) {
+  termgraph.lambdaterm.types.LambdaTerm newarg; 
+  try {
+    newarg =(termgraph.lambdaterm.types.LambdaTerm)`TopDown(ToDeBruinj(var)).visit(arg);
+  } catch(tom.library.sl.VisitFailure e) {
+    newarg = arg;
+  }
+  if(true){
+    return `abs2(newarg); 
+  }
+}
+
+

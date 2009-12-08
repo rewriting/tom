@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the polygraphes example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="polygraphes"/>
+  <target name="build" depends="init">
+    <!-- build adt -->    
+    <gomcompile/>
+    <!-- build tom -->
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
+      <!-- stamp not yet ready for apigen list -->
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/PolygraphesParser.g.t"/>
+    </tom.preset>
+    <!--
+    <tom.preset outputfile="${examples.gen}/${example}/PolygraphesParser.g"
+                import="${examples.gen}/${example}"
+                srcdir="${examples.dir}"> 
+      <include name="${example}/**/PolygraphesParser.g.t"/>
+    </tom.preset>
+    -->
+    <!-- build parser -->
+    <!--
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/PolygraphesParser.g"
+              outputdirectory="${examples.gen}/${example}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    -->
+    <!-- build java source -->
+    <javacompile/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${example}">
+        <include name="examples"/>
+      </fileset>
+    </copy>
+  </target>
+  <property name="distribute" value="yes"/>
+  <target name="dist" depends="common.dist" if="distrib.zip">
+    <zip destfile="${distrib.zip}" update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${example}/examples*"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

@@ -1,0 +1,90 @@
+import ast.AST.*;
+import java.util.*;
+
+aspect ASTDecl {
+  syn lazy Collection ASTDecl.tempComponents() {
+    LinkedList list = new LinkedList();
+    if(superClass() != null) {
+      list.addAll(superClass().tempComponents());
+    }
+    for(int i = 0; i < getNumComponents(); i++) {
+      boolean done = false;
+      for(ListIterator iter = list.listIterator(); !done && iter.hasNext(); ) {
+        Components c = (Components)iter.next();
+        if(c.name().equals(getComponents(i).name()) && c.type().equals(getComponents(i).type())) {
+          iter.remove();
+          done = true;
+        }
+      }
+      if(getComponents(i).isNTA()) {
+        list.add(getComponents(i));
+      }
+      else {
+        int j = 0;
+        while(j < list.size() && !((Components)list.get(j)).isNTA())
+          j++;
+        list.add(j, getComponents(i));
+      }
+    }
+    return list;
+  }
+  syn Iterator ASTDecl.getComponents() = tempComponents().iterator();
+
+  syn boolean ASTDecl.redefinesTokenComponent(TokenComponent c) {
+    if(c.hostClass() != this) // inherited component
+      return false;
+    if(superClass() == null) // no definition in superclass
+      return true;
+    for(Iterator iter = superClass().getComponents(); iter.hasNext(); ) {
+      Components d = (Components)iter.next();
+      if(d.name().equals(c.name()) && d instanceof TokenComponent && c.isNTA() == d.isNTA()) {
+        return false;
+      }
+    }
+    return true; // no equal definition in superclass
+  }
+}
+aspect Comp {
+  public Iterator TypeDecl.getComponents() {
+    return tempComponents().iterator();
+  }
+  syn lazy Collection TypeDecl.tempComponents() {
+    LinkedList list = new LinkedList();
+    for(int i = 0; i < getNumComponents(); i++) {
+      list.add(getComponents(i));
+    }
+    return list;
+  }
+}
+
+aspect NTADetector {
+  public boolean Components.isNTA() {
+    return false;
+  }
+  public boolean ListComponentsNTA.isNTA() {
+    return true;
+  }
+  public boolean OptionalComponentNTA.isNTA() {
+    return true;
+  }
+  public boolean TokenComponentNTA.isNTA() {
+    return true;
+  }
+  public boolean AggregateComponentsNTA.isNTA() {
+    return true;
+  }
+}
+
+aspect ConstructorParameterTypes {
+  syn String Components.constrParmType();
+  eq ListComponents.constrParmType() = ASTNode.java5 ? "List<" + getId().type() + ">" : "List";
+  eq OptionalComponent.constrParmType() = ASTNode.java5 ? "Opt<" + getId().type() + ">" : "Opt";
+  eq TokenComponent.constrParmType() = getTokenId().getTYPE();
+  eq AggregateComponents.constrParmType() = getId().type();
+}
+
+aspect ComponentsHostClass {
+  inh TypeDecl Components.hostClass();
+
+  public String ClassDecl.extendsName = "java.lang.Object";
+}

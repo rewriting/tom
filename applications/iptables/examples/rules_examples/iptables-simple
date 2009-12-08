@@ -1,0 +1,10 @@
+Chain INPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT	   all	--  localhost		 localhost
+ACCEPT     all  --  anywhere      	 anywhere            state RELATED,ESTABLISHED
+ACCEPT     tcp  --  192.168.0.0/24       anywhere            state NEW
+Chain OUTPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT	   all	--  localhost		 localhost	     tcp dpt:80
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED
+ACCEPT     tcp  --  anywhere             192.168.0.0/24      state NEW

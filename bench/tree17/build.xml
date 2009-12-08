@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the tree17 bench" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <target name="clean" description="Cleans bench directory">
+    <delete dir="${bench.gen}/tree17"/>
+    <delete dir="${bench.build}/tree17"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="tree17"/>
+    <javacompile example="tree17"/>
+  </target>
+</project>

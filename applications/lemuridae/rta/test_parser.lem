@@ -1,0 +1,15 @@
+term modulo {
+}
+
+prop modulo {
+  r : [] U -> (forall x, A => B => C) => D /\ G /\ (E /\ F) \/ H
+}
+
+prop fold {
+}
+
+
+rootR(
+  <r:A=>A> implyR(
+    <x:A><a:A> ax(x,a),r)
+)

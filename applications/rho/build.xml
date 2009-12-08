@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="rho" default="build" basedir=".">
+  <description>
+    The rho interpreter
+  </description>
+
+  <property environment="env"/>
+  <property name="tom.home"     value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="rho.dir"      location="."/>
+  <property name="rho.gen"      location="gen"/>
+  <property name="rho.build"    location="build"/>
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${rho.build}"/>
+    <mkdir dir="${rho.gen}"/>
+    
+    <macrodef name="tomcompile">
+      <attribute name="package"/>
+      <sequential>
+        <tom.preset srcdir="${rho.dir}" 
+                    destdir="${rho.gen}">
+          <include name="@{package}/**/*.t"/>
+          <exclude name="@{package}/**/*.g.t"/>
+        </tom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomcompile">
+      <attribute name="package"/>
+      <sequential>
+        <gom.preset srcdir="${rho.dir}"
+                    package="@{package}"
+                    destdir="${rho.gen}">
+          <include name="@{package}/**/*.gom"/>
+        </gom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="javacompile">
+      <attribute name="package"/>
+      <sequential>
+        <javac.preset destdir="${rho.build}">
+          <src path="${rho.dir}"/>
+          <src path="${rho.gen}"/>
+          <include name="@{package}/**/*.java"/>
+        </javac.preset>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="build" depends="build.xrho,build.matching,build.parallel"/>
+
+  <target name="build.xrho" depends="init">
+    <gomcompile package="xrho"/>
+    <tomcompile package="xrho"/>
+    <tom.preset srcdir="${rho.dir}" 
+	    outputfile="${rho.gen}/xrho/RhoParser.g"
+	    import="${rho.gen}/xrho">
+	    <include name="xrho/*.g.t"/>
+    </tom.preset>
+    <tomantlr target="${rho.gen}/xrho/RhoParser.g"
+              outputdirectory="${rho.gen}/xrho">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <javacompile package="xrho"/>
+  </target>
+
+  <target name="build.matching" depends="init">
+    <gomcompile package="matching"/>
+    <tomcompile package="matching"/>
+    <tom.preset srcdir="${rho.dir}" 
+	    outputfile="${rho.gen}/matching/LamcalParser.g"
+	    import="${rho.gen}/matching">
+	    <include name="matching/*.g.t"/>
+    </tom.preset>
+    <tomantlr target="${rho.gen}/matching/LamcalParser.g"
+              outputdirectory="${rho.gen}/matching">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <javacompile package="matching"/>
+  </target>
+
+  <target name="build.parallel" depends="init">
+  <gom.preset srcdir="${rho.dir}"
+              package="lambdaparallel" 
+              destdir="${rho.gen}">
+      <include name="lambdaparallel/**/*.gom"/>
+    </gom.preset>
+    <tomcompile package="lambdaparallel"/>
+    <tom.preset srcdir="${rho.dir}" 
+	    outputfile="${rho.gen}/lambdaparallel/LamcalparallelParser.g"
+	    import="${rho.gen}/lambdaparallel/">
+	    <include name="lambdaparallel/*.g.t"/>
+    </tom.preset>
+    <tomantlr target="${rho.gen}/lambdaparallel/LamcalparallelParser.g"
+              outputdirectory="${rho.gen}/lambdaparallel/">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <javacompile package="lambdaparallel"/>
+  </target>
+
+  <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, init">
+    <tom.junit printsummary="yes"
+               fork="true"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${rho.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${rho.dir}">
+          <include name="xrho/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed in xrho. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${rho.gen}"/>
+    <delete dir="${rho.build}"/>
+  </target>
+</project>

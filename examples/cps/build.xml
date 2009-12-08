@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the cps example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="cps"/>
+  <target name="build" depends="init">
+    <gomfreshcompile/>
+    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
+                import="${examples.gen}/${example}"
+                srcdir="${examples.dir}"> 
+      <include name="${example}/Lambda.g.t"/>
+    </tom.preset>
+    <tomcompile/>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${examples.gen}/${example}/Lambda.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <javacompile/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="examples"/>
+        <include name="*.ml"/>
+      </fileset>
+    </copy>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

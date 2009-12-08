@@ -1,0 +1,15 @@
+exports
+context-free syntax
+"true"        -> Bool { cons("true") }
+"[" Bool* "]" -> BoolList {cons("list1") }
+"[" Bool+ "]" -> BoolList {cons("list2") }
+"[" {Bool ","}* "]" -> BoolList {cons("list3") }
+"[" {Bool ","}+ "]" -> BoolList {cons("list4") }
+
+lexical syntax
+[a-z] -> IdSort { cons("IdCons1") }
+[a-z]* -> IdSort { cons("IdCons2") }
+[a-z]+ -> IdSort { cons("IdCons3") }
+[a-z][a-zA-Z]* -> IdSort { cons("IdCons4") }
+[a-z][a-zA-Z]+ -> IdSort { cons("IdCons5") }
+

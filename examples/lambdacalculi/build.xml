@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the lambdacalculi example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="lambdacalculi"/>
+  <target name="build" depends="init">
+    <gom.preset srcdir="${examples.dir}"
+      termgraph="true"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/lambdaterm.gom"/>
+    </gom.preset>
+                                  
+    <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
+                import="${examples.gen}/${example}"
+                srcdir="${examples.dir}"> 
+                <include name="${example}/**/LambdaTermParser.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"
+      outputdirectory="${examples.gen}/${example}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <tomcompile/>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="no"/>
+</project>

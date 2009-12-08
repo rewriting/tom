@@ -1,0 +1,3 @@
+copy the directorie (rss) into tombat (webapps)
+compile files (in rss/WEB-INF/classes/)
+load the servlet with tomcat manager

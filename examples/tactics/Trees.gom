@@ -1,0 +1,10 @@
+module tactics.Trees 
+imports String 
+abstract syntax
+
+Tree = node(conclusion:String, premises:NodeList)
+     | open(conclusion:String)
+
+NodeList = nlist(Tree*)
+
+

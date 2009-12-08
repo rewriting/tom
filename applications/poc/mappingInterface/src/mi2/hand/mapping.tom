@@ -1,0 +1,66 @@
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+
+%typeterm T {
+  implement { base.hand.types.T }
+  is_sort(t) { $t instanceof base.hand.types.T }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%typeterm T1 {
+  implement { base.hand.types.T1 }
+  is_sort(t) { $t instanceof base.hand.types.T1 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%typeterm T2 {
+  implement { base.hand.types.T2 }
+  is_sort(t) { $t instanceof base.hand.types.T2 }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%op T1 a() {
+  make() { mi2.hand.Module.a_Mapping.instance.make() }
+  is_fsym(t) { mi2.hand.Module.a_Mapping.instance.isSym($t) }
+}
+
+%op T2 b() {
+  make() { mi2.hand.Module.b_Mapping.instance.make() }
+  is_fsym(t) { mi2.hand.Module.b_Mapping.instance.isSym($t) }
+}
+
+%op T1 f(s1:T1, s2:T2) {
+  make(s1, s2) { mi2.hand.Module.f_Mapping.instance.make($s1, $s2) }
+  is_fsym(t) { mi2.hand.Module.f_Mapping.instance.isSym($t) }
+  get_slot(s1, t)  { mi2.hand.Module.f_Mapping.instance.getS1($t) }
+  get_slot(s2, t)  { mi2.hand.Module.f_Mapping.instance.getS2($t) }
+}
+
+%op T2 g(s2:T2) {
+  make(s2) { mi2.hand.Module.g_Mapping.instance.make($s2) }
+  is_fsym(t) { mi2.hand.Module.g_Mapping.instance.isSym($t) }
+  get_slot(s2, t)  { mi2.hand.Module.g_Mapping.instance.getS2($t) }
+}
+
+%op T2 h(ts:t1List) {
+  make(ts) { mi2.hand.Module.h_Mapping.instance.make($ts) }
+  is_fsym(t) { mi2.hand.Module.h_Mapping.instance.isSym($t) }
+  get_slot(ts, t)  { mi2.hand.Module.h_Mapping.instance.getTs($t) }
+}
+
+%typeterm t1List {
+  implement { java.util.List<T1> }
+  is_sort(t) { $t instanceof java.util.List }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+
+%oplist t1List concT1(T1*) {
+  is_fsym(l)       { mi2.hand.Module.concT1_Mapping.instance.isSym($l) }
+  make_empty()     { mi2.hand.Module.concT1_Mapping.instance.makeEmpty() } 
+  make_insert(o,l) { mi2.hand.Module.concT1_Mapping.instance.makeInsert($o,$l) }
+  get_head(l)      { mi2.hand.Module.concT1_Mapping.instance.getHead($l) }
+  get_tail(l)      { mi2.hand.Module.concT1_Mapping.instance.getTail($l) }
+  is_empty(l)      { mi2.hand.Module.concT1_Mapping.instance.isEmpty($l) }
+}

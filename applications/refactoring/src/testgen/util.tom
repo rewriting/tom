@@ -1,0 +1,258 @@
+%include {sl.tom }
+%include {util/types/Set.tom}
+%include {tinyjava/TinyJava.tom}
+%include {tinyjava/_TinyJava.tom}
+
+%op Strategy Debug(label:String) {
+  make(label) {( new testgen.Debug($label) )}
+}
+
+%typeterm Context {
+  implement { Context }
+  is_sort(t) { ($t instanceof Context) }
+}
+
+public static class Context {
+  public String packagename;
+  public Type upperclass;
+  public Set<Type> types; 
+}
+
+%strategy CollectTypes(context:Context,s:Strategy) extends All(s) {
+  visit ClassDecl {
+    c@ClassDecl[name=name] -> {
+      Type newtype;
+      if (context.upperclass != null) {
+        newtype = new Type(context.packagename,context.upperclass,`name.getname());
+      } else {
+        newtype = new Type(context.packagename,`name.getname());
+      }
+      context.types.add(newtype);
+      Type upperupperclass = context.upperclass;
+      context.upperclass = `newtype;
+      //visit the body
+      getEnvironment().down(3);
+      this.visit(getEnvironment());
+      getEnvironment().up();
+      context.upperclass = upperupperclass;
+      return `c;
+    }
+  }
+  visit PackageNode {
+    PackageNode[packageName=packageName] -> {
+      context.packagename = `packageName.getname();
+    }
+  }
+}
+
+public static Set<Type> collectAllTypes(Prog p) {
+  Context context = new Context();
+  context.types = new HashSet<Type>();
+  try {
+    `Mu(MuVar("x"),CollectTypes(context,MuVar("x"))).visit(p);
+  } catch (VisitFailure e) {
+    System.out.println(" Unexpected strategy failure");
+  }
+  return context.types;
+}
+
+public static Set<Type> collectTopLevelTypes(Prog p) {
+  Set<Type> allTypes =  collectAllTypes(p);
+  System.out.println(allTypes);
+  Set<Type> topleveltypes = new HashSet<Type>();
+  for (Type t:allTypes) {
+    if(t.getupperclass()==null) {
+      topleveltypes.add(t);
+    }
+  }
+  System.out.println(topleveltypes);
+  return topleveltypes;
+}
+
+public static Set<Type> collectMemberTypes(Prog p) {
+  Set<Type> allTypes =  collectAllTypes(p);
+  Set<Type> membertypes = new HashSet<Type>();
+  for (Type t:allTypes) {
+    if(t.getupperclass()!=null) {
+      membertypes.add(t);
+    }
+  }
+  return membertypes;
+}
+
+public static Set<Position> collectMemberClassesPosition(Prog p) {
+  Set<Position> positions =  new HashSet();
+  try {
+    `TopDown(CollectMemberPosition(positions)).visit(p);
+  } catch (VisitFailure e) {
+    throw new RuntimeException("Unexpected failure");
+  }
+  return positions;
+}
+
+%strategy CollectMemberPosition(positions:Set) extends Identity() {
+  visit BodyDecl {
+    MemberClassDecl[] -> {
+      positions.add(getPosition().down(1));
+    }
+  }
+}
+
+%strategy GetName(name:NameWrapper) extends Identity() {
+  visit ClassDecl {
+    ClassDecl[name=name] -> {
+      try {
+        // for member classes just return the name
+        `Up(Is_MemberClassDecl()).visit(getEnvironment());
+        name.value = `Dot(name);
+      } catch (VisitFailure e) {
+        // for top level classes return the package+name
+        NameWrapper packageName = new NameWrapper();
+        `ApplyAtEnclosingPackageNode(GetPackageNode(packageName)).visit(getEnvironment());
+        name.value = `Dot(packageName.value,name);
+      }
+    }
+  }
+}
+
+%strategy GetPackageNode(name:NameWrapper) extends Identity() {
+  visit PackageNode {
+    PackageNode[packageName=packageName] -> {
+      name.value = `packageName;
+    }
+  }
+}
+
+%typeterm NameWrapper {
+  implement { NameWrapper }
+}
+
+static class NameWrapper { public Name value; }
+
+%typeterm PositionWrapper {
+  implement { PositionWrapper }
+}
+
+%op Strategy ApplyAtPosition(p:PositionWrapper,s:Strategy) {
+  make(p,s) { new ApplyAtPosition(p,s) }
+}
+
+%typeterm TypeWrapper {
+  implement {TypeWrapper}
+}
+
+static class TypeWrapper {
+
+  public Type type;
+
+  public TypeWrapper(Type t) {
+    this.type = t;
+  }
+}
+
+%op Strategy ApplyAt(t:TypeWrapper,s:Strategy) {
+  make(t,s) { (`_Prog(ApplyAtLocal(t,s))) }
+}
+
+%strategy ApplyAtLocal(t:TypeWrapper,s:Strategy) extends Identity() {
+  visit PackageNode {
+    PackageNode[packageName=name] -> {
+      if (t.type.getpackagename().equals(`name.getname())) {
+        return (PackageNode) `_PackageNode(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
+      }
+    }
+  }
+  visit ClassDecl {
+    ClassDecl[name=n] -> {
+      if (t.type.getname().equals(`n.getname())) {
+        return (ClassDecl) s.visit(getEnvironment());
+      } else {
+        if (t.type.getupperclass() != null) {
+          //find the upper class recursively and then try to use ApplyAt on all its inner classes
+          return (ClassDecl) `_ClassDecl(Identity(),Identity(),_ConcBodyDecl(Try(_MemberClassDecl(this)))).visit(getEnvironment());
+
+        }
+      }
+    }
+  }
+}
+
+%strategy Print() extends Identity() {
+  visit ClassDecl {
+    decl -> {
+      System.out.println(`decl);
+    }
+  }
+}
+
+public void printDeclClass(Prog p) {
+  for (Type t : collectAllTypes(p)) {
+    try {
+      System.out.println("ast for the type "+t);
+      TypeWrapper tt = new TypeWrapper(t);
+      `ApplyAt(tt,Print()).visit(p);
+    } catch (VisitFailure e) {
+      System.out.println(" Unexpected strategy failure");
+    }
+  }
+}
+
+public static String getComposedName(Name n) {
+  %match(n) {
+    ConsDot(head,tail@!EmptyDot()) -> {
+      return `head.getname()+"."+getComposedName(`tail);
+    }
+    ConsDot(head,EmptyDot()) -> {
+      return `head.getname();
+    }
+    Name(name) -> {
+      return `name;
+    }
+    Undefined() -> {
+      return "Object";
+    }
+  }
+  return "";
+}
+
+public static String getSimpleName(Name n) {
+    %match(n) {
+          Dot(_*,name) -> {
+                  return `name.getname();
+                      }
+              Name(name) -> {
+                      return `name;
+                          }
+                  Undefined() -> {
+                          return "Object";
+                              }
+                    }
+      return "";
+}
+
+%op Strategy ApplyAtEnclosingClass(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
+}
+
+%op Strategy ApplyAtEnclosingPackageNode(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(Sequence(Debug("try to find the enclosing package"),IfThenElse(Is_PackageNode(),Sequence(Debug("apply at enclosing package"),s),MuVar("y"))))) }
+}
+
+%op Strategy ApplyAtEnclosingStmt(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),s,MuVar("y")))) }
+}
+
+%op Strategy ApplyToPredecessors(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),Sequence(_ConsBlock(s,Identity()),MuVar("y")),Identity()))) }
+}
+
+%op Strategy ApplyAtEnclosingDot(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),IfThenElse(Up(Is_ConsDot()),Up(MuVar("y")),s)) }
+}
+
+%op Strategy ApplyAtEnclosingScope(s:Strategy) {
+  make(s) { `Sequence(
+      IfThenElse(ApplyAtEnclosingDot(Up(Choice(Is_MemberClassDecl(),Is_FieldDecl(),Is_LocalVariableDecl()))),ApplyAtEnclosingClass(s),ApplyAtEnclosingDot(Up(ApplyAtEnclosingClass(s)))),
+      Debug("Apply at enclosing scope: package node"),
+      ApplyAtEnclosingPackageNode(s)) }
+}

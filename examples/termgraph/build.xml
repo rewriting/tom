@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the termgraph example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="termgraph"/>
+  <target name="build" depends="init">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+      <include name="examples"/>
+      <include name="examplefreshlambda"/>
+      </fileset>
+   </copy>
+    <gom.preset srcdir="${examples.dir}"
+      termgraph="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.gom"/>
+      <exclude name="${example}/**/term.gom"/>
+      <exclude name="${example}/**/lambdaterm.gom"/>
+    </gom.preset>
+    <gom.preset srcdir="${examples.dir}"
+      termgraph="true"
+      withCongruenceStrategies="true"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/term.gom"/>
+      <include name="${example}/**/lambdaterm.gom"/>
+    </gom.preset>
+
+    <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${example}/LambdaTermParser.g"
+      import="${examples.gen}/${example}"
+      srcdir="${examples.dir}"> 
+      <include name="${example}/**/LambdaTermParser.g.t"/>
+    </tom.preset>
+    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
+      import="${examples.gen}/${example}"
+      srcdir="${examples.dir}"> 
+      <include name="${example}/**/Lambda.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tomantlr target="${examples.gen}/${example}/LambdaTermParser.g"
+      outputdirectory="${examples.gen}/${example}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${examples.gen}/${example}/Lambda.g"
+      outputdirectory="${examples.gen}/${example}"
+      libdirectory="${examples.gen}/${example}"
+      multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <tomcompile/>
+    <javacompile/>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

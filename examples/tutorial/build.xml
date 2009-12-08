@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the tutorial example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="tutorial"/>
+  <property name="distribute" value="yes"/>
+</project>

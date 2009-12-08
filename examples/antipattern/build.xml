@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the antipattern example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="antipattern"/>
+  <target name="build" depends="init">
+    <gombuild/>
+    <!--
+    "Wait for the static %rule problem to be resolved"
+    <tomcompile/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+      options="--noStatic"
+      optimize="no"
+      optimize2="no"
+      destdir="${examples.gen}">          
+      <include name="${example}/**/*.t"/>
+      <exclude name="${example}/**/*.g.t"/>
+    </tom.preset>
+    <javacompile/>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${example}">
+        <include name="*.txt"/>
+        <include name="${example}/**/*.txt"/> 
+      </fileset>
+    </copy>
+
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

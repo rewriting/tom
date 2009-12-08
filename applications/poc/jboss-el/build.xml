@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="el" default="test" basedir=".">
+  <description>
+    Transformation and analysis of jboss-el expressions 
+  </description>
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+  <property name="optimize"   value="off"/> 
+  <property name="optimize2"   value="off"/>
+  <property name="genIntrospector"   value="on"/>
+  <property name="pretty"   value="on"/>
+ 
+  <property environment="env"/>
+  <property name="tom.home" value="../../../src/dist"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="el.dir"      location="."/>
+  <property name="el.src"      location="src"/>
+  <property name="el.lib"      location="lib"/>
+  <property name="el.gen"      location="gen"/>
+  <property name="el.build"    location="build"/>
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${el.build}"/>
+    <mkdir dir="${el.gen}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <gom.preset config="${gomconfigfile}"
+                 srcdir="${el.src}"
+                 destdir="${el.gen}"
+                 withCongruenceStrategies="false">
+         <include name="**/*.gom"/>
+    </gom.preset>
+
+    <tom.preset srcdir="${el.src}"
+      destdir="${el.gen}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.t"/>
+    </tom.preset>
+
+    <javac.preset destdir="${el.build}" fork="yes">
+      <src path="${el.src}"/>
+      <src path="${el.gen}"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${el.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+
+      </classpath>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${el.gen}"/>
+    <delete dir="${el.build}"/>
+  </target>
+
+  <target name="test" depends="build"
+    description="Runs junit acceptance tests">
+    <junit haltonfailure="false" showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${el.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${el.build}"/>
+      </classpath>
+      <test name="TestHandMapping"/>
+      <test name="TestGomMapping"/>
+    </junit>
+  </target>
+
+</project>

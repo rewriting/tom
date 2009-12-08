@@ -1,0 +1,140 @@
+%typeterm Interval {
+    implement { Term }
+    is_sort(t) { isinstance(t,Term) }
+    equals(t1,t2) { t1 == t2 }
+}
+
+%op Interval interval(x:float, y:float) {
+    is_fsym(t) { t.name == 'interval' }
+    get_slot(x,t) { t.children[0] }
+    get_slot(y,t) { t.children[1] }
+    make(x,y) { interval(x,y) }
+}
+
+%typeterm Extent {
+    implement { list }
+    is_sort(t) { isinstance(t,list) }
+    equals(l1,l2) { l1 == l2 }
+}
+
+%oplist Extent extent( Interval* ) {
+    is_fsym(t)       { isinstance(t,list) }
+    make_empty()     { [] }
+    make_insert(e,l) { [e] + l[:] }
+    get_head(l)      { l[0]  }  
+    get_tail(l)      { l[1:] }
+    is_empty(l)      { len(l) == 0 }
+}
+
+%typeterm String {
+    implement { string }
+    is_sort(s) { isinstance(s,string) }
+    equals(s1,s2) { s1 == s2 }
+}
+
+%typeterm float {
+    implement { float }
+    is_sort(d) { isinstance(s,float) }
+    equals(d1,d2) { d1 == d2 }
+}
+
+%typeterm Tree {
+    implement { Term }
+    is_sort(t) { isinstance(t,Term) }
+    equals(t1,t2) { t1 == t2 }
+}
+
+%op Tree node(label:String, tl:TreeList) {
+    is_fsym(t) { t.name == 'node' }
+    get_slot(label,t) { t.children[0] }
+    get_slot(tl,t) { t.children[1] }
+    make(l,t) { node(l,t) }
+}
+
+%typeterm TreeList {
+    implement { list }
+    is_sort(t) { isinstance(t,list) }
+    equals(l1,l2) { l1 == l2 }
+}
+
+%oplist TreeList treelist( Tree* ) {
+    is_fsym(t)       { isinstance(t,list) }
+    make_empty()     { [] }
+    make_insert(e,l) { [e] + l[:] }
+    get_head(l)      { l[0]  }  
+    get_tail(l)      { l[1:] }
+    is_empty(l)      { len(l) == 0 }
+}
+
+%typeterm Couple {
+    implement { Term }
+    is_sort(t) { isinstance(t,Term) }
+    equals(t1,t2) { t1 == t2 }
+}
+
+%op Couple pair(label:Tree, value:float) {
+    is_fsym(t) { t.name == 'pair' }
+    get_slot(label,t) { t.children[0] }
+    get_slot(value,t) { t.children[1] }
+    make(l,v) { pair(l,v) }
+}
+
+%typeterm ETree {
+    implement { Term }
+    is_sort(t) { isinstance(t,Term) }
+    equals(t1,t2) { t1 == t2 }
+}
+
+%op ETree enode(label:Couple, tl:ETreeList) {
+    is_fsym(t) { t.name == 'enode' }
+    get_slot(label,t) { t.children[0] }
+    get_slot(tl,t) { t.children[1] }
+    make(l,t) { enode(l,t) }
+}
+
+%typeterm ETreeList {
+    implement { list }
+    is_sort(t) { isinstance(t,list) }
+    equals(l1,l2) { l1 == l2 }
+}
+
+%oplist ETreeList etreelist( ETree* ) {
+    is_fsym(t)       { isinstance(t,list) }
+    make_empty()     { [] }
+    make_insert(e,l) { [e] + l[:] }
+    get_head(l)      { l[0]  }  
+    get_tail(l)      { l[1:] }
+    is_empty(l)      { len(l) == 0 }
+}
+
+%typeterm ExtentList {
+    implement { list }
+    is_sort(t) { isinstance(t,list) }
+    equals(l1,l2) { l1 == l2 }
+}
+
+%oplist ExtentList extentlist( Extent* ) {
+    is_fsym(t)       { isinstance(t,list) }
+    make_empty()     { [] }
+    make_insert(e,l) { [e] + l[:] }
+    get_head(l)      { l[0]  }  
+    get_tail(l)      { l[1:] }
+    is_empty(l)      { len(l) == 0 }
+}
+
+%typeterm FloatList {
+    implement { list }
+    is_sort(t) { isinstance(t,list) }
+    equals(l1,l2) { l1 == l2 }
+}
+
+%oplist FloatList floatlist( float* ) {
+    is_fsym(t)       { isinstance(t,list) }
+    make_empty()     { [] }
+    make_insert(e,l) { [e] + l[:] }
+    get_head(l)      { l[0]  }  
+    get_tail(l)      { l[1:] }
+    is_empty(l)      { len(l) == 0 }
+}
+
+

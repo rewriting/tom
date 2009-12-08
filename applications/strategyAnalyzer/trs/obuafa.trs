@@ -1,0 +1,20 @@
+(VAR x2,Z0,y2,x1,y1,Z4,x)
+(RULES
+        phi0(x) -> phi1(x,x)
+        phi1(Z4,x) -> phi4(x)
+        phi1(Bottom,x) -> Bottom
+        phi2(a) -> Bottom
+        phi2(b) -> Bottom
+        phi2(f(x1)) -> phi2_1(phi0(x1),f(phi0(x1)))
+        phi2(g(x1,x2)) -> phi2_2(phi0(x1),phi0(x2),g(phi0(x1),x2),g(x1,phi0(x2)))
+        phi2_1(Z4,x1) -> x1
+        phi2_1(Bottom,x1) -> Bottom
+        phi2_2(Z4,y2,x1,x2) -> x1
+        phi2_2(Bottom,Bottom,x1,x2) -> Bottom
+        phi2_2(y1,Z4,x1,x2) -> x2
+        phi3(Z0) -> Bottom
+        phi3(a) -> f(a)
+        phi4(x) -> phi5(phi2(x),x)
+        phi5(Z4,x) -> phi2(x)
+        phi5(Bottom,x) -> phi3(x)
+)

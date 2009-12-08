@@ -1,0 +1,7 @@
+#!/bin/sh
+TOM_LIB=`echo $PWD/libs/*.jar | tr ' ' ':'`
+export CLASSPATH=$PWD:$TOM_LIB:$CLASSPATH
+cd build/
+java jline.ConsoleRunner lemu.ProofBuilder
+cd ..
+

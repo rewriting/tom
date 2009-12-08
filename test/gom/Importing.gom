@@ -1,0 +1,5 @@
+module gom.Importing
+imports Imported
+abstract syntax
+Out = Pack(i:Inner)
+    | Loop(o:Out,i:Inner)

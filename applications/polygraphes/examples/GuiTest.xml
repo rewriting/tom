@@ -1,0 +1,91 @@
+﻿<PolygraphicProgram Name="GuiTest">
+<Type>
+<Constructor>
+	<TwoPath>
+		<TwoC1>
+			<TwoC0>
+				<TwoPath>
+					<TwoCell Name="Cellule1" Type="Function">
+						<Source>
+							<OnePath>
+								<Id></Id>
+							</OnePath>
+						</Source>
+						<Target>
+							<OnePath>
+								<OneCell Name="nat"></OneCell>
+							</OnePath>
+						</Target>
+					</TwoCell>
+				</TwoPath>
+				<TwoPath>
+					<TwoCell Name="Cellule2" Type="Function">
+						<Source>
+							<OnePath>
+								<Id></Id>
+							</OnePath>
+						</Source>
+						<Target>
+							<OnePath>
+								<OneCell Name="nat"></OneCell>
+							</OnePath>
+						</Target>
+					</TwoCell>
+				</TwoPath>
+				<TwoPath>
+					<TwoCell Name="Cellule3" Type="Function">
+						<Source>
+							<OnePath>
+								<Id></Id>
+							</OnePath>
+						</Source>
+						<Target>
+							<OnePath>
+								<OneCell Name="nat"></OneCell>
+							</OnePath>
+						</Target>
+					</TwoCell>
+				</TwoPath>
+			</TwoC0>
+			<TwoC0>
+				<TwoPath>
+					<TwoCell Name="Cellule4" Type="Function">
+						<Source>
+							<OnePath>
+								<OneC0>
+									<OnePath>
+										<OneCell Name="nat"></OneCell>
+									</OnePath>
+									<OnePath>
+										<OneCell Name="nat"></OneCell>
+									</OnePath>
+								</OneC0>
+							</OnePath>
+						</Source>
+						<Target>
+							<OnePath>
+								<Id></Id>
+							</OnePath>
+						</Target>
+					</TwoCell>
+				</TwoPath>
+				<TwoPath>
+					<TwoCell Name="Cellule5" Type="Function">
+						<Source>
+							<OnePath>
+								<OneCell Name="nat"></OneCell>
+							</OnePath>
+						</Source>
+						<Target>
+							<OnePath>
+								<Id></Id>
+							</OnePath>
+						</Target>
+					</TwoCell>
+				</TwoPath>
+			</TwoC0>
+		</TwoC1>
+	</TwoPath>
+</Constructor>
+</Type>
+</PolygraphicProgram>

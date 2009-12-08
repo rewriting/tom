@@ -1,0 +1,60 @@
+definition
+module Main
+imports foo
+exports
+
+context-free start-symbols PROGRAM
+
+context-free syntax
+"begin" decls:DECLS statlist:STATEMENTLIST "end" -> PROGRAM {cons("program")}
+{STATEMENT ";"}* -> STATEMENTLIST {cons("statlist")}
+
+"declare" idtypelist:IDTYPELIST ";" -> DECLS {cons("decls")}
+
+{ID-TYPE ","}* -> IDTYPELIST {cons("idtypelist")}
+
+ id:ID ":" type: TYPE -> ID-TYPE {cons("idtype")}
+ id:ID ":=" exp:EXP -> STATEMENT {cons("assign")}
+ "if" exp:EXP "then" then:STATEMENTLIST "else" else:STATEMENTLIST "fi" -> STATEMENT {cons("conditional")}
+ "while" exp:EXP "do" body:STATEMENTLIST "od" -> STATEMENT {cons("loop")}
+context-free syntax
+ id:ID       -> EXP {cons("variable")}
+ nat:NatCon        -> EXP {cons("natconstant")}
+ str:StrCon        -> EXP {cons("strconstant")}
+ lhs:EXP "+" rhs:EXP   -> EXP {left, cons("plus")}
+ lhs:EXP "-" rhs:EXP   -> EXP {left, cons("times")}
+ lhs:EXP "||" rhs:EXP  -> EXP {left, cons("conc")}
+
+exports
+
+sorts TYPE
+context-free syntax
+  "natural" -> TYPE {cons("natural")}
+  "string" -> TYPE {cons("string")}
+  "nil-type" -> TYPE {cons("nil-type")}
+
+sorts ID
+lexical syntax
+[a-z][a-z0-9]* -> ID {cons("idCons")}
+
+lexical restrictions
+  ID -/- [a-z0-9]
+
+sorts NatCon
+
+lexical syntax
+ ~[\0-\31\n\t\"\\] -> StrChar {cons("normal")}
+ [\"] chars:StrChar* [\"] -> StrCon {cons("defaultStrCon")}
+ [0-9]+ -> NatCon {cons("digits")}
+
+lexical restrictions
+
+ NatCon -/- [0-9]
+
+lexical syntax
+  [\ \t\12\r\n] -> LAYOUT
+
+context-free priorities    
+ lhs:EXP "+" rhs:EXP   -> EXP {left, cons("plus")}  >
+ lhs:EXP "-" rhs:EXP   -> EXP {left, cons("times")} >
+ lhs:EXP "||" rhs:EXP  -> EXP {left, cons("conc")}

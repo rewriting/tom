@@ -1,0 +1,17 @@
+termrule plus(e(), x) -> x.
+rule eq(x,x) -> \T.
+
+proof p: exists x, forall y, eq(plus(x, y),y).
+intro. x.
+intro.
+narrowreduce.
+rule.
+
+display p.
+
+proof q: forall x, exists y, eq(x, y).
+intro.
+intro. y.
+narrow.
+
+display q.

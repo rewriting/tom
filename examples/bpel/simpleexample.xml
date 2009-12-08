@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process>
+  <sequence>
+    <invoke operation="root" />
+    <flow>
+      <sequence>
+        <invoke operation="B" />
+        <while>
+          <condition>a</condition>
+          <sequence>
+            <invoke operation="inner1" />
+            <flow>
+              <invoke operation="inner2" />
+              <repeatUntil>
+                <condition>a</condition>
+                <sequence>
+                  <invoke operation="inner3" />
+                  <flow>
+                    <invoke operation="inner4" />
+                    <invoke operation="inner5" />
+                  </flow>
+                </sequence>
+              </repeatUntil>
+            </flow>
+          </sequence>
+        </while>
+        <invoke operation="A" /> 
+      </sequence>
+      <sequence>
+        <invoke operation="C" /> 
+        <flow>
+          <invoke operation="D">
+            <source linkName="toto"/>
+          </invoke> 
+          <invoke operation="E" /> 
+        </flow>
+        <invoke operation="F" />
+        <if>
+          <condition></condition>
+          <invoke operation="if1" />
+          <elseif>
+            <invoke operation="if2" />
+          </elseif>
+          <else>
+            <invoke operation="if3" />
+          </else>
+        </if>
+        <invoke operation="H" />
+      </sequence>
+      <sequence>
+        <invoke operation="G" > 
+          <target linkName="toto"/>
+        </invoke>
+      </sequence>
+    </flow>
+  </sequence>
+</process>
+
+

@@ -1,0 +1,35 @@
+(VAR x2 Z2 y2 x1 y1 Z1 x Z0)
+(RULES
+        choice11(Bottom,x) -> x
+        choice11(Appl(Z0,Z1),x) -> Appl(Z0,Z1)
+
+        choice7(Bottom,x) -> rule5(x)
+        choice7(Appl(Z0,Z1),x) -> one4(x)
+        
+        mu1(Bottom) -> Bottom
+        mu1(Appl(Z0,Z1)) -> choice11(seq8(Appl(Z0,Z1)),Appl(Z0,Z1))
+
+        mu3(Bottom) -> Bottom
+        mu3(Appl(Z0,Z1)) -> choice7(one4(Appl(Z0,Z1)),Appl(Z0,Z1)) 
+
+        one4(Appl(Z0,Z1)) -> one4_1(Appl(Z0,one4_2(Z1)))
+
+        one4_1(Appl(Z0,Bottom)) -> Bottom
+        one4_1(Appl(Z0,Cons(x1,x2))) -> Appl(Z0,Cons(x1,x2))
+
+        one4_2(Nil) -> Bottom
+        one4_2(Cons(x1,x2)) -> one4_3(mu3(x1),x1,x2)
+
+        one4_3(Bottom,x1,Nil) -> Nil
+        one4_3(Bottom,x1,Cons(Z0,Z1)) -> Cons(x1,one4_2(Cons(Z0,Z1)))
+        one4_3(Appl(Z0,Z1),x1,x2) -> Cons(Appl(Z0,Z1),x2)
+
+        rule5(Bottom) -> Bottom
+        rule5(Appl(a,Nil)) -> Appl(b,Nil)
+        rule5(Appl(b,Z1)) -> Bottom
+        rule5(Appl(f,Z1)) -> Bottom
+        rule5(Appl(g,Z1)) -> Bottom
+        seq8(x) -> mu1(choice7(one4(x),x))
+)
+
+

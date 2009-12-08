@@ -1,0 +1,47 @@
+module AntlrGrammar
+imports AntlrCommons AntlrRules
+abstract syntax
+
+AntlrGrammarType = AntlrCombinedGrammar()
+                 | AntlrLexerGrammar()
+                 | AntlrParserGrammar()
+                 | AntlrTreeGrammar()
+
+AntlrGrammar =
+    // Everything fine.
+    AntlrGrammar(
+        type:AntlrGrammarType,
+        id:AntlrId,
+        comment:AntlrComment,
+        options:AntlrOptions,
+        tokens:AntlrTokens,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        rules:AntlrRules)
+    // Wrong grammar.
+  | AntlrWrongGrammar(grammar:AntlrWrongGrammar)
+
+AntlrWrongGrammar =
+    // Something odd inside the arguments.
+    AntlrIncorrectGrammarArgs(
+        type:AntlrGrammarType,
+        id:AntlrId,
+        comment:AntlrComment,
+        options:AntlrOptions,
+        tokens:AntlrTokens,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        rules:AntlrRules)
+    // Some unexpected argument appears.
+  | AntlrIncorrectGrammar(
+        type:AntlrGrammarType,
+        id:AntlrId,
+        comment:AntlrComment,
+        options:AntlrOptions,
+        tokens:AntlrTokens,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        rules:AntlrRules,
+        wrong:AntlrWrong)
+    // Plain wrong, not a grammar.
+  | AntlrPlainWrongGrammar(grammar:AntlrWrong)

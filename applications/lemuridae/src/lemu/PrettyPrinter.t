@@ -1,0 +1,1070 @@
+package lemu;
+
+import lemu.sequents.*;
+import lemu.sequents.types.*;
+
+import lemu.urban.*;
+import lemu.urban.types.*;
+
+import tom.library.sl.*;
+
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.Collection;
+
+import java.io.*;
+
+class PrettyPrinter {
+
+//  %include { sequents/sequents.tom }
+  %include { urban/urban.tom }
+  %include { sl.tom }
+  %typeterm Set {implement {Set} }
+  %typeterm Collection { implement {Collection} }
+
+  private static String translate(RuleType rt) {
+    %match(rt) {
+      axiomInfo[] ->  { return "axiom"; }
+      impliesLeftInfo[] -> { return "\\Rightarrow_\\mathcal{L}"; }
+      impliesRightInfo[]-> { return "\\Rightarrow_\\mathcal{R}"; }
+      andLeftInfo[] -> { return "\\land_\\mathcal{L}"; }
+      andRightInfo[] -> { return "\\land_\\mathcal{R}"; }
+      orLeftInfo[] -> { return "\\lor_\\mathcal{L}"; }
+      orRightInfo[] -> { return "\\lor_\\mathcal{R}"; }
+      forallRightInfo[] -> { return "\\forall_\\mathcal{R}"; }
+      forallLeftInfo[] -> { return "\\forall_\\mathcal{L}"; }
+      existsRightInfo[] -> { return "\\exists_\\mathcal{R}"; }
+      existsLeftInfo[] -> { return "\\exists_\\mathcal{L}"; }
+      bottomInfo[] -> { return "\\bot"; }
+      topInfo[] -> { return "\\top"; }
+      cutInfo(p) -> { return "cut (" + `toLatex(p) + ")"; }
+      openInfo[] -> { return "open"; } 
+      reductionInfo[] -> { return "reduction"; }
+      contractionLeftInfo[] -> { return "contr_\\mathcal{L}"; }
+      contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
+      weakLeftInfo() -> { return "weak_\\mathcal{L}"; }
+      weakRightInfo() -> { return "weak_\\mathcal{R}"; }
+      customRuleInfo[name=n] -> { return `n; }
+      foldRightInfo[num=n] -> { return "fold_\\mathcal{R}(" + `n + ")"; }
+      foldLeftInfo[num=n] -> { return "fold_\\mathcal{L}(" + `n + ")"; }
+      metaVariableInfo[] -> { return ""; }
+    }
+    return rt.toString();
+  }
+
+  public static int peanoToInt(Term term) throws Exception {
+    return peanoToInt(term,0);
+  }
+
+  private static int peanoToInt(Term term, int i) throws Exception {
+    %match(Term term) {
+      funAppl("z",()) -> { return i; }
+      funAppl("succ",(t)) -> { return peanoToInt(`t,i+1); }
+    }
+    throw new Exception("term is not an integer");
+  }
+
+  public static Term intToPeano(int n) {
+    Term res = `funAppl("z",concTerm());
+    for (int i=0; i<n; i++) {
+      res = `funAppl("succ",concTerm(res));
+    }
+    return res;
+  }
+
+  // --- auxiliary strats for cleanTree ----
+
+  %strategy RemoveInHyp(prop: Prop) extends `Identity() {
+    visit Sequent {
+      sequent((X*,p,Y*), c) -> { if (prop == `p) return `sequent(context(X*,Y*),c); }
+    }
+  }
+
+  %strategy RemoveInConcl(prop: Prop) extends `Identity() {
+    visit Sequent {
+      sequent(h, (X*,p,Y*)) -> { if (prop == `p) return `sequent(h,context(X*,Y*)); }
+    }
+  }
+
+  %strategy IsActive(prop: Prop, tl: TermRuleList, pl: PropRuleList) extends `Fail() {
+    visit Tree {
+      // all propositions are virtually used in an open branch
+      r@rule[type=openInfo[]] -> { return `r; }
+
+      // in case of a reduce rule, we have to check if the reduced form of a prop is active
+      r@rule(reductionInfo[],_,concl,_) -> {
+        %match(Sequent `concl, Prop prop) {
+          sequent((_*,p,_*),_), p -> {
+            Prop after = (Prop) Unification.reduce(`p,tl,pl);
+            if (`p != after) 
+              return `r;
+          }
+          sequent(_,(_*,p,_*)), p -> {
+            Prop after = (Prop) Unification.reduce(`p,tl,pl);
+            if (`p != after) 
+              return `r;
+          }
+        }
+      }
+
+      r@rule(_,_,_,p) -> { if (prop == `p) { return `r; } }
+    }
+  }
+
+  %strategy Clean(tl: TermRuleList, pl: PropRuleList) extends `Identity() {
+    visit Tree {
+      r@rule(_,_,sequent(h,c),_) -> {
+        Tree res = `r;
+        %match(Context h) {
+          (_*,x,_*) -> {
+            res = (Tree) 
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).visit(`res);
+          }
+        }
+        %match(Context c) {
+          (_*,x,_*) -> {
+            res = (Tree) 
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).visit(`res);
+          }
+        }
+        return res;
+      }
+    }
+  }
+
+  // ---------------------------------------
+
+  /**
+   * remove unused hypothesis and conclusions in subtrees
+   **/
+  public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
+    try { return (Tree) `TopDown(Clean(tl,pl)).visit(tree); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+  }
+
+  public static String toLatex(sequentsAbstractType term) {
+    %match(Tree term) {
+      rule(metaVariableInfo(mv),(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`toLatex(mv)+"}";}
+      rule(reductionInfo[],(p),c,_) -> { return toLatex(`p); }
+      rule((weakRightInfo|weakLeftInfo)[],p,c,_) -> { return toLatex(`p); }
+      rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
+      rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
+    }
+
+    %match(Premisses term) {
+      () -> { return ""; }
+      (x) -> { return toLatex(`x); }
+      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+    }
+
+    %match(Context term) {
+      () -> { return ""; }
+      (x) -> { return toLatex(`x); }
+      (h,t*) -> {return toLatex(`h) + ", " + toLatex(`t);}
+    }
+
+    %match(Sequent term) {
+      sequent((), c) -> { return "\\vdash " + toLatex(`c); }
+      sequent(ctx, c) -> { return toLatex(`ctx) + " \\vdash " + toLatex(`c); }
+    }
+
+    %match(Prop term) {
+
+      // arithmetic pretty print
+      relationAppl("eq",(x,y)) -> {
+        return toLatex(`x) + " = " + toLatex(`y);
+      }
+      relationAppl("gt",(x,y)) -> {
+        return toLatex(`x) + " > " + toLatex(`y);
+      }
+      relationAppl("lt",(x,y)) -> {
+        return toLatex(`x) + " < " + toLatex(`y);
+      }
+      relationAppl("le",(x,y)) -> {
+        return toLatex(`x) + " \\le " + toLatex(`y);
+      }
+
+      // set theory pretty print
+      relationAppl("in",(x,y)) -> {
+        return toLatex(`x) + " : " + toLatex(`y);
+      }
+      relationAppl("subset",(x,y)) -> {
+        return toLatex(`x) + " \\subset " + toLatex(`y);
+      }
+      relationAppl("supset",(x,y)) -> {
+        return toLatex(`x) + " \\supset " + toLatex(`y);
+      }
+
+      // lamda-Pi
+      relationAppl("WF",(x)) -> {
+        if (leftEndedByNil(`x))
+          return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
+        else
+          return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
+      }
+
+      // Hoare Triples
+      relationAppl("Hoare",(P,S,Q)) -> {
+        return "\\{" + `toLatex(P) + "\\}" + `toLatex(S)  + "\\{" + `toLatex(Q) + "\\}";
+      }
+      relationAppl("eps",(x)) -> {
+        return "\\varepsilon(" + `toLatex(x) + ")";
+      }
+
+      
+      relationAppl(n, ()) -> { return `n;}
+      relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
+
+      implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
+
+      implies(p1@relationAppl[],p2) -> {
+        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@]% ; 
+      }
+      implies(p1,p2) -> {
+        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@]% ; 
+      }
+      or(p1@relationAppl[],p2) -> { 
+        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@]%; 
+      }
+      or(p1,p2) -> {
+        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@]%; 
+      }
+      and(p1@relationAppl[],p2) -> { 
+        return %[@toLatex(`p1)@ \land @toLatex(`p2)@]%; 
+      }
+      and(p1,p2) -> { 
+        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%; 
+      }
+      forall(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
+      exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
+      bottom() -> { return "\\bot";  }
+      top() -> { return "\\top";  }
+    }	
+
+    %match(TermList term) {
+      () -> { return ""; }
+      (x) -> { return toLatex(`x); }
+      (h,t*) -> { return toLatex(`h) + ", " + toLatex(`t); }
+    }
+
+    %match(Term term) {
+      Var(('@',n*)) -> { return `n; }
+      Var(n) -> { return `n; }
+
+      // arithmetic
+      funAppl("z",()) -> { return "0"; }
+      i@funAppl("succ",_) -> {
+        try { return Integer.toString(peanoToInt(`i));}
+        catch (Exception e) {}
+      }
+      
+      funAppl("plus",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + "+" + toLatex(`t2) + ")";
+      }
+      funAppl("mult",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " \\times " + toLatex(`t2) + ")";
+      }
+      funAppl("minus",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " - " + toLatex(`t2) + ")";
+      }
+      funAppl("div",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " / " + toLatex(`t2) + ")";
+      }
+
+      // set theory
+      funAppl("union",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + ") \\cup (" + toLatex(`t2) + ")";
+      }
+      funAppl("inter",(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + ") \\cap (" + toLatex(`t2) + ")";
+      }
+      funAppl("supset",(t1,t2)) -> { 
+	return "(" + toLatex(`t1) + ") \\supset (" + toLatex(`t2) + ")";
+      }
+      funAppl("emptyset",()) -> { 
+        return "\\emptyset";
+      }
+
+      // finite 1st order theory of classes pretty print
+      funAppl("appl",(p,x*)) -> {
+        return `toLatex(p) + "["+ toLatex(`x*) + "]";
+      }
+      funAppl("nil",()) -> {
+        return ("nil");
+      }
+      funAppl("fEq",(x,y)) -> {
+        return toLatex(`x) + "\\dot{=}" + `toLatex(y);
+      }
+      l@funAppl("cons",(x,y)) -> {
+        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle "; 
+        else return toLatex(`x) + "::" + toLatex(`y);
+      }
+
+      // lambda-Pi
+     funAppl("type",()) -> {
+       return ("*");
+     }
+     funAppl("kind",()) -> {
+       return ("\\square");
+     }
+     funAppl("pitype",(x,y)) -> {
+       return ("\\dot\\pi_* ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikind",(x,y)) -> {
+       return ("\\dot\\pi_\\square ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pitt",(x,y)) -> {
+       return ("\\dot\\pi_{***} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pitk",(x,y)) -> {
+       return ("\\dot\\pi_{*\\square\\square} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikt",(x,y)) -> {
+       return ("\\dot\\pi_{\\square**} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikk",(x,y)) -> {
+       return ("\\dot\\pi_{\\square\\square\\square} ") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+
+     // lambda-sigma
+     funAppl("subst",(x,y)) -> {
+       return toLatex(`x) + "[" + toLatex(`y) + "]";
+     }
+     funAppl("rond",(x,y)) -> {
+       return toLatex(`x) + " \\circ " + toLatex(`y);
+     }
+     funAppl("shift",()) -> {
+       return "\\uparrow";
+     }
+     funAppl("one",()) -> {
+       return "\\mathsf{1}";
+     }
+     funAppl("id",()) -> {
+       return "id";
+     }
+     funAppl("lcons",(x,y)) -> {
+       return  toLatex(`x) + " \\cdot " + toLatex(`y);
+     }
+     funAppl("lambda",(x)) -> {
+       return "\\lambda " + toLatex(`x);
+     }
+     funAppl("lappl",(p,x*)) -> {
+       return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
+     }
+      // Emilie 
+      funAppl("int",()) -> { return %[{\bf int}]%; }
+      funAppl("string",()) -> { return %[{\bf string}]%; }
+      funAppl("unit",()) -> { return %[{\bf unit}]%; }
+      funAppl("est_pair",()) -> { return %[\mbox{``est pair''}]%; }
+      funAppl("est_impair",()) -> { return %[\mbox{``est impair''}]%; }
+      funAppl("let_in",(funAppl("var",(x)),t,u)) -> { return %[{\bf let~var}~@`toLatex(x)@~{\bf :=}~(@`toLatex(t)@)~{\bf in}~(@`toLatex(u)@)~{\bf end}]%; }
+      funAppl("let_in",(funAppl("defun",(f)),T,u,v)) -> { return %[{\bf let~defun}~@`toLatex(f)@() : @`toLatex(T)@ = (@`toLatex(u)@)~{\bf in}~(@`toLatex(v)@)~{\bf end}]%; }
+      funAppl("let_in",(funAppl("defun",(f,x1,T1)),T,u,v)) -> { return %[{\bf let~defun}~@`toLatex(f)@(@`toLatex(x1)@ : @`toLatex(T1)@) : @`toLatex(T)@ = (@`toLatex(u)@)~{\bf in}~(@`toLatex(v)@)~{\bf end}]%; }
+      funAppl("range",(dom,T)) -> { return %[@`toLatex(dom)@ \rightarrow @`toLatex(T)@]%; }
+      funAppl("dom",()) -> { return %[\langle~\rangle]%; }
+      funAppl("dom",(x)) -> { return %[\langle @`toLatex(x)@ \rangle]%; }
+      funAppl("dom",(x,y)) -> { return %[\langle @`toLatex(x)@ \times @`toLatex(y)@ \rangle]%; }
+      funAppl("while",(u,v)) -> { return %[{\bf while}~(@`toLatex(u)@)~{\bf do}~(@`toLatex(v)@)]%; }
+
+
+
+      // Hoare triples
+      funAppl("substitute",(P,x,e))  -> {
+        return `toLatex(P) + "[" 
+          + `toLatex(e) + "/" + `toLatex(x) + "]";
+      }
+      funAppl("var",(funAppl(x,())))  -> {
+        return `x; 
+      }
+      funAppl("seq",(x,y))  -> {
+        return `toLatex(x) + "~;~" + `toLatex(y); 
+      }
+      funAppl("and",(a,b)) -> {
+        return `toLatex(a) + "\\dot{\\land}" + `toLatex(b);
+      }
+      funAppl("impl",(a,b)) -> {
+        return `toLatex(a) + "\\dot{\\rightArrow}" + `toLatex(b);
+      }
+      funAppl("if_then_else",(a,b,c)) -> {
+        return %[{\bf if}~(@`toLatex(a)@)~{\bf then}~(@`toLatex(b)@)~{\bf else}~(@`toLatex(c)@)]%;
+      }
+      l@funAppl("arg_cons",(x,y)) -> {
+        if(endedByArgNil(`l)) return argListToLatex(`l) ; 
+        else return toLatex(`x) + ":" + toLatex(`y);
+      }
+      funAppl("arg_nil",()) -> {
+        return "[]";
+      }
+      funAppl("predappl",(funAppl(p,()),l)) -> {
+        return  "\\overline{" + `p + "}(" + `toLatex(l) + ")";
+      }
+      funAppl("affect",(x,e)) -> {
+        return `toLatex(x) + ":=" + `toLatex(e);
+      }
+      funAppl("while",(b,e)) -> {
+        return %[while\ @`toLatex(b)@\ do\ @`toLatex(e)@\ done]%;
+      }
+      funAppl("beq",(x,y)) -> {
+        return "(" + `toLatex(x) + " = " + `toLatex(y) + ")";
+      }
+      funAppl("bnot",(x)) -> {
+        return "!(" + `toLatex(x) + ")";
+      }
+
+
+     funAppl(n, ()) -> { return `n + "()";}
+     funAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
+    }
+
+    return null;
+  }
+
+  public static String toLatex(urbanAbstractType term) {
+   
+    %match(Meta term) {
+      mvar(name) -> { return `name; }
+      rename(n1,n2,mv) -> {return %[@`toLatex(mv)@[@`toLatex(n1)@ \mapsto @`toLatex(n2)@]]%; }
+      reconame(cn1,cn2,mv) -> {return %[@`toLatex(mv)@[@`toLatex(cn1)@ \mapsto @`toLatex(cn2)@]]%;}
+      substconame(cn,n,pt,phi,mv) -> { 
+        return %[@`toLatex(mv)@[@`toLatex(cn)@ := \hat{@`toLatex(n)@}\langle @`toLatex(pt)@:@`toLatex(phi)@\rangle]]%; 
+      }
+      substname(n,cn,pt,phi,mv) -> {
+        return %[@`toLatex(mv)@[@`toLatex(n)@ := \hat{@`toLatex(cn)@}\langle @`toLatex(pt)@:@`toLatex(phi)@\rangle]]%; 
+      }
+    }
+
+    %match(NTree term) {
+      nrule(metaVariableInfo(mv),(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`toLatex(mv)+"}";}
+      nrule(n,(),c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";}
+      nrule(n,p,c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd " + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
+    }
+
+    %match(NPremisses term) {
+      () -> { return ""; }
+      (x) -> { return toLatex(`x); }
+      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+    }
+
+    %match (NProp term) {
+      nprop(x,p) -> { return toLatex(`x)+":"+toLatex(`p);}
+    }
+
+    %match (CNProp term) {
+      cnprop(a,p) -> { return toLatex(`a)+":"+toLatex(`p);}
+    }
+
+    %match (NContext term) {
+      () -> {return "";}
+      (h) -> {return toLatex(`h); }
+      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+    }
+
+    %match (CNContext term) {
+      () -> {return "";}
+      (h) -> {return toLatex(`h); }
+      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+    }
+
+    %match (NSequent term) {
+      nsequent(h,c) -> {return toLatex(`h)+"\\vdash "+toLatex(`c);}
+    }
+
+    %match (Name term) {
+      name(n) -> {return "x_{"+`n+"}";}
+    }
+
+    %match (CoName term) {
+      coname(n) -> {return "a_{"+`n+"}"; }
+    }
+
+    %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
+      metaVar(mv) -> { return `toLatex(mv); }
+      foldL(x,m,y,i) -> { return "{\\sf Fold}_L^"+`i +"(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`y)+")"; }
+      foldR(a,m,b,i) -> { return "{\\sf Fold}_R^"+`i +"(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`b)+")"; }
+      ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
+      cut(a,m1,x,m2) -> {return "{\\sf Cut}(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+", \\langle "+toLatex(`x)+" \\rangle "+toLatex(`m2)+")";}
+      falseL(n) -> {return "{\\sf False}_L("+toLatex(`n)+")";}
+      trueR(cn) -> {return "{\\sf True}_R("+toLatex(`cn)+")";}
+      andR(a,m1,b,m2,nc) -> {return "{\\sf And}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m2)+","+toLatex(`nc)+")" ;}
+      orL(x,m1,y,m2,c) -> {return "{\\sf Or}_L(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`y)+"\\rangle "+toLatex(`m2)+","+toLatex(`c)+")" ;}
+      andL(x,y,m,n) -> {return "{\\sf And}_L(\\langle "+toLatex(`x)+"\\rangle\\langle "+toLatex(`y)+"\\rangle "+toLatex(`m)+","+toLatex(`n)+")";}
+      orR(a,b,m,cn) -> {return "{\\sf Or}_R(\\langle "+toLatex(`a)+"\\rangle\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m)+","+toLatex(`cn)+")";}
+      implyR(x,a,m1,cn) -> {return "{\\sf Imply}_R(\\langle "+toLatex(`x)+"\\rangle\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+","+toLatex(`cn)+")";}
+      implyL(a,m1,x,m2,n) -> {return "{\\sf Imply}_L(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m2)+","+toLatex(`n)+")" ;}
+      forallL(x,m,t,n) -> {return "{\\sf Forall}_L(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`t)+", "+toLatex(`n)+")" ;}
+      forallR(a,varx,m,cn) -> {return "{\\sf Forall}_R(\\langle "+toLatex(`a)+"\\rangle \\langle "+toLatex(`varx)+"\\rangle "+toLatex(`m)+", "+toLatex(`cn)+")" ;}
+      existsL(x,varx,m,n) -> {return "{\\sf Exists}_L(\\langle "+toLatex(`x)+"\\rangle \\langle "+toLatex(`varx)+"\\rangle "+toLatex(`m)+", "+toLatex(`n)+")" ;}
+      existsR(a,m,t,cn) -> {return "{\\sf Exists}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`t)+", "+toLatex(`cn)+")" ;}
+    }
+
+    return null;
+    
+  }
+
+
+  // Hoare pretty-print
+  private static boolean endedByArgNil(Term l) {
+    %match(Term l) {
+      funAppl("arg_cons",(_,funAppl("arg_nil",()))) -> { return true; }
+      funAppl("arg_cons",(_,y)) -> { return endedByArgNil(`y); }
+    }
+    return false;
+  }
+
+  public static String prettyArgList(Term t) {
+    %match(Term t) {
+      funAppl("arg_cons",(x,funAppl("arg_nil",()))) -> { 
+        return prettyPrint(`x); 
+      }
+      funAppl("arg_cons",(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyArgList(`y); 
+      }
+    }
+    return null;
+  }
+
+  public static String argListToLatex(Term t) {
+    %match(Term t) {
+      funAppl("arg_cons",(x,funAppl("arg_nil",()))) -> { 
+        return toLatex(`x); 
+      }
+      funAppl("arg_cons",(x,y)) -> {
+        return toLatex(`x) + "," + argListToLatex(`y); 
+      }
+    }
+    return null;
+  }
+
+
+  // finite 1st order theory of classes list pretty print
+  private static boolean endedByNil(Term l) {
+    %match(Term l) {
+      funAppl("cons",(_,funAppl("nil",()))) -> { return true; }
+      funAppl("cons",(_,y)) -> { return endedByNil(`y); }
+    }
+    return false;
+  }
+
+  public static String prettyList(Term t) {
+    %match(Term t) {
+      funAppl("cons",(x,funAppl("nil",()))) -> { return prettyPrint(`x); }
+      funAppl("cons",(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyList(`y); 
+      }
+    }
+    return null;
+  }
+
+  public static String listToLatex(Term t) {
+    %match(Term t) {
+      funAppl("cons",(x,funAppl("nil",()))) -> { return toLatex(`x); }
+      funAppl("cons",(x,y)) -> {
+        return toLatex(`x) + "," + listToLatex(`y); 
+      }
+    }
+    return null;
+  }
+
+  // lambda-Pi context list pretty print (inverted order)
+  private static boolean leftEndedByNil(Term l) {
+    %match(Term l) {
+	  funAppl("cons",(funAppl("nil",()),_)) -> { return true; }
+	  funAppl("cons",(x,_)) -> { return leftEndedByNil(`x); }
+    }
+    return false;
+  }
+
+  public static String contextListToLatex(Term t) {
+    %match(Term t) {
+	  funAppl("cons",(funAppl("nil",()), funAppl("e",(a,b))))
+	      -> { return toLatex(`a) + " \\in " + toLatex(`b); }
+	  funAppl("cons",(x,funAppl("e",(a,b)))) -> {
+	      return contextListToLatex(`x) + "," + toLatex(`a) + " \\in " + toLatex(`b);      }
+    }
+    return null;
+  }
+
+  public static String prettyPrint(sequentsAbstractType term) {
+
+    %match(Sequent term) {
+      sequent(h,c) -> { 
+        return prettyPrint(`h) + " |- " + prettyPrint(`c); 
+      }
+    }
+
+    %match(Context term) {
+      () -> { return ""; }
+      (f) -> { return prettyPrint(`f); }
+      (h,t*) -> { return prettyPrint(`h) + ", " +  prettyPrint(`t); }
+    }
+
+    %match(Prop term) {
+      implies(p1@relationAppl[],p2) -> {
+        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@]% ; 
+      }
+      implies(p1,p2) -> {
+        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@]% ; 
+      }
+      or(p1@relationAppl[],p2) -> { 
+        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@]%; 
+      }
+      or(p1,p2) -> {
+        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@]%; 
+      }
+      and(p1@relationAppl[],p2) -> { 
+        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@]%; 
+      }
+      and(p1,p2) -> { 
+        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@]%; 
+      }
+      forall(x,p1) -> {
+        return "forall " + `x + ", " + prettyPrint(`p1);
+      }
+      exists(x,p1) -> { 
+        return "exists " + `x + ", " + prettyPrint(`p1);
+      }
+      relationAppl(r,()) -> {
+        return `r;
+      }
+
+      // arithmetic pretty print
+      relationAppl("eq",(x,y)) -> {
+        return prettyPrint(`x) + " = " + prettyPrint(`y);
+      }
+      relationAppl("gt",(x,y)) -> {
+        return prettyPrint(`x) + " > " + prettyPrint(`y);
+      }
+      relationAppl("lt",(x,y)) -> {
+        return prettyPrint(`x) + " < " + prettyPrint(`y);
+      }
+      relationAppl("le",(x,y)) -> {
+        return prettyPrint(`x) + " <= " + prettyPrint(`y);
+      }
+
+      // set theory prettyprint
+      relationAppl("in",(x,y)) -> {
+        return prettyPrint(`x) + " : " + prettyPrint(`y);
+      }
+
+      // Hoare triples
+      relationAppl("Hoare",(P,S,Q)) -> {
+        return "{" + `prettyPrint(P) + "} " 
+          + `prettyPrint(S)  + " {" + `prettyPrint(Q) + "}";
+      }
+ 
+
+      relationAppl(r,x) -> {
+        return `r + "(" + prettyPrint(`x) + ")";
+      }
+
+      bottom() -> {
+        return "False";
+      }
+      top() -> {
+        return "True";
+      }
+    }
+
+    %match(Term term) {
+      Var(('@',n*)) -> { return `n; }
+      Var(x) -> { return `x;}
+
+      // Emilie 
+      funAppl("est_pair",()) -> { return %["est pair"]%; }
+      funAppl("est_impair",()) -> { return %["est impair"]%; }
+      funAppl("let_in",(funAppl("var",(x)),t,u)) -> { return %[let var @`prettyPrint(x)@ := (@`prettyPrint(t)@) in (@`prettyPrint(u)@) end]%; }
+      funAppl("let_in",(funAppl("defun",(f)),T,u,v)) -> { return %[let defun @`prettyPrint(f)@() : @`prettyPrint(T)@ = (@`prettyPrint(u)@) in (@`prettyPrint(v)@) end]%; }
+      funAppl("let_in",(funAppl("defun",(f,x1,T1)),T,u,v)) -> { return %[let defun @`prettyPrint(f)@(@`prettyPrint(x1)@ : @`prettyPrint(T1)@) : @`prettyPrint(T)@ = (@`prettyPrint(u)@) in (@`prettyPrint(v)@) end]%; }
+      funAppl("range",(dom,T)) -> { return %[@`prettyPrint(dom)@ -> @`prettyPrint(T)@]%; }
+      funAppl("dom",()) -> { return "<>"; }
+      funAppl("dom",(x)) -> { return "<"+ `prettyPrint(x) + ">"; }
+      funAppl("dom",(x,y)) -> { return %[<@`prettyPrint(x)@ x @`prettyPrint(y)@>]%; }
+      funAppl("while",(u,v)) -> { return %[while (@`prettyPrint(u)@) do (@`prettyPrint(v)@)]%; }
+
+
+      // arithmetic pretty print
+      funAppl("z",()) -> { return "0"; }
+      i@funAppl("succ",_) -> {
+        try { return Integer.toString(peanoToInt(`i));}
+        catch (Exception e) {}
+      }
+      funAppl("plus",(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "+" + prettyPrint(`t2) + ")";
+      }
+      funAppl("mult",(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "*" + prettyPrint(`t2) + ")";
+      }
+      funAppl("minus",(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "-" + prettyPrint(`t2) + ")";
+      }
+      funAppl("div",(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "/" + prettyPrint(`t2) + ")";
+      }
+
+      // finite 1st order theory of classes pretty print
+      funAppl("appl",(p,x*)) -> {
+        return `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
+      }
+      funAppl("nil",()) -> {
+        return ("nil");
+      }
+      l@funAppl("cons",(x,y)) -> {
+        if(endedByNil(`l)) return "<" + prettyList(`l) + ">"; 
+        else return prettyPrint(`x) + "::" + prettyPrint(`y);
+      }
+
+      // lambda-sigma
+      funAppl("lambda",(x)) -> {
+        return "λ" + `prettyPrint(x);
+      }
+      funAppl("lappl",(p,x*)) -> {
+        return "(" + `prettyPrint(p) + " "+ prettyPrint(`x*) + ")";
+      }
+      funAppl("subst",(p,x*)) -> {
+        return  `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
+      }
+      funAppl("one",()) -> {
+        return ("1");
+      }
+      funAppl("shift",()) -> {
+        return ("↑");
+      }
+      funAppl("lcons",(x,y)) -> {
+        return prettyPrint(`x) + "." + prettyPrint(`y);
+      }
+      funAppl("rond",(x,y)) -> {
+        return prettyPrint(`x) + " o " + prettyPrint(`y);
+      }
+
+      // lambda-pi
+      funAppl("type",()) -> {
+        return ("*");  
+      }
+      funAppl("kind",()) -> {
+        return ("□");   
+      }
+      funAppl("pitype",(x,y))  -> {
+        return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pikind",(x,y))  -> {
+        return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
+      }
+      funAppl("pitt",(x,y))  -> {
+        return "π⁎⁎⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pitk",(x,y))  -> {
+        return "π⁎◽◽" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pikt",(x,y))  -> {
+        return "π◽⁎⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+      funAppl("pikk",(x,y))  -> {
+        return "π◽◽◽" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+
+      // Hoare triples
+      funAppl("substitute",(P,x,e))  -> {
+        return `prettyPrint(P) + "[" 
+          + `prettyPrint(e) + "/" + `prettyPrint(x) + "]";
+      }
+      funAppl("var",(funAppl(x,())))  -> {
+        return "\"" + `x + "\""; 
+      }
+      funAppl("seq",(x,y))  -> {
+        return `prettyPrint(x) + " ; " + `prettyPrint(y); 
+      }
+      funAppl("and",(a,b)) -> {
+        return `prettyPrint(a) + " && " + `prettyPrint(b);
+      }
+      funAppl("not",(b)) -> {
+        return "!(" + `prettyPrint(b) + ")";
+      }
+      funAppl("impl",(a,b)) -> {
+        return `prettyPrint(a) + " ~> " + `prettyPrint(b);
+      }
+      funAppl("if_then_else",(a,b,c)) -> {
+        return "if (" + `prettyPrint(a) + ") then (" + `prettyPrint(b) + ") else (" + `prettyPrint(c) + ")";
+      }
+      l@funAppl("arg_cons",(x,y)) -> {
+        if(endedByArgNil(`l)) return "[" + prettyArgList(`l) + "]"; 
+        else return prettyPrint(`x) + ":" + prettyPrint(`y);
+      }
+      funAppl("arg_nil",()) -> {
+        return "[]";
+      }
+      funAppl("predappl",(funAppl(p,()),l)) -> {
+        return "@(" +`p + "," + `prettyPrint(l) + ")";
+      }
+      funAppl("affect",(x,e)) -> {
+        return `prettyPrint(x) + ":=" + `prettyPrint(e);
+      }
+
+
+
+      // normal case
+
+      funAppl(name,x) -> {
+        return `name + "(" + prettyPrint(`x) + ")";
+      }
+      FreshVar(n,_) -> { return `n; }
+      NewVar(n,_) -> { return `n; }
+    }
+
+    %match(TermList term) {
+      () -> {return ""; }
+      (h) -> { return prettyPrint(`h);}
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(TermRule term) {
+       termrule(lhs, rhs) -> 
+	 { return prettyPrint(`lhs) + " -> " + prettyPrint(`rhs); }
+     }
+
+    %match(PropRule term) {
+       proprule(lhs, rhs) -> 
+	 { return prettyPrint(`lhs) + " -> " + prettyPrint(`rhs); }
+     }
+
+    return term.toString();
+  }
+
+  public static String prettyPrint(urbanAbstractType term) {
+
+    %match(Meta term) {
+      mvar(name) -> { return `name; }
+      rename(n1,n2,mv) -> {return %[@`prettyPrint(mv)@[@`prettyPrint(n1)@ -> @`prettyPrint(n2)@]]%; }
+      reconame(cn1,cn2,mv) -> {return %[@`prettyPrint(mv)@[@`prettyPrint(cn1)@ -> @`prettyPrint(cn2)@]]%;}
+      substconame(cn,n,pt,phi,mv) -> { 
+        return %[@`prettyPrint(mv)@[@`prettyPrint(cn)@ := <@`prettyPrint(n)@><@`prettyPrint(pt)@:@`prettyPrint(phi)@>]]%; 
+      }
+      substname(n,cn,pt,phi,mv) -> {
+        return %[@`prettyPrint(mv)@[@`prettyPrint(n)@ := <@`prettyPrint(cn)@}><@`prettyPrint(pt)@:@`prettyPrint(phi)@>]]%; 
+      }
+    }
+
+    %match(Name term) {
+      name(n) -> {return "x"+`n; }
+    }
+
+    %match(CoName term) {
+      coname(cn) -> {return "a"+`cn; }
+    }
+
+    %match(NProp term) {
+      nprop(n,a) -> { return "<"+prettyPrint(`n)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(CNProp term) {
+      cnprop(cn,a) -> { return "<"+prettyPrint(`cn)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(NContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(CNContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(DBName term) {
+      dbname(i) -> { return "n("+`i+")";}
+    }
+
+    %match(DBCoName term) {
+      dbconame(i) -> { return "cn("+`i+")";}
+    }
+
+    %match(DBProofTerm term) { 
+      DBmetaVar(mv) -> { return `prettyPrint(mv); }
+      DBfoldL(x,m,y,i) -> { return "foldL_"+`i +"(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
+      DBfoldR(a,m,b,i) -> { return "foldR_"+`i +"(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
+      DBax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
+      DBcut(a,m1,x,m2) -> {return "cut(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+")";}
+      DBfalseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
+      DBtrueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
+      DBandR(a,m1,b,m2,nc) -> {return "andR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <cn:"+prettyPrint(`b)+"> "+prettyPrint(`m2)+","+prettyPrint(`nc)+")" ;}
+      DBandL(x,y,m,n) -> {return "andL(<n:"+prettyPrint(`x)+"><n:"+prettyPrint(`y)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBorR(a,b,m,cn) -> {return "orR(<cn:"+prettyPrint(`a)+"><cn:"+prettyPrint(`b)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBorL(x,m1,y,m2,n) -> {return "orL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`y)+"> "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      DBimplyR(x,a,m,cn) -> {return "implyR(<n:"+prettyPrint(`x)+"><cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBimplyL(a,m1,x,m2,n) -> {return "implyL(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+","+prettyPrint(`n)+")" ;}
+      DBexistsL(x,varx,m,n) -> {return "existsL(<n:"+prettyPrint(`x)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBexistsR(a,m,t,cn) -> {return "existsR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
+      DBforallL(x,m,t,n) -> {return "forallL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
+      DBforallR(a,varx,m,cn) -> {return "forallR(<cn:"+prettyPrint(`a)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+    }
+
+    %match(ProofTerm term) { 
+      metaVar(mv) -> { return `prettyPrint(mv); }
+      foldL(x,m,y,i) -> { return "foldL_"+`i +"("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
+      foldR(a,m,b,i) -> { return "foldR_"+`i +"("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
+      ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
+      cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
+      falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
+      trueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
+      andR(a,m1,b,m2,nc) -> {return "andR("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`b)+" "+prettyPrint(`m2)+", "+prettyPrint(`nc)+")" ;}
+      andL(x,y,m,n) -> {return "andL("+prettyPrint(`x)+" "+prettyPrint(`y)+" "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      orR(a,b,m,cn) -> {return "orR("+prettyPrint(`a)+" "+prettyPrint(`b)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      orL(x,m1,y,m2,n) -> {return "orL("+prettyPrint(`x)+" "+prettyPrint(`m1)+", "+prettyPrint(`y)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      implyR(x,a,m,cn) -> {return "implyR("+prettyPrint(`x)+" "+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      implyL(a,m1,x,m2,n) -> {return "implyL("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      existsL(x,varx,m,n) -> {return "existsL("+prettyPrint(`x)+" <"+prettyPrint(`varx)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      existsR(a,m,t,cn) -> {return "existsR("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
+      forallL(x,m,t,n) -> {return "forallL("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
+      forallR(a,varx,m,cn) -> {return "forallR("+prettyPrint(`a)+" <"+prettyPrint(`varx)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+    }
+
+    %match(NSequent term) {
+      nsequent(nctxt,cnctxt) -> { return prettyPrint(`nctxt) + " |- " + prettyPrint(`cnctxt); }
+    }
+
+    return term.toString();
+  }
+
+
+  private static String getPrettySideConstraints(SeqList list) {
+
+    HashSet<Term> set = Utils.getSideConstraints(list);
+
+    if (set.isEmpty())
+      return null;
+
+    Iterator<Term> it = set.iterator();
+    Term var = it.next();
+    String res = prettyPrint(var);
+    while (it.hasNext()) {
+      var =  it.next();
+      res += ", " + prettyPrint(var);
+    }
+    return res + " fresh";
+  }
+
+  public static String prettyRule(sequentsAbstractType term) {
+
+    %match(RuleList term) {
+      (x) -> { return prettyRule(`x); }
+      (t,q*) -> {	return prettyRule(`t) + "\n\n" + prettyRule(`q); }
+    }
+
+    %match(SeqList term) {
+      () -> { return ""; }
+      (x) -> { return prettyPrint(`x); }
+      (t,q*) -> {	return prettyPrint(`t) + "    " + prettyRule(`q); }
+    }
+
+    // generated rules
+    %match(Rule term) {
+      ruledesc(hs,c,p,_) -> {
+        String r1 = prettyRule(`p);
+        String r2;
+        if(`hs==0)
+          r2 = prettyPrint(`sequent(context(c),context()));
+        else
+          r2 = prettyPrint(`sequent(context(),context(c)));
+
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i< Math.max(r1.length(), r2.length()); ++i) 
+          sb.append('-');
+
+
+        String r3 = getPrettySideConstraints(`p);
+        if (r3 != null) 
+          return r1 + "\n" + sb.toString() + " (" + r3 + ")\n" + r2;
+        else 
+          return r1 + "\n" + sb.toString() + "\n" + r2;
+      }
+    }
+    return term.toString();
+  }
+
+  public static void display(Tree tree, TermRuleList tl, PropRuleList pl) throws java.io.IOException, java.lang.InterruptedException {
+    tree = cleanTree(tree, tl, pl);
+    tree = (Tree) Unification.reduce(tree,tl,pl);
+    display(tree);
+  }
+
+  // displays a latex output in xdvi
+  public static void display(sequentsAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
+    File tmp = File.createTempFile("output",".tex");
+    FileWriter writer = new FileWriter(tmp);
+    String path = tmp.getAbsolutePath();
+    String name = tmp.getName();
+    //String basename = path.substring(0,path.length()-4);
+    String basename = "/tmp/"+name;
+    basename = basename.substring(0,basename.length()-4);
+
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
+    writer.write(toLatex(term));
+    writer.write("\n\\]\n");
+    writer.write("\\end{document}\n");
+    writer.flush();
+
+    System.out.println(path);
+    Runtime rt = Runtime.getRuntime();
+    System.out.println(%[latex -output-directory=/tmp @path@]%);
+    Process pr = rt.exec(%[latex -output-directory=/tmp @path@]%);
+    //Process pr = rt.exec(%[latex -output-directory=/tmp \nonstopmode\input{@path@}]%);
+    int ret = pr.waitFor(); 
+    if (ret == 0) {
+      System.out.println(%[dvips @basename@.dvi -X 300 -Y 300 -E -o @basename@.ps]%);
+      pr = rt.exec(%[dvips @basename@.dvi -X 300 -Y 300 -E -o @basename@.ps]%);
+      ret = pr.waitFor();
+    }
+    if (ret == 0) {
+      System.out.println(%[gv --scale=3 @basename@.ps]%);
+      pr = rt.exec(%[gv --scale=3 @basename@.ps]%);
+      ret = pr.waitFor();
+    }
+/*    if (ret == 0) {
+	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
+	pr.waitFor();} */
+    else
+	System.err.println("An error occurred during the LaTeX compilation.");
+  }
+
+  // displays a latex output in xdvi
+  public static void display(urbanAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
+    File tmp = File.createTempFile("output",".tex");
+    FileWriter writer = new FileWriter(tmp);
+    String path = tmp.getAbsolutePath();
+    String name = tmp.getName();
+    //String basename = path.substring(0,path.length()-4);
+    String basename = "/tmp/"+name;
+    basename = basename.substring(0,basename.length()-4);
+
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
+    writer.write(toLatex(term));
+    writer.write("\n\\]\n");
+    writer.write("\\end{document}\n");
+    writer.flush();
+
+    System.out.println(path);
+    Runtime rt = Runtime.getRuntime();
+    Process pr = rt.exec("latex -output-directory=/tmp " + path);
+    //Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+
+    int ret = pr.waitFor(); 
+    if (ret == 0) {
+      pr = rt.exec("dvips " + basename +".dvi -X 300 -Y 300 -E -o "+ basename +".ps");
+      ret = pr.waitFor();
+    }
+    if (ret ==0) {
+      pr = rt.exec("gv --scale=3 "+ basename +".ps");
+      ret = pr.waitFor();
+    }
+    /*    if (ret == 0) {
+          pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
+          pr.waitFor();} */
+    else
+      System.err.println("An error occurred during the LaTeX compilation.");
+  }
+
+}

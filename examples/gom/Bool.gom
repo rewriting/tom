@@ -1,0 +1,32 @@
+module gom.Bool
+imports Peano
+abstract syntax
+Bool = True()
+     | False()
+     | Not(b:Bool)
+     | And(l:Bool,r:Bool)
+     | Or(l:Bool,r:Bool)
+     | Gt(lhs:Nat,rhs:Nat)
+     | Lt(lhs:Nat,rhs:Nat)
+Not:make(b) {
+  %match(Bool b) {
+    Not(x)   -> { return `x; }
+    And(l,r) -> { return `Or(Not(l),Not(r)); }
+    Or(l,r)  -> { return `And(Not(l),Not(r)); }
+  }
+}
+Gt:make(n1,n2) {
+  %match(Nat n1, Nat n2) {
+    Zero(), Suc(_) -> { return `False(); }
+    Suc(_), Zero() -> { return `True(); }
+    Zero(), Zero() -> { return `False(); }
+    Suc(x), Suc(y) -> { return `Gt(x,y); }
+  }
+}
+Lt:make(n1,n2) {
+ gom.bool.types.Bool b = `Not(Gt(n1,n2));
+ %match(Bool b) {
+  Not(_) -> { return realMake(n1,n2); }
+ }
+ if (true) return b;
+}

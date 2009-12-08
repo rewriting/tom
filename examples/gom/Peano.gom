@@ -1,0 +1,12 @@
+module gom.Peano
+abstract syntax
+Nat = Zero()
+    | Suc(pred:Nat)
+    | Plus(l:Nat,r:Nat)
+Plus:make(l,r) {
+  %match(Nat l, Nat r) {
+    Zero(), x -> { return `x; }
+    x, Zero() -> { return `x; }
+    Suc(x), y -> { return `Plus(x, Suc(y)); }
+  }
+}

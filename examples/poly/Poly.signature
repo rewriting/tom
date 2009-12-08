@@ -1,0 +1,52 @@
+  %typeterm term {
+    implement { ATermAppl }
+    equals(t1, t2) { t1.equals(t2) }
+  }
+    
+    /* My operators with constructors allowing to use "`" symbol */
+  %op term zero() {
+    is_fsym(t) { t.getName() == "0" }
+    make { factory.makeAppl(factory.makeAFun("0", 0, false)) }
+  }
+    
+  %op term one() {
+    is_fsym(t) { t.getName() == "1" }
+    make { factory.makeAppl(factory.makeAFun("1", 0, false)) }
+  }
+  
+  %op term a() {
+    is_fsym(t) { t.getName() == "a" }
+    make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
+  }
+  %op term b() {
+    is_fsym(t) { t.getName() == "b" }
+    make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
+  }
+  %op term c() {
+    is_fsym(t) { t.getName() == "c" }
+    make { factory.makeAppl(factory.makeAFun("c", 0, false)) }
+  }
+  
+  %op term X() {
+    is_fsym(t) { t.getName() == "X" }
+    make { factory.makeAppl(factory.makeAFun("X", 0, false)) }
+  }
+  %op term Y() {
+    is_fsym(t) { t.getName() == "Y" }
+    make { factory.makeAppl(factory.makeAFun("Y", 0, false)) }
+  }
+
+    /* this show how to use get_slot */
+  %op term mult(arg1:term, arg2:term) {
+    is_fsym(t) { t.getName() == "mult" }
+    get_slot(arg1,t) {(ATermAppl)t.getArgument(0) }
+    get_slot(arg2,t) {(ATermAppl)t.getArgument(1) }
+    make(t1, t2) { factory.makeAppl(factory.makeAFun("mult",2,false),t1, t2) }
+  }
+  %op term plus(arg1:term, arg2:term) {
+    is_fsym(t) { t.getName() == "plus" }
+    get_slot(arg1,t) { (ATermAppl)t.getArgument(0) }
+    get_slot(arg2,t) { (ATermAppl)t.getArgument(1) }
+    make(t1,t2) { factory.makeAppl(factory.makeAFun("plus",2,false), t1, t2) }
+  }
+    

@@ -1,0 +1,66 @@
+Tom 2.4 announcement
+--------------------
+
+It is our great privilege and pleasure to announce the availability of
+Tom version 2.4.
+
+This release continues our work on the integration of pattern matching
+and rule based programming facilities into C and Java.
+
+Tom is a pattern matching compiler developed at INRIA. It is
+particularly well-suited for programming various transformations on
+trees/terms and XML based documents. Its design follows our research on
+the efficient compilation of rule based languages (e.g. ELAN, developed
+at INRIA-Loria).
+
+Many applications have been developed in Tom. Among them, let us mention:
+ - the Tom compiler itself
+ - languages semantics, interpreters and program transformation tools
+ - a Just In Time strategy compiler using dynamic Java bytecode
+   transformation
+ - a generator of canonical abstract syntax trees (Gom)
+ - a proof assistant for supernatural deduction
+ - a compiler algorithm for anti-pattern matching and disunification
+
+Tom is a complex compiler which adds powerful constructs to C and Java:
+non linear syntactic matching, associative matching with neutral element
+(a.k.a. list-matching), XML based pattern matching, string matching, and
+equational rewriting.
+This offers the possibility to analyze and transform any kind of
+data-structure. Tom can be used for large scale developments and
+applications. It comes with documentation, programming, and debugging
+support.
+
+This new release contains many improvements and new features:
+  - Anti-Patterns:
+    Tom now supports not only pattern matching, but also anti-pattern
+    matching. For example, the pattern (_*,!a(),_*) denotes a list
+    which contains at least one element different from a(). In a similar
+    way, !(_*,a(),_*) denotes a list which does not contain any a().
+
+  - Reflexive Strategies:
+    A strategy is now a term that can be matched like any other term.
+    This allows to dynamically build or transform a strategy at runtime.
+
+  - Congruence Strategies:
+    Gom generates new elementary congruence and constructions
+    strategies. This allows for instance to define the Map operation in
+    a easy way: map(s) = _conc(s)
+
+  - Java Bytecode:
+    A support for Java bytecode analysis and transformation is available
+    in the runtime library. This allows class loading, bytecode analysis
+    and transformation in an algebraic framework.
+    Using the strategy language, the control flow graph can be explored
+    and visualized using dot.
+
+  - Eclipse Plugin:
+    It is back for Eclipse version 3.2.
+    It also supports Gom and all new functionalities.
+
+Tom is available, in open source (GPL/BSD License), from the web page:
+
+  http://tom.loria.fr
+
+  Best regards,
+  Tom development team

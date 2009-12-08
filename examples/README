@@ -1,0 +1,323 @@
+Tom is a language extension which adds pattern matching facilities to
+C, Java or Caml. Therefore, Tom is a multi-purpose programming
+language.
+
+Depending on your background, Tom can be seen as:
+ - a language to perform transformation of XML documents.
+ - a preprocessor which helps to perform discrimination over a complex
+   data-structure.
+ - a tool to manipulate Abstract Syntax Trees.
+ - a backend for Rewrite Rule based languages.
+ - a powerful Rule based programming language.
+
+* How to start with Tom?
+------------------------
+If you come from the
+ - algebraic programming community
+   => start with:
+      - addressbook
+      - peano
+      - gom
+      - poly
+      - strategy
+      - apireach
+
+ - XML community
+   => start with
+      - dom
+      - xml
+      - bpel
+
+ - Java programming community
+   => start with:
+      - builtin
+      - peano
+      - strings
+      - expression (quite complex)
+      - bytecode
+      - strategycompiler
+
+ - C programming community
+   => start with:
+      - integerc
+
+To relax, take a look at quine example 
+(a small self-reproducing program in Tom)
+
+* Running the examples:
+------------------------
+  Compilation:
+    - To compile all examples, run the script 'build.sh' from directory
+    'examples', assuming Ant is installed. To compile a specific example,
+    specify the example name.
+    For instance, to compile example 'peano' only, run
+    'build.sh -Dexample=peano build'.
+    Another possibility is to go into the directory and call 'ant':
+    'cd peano'
+    'ant'
+
+  Execution:
+    - To run a specific example, go to directory examples/build/ and execute
+      the java class of your choice using your Java Virtual Machine. For
+      instance, to run 'Peano1', simply run 'java peano.Peano1'.
+
+
+* Note about ApiGen/Vas/Gom:
+------------------------
+  Vas is build on top of ApiGen and both are deprecated. You may now use
+  Gom for all your applications (see user manual).
+
+  Gom is a system which takes a many-sorted signature as input, and
+  generates a concrete implementation for such an abstract data-type.
+  In addition, Gom automatically generates a mapping for Tom.
+  This system is useful to manipulate Abstract Syntax Trees since it
+  offers an efficient implementation (based on ATerms).
+  The implementation supports maximal memory sharing, strong static
+  typing as well as parsers and pretty-printers.
+
+
+* Included examples:
+--------------------
+* addressbook
+  Small implementation of a database
+  Concepts: apigen, list-matching, gom
+
+* analysis
+  Flow analysis on a simple language
+  Translation of temporal logic formulas into strategies
+  Concepts: strategies
+
+* antipattern
+  Solving anti-pattern matching problems
+  Concepts: anti-patterns, strategies, rule construct
+  Files' description:
+  Matching1
+    - an algorithm for solving anti-pattern matching problems
+  Matching2
+    - same algorithm, but with the strategy Id instead of fail
+  Matching3
+    - modification of the algorithm to allow guards on rules
+  Matching4
+    - another algorithm, a more correct one
+  Matching5
+    - same algorithm as 4, but implemented using %rule
+    - is is not working properly because of the problems with %rule
+  ApAndDisunification1
+    - algorithm for solving anti-pattern matching problems
+    that uses disunification
+  ApAndDisunification2
+    - algorithm for solving anti-pattern matching problems
+    that uses only pattern matching after the anti-patterns are transformed
+  Problems:
+    - if the construct of terms is in a file, and the rules in another,
+      tom won't apply the rules
+    - you cannot control whether a rule should apply or not. For example
+      if you need some rules to apply, and only after they have been applied,
+      to run another rule.
+    - when a strategy applies, the modified term will not fire the rules.
+
+  MatchingDifferences
+    - another algorithm for anti-pattern matching based on set differences, but
+      it only responds `True or `False, without giving the substitution when it
+      exists
+
+* antiptest
+ Antipatterns Test
+ Some example of antipatterns
+ Concepts: antipatterns
+
+* appletxml
+  XML Transformation
+  This examples contains an applet with is similar to the one in the Tom
+  web site: the author page. It aims to show how to combine applet, xml and tom
+  to complete web design technologies.
+  Concepts: XML pattern matching
+
+* bpel
+  transformation of BPEL specification
+  This example contains an example that constructs from a BPEL specification in
+  XML the corresponding work flow graph. This example is based on the
+  implementation of termgraph in Gom. See the termgraph example.
+  Concepts: Gom Termgraph, XML pattern matching
+
+* boulderdash
+  Simulate how rocks go down in the boulder-dash game
+  Coordinate system for Java 2D and used Topology:
+ 0
+0*-------->
+ |    N
+ |    |
+ | W--*--E
+ |    |
+ Y    S
+  Concepts: apigen, virtual mapping
+
+* builtin
+  Shows how to use builtin integer and string
+  Concepts: list-matching, string-matching
+
+* bytecode
+  Class pretty printer
+  An example use of the TOM bytecode manipulation library mapping
+  Loads a java class using the mapping and prints some information
+  Example of strategies to follow the control flow of a Bytecode program
+  //TODO: document the SClassLoader
+  Concepts: bytecode
+
+* caml
+  Show how to use Tom with Caml
+  Concepts: mapping, list-matching
+
+* cell
+  Cellular automata
+  Concepts: pattern matching
+
+* csmaca
+  Simulation of the network protocol CSMA/CA
+  Concepts: probabilistic strategies
+
+* dom
+  XML manipulation based on DOM
+  Concepts: XML, list-matching, DOM
+
+* expression
+  Simplification of algebraic expressions
+  Concepts: complex object mapping, lazy-type
+
+* gom
+  gom usage demonstration
+  Concepts: gom
+
+* gomoku
+  Tiny go-moku game
+  Concepts: list-matching, gom
+
+* gterm
+  hand-written classes similar to those generated by gom
+  Concepts: shared-objects
+
+* integerc
+  Show how to use Tom with C
+  - cfib.t describes addition over Peano integers in C, by defining a simple
+    term data-structure and a Tom mapping
+  - loulou.t illustrates a tricky mapping between Peano and builtin integers
+  - PeanoTest.t shows how to define a mapping for the C version of the ATerm
+    Library
+  Concepts: mapping, complex mapping on builtin
+
+* lambdacalculi
+  Several implementations of betareduction, one per tom file
+   - LambdaUpsilon : 
+       The purely syntactic explicit substitution system 
+       with De Bruijn indices derived from Lambda-X.
+       Written only with the rules() construct of Gom.
+  - BarendregtConvention: 
+      One hook maintains Barendregt's convention.
+      Beta-reduction is then described in 2 lines.
+
+* list
+  Introduction to list-matching
+  Concepts: list-matching, mapping to the ATerm library
+
+* lsystems
+  implementation of the Lindenmayer systems (plants simulation)
+
+* master
+  Various basic rewriting usage examples used in Master course
+  Peano, Fibonacci, polynom derivation, pattern matching
+
+* matching
+  Another implementation of pattern matching in tom
+
+* meta
+  meta quote usage example
+  Concepts: meta quote
+
+* mgs
+  dynamical systems simulations
+  (collaboration with the MGS group)
+  ArrayBeadSort, BeadSort and  BoulderDash
+
+* nspk
+  Verification of the Needham-Schroeder Public-Key protocol
+  Concepts: apigen, complex list-matching, exploration of a search space
+
+* old
+  Old examples, no longer maintained
+
+* p3p
+  Implementation of a web policy, using XML
+  Concepts: XML
+
+* peano
+  Computation with Peano integers
+  Concepts: simple mapping, apigen, Tom notation
+
+* poly
+  Compute the derivative of a polynom
+  Concepts: mapping, apigen, generic traversal, rewrite system
+  Examples:
+    _Simple:   Show how to differentiate a polynom.
+    _Advanced: Extended version with non-linearity and disjunction.
+    _Apigen:   Same as before, but based on ApiGen.
+               Also introduce the notion of rewrite rule system.
+
+* polygraphes             
+  Representation of polygraphs in Tom
+  Concepts: Gom asssociative operators, normalization rules 
+
+* prodrule
+  Implementation of Fibonacci in a Production rule style
+  Concepts: Production rule, Rete
+
+* propp
+  Propositional prover
+  Concepts: using ANTLR with tom
+
+* quine
+  Example of small self-reproducing Tom program
+  Concepts: using % brackets 
+
+* rbtree
+  Red-Black Tree algorithm
+  Concepts: apigen, disjunction of patterns
+
+* strategy
+  Show how to use the MuTraveler strategy language
+  Concepts: strategies
+
+* strategycompiler
+  Compiler for the strategy language based on inlining by Bytecode
+  transformation
+  Concepts: bytecode transformation
+
+* strings
+  Tiny example based on string matching
+  Check whether two strings are anagrams of each other
+  using list matching on strings
+  Concepts: string matching
+
+* structure
+  Calculus of strutures
+  Concepts: complex list-matching, exploration strategies
+
+* tactics
+  Implementation of classical theorem prover tactics with the strategy language
+  Concepts: Tom strategies
+
+* ted
+  Toolbox for live aterms manipulation/representation
+  Concepts: mapping to predefined java type
+
+* termgraph
+  Pattern matching on graphs
+  Shows how to perform pattern matching on graphs coded by terms
+  using ref visitors provided by tom library
+
+* tutorial
+  Examples introduced in the tutorial
+  Concepts: string matching, XML
+
+* xml
+  XML manipulation based on TNode
+  Concepts: XML, list-matching, TNode

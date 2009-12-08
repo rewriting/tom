@@ -1,0 +1,318 @@
+module Bytecode
+imports int long float double String
+abstract syntax
+
+ClassNode = Class(info:ClassInfo, fields:FieldList, methods:MethodList)
+
+ClassInfo = ClassInfo(name:String, signature:Signature, access:AccessList, superName:String, interfaces:StringList, innerClasses:InnerClassInfoList, outerClass:OuterClassInfo)
+
+InnerClassInfo = InnerClassInfo(name:String, outerName:String, innerName:String, access:AccessList)
+
+InnerClassInfoList = InnerClassInfoList(InnerClassInfo*)
+
+OuterClassInfo = OuterClassInfo(owner:String, name:String, desc:MethodDescriptor)
+                | EmptyOuterClassInfo()
+
+LocalVariable = LocalVariable(name:String, typeDesc:String, signature:Signature, start:LabelNode, end:LabelNode, index:int)
+
+LocalVariableList = LocalVariableList(LocalVariable*)
+
+Handler = CatchHandler(handler:LabelNode, type:String)
+         | FinallyHandler(handler:LabelNode)
+
+CatchHandler:make(handler, type) {
+  if(type == null) {
+    return `FinallyHandler(handler);
+  }
+}
+
+TryCatchBlock = TryCatchBlock(start:LabelNode, end:LabelNode, handler:Handler)
+
+TryCatchBlockList = TryCatchBlockList(TryCatchBlock*)
+
+Field = Field(access:AccessList, name:String, desc:FieldDescriptor, signature:Signature, value:Value)
+
+FieldList = FieldList(Field*)
+
+Field:make(access, name, desc, signature, value) {
+  if(value == null) {
+    return `Field(access, name, desc, signature, EmptyValue());
+  }
+}
+
+Method = Method(info:MethodInfo, code:MethodCode)
+
+MethodList = MethodList(Method*)
+
+MethodInfo = MethodInfo(owner:String, access:AccessList, name:String, desc:MethodDescriptor, signature:Signature, exceptions:StringList)
+
+MethodCode = MethodCode(instructions:InstructionList, localVariables:LocalVariableList, tryCatchBlocks:TryCatchBlockList)
+            | EmptyCode()
+
+MethodCode:make(instructions, localVariables, tryCatchBlocks) {
+  if(instructions == null && localVariables == null && tryCatchBlocks == null) {
+    return `EmptyCode();
+  }
+}
+
+FieldDescriptor = ObjectType(className:String)
+                 | ArrayType(arrayype:FieldDescriptor)
+                 | B()
+                 | C()
+                 | D()
+                 | F()
+                 | I()
+                 | J()
+                 | S()
+                 | Z()
+
+FieldDescriptorList = FieldDescriptorList(FieldDescriptor*)
+
+MethodDescriptor = MethodDescriptor(parameters:FieldDescriptorList, return:ReturnDescriptor)
+
+ReturnDescriptor = ReturnDescriptor(type:FieldDescriptor)
+                  | Void()
+
+LabelNode = LabelNode(id:int)
+       | Ref(inst:Instruction)
+
+LabelNodeList = LabelNodeList(LabelNode*)
+
+Value = StringValue(s:String)
+       | IntValue(i:int)
+       | LongValue(l:long)
+       | FloatValue(f:float)
+       | DoubleValue(d:double)
+       | EmptyValue()
+
+AccessList = AccessList(Access*)
+
+Access = ABSTRACT()
+        | ANNOTATION()
+        | BRIDGE()
+        | DEPRECATED()
+        | ENUM()
+        | FINAL()
+        | INTERFACE()
+        | NATIVE()
+        | PRIVATE()
+        | PROTECTED()
+        | PUBLIC()
+        | STATIC()
+        | STRICT()
+        | SUPER()
+        | SYNCHRONIZED()
+        | SYNTHETIC()
+        | TRANSIENT()
+        | VARARGS()
+        | VOLATILE()
+
+TypeNode = ARRAY()
+         | BOOLEAN()
+         | BYTE()
+         | CHAR()
+         | DOUBLE()
+         | FLOAT()
+         | INT()
+         | LONG()
+         | OBJECT()
+         | SHORT()
+         | VOID()
+
+InstructionList = InstructionList(Instruction*)
+Instruction = Anchor(label:LabelNode)
+             | Nop()
+             | Aconst_null()
+             | Iconst_m1()
+             | Iconst_0()
+             | Iconst_1()
+             | Iconst_2()
+             | Iconst_3()
+             | Iconst_4()
+             | Iconst_5()
+             | Lconst_0()
+             | Lconst_1()
+             | Fconst_0()
+             | Fconst_1()
+             | Fconst_2()
+             | Dconst_0()
+             | Dconst_1()
+             | Bipush(operand:int)
+             | Sipush(operand:int)
+             | Ldc(cst:Value)
+             | Iload(var:int)
+             | Lload(var:int)
+             | Fload(var:int)
+             | Dload(var:int)
+             | Aload(var:int)
+             | Iaload()
+             | Laload()
+             | Faload()
+             | Daload()
+             | Aaload()
+             | Baload()
+             | Caload()
+             | Saload()
+             | Istore(var:int)
+             | Lstore(var:int)
+             | Fstore(var:int)
+             | Dstore(var:int)
+             | Astore(var:int)
+             | Iastore()
+             | Lastore()
+             | Fastore()
+             | Dastore()
+             | Aastore()
+             | Bastore()
+             | Castore()
+             | Sastore()
+             | Pop()
+             | Pop2()
+             | Dup()
+             | Dup_x1()
+             | Dup_x2()
+             | Dup2()
+             | Dup2_x1()
+             | Dup2_x2()
+             | Swap()
+             | Iadd()
+             | Ladd()
+             | Fadd()
+             | Dadd()
+             | Isub()
+             | Lsub()
+             | Fsub()
+             | Dsub()
+             | Imul()
+             | Lmul()
+             | Fmul()
+             | Dmul()
+             | Idiv()
+             | Ldiv()
+             | Fdiv()
+             | Ddiv()
+             | Irem()
+             | Lrem()
+             | Frem()
+             | Drem()
+             | Ineg()
+             | Lneg()
+             | Fneg()
+             | Dneg()
+             | Ishl()
+             | Lshl()
+             | Ishr()
+             | Lshr()
+             | Iushr()
+             | Lushr()
+             | Iand()
+             | Land()
+             | Ior()
+             | Lor()
+             | Ixor()
+             | Lxor()
+             | Iinc(incr:int, var:int)
+             | I2l()
+             | I2f()
+             | I2d()
+             | L2i()
+             | L2f()
+             | L2d()
+             | F2i()
+             | F2l()
+             | F2d()
+             | D2i()
+             | D2l()
+             | D2f()
+             | I2b()
+             | I2c()
+             | I2s()
+             | Lcmp()
+             | Fcmpl()
+             | Fcmpg()
+             | Dcmpl()
+             | Dcmpg()
+             | Ifeq(label:LabelNode)
+             | Ifne(label:LabelNode)
+             | Iflt(label:LabelNode)
+             | Ifge(label:LabelNode)
+             | Ifgt(label:LabelNode)
+             | Ifle(label:LabelNode)
+             | If_icmpeq(label:LabelNode)
+             | If_icmpne(label:LabelNode)
+             | If_icmplt(label:LabelNode)
+             | If_icmpge(label:LabelNode)
+             | If_icmpgt(label:LabelNode)
+             | If_icmple(label:LabelNode)
+             | If_acmpeq(label:LabelNode)
+             | If_acmpne(label:LabelNode)
+             | Goto(label:LabelNode)
+             | Jsr(label:LabelNode)
+             | Ret(var:int)
+             | Tableswitch(min:int, max:int, dflt:LabelNode, labels:LabelNodeList)
+             | Lookupswitch(dflt:LabelNode, keys:IntList, labels:LabelNodeList)
+             | Ireturn()
+             | Lreturn()
+             | Freturn()
+             | Dreturn()
+             | Areturn()
+             | Return()
+             | Getstatic(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Putstatic(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Getfield(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Putfield(owner:String, name:String, fieldDesc:FieldDescriptor)
+             | Invokevirtual(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokespecial(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokestatic(owner:String, name:String, methodDesc:MethodDescriptor)
+             | Invokeinterface(owner:String, name:String, methodDesc:MethodDescriptor)
+             | New(typeDesc:String)
+             | Newarray(operand:int)
+             | Anewarray(typeDesc:String)
+             | Arraylength()
+             | Athrow()
+             | Checkcast(typeDesc:String)
+             | Instanceof(typeDesc:String)
+             | Monitorenter()
+             | Monitorexit()
+             | Multianewarray(typeDesc:String, dims:int)
+             | Ifnull(label:LabelNode)
+             | Ifnonnull(label:LabelNode)
+
+sort Method : block() {
+
+  %include{ sl.tom }
+
+  public Method getCfg() {
+    try {
+      return (Method) `TopDown(toCfg()).visitLight(this).expand();
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new RuntimeException("Unexpected failure during cfg transformation");
+    }
+  }
+
+  %strategy toCfg() extends Identity() {
+    visit InstructionList {
+      ConsInstructionList(Anchor(LabelNode(id)), InstructionList(i,tail*)) -> { return `InstructionList(LabInstruction("l"+id,i),tail*); }
+    }
+    visit Instruction {
+      Anchor(LabelNode(id)) -> { return `LabInstruction("l"+id,Nop()); }
+    }
+    visit LabelNode {
+      LabelNode(id) -> { return `Ref(RefInstruction("l"+id)); }
+    } 
+  }
+
+}
+
+IntList = IntList(int*)
+
+StringList = StringList(String*)
+
+Signature = Signature(sig:String)
+           | EmptySignature()
+
+Signature:make(sig) {
+  if(sig == null) {
+    return `EmptySignature();
+  }
+}

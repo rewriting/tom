@@ -1,0 +1,55 @@
+// CONTRACTION A GAUCHE
+
+proof l : (forall x, P(x)) => (P(a) /\ P(b)).
+intro.
+focus h1. duplicate.
+focus h1. intro. a.
+focus h2. intro. b.
+auto.
+display l.
+proofterm l.
+
+// CONTRACTION A GAUCHE
+
+proof l : (P(a) \/ P(b)) => exists x, P(x).
+intro.
+duplicate.
+intro. a.
+focus c2.
+intro. b.
+auto.
+display l.
+proofterm l.
+
+// UTILISATION AVEC IMPLICATION
+
+proof l : (A => B) => ((A => B) /\ (A => B)).
+intro.
+focus h1.
+duplicate.
+intro.
+focus h1.
+intro.
+intro.
+axiom.
+axiom.
+focus h2.
+intro. 
+auto.
+focus c2.
+intro.
+axiom.
+display l.
+proofterm l.
+
+// ENCORE A GAUCHE
+
+proof l : (forall x, (P(x) => Q(x))) => (Q(a) => P(b)) => P(a) => Q(b).
+intro.
+intro.
+focus h1. duplicate.
+focus h1. intro. a. 
+focus h2. intro. b.
+auto.
+display l.
+proofterm l.

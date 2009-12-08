@@ -1,0 +1,16 @@
+module Bool
+imports int String
+abstract syntax
+Bool = True()
+     | False()
+     | And(lhs:Bool,rhs:Bool)
+     | Id(name:IdSort)
+     | Int(value:IntSort)
+
+Block = BoolBlockList(Bool*)
+      | BoolBlock(a:BoolList)
+
+BoolList = BoolList(Bool*)
+
+IntSort = IntCons(str:String)
+IdSort = IdCons(str:String)

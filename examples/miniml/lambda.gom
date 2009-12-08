@@ -1,0 +1,79 @@
+module Lambda
+imports int String
+abstract syntax
+
+/* pure calculus */
+
+atom LVar 
+
+LType = Atom(n:String)
+      | Arrow(t1:LType,t2:LType)
+      | TypeVar(i:int)
+
+LTerm = App(t1:LTerm,t2:LTerm)
+      | Abs(a:<Lam>)
+      | Let(b:<Letin>)
+      | Fix(c:<Fixpoint>)
+      | Var(x:LVar)
+      | Constr(f:String, children:LTermList)
+      | Case(subject:LTerm,rules:Rules)
+
+Rules = RList(<Clause>*)
+
+Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
+
+Pattern binds LVar = PFun(neutral f:String, children:PatternList)
+                   | PVar(x:LVar, neutral ty:LType)
+
+LTermList = LTList(LTerm*) 
+
+PatternList binds LVar = PList(Pattern*)
+
+Lam binds LVar = lam(x:LVar, neutral ty:LType, inner t:LTerm)
+Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
+Fixpoint binds LVar = fixpoint(x:LVar, neutral ty:LType, inner t:LTerm)
+
+/* typed version */
+
+Typed = Typed(t:TyLTerm,ty:LType)
+
+TyLTerm = TyApp(t1:Typed,t2:Typed)
+        | TyAbs(a:<TyLam>)
+        | TyFix(c:<TyFixpoint>)
+        | TyVar(x:LVar)
+        | TyConstr(f:String, children:TyLTermList)
+        | TyCase(subject:Typed,rules:TyRules)
+        | TyThis()
+
+TyLTermList = TyLTList(Typed*) 
+TyRules = TyRList(<TyClause>*)
+TyClause binds LVar = TyRule(p:TyPattern, inner t:Typed) 
+TyPattern binds LVar = TyPFun(neutral f:String, children:TyPatternList)
+                     | TyPVar(x:LVar, neutral ty:LType)
+TyPatternList binds LVar = TyPList(TyPattern*)
+
+TyLam binds LVar = Tylam(x:LVar, neutral ty:LType, inner t:Typed)
+TyFixpoint binds LVar = Tyfixpoint(x:LVar, neutral ty:LType, inner t:Typed)
+
+
+/* type reconstruction */
+
+Constraint = Constraint(ty1:LType,ty2:LType)
+ConstraintList = CList(Constraint*)
+ReconResult = Pair(t:Typed,cl:ConstraintList)
+ReconChildrenResult = Pair2(tl:TyLTermList,cl:ConstraintList)
+ReconRulesResult = Triple(rls:TyRules,ty:LType,cl:ConstraintList)
+ReconClauseResult = Pair3(c:TyClause,cl:ConstraintList)
+ReconPatternResult = 
+  Quadruple(c:Context,p:TyPattern,ty:LType,cl:ConstraintList)
+ReconPatternListResult = Triple2(c:Context,pl:TyPatternList,cl:ConstraintList)
+Domain = Domain(LType*)
+Range = Range(dom:Domain,codom:LType)
+Jugement = Jugement(v:LVar,ty:LType)
+         | RangeOf(c:String,r:Range)
+Context = Context(Jugement*)
+Mapping = MapsTo(i:int,ty:LType)
+Substitution = MList(Mapping*)
+
+/* compilation */
+FixVars = FixVarList(String*)

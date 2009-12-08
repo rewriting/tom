@@ -1,0 +1,14 @@
+definition
+
+module Booleans
+
+exports
+
+context-free start-symbols 
+ Bool
+
+sorts Bool
+context-free syntax
+ "true"        -> Bool { cons("True") }
+ "false"       -> Bool { cons("False") }
+ Bool "&" Bool -> Bool { cons("And") }

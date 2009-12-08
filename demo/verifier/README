@@ -1,0 +1,14 @@
+# compile the program
+$ tom.src --verify Match.t
+
+# verify the patterns, and build a proof
+$ zvtov Match.zv
+
+# check the proof
+$ coqc Match.v
+
+# a move verbose check can be "coqtop < Match.v"
+
+# to be able to verify the proof, make sure coq can use zenon library
+# in ~/.coqrc, you have to place:
+Add Rec LoadPath "<zenon_prefix>/lib/foc".

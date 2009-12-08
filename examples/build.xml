@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Ant for Tom-examples" default="examples" basedir=".">
+  <description>
+    This script prepare a bundle of Tom examples
+  </description>
+
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
+  <property name="tomfork" value="on"/>
+  <property environment="env"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <import file="${tom.common.path}/tom-common.xml"/>
+
+  <!-- some used directory location -->
+  <property name="examples.dir"   location="."/>
+  <property name="examples.dist"  location="dist"/>
+
+  <!-- where the examples a build: javac destDir -->
+  <property name="examples.gen"   location="gen"/>
+  <property name="examples.build" location="build"/>
+  <property name="examples.report" location="report"/>
+
+  <property name="examples.lib"   value="lib"/>
+
+  <target name="prepare.examples">
+    <mkdir dir="${examples.dist}"/>
+  </target>
+
+  <!-- target debug to help finding properties problems -->
+  <target name="debug">
+    <echoproperties/>
+  </target>
+
+  <target name="clean.examples" description="Cleans examples directory">
+    <delete dir="${examples.gen}"/>
+    <delete dir="${examples.build}"/>
+    <delete dir="${examples.report}"/>
+  </target>
+
+  <target name="build">
+    <fail unless="example">
+      Please define the "example" to build
+    </fail>
+    <echo>Building example: ${example}</echo>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="${example}/build.xml"/>
+      </filelist>
+    </subant>
+  </target>
+
+  <target name="examples"
+          description="Builds the examples (at least some)"
+          depends="sub.all">
+  </target>
+
+  <target name="sub.all">
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="build.all">
+    <!-- Use subant instead of apply, to make sure memory is released -->
+    <parallel threadCount='4'>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-Dtom.home=${tom.home}"/>
+      <arg value="-f"/>
+      <fileset dir="." includes="a*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="b*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="c*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="d*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="e*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="f*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="g*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="h*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="i*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="j*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="k*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="l*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="m*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="n*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="o*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="p*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="q*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="r*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="s*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="t*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="u*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="v*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="w*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="x*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="y*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="z*/build.xml"/>
+    </apply>
+  </parallel>
+  </target>
+
+  <target name="dist.all" depends="prepare.examples">
+    <fail unless="version">
+      ****************************************************
+      ****************************************************
+      You have to define the "version" property in order
+      to build the examples distribution
+      > ./build.sh -Dversion="xxx"
+      ****************************************************
+      ****************************************************
+    </fail>
+    <property name="distrib.zip"
+      value="${examples.dist}/tom-examples-${version}.zip"/>
+    <zip destfile="${distrib.zip}" update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="755">
+        <include name="build.sh"/>
+        <include name="build.bat"/>
+      </zipfileset>
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="README"/>
+        <include name="common.xml"/>
+        <include name="**/build.xml"/>
+        <include name="${examples.lib}/*.jar"/>
+
+        <exclude name="gasel/build.xml"/>
+        <exclude name="deepmatch/build.xml"/>
+        <exclude name="lambdacalculi/build.xml"/>
+        <exclude name="multigraph/build.xml"/>
+        <exclude name="set/build.xml"/>
+        <exclude name="gasel/build.xml"/>
+        <exclude name="build/**/*"/>
+        <exclude name="gen/**/*"/>
+        <exclude name="dist/**/*"/>
+      </zipfileset>
+    </zip>
+    <subant target="dist">
+      <fileset dir="." includes="*/build.xml"/>
+      <property name="distrib.zip"
+        value="${distrib.zip}"/>
+    </subant>
+  </target>
+
+  <target name="dist.examples"
+          description="Prepare a distribution of examples"
+          depends="prepare.examples, dist.all">
+  </target>
+
+  <target name="clean.dist" description="Mr proper" depends="clean">
+    <delete dir="${examples.dist}"/>
+  </target>
+
+  <target name="clean"
+          description="Cleans everything in the project"
+          depends="clean.examples">
+  </target>
+
+  <target name="junit" depends="tom.init, examples"
+    description="Runs junit acceptance tests">
+    <mkdir dir="${examples.report}"/>
+    <tom.junit printsummary="on"
+              fork="on"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="example.junit" depends="tom.init"
+          description="Runs junit acceptance tests on a specific example">
+    <fail unless="example">
+      Please define the "example" to test
+    </fail>
+    <mkdir dir="${examples.report}"/>
+    <antcall target="build"/>
+    <tom.junit fork="on"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <formatter type="brief" usefile="no"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="memorytest">
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+  </target>
+
+</project>

@@ -1,0 +1,49 @@
+* Mini ML to java compiler with optional lazy behaviour *
+
+** description
+
+Allows for the compilation to java code of programs with a syntax 'a
+la' ML with a lazy semantics and containing extern calls to java
+functions. 
+
+The intermediate language is pure system F with simple case constructs (no
+nested patterns), and makes use of fresh-gom. It forms a good candidate for
+optimization experimentation.
+
+For now, one program transformation is available: thunkification.
+
+The backend (system F to Java) is really simple and minimalist.
+
+** usage
+
+ - invocation: java lazyml.Main [--lazy] < foo.mml
+ - input: some miniml file
+ - output: some java code meant to be included in a java class
+
+** organization
+
+ - lambda.gom: (fresh)gom signature of typed and untyped programs
+ - Lambda.g.t: parser
+ - PreProc.t: 'case .. of' unfolding 
+ - Typer.t: lambda -> system F (type inference)
+ - Eval.t: symbolic evaluation for debugging
+ - Compiler.t: system F -> Java
+ - Lazy Compiler.t: system F -> thunks in Java
+ - Printer.t: various pretty-print functions for debugging
+ - Main.t: parses, pre-processes, types, compiles
+
+** demos
+
+ - demo1: demo of lazy capabilities, sum (take 100 [1..])
+ - demo2: towards a bootstrap of the compiler: parsing + type inference +
+          pretty printing making use of polymorphism and extern java functions
+          invocation
+
+ - to run the demos:
+     cd examples
+     ./build.sh lazyml
+     cd lazyml/demo1
+     make
+     cd ../demo2
+     make < examples/demo2.ml
+

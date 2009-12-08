@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the caml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="caml"/>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <!-- build tom -->
+    <tom destdir="${examples.gen}/${example}"
+         srcdir="${examples.dir}/${example}"
+         camlcode="yes">
+      <tomincludedir>
+        <pathelement location="${tom.home}/share/tom"/>
+      </tomincludedir>
+      <include name="**/*.t"/>
+      <classpath refid="tom.classpath"/>
+    </tom>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.gen}/${example}">
+        <include name="*.ml"/>
+      </fileset>
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.ml"/>
+        <include name="Makefile"/>
+        <include name="README"/>
+      </fileset>
+    </copy>
+    <antcall target="caml.make"/>
+  </target>
+  <target name="caml.make" if="camlc.bin">
+    <exec dir="${examples.build}/${example}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+      <env key="CAMLC" value="${camlc.bin}"/>
+    </exec>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the miniml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="miniml"/>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <gomfreshcompile/> 
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <tom.preset outputfile="${examples.gen}/${example}/Lambda.g"
+                import="${examples.gen}/${example}"
+                srcdir="${examples.dir}"> 
+                <include name="${example}/**/Lambda.g.t"/>
+    </tom.preset>
+    <antlr3 target="${examples.gen}/${example}/Lambda.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <tom.preset import="${examples.gen}/${example}"
+                srcdir="${examples.dir}"
+                destdir="${examples.gen}"> 
+                <include name="${example}/*.t"/>
+                <exclude name="${example}/*.g.t"/>
+    </tom.preset>
+    <javac.preset destdir="${examples.build}"
+                  srcdir="${examples.gen}">
+      <classpath refid="tom.examples.classpath"/>
+      <include name="${example}/**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <property name="distribute" value="yes"/>
+</project>

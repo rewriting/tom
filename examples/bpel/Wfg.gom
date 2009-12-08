@@ -1,0 +1,33 @@
+module bpel.Wfg
+imports String 
+abstract syntax
+
+Wfg = WfgNode(Wfg*)
+    | Activity(name:String,incond:Condition,outcond:Condition)
+    | ConcWfg(Wfg*)
+    | EmptyWfg()
+
+Condition = And(Condition*) 
+          | Or(Condition*)
+          | Xor(c1:Condition,c2:Condition)
+          | Cond(wfg:Wfg)
+          | Label(node:String)
+          | NoCond()
+
+WfgNode:FL() {}
+ConcWfg:FL() {}
+WfgNode:make_insert(node,wfg) {
+  %match(Wfg node){
+    ConsConcWfg(e,tail) -> {
+      return `WfgNode(wfg*,e,tail*);
+    }
+  }
+}
+
+ConcWfg:make_insert(wfg,wfglist) {
+  %match(Wfg wfg){
+    EmptyWfg() -> {
+      return wfglist;
+    }
+  }
+}

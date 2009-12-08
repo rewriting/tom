@@ -1,0 +1,197 @@
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> False.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+termrule pred(0) -> 0.
+termrule pred(succ(x)) -> x.
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> x * y + y.
+
+rule eq(x,y) -> forall P, in(cons(x,nil()),P) => in(cons(y,nil()),P).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+
+inductive Nat = z() | succ(m:Nat).
+hered_nat.
+proprule in(l,fNat(t)) -> Nat(appl(t,l)).
+
+proprule Null(0) -> True.
+proprule Null(succ(x)) -> False.
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+
+proof eqrefl: forall x,eq(x,x).
+auto.
+
+proof eqsym: forall x y, eq(x,y) => eq(y,x).
+intros.
+focus h1. rule. fEq(one(),S(x0)).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. x0. axiom.
+
+proof succ_injective: forall x y, eq(x,y) => eq(succ(x),succ(y)).
+intros.
+focus h1. rule. fEq(S(succ(x0)),succ(one())).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. succ(x0). axiom.
+
+proof null_is_zero: forall x, Nat(x) => (Null(x) <=> eq(x,0)).
+intros.
+theorem eqsym.
+focus h3. intro. x0. focus h3. intro. 0.
+intros.
+focus h3. rule. fNull(one()).
+autoreduce.
+autoreduce.
+focus h1. rule. supset(fNull(one()),fEq(one(),S(0))).
+reduce. intros.
+autoreduce.
+autoreduce.
+
+proof natcase1: forall n, Nat(n) => (Nat(n) /\ Null(n) \/ (exists m, Nat(m) /\ eq(n,succ(m)))).
+intros.
+focus h1. rule. inter(fNat(one()),union(fNull(one()),P(inter(fNat(one()),fEq(S(one()),succ(one())))))).
+autoreduce.
+next.
+autoreduce.
+rule. reduce.
+focus h2. remove.
+focus c2. remove.
+focus c2. remove.
+intros.
+focus c2. intro. succ(n0).
+intros.
+theorem succ_injective.
+focus h4. intro. m0.
+focus h4. intro. succ(n0).
+intros.
+focus c2. rule.
+focus h4. rule. p0.
+focus h3. rule. n0.
+axiom.
+axiom.
+axiom.
+axiom.
+focus h2.
+focus c2. intro. 0.
+intros.
+theorem null_is_zero.
+focus h3. intro. m0.
+cut eq(m0,0).
+theorem succ_injective.
+focus h5. intro. m0. focus h5. intro. 0.
+intros.
+intros.
+auto.
+rule.
+focus h2. rule. m0.
+axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+rule.
+focus h2. rule. m0.
+axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+
+proof natcase2: forall n, ((Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m)))) => Nat(n).
+intros.
+theorem eqsym.
+focus h3. intro. n0. focus h3. intro. succ(m0). 
+intros.
+focus h3. rule. fNat(one()).
+reduce. axiom.
+reduce.
+rule.
+focus h2. rule. m0.
+reduce. axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+
+proof natcase: 
+forall n, ((Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m)))) <=> Nat(n).
+theorem natcase1.
+theorem natcase2.
+intro.
+focus h1. intro. n0.
+focus h2. intro. n0.
+intros.
+
+// on peut donc ajouter le raisonnement par cas : 
+rule natcase.
+
+proof recind1:    forall n, Nat(n) 
+                  => forall p, in(cons(0,nil()),p) 
+                  => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                  => in(cons(n,nil()),p) .
+intros.
+focus h1. rule 3. inter(fNat(one()),p0).
+reduce. intros.
+next. reduce. intros.
+rule 2.
+axiom.
+rule. reduce.
+intros.
+focus h5. intro. m0. intros.
+showrules.
+rule 2.
+focus h3. rule 3. p1.
+focus h3. rule. m0.
+axiom.
+axiom.
+axiom.
+axiom.
+
+proof recind2:   forall n, 
+                  (forall p, in(cons(0,nil()),p) 
+                   => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                   => in(cons(n,nil()),p)
+                 ) => Nat(n).
+intros.
+rule 2.
+focus h3. intro. p0.
+intros.
+focus h2. rule. m0.
+axiom.
+axiom.
+
+proof recind:    forall n, Nat(n) <=> 
+                 (forall p, in(cons(0,nil()),p) 
+                  => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                  => in(cons(n,nil()),p)) .
+theorem recind1.
+theorem recind2.
+intro.
+focus h1. intro. n0.
+focus h2. intro. n0.
+intros.
+
+// on peut donc ajouter l'induction avec recurseur : 
+rule recind.
+hered_rec_nat.
+
+
+

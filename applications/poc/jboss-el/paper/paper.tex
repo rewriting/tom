@@ -1,0 +1,649 @@
+%% vim: set spell spelllang=en:
+\documentclass[runningheads]{llncs}
+
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{ifpdf}
+\usepackage[all]{xy}
+
+\ifpdf
+%    \usepackage{hyperref}
+   \DeclareGraphicsRule{*}{mps}{*}{}
+ \else
+\fi
+
+\pagenumbering{arabic}
+
+\newcommand{\scala}{\textsc{Scala}}
+\newcommand{\pizza}{\textsc{Pizza}}
+\newcommand{\jmatch}{\textsc{JMatch}}
+\newcommand{\jbossrules}{\textsc{JBoss Rules}}
+\newcommand{\jbossel}{\textsc{JBoss-EL}}
+\newcommand{\jboss}{\textsc{JBoss}}
+\newcommand{\jsp}{\textsc{JSP}}
+\newcommand{\jess}{\textsc{Jess}}
+\newcommand{\jrules}{\textsc{JRules}}
+\newcommand{\stratego}{\textsc{Stratego}}
+\newcommand{\jjtraveler}{{JJTraveler}}
+\newcommand{\maude}{\textsc{Maude}\xspace}
+\newcommand{\asfsdf}{{ASF+SDF}\xspace}
+
+\newcommand{\elan}    {\textsf{ELAN}\xspace}
+\newcommand{\tom}{\textsc{Tom}}
+\newcommand{\gom}{\textsc{Gom}}
+\newcommand{\java}{\textsc{Java}}
+\newcommand{\C}{\textsf{C}}
+\newcommand{\eclipse}{\textsc{Eclipse}}
+\newcommand{\ocaml}{\textsc{OCaml}}
+\newcommand{\ml}{\textsc{ML}}
+\newcommand{\haskell}{\textsc{Haskell}}
+\newcommand{\fsharp}{\textsf{F \#}}
+\newcommand{\lex}[1]{{\textrm{\textbf{#1}}}}
+
+\newcommand{\isdef}{\mathrel{\mbox{\small$\stackrel{\mbox{\tiny$\triangle$}}{=}$}}}
+\def\vs{\vspace{-1.5mm}}
+\newcommand{\Mu}{{\ensuremath{\mu}}}
+
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\wrt}{\textit{wrt.}}
+\newcommand{\etc}{\textit{etc.}}
+
+% code samples
+\RequirePackage{listings}
+\lstset{basicstyle={\ttfamily},
+        keywordstyle={\rmfamily\bfseries},
+        columns=flexible}
+\lstdefinelanguage{gom}{
+  alsoletter={\%},
+  morekeywords={\%match,module,imports,abstract,
+                syntax,make,make_insert,realMake},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+}
+\lstnewenvironment{el}[1][]%
+{\lstset{frame=tb,#1}}
+{}
+\lstnewenvironment{gomcode}[1][]%
+{\lstset{language={gom},frame=tb,#1}}
+{}
+\lstnewenvironment{tomcode}[1][]%
+{\lstset{language={java},
+  alsoletter={\%},
+  morekeywords={\%typeterm,\%op,\%oplist,\%strategy,\%match,
+    is_fsym,get_slot,get_head,get_tail,is_empty,implement,equals,
+    make,make_empty,make_insert,realMake,\%gom,visit,
+    module,imports,abstract,syntax},
+  frame=tb,#1}}
+{}
+\lstnewenvironment{objcode}[1][]%
+{\lstset{
+  morekeywords={op,strat},
+  frame=tb,#1}}
+{}
+\lstnewenvironment{asfsdfcode}[1][]%
+{\lstset{
+  morekeywords={module,imports,exports,context-free,syntax,equations},
+  frame=tb,#1}}
+{}
+\lstnewenvironment{javacode}[1][]%
+{\lstset{language={java},frame=tb,#1}}
+{}
+\lstnewenvironment{coqcode}[1][]%
+{\lstset{
+  morekeywords={Ltac,Inductive,Fixpoint,Theorem,Lemma,match,with,end},
+  xleftmargin=1em,#1}}
+{}
+\lstnewenvironment{elancode}[1][]%
+{\lstset{
+  morekeywords={where,end},
+  frame=tb,#1}}
+{}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+% code samples
+\newcommand{\comment}[2]{\marginpar{{\small\sf---#1: #2 }}{ \fbox{\sf --#1}}}
+
+%\title{Strategic rewriting on existing ASTs}
+%\title{Analysing and Transforming Third-Party Data-Structures using Data-Abstraction and Strategic Rewriting}
+\title{Analysing and Transforming Third-Party Data-Structures by combining Data-Abstraction and Strategic Rewriting}
+%\title{Analysis and Transformation of Third-Party ASTs based on Strategies and ADTs}
+%\title{A platform for developing tools using strategic programming and ADTs over existing ASTs}
+
+\author{Emilie Balland \and Pierre-Etienne Moreau \and Nicolae Vintila}
+
+\institute{INRIA \& LORIA,\\
+  BP 101, 54602 Villers-l{\`e}s-Nancy Cedex France\\
+
+% Domain Specific Consulting Inc.
+% 
+% Canada
+\email{\{Emilie.Balland,Pierre-Etienne.Moreau\}@loria.fr,nick@domainspecificconsulting.com}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present a language embedded in {\java} dedicated to the manipulation and
+transformation of structured data.  Motivated by the promotion of rule based
+techniques and their integration in large scale applications, the {\tom}
+language extends {\java} with the purpose of providing high level constructs
+inspired by the rewriting community.
+
+This paper describes in which way {\tom} is data-agnostic and thus can be
+easily integrated in existing projects. Matching and strategic rewriting
+features are usable on external data-structures of existing APIs like Eclipse
+JDT. To illustrate this aspect, we present the {\jbossel} library and show how
+we can manipulate {\jbossel} expressions using {\tom} for defining
+transformation and analysis in a declarative way.
+\end{abstract}
+
+%
+% outline
+% -------
+% what is the general problem: analysing and transforming existing ASTs
+% an example: JBoss-EL
+% what do we provide: a way to describe a mapping (and Tom)
+% we present mi3 and how easy it is to implement Introspector
+% application of this technology to JBoss-EL
+% extension: congruence strategies
+%
+
+\section{Introduction}
+
+\section{Tom: strategic rewriting piggybacked on Java}
+	
+The {\tom} language embed strategic rewriting statements in  mainstream
+languages like {\java} or {\C}.  For example, the matching statement is
+introduced by the \lex{\%match} token and can be used as any {\java} code
+block.  This construction is an extension of the conventional construction
+\texttt{switch/case}, whose main difference is that the discrimination is
+based on algebraic \emph{terms} rather than atomic values as integers or
+characters.
+
+A basic example of {\tom} programs is the definition of the addition on Peano
+integers. Integers are represented by algebraic terms based on the
+\texttt{zero()} constant and the \emph{successor}, \texttt{suc(x)},  which
+takes a Peano integer as argument.  The addition is defined by the following
+{\java} method:
+
+\medskip
+\begin{tomcode}
+public int plus(int t1, int t2) {
+  %match(t1, t2) {
+    x,zero()  -> { return `x; }
+    x,suc(y)  -> { return `suc(plus(x,y)); }
+  }
+}
+
+public void run() {
+    System.out.println("plus(1,2) = " + plus(1,2));
+}
+\end{tomcode}
+
+In this example, given two terms  $t_1$ and $t_2$ representing Peano integers,
+the evaluation of the \texttt{plus} function is implemented by matching: $x$
+matches $t_1$ and the $zero()$ and $suc(y)$ patterns match eventually $t_2$.
+When the $zero()$ pattern matches $t_2$, the result is $x$, which
+is intanciated by $t_1$. When the $suc(y)$ pattern matches $t_2$, it means
+that the $t_2$ term is rooted by the $suc$ symbol; the subterm $y$ is added
+to $x$, and the successor of this term is returned. The backquote construction
+\texttt{`} enables the construction of new algebraic terms and can reuse
+variables instantiated by matching.
+
+Note that the matching statement proposed by {\tom} is more expressive than
+ones proposed by functional languages. 
+\comment{Nick}{I believe it would be great to have a dedicated section on
+  comparing Tom's capabilities with other languages. I would include Stratego
+    and Kiama, a new Scala based language that assimilated some Stratego power
+    into Scala. Google for "stratego dynamic rules context" to see this
+    powerful feature in Stratego: maybe this can spark new ideas.}
+
+For example,  it is possible to use
+equational matching or negative matching. Moreover, the right hand side of the
+match statement are not restricted to terms but can be any instruction from the
+host language. As for the \texttt{switch/case} statement, if the match
+succeeds, the instructions are executed and if the control flow of the program
+is not interrupted, the following patterns are tried. The \texttt{plus} method
+uses the {\java} \texttt{return} statement in order to interrupt the
+control flow when a pattern succeeds. Even if this \texttt{plus} method is
+defined by matching, it can be used as any other {\java} method in the
+surrounding {\java} code.
+
+When using rewriting as a programming or modeling paradigm, it is common to
+consider rewrite systems that are non-confluent or non-terminating. To be able
+to use them, it is necessary to exercise some control over the application of
+the rules. In {\tom}, a solution would be to use {\java} to express the control
+needed. While this solution provides a huge flexibility, its lack of
+abstraction renders difficult the reasoning about such transformations.
+Strategies such as \emph{bottom-up}, \emph{top-down} or \emph{leftmost-innermost}
+are higher-order features that describe how rewrite rules should be applied.
+We have developed a flexible and expressive strategy language inspired by
+{\elan}, {\stratego}, and {\jjtraveler}~\cite{visser-oopsla01} where high-level
+strategies are defined by combining low-level primitives. For example, the
+\emph{top-down} strategy is recursively defined by
+\texttt{TopDown(s)}~${\isdef}$~\texttt{Sequence(s,All(TopDown(s)))}.
+
+An elementary strategy corresponds to a minimal transformation. It could be
+\emph{Identity} (does nothing), \emph{Fail} (always fails), or a set of
+\emph{rewrite rules} (performs an elementary rewrite step only at the root
+position).  In our system, strategies are type-preserving and have a default
+behavior (introduced by the keyword \texttt{extends}) that can be either
+\texttt{Identity} or \texttt{Fail}:
+
+\begin{tomcode}
+  %strategy R() extends Fail() {
+    visit Nat {
+      zero()      -> { return `suc(zero()); }
+      suc(suc(x)) -> { return `x; }
+    }
+  }
+\end{tomcode}
+
+When a strategy is applied to a term~$t$, as in a \texttt{\%match}, a rule is
+fired if a pattern matches. Otherwise, the default strategy is applied.
+For example, applying the strategy \texttt{R()} to the term
+\texttt{suc(suc(zero()))} will produce the term \texttt{zero()} thanks to the
+second rule. The application to \texttt{suc(suc(suc(zero())))} fails since no
+pattern matches at root position.
+
+More control is obtained by combining elementary strategies with \emph{basic
+combinators} such as \texttt{Sequence}, \texttt{Choice},
+\texttt{All}, \texttt{One} as presented
+in~\cite{BKK98,visser-icfp98}.
+
+By denoting \texttt{s[t]} the application of the strategy~\texttt{s} to the
+term~\texttt{t}, the \emph{basic combinators} are defined as follows:
+
+\begin{small}
+\begin{tabular}{lll}
+
+\texttt{Sequence(s1,s2)[t]} & $\rightarrow$ & \texttt{s2[t']} if \texttt{s1[t]}
+$\rightarrow$ \texttt{t'}\\
+&& failure if \texttt{s1[t]} fails\\
+
+\texttt{Choice(s1,s2)[t]} & $\rightarrow$ & \texttt{t'} if \texttt{s1[t]}
+$\rightarrow$ \texttt{t'}\\
+&& \texttt{s2[t']} if \texttt{s1[t]} fails\\
+
+\texttt{All(s)[f(t1,\ldots,tn)]} & $\rightarrow$ & \texttt{f(t1',\ldots,tn')}
+if \texttt{s[t1]} $\rightarrow$ \texttt{t1'},\ldots, \texttt{s[tn]}
+$\rightarrow$ \texttt{tn'}\\
+&& failure if there exists \texttt{i} such that \texttt{s[ti]} fails\\
+
+\texttt{One(s)[f(t1,\ldots,tn)]} & $\rightarrow$ &
+\texttt{f(t1,\ldots,ti',\ldots,tn)} if \texttt{s[ti]}  $\rightarrow$
+\texttt{ti'}\\
+&& failure if for all \texttt{i}, \texttt{s[ti]} fails\\
+\end{tabular}
+\end{small}
+
+An example of composed strategy is
+\texttt{Try(s)}~${\isdef}$~\texttt{`Choice(s,Identity())},
+which applies~\texttt{s} if it can, and performs the \textit{Identity} otherwise.
+To define strategies such as \emph{repeat}, \emph{bottom-up}, \emph{top-down},
+{\etc} recursive definitions are needed. For example, to repeat the application
+of a strategy~\texttt{s} until it fails, we consider the strategy
+\texttt{Repeat(s)}~${\isdef}$~\texttt{Choice(Sequence(s,Repeat(s)),}
+\texttt{Identity())}.  In {\tom}, we use the recursion operator~$\Mu$
+(comparable to \texttt{rec} in {\ocaml}) to have stand-alone definitions:
+$\Mu$\texttt{x.Choice(Sequence(s,x),Identity())}.
+
+The \texttt{All} and \texttt{One} combinators are used to define tree
+traversals. For example, we have
+\texttt{TopDown(s)}~${\isdef}$~$\Mu$\texttt{x.Sequence(s,All(x))}:
+the strategy
+ \texttt{s} is first applied on top of the considered term, then
+the strategy \texttt{TopDown(s)} is recursively called on all immediate
+subterms of the term.
+
+Strategy expressions can have any kind of parameters. It is useful to have a
+{\java} \texttt{Collection} as parameter in order to collect information.  For
+example, let us consider the following strategy which collects the direct
+subterms of an~$f$.  This program creates a hash-set, and a strategy applied to
+\texttt{f(f(a()))} collects all the subterms which are under an~\texttt{f}:
+{\ie} $\{\texttt{a()}, \texttt{f(a())}\}$.
+
+\begin{tomcode}
+  %strategy Collect(c:Collection) extends Identity() {
+    visit T {
+      f(x) -> { c.add(`x); }
+    }
+  }
+  Collection bag = new HashSet();
+  `TopDown(Collect(bag)).apply( `f(f(a())) );
+\end{tomcode}
+
+\section{Mapping existing ASTs}
+
+In this section, we will present how the {\tom} language can be directly used
+on any Java objects using a mechanism of mappings. In particular, we will show
+that it can be used to manipulate in a direct way ASTs like Eclipse's JDT.
+
+\comment{Nick}{for Eclipse it seems more complicated because of the special
+  APIs Eclipse has for refactoring. I can send some links if you'd like.}
+
+\subsection{Mapping data-structures}
+
+In the previous example, we can notice that the {\java} \texttt{plus} method
+take two parameters of type \texttt{int} while the match statement is specified
+on the {\tom} type \texttt{Nat} composed of the \texttt{zero} and \texttt{suc}
+constructors. This shows an important specificity of the {\tom} language : the
+matching compilation is implemented independently of the concrete
+implementation of the terms. In fact, the match constructs are expressed in
+function of algebraic data types and the compiler translates these statements
+by manipulation on the concrete data types that represent the algebraic terms.
+{\tom} users have to specify the relation (\emph{mapping}) between the {\tom}
+algebraic data types and the concrete {\java} types using dedicated {\tom}
+syntactic constructs. The \lex{\%typeterm}, \lex{\%op} and \lex{\%oplist}
+enable to respectively  describe the implementation of algebraic types,
+constructors and list constructors. Now, we will illustrate these constructions
+by defining the mapping for Peano integers and the {\java} primitive type
+\texttt{int}.
+
+First, the \lex{\%typeterm} construction specifies an algebraic {\tom} type and
+its concrete {\java} type. The user has also to declare how testing the
+equality between two terms using the concrete representations.
+
+\medskip
+\begin{tomcode}[morekeywords={equals}]
+%typeterm Nat {
+    implement { int }
+    equals(t1,t2) { t1 == t2 }
+}
+\end{tomcode}
+
+The \texttt{nat} type is declared by the \lex{\%typeterm} construction and is
+implemented by the \texttt{int} type. The mapping also specifies that the
+equality tests of two \texttt{Nat} terms can be achieved simply by comparison
+of their concrete representations (using \texttt{==}). Operators of this kind
+are defined using the construction \lex{\%op} which allows to specify both how
+\emph{building} and \emph{destroying} (in the sense of decomposing) a term
+whose head is the symbol of the declared operator. We can define the
+\texttt{zero} and \texttt{suc} constructors as follows:
+
+\begin{tomcode}
+%op Nat zero() {
+  is_fsym(i) { i==0 }
+  make() { 0 }
+}
+
+%op Nat suc(p:Nat) {
+  is_fsym(i) { i>0 }
+  get_slot(p,i) { i-1 }
+  make(i) { i+1 }
+}
+\end{tomcode}
+
+	
+The first line of each \lex{\%op} construction defines the signature of the
+algebraic operator, and the names of its arguments. The \lex{is\_fsym}
+construction used to test whether an object represents a term whose head symbol
+is the operator and the \lex{get\_slot} construction can extract the various
+sub-terms according to their behalf. Both buildings are the destructive part of
+the mapping used to compile the match statement.  The \texttt{make} construction
+is used to specify how to construct a term whose head symbol is this operator
+and whose subterms are given as parameters.
+
+Variadic operators (unfixed arity) are defined similarly using the
+\lex{\%oplist} construction.  The first line specifies the domain and co-domain
+of the operator, as its name suggests. Specific operations to lists must be
+defined, they are used to compile the filtering list. Mappings specifies how to
+construct an empty list, and insert a new element at the top of a list. It also
+details how deconstructing a list, by separating the head element and the rest
+of the list.
+
+\begin{tomcode}[morekeywords={equals}]
+  %typeterm NatList {
+    implement { MyIntList }
+    equals(l1,l2)  { l1.equals(l2) }
+  }
+
+  %oplist NatList conc( Nat* ) {
+    is_fsym(t)       { t instanceof MyIntList  }
+    make_empty()     { new MyIntList() }
+    make_insert(e,l) { new MyIntList(e,l) }
+    get_head(l)      { l.get(0) }
+    get_tail(l)      { l.sublist(1,l.size()) }
+    is_empty(l)      { l.isEmpty() }
+ }
+\end{tomcode}
+
+	
+The definition \lex{\%oplist} for the list of \texttt{Nat} elements is
+implemented by the class \texttt{MyIntList} which extends
+\texttt{ArrayList<integer>}. It offers functions to construct an empty list and
+a list from an element representing his head and a list corresponding to the
+tail.
+
+\medskip
+
+A mapping should not necessarily be complete. It is sometimes useful to
+specify only the destructive part. For example, the {\tom} runtime library
+provides mappings for partial standard implementations of the {\java}
+collection library (\texttt{java.util} package) which can be used to match any
+{\java} collection in a declarative way. For example, we define the following
+type mapping for the {\java} \verb+List+ interface:
+
+\begin{tomcode}
+%typeterm List {
+  implement      { java.util.List }
+  is_sort(t)      { $t instanceof java.util.List }
+  equals(l1,l2)  { $l1.equals($l2) }
+}
+\end{tomcode}
+
+Thus we can define this partial list constructor mapping to match any objects
+of type \verb+List+:
+
+\begin{tomcode}
+  %oplist List conc( Object* ) {
+    is_fsym(t)       { t instanceof java.util.List  }
+    get_head(l)      { l.get(0) }
+    get_tail(l)      { l.sublist(1,l.size()) }
+    is_empty(l)      { l.isEmpty() }
+ }
+\end{tomcode}
+
+\emph{Add a simple example with non-linearity on lists}
+
+\comment{Nick}{As you know, I did not understand well where each of these ADT
+  APIs are used in the Tom generated code.}
+  
+ \comment{Nick}{ For example when is a deep clone
+    needed and when not, is maximal sharing or immutability a strong
+    requirement? Should I make a new term when a child is set or can I just
+    call a setter in the native AST? It would be great to have a section about
+    this in detail!!}
+
+\subsection{Strategic rewriting for existing data-structures}
+
+In term rewriting, a strategy is a way to control the application of a set of
+rules on a term. The strategy specifies which rules are applied and at which
+positions. We argue that strategy languages are also well-adapted for
+collecting information inside a complex tree structure. Thus the combination of
+pattern-matching and strategies can greatly facilitate the development of code
+analysers. {\tom} offers a strategy language smoothly integrated into {\java},
+flexible enough to express complex traversals and to collect information
+using {\java} collections. This language is influenced by the strategy
+languages offered by {\elan} and {\stratego}. One of its main characteristics
+is its data-structure independence. Any {\java} data-structure can be
+traversed thanks to {\tom} mappings presented in previous examples.
+
+\comment{Emilie}{Present introspectors}
+
+\section{{\jbossel} analysis}
+
+{\jbossel} is an extension of the Unified Expression Language (EL) proposed by
+\texttt{Sun} for manipulating datas from Java Server Pages ({\jsp}).
+Expressions can call Java methods and evaluate simple arithmetic and boolean
+expressions. As these expressions are simply strings, {\jboss} offers a parser
+in order to manipulate them as abstract syntax trees. We will present in this
+Section how we can directly map the AST given by {\jboss} and describe simple
+transformation and analysis in a declarative way.
+
+\subsection{Brief description of {\jbossel}}
+
+In a {\jsp} page, expressions are enclosed by \texttt{\$\{\}}. When rendering
+the page, expressions are dynamically evaluated. For example:
+
+\begin{el}
+<c:if test="${car.price > 1000}" >
+  ...
+</c:if>
+\end{el}
+
+In this code, we assume that an instance of the \verb+Car+ {\java} Bean lives
+in some scope such as session scope or application scope.  The instance is
+bound to the name \texttt{car} and is accessible from a request attribute
+(equivalent to the {\jsp} code \verb+request.getAttribute("car")+). The
+\verb+${car.price > 1000}+ expression is evaluated dynamically and the
+corresponding result (which can be \verb+true+ or \verb+false+ strings) takes
+the place of the expression.
+
+{\jbossel} provides an extension to the Unified Expression Language (EL). For
+example, it allows programmers to use a method with user defined parameters (as
+    in \verb+${car.setPrice(price)}+) and also offers a mechanism for
+projection (the result of \verb+#{cars.{c|c.price()}}+ is the \verb+cars+ list'
+    prices).  This extended language is used in {\jboss} products such as
+{\jboss} Seam and will illustrate the mechanism of {\tom} mappings. In fact.
+{\jboss} provides a parsing library for constructing the AST corresponding to
+an expression. Our goal is to realize security analysis directly on these ASTs.
+The main interest of our approach is that we can directly use the {\tom}
+language on existing structures. In this way, analysis or transformations can
+be expressed in a declarative way without coding by hand complex visitors or
+translating structures for using other rule-based languages.
+
+\subsection{Mapping {\jbossel} trees}
+
+
+\subsection{{\jbossel} transformation and analysis}
+
+\subsubsection{Optimizing by rule-based transformation}
+
+\subsubsection{Eliminate hardcoded strings in UI code}
+
+As an example, suppose we want to replace the use of text literals with calls
+to \verb+bundle.get("...")+ in order to facilitate internationalization. For
+example, suppose we have the following code:
+
+\begin{el}
+${cars.getRowCount()} Cars' total price =
+  $ ${cars.getTotalPrice()}
+\end{el}
+
+It will be replaced by:
+
+\begin{el}
+${cars.getRowCount()} ${bundle.get("Cars' total price"}} =
+  $ ${cars.getTotalPrice()}
+\end{el}
+
+After this transformation, the developer can fix it manually by properly
+placing text in resource bundles which can thus be internationalized.
+In {\tom}, such transformation is implemented by identifying literals using
+pattern-matching and replace it by a function call on bundle. The corresponding
+{\tom}+{\java} code realizes completely this transformation:
+
+\begin{tomcode}
+  %strategy ReplaceLiteral() extends Identity() {
+    visit Expr {
+      Literal(s) ->
+        FunctionCall(Identifier("bundle"),"get",Literal(s))
+    }
+  }
+
+  public String internationalize(String expression) {
+    Node ast = ELParser.parse(expression);
+    Node new_ast= `BottomUp(ReplaceLiteral()).visit(node);
+    return new_ast.getExpression();
+  }
+\end{tomcode}
+
+First we define the transformation rule using the \verb+%strategy+ construct.
+This basic transformation is identified by the \texttt{ReplaceLiteral} name and
+can now be applied as a basic strategy. As we want to apply this improvement in
+the whole AST, the {\java} method named \texttt{internationalize} applies this
+rule in a bottom-up way (using the {\tom} strategy language) on the AST of its
+expression argument. The result of the method is a new expression of type
+\texttt{String}. Note that if we replace the \verb+BottomUp+ strategy by a
+\verb+TopDown+, the program does not terminate because the right-hand side of
+the rule contains \verb+Literal(s)+ which means that the transformation can be
+fired again.
+
+\subsubsection{List beans read and/or written in a screen}
+
+\comment{Nick}{Detecting writes would require also processing the (X)HTML around the EL to detect EL inside forms.
+Another aspect of this is detecting if the display of the page causes state mutations.}
+
+\subsubsection{List controller actions}
+
+\comment{Nick}{Detect method calls from links and buttons inside forms to determine which controller layer apis are called}
+
+\subsubsection{Retrieving information by pattern-matching}
+
+An other simple example of {\jbossel} analysis consists in identifying all
+method calls that do not start with \emph{get} as they are suspects for code
+that mutates the state of the application during rendering of the page. In this
+example, we will use a {\java} collection for collecting each suspect call. In
+this case, we will use strategies to collect information in the AST:
+
+\begin{tomcode}
+  %strategy CollectSuspectCall(bag:Set) extends Identity() {
+    visit Expr {
+      f@FunctionCall[name=!concString('get',_*)] -> {
+        bag.add(`f);
+      }
+    }
+  }
+
+  public Set collectSuspectCalls(String expression) {
+    Node ast = ELParser.parse(expression);
+    Set bag = new HashSet();
+    `TopDown(CollectSuspectCall(bag)).visit(node);
+    return bag;
+  }
+\end{tomcode}
+
+
+\section{Related Works}
+
+Compared to other term rewriting based languages, like {\asfsdf}, {\maude},
+{\elan}, {\stratego} an important advantage of {\tom} is its seamless
+integration in any {\java} project. Other languages provide pattern-matching
+extensions for {\java}: {\scala}, {\pizza}, {\jmatch}. To our knowledge, they
+only provide a basic pattern-matching. More specifically, they lack the
+list-matching, as well as the negative conditions. Other rule-based languages
+like {\jrules}, {\jbossrules} or {\jess} have \emph{business rules} as their
+application domain, and not program transformation.
+
+The mapping concept proposed in~{\tom} is based on Philip
+Wadler's \emph{views}~\cite{wadler87}. This concept gave rise to the {\pizza}
+language~\cite{odersky97pizza} which is an extension of the {\java} language to
+algebraic structures. In addition to the algebraic data types, this language
+provided generics, closures and matching. The matching construction and the algebraic data
+structures are less expressive than the language proposed by {\tom}
+(for example, there is no matching modulo a theory and the data structures do not have
+ maximal sharing or invariant). Generalist languages like
+{\fsharp}~\cite{fsharp} and \scala~\cite{scala} offer primitives for the
+definition of \emph{views}. These constructions are called respectively
+\emph{active patterns} in {\fsharp}~\cite{syme07} and \emph{extractors} in
+{\scala}~\cite{emir07}.  Defining views allow to deconstruct a same object in
+different ways by changing the behaviour of the matching statement. This type
+of views only allow to specify the destructive part of the mapping.  As for
+the \emph{extractors} of {\scala}, {\tom} mappings allow in addition to
+build data structures through the same abstractions used for matching.
+
+\section{Conclusion}
+
+\bibliographystyle{splncs}
+\bibliography{paper}
+
+\end{document}

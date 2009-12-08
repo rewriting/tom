@@ -1,0 +1,73 @@
+module firewall.Ast
+imports String int
+abstract syntax
+
+IpTablesOutput = Blocks(Block*)
+
+Block = Block(rule:Rule,policy:Policy,instructionList:InstructionList)
+
+Rule = Input()
+     | Forward()
+     | Output()
+     | Prerouting()
+     | Postrouting()
+     | UserRuleDef(user_rule_name:String)
+
+Policy = PolicyAccept()
+       	| PolicyDrop()
+       	| Ref(nb_ref:int)
+
+InstructionList = InstructionList(Instruction*)
+
+Instruction = Ins(num:int,target:Target,prot:Protocol,opt:Opt,source:Communication,destination:Communication,options:Opts)
+
+Target = Accept()
+        |Classify()
+        |ClusterIp()
+        |ConnMark()
+        |ConnSecMark()
+        |Dnat()
+        |Drop()
+        |Dscp()
+        |Ecn()
+        |Log()
+        |Mark()
+        |Masquerade()
+        |Mirror()
+        |NetMap()
+        |NfLog()
+        |NfQueue()
+        |NoTrack()
+        |Queue()
+        |Redirect()
+        |Reject()
+        |Return()
+        |UserRuleCall(user_rule_name:String)
+        |Same()
+        |SecMark()
+        |Snat()
+        |TcpMss()
+        |Tos()
+        |Trace()
+        |Ttl()
+        |Ulog()
+        |Ipv4OptSstRip()
+        |Set()
+        |Tarpit()
+        
+Protocol =   All_()
+            |Icmp()
+            |Udp()
+            |Tcp()
+
+Opt =   None()
+
+Communication = Anywhere()
+              |Localhost()
+              |Ipv4_Addr(ipv4:Ipv4,mask:int)
+              |Ipv6_Addr(ipv6:String)
+
+Ipv4 = Ipv4(int*)
+
+Opts = Opts(lo:String)
+

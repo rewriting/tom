@@ -1,0 +1,12 @@
+module gom.Elist
+imports int
+abstract syntax
+Elist = Nil()
+      | Cons(head:E,tail:Elist)
+E = a()
+  | b()
+  | c()
+  | d()
+  | f(el1:E,bi:int,el2:E)
+  | g(el1:E,bi:int,el2:E)
+VElist = conc(E*)

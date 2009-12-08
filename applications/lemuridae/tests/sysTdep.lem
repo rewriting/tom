@@ -1,0 +1,76 @@
+termrule lappl(lambda(a),b) -> subst(a,slash(b)).
+termrule subst(lappl(a,b),s) -> lappl(subst(a,s),subst(b,s)).
+termrule subst(lambda(a),s) -> lambda(subst(a,lift(s))).
+termrule subst(lone(),slash(a)) -> a.
+termrule subst(lsuc(n),slash(a)) -> n.
+termrule subst(lone(),lift(s)) -> lone().
+termrule subst(lsuc(n),lift(s)) -> subst(subst(n,s),shift()).
+termrule subst(n,shift()) -> lsuc(n).
+
+termrule subst(succ(n),s) -> succ(subst(n,s)).
+termrule lappl(lappl(lappl(rec(),0),u),v) -> u.
+termrule lappl(lappl(lappl(rec(),succ(n)),u),v) -> lappl(lappl(v,n),(lappl(lappl(lappl(rec(),n),u),v))).
+
+termrule REC(n,u,v) -> lappl(lappl(lappl(rec(),n),u),v).
+termrule PLUS(x,y)  -> REC(x,y, lambda(lambda(succ(lone()))) ).
+
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> False.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+
+termrule appl(lone(),l) -> lone().
+termrule appl(rec(),l) -> rec().
+termrule appl(shift(),l) -> shift().
+termrule appl(lambda(t),l) -> lambda(appl(t,l)).
+termrule appl(slash(t),l) -> slash(appl(t,l)).
+termrule appl(lift(t),l) -> lift(appl(t,l)).
+termrule appl(lsuc(t),l) -> lsuc(appl(t,l)).
+termrule appl(lappl(t1,t2),l) -> lappl(appl(t1,l),appl(t2,l)).
+termrule appl(subst(t1,t2),l) -> subst(appl(t1,l),appl(t2,l)).
+
+termrule appl(z(),l) -> z().
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+
+
+termrule appl(PLUS(t1,t2),l) -> PLUS(appl(t1,l),appl(t2,l)).
+
+recinductive Nat = z() | succ(m:Nat).
+rec_nat.
+proprule in(l,fNat(t)) -> Nat(appl(t,l)).
+proprule in(l,fRecNat(t)) -> Nat(rec_nat(t,l)).
+
+
+proof S: forall n, Nat(n) => Nat(succ(n)).
+intros.
+rule.
+focus h2.
+rule. n0.
+axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+axiom.
+
+proof plus: forall x y, Nat(x) => Nat(y) => Nat(PLUS(x,y)).
+intros.
+focus h1.
+rule. fNat(PLUS(one(),S(y0))).
+reduce.
+axiom.
+next.
+reduce.
+axiom.
+rule.
+reduce.
+theorem S. 
+focus h5. intro. PLUS(m0,y0).
+reduce.
+intros.

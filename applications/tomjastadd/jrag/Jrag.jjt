@@ -1,0 +1,2304 @@
+/**
+ *
+ * Copied from teh VTransformer Java1.1.jjt file in the Javacc
+ * release. (Author: Sriram Sankar 3/5/97)
+ *
+ * This file contains a Java grammar and actions that implement a front-end.
+ * The VTransformer file has been changed to suit the grammar
+ * of attribute "jrag"-files. Changes:
+ * FieldDeclarations restricted to be of form ("inh"|"syn" type() attrName)
+ * Actions added:
+ * In production UnmodifiedClassDeclaration, to keep track of current
+ * classname.
+ * In production FieldDeclaration. To add declared attributes
+ * to tables
+ */
+
+options {
+  JAVA_UNICODE_ESCAPE = true;
+
+  STATIC=false;
+  MULTI=true;
+  VISITOR=true;
+  NODE_USES_PARSER=true;
+  NODE_SCOPE_HOOK= true;	//added!
+  NODE_PACKAGE="jrag.AST";
+
+  
+}
+
+PARSER_BEGIN(JragParser)
+package jrag.AST;
+import java.util.*;            //added
+import jrag.*;
+
+import ast.AST.Grammar;
+
+public class JragParser {
+
+  /* Added attributes to the parser: */
+  public String className;	// Name of class currently parsed.
+  public String fileName;      // Name of parsed file;
+
+  public Grammar root;
+  public java.io.InputStream inputStream;
+
+  /* ------- Method to set name of parsed file --------- */
+  public void setFileName(String name) {
+    fileName = name;
+  }
+
+  /* ------ Added methods for NODE_SCOPE_HOOKS ---------*/
+  public  void jjtreeOpenNodeScope(Node n) {
+    ((SimpleNode) n).firstToken = getToken(1);
+  }
+
+  public void jjtreeCloseNodeScope(Node n) {
+    ((SimpleNode) n).lastToken = getToken(0);
+  }
+  /* ------End of methods for NODE_SCOPE_HOOK------------*/
+
+  /* ------ Some auxiliary methods ----------------------*/
+
+  /* Returns string consisting of all chars before a dot */
+  public String beforeDot(String s) {
+    int i = s.indexOf('.');
+    if (i<0)
+      return s;
+    else
+      return s.substring(0,i);
+  }
+
+  /* Returns string consisting of all chars between "get" and before a '('
+     Returns null if "get" is not a prefix; s  if no "(" found*/
+  public String stripGet(String s) {
+    if (!s.startsWith("get"))
+      return null;    
+    s = s.substring(3, s.length());
+    return s;
+  }
+
+  /* Returns string consisting of all chars after a dot */
+  public String afterDot(String s) {
+    int i = s.indexOf('.');
+    if (i<0)
+      return null;
+    else
+      return s.substring(i+1,s.length());
+  }
+
+  /* ---------------- End of auxiliary methods -----------------*/
+}
+
+
+
+PARSER_END(JragParser)
+
+
+/* WHITE SPACE */
+
+SPECIAL_TOKEN :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* RESERVED WORDS AND LITERALS */
+
+TOKEN :
+{
+  < ABSTRACT: "abstract" >
+| < ASSERT: "assert" >
+| < BOOLEAN: "boolean" >
+| < BREAK: "break" >
+| < BYTE: "byte" >
+| < CASE: "case" >
+| < CATCH: "catch" >
+| < CHAR: "char" >
+| < CLASS: "class" >
+| < CONST: "const" >
+| < CONTINUE: "continue" >
+| < _DEFAULT: "default" >
+| < DO: "do" >
+| < DOUBLE: "double" >
+| < ELSE: "else" >
+| < ENUM: "enum" >
+| < EXTENDS: "extends" >
+| < FALSE: "false" >
+| < FINAL: "final" >
+| < FINALLY: "finally" >
+| < FLOAT: "float" >
+| < FOR: "for" >
+| < GOTO: "goto" >
+| < IF: "if" >
+| < IMPLEMENTS: "implements" >
+| < IMPORT: "import" >
+| < INSTANCEOF: "instanceof" >
+| < INT: "int" >
+| < INTERFACE: "interface" >
+| < LONG: "long" >
+| < NATIVE: "native" >
+| < NEW: "new" >
+| < NULL: "null" >
+| < PACKAGE: "package">
+| < PRIVATE: "private" >
+| < PROTECTED: "protected" >
+| < PUBLIC: "public" >
+| < RETURN: "return" >
+| < SHORT: "short" >
+| < STATIC: "static" >
+| < STRICTFP: "strictfp" >
+| < SUPER: "super" >
+| < SWITCH: "switch" >
+| < SYNCHRONIZED: "synchronized" >
+| < THIS: "this" >
+| < THROW: "throw" >
+| < THROWS: "throws" >
+| < TRANSIENT: "transient" >
+| < TRUE: "true" >
+| < TRY: "try" >
+| < VOID: "void" >
+| < VOLATILE: "volatile" >
+| < WHILE: "while" >
+
+| < INH: "inh"> //added
+| < SYN: "syn"> //added
+| < SONS: "sons"> //added
+| < LAZY: "lazy"> //added
+| < REWRITE: "rewrite"> //added
+| < TO: "to"> //added
+| < WHEN: "when"> //added
+| < ASPECT: "aspect"> // added
+| < EQUATION: "eq"> // added
+| < CIRCULAR: "circular"> // added
+| < REFINE: "refine" > // added
+| < COLL: "coll"> // added
+| < CONTRIBUTES: "contributes"> // added
+| < EACH: "each"> // added
+| < NTA: "nta"> // added
+
+}
+
+/* LITERALS */
+
+TOKEN :
+{
+  < INTEGER_LITERAL:
+        <DECIMAL_LITERAL> (["l","L"])?
+      | <HEX_LITERAL> (["l","L"])?
+      | <OCTAL_LITERAL> (["l","L"])?
+  >
+|
+  < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+|
+  < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+|
+  < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+|
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < CHARACTER_LITERAL:
+      "'"
+      (   (~["'","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )
+      "'"
+  >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < #LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+| < AT: "@" >
+}
+
+/* OPERATORS */
+
+TOKEN :
+{
+  < ASSIGN: "=" >
+| < LT: "<" >
+| < BANG: "!" >
+| < TILDE: "~" >
+| < HOOK: "?" >
+| < COLON: ":" >
+| < EQ: "==" >
+| < LE: "<=" >
+| < GE: ">=" >
+| < NE: "!=" >
+| < SC_OR: "||" >
+| < SC_AND: "&&" >
+| < INCR: "++" >
+| < DECR: "--" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < STAR: "*" >
+| < SLASH: "/" >
+| < BIT_AND: "&" >
+| < BIT_OR: "|" >
+| < XOR: "^" >
+| < REM: "%" >
+| < LSHIFT: "<<" >
+| < PLUSASSIGN: "+=" >
+| < MINUSASSIGN: "-=" >
+| < STARASSIGN: "*=" >
+| < SLASHASSIGN: "/=" >
+| < ANDASSIGN: "&=" >
+| < ORASSIGN: "|=" >
+| < XORASSIGN: "^=" >
+| < REMASSIGN: "%=" >
+| < LSHIFTASSIGN: "<<=" >
+| < RSIGNEDSHIFTASSIGN: ">>=" >
+| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
+| < ELLIPSIS: "..." >
+}
+
+/* >'s need special attention due to generics syntax. */
+TOKEN :
+{
+  < RUNSIGNEDSHIFT: ">>>" >
+  {
+     matchedToken.kind = GT;
+     ((Token.GTToken)matchedToken).realKind = RUNSIGNEDSHIFT;
+     input_stream.backup(2);
+  }
+| < RSIGNEDSHIFT: ">>" >
+  {
+     matchedToken.kind = GT;
+     ((Token.GTToken)matchedToken).realKind = RSIGNEDSHIFT;
+     input_stream.backup(1);
+  }
+| < GT: ">" >
+}
+
+/*****************************************
+ * THE JAVA LANGUAGE GRAMMAR STARTS HERE *
+ *****************************************/
+
+/*
+ * Program structuring syntax follows.
+ */
+
+ASTCompilationUnit CompilationUnit() :
+{}
+{
+  [ PackageDeclaration() ]
+  ( ImportDeclaration() )*
+  ( TypeDeclaration() )*
+  <EOF>
+                {
+		  return jjtThis;
+		}	
+}
+
+void PackageDeclaration() :
+{}
+{
+  "package" Name() ";"
+}
+
+void ImportDeclaration() :
+{}
+{
+  "import" [ "static" ] Name() [ "." "*" ] ";"
+}
+
+String Modifiers() :
+{
+}
+{
+ (LOOKAHEAD(2)
+  (
+   "public" 
+  |
+   "static"
+  |
+   "protected"
+  |
+   "private"
+  |
+   "final"
+  |
+   "abstract"
+  |
+   "synchronized"
+  |
+   "native"
+  |
+   "transient"
+  |
+   "volatile"
+  |
+   "strictfp"
+  |
+   Annotation()
+  )
+ )*
+ { jjtree.popNode(); String s = jjtThis.unparse().trim(); return s.equals("class") ? "" : (s + " "); }
+}
+
+void TypeDeclaration() :
+{ 
+  String modifiers; 
+}
+{
+  ";"
+|
+  modifiers = Modifiers()
+  (
+     ClassDeclaration(modifiers)
+   |
+     InterfaceDeclaration(modifiers)
+   |
+     EnumDeclaration(modifiers)
+   | 
+     AnnotationTypeDeclaration(modifiers)
+   | 
+     AspectDeclaration(modifiers)
+  )
+}
+
+void AspectDeclaration(String modifiers) :
+{}
+{
+  "aspect" <IDENTIFIER> [ "extends" ClassOrInterfaceType() ] [ "implements" TypeNameList() ] AspectBody()
+}
+
+void AspectBody() :
+{}
+{
+  "{" ( AspectBodyDeclaration() )* "}"
+}
+
+void AspectBodyDeclaration() :
+{}
+{
+  LOOKAHEAD(<REFINE> <IDENTIFIER> "eq" <IDENTIFIER> "." <IDENTIFIER> "(" [<INT> <IDENTIFIER>] ")" "." <IDENTIFIER>)
+  AspectRefineInhEquation()
+| 
+  LOOKAHEAD(<REFINE> <IDENTIFIER> "eq")
+  AspectRefineSynEquation()
+| 
+  LOOKAHEAD(AspectRefineMethodDeclarationLookahead())
+  AspectRefineMethodDeclaration()
+|
+  LOOKAHEAD(<REFINE>)
+  AspectRefineConstructorDeclaration()
+|  
+  LOOKAHEAD( ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* "class" )
+  AspectClassDeclaration()
+|
+  LOOKAHEAD( ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* "interface" )
+  AspectInterfaceDeclaration()
+|
+  LOOKAHEAD("syn")
+  AspectSynAttributeDeclaration()
+|
+  LOOKAHEAD("inh")
+  AspectInhAttributeDeclaration()
+|
+  LOOKAHEAD("rewrite")
+  AspectRewrite()
+|
+  LOOKAHEAD("eq" <IDENTIFIER> "." <IDENTIFIER> "(" [<INT> <IDENTIFIER>] ")" "." <IDENTIFIER>)
+  AspectInhEquation()
+|
+  AspectSynEquation()
+|
+  LOOKAHEAD(<IDENTIFIER> "implements")
+  AspectAddInterface()
+|
+  LOOKAHEAD(<IDENTIFIER> "extends")
+  AspectExtendInterface()
+|
+  CollectionAttribute()
+| 
+  LOOKAHEAD(<IDENTIFIER> "contributes")
+  CollectionContribution()
+|
+  LOOKAHEAD( AspectMethodDeclarationLookahead() )
+  AspectMethodDeclaration()
+|
+  LOOKAHEAD( [ "public" | "protected" | "private" ] <IDENTIFIER> "." <IDENTIFIER> "(" )
+  AspectConstructorDeclaration()
+|
+  AspectFieldDeclaration()
+
+}
+
+void AspectClassDeclaration() :
+{ Token t;
+  String outerClassName;
+  StringBuffer name = new StringBuffer();
+  SimpleNode nameList = null;
+  StringBuffer modifiers = new StringBuffer();
+  SimpleNode node;
+  ast.AST.TypeDecl typeDecl = null;
+  String typeParameters;
+}
+{
+  (( t="static" | t="abstract" | t="final" | t="public" | t="protected" | t="private" ) { modifiers.append(t.image + " "); })*
+  "class" t = <IDENTIFIER> {outerClassName = className; className = t.image; typeDecl = root.findClassDecl(className, jjtThis.unparseComment()); typeDecl.modifiers = modifiers.toString(); }
+   [ typeParameters = TypeParameters() { typeDecl.typeParameters = typeParameters; } ]
+  [
+  "extends"
+  node = ClassOrInterfaceType() { name.append(node.unparse()); }
+  { if(!name.toString().equals("") &&  typeDecl instanceof ast.AST.ClassDecl)
+      ((ast.AST.ClassDecl)typeDecl).extendsName = name.toString();
+  }
+  ]
+  [ "implements" nameList = TypeNameList() { root.addInterface(nameList, className, fileName); } ]
+  AspectClassBody() { className = outerClassName; }
+}
+void AspectClassBody() :
+{
+  SimpleNode n;
+}
+{
+  "{" ( n = ClassBodyDeclaration() { root.addClassBodyDecl(n, className, fileName); } )* "}"
+}
+
+void AspectInterfaceDeclaration() :
+{Token t;
+  String outerClassName;
+  SimpleNode nameList = null;
+  ast.AST.TypeDecl typeDecl = null;
+  String typeParameters;
+}
+{
+  ( "static" | "abstract" | "final" | "public" | "protected" | "private" )*
+  "interface" t = <IDENTIFIER> {outerClassName = className; className = t.image; typeDecl = root.findInterfaceDecl(className, jjtThis.unparseComment()); }
+   [ typeParameters = TypeParameters() { typeDecl.typeParameters = typeParameters; } ]
+  [ "extends" nameList = TypeNameList() { root.addInterface(nameList, className, fileName); } ]
+  "{" ( AspectInterfaceMemberDeclaration() )* "}" { className = outerClassName; }
+}
+
+void AspectInterfaceMemberDeclaration() :
+{}
+{
+  LOOKAHEAD( ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* "class" )
+  AspectNestedClassDeclaration()
+|
+  LOOKAHEAD( ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* "interface" )
+  AspectNestedInterfaceDeclaration()
+|
+  LOOKAHEAD("sons")
+  AspectSonsDeclaration()
+|
+  LOOKAHEAD("syn")
+  AspectInterfaceSynAttributeDeclaration()
+|
+  LOOKAHEAD("inh")
+  AspectInterfaceInhAttributeDeclaration()
+|
+  LOOKAHEAD( AspectInterfaceMethodDeclarationLookahead() )
+  AspectInterfaceMethodDeclaration()
+|
+  AspectInterfaceFieldDeclaration()
+}
+
+void AspectSonsDeclaration() :
+{
+  ast.AST.List list = new ast.AST.List();
+  Token type;
+  Token name;
+  boolean isList = false;
+}
+{
+  "sons"
+  (
+    ("[" name = <IDENTIFIER> ":" type = <IDENTIFIER> "]"
+     {
+       list.add(
+         new ast.AST.OptionalComponent(
+           new ast.AST.Id(
+             new ast.AST.Opt(new ast.AST.NameNode(name.image)),
+             new ast.AST.IdUse(type.image)
+           )
+         )
+       );
+     }
+    )
+    | ( name = <IDENTIFIER> ":" type = <IDENTIFIER> ("*" { isList = true; } )? 
+       {
+         if(isList) {
+           list.add(
+             new ast.AST.ListComponents(
+               new ast.AST.Id(
+                 new ast.AST.Opt(new ast.AST.NameNode(name.image)),
+                 new ast.AST.IdUse(type.image)
+               )
+             )
+           );
+         }
+         else {
+           list.add(
+             new ast.AST.AggregateComponents(
+               new ast.AST.Id(
+                 new ast.AST.Opt(new ast.AST.NameNode(name.image)),
+                 new ast.AST.IdUse(type.image)
+               )
+             )
+           );
+         }
+       }
+      )
+  )*
+
+  ";"
+  {
+    root.addComponents(className, list);
+  }
+  
+}
+
+void AspectInterfaceSynAttributeDeclaration() :
+{ String attrType;
+  Token attrName;
+  Token t;
+  Token first, last;
+
+  String type;
+  Token name;
+  String targetName;
+  
+  ast.AST.List list = new ast.AST.List();
+
+  SimpleNode eq = null;
+
+  boolean init = false;
+  boolean isLazy = false; 
+  boolean isFinal = false;
+  SimpleNode bottomValue = null; }
+{
+  "syn" { first = token; } ["lazy" {isLazy = true;}] ["final" {isFinal = true;}]
+  attrType = Type() attrName = VariableDeclaratorId()
+
+  "("
+  [  
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+  ")"
+  
+  [
+    <CIRCULAR> <LBRACKET> bottomValue = Expression() <RBRACKET>
+  ]
+  
+  ";" { last = token; }
+  {
+    root.addSynDecl(attrName.image, attrType, className, isLazy,
+    		fileName, first.beginLine, last.endLine, list, (ASTExpression) bottomValue, isFinal, false, jjtThis);
+    
+  }
+}
+
+void AspectInterfaceInhAttributeDeclaration() :
+{ String attrType;
+  Token attrName;
+  Token t;
+  Token first, last;
+  
+  String type;
+  Token name;
+  String targetName;
+  ast.AST.List list = new ast.AST.List();
+  SimpleNode bottomValue = null;
+  boolean isLazy = false; 
+  boolean isFinal = false;
+}
+{
+  "inh" { first = token; } ["lazy" {isLazy = true;}] ["final" {isFinal = true;}] attrType = Type()
+  attrName = VariableDeclaratorId()
+ 
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  [
+    <CIRCULAR> <LBRACKET> bottomValue = Expression() <RBRACKET>
+  ]
+  
+  ";"  
+  {
+    last = token;
+    root.addInhDecl(attrName.image, attrType, className, isLazy,
+        fileName, first.beginLine, last.endLine, list, (ASTExpression) bottomValue, isFinal, false, jjtThis);
+  }
+}
+
+void AspectInterfaceMethodDeclarationLookahead() :
+{}
+{
+  ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+  ResultType() <IDENTIFIER> "("
+}
+
+void AspectInterfaceMethodDeclaration() :
+{Token t;}
+{
+  ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+  ResultType() MethodDeclarator() [ "throws" NameList() ]
+  ";" {
+    root.addClassBodyDecl(jjtThis, className, fileName);
+  }
+}
+
+void AspectInterfaceFieldDeclaration() :
+{Token t;}
+{
+  ( "public" | "protected" | "private" | "static" | "final" | "transient" | "volatile" )*
+  Type() VariableDeclarator() ( "," VariableDeclarator() )* ";" {
+    root.addClassBodyDecl(jjtThis, className, fileName);
+  }
+}
+
+void AspectNestedInterfaceDeclaration() :
+{ String outerClassName = className;
+  className = "D$u$m$m$y";
+}
+{
+  ( "static" | "abstract" | "final" | "public" | "protected" | "private" )*
+
+  "interface" <IDENTIFIER> [ "extends" NameList() ]
+  "{" ( InterfaceMemberDeclaration() )* "}" 
+  { className = outerClassName; 
+    root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void AspectNestedClassDeclaration() :
+{ String outerClassName = className;
+  className = "D$u$m$m$y";
+}
+{
+  ( "static" | "abstract" | "final" | "public" | "protected" | "private" )*
+  "class" <IDENTIFIER> 
+   [ "extends" ClassOrInterfaceType() ] [ "implements" TypeNameList() ]
+  ClassBody() 
+  { className = outerClassName; 
+    root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void AspectMethodDeclarationLookahead() :
+{}
+{
+  Modifiers()
+  ResultType() <IDENTIFIER> "." <IDENTIFIER> "("
+}
+
+void AspectMethodDeclaration() :
+{Token t;}
+{
+  Modifiers()
+  ResultType() t = <IDENTIFIER> "." { className = t.image; } MethodDeclarator() [ "throws" NameList() ]
+  ( Block() | ";" ) {
+    root.addClassBodyDecl(jjtThis, className, fileName);
+  }
+}
+
+void AspectRefineMethodDeclarationLookahead() :
+{}
+{
+  <REFINE> <IDENTIFIER> ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+  ResultType() <IDENTIFIER> "." <IDENTIFIER> "("
+}
+
+void AspectRefineMethodDeclaration() :
+{Token t; String aspectName; String secondAspectName; }
+{
+  t = <REFINE> { t.image = ""; } t = <IDENTIFIER> { aspectName = t.image; t.image = ""; } ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+  ResultType() t = <IDENTIFIER> "." { className = t.image; } MethodDeclarator() [ "throws" NameList() ]
+  (( Block() | ";" ) {
+    root.addRefinedClassBodyDecl(jjtThis, className, fileName, aspectName);
+  }
+  | ( "to" <REFINE> t = <IDENTIFIER> { secondAspectName = t.image; t.image = ""; } ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+  ResultType() t = <IDENTIFIER> "." { className = t.image; } MethodDeclarator() [ "throws" NameList() ]
+  ( Block() | ";" ) {
+    root.addReplacedClassBodyDecl(jjtThis, className, fileName, secondAspectName, aspectName, null);
+  }))
+}
+void AspectConstructorDeclaration() :
+{Token t;}
+{
+  [ "public" | "protected" | "private" ]
+  t = <IDENTIFIER> "." { className = t.image; } <IDENTIFIER> FormalParameters() [ "throws" NameList() ]
+  "{"
+    [ LOOKAHEAD(ExplicitConstructorInvocation()) ExplicitConstructorInvocation() ]
+    ( BlockStatement() )*
+  "}"
+  {
+    root.addClassBodyDecl(jjtThis, className, fileName);
+  }
+}
+
+void AspectRefineConstructorDeclaration() :
+{Token t; String aspectName; String secondAspectName; }
+{
+  t = <REFINE> { t.image = ""; } t = <IDENTIFIER> { aspectName = t.image; t.image = ""; } [ "public" | "protected" | "private" ]
+  t = <IDENTIFIER> "." { className = t.image; } <IDENTIFIER> FormalParameters() [ "throws" NameList() ]
+  "{"
+    [ LOOKAHEAD(ExplicitConstructorInvocation()) ExplicitConstructorInvocation() ]
+    ( BlockStatement() )*
+  "}"
+  {
+    root.addRefinedClassBodyDecl(jjtThis, className, fileName, aspectName);
+  }
+}
+
+void AspectFieldDeclaration() :
+{Token t;}
+{
+  ( "public" | "protected" | "private" | "static" | "final" | "transient" | "volatile" )*
+  Type() t = <IDENTIFIER> "." { className = t.image; } VariableDeclarator() ( "," VariableDeclarator() )* ";" {
+    root.addClassBodyDecl(jjtThis, className, fileName);
+  }
+}
+
+void AspectSynAttributeDeclaration() :
+{ String attrType;
+  Token attrName;
+  Token t;
+  Token first, last;
+
+  String type;
+  Token name;
+  String targetName;
+  
+  ast.AST.List list = new ast.AST.List();
+
+  SimpleNode eq = null;
+
+  boolean init = false;
+  boolean isLazy = false; 
+  SimpleNode bottomValue = null; 
+  boolean isFinal = false;
+  boolean isNTA = false;
+}
+{
+  "syn" { first = token; } [<NTA> {isNTA = true; }] ["lazy" {isLazy = true;}] ["final" {isFinal = true; }]
+  attrType = Type() t = <IDENTIFIER> "." { targetName = t.image; } attrName = VariableDeclaratorId()
+
+  "("
+  [  
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+  ")"
+  
+  [
+    <CIRCULAR> <LBRACKET> bottomValue = Expression() <RBRACKET>
+  ]
+  
+  ( ("=" eq = Expression() ";" { last = token; init = true;} )
+  | (eq = Block() { last = token; init = true;})
+  | ";" { last = token; } )
+  {
+    root.addSynDecl(attrName.image, attrType, targetName, isLazy,
+    		fileName, first.beginLine, last.endLine, list, (ASTExpression) bottomValue,isFinal, isNTA, jjtThis);
+    
+    if (init) {
+      root.addSynEq(attrName.image, targetName, eq, fileName, first.beginLine, last.endLine, (ast.AST.List)list.fullCopy(), jjtThis);
+    }
+  }
+}
+
+void AspectInhAttributeDeclaration() :
+{ String attrType;
+  Token attrName;
+  Token t;
+  Token first, last;
+  
+  String type;
+  Token name;
+  String targetName;
+  ast.AST.List list = new ast.AST.List();
+  SimpleNode bottomValue = null;
+  boolean isLazy = false; 
+  boolean isFinal = false;
+  boolean isNTA = false;
+}
+{
+  "inh" { first = token; } [<NTA> {isNTA = true;}] ["lazy" {isLazy = true;}] ["final" {isFinal = true; }] attrType = Type()
+  t = <IDENTIFIER> "." { targetName = t.image; }
+  attrName = VariableDeclaratorId()
+ 
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  [
+    <CIRCULAR> <LBRACKET> bottomValue = Expression() <RBRACKET>
+  ]
+  
+  ";"  
+  {
+    last = token;
+    root.addInhDecl(attrName.image, attrType, targetName, isLazy,
+        fileName, first.beginLine, last.endLine, list, (ASTExpression) bottomValue,isFinal,isNTA, jjtThis);
+  }
+}
+
+
+void AspectRewrite() :
+{
+  Token t;
+  SimpleNode cond;
+  SimpleNode eq;
+  Token first, last;
+  
+  Token parent = null;
+  Token child = null;
+  String type;
+}
+{
+  "rewrite" {cond = null; first = token;} t = <IDENTIFIER> { className = t.image; }
+  [<IDENTIFIER> parent = <IDENTIFIER> "." child = <IDENTIFIER> <LPAREN> <RPAREN>]
+  <LBRACE>
+    ( ["when" { first = token; } <LPAREN> cond = Expression() <RPAREN>]
+      "to" type = Type() ( (eq = Expression() ";" { last = token; }) | eq = Block() { last = token; } ) 
+      {
+        if(parent != null && child != null) {
+          root.addRewriteList(className, cond, eq, type, fileName, first.beginLine, last.endLine, parent.image, child.image);
+        }
+        else {
+          root.addRewrite(className, cond, eq, type, fileName, first.beginLine, last.endLine);
+        }
+        cond = null;}
+    )+
+  <RBRACE>
+}
+
+void AspectSynEquation() :
+{
+  String t;
+  Token first, last;
+  SimpleNode eq;
+  String type;
+  Token name;
+  Token attrName;
+  Token targetName;
+  ast.AST.List list = new ast.AST.List();
+}
+{
+  "eq" { first = token; }
+
+  targetName = <IDENTIFIER> "."
+  attrName = VariableDeclaratorId()
+
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  ( ("=" eq = Expression() ";" { last = token; })
+  | eq = Block() { last = token; } )
+  
+  {
+    root.addSynEq(attrName.image, targetName.image, eq, fileName, first.beginLine, last.endLine, list, jjtThis);
+  }
+  
+}
+void AspectRefineSynEquation() :
+{
+  String t;
+  Token first, last;
+  SimpleNode eq;
+  String type;
+  Token name;
+  Token attrName;
+  Token targetName;
+  Token aspectName;
+  Token secondAspectName;
+  ast.AST.List list = new ast.AST.List();
+}
+{
+  <REFINE> aspectName = <IDENTIFIER>
+  "eq" { first = token; }
+
+  targetName = <IDENTIFIER> "."
+  attrName = VariableDeclaratorId()
+
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  (
+  (  ( ("=" eq = Expression() ";" { last = token; })
+    | eq = Block() { last = token; } )
+    { root.addRefinedSynEq(attrName.image, targetName.image, eq, fileName, first.beginLine, last.endLine, list, aspectName.image, jjtThis); }
+  )
+
+  |
+
+  ( "to" <REFINE> secondAspectName = <IDENTIFIER> 
+    "eq" <IDENTIFIER> "." VariableDeclaratorId()
+    "("
+    [ 
+      type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+      ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+    ]
+ 
+    ")"
+    
+    ( ("=" eq = Expression() ";" { last = token; })
+    | eq = Block() { last = token; } )
+    { root.addReplacedSynEq(attrName.image, targetName.image, eq, fileName, first.beginLine, last.endLine, list, secondAspectName.image, aspectName.image, jjtThis); }
+  )
+  )
+}
+
+void AspectInhEquation() :
+{
+  String t;
+  Token first, last;
+  SimpleNode eq;
+  Token name;
+  String type;
+  Token attrName;
+  Token targetName;
+  Token sonName;
+  ast.AST.List list = new ast.AST.List();
+  ast.AST.Parameter p = null;
+}
+{
+  "eq" { first = token; }
+
+  targetName = <IDENTIFIER> "."
+  sonName = <IDENTIFIER> "(" [ <INT> name = <IDENTIFIER> { p = new ast.AST.Parameter("int", name.image); } ] ")" "."
+  attrName = VariableDeclaratorId()
+
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  ( ("=" eq = Expression() ";" { last = token; })
+  | eq = Block() { last = token; } )
+  
+  {
+    root.addInhEq(sonName.image, attrName.image, targetName.image, eq, fileName, first.beginLine, last.endLine, list, p, jjtThis);
+  }
+}
+void AspectRefineInhEquation() :
+{
+  String t;
+  Token first, last;
+  SimpleNode eq;
+  Token name;
+  String type;
+  Token attrName;
+  Token targetName;
+  Token sonName;
+  ast.AST.List list = new ast.AST.List();
+  ast.AST.Parameter p = null;
+  Token aspectName;
+}
+{
+  <REFINE> aspectName = <IDENTIFIER> "eq" { first = token; }
+
+  targetName = <IDENTIFIER> "."
+  sonName = <IDENTIFIER> "(" [ <INT> name = <IDENTIFIER> { p = new ast.AST.Parameter("int", name.image); } ] ")" "."
+  attrName = VariableDeclaratorId()
+
+  "("
+  [ 
+    type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); }
+    ( "," type = Type() name = <IDENTIFIER> { list.add(new ast.AST.Parameter(type, name.image)); })*
+  ]
+
+  ")"
+  
+  ( ("=" eq = Expression() ";" { last = token; })
+  | eq = Block() { last = token; } )
+  
+  {
+    root.addRefinedInhEq(sonName.image, attrName.image, targetName.image, eq, fileName, first.beginLine, last.endLine, list, p, aspectName.image, jjtThis);
+  }
+}
+
+void CollectionAttribute():
+{
+  Token t;
+  Token first, last;
+  String attrType;
+  String targetName;
+  Token attrName;
+  String combOp;
+  String rootName = null;
+  SimpleNode startValue;
+  boolean isCircular = false;
+  ArrayList annotations = new ArrayList();
+  String annotation;
+}
+{
+  "coll" { first = token; }
+  ( annotation = Annotation() { annotations.add(annotation); } )*
+  attrType=Type() t = <IDENTIFIER> "." { targetName = t.image; } attrName = VariableDeclaratorId() "(" ")"
+  [ <CIRCULAR> { isCircular = true; } ]
+  <LBRACKET> startValue = Expression() <RBRACKET> 
+  <IDENTIFIER> t = <IDENTIFIER> { combOp = t.image; } 
+  [ <IDENTIFIER> t = <IDENTIFIER> { rootName = t.image; } ]
+  
+  ";" { last = token; }
+  {
+    root.addCollDecl(attrName.image, attrType, targetName, fileName, first.beginLine, last.endLine, (ASTExpression)startValue, combOp, isCircular, annotations, jjtThis, rootName);
+  }
+
+}
+
+void CollectionContribution():
+{
+  Token t;
+  Token first, last;
+  SimpleNode contribution;
+  SimpleNode condition = null;
+  String targetName;
+  String targetAttributeName;
+  String attributeType;
+  SimpleNode reference;
+  ast.AST.List contributionList = new ast.AST.List();
+  boolean refSet = false;
+}
+{
+  t = <IDENTIFIER> { first = token; attributeType = t.image; }
+  "contributes"
+
+  contribution = Expression() { condition = null; }
+  [ "when" condition = Expression() ]
+  {
+      contributionList.add(new ast.AST.Contribution(contribution.unparse(), condition == null ? null : condition.unparse()));
+  }
+  (
+    ","
+    contribution = Expression() { condition = null; }
+    [ "when" condition = Expression() ]
+    {
+        contributionList.add(new ast.AST.Contribution(contribution.unparse(), condition == null ? null : condition.unparse()));
+    }
+  )*
+  "to" t = <IDENTIFIER> "." { targetName = t.image; } t = <IDENTIFIER> { targetAttributeName = t.image; } "(" ")"
+  
+  "for" [ "each" { refSet = true; } ] reference = Expression() ";" { last = token; }
+  {
+    root.addCollEq(targetName, targetAttributeName, attributeType, reference.unparse().trim(), contributionList, fileName, first.beginLine, last.endLine, refSet, jjtThis); 
+  }
+}
+
+void AspectAddInterface() :
+{
+  Token first, last;
+  Token targetName;
+  SimpleNode nameList;
+}
+{
+  targetName = <IDENTIFIER> { first = token; }
+  "implements"
+  nameList = TypeNameList()
+  ";"
+  {
+    last = token;
+    root.addInterface(nameList, targetName.image, fileName);
+  }
+  
+}
+
+void AspectExtendInterface() :
+{
+  Token first, last;
+  Token targetName;
+  SimpleNode nameList;
+}
+{
+  targetName = <IDENTIFIER> { first = token; }
+  "extends"
+  nameList = TypeNameList()
+  ";"
+  {
+    last = token;
+    root.extendInterface(nameList, targetName.image, fileName);
+  }
+  
+}
+
+
+/*
+ * Declaration syntax follows.
+ */
+
+void ClassDeclaration(String modifiers) :
+{ Token t;
+  SimpleNode node;
+  String outerClassName;
+  StringBuffer name = new StringBuffer();
+  ast.AST.TypeDecl typeDecl = null;
+  SimpleNode nameList = null;
+  String typeParameters;
+}
+{
+  "class" t = <IDENTIFIER> { outerClassName = className; className = t.image; typeDecl = root.findClassDecl(className, jjtThis.unparseComment()); typeDecl.modifiers = modifiers; }
+   [ typeParameters = TypeParameters() { typeDecl.typeParameters = typeParameters; } ]
+   [ "extends"
+   node = ClassOrInterfaceType() { name.append(node.unparse()); }
+  //t = <IDENTIFIER>  { name.append(t.image); } ("." t = <IDENTIFIER> {name.append("." + t.image); })* 
+  { if(!name.toString().equals("") && typeDecl instanceof ast.AST.ClassDecl)
+      ((ast.AST.ClassDecl)typeDecl).extendsName = name.toString();
+  }
+   //Name() 
+   ] 
+   [ "implements" nameList = TypeNameList() { root.addInterface(nameList, className, fileName);} ]
+  ClassBody() { className = outerClassName; }
+  //UnmodifiedClassDeclaration()
+}
+
+SimpleNode TypeNameList():
+{}
+{
+  (
+   ClassOrInterfaceType()
+   ( "," ClassOrInterfaceType() )*
+  )
+   { return jjtThis; }
+}
+
+
+/* Added action to set classname and add class to allClasses */
+void UnmodifiedClassDeclaration(String modifiers) :
+{
+  Token t;
+  SimpleNode nameList;
+  String outerClassName;
+}
+{
+  "class" t = <IDENTIFIER> { outerClassName = className; className = t.image; }
+  [ TypeParameters() ]
+   [ "extends" ClassOrInterfaceType() ] [ "implements" nameList = TypeNameList() ]
+  ClassBody() { className = outerClassName; }
+}
+
+
+void EnumDeclaration(String modifiers):
+{}
+{
+  "enum" <IDENTIFIER>
+  [ "implements" TypeNameList() ]
+  EnumBody()
+
+  // TODO: FIXME { root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void EnumBody():
+{}
+{
+   "{"
+   EnumConstant() ( "," EnumConstant() )*
+   [ ";" ( ClassBodyDeclaration() )* ]
+   "}"
+}
+
+void EnumConstant():
+{}
+{
+  <IDENTIFIER> [ Arguments() ] [ ClassBody() ]
+}
+
+String TypeParameters():
+{}
+{
+  (
+   "<" TypeParameter() ( "," TypeParameter() )* ">"
+  )
+  { return jjtThis.unparse(); }
+}
+
+void TypeParameter():
+{}
+{
+   <IDENTIFIER> [ TypeBound() ]
+}
+
+void TypeBound():
+{}
+{
+   "extends" ClassOrInterfaceType() ( "&" ClassOrInterfaceType() )*
+}
+
+
+
+
+void ClassBody() :
+{}
+{
+  "{" ( ClassBodyDeclaration() )* "}"
+}
+
+/* Added one branch corresponding to attribute declarations
+   and two branches  for syn and inh attribute equations  */
+SimpleNode ClassBodyDeclaration() :
+{
+  String modifiers;
+}
+{
+  (
+  LOOKAHEAD(2)
+  Initializer()
+|
+  modifiers = Modifiers()
+  (
+    UnmodifiedClassDeclaration(modifiers)
+  |
+    UnmodifiedInterfaceDeclaration(modifiers)
+  |
+    EnumDeclaration(modifiers)
+  |
+    LOOKAHEAD( [TypeParameters() ] <IDENTIFIER> "(" )
+    ConstructorDeclaration(modifiers)
+  | 
+    LOOKAHEAD( Type() <IDENTIFIER> ( "[" "]" )* ( "," | "=" | ";" ) )
+    FieldDeclaration(modifiers)
+  |
+    MethodDeclaration(modifiers)
+  )
+|
+  ";"
+  )
+  {
+    return jjtThis;
+  }
+}
+
+void InterfaceDeclaration(String modifiers) :
+{}
+{
+  UnmodifiedInterfaceDeclaration(modifiers) 
+}
+
+void UnmodifiedInterfaceDeclaration(String modifiers) :
+{
+  Token t;
+  String outerClassName;
+  SimpleNode nameList = null;
+  String typeParameters;
+  ast.AST.TypeDecl typeDecl = null;
+}
+{
+  "interface" t = <IDENTIFIER> {outerClassName = className; className = t.image; typeDecl = root.findInterfaceDecl(className, jjtThis.unparseComment()); }
+  [ typeParameters = TypeParameters() { typeDecl.typeParameters = typeParameters; } ]
+  [ "extends" nameList = TypeNameList() { root.addInterface(nameList, className, fileName); } ]
+  "{" ( InterfaceMemberDeclaration() )* "}" { className = outerClassName; }
+}
+
+void InterfaceMemberDeclaration() :
+{
+  String modifiers;
+}
+{
+  modifiers = Modifiers()
+  (
+    UnmodifiedClassDeclaration(modifiers)
+  |
+    UnmodifiedInterfaceDeclaration(modifiers)
+  |
+    LOOKAHEAD( Type() <IDENTIFIER> ( "[" "]" )* ( "," | "=" | ";" ) )
+    FieldDeclaration(modifiers)
+  |
+    MethodDeclaration(modifiers)
+  )
+|
+  ";"
+}
+
+void FieldDeclaration(String modifiers) :
+{}
+{
+  Type() VariableDeclarator() ( "," VariableDeclarator() )* ";" 
+  // TODO: FIXME { root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void VariableDeclarator() :
+{}
+{
+  VariableDeclaratorId() [ "=" VariableInitializer() ]
+ 
+}
+
+/* Changed to return token (name) of variable */
+Token  VariableDeclaratorId() :
+{Token t;}
+{
+  t = <IDENTIFIER> ( "[" "]" )*
+ { return t; }
+}
+
+void VariableInitializer() :
+{}
+{
+  ArrayInitializer()
+|
+  Expression()
+}
+
+void ArrayInitializer() :
+{}
+{
+  "{" [ VariableInitializer() ( LOOKAHEAD(2) "," VariableInitializer() )* ] [ "," ] "}"
+}
+
+void MethodDeclaration(String modifiers) :
+{}
+{
+  [ TypeParameters() ]
+  ResultType()  MethodDeclarator() [ "throws" NameList() ]
+  ( Block() | ";" ) 
+  // TODO: FIXME { root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void MethodDeclarator() :
+{}
+{
+  <IDENTIFIER> FormalParameters() ( "[" "]" )*
+}
+
+void FormalParameters() :
+{}
+{
+  "(" [ FormalParameter() ( "," FormalParameter() )* ] ")"
+}
+
+void FormalParameter() :
+{}
+{
+  [ "final" ] Type() ["..."] VariableDeclaratorId()
+}
+
+void ConstructorDeclaration(String modifiers) :
+{}
+{
+  [ TypeParameters() ]
+  <IDENTIFIER> FormalParameters() [ "throws" NameList() ]
+  "{"
+    [ LOOKAHEAD(ExplicitConstructorInvocation()) ExplicitConstructorInvocation() ]
+    ( BlockStatement() )*
+  "}" 
+   // TODO: FIXME { root.addClassBodyDecl(jjtThis, className, fileName); }
+}
+
+void ExplicitConstructorInvocation() :
+{}
+{
+  LOOKAHEAD("this" Arguments() ";")
+  "this" Arguments() ";"
+|
+  [ LOOKAHEAD(2) PrimaryExpression() "." ] "super" Arguments() ";"
+}
+
+void Initializer() :
+{}
+{
+  [ "static" ] Block()
+}
+
+
+/*
+ * Type, name and expression syntax follows.
+ */
+
+/*Changed to return string */
+String Type():
+{}
+{
+ (
+   LOOKAHEAD(2) ReferenceType()
+ |
+   PrimitiveType()
+ )
+ { return jjtThis.unparse(); }
+}
+
+void ReferenceType():
+{}
+{
+   PrimitiveType() ( LOOKAHEAD(2) "[" "]" )+
+  |
+   ( ClassOrInterfaceType() ) ( LOOKAHEAD(2) "[" "]" )*
+}
+
+SimpleNode ClassOrInterfaceType():
+{}
+{
+  (
+  <IDENTIFIER> [ LOOKAHEAD(2) TypeArguments() ]
+  ( LOOKAHEAD(2) "." <IDENTIFIER> [ LOOKAHEAD(2) TypeArguments() ] )*
+  )
+  { return jjtThis; }
+}
+
+void TypeArguments():
+{}
+{
+   "<" TypeArgument() ( "," TypeArgument() )* ">"
+}
+
+void TypeArgument():
+{}
+{
+   ReferenceType()
+ |
+   "?" [ WildcardBounds() ]
+}
+
+void WildcardBounds():
+{}
+{
+   "extends" ReferenceType()
+ |
+   "super" ReferenceType()
+}
+
+void PrimitiveType():
+{}
+{
+  "boolean"
+|
+  "char"
+|
+  "byte"
+|
+  "short"
+|
+  "int"
+|
+  "long"
+|
+  "float"
+|
+  "double"
+}
+
+void ResultType():
+{}
+{
+  "void"
+|
+  Type()
+}
+
+/* Changed to return token */
+String Name() :
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+{}
+{
+  (<IDENTIFIER>
+  ( LOOKAHEAD(2) "." <IDENTIFIER>
+  )*
+  )
+  { return jjtThis.unparse(); }
+}
+
+SimpleNode NameList() :
+{}
+{
+  (Name()
+  ( "," Name()
+  )*
+  )
+  {
+    return jjtThis; 
+  }
+}
+
+
+/*
+ * Expression syntax follows.
+ */
+
+SimpleNode Expression() :
+/*
+ * This expansion has been written this way instead of:
+ *   Assignment() | ConditionalExpression()
+ * for performance reasons.
+ * However, it is a weakening of the grammar for it allows the LHS of
+ * assignments to be any conditional expression whereas it can only be
+ * a primary expression.  Consider adding a semantic predicate to work
+ * around this.
+ */
+{}
+{
+  (
+  ConditionalExpression()
+  [ 
+    LOOKAHEAD(2)
+    AssignmentOperator() Expression()
+  ]
+  )
+  {
+    return jjtThis;
+  }
+}
+
+void AssignmentOperator() :
+{}
+{
+  "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
+}
+
+void ConditionalExpression() :
+{}
+{
+  ConditionalOrExpression() [ "?" Expression() ":" ConditionalExpression() ]
+}
+
+void ConditionalOrExpression() :
+{}
+{
+  ConditionalAndExpression() ( "||" ConditionalAndExpression() )*
+}
+
+void ConditionalAndExpression() :
+{}
+{
+  InclusiveOrExpression() ( "&&" InclusiveOrExpression() )*
+}
+
+void InclusiveOrExpression() :
+{}
+{
+  ExclusiveOrExpression() ( "|" ExclusiveOrExpression() )*
+}
+
+void ExclusiveOrExpression() :
+{}
+{
+  AndExpression() ( "^" AndExpression() )*
+}
+
+void AndExpression() :
+{}
+{
+  EqualityExpression() ( "&" EqualityExpression() )*
+}
+
+void EqualityExpression() :
+{}
+{
+  InstanceOfExpression() ( ( "==" | "!=" ) InstanceOfExpression() )*
+}
+
+void InstanceOfExpression() :
+{}
+{
+  RelationalExpression() [ "instanceof" Type() ]
+}
+
+void RelationalExpression() :
+{}
+{
+  ShiftExpression() ( ( "<" | ">" | "<=" | ">=" ) ShiftExpression() )*
+}
+
+void ShiftExpression():
+{}
+{
+  AdditiveExpression() ( ( "<<" | RSIGNEDSHIFT() | RUNSIGNEDSHIFT() ) AdditiveExpression() )*
+}
+
+void AdditiveExpression() :
+{}
+{
+  MultiplicativeExpression() ( ( "+" | "-" ) MultiplicativeExpression() )*
+}
+
+void MultiplicativeExpression() :
+{}
+{
+  UnaryExpression() ( ( "*" | "/" | "%" ) UnaryExpression() )*
+}
+
+void UnaryExpression() :
+{}
+{
+  ( "+" | "-" ) UnaryExpression()
+|
+  PreIncrementExpression()
+|
+  PreDecrementExpression()
+|
+  UnaryExpressionNotPlusMinus()
+}
+
+void PreIncrementExpression() :
+{}
+{
+  "++" PrimaryExpression()
+}
+
+void PreDecrementExpression() :
+{}
+{
+  "--" PrimaryExpression()
+}
+
+void UnaryExpressionNotPlusMinus() :
+{}
+{
+  ( "~" | "!" ) UnaryExpression()
+|
+  LOOKAHEAD( CastLookahead() )
+  CastExpression()
+|
+  PostfixExpression()
+}
+
+// This production is to determine lookahead only.  The LOOKAHEAD specifications
+// below are not used, but they are there just to indicate that we know about
+// this.
+void CastLookahead() :
+{}
+{
+  LOOKAHEAD(2)
+  "(" PrimitiveType()
+|
+  LOOKAHEAD("(" Type() "[")
+  "(" Type() "[" "]"
+|
+  "(" Type() ")" ( "~" | "!" | "(" | <IDENTIFIER> | "this" | "super" | "new" | Literal() )
+}
+
+void PostfixExpression() :
+{}
+{
+  PrimaryExpression() [ "++" | "--" ]
+}
+
+void CastExpression() :
+{}
+{
+  LOOKAHEAD("(" PrimitiveType())
+  "(" Type() ")" UnaryExpression()
+|
+  "(" Type() ")" UnaryExpressionNotPlusMinus()
+}
+
+void PrimaryExpression() :
+{}
+{
+  PrimaryPrefix() ( LOOKAHEAD(2) PrimarySuffix() )*
+}
+
+void MemberSelector():
+{}
+{
+  "." TypeArguments() <IDENTIFIER>
+}
+
+void PrimaryPrefix() :
+{}
+{
+  Literal()
+|
+  "this"
+|
+  "super" "." <IDENTIFIER>
+|
+  "(" Expression() ")"
+|
+  AllocationExpression()
+|
+  LOOKAHEAD( ResultType() "." "class" )
+  ResultType() "." "class"
+|
+  Name()
+}
+
+void PrimarySuffix() :
+{}
+{
+  LOOKAHEAD(2)
+  "." "this"
+|
+  LOOKAHEAD(2)
+  "." AllocationExpression()
+|
+  LOOKAHEAD(3)
+  MemberSelector()
+|
+  "[" Expression() "]"
+|
+  "." <IDENTIFIER>
+|
+  Arguments()
+}
+
+void Literal() :
+{}
+{
+  <INTEGER_LITERAL>
+|
+  <FLOATING_POINT_LITERAL>
+|
+  <CHARACTER_LITERAL>
+|
+  <STRING_LITERAL>
+|
+  BooleanLiteral()
+|
+  NullLiteral()
+}
+
+void BooleanLiteral() :
+{}
+{
+  "true"
+|
+  "false"
+}
+
+void NullLiteral() :
+{}
+{
+  "null"
+}
+
+void Arguments() :
+{}
+{
+  "(" [ ArgumentList() ] ")"
+}
+
+void ArgumentList() :
+{}
+{
+  Expression() ( "," Expression() )*
+}
+
+void AllocationExpression() :
+{ String outerClassName = className;
+  className = "D$u$m$m$y";
+}
+{
+  (
+  LOOKAHEAD(2)
+  "new" PrimitiveType() ArrayDimsAndInits()
+|
+  "new" ClassOrInterfaceType() [ TypeArguments() ]
+
+    (
+      ArrayDimsAndInits()
+    |
+      Arguments()
+      [ ClassBody() ]
+    )
+  )
+  {
+    className = outerClassName;
+  }
+}
+
+/*
+ * The third LOOKAHEAD specification below is to parse to PrimarySuffix
+ * if there is an expression between the "[...]".
+ */
+void ArrayDimsAndInits() :
+{}
+{
+  LOOKAHEAD(2)
+  ( LOOKAHEAD(2) "[" Expression() "]" )+ ( LOOKAHEAD(2) "[" "]" )*
+|
+  ( "[" "]" )+ ArrayInitializer()
+}
+
+
+/*
+ * Statement syntax follows.
+ */
+
+void Statement() :
+{}
+{
+  LOOKAHEAD(2)
+  LabeledStatement()
+|
+  AssertStatement()
+|
+  Block()
+|
+  EmptyStatement()
+|
+  StatementExpression() ";"
+|
+  SwitchStatement()
+|
+  IfStatement()
+|
+  WhileStatement()
+|
+  DoStatement()
+|
+  ForStatement()
+|
+  BreakStatement()
+|
+  ContinueStatement()
+|
+  ReturnStatement()
+|
+  ThrowStatement()
+|
+  SynchronizedStatement()
+|
+  TryStatement()
+}
+
+void AssertStatement():
+{}
+{
+  "assert" Expression() [ ":" Expression() ] ";"
+}
+
+void LabeledStatement() :
+{}
+{
+  <IDENTIFIER> ":" Statement()
+}
+
+SimpleNode Block() :
+{}
+{
+  (
+  "{" ( BlockStatement() )* "}"
+  )
+  {
+    return jjtThis;
+  }
+}
+
+void BlockStatement() :
+{}
+{
+  LOOKAHEAD([ "final" ] Type() <IDENTIFIER>)
+  LocalVariableDeclaration() ";"
+|
+  Statement()
+|
+  UnmodifiedClassDeclaration("")
+}
+
+void LocalVariableDeclaration() :
+{}
+{
+  [ "final" ] Type() VariableDeclarator() ( "," VariableDeclarator() )*
+}
+
+void EmptyStatement() :
+{}
+{
+  ";"
+}
+
+void StatementExpression() :
+/*
+ * The last expansion of this production accepts more than the legal
+ * Java expansions for StatementExpression.  This expansion does not
+ * use PostfixExpression for performance reasons.
+ */
+{}
+{
+  PreIncrementExpression()
+|
+  PreDecrementExpression()
+|
+  PrimaryExpression()
+  [
+    "++"
+  |
+    "--"
+  |
+    AssignmentOperator() Expression()
+  ]
+}
+
+void SwitchStatement() :
+{}
+{
+  "switch" "(" Expression() ")" "{"
+    ( SwitchLabel() ( BlockStatement() )* )*
+  "}"
+}
+
+void SwitchLabel() :
+{}
+{
+  "case" Expression() ":"
+|
+  "default" ":"
+}
+
+void IfStatement() :
+/*
+ * The disambiguating algorithm of JavaCC automatically binds dangling
+ * else's to the innermost if statement.  The LOOKAHEAD specification
+ * is to tell JavaCC that we know what we are doing.
+ */
+{}
+{
+  "if" "(" Expression() ")" Statement() [ LOOKAHEAD(1) "else" Statement() ]
+}
+
+void WhileStatement() :
+{}
+{
+  "while" "(" Expression() ")" Statement()
+}
+
+void DoStatement() :
+{}
+{
+  "do" Statement() "while" "(" Expression() ")" ";"
+}
+
+void ForStatement() :
+{}
+{
+  "for" "("
+
+  (
+      LOOKAHEAD(Type() <IDENTIFIER> ":")
+      Type() <IDENTIFIER> ":" Expression() 
+    |
+     [ ForInit() ] ";" [ Expression() ] ";" [ ForUpdate() ]
+  )
+
+  ")" Statement()
+}
+
+void ForInit() :
+{}
+{
+  LOOKAHEAD( [ "final" ] Type() <IDENTIFIER> )
+  LocalVariableDeclaration()
+|
+  StatementExpressionList()
+}
+
+void StatementExpressionList() :
+{}
+{
+  StatementExpression() ( "," StatementExpression() )*
+}
+
+void ForUpdate() :
+{}
+{
+  StatementExpressionList()
+}
+
+void BreakStatement() :
+{}
+{
+  "break" [ <IDENTIFIER> ] ";"
+}
+
+void ContinueStatement() :
+{}
+{
+  "continue" [ <IDENTIFIER> ] ";"
+}
+
+void ReturnStatement() :
+{}
+{
+  "return" [ Expression() ] ";"
+}
+
+void ThrowStatement() :
+{}
+{
+  "throw" Expression() ";"
+}
+
+void SynchronizedStatement() :
+{}
+{
+  "synchronized" "(" Expression() ")" Block()
+}
+
+void TryStatement() :
+/*
+ * Semantic check required here to make sure that at least one
+ * finally/catch is present.
+ */
+{}
+{
+  "try" Block()
+  ( "catch" "(" FormalParameter() ")" Block() )*
+  [ "finally" Block() ]
+}
+
+/* We use productions to match >>>, >> and > so that we can keep the
+ * type declaration syntax with generics clean
+ */
+
+void RUNSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                ((Token.GTToken)getToken(1)).realKind == RUNSIGNEDSHIFT} )
+   ">" ">" ">"
+  )
+}
+
+void RSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                ((Token.GTToken)getToken(1)).realKind == RSIGNEDSHIFT} )
+  ">" ">"
+  )
+}
+
+/* Annotation syntax follows. */
+
+String Annotation():
+{}
+{
+ (
+   LOOKAHEAD( "@" Name() "(" ( <IDENTIFIER> "=" | ")" ))
+   NormalAnnotation()
+ |
+   LOOKAHEAD( "@" Name() "(" )
+   SingleMemberAnnotation()
+ |
+   MarkerAnnotation()
+ )
+ { return jjtThis.unparse(); }
+}
+
+void NormalAnnotation():
+{}
+{
+   "@" Name() "(" [ MemberValuePairs() ] ")"
+}
+
+void MarkerAnnotation():
+{}
+{
+  "@" Name()
+}
+
+void SingleMemberAnnotation():
+{}
+{
+  "@" Name() "(" MemberValue() ")"
+}
+
+void MemberValuePairs():
+{}
+{
+   MemberValuePair() ( "," MemberValuePair() )*
+}
+
+void MemberValuePair():
+{}
+{
+    <IDENTIFIER> "=" MemberValue()
+}
+
+void MemberValue():
+{}
+{
+   Annotation()
+ |
+   MemberValueArrayInitializer()
+ |
+   ConditionalExpression()
+}
+
+void  MemberValueArrayInitializer():
+{}
+{
+  "{" MemberValue() ( LOOKAHEAD(2) "," MemberValue() )* [ "," ] "}"
+}
+
+
+/* Annotation Types. */
+
+void AnnotationTypeDeclaration(String modifiers):
+{}
+{
+  "@" "interface" <IDENTIFIER> AnnotationTypeBody()
+}
+
+void AnnotationTypeBody():
+{}
+{
+  "{" ( AnnotationTypeMemberDeclaration() )* "}"
+}
+
+void AnnotationTypeMemberDeclaration():
+{
+   String modifiers;
+}
+{
+ modifiers = Modifiers()
+ (
+   LOOKAHEAD(Type() <IDENTIFIER> "(")
+   Type() <IDENTIFIER> "(" ")" [ DefaultValue() ] ";"
+  |
+   UnmodifiedClassDeclaration(modifiers)
+  |
+   UnmodifiedInterfaceDeclaration(modifiers)
+  |
+   EnumDeclaration(modifiers)
+  |
+   AnnotationTypeDeclaration(modifiers)
+  |
+   FieldDeclaration(modifiers)
+ )
+ |
+   ( ";" )
+}
+
+void DefaultValue():
+{}
+{
+  "default" MemberValue()
+}

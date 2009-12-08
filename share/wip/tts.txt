@@ -1,0 +1,62 @@
+================================================================================
+Travail en cours :
+------------------
+
+Le contexte (nom de la table des symbole) va etre code dans le module gom et
+dans les instructions match.
+
+Mon but actuel est de mettre en place la "tuyauterie" qui permattra de recuperer
+une table de symboles dans une table de table de symboles.
+Pour ce faire, la fonction getSymbolTable() va prendre en parametre un argument
+correspondant a l'idantifiant de la table des symboles demandees, c'est à dire
+le nom de module.
+
+================================================================================
+Pense-bete de l'etat actuel de mon travail :
+--------------------------------------------
+
+* Parser
+
+* Checker
+SyntaxChecker
+TypeChecker
+
+* Compiler
+KernelCompiler // OK
+TODO l.47 utiliser le modulename
+TODO l.122 affecter valeur
+KernelExpander -> pb a cause des traversals
+TODO l.52 la table par default ? => les autres dans les constructeurs
+TODO l.59 utiliser le modulename
+>> remplacer le replace par une strategie
+>> utiliser une stack
+
+* Backend // OK
+TomBackend // OK
+TODO l.105 instancier valeur par defaut
+TomAbstractGenerator // OK
+TODO l.56 utiliser le modulename
+TODO l.436 affecter valeur
+TomGenericGenerator // OK
+TomImperativeGenerator // OK
+TomJavaGenerator // OK
+TomCamlGenerator // OK
+
+================================================================================
+Resume de la situation :
+------------------------
+
+Le backend a deja toute la logistique necessaire a l'utilisation de table de
+tables de symboles.
+
+Le compiler a une partie de la logistique en place, mais dans les fonctions
+utilisant des traversals il est ardu de capturer le contexte.
+
+Dans le parser, les changements sont faciles a faire, le contexte est facilement
+accesible.
+
+J'ai besoin de travailler dans l'ordre (en pratique il s'agit de l'ordre inverse,
+je suis partie de la fin) pour que les modifications me genere les erreurs en
+casdade afin de ne pas risquer d'oublier de faire une modification.
+
+===============================================================================

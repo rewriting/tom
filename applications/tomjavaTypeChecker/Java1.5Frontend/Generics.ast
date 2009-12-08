@@ -1,0 +1,43 @@
+// generic type declarations
+GenericClassDecl : ClassDecl ::= Modifiers <ID:String> [SuperClassAccess:Access] Implements:Access* BodyDecl* TypeParameter:TypeVariable* /ParTypeDecl:ParClassDecl*/;
+GenericInterfaceDecl : InterfaceDecl ::= Modifiers <ID:String> SuperInterfaceId:Access* BodyDecl* TypeParameter:TypeVariable* /ParTypeDecl:ParInterfaceDecl*/;
+
+// parameterized type declarations
+ParClassDecl : ClassDecl ::= Argument:Access* /[SuperClassAccess:Access]/ /Implements:Access*/ /BodyDecl*/;
+RawClassDecl : ParClassDecl;
+
+ParInterfaceDecl : InterfaceDecl ::= Argument:Access* /SuperInterfaceId:Access*/ /BodyDecl*/;
+RawInterfaceDecl : ParInterfaceDecl;
+
+// parameterized type access
+ParTypeAccess : Access ::= TypeAccess:Access TypeArgument:Access*;
+
+TypeVariable : ReferenceType ::= Modifiers <ID:String> BodyDecl* TypeBound:Access*;
+
+abstract AbstractWildcard : Access;
+Wildcard : AbstractWildcard;
+WildcardExtends : AbstractWildcard ::= Access;
+WildcardSuper : AbstractWildcard ::= Access;
+
+abstract AbstractWildcardType : TypeDecl;
+WildcardType : AbstractWildcardType;
+WildcardExtendsType : AbstractWildcardType ::= Access;
+WildcardSuperType : AbstractWildcardType ::= Access;
+
+MethodDeclSubstituted : MethodDecl ::= <Original:MethodDecl>;
+ConstructorDeclSubstituted : ConstructorDecl ::= <Original:ConstructorDecl>;
+FieldDeclarationSubstituted : FieldDeclaration ::= <Original:FieldDeclaration>;
+ParameterDeclarationSubstituted : ParameterDeclaration ::= <Original:ParameterDeclaration>;
+VariableArityParameterDeclarationSubstituted : VariableArityParameterDeclaration ::= <Original:VariableArityParameterDeclaration>;
+
+ClassDeclSubstituted : ClassDecl ::= <Original:TypeDecl>;
+InterfaceDeclSubstituted : InterfaceDecl ::= <Original:TypeDecl>;
+GenericClassDeclSubstituted : GenericClassDecl ::= <Original:TypeDecl>;
+GenericInterfaceDeclSubstituted : GenericInterfaceDecl ::= <Original:TypeDecl>;
+
+LUBType : ReferenceType ::= Modifiers <ID:String> BodyDecl* TypeBound:Access*;
+GLBType : ReferenceType ::= Modifiers <ID:String> BodyDecl* TypeBound:Access*;
+
+WildcardsCompilationUnit : CompilationUnit;
+
+BridgeMethodDecl : MethodDecl;

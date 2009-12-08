@@ -1,0 +1,8 @@
+module iptables.Firewall
+imports IptablesList IptablesCmd
+abstract syntax
+
+FirewallRules = 
+	FirewallRulesIptablesList(ilb:IptablesListBlocks)
+	| FirewallRulesIptablesCmd(icr:IptablesCmdRules)
+

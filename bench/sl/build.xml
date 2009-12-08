@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the sl bench" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <target name="clean" description="Cleans bench directory">
+    <delete dir="${bench.gen}/sl"/>
+    <delete dir="${bench.build}/sl"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="sl"/>
+    <tomcompile example="sl"/>
+    <javacompile example="sl"/>
+  </target>
+</project>

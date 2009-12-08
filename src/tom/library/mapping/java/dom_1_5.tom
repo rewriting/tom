@@ -1,0 +1,224 @@
+/*
+ *
+ * Copyright (c) 2000-2007, Bertrand Tavernier
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ * 	- Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.  
+ * 	- Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	- Neither the name of the INRIA nor the names of its
+ * 	contributors may be used to endorse or promote products derived from
+ * 	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ **/
+
+
+public static org.w3c.dom.Node tom_mapping_buildAttribute(org.w3c.dom.Document dom,
+								  String t0,  
+								  String v) {
+	org.w3c.dom.Attr res = dom.createAttribute(t0); 
+	res.setValue(v);
+	return res;
+}
+
+
+public static org.w3c.dom.Node tom_mapping_buildElement(org.w3c.dom.Document dom,
+								String name, 
+								java.util.ArrayList<Node> attr, 
+								java.util.ArrayList<Node> child) {
+
+	org.w3c.dom.Element res = dom.createElement(name);
+	
+	for (Node n : child)
+		res.appendChild(n);	
+	for (Node n : attr)
+		res.setAttribute(n.getNodeName(),n.getNodeValue());
+
+	return res;
+}
+
+public static org.w3c.dom.Node tom_mapping_buildEntityReference(org.w3c.dom.Document dom,
+								String name,  
+								java.util.ArrayList<Node> child) {
+
+	org.w3c.dom.EntityReference res = dom.createEntityReference(name);
+	for (Node n : child)
+		res.appendChild(n);	
+	return res;
+}
+
+public static java.util.ArrayList<Node> tom_mapping_buildTNodeList(org.w3c.dom.NodeList n) {
+	java.util.ArrayList<Node> res = new java.util.ArrayList<Node>();
+	for (int it=0;it<n.getLength();it++)
+		res.add(n.item(it));
+	return res;
+}
+
+public static java.util.ArrayList<Node> tom_mapping_buildNamedNodeMap(org.w3c.dom.NamedNodeMap n) {
+	java.util.ArrayList<Node> res = new java.util.ArrayList<Node>();
+	String str_name;
+	int ins;
+	for (int it=0;it<n.getLength();it++) {
+		str_name = n.item(it).getNodeName();
+		ins = res.size();
+		for(int jt=0;jt<res.size();jt++) {
+			if (((org.w3c.dom.Attr)res.get(jt)).getNodeName().compareTo(str_name)>0) {
+				ins = jt;
+				break;
+			}
+		}
+		res.add(ins,n.item(it));
+	} 
+
+	return res;
+}
+
+public static java.util.ArrayList<Node> tom_mapping_add(Node e, java.util.ArrayList<Node> l) {
+	l.add(e);
+	return l;
+}
+
+public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
+	return new java.util.ArrayList<Node>();
+}
+
+%include { int.tom }
+%include { string.tom }
+
+%typeterm TNode { 
+	implement {org.w3c.dom.Node}	
+	is_sort(t) {$t instanceof org.w3c.dom.Node}	
+	equals(t1,t2) {$t1.equals($t2)}
+}
+
+%typeterm TDocument { 
+	implement {org.w3c.dom.Document}	
+	is_sort(t) {$t instanceof org.w3c.dom.Document}	
+	equals(t1,t2) {$t1.equals($t2)}
+}
+
+
+%op TDocument DocumentNode(DocType:TNode, DocElem:TNode) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.DOCUMENT_NODE)}
+  get_slot(DocType,t) { ((org.w3c.dom.Document)$t).getDoctype()}
+  get_slot(DocElem,t) { ((org.w3c.dom.Document)$t).getDocumentElement()}
+}
+
+%op TNode DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String, Entities:TNodeList, Notations:TNodeList) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.DOCUMENT_TYPE_NODE)}
+  get_slot(Name,t) { ((org.w3c.dom.DocumentType)$t).getName()}
+  get_slot(PublicId,t) { ((org.w3c.dom.DocumentType)$t).getPublicId()}
+  get_slot(SystemId,t) { ((org.w3c.dom.DocumentType)$t).getSystemId()}
+  get_slot(InternalSubset,t) { ((org.w3c.dom.DocumentType)$t).getInternalSubset()}
+  get_slot(Entities,t) { tom_mapping_buildNamedNodeMap(((org.w3c.dom.DocumentType)$t).getEntities())}
+  get_slot(Notations,t) { tom_mapping_buildNamedNodeMap(((org.w3c.dom.DocumentType)$t).getNotations())}
+}
+
+%op TNode EntityReferenceNode(Doc:TDocument, Name:String, ChildList:TNodeList) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.ENTITY_REFERENCE_NODE)}
+  get_slot(Name,t) { ((org.w3c.dom.EntityReference)$t).getNodeName()}
+  get_slot(ChildList,t) { tom_mapping_buildTNodeList(((org.w3c.dom.EntityReference)$t).getChildNodes())}
+  get_slot(Doc,t) { ((org.w3c.dom.EntityReference)$t).getOwnerDocument()}
+  make(doc, t0, t1) { tom_mapping_buildEntityReference($doc,$t0,$t1) }	  
+}
+
+%op TNode EntityNode(NotationName:String, PublicId:String, SystemId:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.ENTITY_NODE)}
+  get_slot(NotationName,t) { ((org.w3c.dom.Entity)$t).getNotationName()}
+  get_slot(PublicId,t) { ((org.w3c.dom.Entity)$t).getPublicId()}
+  get_slot(SystemId,t) { ((org.w3c.dom.Entity)$t).getSystemId()}
+}
+
+%op TNode NotationNode(PublicId:String, SystemId:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.NOTATION_NODE)}
+  get_slot(PublicId,t) { ((org.w3c.dom.Notation)$t).getPublicId()}
+  get_slot(SystemId,t) { ((org.w3c.dom.Notation)$t).getSystemId()}
+}
+
+%op TNode CommentNode(Doc:TDocument, Data:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.COMMENT_NODE)}
+  get_slot(Data,t) { ((org.w3c.dom.Comment)$t).getData()}
+  get_slot(Doc,t) { ((org.w3c.dom.Comment)$t).getOwnerDocument()}
+  make(doc, t0) { ((org.w3c.dom.Document)$doc).createComment($t0) }
+}
+
+
+%op TNode ProcessingInstructionNode(Doc:TDocument, Target:String, Data:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE)}
+  get_slot(Target,t) { ((org.w3c.dom.ProcessingInstruction)$t).getTarget()}
+  get_slot(Data,t) { ((org.w3c.dom.ProcessingInstruction)$t).getData()}
+  get_slot(Doc,t) { ((org.w3c.dom.ProcessingInstruction)$t).getOwnerDocument()}
+  make(doc, t0, t1) { doc.createProcessingInstruction($t0,$t1) }
+}
+
+%op TNode CDATASectionNode(Doc:TDocument, Data:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.CDATA_SECTION_NODE)}
+  get_slot(Data,t) { ((org.w3c.dom.CDATASection)$t).getData()}
+  get_slot(Doc,t) { ((org.w3c.dom.CDATASection)$t).getOwnerDocument()}
+  make(doc,t0) { ((org.w3c.dom.Document)doc).createCDATASection($t0) }
+}
+
+%typeterm TNodeList {
+	implement{ java.util.ArrayList<Node> }
+	is_sort(t){ $t instanceof java.util.ArrayList }
+	equals(l1,l2) { $l1.equals($l2) }
+}
+
+%oparray TNodeList concTNode( TNode* ) {
+	is_fsym(t) { ($t!= null) }
+	make_empty(n) { new java.util.ArrayList<Node>($n) }
+	make_append(e,l) { tom_mapping_add($e,$l)  }
+	get_element(l,n) { (org.w3c.dom.Node)$l.get($n) }
+	get_size(l) { $l.size() }
+}
+
+
+%op TNodeList emptyTNodeList() {
+  is_fsym(t) { ($t!= null) && $t.isEmpty()}
+  make() { tom_mapping_newTNodeList() }
+}
+
+
+%op TNode ElementNode(Doc:TDocument, Name:String, AttrList:TNodeList, ChildList:TNodeList) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE)}
+
+  get_slot(Name,t) { ((org.w3c.dom.Element)$t).getNodeName()}
+  get_slot(AttrList,t) { tom_mapping_buildNamedNodeMap(((org.w3c.dom.Element)$t).getAttributes())}
+  get_slot(ChildList,t) { tom_mapping_buildTNodeList(((org.w3c.dom.Element)$t).getChildNodes())}
+  get_slot(Doc,t) { ((org.w3c.dom.Element)$t).getOwnerDocument()}
+  make(t0, t2, t3, t4) { tom_mapping_buildElement($t0,$t2,$t3,$t4)}
+}
+
+%op TNode AttributeNode(Doc:TDocument, Name:String, Specified:String,  Value:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.ATTRIBUTE_NODE)}
+  get_slot(Name,t) { ((org.w3c.dom.Attr)$t).getName()}
+  get_slot(Specified,t) { (((org.w3c.dom.Attr)$t).getSpecified()?"true":"false") }
+  get_slot(Value,t) { ((org.w3c.dom.Attr)$t).getValue() }
+  get_slot(Doc,t) { ((org.w3c.dom.Attr)$t).getOwnerDocument()}
+  make(t0, t1, t2, t3) { tom_mapping_buildAttribute($t0,$t1,$t3) }
+}
+
+%op TNode TextNode(Dom:TDocument,Data:String) {
+  is_fsym(t) { ($t!= null) && ($t.getNodeType()==org.w3c.dom.Node.TEXT_NODE )}
+  get_slot(Data,t) { $t.getNodeValue() }
+  get_slot(Dom,t) { $t.getOwnerDocument()}
+  make(dom,t0) { ((org.w3c.dom.Document)$dom).createTextNode($t0)}
+}
+

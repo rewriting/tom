@@ -1,0 +1,1 @@
+concRule(rule(NList(TNode(Name("A"),NList()),VarNode("node"),TNode(VarNodeName("name"),NList())),NList(TNode(Name("A"),NList()))))

@@ -1,0 +1,30 @@
+(do not forget to download and install sdf/sglr before trying to run these commands)
+
+sdf2table -i Test.sdf
+sglr -t -p Test.tbl -i start -o query.asfix
+implodePT -t -i query.asfix
+
+sglr -p grammars/Sdf2.tbl -i grammars/Pico.sdf -o query.asfix -t -v
+java sdfgom/Main -i ../query.asfix
+
+
+
+========
+Examples
+========
+
+Test.t
+- Simple example, OK 
+
+TestMept.t :
+- simple example to show the use of a Converter
+- Replace previous examples (TestMept.t & TestMeptOK*)
+
+TO IMPROVE
+==========
+E* -> L
+do something for these productions, which have no constructor name
+
+handle "import section" of SDF (generate imports in Gom file)
+handle multiple modules in one SDF file (i.e. generate several Gom files)
+handle priorities (throw them away)

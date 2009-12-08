@@ -1,0 +1,22 @@
+match(a, a)
+match(a, b)
+-
+match(f(a,b), f(a,a))
+match(f(a,b), f(a,b))
+match(f(a,b), c)
+-
+match(f_a(X,Y), f_a(a,b))
+match(f_a(X,Y), f_a(a,f_a(b,c)))
+match(f_a(X,Y), f_a(f_a(a,b),c))
+-
+match(f_a(a,b),e_f)
+match(f_a(X,Y),e_f)
+match(f_a(X_f,Y_f),e_f)
+match(f_a(X,f_a(P_f,f_a(Y,f_a(P_f,Z)))),f_a(a,b))
+match(f_a(X,f_a(P_f,f_a(Y,f_a(P_f,Z)))),f_a(a,f_a(b,c)))
+match(f_a(X,f_a(P_f,f_a(Y,f_a(P_f,Z)))),f_a(a,f_a(b,f_a(c,d))))
+match(f_a(P_f,P_f),f_a(a,a))
+match(f_a(X,f_a(P_f,f_a(Y,f_a(P_f,Z)))),f_a(a,a))
+match(f_a(X,f_a(P_f,Z)),f_a(a,a))
+match(f_a(X,f_a(P_f,f_a(Y,f_a(P_f,Z)))),f_a(a,f_a(b,f_a(c,f_a(d,f_a(c,f))))))
+match(f_a(X,f_a(P,f_a(Y,f_a(P,Z)))),f_a(a,f_a(b,f_a(c,f_a(d,f_a(c,f))))))

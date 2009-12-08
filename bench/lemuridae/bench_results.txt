@@ -1,0 +1,5 @@
+-  22/11/07 (At revision 7309)
+[bench old version of strategies sl]
+real    1m48.257s
+user    2m17.682s
+sys     0m12.853s

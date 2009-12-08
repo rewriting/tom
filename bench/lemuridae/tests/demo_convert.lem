@@ -1,0 +1,24 @@
+proprule eq(x,x) -> True.
+proprule eq(b(x),y) -> eq(c(x),y).
+termrule a(x) -> b(x).
+
+reduce term a(0).
+
+proof r1: forall x, eq(b(x),c(x)).
+autoreduce.
+
+termrule r1.
+
+reduce term a(0).
+
+// --------------------------
+
+rule P(x) -> eq(b(x),a(x)). 
+
+reduce proposition P(0).
+
+proof p1: forall x, P(x) <=> eq(a(x),a(x)).
+autoreduce.
+
+proprule p1.
+reduce proposition P(0).

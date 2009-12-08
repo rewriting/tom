@@ -1,0 +1,148 @@
+################ Start of IPFW rules file ###############################
+# Flush out the list before we begin.
+ipfw -q -f flush
+
+# Set rules command prefix
+cmd="ipfw -q add"
+pif="dc0"     # public interface name of NIC
+              # facing the public Internet
+
+#################################################################
+# No restrictions on Inside LAN Interface for private network
+# Not needed unless you have LAN.
+# Change xl0 to your LAN NIC interface name
+#################################################################
+#$cmd 00005 allow all from any to any via xl0
+
+#################################################################
+# No restrictions on Loopback Interface
+#################################################################
+$cmd 00010 allow all from any to any via lo0
+
+#################################################################
+# Allow the packet through if it has previous been added to the
+# the "dynamic" rules table by a allow keep-state statement.
+#################################################################
+$cmd 00015 check-state
+
+#################################################################
+# Interface facing Public Internet (Outbound Section)
+# Interrogate session start requests originating from behind the
+# firewall on the private network or from this gateway server
+# destine for the public Internet.
+#################################################################
+
+# Allow out access to my ISP's Domain name server.
+# x.x.x.x must be the IP address of your ISP.s DNS
+# Dup these lines if your ISP has more than one DNS server
+# Get the IP addresses from /etc/resolv.conf file
+$cmd 00110 allow tcp from any to x.x.x.x 53 out via $pif setup keep-state
+$cmd 00111 allow udp from any to x.x.x.x 53 out via $pif keep-state
+
+# Allow out access to my ISP's DHCP server for cable/DSL configurations.
+# This rule is not needed for .user ppp. connection to the public Internet.
+# so you can delete this whole group.
+# Use the following rule and check log for IP address.
+# Then put IP address in commented out rule & delete first rule
+$cmd 00120 allow log udp from any to any 67 out via $pif keep-state
+#$cmd 00120 allow udp from any to x.x.x.x 67 out via $pif keep-state
+
+# Allow out non-secure standard www function
+$cmd 00200 allow tcp from any to any 80 out via $pif setup keep-state
+
+# Allow out secure www function https over TLS SSL
+$cmd 00220 allow tcp from any to any 443 out via $pif setup keep-state
+
+# Allow out send & get email function
+$cmd 00230 allow tcp from any to any 25 out via $pif setup keep-state
+$cmd 00231 allow tcp from any to any 110 out via $pif setup keep-state
+
+# Allow out FBSD (make install & CVSUP) functions
+# Basically give user root "GOD" privileges.
+$cmd 00240 allow tcp from me to any out via $pif setup keep-state uid root
+
+# Allow out ping
+$cmd 00250 allow icmp from any to any out via $pif keep-state
+
+# Allow out Time
+$cmd 00260 allow tcp from any to any 37 out via $pif setup keep-state
+
+# Allow out nntp news (i.e. news groups)
+$cmd 00270 allow tcp from any to any 119 out via $pif setup keep-state
+
+# Allow out secure FTP, Telnet, and SCP
+# This function is using SSH (secure shell)
+$cmd 00280 allow tcp from any to any 22 out via $pif setup keep-state
+
+# Allow out whois
+$cmd 00290 allow tcp from any to any 43 out via $pif setup keep-state
+
+# deny and log everything else that.s trying to get out.
+# This rule enforces the block all by default logic.
+$cmd 00299 deny log all from any to any out via $pif
+
+#################################################################
+# Interface facing Public Internet (Inbound Section)
+# Interrogate packets originating from the public Internet
+# destine for this gateway server or the private network.
+#################################################################
+
+# Deny all inbound traffic from non-routable reserved address spaces
+$cmd 00300 deny all from 192.168.0.0/16 to any in via $pif  #RFC 1918 private IP
+$cmd 00301 deny all from 172.16.0.0/12 to any in via $pif     #RFC 1918 private IP
+$cmd 00302 deny all from 10.0.0.0/8 to any in via $pif          #RFC 1918 private IP
+$cmd 00303 deny all from 127.0.0.0/8 to any in via $pif        #loopback
+$cmd 00304 deny all from 0.0.0.0/8 to any in via $pif            #loopback
+$cmd 00305 deny all from 169.254.0.0/16 to any in via $pif   #DHCP auto-config
+$cmd 00306 deny all from 192.0.2.0/24 to any in via $pif       #reserved for docs
+$cmd 00307 deny all from 204.152.64.0/23 to any in via $pif  #Sun cluster interconnect
+$cmd 00308 deny all from 224.0.0.0/3 to any in via $pif         #Class D & E multicast
+
+# Deny public pings
+$cmd 00310 deny icmp from any to any in via $pif
+
+# Deny ident
+$cmd 00315 deny tcp from any to any 113 in via $pif
+
+# Deny all Netbios service. 137=name, 138=datagram, 139=session
+# Netbios is MS/Windows sharing services.
+# Block MS/Windows hosts2 name server requests 81
+$cmd 00320 deny tcp from any to any 137 in via $pif
+$cmd 00321 deny tcp from any to any 138 in via $pif
+$cmd 00322 deny tcp from any to any 139 in via $pif
+$cmd 00323 deny tcp from any to any 81 in via $pif
+
+# Deny any late arriving packets
+$cmd 00330 deny all from any to any frag in via $pif
+
+# Deny ACK packets that did not match the dynamic rule table
+$cmd 00332 deny tcp from any to any established in via $pif
+
+# Allow traffic in from ISP's DHCP server. This rule must contain
+# the IP address of your ISP.s DHCP server as it.s the only
+# authorized source to send this packet type.
+# Only necessary for cable or DSL configurations.
+# This rule is not needed for .user ppp. type connection to
+# the public Internet. This is the same IP address you captured
+# and used in the outbound section.
+#$cmd 00360 allow udp from any to x.x.x.x 67 in via $pif keep-state
+
+# Allow in standard www function because I have apache server
+$cmd 00400 allow tcp from any to me 80 in via $pif setup limit src-addr 2
+
+# Allow in secure FTP, Telnet, and SCP from public Internet
+$cmd 00410 allow tcp from any to me 22 in via $pif setup limit src-addr 2
+
+# Allow in non-secure Telnet session from public Internet
+# labeled non-secure because ID & PW are passed over public
+# Internet as clear text.
+# Delete this sample group if you do not have telnet server enabled.
+$cmd 00420 allow tcp from any to me 23 in via $pif setup limit src-addr 2
+
+# Reject & Log all incoming connections from the outside
+$cmd 00499 deny log all from any to any in via $pif
+
+# Everything else is denied by default
+# deny and log all packets that fell through to see what they are
+$cmd 00999 deny log all from any to any
+################ End of IPFW rules file ###############################

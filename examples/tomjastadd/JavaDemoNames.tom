@@ -1,0 +1,129 @@
+
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+               
+%typeterm ASTNode {
+  implement { ASTNode }
+  is_sort(t) { $t instanceof ASTNode }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%oplist ASTNode List(ASTNode*) {
+  is_fsym(l)       { ($l!= null) && ($l instanceof List) }
+  make_empty()     { new List() }
+  make_insert(o,l) { ((List)$l).add($o) }
+  get_head(l)      { $l.getChild(0) }
+  get_tail(l)      { getTail(((List)$l)) }
+  is_empty(l)      { ($l.getNumChild()==0) }
+}
+
+private static List getTail(List l) {
+  List res = new List();
+  for(int i = 1; i < l.getNumChild(); i++) {
+  ASTNode node = l.getChildNoTransform(i);
+  if(node != null) node = node.fullCopy();
+  res.setChild(node, i-1);
+  }
+  return res;
+}
+
+%op ASTNode Prog(CompUnitList:ASTNode) {
+  make(CompUnitList) { new Prog((List) $CompUnitList) }
+  is_fsym(t) { $t instanceof Prog } 
+  get_slot(CompUnitList, t)  { ((Prog)$t).getCompUnitList() }
+}
+
+%op ASTNode CompUnit(packageName:String, ClassDeclList:ASTNode) {
+  make(packageName, ClassDeclList) { new CompUnit((String) $packageName, (List) $ClassDeclList) }
+  is_fsym(t) { $t instanceof CompUnit } 
+  get_slot(packageName, t)  { ((CompUnit)$t).getpackageName() }
+  get_slot(ClassDeclList, t)  { ((CompUnit)$t).getClassDeclList() }
+}
+
+%op ASTNode ClassDecl(name:String, Super:ASTNode, BodyDeclList:ASTNode) {
+  make(name, Super, BodyDeclList) { new ClassDecl((String) $name, (Name) $Super, (List) $BodyDeclList) }
+  is_fsym(t) { $t instanceof ClassDecl } 
+  get_slot(name, t)  { ((ClassDecl)$t).getname() }
+  get_slot(Super, t)  { ((ClassDecl)$t).getSuper() }
+  get_slot(BodyDeclList, t)  { ((ClassDecl)$t).getBodyDeclList() }
+}
+
+%op ASTNode FieldDecl(FieldType:ASTNode, name:String, Expr:ASTNode) {
+  make(FieldType, name, Expr) { new FieldDecl((Name) $FieldType, (String) $name, (Expr) $Expr) }
+  is_fsym(t) { $t instanceof FieldDecl } 
+  get_slot(FieldType, t)  { ((FieldDecl)$t).getFieldType() }
+  get_slot(name, t)  { ((FieldDecl)$t).getname() }
+  get_slot(Expr, t)  { ((FieldDecl)$t).getExpr() }
+}
+
+%op ASTNode MemberClassDecl(ClassDecl:ASTNode) {
+  make(ClassDecl) { new MemberClassDecl((ClassDecl) $ClassDecl) }
+  is_fsym(t) { $t instanceof MemberClassDecl } 
+  get_slot(ClassDecl, t)  { ((MemberClassDecl)$t).getClassDecl() }
+}
+
+%op ASTNode Initializer(Block:ASTNode) {
+  make(Block) { new Initializer((Block) $Block) }
+  is_fsym(t) { $t instanceof Initializer } 
+  get_slot(Block, t)  { ((Initializer)$t).getBlock() }
+}
+
+%op ASTNode Block(StmtList:ASTNode) {
+  make(StmtList) { new Block((List) $StmtList) }
+  is_fsym(t) { $t instanceof Block } 
+  get_slot(StmtList, t)  { ((Block)$t).getStmtList() }
+}
+
+%op ASTNode LocalVariableDecl(VarType:ASTNode, name:String, Expr:ASTNode) {
+  make(VarType, name, Expr) { new LocalVariableDecl((Name) $VarType, (String) $name, (Expr) $Expr) }
+  is_fsym(t) { $t instanceof LocalVariableDecl } 
+  get_slot(VarType, t)  { ((LocalVariableDecl)$t).getVarType() }
+  get_slot(name, t)  { ((LocalVariableDecl)$t).getname() }
+  get_slot(Expr, t)  { ((LocalVariableDecl)$t).getExpr() }
+}
+
+%op ASTNode Dot(name:String, Left:ASTNode, Right:ASTNode) {
+  make(name, Left, Right) { new Dot((String) $name, (Name) $Left, (Name) $Right) }
+  is_fsym(t) { $t instanceof Dot } 
+  get_slot(name, t)  { ((Dot)$t).getname() }
+  get_slot(Left, t)  { ((Dot)$t).getLeft() }
+  get_slot(Right, t)  { ((Dot)$t).getRight() }
+}
+
+%op ASTNode ExpressionName(name:String) {
+  make(name) { new ExpressionName((String) $name) }
+  is_fsym(t) { $t instanceof ExpressionName } 
+  get_slot(name, t)  { ((ExpressionName)$t).getname() }
+}
+
+%op ASTNode PackageName(name:String) {
+  make(name) { new PackageName((String) $name) }
+  is_fsym(t) { $t instanceof PackageName } 
+  get_slot(name, t)  { ((PackageName)$t).getname() }
+}
+
+%op ASTNode TypeName(name:String) {
+  make(name) { new TypeName((String) $name) }
+  is_fsym(t) { $t instanceof TypeName } 
+  get_slot(name, t)  { ((TypeName)$t).getname() }
+}
+
+%op ASTNode ParseName(name:String) {
+  make(name) { new ParseName((String) $name) }
+  is_fsym(t) { $t instanceof ParseName } 
+  get_slot(name, t)  { ((ParseName)$t).getname() }
+}
+
+%op ASTNode PackageOrTypeName(name:String) {
+  make(name) { new PackageOrTypeName((String) $name) }
+  is_fsym(t) { $t instanceof PackageOrTypeName } 
+  get_slot(name, t)  { ((PackageOrTypeName)$t).getname() }
+}
+
+%op ASTNode AmbiguousName(name:String) {
+  make(name) { new AmbiguousName((String) $name) }
+  is_fsym(t) { $t instanceof AmbiguousName } 
+  get_slot(name, t)  { ((AmbiguousName)$t).getname() }
+}
+

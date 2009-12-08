@@ -1,0 +1,22 @@
+module termgraph.freshlambda
+imports int String
+abstract syntax
+
+LTerm = Plus(t1:LTerm,t2:LTerm)
+      | Let(x:Name,t:LTerm,u:LTerm)
+      | Var(x:Name)
+      | SubstLTerm(t:LTerm, x:Name, u:LTerm)
+      | Num(i:Nat)
+
+Nat = Val(i:int)
+
+Name = Name(s:String)
+
+sort LTerm: graphrules(HeadBeta, Fail) {
+  Let(x,u,t) -> SubstLTerm(t,x,u)
+  SubstLTerm(Plus(t,u),x,v) -> Plus(SubstLTerm(t,x,v),SubstLTerm(u,x,v))
+  SubstLTerm(Let(x,u,t),y,v) -> Let(x,SubstLTerm(u,y,v),SubstLTerm(t,y,v))
+  SubstLTerm(Var(x),x,t) -> t
+  SubstLTerm(Var(x),y,t) -> Var(x)
+  SubstLTerm(Num(i),y,t) -> Num(i)
+}

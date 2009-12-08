@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<process>
+<flow>
+<links>
+<link name="receive-to-assess"/>
+<link name="receive-to-approval"/>
+<link name="assess-to-setMessage"/>
+<link name="assess-to-approval"/>
+<link name="setMessage-to-reply"/>
+<link name="approval-to-reply"/>
+</links>
+<receive createInstance="yes" operation="request" partnerLink="customer" portType="lns:loanServicePT" variable="request">
+<source linkName="receive-to-assess" transitionCondition="bpws:getVariableData('request','amount') &lt; 10000"/>
+<source linkName="receive-to-approval" transitionCondition="bpws:getVariableData('request','amount') &gt;= 10000"/>
+</receive>
+<invoke inputVariable="request" operation="check" outputVariable="risk" partnerLink="assessor" portType="lns:riskAssessmentPT">
+<target linkName="receive-to-assess"/>
+<source linkName="assess-to-setMessage"  transitionCondition="bpws:getVariableData('risk','level')='low'"/>
+<source linkName="assess-to-approval" transitionCondition="bpws:getVariableData('risk','level')!='low'"/>
+</invoke>
+<assign>
+<target linkName="assess-to-setMessage"/>
+<source linkName="setMessage-to-reply"/>
+<copy>
+<from expression="'yes'"/>
+<to part="accept" variable="approval"/>
+</copy>
+</assign>
+<invoke inputVariable="request" operation="approve" outputVariable="approval" partnerLink="approver" portType="lns:loanApprovalPT">
+<target linkName="receive-to-approval"/>
+<target linkName="assess-to-approval"/>
+<source linkName="approval-to-reply"/>
+</invoke>
+<reply operation="request" partnerLink="customer" portType="lns:loanServicePT" variable="approval">
+<target linkName="setMessage-to-reply"/>
+<target linkName="approval-to-reply"/>
+</reply>
+</flow>
+</process>

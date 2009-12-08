@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the integerc example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="integerc"/>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${example}"/>
+    <tom.preset srcdir="${examples.dir}/${example}"
+	        destdir="${examples.gen}/${example}"         
+                ccode="yes">
+      <include name="**/*.t"/>
+    </tom.preset>
+    <copy todir="${examples.gen}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="Makefile"/>
+      </fileset>
+    </copy>
+    <antcall target="integerc.make"/>
+  </target>
+  <target name="integerc.make" if="aterm.home">
+    <exec dir="${examples.gen}/${example}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
+    </exec>
+    <antcall target="integerc.make.cpl"/>
+  </target>
+  <target name="integerc.make.cpl" if="cpl.home">
+    <exec dir="${examples.gen}/${example}" 
+          failonerror="yes"
+          executable="make">
+      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <arg line="nqueens nqueens2"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -L${cpl.home}/lib -lATerm -lchoice"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>
+    </exec>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>

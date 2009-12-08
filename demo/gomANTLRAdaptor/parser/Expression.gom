@@ -1,0 +1,14 @@
+module parser.Expression
+imports String int
+abstract syntax
+
+RuleBase = StatementList( Statement* )
+
+Statement  = Equal(Lhs:Expr,Rhs:Expr)
+
+Expr = Num(Value:int)
+     | Id(Name:String)
+     | Plus(e1:Expr,e2:Expr)
+     | Mult(e1:Expr,e2:Expr)
+     | Div(e1:Expr,e2:Expr)
+     | Minus(e1:Expr,e2:Expr)

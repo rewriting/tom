@@ -1,0 +1,71 @@
+import java.util.*;
+import jrag.AST.JragParser;
+import ast.AST.*;
+
+aspect JastAdd {
+  private static final Collection ASTNode.emptyCollection = new ArrayList(0);
+  syn Collection ASTNode.emptyCollection() = ASTNode.emptyCollection;
+    
+  public static Grammar Grammar.createGrammar() {
+    Grammar g = new Grammar();
+    g.abstractAncestors();
+    return g;
+  }
+  
+  public Collection Grammar.addAst(String fileName) throws FileNotFoundException {
+    return addAst(fileName, new FileInputStream(fileName)); 
+  }
+  
+  public Collection Grammar.addAst(String fileName, InputStream is) {
+    try {
+      Ast parser = new Ast(is);
+      parser.fileName = fileName;
+      Grammar g = parser.Grammar();
+      for(int i = 0; i < g.getNumTypeDecl(); i++) {
+        addTypeDecl(g.getTypeDecl(i));
+      }
+      return parser.parseErrors();
+    } catch (ast.AST.TokenMgrError e) {
+      Collection c = new ArrayList();
+      c.add(fileName + ": " + e.getMessage());
+      return c;
+    } catch (ast.AST.ParseException e) {
+    }
+    return emptyCollection();
+  }
+
+  public Collection Grammar.addJrag(String fileName) throws FileNotFoundException {
+    return addJrag(fileName, new FileInputStream(fileName));
+  }
+ 
+  public Collection Grammar.addJrag(String fileName, InputStream is) {
+    try {
+      JragParser jp = new JragParser(is);
+      jp.inputStream = is;
+      jp.root = this;
+      jp.setFileName(fileName);
+      ASTCompilationUnit au = jp.CompilationUnit();
+      addCompUnit(au);
+    } catch (jrag.AST.ParseException e) {
+      StringBuffer msg = new StringBuffer();    
+      msg.append(Integer.toString(e.currentToken.next.beginLine));
+      msg.append(";");
+      msg.append(Integer.toString(e.currentToken.next.beginColumn));
+      msg.append(";");
+      msg.append(Integer.toString(e.currentToken.next.endLine));
+      msg.append(";");
+      msg.append(Integer.toString(e.currentToken.next.endColumn));
+      msg.append(";");
+      msg.append("Syntax error");
+      Collection c = new ArrayList();
+      c.add(msg.toString());
+      return c;
+    } catch (jrag.AST.TokenMgrError e) {
+      Collection c = new ArrayList();
+      c.add(fileName + ": " + e.getMessage());
+      return c;
+    }
+    return emptyCollection();
+  }
+    
+}

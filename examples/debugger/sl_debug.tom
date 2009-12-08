@@ -1,0 +1,115 @@
+%typeterm Strategy {
+  implement { tom.library.sl.Strategy }
+  is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
+  equals(t1,t2) { ($t1.equals($t2)) }
+}
+
+%include { sl/basic.tom }
+
+/*
+ * complex strategies
+ */
+
+%op Strategy Try(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"Try") }
+  make(v) { debugger.Factory.makeTry($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy TopDown(s1:Strategy) {
+//  is_fsym(t) { debugger.Lib.simulates($t,"TopDown") }
+  make(v) { debugger.Factory.makeTopDown($v) }
+//  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy TopDownCollect(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"TopDownCollect") }
+  make(v) { debugger.Factory.makeTopDownCollect($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+
+%op Strategy TopDownOnSucces(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"TopDownOnSucces") }
+  make(v) { debugger.Factory.makeTopDownOnSucces($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy TopDownIdStopOnSucces(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"TopDownIdStopOnSucces") }
+  make(v) { debugger.Factory.makeTopDownIdStopOnSucces($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy BottomUp(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"BottomUp") }
+  make(v) { debugger.Factory.makeBottomUp($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy OnceBottomUp(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"OnceBottomUp") }
+  make(v) { debugger.Factory.makeOnceBottomUp($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy OnceTopDown(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"OnceTopDown") }
+  make(v) { debugger.Factory.makeOnceTopDown($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy Innermost(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"Innermost") }
+  make(v) { debugger.Factory.makeInnermost($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy Outermost(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"Outermost") }
+  make(v) { debugger.Factory.makeOutermost($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy Repeat(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"Repeat") }
+  make(v) { debugger.Factory.makeRepeat($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy RepeatId(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"RepeatId") }
+  make(v) { debugger.Factory.makeRepeatId($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy OnceBottomUpId(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"OnceBottomUpId") }
+  make(v) { debugger.Factory.makeOnceBottomUpId($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy OnceTopDownId(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"OnceTopDownId") }
+  make(v) { debugger.Factory.makeOnceTopDownId($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy InnermostId(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"InnermostId") }
+  make(v) { debugger.Factory.makeInnermostId($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy InnermostIdSeq(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"InnermostIdSeq") }
+  make(v) { debugger.Factory.makeInnermostIdSeq($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+
+%op Strategy OutermostId(s1:Strategy) {
+  is_fsym(t) { debugger.Lib.simulates($t,"OutermostId") }
+  make(v) { debugger.Factory.makeOutermostId($v) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+}
+

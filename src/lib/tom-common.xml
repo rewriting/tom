@@ -1,0 +1,106 @@
+<project name="imported" basedir="." default="...">
+
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+  <property name="javacDebug"  value="false"/>
+  <property name="nowarnings"  value="false"/>
+  <property name="optimize"    value="on"/>
+  <property name="optimize2"   value="off"/>
+  <property name="multithread" value="off"/>
+  <property name="inline"      value="off"/>
+  <property name="inlineplus"  value="off"/>
+  <property name="verbose"     value="off"/>
+  <property name="pretty"      value="off"/>
+  <property name="visitable"   value="on"/>
+  <property name="tomfork"     value="on"/>
+  <property name="genIntrospector"  value="off"/>		
+  <property name="memoryInitSize" value="512m" />
+  <property name="memoryMaxSize"  value="1024m" />
+
+  <property environment="env"/>
+  <property name="tom.home"    value="${env.TOM_HOME}"/>
+
+  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
+  <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
+  <property name="gomantlradapterconfigfile"  location="${tom.home}/GomAntlrAdaptor.xml"/>
+
+  <path id="external.classpath">
+    <fileset dir="${user.home}">
+      <include name=".ant/lib/*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="tom.init">
+    <fail unless="tom.home"
+          message="tom.home has to be defined in your environment,
+          to find the Tom classes"/>
+    <!-- Define the classpath to run tom and related tools -->
+    <path id="tom.classpath">
+      <path refid="external.classpath"/>
+      <fileset dir="${tom.home}/lib">
+	<include name="**/*.jar"/>
+      </fileset>
+    </path>
+
+    <taskdef name="tom"
+      classname="tom.engine.tools.ant.TomTask">
+	    <classpath refid="tom.classpath"/>
+    </taskdef>
+    <taskdef name="tomantlr"
+             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <taskdef name="gom"
+      classname="tom.gom.tools.ant.GomTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <taskdef name="gomantlradapter"
+      classname="tom.gom.tools.ant.GomAntlrAdapterTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <taskdef name="tom.junit"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+
+    <presetdef name="tom.preset">
+      <tom config="${tomconfigfile}"
+           nowarn="${nowarnings}"
+           optimize="${optimize}"
+           optimize2="${optimize2}"
+           multithread="${multithread}"
+           inline="${inline}"
+           inlineplus="${inlineplus}"
+      	   genIntrospector="${genIntrospector}"
+           verbose="${verbose}"
+           fork="${tomfork}"
+           pretty="${pretty}">
+        <classpath refid="tom.classpath"/>
+      </tom>
+    </presetdef>
+
+    <presetdef name="gom.preset">
+      <gom config="${gomconfigfile}">
+        <classpath refid="tom.classpath"/>
+      </gom>
+    </presetdef>
+
+    <presetdef name="gomantlradapter.preset">
+      <gomantlradapter config="${gomantlradapterconfigfile}">
+        <classpath refid="tom.classpath"/>
+      </gomantlradapter>
+    </presetdef>
+
+    <presetdef name="javac.preset">
+      <javac target="${javacTarget}"
+             source="${javacSource}"
+             nowarn="${nowarnings}"
+             fork="${tomfork}"
+             debug="${javacDebug}"
+             memoryInitialSize="${memoryInitSize}"
+             memoryMaximumSize="${memoryMaxSize}">
+        <classpath refid="tom.classpath"/>
+      </javac>
+    </presetdef>
+  </target>
+</project>

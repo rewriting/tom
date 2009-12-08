@@ -1,0 +1,22 @@
+module generics
+imports String int
+abstract syntax
+
+Sig = sig(tl:TypetermList, op:OperatorList)
+
+GenericId = genId(id:String,type:String)
+IdList = idlist(GenericId*)
+Typeterm = typeterm(name:GenericId,infos:InfoList)
+Operator = op(ret:GenericId,name:GenericId,params:IdList,infos:InfoList)
+         | oplist(ret:GenericId,name:GenericId,param:String,infos:InfoList)
+
+TTInstance = ttinstance(tt:Typeterm,value:String)
+OpInstance = opinstance(op:Operator,value:String)
+
+
+Info = info(left:String,right:String)
+InfoList = infolist(Info*)
+TypetermList = ttlist(Typeterm*)
+OperatorList = olist(Operator*)
+
+

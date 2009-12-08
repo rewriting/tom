@@ -1,0 +1,98 @@
+module Code
+imports TomSignature TomName int
+abstract syntax
+
+CodeList = concCode(Code*)
+Code =
+     | TargetLanguageToCode(Tl:TargetLanguage)
+     | InstructionToCode(AstInstruction:Instruction)
+     | DeclarationToCode(AstDeclaration:Declaration)
+     | BQTermToCode(Bq:BQTerm)
+  /**
+   * <code>Tom</code> main construct to embed a Tom island
+   * It will be generated on a single line
+   * @param CodeList a list of Code that corresponds to islands or lakes
+   */
+     | Tom(CodeList:CodeList)
+  /**
+   * <code>TomInclude</code> like <code>Tom</code>, but corresponds to an include.
+   * It will be generated on a single line
+   * @param CodeList a list of Code that corresponds to islands or lakes
+   */
+     | TomInclude(CodeList:CodeList)
+
+
+BQTermList = concBQTerm(BQTerm*)
+
+/* used for the compilation of backquote expressions
+ * ex: `f(x+2,a()) -> 
+ *          BQAppl("f",concBQTerm(
+ *                        Composite(CompositeBQTerm(BQVar(x)),
+ *                                  CompositeTL(ITL("+")),
+ *                                  CompositeBQTerm(BuildConstant("2")))
+ *                         BQAppl("a",concBQTerm())))
+ */
+CompositeMember = CompositeBQTerm(term:BQTerm) 
+                | CompositeTL(Tl:TargetLanguage)
+
+
+BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
+       | BQVariable(Option:OptionList,AstName:TomName,AstType:TomType)
+       | BQVariableStar(Option:OptionList,AstName:TomName,AstType:TomType)
+       // translate a purely algebraic TomTerm into a BQTerm
+       // useful ?
+       | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
+       | Composite(CompositeMember*)
+      /**
+       * <code>FunctionCall</code> generates a function call
+       *
+       * @param AstName the name of the symbol
+       * @param AstType the codomain of the function call, EmptyType if not known
+       */
+       | FunctionCall(AstName:TomName,AstType:TomType,Args:BQTermList)
+       | BuildConstant(AstName:TomName)
+       | BuildTerm(AstName:TomName,Args:BQTermList,ModuleName:String)
+       | BuildEmptyList(AstName:TomName)
+       | BuildConsList(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)
+       | BuildAppendList(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)
+       | BuildEmptyArray(AstName:TomName,Size:BQTerm)
+       | BuildConsArray(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)
+       | BuildAppendArray(AstName:TomName,HeadTerm:BQTerm,TailTerm:BQTerm)
+       | ExpressionToBQTerm(Exp:Expression)
+    // for the compiler
+       | SymbolOf(GroundTerm:BQTerm)
+       | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:BQTerm)
+  /**
+   * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | VariableHeadList(Opname:TomName,Begin:BQTerm,End:BQTerm)
+  /**
+   * <code>VariableHeadArray</code> a head array that is variable ( starting from begining to end )
+   *
+   * @param Option a list of options
+   * @param AstName the name of the variable
+   * @param AstType the type of the variable
+   * @param Constraints a list of constraints
+   */
+    | VariableHeadArray(Opname:TomName,Subject:BQTerm,BeginIndex:BQTerm,EndIndex:BQTerm)
+  /**
+   * <code>ListHead</code> represents the head of a list
+   *
+   * @param Opname operator's name
+   * @param Codomain the type of the operator
+   * @param Variable the list from which to extract the head / tail
+   */
+	  | ListHead(Opname:TomName,Codomain:TomType,Variable:BQTerm)
+  /**
+   * <code>ListTail</code> the tail of a list
+   *
+   * @param Opname operator's name
+   * @param Codomain the type of the operator
+   * @param Variable the list from which to extract the head / tail
+   */
+  	| ListTail(Opname:TomName,Variable:BQTerm)  		   

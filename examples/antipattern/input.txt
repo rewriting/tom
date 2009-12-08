@@ -1,0 +1,53 @@
+match(a, a)
+match(a, b)
+match(anti(a), a)
+match(anti(a), b)
+-
+match(f(a,anti(b)), f(a,a))
+match(f(a,anti(b)), f(a,c))
+match(f(a,anti(b)), f(a,b))
+match(f(a,anti(b)), f(b,c))
+-
+match(anti(f(a,anti(b))), f(a,a))
+match(anti(f(a,anti(b))), f(a,c))
+match(anti(f(a,anti(b))), f(a,b))
+match(anti(f(a,anti(b))), f(b,c))
+match(anti(f(a,anti(b))), g(b))
+match(anti(f(a,anti(b))), f(a,b))
+match(anti(f(a,anti(b))), f(b,b))
+-
+match(f(X,X), f(a,a))
+match(f(X,X), f(a,b))
+-
+match(anti(f(X,X)), f(a,a))
+match(anti(f(X,X)), f(a,b))
+match(anti(f(X,X)), g(a))
+-
+match(f(X,anti(g(X))), f(a,b))
+match(f(X,anti(g(X))), f(a,g(b)))
+match(f(X,anti(g(X))), f(b,g(b)))
+match(f(X,anti(g(X))), g(b))
+-
+match(anti(f(X,anti(g(X)))), f(a,b))
+match(anti(f(X,anti(g(X)))), f(a,g(b)))
+match(anti(f(X,anti(g(X)))), f(b,g(b)))
+match(anti(f(X,anti(g(X)))), g(b))
+match(anti(f(X,anti(g(Y)))), f(b,g(b)))
+match(f(a,anti(g(Y))), f(b,g(b)))
+match(f(a,anti(g(Y))), f(a,b)) 
+-
+match(f(X,anti(X)), f(a,a))
+match(f(X,anti(X)), f(a,b))
+-
+match(f(anti(g(X)),anti(g(X))),f(g(a),g(b)))
+match(anti(f(anti(g(X)),anti(g(X)))),f(g(a),g(b)))
+-
+match(f(anti(X),anti(X)), f(a,a))
+match(f(anti(X),anti(X)), f(a,b))
+-
+match(anti(f(X,Y)), f(a,b))
+match(anti(f(X,anti(g(Y)))), f(a,g(b)))
+-
+match(anti(f(Z,anti(g(X,Y)))),f(c,g(a,b)))
+-
+match(anti(anti(X)),a)

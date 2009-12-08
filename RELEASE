@@ -1,0 +1,34 @@
+How to prepare a release:
+-------------------------
+
+- prepare release note (announce.txt)
+- in build.xml, update the property stable.version
+- ./build.sh clean.all
+- ./build.sh
+- ./build.sh bootstrap
+- ./build.sh bootinstall
+- ./build.sh all
+- svn commit
+
+- update the version of the manual
+- update the date of the manual
+- build a pdf version of the manual
+- update javadoc on the web site
+
+(- prepare the eclipse plugin)
+
+- prepare installation kit for windows
+
+- create distfiles:
+- ./build.sh dist.all
+- ./build.sh source.distribution
+
+- upload files to gforge
+- upload manual
+
+
+- update Changelog, commit, tag the release with
+  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.7 -m "tag tree"
+  svn copy svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/trunk svn+ssh://developername@scm.gforge.inria.fr/svn/tom/jtom/tags/tom-2.7 -m "tag tree"
+
+

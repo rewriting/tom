@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the builtin example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="builtin"/>
+  <property name="distribute" value="yes"/>
+</project>

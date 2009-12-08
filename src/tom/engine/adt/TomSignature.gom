@@ -1,0 +1,23 @@
+module TomSignature
+imports TomName TomType TomConstraint TomInstruction TomExpression 
+        TomDeclaration TomOption TomTerm TomSlot int String Code TypeConstraints
+abstract syntax
+TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
+               | ITL(Code:String)
+               | Comment(Code:String)
+               | noTL()
+TextPosition = TextPosition(Line:int,Column:int)
+TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Option:OptionList)
+TomSymbol = emptySymbol()
+          | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList)
+TomSymbolTable = Table(EntryList:TomEntryList)
+TomEntry = Entry(StrName:String,AstSymbol:TomSymbol)
+TomStructureTable = StructTable(StructList:TomList)
+TomVisitList = concTomVisit(TomVisit*)
+TomEntryList = concTomEntry(TomEntry*)
+TomSymbolList = concTomSymbol(TomSymbol*)
+
+KeyEntry = UsedSymbolConstructor(Symbol:TomSymbol)
+         | UsedSymbolDestructor(Symbol:TomSymbol)
+         | UsedSymbolAC(Symbol:TomSymbol)
+         | UsedType(Typedef:TomType)

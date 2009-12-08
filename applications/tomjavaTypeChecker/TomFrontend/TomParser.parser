@@ -1,0 +1,199 @@
+BodyDecl class_body_declaration =
+  TYPEMAPPING IDENTIFIER LBRACE mapping_implement.t type_mapping_list.m RBRACE {:
+    return new MemberClassDecl(
+      new TomTypeAlias(
+        new Modifiers(new List()),
+        IDENTIFIER,
+        new Opt(),
+        new List(),
+        t,
+        m
+      )
+    );
+  :}
+;
+
+
+
+Access mapping_implement =
+IMPLEMENT LBRACE type.t RBRACE {:
+  return t;
+  :}
+;
+
+List type_mapping_list =
+  type_mapping {: return new List().add(type_mapping); :}
+  | type_mapping_list type_mapping {: return type_mapping_list.add(type_mapping); :}
+  ;
+
+BodyDecl type_mapping =
+  IDENTIFIER LPAREN notype_parameter_list.l? RPAREN LBRACE expression RBRACE {: 
+    return new MethodDecl(
+      new Modifiers(new List()),
+      new TypeAccess("boolean"),
+      IDENTIFIER,
+      l,
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      )
+   );
+:}
+
+;
+
+List notype_parameter_list =
+  notype_parameter {: return new List().add(notype_parameter); :}
+  | notype_parameter_list COMMA notype_parameter {: return notype_parameter_list.add(notype_parameter); :}
+  ;
+
+ParameterDeclaration notype_parameter =
+  IDENTIFIER.name {: return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("java.lang", "Object"), name); :}
+  ;
+ 
+BodyDecl class_body_declaration =
+  OPMAPPING IDENTIFIER.returnType IDENTIFIER.opName LPAREN tom_typed_parameter_list.l? RPAREN LBRACE 
+    mapping_list.slotlist RBRACE {:
+      for(int i = 0; i < slotlist.getNumChildNoTransform(); i++) {
+        MethodMapping m = (MethodMapping)slotlist.getChildNoTransform(i);
+        if(m instanceof MakeMapping) {
+          MakeMapping make = (MakeMapping)m;
+          make.setTomTypedParameterList((List)l.fullCopy());
+          make.setTypeAccess(new TypeAccess("#" + returnType));
+          make.setID(make.getID() + "#" + opName);
+          make.setConstructorName(opName);
+        }
+        else if(m instanceof GetSlotMapping) {
+          GetSlotMapping slot = (GetSlotMapping)m;
+          slot.setTomTypedParameterList((List)l.fullCopy());
+          for(ParameterDeclaration d : slot.getParametersNoTransform())
+            d.setTypeAccess(new TypeAccess("#" + returnType));
+          slot.setID(m.getID() + "#" + opName);
+        }
+        else {
+          m.setID(m.getID() + "#" + opName);
+        }
+      }
+      slotlist.add(new OperatorMapping(new TypeAccess("#" + returnType), opName, l));
+      return new MethodMappings(slotlist);
+  :}
+  ;
+
+List tom_typed_parameter_list =
+  tom_typed_parameter {: return new List().add(tom_typed_parameter); :}
+  | tom_typed_parameter_list COMMA tom_typed_parameter {: return tom_typed_parameter_list.add(tom_typed_parameter); :}
+  ;
+
+ParameterDeclaration tom_typed_parameter =
+  IDENTIFIER.name COLON IDENTIFIER.type {:
+    if (type.equals("String")) {
+      return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess(type), name);
+    } else {
+      return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("#" + type), name);
+    }
+    :}
+    | IDENTIFIER.name COLON primitive_type.typeaccess {:
+      return new ParameterDeclaration(new Modifiers(new List()), typeaccess, name);
+ :};
+
+MethodMapping mapping_isfsym =
+  ISFSYM LPAREN IDENTIFIER.name RPAREN LBRACE expression RBRACE {: 
+    return new MethodMapping(
+      new Modifiers(new List()),
+      new TypeAccess("boolean"),
+      "is_fsym",
+      new List().add(new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("java.lang","Object"), name)),
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      )
+   );
+:}
+;
+    
+MakeMapping mapping_make =
+  MAKE.m LPAREN tom_parameter_list.l? RPAREN LBRACE expression RBRACE {: 
+    return new MakeMapping(
+      new Modifiers(new List().add(new Modifier("static"))),
+      new TypeAccess("java.lang", "Object"),
+      m,
+      l,
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      ),
+      "",
+      new List()
+    );
+  :}
+  ;
+
+
+List mapping_list =
+  method_mapping {: return new List().add(method_mapping); :}
+  | mapping_list method_mapping {: return mapping_list.add(method_mapping); :}
+  ;
+MethodMapping method_mapping =
+   mapping_get_slot | mapping_make | mapping_isfsym
+  ;
+
+GetSlotMapping mapping_get_slot =
+  GETSLOT LPAREN IDENTIFIER.slotname COMMA IDENTIFIER.subjectname RPAREN LBRACE expression RBRACE {: 
+    return new GetSlotMapping(
+      new Modifiers(new List().add(new Modifier("static"))),
+      new TypeAccess("java.lang", "Object"),
+      "get_slot_" + slotname,
+      new List().add(new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("java.lang", "Object"), subjectname)),
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      ),
+      slotname,
+      new List()
+    );
+  :}
+  ;
+
+
+List tom_parameter_list =
+  tom_parameter {: return new List().add(tom_parameter); :}
+  | tom_parameter_list COMMA tom_parameter {: return tom_parameter_list.add(tom_parameter); :}
+  ;
+
+ParameterDeclaration tom_parameter =
+  IDENTIFIER.name {: return new TomParameter(new Modifiers(new List()), new TypeAccess("java.lang", "Object"), name); :}
+  ;
+
+Expr expression =
+  BACKQUOTE expression {: return new BackQuoteExpr(expression); :}
+  ;
+
+Stmt statement =
+  MATCH LPAREN simple_name.t? expression RPAREN LBRACE rule_list RBRACE {: return new MatchStmt(t, expression, rule_list); :}
+  ;
+
+List rule_list =
+    rule {: return new List().add(rule); :}
+  | rule_list rule {: return rule_list.add(rule); :}
+  ;
+
+Rule rule =
+  expression ARROW block {: return new Rule(expression, block); :}
+  ;
+

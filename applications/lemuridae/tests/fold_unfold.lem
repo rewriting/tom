@@ -1,0 +1,18 @@
+proprule P -> A /\ B.
+proof th: P => A /\ B.
+intro.
+focus h1.
+fold.
+axiom.
+
+proof th2: X => X.
+intro.
+cut P.
+focus h2.
+fold.
+axiom.
+focus c2.
+fold.
+axiom.
+proofterm th2.
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Class>
+<Order Name="TINAMIFORMES">
+        <Family Name="TINAMIDAE">
+            <Species Scientific_Name="Tinamus major">  Great Tinamou.</Species>
+            <Species Scientific_Name="Nothocercus">Highland Tinamou.</Species>
+            <Species Scientific_Name="Crypturellus soui">Little Tinamou.</Species>
+            <Species Scientific_Name="Crypturellus cinnamomeus">Thicket Tinamou.</Species>
+            <Species Scientific_Name="Crypturellus boucardi">Slaty-breasted Tinamou.</Species>
+            <Species Scientific_Name="Crypturellus kerriae">Choco Tinamou.</Species>
+        </Family>
+    </Order>
+<Order Name="GAVIIFORMES">
+        <Family Name="GAVIIDAE">
+            <Species Scientific_Name="Gavia stellata">Red-throated Loon.</Species>
+            <Species Scientific_Name="Gavia arctica">Arctic Loon.</Species>
+            <Species Scientific_Name="Gavia pacifica">Pacific Loon.</Species>
+            <Species Scientific_Name="Gavia immer">Common Loon.</Species>
+            <Species Scientific_Name="Gavia adamsii">Yellow-billed Loon.</Species>
+        </Family>
+    </Order>
+
+
+<Order Name="PELECANIFORMES">
+        <Family Name="PHAETHONTIDAE">
+            <Species Scientific_Name="Phaethon lepturus">White-tailed Tropicbird.</Species>
+            <Species Scientific_Name="Phaethon aethereus">Red-billed Tropicbird.</Species>
+            <Species Scientific_Name="Phaethon rubricauda">Red-tailed Tropicbird.</Species>
+        </Family>
+        <Family Name="SULIDAE">
+            <Species Scientific_Name="Sula dactylatra">Masked Booby.</Species>
+            <Species Scientific_Name="Sula nebouxii">Blue-footed Booby.</Species>
+            <Species Scientific_Name="Sula variegata">Peruvian Booby. (A)</Species>
+            <Species Scientific_Name="Sula leucogaster">Brown Booby.</Species>
+            <Species Scientific_Name="Sula sula">Red-footed Booby.</Species>
+            <Species Scientific_Name="Morus bassanus">Northern Gannet.</Species>
+        </Family>
+        <Family Name="PELECANIDAE">
+            <Species Scientific_Name="Pelecanus erythrorhynchos">American White Pelican.</Species>
+            <Species Scientific_Name="Pelecanus occidentalis">Brown Pelican.</Species>
+        </Family>
+        <Family Name="PHALACROCORACIDAE">
+            <Species Scientific_Name="Phalacrocorax penicillatus">Brandt's Cormorant.</Species>
+            <Species Scientific_Name="Phalacrocorax brasilianus">Neotropic Cormorant.</Species>
+            <Species Scientific_Name="Phalacrocorax auritus">Double-crested Cormorant.</Species>
+            <Species Scientific_Name="Phalacrocorax carbo">Great Cormorant.</Species>
+            <Species Scientific_Name="Phalacrocorax urile">Red-faced Cormorant.</Species>
+            <Species Scientific_Name="Phalacrocorax pelagicus">Pelagic Cormorant.</Species>
+        </Family>
+        <Family Name="ANHINGIDAE">
+            <Species Scientific_Name="Anhinga anhinga">Anhinga.</Species>
+        </Family>
+        <Family Name="FREGATIDAE">
+            <Species Scientific_Name="Fregata magnificens">Magnificent Frigatebird.</Species>
+            <Species Scientific_Name="Fregata minor">Great Frigatebird.</Species>
+            <Species Scientific_Name="Fregata ariel">Lesser Frigatebird. (A)</Species>
+        </Family>
+    </Order>
+</Class>

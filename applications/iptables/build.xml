@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="tom.home"        location="../../src/dist"/>
+  <property name="iptables.dir"      location="."/>
+  <property name="iptables.src"      location="${iptables.dir}/src"/>
+  <property name="iptables.gen"      location="${iptables.dir}/gen"/>
+  <property name="iptables.build"    location="${iptables.dir}/build"/>
+  <property name="iptables.package"   value="iptables"/>
+  <property name="iptables.ast"      value="${iptables.package}/Ast"/>
+  <property name="iptables.grammarlistname"  value="IptablesListParser"/>
+  <property name="iptables.grammarcmdname"  value="IptablesCmdParser"/>
+  <property name="iptables.grammarlist"  value="${iptables.package}/${iptables.grammarlistname}"/>
+  <property name="iptables.grammarcmd"  value="${iptables.package}/${iptables.grammarcmdname}"/>
+  
+  <import file="${tom.home}/lib/tom-common.xml"/>
+  
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="tom.classpath"/>
+  </taskdef>
+  
+  <target name="init" depends="tom.init"> 
+    <mkdir dir="${iptables.build}"/>
+    <mkdir dir="${iptables.gen}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${iptables.src}"
+                destdir="${iptables.gen}"
+                import="${iptables.gen}"> 
+      <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="antlrtom" depends="gomantlradapter">
+    <tom.preset srcdir="${iptables.src}"
+        outputfile="${iptables.gen}/${iptables.grammarlist}.g">
+      <include name="${iptables.grammarlist}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${iptables.gen}"/>
+        <pathelement location="${iptables.gen}/${iptables.package}"/>
+      </tomincludedir>
+    </tom.preset>
+    <tom.preset srcdir="${iptables.src}"
+        outputfile="${iptables.gen}/${iptables.grammarcmd}.g">
+      <include name="${iptables.grammarcmd}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${iptables.gen}"/>
+        <pathelement location="${iptables.gen}/${iptables.package}"/>
+      </tomincludedir>
+    </tom.preset>
+  </target>
+  
+  <target name="gomantlradapter" depends="init">
+    <gomantlradapter.preset srcdir="${iptables.src}"
+                            destdir="${iptables.gen}"
+                            grammar="${iptables.grammarlistname}"
+                            package="${iptables.package}">
+      <include name="${iptables.ast}.gom"/>
+    </gomantlradapter.preset>
+    <gomantlradapter.preset srcdir="${iptables.src}"
+                            destdir="${iptables.gen}"
+                            grammar="${iptables.grammarcmdname}"
+                            package="${iptables.package}">
+      <include name="${iptables.ast}.gom"/>
+    </gomantlradapter.preset>
+  </target>
+
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${iptables.src}"
+                destdir="${iptables.gen}">
+                <include name="**/*.gom"/>
+    </gom.preset>
+  </target>
+  
+  <target name="antlr" depends="antlrtom">
+    <antlr3 target="${iptables.gen}/${iptables.grammarlist}.g"
+            outputdirectory="${iptables.gen}/${iptables.package}" />
+    <antlr3 target="${iptables.gen}/${iptables.grammarcmd}.g"
+            outputdirectory="${iptables.gen}/${iptables.package}" />
+  </target>
+  
+  <target name="javac" depends="tom, antlr">
+    <javac.preset destdir="${iptables.build}" >
+      <!--<src path="${iptables.src}"/>-->
+      <src path="${iptables.gen}"/>
+      <src path="${iptables.src}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${iptables.gen}"/>
+    <delete dir="${iptables.build}"/>
+  </target>
+  
+</project>

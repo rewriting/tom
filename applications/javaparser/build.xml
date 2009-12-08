@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="tom.home"        location="../../src/dist"/>
+  <property name="jparse.dir"      location="."/>
+  <property name="jparse.src"      location="${jparse.dir}/src"/>
+  <property name="jparse.gen"      location="${jparse.dir}/gen"/>
+  <property name="jparse.build"    location="${jparse.dir}/build"/>
+  <property name="jparse.ast"      value="Ast"/>
+  <property name="jparse.grammar"  value="Java"/>
+  <property name="jparse.parser"   value="parser"/>
+  
+  <import file="${tom.home}/lib/tom-common.xml"/>
+  
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="tom.classpath"/>
+  </taskdef>
+  
+  <target name="init" depends="tom.init">
+    <mkdir dir="${jparse.build}"/>
+    <mkdir dir="${jparse.gen}"/>
+    <mkdir dir="${jparse.gen}/${jparse.parser}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}">
+      <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="antlrtom" depends="gomantlradapter">
+    <tom.preset srcdir="${jparse.src}"
+                outputfile="${jparse.gen}/${jparse.grammar}.g"
+                import="${jparse.gen}"> 
+      <include name="${jparse.grammar}.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}">
+      <include name="${jparse.ast}.gom"/>
+    </gom.preset>
+  </target>
+  
+  <target name="gomantlradapter" depends="init">
+    <gomantlradapter.preset srcdir="${jparse.src}"
+                            destdir="${jparse.gen}"
+                            grammar="${jparse.grammar}"
+                            package="${jparse.parser}">
+      <include name="${jparse.ast}.gom"/>
+    </gomantlradapter.preset>
+  </target>
+  
+  <target name="antlr" depends="antlrtom">
+    <antlr3 target="${jparse.gen}/${jparse.grammar}.g"
+            outputdirectory="${jparse.gen}/${jparse.parser}"
+            />
+  </target>
+  
+  <target name="javac" depends="tom, antlr">
+    <javac.preset destdir="${jparse.build}" >
+      <!--<src path="${jparse.src}"/>-->
+      <src path="${jparse.gen}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+  
+  <target name="test"><!-- depends="javac"-->
+    <java classname="Main"
+          fork="true">
+      <!-- <arg value="${jparse.gen}/Main.java"/> -->
+      <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${jparse.build}"/>
+      </classpath>
+    </java>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${jparse.gen}"/>
+    <delete dir="${jparse.build}"/>
+  </target>
+  
+</project>

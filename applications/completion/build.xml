@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Completion in deduction modulo" default="build" basedir=".">
+  <description>
+    Completion in deduction modulo to recover cut admissibility
+    (include TaMed)
+  </description>
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="comp.dir"      location="."/>
+  <property name="comp.src"      location="src"/>
+  <property name="comp.gen"      location="gen"/>
+  <property name="comp.build"    location="build"/>
+ 
+  <target name="clean" description="Clean generated files">
+    <delete dir="${comp.build}"/>
+  </target>
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${comp.build}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <copy todir="${comp.build}">
+      <fileset dir="${comp.src}">
+        <include name="**/*.ml"/>
+        <include name="**/*.mli"/>
+        <include name="**/*.t"/>
+        <include name="**/Makefile"/>
+        <include name="**/*.mly"/>
+        <include name="**/*.mll"/>
+      </fileset>
+    </copy>
+    <antcall target="caml.make"/>
+  </target>
+  <target name="caml.make">
+    <exec dir="${comp.build}" 
+          failonerror="yes"
+          executable="touch">
+      <arg line=".depends"/>
+    </exec>
+    <exec dir="${comp.build}" 
+          failonerror="yes"
+          executable="touch">
+      <arg line="*.mli"/>
+    </exec>
+    <exec dir="${comp.build}" 
+          failonerror="yes"
+          executable="make">
+      <arg line="dep"/>
+    </exec>
+    <exec dir="${comp.build}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+    </exec>
+  </target>
+</project>

@@ -1,0 +1,24 @@
+module TomOption
+imports TomSignature int Theory
+abstract syntax
+Option = 
+  | DeclarationToOption(AstDeclaration:Declaration)
+  | TomNameToOption(AstName:TomName)
+  | TomTermToOption(AstTerm:TomTerm)
+  | GeneratedMatch()
+  | OriginTracking(AstName:TomName,Line:int,FileName:String)
+  | OriginalText(AstName:TomName)
+  | Constant()
+  | MatchingTheory(Theory:Theory)
+  | Label(AstName:TomName)
+  | Debug(AstName:TomName)
+  | ModuleName(String:String)
+  | ImplicitXMLAttribut()
+  | ImplicitXMLChild()
+  | ACSymbol()
+  | noOption()
+// TODO : remove
+  | DefinedSymbol()
+  | TypeForVariable(String:String)
+
+OptionList = concOption(Option*)

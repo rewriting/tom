@@ -1,0 +1,17 @@
+Context(SigOf("zero", Sig(Domain(),Type("Nat"))),
+                      SigOf("suc", Sig(Domain(Type("Nat")), Type("Nat"))),
+                      SigOf("mult", Sig(Domain(Type("Nat"),Type("Nat")), Type("Nat"))),
+                      SigOf("square", Sig(Domain(Type("Int")), Type("Nat"))),
+                      SigOf("uminus", Sig(Domain(Type("Nat")), Type("Int"))),
+                      SigOf("plus", Sig(Domain(Type("Int"),Type("Int")),Type("Int"))),
+		      SigOf("div", Sig(Domain(Type("Int"),Type("Int")),Type("Float")))),
+
+CList(Subtype(Type("Nat"),Type("Int")),
+      Subtype(Type("Int"),Type("Float"))),
+
+TIList(Match(Rule(Conjunction(CondList(Less(Fun("zero",TTeList()),Var("x",TypeVar(1))),
+			      	      Disjunction(CondList(Matching(Var("x",TypeVar(2)),
+							    	    Fun("suc",TTeList(Fun("zero",TTeList()))),TypeVar(3)),
+						   	   Matching(Var("x",TypeVar(4)),
+							    	    Fun("suc",TTeList(Fun("suc",TTeList(Fun("zero",TTeList()))))),TypeVar(5)))))),
+		  TTeList(Var("x",TypeVar(6))))))

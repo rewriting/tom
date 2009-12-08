@@ -1,0 +1,196 @@
+aspect JavaDemoNames {
+  // abstraction for FieldDecl and LocalVariableDecl
+  interface Variable {
+    String getname();
+    ClassDecl type();
+  }
+  FieldDecl implements Variable;
+  LocalVariableDecl implements Variable;
+ 
+  eq Prog.getCompUnit().unknownType() {
+    return new ClassDecl("unknown", new TypeName("Object"), new List() ) {
+      public ClassDecl memberClass(String name) {
+        return null;
+      }
+      public FieldDecl memberField(String name) {
+        return null;
+      }
+    };
+  }
+  inh ClassDecl Expr.unknownType();
+  inh ClassDecl CompUnit.unknownType();
+
+  syn ClassDecl Expr.type() = unknownType();
+  eq Dot.type() = getRight().type();
+  eq ExpressionName.type() = lookupVariable(getname()) != null ?
+      lookupVariable(getname()).type() : unknownType();
+  eq TypeName.type() = lookupType(getname()) != null ?
+      lookupType(getname()) : unknownType();
+  syn ClassDecl LocalVariableDecl.type() = getVarType().type();
+  syn ClassDecl FieldDecl.type() = getFieldType().type();
+  
+  // visible variable or null
+  inh Variable Expr.lookupVariable(String name);
+  inh Variable CompUnit.lookupVariable(String name);
+  inh Variable Block.lookupVariable(String name);
+  inh Variable ClassDecl.lookupVariable(String name);
+  
+  // local variables in blocks
+  eq Block.getStmt(int index).lookupVariable(String name) {
+    for(int i = 0; i < index; i++)
+      if(getStmt(i).isLocalVariableDecl(name))
+        return (LocalVariableDecl)getStmt(i);
+    return lookupVariable(name);
+  }
+  syn boolean Stmt.isLocalVariableDecl(String name) = false;
+  eq LocalVariableDecl.isLocalVariableDecl(String name) =
+    getname().equals(name);
+    
+  // member fields in classes
+  eq ClassDecl.getBodyDecl().lookupVariable(String name) {
+    if(memberField(name) != null)
+      return memberField(name);
+    return lookupVariable(name);
+  }
+  // members including inheritance
+  syn FieldDecl ClassDecl.memberField(String name) {
+    for(int i = 0; i < getNumBodyDecl(); i++)
+      if(getBodyDecl(i).isField(name))
+        return (FieldDecl)getBodyDecl(i);
+    if(!getname().equals("Object") && getSuper().type().memberField(name) != null)
+      return getSuper().type().memberField(name);
+    return null;
+  }
+  syn boolean BodyDecl.isField(String name) = false;
+  eq FieldDecl.isField(String name) = getname().equals(name);
+  
+  // no more nested declarations
+  eq Prog.getCompUnit().lookupVariable(String name) = null;
+  
+  // visible type or null object
+  inh ClassDecl Expr.lookupType(String name);
+  inh ClassDecl CompUnit.lookupType(String name);
+  inh ClassDecl ClassDecl.lookupType(String name);
+  
+  // top level types in compilation unit
+  eq CompUnit.getClassDecl().lookupType(String name) {
+    if(topLevelType(name) != null)
+      return topLevelType(name);
+    // declarations in same package
+    return lookupCanonical(getpackageName(), name);
+  }
+  syn ClassDecl CompUnit.topLevelType(String name) {
+    for(int i = 0; i < getNumClassDecl(); i++)
+      if(getClassDecl(i).getname().equals(name))
+        return getClassDecl(i);
+    return null;
+  }
+  // lookup a type using its canonical name
+  inh ClassDecl Expr.lookupCanonical(String pack, String type);
+  inh ClassDecl CompUnit.lookupCanonical(String pack, String type);
+  eq Prog.getCompUnit().lookupCanonical(String pack, String type) {
+    for(int i = 0; i < getNumCompUnit(); i++)
+      if(getCompUnit(i).getpackageName().equals(pack) && 
+         getCompUnit(i).topLevelType(type) != null)
+        return getCompUnit(i).topLevelType(type);
+    return null;
+  }
+  // member classes in class declaration
+  eq ClassDecl.getBodyDecl().lookupType(String name) {
+    if(memberClass(name) != null)
+      return memberClass(name);
+    return lookupType(name);
+  }
+  // members including inheritance
+  syn ClassDecl ClassDecl.memberClass(String name) {
+    for(int i = 0; i < getNumBodyDecl(); i++)
+      if(getBodyDecl(i).isMemberClass(name))
+        return ((MemberClassDecl)getBodyDecl(i)).getClassDecl();
+    if(!getname().equals("Object") && getSuper().type().memberClass(name) != null)
+      return getSuper().type().memberClass(name);
+    return null;
+  }
+  syn boolean BodyDecl.isMemberClass(String name) = false;
+  eq MemberClassDecl.isMemberClass(String name) = getClassDecl().getname().equals(name);
+  
+  // no more nested declarations
+  eq Prog.getCompUnit().lookupType(String name) = null;
+
+  eq Dot.getRight().lookupVariable(String name) = 
+    getLeft().type().memberField(name);
+
+  eq Dot.getRight().lookupType(String name) = 
+    getLeft().qualifiedLookupType(name);
+  
+  syn ClassDecl Expr.qualifiedLookupType(String typeName) =
+    type().memberClass(typeName);
+  eq PackageName.qualifiedLookupType(String typeName) =
+    lookupCanonical(getname(), typeName);
+
+  rewrite ParseName { 
+    when(kind() == Kind.PACKAGE_NAME)
+    to Name new PackageName(getname());
+    when(kind() == Kind.TYPE_NAME)
+    to Name new TypeName(getname());
+    when(kind() == Kind.EXPRESSION_NAME)
+    to Name new ExpressionName(getname());
+    when(kind() == Kind.PACKAGE_OR_TYPE_NAME)
+    to Name new PackageOrTypeName(getname());
+    when(kind() == Kind.AMBIGUOUS_NAME)
+    to Name new AmbiguousName(getname());
+  }
+  inh Kind Name.kind();
+  inh Kind CompUnit.kind();
+  eq Prog.getCompUnit().kind() = Kind.AMBIGUOUS_NAME;
+  eq ClassDecl.getSuper().kind() = Kind.PACKAGE_NAME;
+  eq FieldDecl.getFieldType().kind() = Kind.TYPE_NAME;
+  eq FieldDecl.getExpr().kind() = Kind.EXPRESSION_NAME;
+  eq LocalVariableDecl.getVarType().kind() = Kind.TYPE_NAME;
+  eq LocalVariableDecl.getExpr().kind() = Kind.EXPRESSION_NAME;
+  
+  // propagate information from right to left
+  eq Dot.getLeft().kind() = getRight().predKind();
+  syn Kind Name.predKind() = Kind.AMBIGUOUS_NAME;
+  eq Dot.predKind() = getLeft().predKind();
+  
+  eq PackageName.predKind() = Kind.PACKAGE_NAME;
+  eq TypeName.predKind() = Kind.PACKAGE_OR_TYPE_NAME;
+  eq ExpressionName.predKind() = Kind.AMBIGUOUS_NAME;
+  eq PackageOrTypeName.predKind() = Kind.PACKAGE_OR_TYPE_NAME;
+  eq AmbiguousName.predKind() = Kind.AMBIGUOUS_NAME;
+  
+  class Kind {
+    static Kind PACKAGE_NAME = new Kind();
+    static Kind TYPE_NAME = new Kind();
+    static Kind EXPRESSION_NAME = new Kind();
+    static Kind PACKAGE_OR_TYPE_NAME = new Kind();
+    static Kind AMBIGUOUS_NAME = new Kind();
+  }
+  rewrite AmbiguousName {
+    when(lookupVariable(getname()) != null)
+    to Name new ExpressionName(getname());
+    when(lookupType(getname()) != null)
+    to Name new TypeName(getname());
+    when(hasPackage(getname()))
+    to Name new PackageName(getname());
+  }
+  rewrite PackageOrTypeName {
+    when(lookupType(getname()) != null)
+    to Name new TypeName(getname());
+    when(hasPackage(getname()))
+    to Name new PackageName(getname());
+  }
+  inh boolean Expr.hasPackage(String name);
+  inh boolean CompUnit.hasPackage(String name);
+  eq Prog.getCompUnit().hasPackage(String name) {
+    for(int i = 0; i < getNumCompUnit(); i++)
+      if(getCompUnit(i).getpackageName().equals(name))
+        return true;
+    return false;
+  }
+  eq Dot.getRight().hasPackage(String name) =
+        getLeft().qualifiedHasPackage(name);
+  syn boolean Expr.qualifiedHasPackage(String name) = false;
+  eq PackageName.qualifiedHasPackage(String name) = 
+        hasPackage(getname() + '.' + name);
+}

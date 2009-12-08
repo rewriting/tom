@@ -1,0 +1,14 @@
+Travail effectué :
+
+Suppression des règles qui sont englobées par la politique par défaut.
+Filtrage des IP et connexion qui sont bloquées par l'utilitaire fail2ban
+Filtrage des règles fail2ban
+Filtrage des chains utilisateur qui ne sont pas utilisées.
+
+
+Travail à faire :
+
+Recherche de regles spécifiques a une IP alors qu'une regle plus globale est appliquée au reseau de cette IP
+REgroupement des regles par reseau.
+Filtrage des regles de qualité de service / anti flood
+//Verifier que dans INPUT destination soit meme

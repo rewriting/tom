@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+use diagnostics;
+
+# arguments: [-p package] module
+# generating baseclass and visitorclass
+my $package="";
+my $module=shift;
+my $baseclass=lc($module).".".$module."AbstractType";
+my $visitorclass=lc($module).".".$module."Visitor";
+if($module eq "-p") {
+  $package=shift;
+  $module=shift;
+  $baseclass=$package.".".$baseclass;
+  $visitorclass=$package.".".$visitorclass;
+}
+
+# filter to be applied on submodule AbstractClass java file
+my $etat=0;
+my $classname="";
+
+while(<>) {
+  my $ligne=$_;
+
+  if($etat==0) {
+    if(/public/) {
+      $ligne =~ s/public abstract class (.*) implements.*/public abstract class $1 extends $baseclass {/;
+      $classname=$1;
+      print $ligne;
+      $etat=1;
+    } else {
+      print;
+    }
+  } elsif($etat==1) {
+    if(/$classname/) {
+      $ligne =~ /$classname accept\((.*) v\)/;
+      my $genvisitor=$1;
+      print "\n";
+      print "    public $baseclass accept($visitorclass v) throws jjtraveler.VisitFailure {\n";
+      print "        if(v instanceof $genvisitor) {\n";
+      print "            return accept(($genvisitor)v);\n";
+      print "        }\n";
+      print "\n";     
+      print "        throw new jjtraveler.VisitFailure();\n";
+      print "    }\n";
+      print"\n";
+      print;
+      $etat=2;
+    }
+  } else {
+    print;
+  }
+}

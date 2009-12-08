@@ -1,0 +1,4 @@
+Chain INPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT     tcp  --  192.168.0.0/24       anywhere
+DROP	   tcp  --  192.168.0.0/24       anywhere

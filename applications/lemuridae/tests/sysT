@@ -1,0 +1,43 @@
+proprule  eps(natpoint) -> nat.
+proprule  eps(impl(a,b)) -> eps(a) => eps(b).
+
+proprule  nat -> forall tau, tau => (nat => tau => tau) => tau.
+
+proof zero: nat.
+fold.
+intro.
+intro.
+intro.
+axiom.
+
+
+proof s: nat => nat.
+intro.
+fold.
+intro.
+intro.
+intro.
+focus h3.
+duplicate.
+focus h3.
+intro.
+next.
+axiom.
+focus h1.
+fold.
+focus h1.
+intro. tau.
+focus h1.
+intro.
+next.
+focus c2.
+axiom.
+focus h1.
+intro.
+next.
+axiom.
+focus h1.
+axiom.
+display s.
+
+proofterm s.

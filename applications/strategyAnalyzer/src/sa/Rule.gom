@@ -1,0 +1,53 @@
+module sa.Rule
+imports String int
+abstract syntax
+
+Expression = Let(name:String, v:Expression, t:Expression)
+           | Set(list:RuleList)
+           | Strat(strat:Strat)
+           | Signature(symbollist:SymbolList)
+
+Symbol = Symbol(name:String,arity:int)
+SymbolList = SymbolList(Symbol*)
+
+ExpressionList = ExpressionList(Expression*)
+
+Term = Appl(symbol:String,args:TermList)
+     | Var(name:String)
+     | BuiltinInt(i:int)
+     | Anti(term:Term)
+     | At(term1:Term,term2:Term)
+
+TermList = TermList(Term*)
+
+Rule = Rule(lhs:Term,rhs:Term)
+     | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
+
+Condition = 
+          | CondEquals(t1:Term,t2:Term)
+
+RuleList = RuleList(Rule*)
+
+Strat = StratName(name:String)
+      | StratRule(rule:Rule)
+      | StratSequence(s1:Strat, s2:Strat)
+      | StratChoice(s1:Strat, s2:Strat)
+      | StratIdentity()
+      | StratFail()
+      | StratAll(s:Strat)
+      | StratOne(s:Strat)
+      | StratExp(e:Expression)
+      | StratMu(name:String, s:Strat)
+
+module Rule:rules() {
+  StratExp(Strat(s)) -> s
+  StratName("Identity") -> StratIdentity()
+  StratName("Fail") -> StratFail()
+}
+
+
+// sort Rule:block() {
+//   public int compareTo(Object r){
+//     return this.compareToLPO(r);
+//   }
+// }

@@ -1,0 +1,33 @@
+match(f(a,X,cons(gt(X,3))), f(a,2))
+match(f(a,X,cons(gt(X,3))), f(a,7))
+match(f(a,X,cons(gt(X,3),lt(X,5))), f(a,4))
+match(f(a,X,cons(gt(X,3),lt(X,5))), f(a,6))
+-
+match(anti(f(a,X,cons(gt(X,3)))), f(a,2))
+match(anti(f(a,X,cons(gt(X,3),lt(X,5)))), f(a,4))
+match(anti(f(a,X,cons(gt(X,3),lt(X,5)))), f(a,6))
+match(anti(f(a,X,cons(gt(X,3),lt(X,5)))), g(a))
+-
+match(f(a,anti(g(X,cons(gt(X,3))))),f(a,g(2)))
+match(f(a,anti(g(X,cons(gt(X,3))))),f(a,g(4)))
+match(f(a,anti(g(X,cons(gt(X,3))))),f(a,b))
+-
+match(f(X,X,cons(gt(X,3),lt(X,7))),f(4,4))
+match(f(X,X,cons(gt(X,3),lt(X,7))),f(4,5))
+match(f(X,X,cons(gt(X,3),lt(X,7))),f(10,10))
+-
+match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),f(2,g(2)))
+match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),f(4,g(4)))
+match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),f(4,g(5)))
+match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),g(5))
+-
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(2,g(2)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(4,g(4)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(4,g(5)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),g(5))
+-
+match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(2,g(2)))
+match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(2,a))
+match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(4,g(4)))
+match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(4,g(5)))
+match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),g(5))

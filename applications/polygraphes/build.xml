@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="tom.home"        location="../../src/dist"/>
+  <property name="polygraph.dir"      location="."/>
+  <property name="polygraph.src"      location="${polygraph.dir}/src"/>
+  <property name="polygraph.gen"      location="${polygraph.dir}/gen"/>
+  <property name="polygraph.build"    location="${polygraph.dir}/build"/>
+  
+  <import file="${tom.home}/lib/tom-common.xml"/>
+  
+  
+  <target name="init" depends="tom.init">
+    <mkdir dir="${polygraph.build}"/>
+    <mkdir dir="${polygraph.gen}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${polygraph.src}"
+                destdir="${polygraph.gen}"
+                import="${polygraph.gen}"> 
+      <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+  </target>
+  
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${polygraph.src}"
+                destdir="${polygraph.gen}">
+                <include name="**/*.gom"/>
+    </gom.preset>
+  </target>
+
+  <target name="javac" depends="tom">
+    <javac.preset destdir="${polygraph.build}" >
+      <!--<src path="${polygraph.src}"/>-->
+      <src path="${polygraph.gen}"/>
+      <src path="${polygraph.src}"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${polygraph.gen}"/>
+    <delete dir="${polygraph.build}"/>
+  </target>
+  
+</project>

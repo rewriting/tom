@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process>
+
+  <sequence>
+    <invoke>
+      <activity name="a1"/> 
+      <url name="s1"/> 
+      <input name="d1"/> 
+      <output  name="d2"/>
+    </invoke>
+    <invoke>
+      <activity name="a2"/> 
+      <url name="s2"/> 
+      <input name="d2"/> 
+      <output  name="d3"/>
+    </invoke>
+    <invoke>
+      <activity name="a3"/> 
+      <url name="s3"/> 
+      <input name="d3"/> 
+      <output  name="d4"/>
+      <output  name="d5"/>
+    </invoke>
+    <flow>
+      <sequence>
+        <invoke>
+          <activity name="a4"/> 
+          <url name="s4"/> 
+          <input name="d4"/> 
+          <output  name="d6"/>
+          <output  name="d7"/>
+        </invoke>
+        <invoke>
+          <activity name="a5"/> 
+          <url name="s5"/> 
+          <input name="d6"/> 
+          <output  name="d8"/>
+        </invoke>
+      </sequence>
+      <sequence>
+        <invoke>
+          <activity name="a6"/> 
+          <url name="s6"/> 
+          <input name="d5"/> 
+          <output  name="d9"/>
+        </invoke>
+      </sequence>
+    </flow>
+    <invoke>
+      <activity name="a7"/> 
+      <url name="s7"/> 
+      <input name="d8"/> 
+      <output  name="d11"/>
+    </invoke>
+    <invoke>
+      <activity name="a8"/> 
+      <url name="s8"/> 
+      <input name="d9"/> 
+      <output  name="d12"/>
+    </invoke>
+    <invoke>
+      <activity name="a9"/> 
+      <url name="s9"/> 
+      <input name="d7"/>
+      <output name="d13"/>
+    </invoke>
+    <invoke>
+      <activity name="a10"/> 
+      <url name="s10"/> 
+      <input name="d13"/>
+
+    </invoke>
+  </sequence>
+
+</process>
+

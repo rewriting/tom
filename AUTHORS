@@ -1,0 +1,27 @@
+Current developers:
+    Jean-Christophe Bach      e-mail: Jeanchristophe.Bach@loria.fr
+    Emilie Balland            e-mail: Emilie.Balland@loria.fr
+    Paul Brauner              e-mail: Paul.Brauner@loria.fr
+    Radu Kopetz               e-mail: Radu.Kopetz@loria.fr
+    Pierre-Etienne Moreau     e-mail: Pierre-Etienne.Moreau@loria.fr
+    Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
+    Claudia Tavares           e-mail: Claudia.Tavares@loria.fr
+
+Main contributors:
+    Julien Guyon              Eclipse plugin
+    Bertrand Tavernier        CRIL Technology
+
+Other contributors:
+    Gregory Andrien           Plugin-Platform
+    Mark van den Brand        Discussions
+    Guillaume Darmont         XML extension
+    Eric Deplagne             first ANTLR plugin
+    Stephane Hrvatin          ANTLR based parser
+    Anne-Claire Lonchamp      Constraint extension
+    Christophe Ringeissen     Initial design of Tom
+    Yoann Toussaint           Strategy construct and ANTLRMapper
+    Jurgen Vinju              Many discussions and ApiGen integration
+    Patrick Viry              Discussions and backquote notation
+    Eelco Visser              Discussions and %match construct
+    Marian Vittek             Initial design of Tom
+

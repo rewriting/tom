@@ -1,0 +1,30 @@
+aspect PrettyPrint {
+
+
+  public void BackQuoteExpr.toString(StringBuffer s) {
+    getExpr().toString(s);
+  }
+
+  public void MatchStmt.toString(StringBuffer s) {
+    s.append("Match (");
+    getExpr().toString(s);
+    s.append(") {");
+    for(int i = 0; i < getNumRule(); i++) {
+      s.append("\n");
+      getRule(i).toString(s);
+    }
+    s.append("}\n");
+  }
+
+
+  public void Rule.toString(StringBuffer s) {
+    getExpr().toString(s);
+    s.append(" -> ");
+    getStmt().toString(s);
+  }
+
+  public void OperatorMapping.toString(StringBuffer s) {
+    
+  }
+
+}

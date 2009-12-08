@@ -1,0 +1,88 @@
+module TomExpression
+imports TomSignature String
+abstract syntax
+
+Expression = BQTermToExpression(AstTerm:BQTerm)
+		       | TomInstructionToExpression(Instruction:Instruction)
+           /**
+            * We have different Bottom for different types
+            * For instance, built-in types can't be null in Java
+            */
+           | Bottom(TomType:TomType)
+           | Negation(Arg:Expression)
+           | And(Arg1:Expression,Arg2:Expression)
+           | Or(Arg1:Expression,Arg2:Expression)
+           /**
+		   * <code>OrExpressionDisjunction</code> used for the disjunction of symbols
+		   *
+		   * @param Expression the list of And() that are linked by Or
+		   */		              
+           | OrExpressionDisjunction(Expression*)
+           /**
+		   * <code>OrConnector</code> this is the 'or' connector that initially connected the constraints in the lhs of the rule
+		   *
+		   * @param Expression the list of expressions that are linked by Or
+           */
+           | OrConnector(Expression*)
+           | GreaterThan(Arg1:Expression,Arg2:Expression)
+           | GreaterOrEqualThan(Arg1:Expression,Arg2:Expression)
+           | LessThan(Arg1:Expression,Arg2:Expression)
+           | LessOrEqualThan(Arg1:Expression,Arg2:Expression)           
+           | AntiMatchExpression(Expression:Expression)
+           | Conditional(Cond:Expression,Then:Expression,Else:Expression)
+           | TrueTL()
+           | FalseTL()
+           | Integer(value:int)
+           // Kid1 - the subject
+           // Kid2 - the pattern
+           | EqualTerm(TomType:TomType,Kid1:BQTerm,Kid2:TomTerm)
+           // equality between two backquote terms
+           | EqualBQTerm(TomType:TomType,t1:BQTerm,t2:BQTerm)
+           | Cast(AstType:TomType,Source:Expression)
+           // AstName - the name of the function symbol from whom to extract the slot
+           // Variable - from what to extract the slot 
+           | GetSlot(Codomain:TomType,AstName:TomName,SlotNameString:String,Variable:BQTerm)
+           | IsFsym(AstName:TomName,Variable:BQTerm)
+           | GetHead(Opname:TomName,Codomain:TomType,Variable:BQTerm)
+           | GetTail(Opname:TomName,Variable:BQTerm)
+           | IsEmptyList(Opname:TomName,Variable:BQTerm)
+           | IsEmptyArray(Opname:TomName,Variable:BQTerm,Index:BQTerm)
+           | AddOne(Variable:BQTerm)
+           | SubstractOne(Variable:BQTerm)
+           /**
+            *  <code>Substract(Term1:BQTerm,Term2:BQTerm)</code> performs Term1-Term2
+            *
+            */
+           | Substract(Term1:BQTerm,Term2:BQTerm)
+           | GetSize(Opname:TomName,Variable:BQTerm)
+           | GetElement(Opname:TomName,Codomain:TomType,Variable:BQTerm,Index:BQTerm)
+           | GetSliceList(AstName:TomName,VariableBeginAST:BQTerm,VariableEndAST:BQTerm, Tail:BQTerm)
+           | GetSliceArray(AstName:TomName,SubjectListName:BQTerm,VariableBeginAST:BQTerm,VariableEndAST:BQTerm)
+           | ConstraintToExpression(cons:Constraint)
+           /**
+            * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
+            * @param Pattern the f(x,y)
+            * @param Subject the subject to match 
+            */
+           | ACMatchLoop(SymbolName:String,VariableX:TomTerm,VariableY:TomTerm,MultiplicityY:int,Subject:BQTerm)
+           /**
+		   * <code>WhileExpression</code> a do while loop
+		   *
+		   * @param LoopCondition the loop condition
+		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
+		   */
+           | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
+           /*
+		   * check that source is of sort astType, and then execute inst
+		   */
+           | IsSort(AstType:TomType,Variable:BQTerm)
+       /*
+        * used to represent a piece of code
+        * similar to ITL, but preprocessed to perform macro-expansion
+        */
+           | Code(Code:String)
+
+module TomExpression:rules() {
+  BQTermToExpression(ExpressionToBQTerm(t)) -> t
+  ExpressionToBQTerm(BQTermToExpression(t)) -> t
+}

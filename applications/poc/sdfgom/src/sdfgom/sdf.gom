@@ -1,0 +1,114 @@
+module sdfgom.sdf
+imports String int ATerm
+abstract syntax
+
+Definition = definition(moduleList:ModuleList)
+ModuleList = modulelist(Module*)
+
+Module = my_module(moduleName:ModuleName,impSections:ImpSections,sections:Sections)
+
+ModuleName = unparameterized(moduleId:ModuleId)
+ModuleId = leaf(String:String)
+         | path(String:String)
+         | root(String:String)
+
+ImpSection = my_imports(imps:Imports)
+ImpSections = listImpSection(ImpSection*)
+
+Imports = listImports(ModuleImport*)
+ModuleImport = module_name(moduleName:ModuleName)
+
+Sections = listSection(Section*)
+
+Section = exports(grammar:Grammar)
+        | hiddens(grammar:Grammar)
+
+Grammar = conc_grammars(g1:Grammar,g2:Grammar)
+       | context_free_syntax(prods:Productions)
+       | context_free_start_symbols(symbols:Symbols)
+       | context_free_restrictions(restricts:Restrictions)
+       | context_free_priorities(prios:Priorities)
+       | lexical_syntax(prods:Productions)
+       | lexical_restrictions(restricts:Restrictions)
+       | sorts(sorts:Symbols)
+       | restrictions(restricts:Restrictions)
+
+Priorities = listPriority(Priority*)
+
+Priority = chain(Group*)
+Group = simple_group(prod:Production)
+      | prods_group(prods:Productions)
+      | assoc_group(assoc:Associativity,prods:Productions)
+
+Productions = listProduction(Production*)
+
+Production = prod(Lhs:Symbols, Rhs:Symbol, Attributes:Attributes) 
+
+SymbolPlus = symbolPlus(Symbol*)
+SymbolStar = symbolStar(Symbol*)
+Symbols = listSymbol(Symbol*)
+NESymbols = nelistSymbol(Symbol*)
+Symbol = lit(String:String) 
+       | my_sort(Sort:Sort) // sort is forbidden
+       | label(Fun:Fun,Symbol:Symbol)
+       | iter(Symbol:Symbol)
+       | iter_star(Symbol:Symbol)
+       | iter_sep(Symbol:Symbol,Sep:Symbol)
+       | iter_star_sep(Symbol:Symbol,Sep:Symbol)
+       | char_class(charclass:CharClass)
+       | layout()
+       | opt(Symbol:Symbol)
+       | cf(Symbol:Symbol)
+       | lex(Symbol:Symbol)
+       | varsym(Symbol:Symbol)
+       |parameterized_sort(sort1:Sort, parameters:SymbolPlus)
+
+CharClass = simple_charclass(OptCR:OptCharRanges)
+          | comp(cc:CharClass)
+
+OptCharRanges = absent()
+              | present(cr:CharRanges)
+CharRange = range(c1:MyCharacter,c2:MyCharacter)
+           | singleChar(c:MyCharacter)
+CharRanges = conc(cr1:CharRanges,cr2:CharRanges)
+           | singleCharRange(cr:CharRange)
+
+MyCharacter = my_short(SC:ShortChar)
+            | numeric(nc:NumChar)
+
+NumChar = digits(String:String)
+
+ShortChar = regular(String:String)
+          | escaped(String:String)
+
+Sort = more_chars(String:String)
+     | one_char(String:String)
+
+Attributes = no_attrs()
+           | attrs(Attribute*)
+Attribute = assoc(Associativity:Associativity)
+          | term(Tree:Tree)
+          | bracket()
+          | reject()
+          | prefer()
+          | avoid()
+
+ATerms = listATerm(Tree*)
+Tree = appl(Fun:Fun,Args:ATerms)
+     | fun(Fun:Fun)
+Fun = unquoted(String:String)
+    | quoted(String:String)
+
+Associativity = left()
+              | right()
+              | non_assoc()
+              | my_assoc()
+
+
+Restrictions = listRestriction(Restriction*)
+
+Restriction = follow(symbols:Symbols,lookaheads:Lookaheads)
+
+Lookaheads = single(look:Lookahead)
+
+Lookahead = look_char_class(cc:CharClass)

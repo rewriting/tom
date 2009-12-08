@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="E:/eclipse 3.3/eclipse/plugins/fr.loria.eclipse.tom_2.5.2/lib/aircube-bundle.jar"/>
+	<classpathentry kind="lib" path="lib/deployedimage.jar"/>
+	<classpathentry kind="lib" path="lib/interpreter-0.3.9.jar"/>
+	<classpathentry kind="lib" path="lib/jaspercompiler.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="lib/jsf-impl.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="lib" path="lib/tomcat-piece.jar"/>
+	<classpathentry kind="lib" path="lib/webGalileoFaces.jar"/>
+	<classpathentry kind="lib" path="lib/wgcore.jar"/>
+	<classpathentry kind="lib" path="lib/wgtags.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

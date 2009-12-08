@@ -1,0 +1,12 @@
+module base.data
+  imports int 
+  abstract syntax 
+ 
+  T1 = a()
+     | f(s1:T1, s2:T2)
+  
+  T2 = b()
+     | g(s2:T2)
+     | h(ts:ListT1)
+
+  ListT1 = concT1(T1*)

@@ -1,0 +1,5 @@
+module gom.Rond
+abstract syntax
+Point = Point(abs:int, ord:int)
+Rond = Cercle(p1:Point,p2:Point,p3:Point)
+     | Rond(centre:Point,rayon:int)

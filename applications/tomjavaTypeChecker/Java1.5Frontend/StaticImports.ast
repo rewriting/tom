@@ -1,0 +1,4 @@
+// 7.5 Import Declarations
+abstract StaticImportDecl : ImportDecl;
+SingleStaticImportDecl : StaticImportDecl ::= <ID:String>;
+StaticImportOnDemandDecl : StaticImportDecl;

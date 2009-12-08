@@ -1,0 +1,25 @@
+aspect PrettyPrint {
+  public void ASTNode.dumpTree(int j) {
+    StringBuffer s = new StringBuffer();
+    for(int i = 0; i < j; i++) {
+      s.append("  ");
+    }
+    System.out.println(s.toString() + getClass().getName() + extra());
+    for(int i = 0; i < getNumChild(); i++)
+      getChild(i).dumpTree(j + 1);
+  }
+  syn String ASTNode.extra() = "";
+
+  eq CompUnit.extra() = ", packageName: " + getpackageName();
+  eq ClassDecl.extra() = ", classDecl: " + getname();
+  eq FieldDecl.extra() = ", fieldDecl: " + getname();
+  eq Name.extra() = ", name: " + getname();
+  
+  public void Prog.printTree() {
+    for(int i = 0; i < getNumCompUnit(); i++) {
+      getCompUnit(i).dumpTree(0);
+    }
+  }
+
+}
+

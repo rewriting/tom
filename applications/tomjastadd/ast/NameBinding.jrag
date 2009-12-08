@@ -1,0 +1,90 @@
+import ast.AST.*;
+import java.util.*;
+
+aspect Environment {
+  eq Grammar.getTypeDecl().env() = this;
+
+  inh Grammar Components.env();
+  inh Grammar IdUse.env();
+  inh Grammar TypeDecl.env();
+}
+
+aspect Lookup {
+  syn TypeDecl Grammar.lookup(String name) {
+    for(int i = 0; i < getNumTypeDecl(); i++) {
+      if(getTypeDecl(i).name().equals(name))
+        return getTypeDecl(i);
+    }
+    return null;
+  }
+
+  public TypeDecl Grammar.findClassDecl(String name, String comment) {
+    comment = comment.trim();
+    if(!comment.startsWith("/"))
+      comment = "";
+    
+    TypeDecl t = lookup(name);
+    if(t == null) {
+      t = new ClassDecl(new IdDecl(name), new List(), new List(), new List(), new List(), new List(), new List(), "", 0 ,0, comment);
+      addTypeDecl(t);
+    }
+    return t;
+  }
+  
+  public TypeDecl Grammar.findInterfaceDecl(String name, String comment) {
+    comment = comment.trim();
+    if(!comment.startsWith("/"))
+      comment = "";
+    TypeDecl t = lookup(name);
+    if(t == null) {
+      t = new InterfaceDecl(new IdDecl(name), new List(), new List(), new List(), new List(), new List(), new List(), "", 0, 0, comment);
+      addTypeDecl(t);
+    }
+    return t;
+  }
+    
+  syn lazy Components TypeDecl.lookupComponents(String name) = null;
+  eq ASTDecl.lookupComponents(String name) {
+    for(Iterator iter = getComponents(); iter.hasNext(); ) {
+      Components c = (Components)iter.next();
+      if(c.name().equals(name))
+        return c;
+    }
+    return null;
+  }
+}
+
+aspect Names {
+  syn String TypeDecl.name() = getIdDecl().name();
+  syn String IdDecl.name() = getID();
+  
+  syn String Components.name();
+  eq ListComponents.name() = getId().name();
+  eq OptionalComponent.name() = getId().name();
+  eq TokenComponent.name() = getTokenId().name();
+  eq AggregateComponents.name() = getId().name();
+
+  syn String Id.name() = hasNameNode() ?
+    getNameNode().name() : getIdUse().name();
+
+  syn String NameNode.name() = getID();
+  syn String IdUse.name() = getID();
+
+  syn String TokenId.name() = getID();
+}
+
+aspect Types {
+  syn String Components.type();
+  eq ListComponents.type() = getId().type();
+  eq OptionalComponent.type() = getId().type();
+  eq TokenComponent.type() = getTokenId().type();
+  eq AggregateComponents.type() = getId().type();
+
+  syn String Id.type() = getIdUse().name();
+
+  syn String TokenId.type() = getTYPE();
+}
+
+aspect ComponentsHostClass {
+  syn String Components.className() = hostClass().name();
+}

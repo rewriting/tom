@@ -1,0 +1,101 @@
+module iptables.Analyser
+imports boolean int long String
+abstract syntax
+
+	Rules = Rules(Rule*)
+		| RulesL(r:Rule,rs:Rules)
+		| RulesR(rs:Rules,r:Rule)
+		| RulesA(rsl:Rules,rsr:Rules)
+
+	Rule = Rule(
+			action:Action,
+			iface:Iface,
+			proto:Protocol,
+			target:Target,
+			srcAddr:Address,
+			destAddr:Address,
+			srcPort:Port,
+			destPort:Port,
+			opts:Options,
+			input:String)
+
+	Action =
+		Accept()
+		| Drop() /* do not process the packet */
+		| Reject() /* drop then send an error message to the sender */
+		| Log()
+
+	/* The network interface */
+	Iface =
+		IfaceAny()
+		| Iface(name:String)
+
+	Protocol =
+		ProtoAny()
+		| TCP()
+		| UDP()
+		| IPv4()
+		| IPv6()
+		| ICMP()
+		| ARP()
+		| RIP()
+		| Ethernet()
+
+	Target =
+		In()
+		| Out()
+		| Forward()
+
+	Address =
+		AddrAny()
+		| Addr4(ip:int,smask:int, str:String)
+		/* Only need a subnetmask for the network prefix in IPv6 */
+		| Addr6(ipnet:long,iphost:long,snetmask:long, str:String)
+
+	Port =
+		PortAny()
+		| Port(number:int)
+
+
+	Options = 
+		NoOpt()
+		| Opt(global:GlobalOptions, proto:ProtocolOptions, states:States)
+
+	/* Global options */
+	GlobalOptions = GlobalOpts(GlobalOption*)
+
+	GlobalOption =
+		NoGlobalOpt()
+		| LogLevel(level:int)
+
+	/* Protocol options */
+	ProtocolOptions = ProtoOpts(ProtocolOption*)
+
+	/* >>> TODO: split by protocol */
+	ProtocolOption =
+		NoProtoOpt()
+		| ICMPxType(id:int)
+		| ICMPxTTLZero()
+		| ICMPxDestinationUnreachable()
+		| TCPxSyn(val:boolean)
+		| TCPxAck(val:boolean)
+
+	/* Packet state options */
+	States = States(State*)
+
+	State =
+		StateAny()
+		| New()
+		| Related() /* New connection associated with an existing one */
+		| Established() /* packets was seen in both directions */
+		| Invalid() /* packets associated with no known connection */
+
+module Analyser:rules() {
+	RulesL(r@Rule(_,_,_,In(),_,_,_,_,_,_),
+	rs@Rules(X*,
+		r1@Rule(_,_,_,In(),_,_,_,_,_,_),
+		r2@Rule(_,_,_,Out(),_,_,_,_,_,_),Y*)) -> Rules(X*,r1,r,r2,Y*)
+	RulesL(r@Rule(_,_,_,_,_,_,_,_,_,_),rs@Rules(R*)) -> Rules(r,R*)
+	RulesR(rs@Rules(R*),r@Rule(_,_,_,_,_,_,_,_,_,_)) -> Rules(r,R*)
+	RulesA(rsl@Rules(L*),rsr@Rules(R*)) -> Rules(L*,R*)
+}

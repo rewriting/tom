@@ -1,0 +1,23 @@
+Prog ::= CompUnit*;
+CompUnit ::= <packageName:String> ClassDecl*;
+ClassDecl ::= <name:String> Super:Name BodyDecl*;
+
+abstract BodyDecl;
+FieldDecl : BodyDecl ::= FieldType:Name <name:String> Expr;
+MemberClassDecl : BodyDecl ::= ClassDecl;
+Initializer : BodyDecl ::= Block;
+
+abstract Stmt;
+Block : Stmt ::= Stmt*;
+LocalVariableDecl : Stmt ::= VarType:Name <name:String> Expr;
+
+abstract Expr;
+abstract Name : Expr ::= <name:String>;
+Dot : Name ::= Left:Name Right:Name;
+ExpressionName : Name;
+PackageName : Name;
+TypeName : Name;
+
+ParseName : Name;
+PackageOrTypeName : Name;
+AmbiguousName : Name;

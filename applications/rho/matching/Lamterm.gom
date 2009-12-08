@@ -1,0 +1,11 @@
+module Lamterm
+imports String
+abstract syntax
+LamTerm = localVar(na:String)
+        | constant(na:String)
+        | matchVar(na:String)
+        | abs(lhs:LamTerm,rhs:LamTerm)
+        | app(lhs:LamTerm,rhs:LamTerm)
+
+Equation = match(lhs:LamTerm,rhs:LamTerm)
+Systems = and(Equation*)

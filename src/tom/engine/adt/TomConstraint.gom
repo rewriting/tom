@@ -1,0 +1,44 @@
+module TomConstraint
+imports Code TomTerm
+abstract syntax
+
+Constraint = 
+      // TODO : move to TopOption and get rid of constraints in
+      // TomTerm
+      | AliasTo(Var:TomTerm)
+		  /**
+		   * <code>AssignTo</code> specifies that we want to instanciate Variable with the term on which this constraint is attached
+		   *
+		   * @param Variable the variable to constraint
+		   */
+			| AssignPositionTo(Variable:BQTerm)
+			| TrueConstraint()
+			| FalseConstraint()				   
+			| Negate(c:Constraint)
+			| IsSortConstraint(AstType:TomType,BQTerm:BQTerm)
+			| AndConstraint(Constraint*)
+			| OrConstraint(Constraint*)
+		  /**
+		   * <code>OrConstraintDisjunction</code> used for the disjunction of symbols
+		   *
+		   * @param Constraint the list of AndConstraints that are linked by Or
+		   */		   
+			| OrConstraintDisjunction(Constraint*)
+			| MatchConstraint(Pattern:TomTerm, Subject:BQTerm)
+			| AntiMatchConstraint(Constraint:Constraint)
+			| NumericConstraint(Left:BQTerm, Right:BQTerm, Type:NumericConstraintType)
+			| EmptyListConstraint(Opname:TomName,Variable:BQTerm)
+			| EmptyArrayConstraint(Opname:TomName,Variable:BQTerm,Index:BQTerm)
+
+NumericConstraintType = NumLessThan() 
+					| NumLessOrEqualThan()
+					| NumGreaterThan()
+					| NumGreaterOrEqualThan()
+					| NumDifferent()
+					| NumEqual()
+
+ConstraintList = concConstraint(Constraint*)
+
+AndConstraint:AU() { `TrueConstraint() }
+OrConstraint:AU() { `FalseConstraint() }
+OrConstraintDisjunction:AU() { }

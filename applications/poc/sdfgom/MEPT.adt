@@ -1,0 +1,58 @@
+[
+constructor(ParseTree, top, parsetree(<top(Tree)>, <amb-cnt(int)>)), 
+
+constructor(Tree, appl, appl(<prod(Production)>, <args(Args)>)), 
+constructor(Tree, cycle, cycle(<symbol(Symbol)>,<cycle-length(int)>)),
+constructor(Tree, amb, amb(<args(Args)>)), 
+constructor(Tree, char, <character(int)>), 
+list(Args, Tree), 
+
+constructor(Production, Default, prod(<lhs(Symbols)>, <rhs(Symbol)>, <attributes(Attributes)>)), 
+constructor(Production, List, list(<rhs(Symbol)>)), 
+
+constructor(Attributes, no-attrs, no-attrs), 
+constructor(Attributes, attrs, attrs(<attrs(Attrs)>)),
+
+list(Attrs, Attr),
+
+constructor(Attr, assoc, assoc(<assoc(Associativity)>)), 
+constructor(Attr, term, term(<value(term)>)), 
+constructor(Attr, id, id(<module-name(str)>)), 
+constructor(Attr, bracket, bracket), 
+constructor(Attr, reject, reject), 
+constructor(Attr, prefer, prefer), 
+constructor(Attr, avoid, avoid), 
+
+constructor(Associativity, left, left), 
+constructor(Associativity, right, right), 
+constructor(Associativity, assoc, assoc), 
+constructor(Associativity, non-assoc, non-assoc),
+
+constructor(Symbol, lit, lit(<string(str)>)), 
+constructor(Symbol, cilit, cilit(<string(str)>)), 
+constructor(Symbol, cf, cf(<symbol(Symbol)>)), 
+constructor(Symbol, lex, lex(<symbol(Symbol)>)), 
+constructor(Symbol, empty, empty), 
+constructor(Symbol, seq, seq(<symbols(Symbols)>)), 
+constructor(Symbol, opt, opt(<symbol(Symbol)>)), 
+constructor(Symbol, alt, alt(<lhs(Symbol)>, <rhs(Symbol)>)), 
+constructor(Symbol, tuple, tuple(<head(Symbol)>, <rest(Symbols)>)), 
+constructor(Symbol, sort, sort(<string(str)>)), 
+constructor(Symbol, iter-plus, iter(<symbol(Symbol)>)), 
+constructor(Symbol, iter-star, iter-star(<symbol(Symbol)>)), 
+constructor(Symbol, iter-plus-sep, iter-sep(<symbol(Symbol)>, <separator(Symbol)>)), 
+constructor(Symbol, iter-star-sep, iter-star-sep(<symbol(Symbol)>, <separator(Symbol)>)), 
+constructor(Symbol, iter-n, iter-n(<symbol(Symbol)>, <number(int)>)), 
+constructor(Symbol, iter-sep-n, iter-sep-n(<symbol(Symbol)>, <separator(Symbol)>, <number(int)>)), 
+constructor(Symbol, func, func(<symbols(Symbols)>, <symbol(Symbol)>)), 
+constructor(Symbol, parameterized-sort, parameterized-sort(<sort(str)>, <parameters(Symbols)>)), 
+constructor(Symbol, strategy, strategy(<lhs(Symbol)>, <rhs(Symbol)>)), 
+constructor(Symbol, var-sym, varsym(<symbol(Symbol)>)), 
+constructor(Symbol, layout, layout), 
+constructor(Symbol, char-class, char-class(<ranges(CharRanges)>)),
+list(Symbols, Symbol), 
+
+constructor(CharRange, character, <start(int)>), 
+constructor(CharRange, range, range(<start(int)>, <end(int)>)),
+list(CharRanges, CharRange)
+]

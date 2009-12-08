@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Tests for Tom" default="junit" basedir=".">
+  <description>
+    Build script for Tom unit tests
+  </description>
+
+  <property name="test.src"   location="."/>
+  <property name="test.gen"   location="gen"/>
+  <property name="test.build" location="build"/>
+  <property name="test.report" location="report"/>
+
+  <!-- <property name="optimize" value="off"/> -->
+  <!-- <property name="verbose" value="on"/> -->
+
+  <property name="javacSource"    value="1.5"/>
+  <property name="javacTarget"    value="1.5"/>
+  <property environment="env"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <import   file="${tom.common.path}/tom-common.xml"/>
+
+  <target name="init" depends="tom.init">
+    <fail unless="tom.home" message="Property tom.home has to be defined"/>
+  </target>
+
+  <target name="prepare">
+    <mkdir dir="${test.gen}"/>
+    <mkdir dir="${test.build}"/>
+    <mkdir dir="${test.report}"/>
+  </target>
+
+  <target name="build" depends="init,prepare">
+    <gom.preset srcdir="${test.src}"
+                package="sl"
+                termpointer="true"
+                withCongruenceStrategies="true"
+                destdir="${test.gen}">
+         <include name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+    </gom.preset>
+    <gom.preset srcdir="${test.src}"
+                destdir="${test.gen}">
+         <include name="**/*.gom"/>
+         <exclude name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+    </gom.preset>
+    <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
+                destdir="${test.gen}">
+      <exclude name="cfib1.t"/>
+      <exclude name="loulou.t"/>
+      <exclude name="Record.t"/>
+      <exclude name="Peano.t"/>
+      <exclude name="TestRecord.t"/>
+      <exclude name="TestPeano.t"/>
+      <exclude name="TestWhen.t"/>
+      <exclude name="TomList.t"/>
+      <exclude name="TestOptimizer.t"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
+                destdir="${test.gen}"
+                options="--lazyType">
+      <include name="Record.t"/>
+      <include name="TestRecord.t"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                options="--optimize">
+    	<include name="TestOptimizer.t"/>
+    </tom.preset>
+    <javac.preset destdir="${test.build}" fork="true">
+      <src path="${test.src}"/>
+      <src path="${test.gen}"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+      <exclude name="gen/**"/>
+    </javac.preset>
+    <copy todir="${test.build}">
+      <fileset dir="${test.src}">
+        <include name="*/*.xml"/>
+        <include name="*/*.dtd"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="junit" description="Runs junit acceptance tests"
+          depends="build">
+    <tom.junit printsummary="on"
+               fork="on"
+               dir="${test.build}"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+      <batchtest todir="${test.report}">
+        <fileset dir="${test.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${test.src}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="report" description="Create acceptance tests report"
+          depends="junit">
+      <junitreport todir="${test.report}">
+        <fileset dir="${test.report}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${test.report}/html"/>
+      </junitreport>
+    </target>
+
+  <target name="regress"
+    description="Run regresssion tests"
+    depends="build">
+    <taskdef name="gomregress"
+             classname="regress.GomErrorTask">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+    </taskdef>
+    <taskdef name="tomregress"
+             classname="regress.TomErrorTask">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+    </taskdef>
+      <gomregress config="${gomconfigfile}"
+                  srcdir="${test.src}">
+        <classpath refid="tom.classpath"/>
+        <include name="regress/error/**/*.gom"/>
+      </gomregress>
+    <tomregress config="${tomconfigfile}"
+           nowarn="${nowarnings}"
+           optimize="${optimize}"
+           optimize2="${optimize2}"
+           multithread="${multithread}"
+           inline="${inline}"
+           inlineplus="${inlineplus}"
+      	   genIntrospector="${genIntrospector}"
+           verbose="${verbose}"
+           fork="${tomfork}"
+           pretty="${pretty}"
+           srcdir="${test.src}"
+           destdir="${test.gen}">
+        <classpath refid="tom.classpath"/>
+        <include name="regress/error/**/*.t"/>
+      </tomregress>
+  </target>
+
+  <target name="clean">
+    <delete dir="${test.gen}"/>
+    <delete dir="${test.build}"/>
+    <delete dir="${test.report}"/>
+  </target>
+
+</project>

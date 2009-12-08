@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the appletxml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="example" value="appletxml"/>
+  <target name="build" depends="common.build">
+    <!-- Create a jar for the applet -->
+    <path id="tom-runtime.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-runtime-full.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-runtime.jar" refid="tom-runtime.path"/>
+    <jar jarfile="${examples.build}/${example}/xmlconverter.jar">
+      <fileset dir="${examples.build}">
+        <include name="${example}/**/*.class"/>
+      </fileset>
+      <zipfileset src="${tom-runtime.jar}">
+        <include name="shared/**/*.class"/>
+        <include name="tom/library/adt/tnode/**/*.class"/>
+        <include name="tom/library/sl/Visitable.class"/>
+        <include name="jjtraveler/Visitable.class"/>
+        <include name="jjtraveler/VisitFailure.class"/>
+        <include name="tom/library/xml/*.class"/>
+        <include name="aterm/**/*.class"/>
+        <include name="tom/library/utils/*Converter.class"/>
+      </zipfileset>
+    </jar>
+    <copy todir="${examples.build}/${example}">
+      <fileset dir="${examples.dir}/${example}">
+        <include name="*.html"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="junit" depends="common.junit">
+    <path id="junit.classpath">
+      <path refid="external.classpath"/>
+      <fileset dir="${tom.home}/lib">
+	<include name="**/junit.jar"/>
+      </fileset>
+    </path>
+    <taskdef name="applet.junit"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="junit.classpath"/>
+    </taskdef>
+    <applet.junit printsummary="on"
+	    fork="on"
+	    haltonfailure="false"
+	    failureproperty="tests.failed"
+	    showoutput="true">
+      <formatter type="brief" usefile="no"/>
+      <classpath>
+        <path refid="junit.classpath"/>
+        <fileset dir="${examples.build}/${example}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+      <sysproperty key="basedir" value="${examples.dir}"/>
+      <formatter type="xml" if="test.xmlreport"/>
+    </applet.junit>
+  </target>
+  <property name="distribute" value="yes"/>
+</project>
