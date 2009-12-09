@@ -64,6 +64,7 @@ import tom.library.sl.*;
 
 public class NewKernelTyper {
   %include { ../../library/mapping/java/sl.tom}
+  %include { ../adt/code/_Code.tom}
 //  %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../adt/tomsignature/TomSignature.tom }
 //  %include { ../../library/mapping/java/util/types/HashMap.tom}
@@ -186,20 +187,21 @@ public class NewKernelTyper {
 
   private Code inferTypeCode(Code code) {
     try {
-//      Code result =
-       return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
+      init();
+      //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
+      return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
   }
 
-  %strategy splitConstraintInstruction(nkt:NewKernelTyper) extends Fail() {
+  %strategy inferInstruction(nkt:NewKernelTyper) extends Fail() {
     visit Instruction {
       Match(constraintInstructionList,options) -> {
-        nkt.init();
         // Generate type constraints for a %match
         ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
         nkt.solveConstraints();
+        nkt.init(); // Reset all lists for the next independent match block 
         result = nkt.replaceInConstraintInstructionList(`result);
         return `Match(result,options);
       }
@@ -218,7 +220,7 @@ public class NewKernelTyper {
           `TopDown(inferConstraint(this)).visitLight(`constraint);
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
-          inferInstruction(`action);
+          `TopDown(inferInstruction(this)).visitLight(`action);
           resetVarPatternList();
           ConstraintInstructionList typedTail =
             `inferConstraintInstructionList(tailCIList);
@@ -405,10 +407,6 @@ public class NewKernelTyper {
   }
 */
 
-  //TODO
-  private void inferInstruction(Instruction action) {
-    // addTypeConstraints
-  }
 
 
   /*
