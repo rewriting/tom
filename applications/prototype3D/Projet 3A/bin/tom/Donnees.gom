@@ -1,0 +1,9 @@
+module tom.Donnees
+imports String
+abstract syntax
+
+Formule = Input(A:String)
+        | False()
+        | True()
+        | And(f1:Formule, f2:Formule)
+        | Or(f1:Formule, f2:Formule) 

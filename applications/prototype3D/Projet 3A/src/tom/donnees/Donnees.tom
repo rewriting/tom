@@ -1,0 +1,69 @@
+
+%include { string.tom }
+
+%typeterm Sequent {
+  implement { tom.donnees.types.Sequent }
+  is_sort(t) { ($t instanceof tom.donnees.types.Sequent) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Formule {
+  implement { tom.donnees.types.Formule }
+  is_sort(t) { ($t instanceof tom.donnees.types.Formule) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Sequent EmptyList() {
+  is_fsym(t) { ($t instanceof tom.donnees.types.sequent.EmptyList) }
+  make() { tom.donnees.types.sequent.EmptyList.make() }
+}
+
+%op Sequent ConsList(HeadList:Formule, TailList:Sequent) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.sequent.ConsList) }
+  get_slot(HeadList, t) { $t.getHeadList() }
+  get_slot(TailList, t) { $t.getTailList() }
+  make(t0, t1) { tom.donnees.types.sequent.ConsList.make($t0, $t1) }
+}
+
+%op Formule Input(A:String) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.Input) }
+  get_slot(A, t) { $t.getA() }
+  make(t0) { tom.donnees.types.formule.Input.make($t0) }
+}
+
+%op Formule False() {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.False) }
+  make() { tom.donnees.types.formule.False.make() }
+}
+
+%op Formule True() {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.True) }
+  make() { tom.donnees.types.formule.True.make() }
+}
+
+%op Formule And(f1:Formule, f2:Formule) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.And) }
+  get_slot(f1, t) { $t.getf1() }
+  get_slot(f2, t) { $t.getf2() }
+  make(t0, t1) { tom.donnees.types.formule.And.make($t0, $t1) }
+}
+
+%op Formule Or(f1:Formule, f2:Formule) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.Or) }
+  get_slot(f1, t) { $t.getf1() }
+  get_slot(f2, t) { $t.getf2() }
+  make(t0, t1) { tom.donnees.types.formule.Or.make($t0, $t1) }
+}
+
+
+%oplist Sequent List(Formule*) {
+  is_fsym(t) { (($t instanceof tom.donnees.types.sequent.ConsList) || ($t instanceof tom.donnees.types.sequent.EmptyList)) }
+  make_empty() { tom.donnees.types.sequent.EmptyList.make() }
+  make_insert(e,l) { tom.donnees.types.sequent.ConsList.make($e,$l) }
+  get_head(l) { $l.getHeadList() }
+  get_tail(l) { $l.getTailList() }
+  is_empty(l) { $l.isEmptyList() }
+}
