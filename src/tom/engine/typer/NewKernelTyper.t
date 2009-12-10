@@ -43,6 +43,7 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomslot.types.slotlist.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.*;
@@ -99,6 +100,10 @@ public class NewKernelTyper {
     this.symbolTable = symbolTable;
   }
 
+  protected TomType getSymbolCodomain(TomSymbol tomSymbol) {
+    return TomBase.getSymbolCodomain(tomSymbol);
+  }
+
   protected TomSymbol getSymbolFromName(String tomName) {
     return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
@@ -124,7 +129,7 @@ public class NewKernelTyper {
           throw new TomRuntimeException("No symbol found because there is no name.");
         }
         TomSymbol tomSymbol = getSymbolFromName(`name);
-        return TomBase.getSymbolCodomain(tomSymbol);
+        return getSymbolCodomain(tomSymbol);
       }
     } 
     throw new TomRuntimeException("getType: should not be here.");
@@ -220,7 +225,7 @@ public class NewKernelTyper {
           `TopDown(inferConstraint(this)).visitLight(`constraint);
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
-          `TopDown(inferInstruction(this)).visitLight(`action);
+          `TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
           resetVarPatternList();
           ConstraintInstructionList typedTail =
             `inferConstraintInstructionList(tailCIList);
@@ -352,17 +357,88 @@ public class NewKernelTyper {
             nkt.addConstraint(`Equation(freshType1,freshType2));
             nkt.inferBQTerm(`left,freshType1);
             nkt.inferBQTerm(`right,freshType2);
-
           }
         }
       }
     }  
   } 
 
-  private void inferTomTerm(TomTerm term, TomType type) {}
+  private void inferTomTerm(TomTerm term, TomType freshType) {
+    %match(term) {
+      /**
+       * Type a variable
+       * CT-VAR rule: 
+       * IF found "x:A" and "x:T" already exists in SymbolTable 
+       * THEN add a type constraint "A = T"
+       */
+      (Variable|VariableStar)[AstName=name,AstType=type] -> {
+        addConstraint(`Equation(type,freshType));  
+      }
 
-  private void inferBQTerm(BQTerm term, TomType type) {}
+      /**
+       * CT-FUN rule:
+       * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+       * THEN infers type of arguments and add a type constraint "A = T" and
+       *      calls the TypeVariableList method which adds a type constraint "Ai =
+       *      Ti" for each argument, where Ai is a fresh type variable
+       *
+       * CT-EMPTY rule:
+       * IF found "l():AA" and "l:T*->TT" exists in SymbolTable
+       * THEN add a type constraint "AA = TT"       
+       *
+       * CT-ELEM rule:
+       * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+       * THEN infers type of both sublist "l(e1,...,en)" and last argument
+       *      "e" and adds a type constraint "AA = TT" and calls the
+       *      TypeVariableList method which adds a type constraint "A =T"
+       *      for the last argument, where A is a fresh type variable and
+       *      "e" does not represent a list with head symbol "l"
+       *
+       * CT-MERGE rule:
+       * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+       * THEN infers type of both sublist "l(e1,...,en)" and last argument
+       *      "e" and adds a type constraint "AA = TT" and calls the
+       *      TypeVariableList method, where "e" represents a list with
+       *      head symbol "l"
+       *
+       * CT-STAR rule:
+       * Equals to CT-MERGE but with a star variable "x*" instead of "e"
+       * This rule is necessary because it differed from CT-MERGE in the
+       * sense of the type of the last argument ("x*" here) is unknown 
+       */
+      RecordAppl[NameList=nameList@(Name(tomName),_*),Slots=slotList] -> {
+        // Do we need to test if the nameList is equal to ""???
+        TomSymbol tomSymbol = getSymbolFromName(`tomName);
+        if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
+          TomType codomain = getSymbolCodomain(tomSymbol);
+          addConstraint(`Equation(codomain,freshType));
+          if (!`slotList.isEmptyconcSlot()) {
+            inferSlotList(`slotList,`tomSymbol,freshType);
+          }
+        }
+      }
+    }
+  }
 
+  private void inferBQTerm(BQTerm term, TomType freshType) {}
+
+  private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType
+      freshType) {
+    %match(slotList,tomSymbol) {
+      concSlot(PairSlotAppl[Appl=argTerm],tailSList*),Symbol[TypesToType=TypesToType(concTomType(headTTList,tailTTList*),codomain)] -> {
+        TomType argFreshType = freshType;
+        // In case of a list
+        if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
+          //%match(argTerm) {
+            //VariableStar[] -> {}
+          //}
+        }
+        // In case of a function
+        `inferTomTerm(argTerm,argFreshType);
+        `inferSlotList(tailSList,tomSymbol,freshType);
+      }
+    }
+  }
   /*
    public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
     if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
