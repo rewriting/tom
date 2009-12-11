@@ -55,14 +55,6 @@ public class BackendPlugin extends GomGenericPlugin {
     templateFactory = new SharedTemplateFactory(getOptionManager(),getGomEnvironment());
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +

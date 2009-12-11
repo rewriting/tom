@@ -59,16 +59,8 @@ public class AdapterGenerator {
     this.grammarPkg = getStreamManager().getDefaultPackagePath();
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public GomStreamManager getStreamManager() {
-    return getGomEnvironment().getStreamManager();
-  }
-
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
+  private GomStreamManager getStreamManager() {
+    return gomEnvironment.getStreamManager();
   }
 
   %include { ../adt/gom/Gom.tom}
