@@ -1,6 +1,6 @@
 module TypeConstraints
 
-imports String TomType
+imports String TomType 
 abstract syntax
 
 /* Type Reconstruction */
@@ -11,9 +11,10 @@ TermToInfer =
              * @param TypeVar a type variable
              */
             NewTerm(Term: TomTerm, TypeVar: TomType)
+           | TypedTomTerm(Term1: TomTerm, TypeVar: TomType)
+           |TypedBQTerm(Term2: BQTerm, TypeVar: TomType)
 
 TermToInferList = concTermToInfer(TermToInfer*) 
-
 
 TypeConstraint = Equation(Type1: TomType, Type2: TomType)
                | Subtype(Type1: TomType, Type2: TomType)

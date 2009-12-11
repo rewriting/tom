@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Main-Class: gnu.prolog.test.GoalRunner
+
+Name: gnu/prolog/
+Specification-Title: GNU Prolog for Java API Specification
+Specification-Version: @version@
+Specification-Vendor: gnuprologjava.sourceforge.net
+Implementation-Vendor: gnuprologjava.sourceforge.net
+Implementation-Version: @version@
+Implementation-Title: GNU Prolog for Java Library
