@@ -44,6 +44,7 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomslot.types.slotlist.*;
+import tom.engine.adt.tomslot.types.slot.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.*;
@@ -102,6 +103,10 @@ public class NewKernelTyper {
 
   protected TomType getSymbolCodomain(TomSymbol tomSymbol) {
     return TomBase.getSymbolCodomain(tomSymbol);
+  }
+
+  protected TomSymbol getSymbolFromTerm(TomTerm tomTerm) {
+    return TomBase.getSymbolFromTerm(tomTerm, getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
@@ -371,7 +376,7 @@ public class NewKernelTyper {
        * IF found "x:A" and "x:T" already exists in SymbolTable 
        * THEN add a type constraint "A = T"
        */
-      (Variable|VariableStar)[AstName=name,AstType=type] -> {
+      (Variable|VariableStar)[AstType=type] -> {
         addConstraint(`Equation(type,freshType));  
       }
 
@@ -406,7 +411,7 @@ public class NewKernelTyper {
        * This rule is necessary because it differed from CT-MERGE in the
        * sense of the type of the last argument ("x*" here) is unknown 
        */
-      RecordAppl[NameList=nameList@(Name(tomName),_*),Slots=slotList] -> {
+      RecordAppl[NameList=(Name(tomName),_*),Slots=slotList] -> {
         // Do we need to test if the nameList is equal to ""???
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
         if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
@@ -425,129 +430,63 @@ public class NewKernelTyper {
   private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType
       freshType) {
     %match(slotList,tomSymbol) {
-      concSlot(PairSlotAppl[Appl=argTerm],tailSList*),Symbol[TypesToType=TypesToType(concTomType(headTTList,tailTTList*),codomain)] -> {
+      concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
         TomType argFreshType = freshType;
         // In case of a list
         if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
-          //%match(argTerm) {
-            //VariableStar[] -> {}
-          //}
-        }
-        // In case of a function
-        `inferTomTerm(argTerm,argFreshType);
-        `inferSlotList(tailSList,tomSymbol,freshType);
-      }
-    }
-  }
-  /*
-   public void typeVariableList(TomSymbol symb, TomTypeList domain, TomType te, SlotList slist) {
-    if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
-      %match(slist) {
-        concSlot(VariableStar(_, n, t, _), s*) -> {
-              //inferTerm(fs, t);
-              addConstraint(`Equation(t,te));
-              typeVariableList(symb, domain, te, s*);
-              break;
-            }
-            concSlot(Variable(_, n, t, _), s*) -> {
-              TomType tt = getFreshTypeVar();
-              //inferTerm(,);
-              addConstraint(`Equation(t,tt));
-              typeVariableList();
-              break;
-            }
-            concSlot(RecordAppl(_,concTomName(Name(tn),_*),_,_), s*) -> {
-                //fdom = getSimpleDom();
-                //syme = findSymblo(tn, fdom);
-                //if(syme!= symb) {
-                //tt = getFreshTypeVar();
-                //addConstraint(`Equation(tt, fdom));
-                //inferTerm(fs, tt);
-                //} else {
-                //  inferTerm(fs, te);
-                //}
-                typeVariableList(symb, domain, te, s);
-                break;
-            }
-      }
-    } else {
-      while(!domain.isEmptyconcTomType()) {
-        TomType tt = getFreshTypeVar();
-        addconstraint(`Equation(tt, domain.getHeadconcTomType())); //Eq(tt, fdom)
-        TomTerm farg = slist.getHeadconcSlot().getAppl();
-        inferTerm(farg, tt);
-        domain = domain.getTailconcTomType();
-        slist = slist.getTailconcSlot();
-      }
-    } 
-  }
-*/
-
-
-
-  /*
-  public void inferNumMatch(TomTerm e1, TomTerm e2) {
-    TomType t1 = getFreshTypeVar();
-    TomType t2 = getFreshTypeVar();
-    addConstraint(`Equation(t1,t2));
-    inferTerm(e1, t1);
-    inferTerm(e2, t2);
-  }
-
-  public void inferTerm(TomTerm e, TomType te) {
-    %match(e) {
-      (Variable|VariableStar)(_, _,type, _) -> { addConstraint(`Equation(type,te)); }
-      RecordAppl(optionList, NameList(headName,_*), slotList, constraintList) -> {
-        String name = null;
-        TomType t;
-        if(`(headName) instanceof AntiName) {
-          name = ((AntiName)`headName).getName().getString();
+          TomSymbol argSymb = getSymbolFromTerm(`term);
+          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+            /**
+             * Continuation of CT-ELEM rule (applying to premises which are
+             * not lists):
+             * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
+             * THEN infers type of both sublist "l(e1,...,en)" and last argument
+             *      "e" and adds a type constraint "A = T" for the last
+             *      argument, where "A" is a fresh type variable  and
+             *      "e" does not represent a list with head symbol "l"
+             */
+            argFreshType = getFreshTypeVar();
+            addConstraint(`Equation(argFreshType,headTTList));
+          }
+          /**
+           * Continuation of CT-MERGE rule (applying to premises):
+           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+           * THEN infers type of both sublist "l(e1,...,en)" and last argument
+           *      "e", where "e" represents a list with
+           *      head symbol "l"
+           *
+           * Continuation of CT-STAR rule (applying to premises):
+           * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
+           * THEN infers type of both sublist "l(e1,...,en)" and last argument
+           *      "x", where "x" represents a list with
+           *      head symbol "l"
+           */
+          `inferTomTerm(term,argFreshType);
+          `inferSlotList(tailSList,tomSymbol,freshType);
         } else {
-          name = ((TomName)`headName).getString();
+          // In case of a function
+          TomType argType;
+          TomTerm argTerm;
+          TomTypeList symDomain = `domain;
+          /**
+           * Continuation of CT-FUN rule (applying to premises):
+           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+           * THEN infers type of arguments and adds a type constraint "Ai =
+           *      Ti" for each argument, where "Ai" is a fresh type variable
+           */
+          for(Slot arg : `slotList.getCollectionconcSlot()) {
+            argTerm = arg.getAppl();
+            argType = symDomain.getHeadconcTomType();
+            argFreshType = getFreshTypeVar();
+            addConstraint(`Equation(argFreshType,argType));
+            `inferTomTerm(argTerm,argFreshType);
+            symDomain = symDomain.getTailconcTomType();
+          }
         }
-        TomSymbol symbol = getSymbolTable().getSymbolFromName(name);
-        if(symbol!=null) {
-          t = symbol.getTypesToType().getCodomain();
-        } else {
-          t = `EmptyType();
-        }
-
-        addConstraint(`Equation(t,te));
-
-        concTomType tl;
-        if(symbol!=null) {
-          tl = symbol.getTypesToType().getDomain();
-        } else {
-          tl = `concTomType();
-        }
-
-        typeVariableList(symbol, tl, te, slotList);
       }
     }
   }
 
-  public void inferCond() {}
-
-  public void inferBlock() {
-    //initGlobal()
-    //collectSubjectVariables()
-  }
-
-  public void inferRule(Instruction instr, TomList localContext) {
-    //  %match(instr) {
-    //   Instruction(cond, action) -> {
-    //initLocal()
-    //inferCond()
-    //propagate()
-    // }
-    //  }
-  }
-
-  public TypeConstraintList addConstraint(TypeConstraint constraint, TypeConstraintList
-      constraintList) {
-    return `concTypeConstraint(constraint,constraintList);
-  }
-*/
   // TODO
   private void solveConstraints() {
     // Add a new substitution in "substitutions"
