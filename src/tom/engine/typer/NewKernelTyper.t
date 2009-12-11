@@ -109,6 +109,10 @@ public class NewKernelTyper {
     return TomBase.getSymbolFromTerm(tomTerm, getSymbolTable());
   }
 
+  protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
+    return TomBase.getSymbolFromTerm(bqTerm, getSymbolTable());
+  }
+
   protected TomSymbol getSymbolFromName(String tomName) {
     return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
@@ -137,12 +141,25 @@ public class NewKernelTyper {
         return getSymbolCodomain(tomSymbol);
       }
     } 
-    throw new TomRuntimeException("getType: should not be here.");
+    throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
 
-  // TODO
   protected TomType getType(BQTerm term) {
-    return `EmptyType(); 
+    %match(term) {
+      (BQVariable|BQVariableStar)[AstType=type] -> {
+        return `type;
+      }
+      BQAppl[AstName=Name(name)] -> {
+        if(`name.equals("")) {
+          // Maybe we need to discover the symbol using the context type
+          // information (i.e. the type of subject)
+          throw new TomRuntimeException("No symbol found because there is no name.");
+        }
+        TomSymbol tomSymbol = getSymbolFromName(`name);
+        return getSymbolCodomain(tomSymbol);
+      }
+    } 
+    throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
 
   protected TomType getFreshTypeVar() {
@@ -425,7 +442,25 @@ public class NewKernelTyper {
     }
   }
 
-  private void inferBQTerm(BQTerm term, TomType freshType) {}
+  private void inferBQTerm(BQTerm term, TomType freshType) {
+    %match(term) {
+      (BQVariable|BQVariableStar)[AstType=type] -> {
+        addConstraint(`Equation(type,freshType));  
+      }
+
+      BQAppl[AstName=Name(tomName),Args=bqTList] -> {
+        // Do we need to test if the nameList is equal to ""???
+        TomSymbol tomSymbol = getSymbolFromName(`tomName);
+        if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
+          TomType codomain = getSymbolCodomain(tomSymbol);
+          addConstraint(`Equation(codomain,freshType));
+          if (!`bqTList.isEmptyconcBQTerm()) {
+            inferBQTermList(`bqTList,`tomSymbol,freshType);
+          }
+        }
+      }
+    }
+  }
 
   private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType
       freshType) {
@@ -487,15 +522,39 @@ public class NewKernelTyper {
     }
   }
 
-  // TODO
-  private void solveConstraints() {
-    // Add a new substitution in "substitutions"
+  private void inferBQTermList(BQTermList bqTList, TomSymbol tomSymbol, TomType
+      freshType) {
+    %match(bqTList,tomSymbol) {
+      concBQTerm(term,tailBQTList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
+        TomType argFreshType = freshType;
+        // In case of a list
+        if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
+          TomSymbol argSymb = getSymbolFromTerm(`term);
+          if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
+            argFreshType = getFreshTypeVar();
+            addConstraint(`Equation(argFreshType,headTTList));
+          }
+          `inferBQTerm(term,argFreshType);
+          `inferBQTermList(tailBQTList,tomSymbol,freshType);
+        } else {
+          // In case of a function
+          TomType argType;
+          TomTypeList symDomain = `domain;
+          for(BQTerm arg : `bqTList.getCollectionconcBQTerm()) {
+            argType = symDomain.getHeadconcTomType();
+            argFreshType = getFreshTypeVar();
+            addConstraint(`Equation(argFreshType,argType));
+            `inferBQTerm(arg,argFreshType);
+            symDomain = symDomain.getTailconcTomType();
+          }
+        }
+      }
+    }
   }
 
   // TODO
-  private ConstraintInstructionList replaceInCode(ConstraintInstructionList
-      cilist) {
-    return cilist;
+  private void solveConstraints() {
+    // Add a new substitution in "substitutions"
   }
 
   //TODO
