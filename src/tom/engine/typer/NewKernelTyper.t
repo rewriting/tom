@@ -272,6 +272,7 @@ public class NewKernelTyper {
           concTomTerm(_*,(Variable|VariableStar)(_,name,type2,_),_*) -> {
             if(`type1 != SymbolTable.TYPE_UNKNOWN) {
               nkt.addConstraint(`Equation(type1,type2));
+              //nkt.printGeneratedConstraints();//DEBUG
             }
             return `Variable(option,name,type2,cilist);
           }
@@ -380,6 +381,12 @@ public class NewKernelTyper {
             nkt.inferBQTerm(`left,freshType1);
             nkt.inferBQTerm(`right,freshType2);
           }
+/*          AliasTo(tomterm) << constraint &&
+          concTomTerm(_*,tomterm,_*) << nkt.varPatternList -> {
+            TomType freshType = nkt.getFreshTypeVar();
+            nkt.addConstraint(`Equation(freshType,nkt.getType(tomterm)));
+            nkt.inferTomTerm(`tomterm,freshType);
+          }*/
         }
       }
     }  
@@ -462,8 +469,7 @@ public class NewKernelTyper {
     }
   }
 
-  private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType
-      freshType) {
+  private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType freshType) {
     %match(slotList,tomSymbol) {
       concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
         TomType argFreshType = freshType;
@@ -552,6 +558,47 @@ public class NewKernelTyper {
     }
   }
 
+  private Code applySubstitutions(Code code) {
+    TomType newtt;
+    Code replacedCode = code;
+    try {
+      for(TomType ttToSubstitute : substitutions.keySet()) {
+        newtt = substitutions.get(ttToSubstitute);
+        replacedCode = `TopDown(substitute(ttToSubstitute,newtt,this)).visitLight(replacedCode);
+      }
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("applySubstitutions: failure on " + replacedCode);
+    }
+    return replacedCode;
+  }
+
+  %strategy substitute(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {
+    visit TomTerm {
+      term -> {
+        %match {
+          Variable[Option=options,AstName=name,AstType=type,Constraints=constraints] << term && (type == oldtt) -> {
+            return `Variable(options,name,newtt,constraints);
+          }
+          VariableStar[Option=options,AstName=name,AstType=type,Constraints=constraints] << term && (type == oldtt) -> {
+            return `VariableStar(options,name,newtt,constraints);
+          }
+        }
+      }
+    }
+    visit BQTerm {
+      term -> {
+        %match {
+          BQVariable[Option=options,AstName=name,AstType=type] << term && (type == oldtt) -> {
+            return `BQVariable(options,name,newtt);
+          }
+          BQVariableStar[Option=options,AstName=name,AstType=type] << term && (type == oldtt) -> {
+            return `BQVariableStar(options,name,newtt);
+          }
+        }
+      }
+    }
+  }
+
   // TODO
   private void solveConstraints() {
     // Add a new substitution in "substitutions"
@@ -562,9 +609,13 @@ public class NewKernelTyper {
     return `cil;
   }
 
+  //TODO : write a sexy print method
+  public void printGeneratedConstraints() {
+    System.out.println("Generated constraints :\n" + `typeConstraints);
+  }
 
 /*
-  %strategy propagate(nkt:NewKernelTyper) extends Fail() {
-  }
+  %strategy propagate(nkt:NewKernelTyper) extends Fail() {}
 */
+
 } // NewKernelTyper
