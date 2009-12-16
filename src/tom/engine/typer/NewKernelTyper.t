@@ -558,21 +558,93 @@ public class NewKernelTyper {
     }
   }
 
-  private Code applySubstitutions(Code code) {
+  // TODO
+  private void solveConstraints() {
+    // Add a new substitution in "substitutions"
+  }
+/*
+  %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
+    visit TypeConstraintList {
+      concTypeConstraint(_*,Equation(Type(tName1,_),Type(tName2@!TName1,_)),_*) -> {
+        throw new RuntimeException("solveConstraints: failure on " + `tName1
+            + " = " + `tName2);
+      }
+
+      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
+        `substitutions.put(typeVar,type);
+        TypeConstraintList lSubTCList = `leftTCList;
+        TypeConstraintList rSubTCList = `rightTCList;
+        if(findTypeVars(typeVar,lSubTCList)) {
+          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
+        }
+        if(findTypeVars(typeVar,rSubTCList)) {
+          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
+        }
+        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
+      }
+
+      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
+        `substitutions.put(typeVar,type);
+        TypeConstraintList lSubTCList = `leftTCList;
+        TypeConstraintList rSubTCList = `rightTCList;
+        if(findTypeVars(typeVar,lSubTCList)) {
+          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
+        }
+        if(findTypeVars(typeVar,rSubTCList)) {
+          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
+        }
+        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
+      }
+    }
+  }
+*/
+  private static boolean findTypeVars(TomType typeVar, TypeConstraintList
+      tcList) {
+    %match {
+      concTypeConstraint(_*,Equation(type1,type2),_*) << tcList &&
+      (type1 == typeVar || type2 == typeVar) -> {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private TypeConstraintList applySubstitution(TomType oldtt, TomType newtt,
+      TypeConstraintList tcList) {
+    try {
+      return (TypeConstraintList)
+        `TopDown(replaceFreshTypeVar(oldtt,newtt,this)).visitLight(tcList);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new RuntimeException("applySubstitution: should not be here.");
+    }
+  }
+
+  private ConstraintInstructionList
+    replaceInConstraintInstructionList(ConstraintInstructionList ciList) {
     TomType newtt;
-    Code replacedCode = code;
+    ConstraintInstructionList replacedCIList = ciList;
     try {
       for(TomType ttToSubstitute : substitutions.keySet()) {
         newtt = substitutions.get(ttToSubstitute);
-        replacedCode = `TopDown(substitute(ttToSubstitute,newtt,this)).visitLight(replacedCode);
+        replacedCIList =
+          `TopDown(replaceFreshTypeVar(ttToSubstitute,newtt,this)).visitLight(ciList);
       }
     } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("applySubstitutions: failure on " + replacedCode);
+      throw new TomRuntimeException("replaceInConstraintInstructionList: failure on " +
+          replacedCIList);
     }
-    return replacedCode;
+    return replacedCIList;
   }
 
-  %strategy substitute(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {
+  // TODO : verify oldtt
+  %strategy replaceFreshTypeVar(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {
+    visit TomType {
+      oldtt -> { return newtt; }
+    }
+  }
+
+/*
+  %strategy replaceFreshTypeVar(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       term -> {
         %match {
@@ -598,21 +670,12 @@ public class NewKernelTyper {
       }
     }
   }
-
-  // TODO
-  private void solveConstraints() {
-    // Add a new substitution in "substitutions"
-  }
-
-  //TODO
-  private ConstraintInstructionList replaceInConstraintInstructionList(ConstraintInstructionList cil) {
-    return `cil;
-  }
-
+*/
   //TODO : write a sexy print method
   public void printGeneratedConstraints() {
     System.out.println("Generated constraints :\n" + `typeConstraints);
   }
+
 
 /*
   %strategy propagate(nkt:NewKernelTyper) extends Fail() {}
