@@ -210,7 +210,9 @@ public class SymbolTable {
       %match(desc) { VariadicConstructorDescription[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(),
+          cons);
       return false;
     }
   }
@@ -225,7 +227,9 @@ public class SymbolTable {
       }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(),
+          cons);
       return false;
     }
   }
@@ -240,7 +244,9 @@ public class SymbolTable {
       }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(),
+          cons);
       return false;
     }
   }
