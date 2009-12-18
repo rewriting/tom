@@ -595,13 +595,15 @@ public class SymbolTable {
           }
         }
       }
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(), constructor);
+          GomMessage.undeclaredConstructorException.getMessage(),
+          constructor);
       return null;
     }
     getLogger().log(Level.SEVERE,
-        GomMessage.cannotAccessToChildConstructor.getMessage(), new Object[] {omega,constructor});
+        GomMessage.cannotAccessToChildConstructor.getMessage(),
+        new Object[] {omega,constructor});
     return null;
   }
 
@@ -611,7 +613,8 @@ public class SymbolTable {
         return (tom.gom.adt.symboltable.types.stringlist.StringList)
           sorts.get(sort).getFreshInfo().getAccessibleAtoms();
       } catch(NullPointerException e) {
-        getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+        getLogger().log(Level.SEVERE,
+            GomMessage.undeclaredSortException.getMessage(), sort);
         return null;
       }
     }
@@ -665,9 +668,9 @@ public class SymbolTable {
    * where it generates 'getHeadRawC()' and 'getTailRawC()'
    **/
   public String rawGetter(String cons, String field) {
-    if(isGenerated(cons)) {
+    if (isGenerated(cons)) {
       String suffix = getBaseName(cons);
-      if(field.startsWith("Head")) {
+      if (field.startsWith("Head")) {
         return "getHeadRaw" + suffix + "()";
       } else if (field.startsWith("Tail")) {
         return "getTailRaw" + suffix + "()";
@@ -743,7 +746,7 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SOuter()],_*) -> {
-        if(`n.equals(field)) {
+        if (`n.equals(field)) {
           return true;
         }
       }
@@ -756,7 +759,7 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SPattern()],_*) -> {
-        if(`n.equals(field)) {
+        if (`n.equals(field)) {
           return true;
         }
       }
@@ -769,7 +772,7 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SInner()],_*) -> {
-        if(`n.equals(field)) {
+        if (`n.equals(field)) {
           return true;
         }
       }
@@ -834,7 +837,7 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SRefreshPoint()],_*) -> {
-        if(`n.equals(field)) {
+        if (`n.equals(field)) {
           return true;
         }
       }
@@ -851,8 +854,8 @@ public class SymbolTable {
   public Set<String> getAtoms() {
     Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
-    while(it.hasNext()) {
-      if(!isAtomType(it.next())) {
+    while (it.hasNext()) {
+      if (!isAtomType(it.next())) {
         it.remove();
       }
     }
@@ -931,8 +934,8 @@ public class SymbolTable {
     }
   }
 
-  /* TODO: use GomMessage and the logger instead of RutimeException */
-//getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
+  /* TODO: use GomMessage and the logger instead of RuntimeException */
+  //getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
 
   public Logger getLogger() {
     return Logger.getLogger(getClass().getName());
