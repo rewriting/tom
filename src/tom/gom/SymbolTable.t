@@ -125,8 +125,9 @@ public class SymbolTable {
 
   public String getFullSortClassName(String sort) {
     SortDescription desc = sorts.get(sort);
-    if(desc==null) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+    if (null == desc) {
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredSortException.getMessage(), sort);
       return null;
     }
     %match(desc) {
@@ -142,8 +143,9 @@ public class SymbolTable {
 
   public String getFullConstructorClassName(String cons) {
     ConstructorDescription desc = constructors.get(cons);
-    if(desc==null) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+    if(null == desc) {
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(), cons);
       return null;
     }
     %match(desc) {
