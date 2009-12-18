@@ -260,16 +260,16 @@ public class SymbolTable {
 
   public String toString() {
     StringBuffer buf = new StringBuffer();
-    for(Map.Entry<String,SortDescription> e: sorts.entrySet()) {
+    for (Map.Entry<String,SortDescription> e: sorts.entrySet()) {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try {
         tom.library.utils.Viewer.toTree(e.getValue(),swriter);
-      } catch(java.io.IOException ex) {
+      } catch (java.io.IOException ex) {
         ex.printStackTrace();
       }
       buf.append("sort " + e.getKey() + ":\n" + swriter + "\n");
     }
-    for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()) {
+    for (Map.Entry<String,ConstructorDescription> e: constructors.entrySet()) {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try {
         tom.library.utils.Viewer.toTree(e.getValue(),swriter);
@@ -310,12 +310,12 @@ public class SymbolTable {
 
   /**
    * returns only sorts concerned by freshGom
-   **/
+   */
   public Set<String> getFreshSorts() {
     Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
-    while(it.hasNext()) {
-      if(!isFreshType(it.next())) {
+    while (it.hasNext()) {
+      if (!isFreshType(it.next())) {
         it.remove();
       }
     }
@@ -329,8 +329,8 @@ public class SymbolTable {
    **/
   public Set<String> getFreshConstructors() {
     HashSet<String> res = new HashSet<String>();
-    for(String c: constructors.keySet()) {
-      if(isFreshType(getSort(c))) {
+    for (String c: constructors.keySet()) {
+      if (isFreshType(getSort(c))) {
         res.add(c);
       }
     }
@@ -343,7 +343,7 @@ public class SymbolTable {
   }
 
   public String rawCons(String c) {
-    if(isGenerated(c)) {
+    if (isGenerated(c)) {
       %match(getGenerated(c)) {
         GenCons(suffix) ->  { return "ConsRaw" + `suffix; }
         GenNil(suffix) -> { return "EmptyRaw" + `suffix; }
@@ -354,8 +354,9 @@ public class SymbolTable {
 
   public String qualifiedRawSortId(String sort) {
     SortDescription desc = sorts.get(sort);
-    if(desc==null) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+    if (null == desc) {
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredSortException.getMessage(), sort);
       return null;
     }
     %match(desc) {
@@ -371,8 +372,9 @@ public class SymbolTable {
 
   public String qualifiedRawConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
-    if(desc==null) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+    if (null == desc) {
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(), cons);
       return null;
     }
     %match(desc) {
@@ -485,7 +487,7 @@ public class SymbolTable {
   }
 
   public boolean isExpressionType(String sort) {
-    if(getGomEnvironment().isBuiltin(sort)) {
+    if (getGomEnvironment().isBuiltin(sort)) {
       return false;
     }
     try {
@@ -493,13 +495,14 @@ public class SymbolTable {
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredSortException.getMessage(), sort);
       return false;
     }
   }
 
   public boolean isPatternType(String sort) {
-    if(getGomEnvironment().isBuiltin(sort)) {
+    if (getGomEnvironment().isBuiltin(sort)) {
       return false;
     }
     try {
@@ -513,7 +516,7 @@ public class SymbolTable {
   }
 
   public boolean isAtomType(String sort) {
-    if(getGomEnvironment().isBuiltin(sort)) {
+    if (getGomEnvironment().isBuiltin(sort)) {
       return false;
     }
     try {
@@ -535,7 +538,8 @@ public class SymbolTable {
       %match(i) { !NoFreshSort[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredSortException.getMessage(), sort);
       return false;
     }
   }
@@ -592,10 +596,12 @@ public class SymbolTable {
         }
       }
     } catch(NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), constructor);
+      getLogger().log(Level.SEVERE,
+          GomMessage.undeclaredConstructorException.getMessage(), constructor);
       return null;
     }
-    getLogger().log(Level.SEVERE, GomMessage.cannotAccessToChildConstructor.getMessage(), new Object[] {omega,constructor});
+    getLogger().log(Level.SEVERE,
+        GomMessage.cannotAccessToChildConstructor.getMessage(), new Object[] {omega,constructor});
     return null;
   }
 
