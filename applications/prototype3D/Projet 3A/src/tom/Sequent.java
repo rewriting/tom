@@ -20,6 +20,8 @@ public class Sequent {
 
 	private static LinkedList<Ligne> listeLigne = new LinkedList<Ligne>();
 
+	private static LinkedList<Ligne> listeLigneFinale = new LinkedList<Ligne>();
+
 	private static boolean tom_equal_term_char(char t1, char t2) {
 		return t1 == t2;
 	}
@@ -173,14 +175,6 @@ public class Sequent {
 			dessiner();
 		}
 		/*
-		 * On verifie la preuve
-		 */
-		if (Interface.getDerivation()) {
-			LinkedList<Couple> listeCouple = new LinkedList<Couple>();
-			listeCouple.add(new Couple(tom_make_True(), tom_make_False()));
-			System.out.println("est-ce une preuve ? " + verifierPreuve(listeCouple));
-		}
-		/*
 		 * On dessine le tout dans le repere
 		 */
 		repere.dessiner(repere);
@@ -198,15 +192,13 @@ public class Sequent {
 			 * Chaque formule est associee a trois noeuds : l'entree, le point
 			 * de depart de la construction de l'arbre et la sortie
 			 */
-			listeNoeud[3 * i] = new Noeud(3 * i, 0, 1, 1, 1, "neutre", "-1", i);
+			listeNoeud[3 * i] = new Noeud(3 * i, 0, 1, 1, 1, "-1", i);
 			listeNoeud[3 * i].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i], i);
-			listeNoeud[3 * i + 1] = new Noeud(3 * i + 1, 0, 1, 1, 1, "depart",
-					"", i);
+			listeNoeud[3 * i + 1] = new Noeud(3 * i + 1, 0, 1, 1, 1, "", i);
 			repere.dessinerPoint(listeNoeud[3 * i + 1], i);
 			listeNoeud[3 * i + 1].setFormule(sequent[i]);
-			listeNoeud[3 * i + 2] = new Noeud(3 * i + 2, 0, 1, 1, 1, "neutre",
-					"-1", i);
+			listeNoeud[3 * i + 2] = new Noeud(3 * i + 2, 0, 1, 1, 1, "-1", i);
 			listeNoeud[3 * i + 2].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i + 2], i);
 
@@ -248,10 +240,11 @@ public class Sequent {
 							+ i)));
 				}
 				Noeud temp = new Noeud(n.getX(), n.getY() + hauteur, n.getZ(),
-						n.getProfondeurInitiale(), repere.getNiveauMax(), n
-								.getEtat(), "-1", 0);
+						n.getProfondeurInitiale(), repere.getNiveauMax(), "-1",
+						0);
 				repere.dessinerPoint(temp, -1);
 				n.setEstFinal();
+				temp.setFormule(n.getFormule());
 				for (Ligne l : listeLigne) {
 					if (l.getListePoints().contains(n)) {
 						l.enleverNoeud(n);
@@ -260,96 +253,33 @@ public class Sequent {
 				}
 			}
 		}
+		/*
+		 * On recopie les lignes en tant que ligne finale
+		 */
+		listeLigneFinale = (LinkedList<Ligne>) listeLigne.clone();
 	}
 
 	public static void dessiner() {
-		for (Ligne l : listeLigne) {
-			l.relierPoints();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static void relierNoeudsTerminaux() {
 		/*
-		 * On relie tous les noeuds terminaux entre eux, pour avoir le "chemin"
-		 * de la preuve
+		 * Une fois que l'on a dessine toutes les lignes, on les supprime pour
+		 * preparer le graphe suivant
 		 */
-		LinkedList<Noeud> listeTemp = (LinkedList<Noeud>) repere
-				.getListeNoeud().clone();
-		LinkedList<Float> listeZ = new LinkedList<Float>();
-		TreeSet<Noeud> pointsFinaux = new TreeSet<Noeud>();
-		for (Noeud n : listeTemp) {
-			if (n.getProfondeur() == repere.getNiveauMax()
-					&& !pointsFinaux.contains(n)) {
-				pointsFinaux.add(n);
-			}
-		}
-		boolean trouve = false;
-		for (Noeud n : pointsFinaux) {
-			TreeSet<Noeud> listeTemp2 = new TreeSet<Noeud>();
-			float perimetre;
-			/*
-			 * Determination du perimetre de recherche
-			 */
-			if (n.getEtat() == "neutre") {
-				perimetre = 1;
-			} else {
-				perimetre = (float) (3 / Math.pow(2,
-						n.getProfondeurInitiale() - 1));
-			}
-			/*
-			 * On selectionne les points a relier
-			 */
-			for (Noeud p : pointsFinaux) {
-				if (p.getEtat() != "neutre") {
-					if (n.getEtat() == "neutre") {
-						if (p.getX() <= n.getX() + perimetre
-								&& p.getZ() <= n.getZ() + perimetre
-								&& p.getZ() >= n.getZ() - perimetre
-								&& p.getX() > n.getX()) {
-							listeTemp2.add(p);
-						}
-					} else {
-						if (p.getX() <= n.getX() + perimetre
-								&& p.getZ() <= n.getZ() + perimetre / 2
-								&& p.getZ() >= n.getZ() - perimetre / 2
-								&& p.getX() > n.getX()) {
-							listeTemp2.add(p);
-						}
-					}
-				}
-			}
-			/*
-			 * On relie les points. Si aucun point n'est selectionne, on prend
-			 * le prochain point finissant un sequent
-			 */
-			for (Noeud q : listeTemp2) {
-				if (!trouve || (!listeZ.contains(q.getZ()))) {
-					repere.dessinerSegment(n, q);
-				}
-				trouve = true;
-				listeZ.add(q.getZ());
-			}
-			if (!trouve) {
-				boolean recherche = false;
-				for (Noeud t : pointsFinaux) {
-					if (!recherche && t.getX() > n.getX()
-							&& t.getEtat().equals("neutre")) {
-						recherche = true;
-						repere.dessinerSegment(t, n);
-					}
-				}
-			}
-			trouve = false;
+		LinkedList<Ligne> temp = (LinkedList<Ligne>) listeLigne.clone();
+		for (Ligne l : temp) {
+			l.relierPoints();
+			listeLigne.remove(l);
 		}
 	}
 
 	public static void decomposerFormule(Formule f, Noeud n, int i) {
+		n.setFormule(f);
 		TreeSet<Noeud> temp = new TreeSet<Noeud>();
 		{
 			{
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_And(((tom.donnees.types.Formule) f))) {
+						tom.donnees.types.Formule tom_x = tom_get_slot_And_f1(((tom.donnees.types.Formule) f));
+						tom.donnees.types.Formule tom_y = tom_get_slot_And_f2(((tom.donnees.types.Formule) f));
 						temp = repere.dessinerAND(n, i, false);
 						LinkedList<Ligne> temp2 = (LinkedList<Ligne>) listeLigne
 								.clone();
@@ -367,18 +297,17 @@ public class Sequent {
 								listeLigne.add(l2);
 							}
 						}
-						decomposerFormule(
-								tom_get_slot_And_f1(((tom.donnees.types.Formule) f)),
-								temp.last(), i);
-						decomposerFormule(
-								tom_get_slot_And_f2(((tom.donnees.types.Formule) f)),
-								temp.first(), i);
+						n.setFormule(tom_make_And(tom_x, tom_y));
+						decomposerFormule(tom_x, temp.last(), i);
+						decomposerFormule(tom_y, temp.first(), i);
 					}
 				}
 			}
 			{
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_Or(((tom.donnees.types.Formule) f))) {
+						tom.donnees.types.Formule tom_x = tom_get_slot_Or_f1(((tom.donnees.types.Formule) f));
+						tom.donnees.types.Formule tom_y = tom_get_slot_Or_f2(((tom.donnees.types.Formule) f));
 						temp = repere.dessinerOR(n, i);
 						for (Ligne l : listeLigne) {
 							if (l.getListePoints().contains(n)) {
@@ -387,18 +316,17 @@ public class Sequent {
 								l.ajouterNoeud(temp.last());
 							}
 						}
-						decomposerFormule(
-								tom_get_slot_Or_f1(((tom.donnees.types.Formule) f)),
-								temp.first(), i);
-						decomposerFormule(
-								tom_get_slot_Or_f2(((tom.donnees.types.Formule) f)),
-								temp.last(), i);
+						n.setFormule(tom_make_Or(tom_x, tom_y));
+						decomposerFormule(tom_x, temp.first(), i);
+						decomposerFormule(tom_y, temp.last(), i);
 					}
 				}
 			}
 			{
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_Input(((tom.donnees.types.Formule) f))) {
+						n
+								.setFormule(tom_make_Input(tom_get_slot_Input_A(((tom.donnees.types.Formule) f))));
 						n.setEstFinal();
 					}
 				}
@@ -406,6 +334,7 @@ public class Sequent {
 			{
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_True(((tom.donnees.types.Formule) f))) {
+						n.setFormule(tom_make_True());
 						n.setEstFinal();
 					}
 				}
@@ -413,6 +342,7 @@ public class Sequent {
 			{
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_False(((tom.donnees.types.Formule) f))) {
+						n.setFormule(tom_make_False());
 						n.setEstFinal();
 					}
 				}
@@ -474,6 +404,13 @@ public class Sequent {
 				}
 			}
 		}
+		/*
+		 * Si aucun point n'a ete traite, la ligne est finale, et est ajoutee en
+		 * tant que telle
+		 */
+		if (!termine) {
+			listeLigneFinale.add(l);
+		}
 	}
 
 	public static Ligne dupliquerFormule(String s, Ligne l, Noeud n,
@@ -528,12 +465,22 @@ public class Sequent {
 		return new Ligne(nouvelleListePoints, repere);
 	}
 
-	public static boolean verifierPreuve(LinkedList<Couple> listeCouple) {
+	public static boolean verifierPreuve(String[] listeCouple) {
+		/*
+		 * On commence par creer les couples de formules correspondant aux
+		 * entrees de l'utilisateur
+		 */
+		String[] couple = new String[2];
+		LinkedList<Couple> listeCoupleFinale = new LinkedList<Couple>();
+		for (int i = 0; i < listeCouple.length; i++) {
+			couple = listeCouple[i].split(" ");
+			listeCoupleFinale.add(new Couple(reecrireFormule(couple[0]),
+					reecrireFormule(couple[1])));
+		}
 		boolean resultat = true;
 		boolean temp = false;
-		for (Ligne l : listeLigne) {
-			temp = false;
-			for (Couple c : listeCouple) {
+		for (Ligne l : listeLigneFinale) {
+			for (Couple c : listeCoupleFinale) {
 				if (c.estDansLigne(l)) {
 					temp = true;
 				}
@@ -750,12 +697,10 @@ public class Sequent {
 					return tom_make_False();
 				}
 				break;
-			case 'A':
-				if (s.length() == 1) {
-					return tom_make_Input("A");
-				}
-				break;
 			default:
+				if (s.length() == 1) {
+					return tom_make_Input(s);
+				}
 				break;
 			}
 		}

@@ -1,6 +1,7 @@
 package fenetre;
 
 import tom.Sequent;
+import tom.donnees.types.Formule;
 import java3D.Repere;
 
 import javax.swing.JButton;
@@ -17,7 +18,7 @@ import java.util.LinkedList;
 
 /*
  * Exemple : (A\/(A\/False))/\(True\/False)
- * Exemple 2 : True\/(A/\True),(A\/(A\/False))/\(True\/False)
+ * Exemple 2 : True\/(A/\True),(B\/(C\/False))/\(True\/False)
  * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
  * Exemple 4 : True\/(A/\True),(A\/(A\/False))/\(True\/False),(A/\(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
  * Exemple 5 : (A\/True)\/(A/\False)
@@ -28,17 +29,21 @@ public class Interface extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private final static boolean RIGHT_TO_LEFT = false;
+
 	private static Interface inter;
 
 	private JPanel jContentPane = null;
-
-	final static boolean RIGHT_TO_LEFT = false;
 
 	private JTextField sequent = null;
 
 	private JTextField subSequent = null;
 
 	private JTextField consigne = null;
+
+	private JTextField couple = null;
+
+	private JButton consigne2 = null;
 
 	private JButton and = null;
 
@@ -47,6 +52,14 @@ public class Interface extends JFrame {
 	private JButton True = null;
 
 	private JButton False = null;
+
+	private JButton and2 = null;
+
+	private JButton or2 = null;
+
+	private JButton True2 = null;
+
+	private JButton False2 = null;
 
 	private JButton seeSequent = null;
 
@@ -61,8 +74,12 @@ public class Interface extends JFrame {
 	private JButton back = null;
 
 	private JButton send = null;
-	
+
 	private JButton genererDerivation = null;
+
+	private JButton findProof = null;
+
+	private JButton checkProof = null;
 
 	private JButton close = null;
 
@@ -70,22 +87,31 @@ public class Interface extends JFrame {
 
 	private static LinkedList<Repere> listeRepere = new LinkedList<Repere>(); // @jve:decl-index=0:
 
+	private static LinkedList<String> listeSubSequent = new LinkedList<String>(); // @jve:decl-index=0:
+
+	private static LinkedList<Integer> listeNumeroSequent = new LinkedList<Integer>(); // @jve:decl-index=0:
+
 	private static String placeSubSequent = ""; // @jve:decl-index=0:
 
 	private static String[] listeSequent;
 
-	private static int positionSequent = -1;
-
-	private static LinkedList<String> subSequentPrecedent = new LinkedList<String>(); // @jve:decl-index=0:
+	private static String[] listeCouple;
 
 	private static boolean derivation = false;
-	
+
+	private static boolean parcourirSequentVisible = false;
+
+	private static boolean coupleVisible = false;
+
+	private static boolean verifierPreuve = false;
+
 	/**
 	 * This is the default constructor
 	 */
 	public Interface() {
 		super();
 		inter = this;
+		listeNumeroSequent.add(-1);
 		initialize();
 	}
 
@@ -93,20 +119,28 @@ public class Interface extends JFrame {
 		return placeSubSequent;
 	}
 
-	public static int getPositionSequent() {
-		return positionSequent;
+	public static int getNumeroSequent() {
+		return listeNumeroSequent.getLast();
 	}
 
 	public static String[] getListeSequent() {
 		return listeSequent;
 	}
 
+	public static String[] getListeCouple() {
+		return listeCouple;
+	}
+
 	public static LinkedList<Repere> getListeRepere() {
 		return listeRepere;
 	}
-	
+
 	public static boolean getDerivation() {
 		return derivation;
+	}
+
+	public static boolean getVerifierPreuve() {
+		return verifierPreuve;
 	}
 
 	/**
@@ -115,7 +149,7 @@ public class Interface extends JFrame {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(750, 200);
+		this.setSize(1200, 200);
 		this.setContentPane(getJContentPane());
 		this.setTitle("Prototype");
 	}
@@ -132,9 +166,9 @@ public class Interface extends JFrame {
 		}
 
 		/*
-		 * Permet de placer les elements dans la fenetre d'affichage; autorise le
-		 * redimensionnement de la fenetre tout en gardant une place coherente
-		 * des elements constitutifs
+		 * Permet de placer les elements dans la fenetre d'affichage; autorise
+		 * le redimensionnement de la fenetre tout en gardant une place
+		 * coherente des elements constitutifs
 		 */
 		if (jContentPane == null) {
 			jContentPane = new JPanel();
@@ -142,8 +176,11 @@ public class Interface extends JFrame {
 			GridBagConstraints contraintes = new GridBagConstraints();
 			jContentPane.setLayout(grid);
 			contraintes = new GridBagConstraints();
-			contraintes.insets = new Insets(7, 7, 7, 7);
+			contraintes.insets = new Insets(3, 3, 3, 3);
 
+			/*
+			 * Rentrer un sequent
+			 */
 			contraintes.anchor = GridBagConstraints.NORTH;
 			contraintes.fill = GridBagConstraints.HORIZONTAL;
 			contraintes.weighty = 1;
@@ -156,25 +193,23 @@ public class Interface extends JFrame {
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.weightx = 20;
 			contraintes.gridx = 2;
-			contraintes.gridwidth = 10;
+			contraintes.weightx = 10;
+			contraintes.gridwidth = 3;
 			comp = getSequent();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.insets = new Insets(3, 3, 3, 3);
-			contraintes.fill = GridBagConstraints.NONE;
-			contraintes.weightx = 1;
 			contraintes.gridx = 1;
 			contraintes.gridy = 2;
 			contraintes.gridwidth = 1;
-			comp = getAnd();
+			contraintes.weightx = 1;
+			comp = getOr();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
 			contraintes.gridx = 2;
-			comp = getOr();
+			comp = getAnd();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
@@ -188,68 +223,127 @@ public class Interface extends JFrame {
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 1;
-			contraintes.gridy = 3;
+			/*
+			 * Parcourir les sequents
+			 */
+			contraintes.gridx = 5;
+			contraintes.gridy = 1;
+			contraintes.gridwidth = 1;
+			contraintes.weightx = 1;
 			comp = getSeeSequent();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.fill = GridBagConstraints.HORIZONTAL;
-			contraintes.gridx = 2;
-			contraintes.gridwidth = 10;
+			contraintes.gridx = 6;
+			contraintes.gridy = 1;
+			contraintes.weightx = 10;
+			contraintes.gridwidth = 4;
 			comp = getSubSequent();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.fill = GridBagConstraints.NONE;
-			contraintes.gridx = 1;
-			contraintes.gridy = 4;
 			contraintes.gridwidth = 1;
+			contraintes.weightx = 1;
+			contraintes.gridx = 5;
+			contraintes.gridy = 2;
 			comp = getPreviousSequent();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 2;
+			contraintes.gridx = 6;
 			comp = getNextSequent();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 3;
+			contraintes.gridx = 7;
 			comp = getLeftSon();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 4;
+			contraintes.gridx = 8;
 			comp = getRightSon();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 5;
+			contraintes.gridx = 9;
 			comp = getBack();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.fill = GridBagConstraints.NONE;
-			contraintes.anchor = GridBagConstraints.CENTER;
+			/*
+			 * Generer les arbres et/ou les preuves
+			 */
 			contraintes.gridx = 1;
-			contraintes.gridy = 5;
-			contraintes.gridwidth = 2;
+			contraintes.gridy = 3;
 			comp = getSend();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
-			
-			contraintes.gridx = 3;
+
+			contraintes.gridx = 2;
 			comp = getGenererDerivation();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 5;
+			contraintes.gridx = 3;
+			comp = getFindProof();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 4;
+			comp = getCheckProof();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 1;
+			contraintes.gridy = 4;
 			comp = getClose();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 
-			contraintes.gridx = 6;
+			contraintes.gridx = 3;
 			comp = getQuit();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			/*
+			 * Creer liste couple pour verification/recherche de preuves
+			 */
+			contraintes.gridwidth = 1;
+			contraintes.weightx = 1;
+			contraintes.gridx = 5;
+			contraintes.gridy = 3;
+			comp = getConsigne2();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 6;
+			contraintes.gridy = 3;
+			contraintes.weightx = 10;
+			contraintes.gridwidth = 4;
+			comp = getCouple();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.weightx = 1;
+			contraintes.gridwidth = 1;
+			contraintes.gridx = 5;
+			contraintes.gridy = 4;
+			comp = getAnd2();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 6;
+			comp = getOr2();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 7;
+			comp = getTrue2();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
+
+			contraintes.gridx = 8;
+			comp = getFalse2();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
 		}
@@ -284,6 +378,12 @@ public class Interface extends JFrame {
 			sequent = new JTextField();
 			sequent.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
+					/*
+					 * Pour rentrer les sequents, il faut respecter les regles
+					 * suivantes : separer les sequents par des virgules; ne pas
+					 * mettre d'espaces; ne pas mettre de parenthèses inutiles
+					 * (ex: ne pas entourer un sequent de parenthèses)
+					 */
 				}
 			});
 		}
@@ -367,6 +467,86 @@ public class Interface extends JFrame {
 	}
 
 	/**
+	 * This method initializes and2
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getAnd2() {
+		if (and2 == null) {
+			and2 = new JButton();
+			and2.setText("/\\");
+			and2.setVisible(false);
+			and2.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					couple.setText(couple.getText() + "/\\");
+				}
+			});
+		}
+		return and2;
+	}
+
+	/**
+	 * This method initializes or2
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getOr2() {
+		if (or2 == null) {
+			or2 = new JButton();
+			or2.setText("\\/");
+			or2.setVisible(false);
+			or2.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					couple.setText(couple.getText() + "\\/");
+				}
+			});
+		}
+		return or2;
+	}
+
+	/**
+	 * This method initializes True2
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getTrue2() {
+		if (True2 == null) {
+			True2 = new JButton();
+			True2.setText("True");
+			True2.setVisible(false);
+			True2.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					couple.setText(couple.getText() + "True");
+				}
+			});
+		}
+		return True2;
+	}
+
+	/**
+	 * This method initializes False2
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getFalse2() {
+		if (False2 == null) {
+			False2 = new JButton();
+			False2.setText("False");
+			False2.setVisible(false);
+			False2.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					couple.setText(couple.getText() + "False");
+				}
+			});
+		}
+		return False2;
+	}
+
+	/**
 	 * This method initializes seeSequent
 	 * 
 	 * @return javax.swing.JRadioButton
@@ -378,12 +558,35 @@ public class Interface extends JFrame {
 			seeSequent.setText("See Sequent");
 			seeSequent.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					sequent.setText(sequent.getText().replace(" ", ""));
-					listeSequent = sequent.getText().split(",");
-					subSequent.setText(listeSequent[0]);
-					subSequentPrecedent.add(listeSequent[0]);
-					positionSequent = 0;
+					/*
+					 * On rend visible/invisible les boutons correspondant
+					 */
+					parcourirSequentVisible = !parcourirSequentVisible;
+					previousSequent.setVisible(parcourirSequentVisible);
+					nextSequent.setVisible(parcourirSequentVisible);
+					leftSon.setVisible(parcourirSequentVisible);
+					rightSon.setVisible(parcourirSequentVisible);
+					back.setVisible(parcourirSequentVisible);
+					subSequent.setVisible(parcourirSequentVisible);
+					/*
+					 * On met a jour le subsequent selectionne
+					 */
+					if (parcourirSequentVisible) {
+						sequent.setText(sequent.getText().replace(" ", ""));
+						listeSequent = sequent.getText().split(",");
+						subSequent.setText(listeSequent[0]);
+						listeSubSequent.add(listeSequent[0]);
+						listeNumeroSequent.add(0);
+					} else {
+						subSequent.setText("");
+						listeNumeroSequent.clear();
+						listeNumeroSequent.add(-1);
+						listeSubSequent.clear();
+					}
 					placeSubSequent = "";
+					if (!listeRepere.isEmpty()) {
+						listeRepere.getLast().actualiser();
+					}
 				}
 			});
 		}
@@ -400,16 +603,23 @@ public class Interface extends JFrame {
 		if (previousSequent == null) {
 			previousSequent = new JButton();
 			previousSequent.setText("Previous Sequent");
+			previousSequent.setVisible(false);
 			previousSequent
 					.addActionListener(new java.awt.event.ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
-							if (positionSequent > 0) {
-								positionSequent--;
+							if (listeNumeroSequent.getLast() > 0) {
+								listeNumeroSequent.add(listeNumeroSequent
+										.getLast() - 1);
 								subSequent
-										.setText(listeSequent[positionSequent]);
-								subSequentPrecedent
-										.add(listeSequent[positionSequent]);
+										.setText(listeSequent[listeNumeroSequent
+												.getLast()]);
+								listeSubSequent
+										.add(listeSequent[listeNumeroSequent
+												.getLast()]);
 								placeSubSequent = "";
+								if (!listeRepere.isEmpty()) {
+									listeRepere.getLast().actualiser();
+								}
 							}
 						}
 					});
@@ -427,15 +637,21 @@ public class Interface extends JFrame {
 		if (nextSequent == null) {
 			nextSequent = new JButton();
 			nextSequent.setText("Next Sequent");
+			nextSequent.setVisible(false);
 			nextSequent.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (positionSequent >= 0) {
-						if (positionSequent < listeSequent.length - 1) {
-							positionSequent++;
-							subSequent.setText(listeSequent[positionSequent]);
-							subSequentPrecedent
-									.add(listeSequent[positionSequent]);
+					if (listeNumeroSequent.getLast() >= 0) {
+						if (listeNumeroSequent.getLast() < listeSequent.length - 1) {
+							listeNumeroSequent
+									.add(listeNumeroSequent.getLast() + 1);
+							subSequent.setText(listeSequent[listeNumeroSequent
+									.getLast()]);
+							listeSubSequent.add(listeSequent[listeNumeroSequent
+									.getLast()]);
 							placeSubSequent = "";
+							if (!listeRepere.isEmpty()) {
+								listeRepere.getLast().actualiser();
+							}
 						}
 					}
 				}
@@ -454,12 +670,17 @@ public class Interface extends JFrame {
 		if (leftSon == null) {
 			leftSon = new JButton();
 			leftSon.setText("Left Son");
+			leftSon.setVisible(false);
 			leftSon.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					subSequentPrecedent.add(subSequent.getText());
+					listeSubSequent.add(subSequent.getText());
 					subSequent.setText(redirigerSelection(subSequent.getText(),
 							"left"));
+					listeNumeroSequent.add(listeNumeroSequent.getLast());
 					placeSubSequent = placeSubSequent + "0";
+					if (!listeRepere.isEmpty()) {
+						listeRepere.getLast().actualiser();
+					}
 				}
 			});
 		}
@@ -476,16 +697,17 @@ public class Interface extends JFrame {
 		if (rightSon == null) {
 			rightSon = new JButton();
 			rightSon.setText("Right Son");
+			rightSon.setVisible(false);
 			rightSon.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					subSequentPrecedent.add(subSequent.getText());
+					listeSubSequent.add(subSequent.getText());
 					subSequent.setText(redirigerSelection(subSequent.getText(),
 							"right"));
+					listeNumeroSequent.add(listeNumeroSequent.getLast());
 					placeSubSequent = placeSubSequent + "1";
-					//if (!listeRepere.isEmpty()) {
-						//listeRepere.getFirst().actualiser();
-						// listeRepere.getFirst().dessiner(listeRepere.getFirst());
-					//}
+					if (!listeRepere.isEmpty()) {
+						listeRepere.getLast().actualiser();
+					}
 				}
 			});
 		}
@@ -502,13 +724,31 @@ public class Interface extends JFrame {
 		if (back == null) {
 			back = new JButton();
 			back.setText("Back");
+			back.setVisible(false);
 			back.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (!subSequentPrecedent.isEmpty()) {
-						subSequent.setText(subSequentPrecedent.pollLast());
+					if (!listeSubSequent.isEmpty()) {
+						subSequent.setText(listeSubSequent.removeLast());
+						listeNumeroSequent.removeLast();
 						if (placeSubSequent.length() > 0) {
 							placeSubSequent = placeSubSequent.substring(0,
 									placeSubSequent.length() - 1);
+						}
+						if (!listeRepere.isEmpty()) {
+							listeRepere.getLast().actualiser();
+						}
+						/*
+						 * Dans le cas ou on revient au debut, on recache tous
+						 * les boutons
+						 */
+						if (listeSubSequent.isEmpty()) {
+							parcourirSequentVisible = !parcourirSequentVisible;
+							previousSequent.setVisible(parcourirSequentVisible);
+							nextSequent.setVisible(parcourirSequentVisible);
+							leftSon.setVisible(parcourirSequentVisible);
+							rightSon.setVisible(parcourirSequentVisible);
+							back.setVisible(parcourirSequentVisible);
+							subSequent.setVisible(parcourirSequentVisible);
 						}
 					}
 				}
@@ -525,12 +765,63 @@ public class Interface extends JFrame {
 	private JTextField getSubSequent() {
 		if (subSequent == null) {
 			subSequent = new JTextField();
+			subSequent.setEditable(false);
+			subSequent.setVisible(false);
 			subSequent.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 				}
 			});
 		}
 		return subSequent;
+	}
+
+	/**
+	 * This method initializes consigne2
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getConsigne2() {
+		if (consigne2 == null) {
+			consigne2 = new JButton();
+			consigne2.setText("Enter Couples");
+			consigne2.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					/*
+					 * On rend visible/invisible les boutons correspondant
+					 */
+					coupleVisible = !coupleVisible;
+					couple.setVisible(coupleVisible);
+					and2.setVisible(coupleVisible);
+					or2.setVisible(coupleVisible);
+					True2.setVisible(coupleVisible);
+					False2.setVisible(coupleVisible);
+				}
+			});
+		}
+		return consigne2;
+	}
+
+	/**
+	 * This method initializes couple
+	 * 
+	 * @return javax.swing.JTextField
+	 */
+	private JTextField getCouple() {
+		if (couple == null) {
+			couple = new JTextField();
+			couple.setVisible(false);
+			couple.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					/*
+					 * Pour rentrer les couples, il faut respecter les regles
+					 * suivantes : separer les couples par des virgules ;
+					 * separer les deux formules d'un couple par un espace ;
+					 */
+				}
+			});
+		}
+		return couple;
 	}
 
 	/**
@@ -550,13 +841,12 @@ public class Interface extends JFrame {
 					listeSequent = sequent.getText().split(",");
 					listeRepere.add(new Repere());
 					Sequent.main(listeSequent, listeRepere.getLast());
-					listeRepere.getLast().setCamera();
 				}
 			});
 		}
 		return send;
 	}
-	
+
 	/**
 	 * This method initializes genererDerivation
 	 * 
@@ -567,18 +857,64 @@ public class Interface extends JFrame {
 		if (genererDerivation == null) {
 			genererDerivation = new JButton();
 			genererDerivation.setText("Generate Graph Derivation");
-			genererDerivation.addActionListener(new java.awt.event.ActionListener() {
+			genererDerivation
+					.addActionListener(new java.awt.event.ActionListener() {
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+							derivation = true;
+							sequent.setText(sequent.getText().replace(" ", ""));
+							listeSequent = sequent.getText().split(",");
+							listeRepere.add(new Repere());
+							Sequent.main(listeSequent, listeRepere.getLast());
+						}
+					});
+		}
+		return genererDerivation;
+	}
+
+	/**
+	 * This method initializes findProof
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getFindProof() {
+		if (findProof == null) {
+			findProof = new JButton();
+			findProof.setText("Find Proof");
+			findProof.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					derivation  = true;
-					sequent.setText(sequent.getText().replace(" ", ""));
-					listeSequent = sequent.getText().split(",");
-					listeRepere.add(new Repere());
-					Sequent.main(listeSequent, listeRepere.getLast());
-					listeRepere.getLast().setCamera();
+
 				}
 			});
 		}
-		return genererDerivation;
+		return findProof;
+	}
+
+	/**
+	 * This method initializes checkProof
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getCheckProof() {
+		if (checkProof == null) {
+			checkProof = new JButton();
+			checkProof.setText("Check Proof");
+			checkProof.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					/*
+					 * On met a jour la liste des couples retenus
+					 */
+					couple.setText(couple.getText().replace("  ", " "));
+					listeCouple = couple.getText().split(",");
+					if (!listeRepere.isEmpty()) {
+						System.out.println("Est-ce une preuve ? "
+								+ Sequent.verifierPreuve(listeCouple));
+					}
+				}
+			});
+		}
+		return checkProof;
 	}
 
 	/**
@@ -615,6 +951,9 @@ public class Interface extends JFrame {
 			quit.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					inter.setVisible(false);
+					for (Repere rep : listeRepere) {
+						rep.setVisible(false);
+					}
 				}
 			});
 		}
@@ -692,12 +1031,10 @@ public class Interface extends JFrame {
 					return s1;
 				}
 				break;
-			case 'A':
+			default:
 				if (s1.length() == 1) {
 					return s1;
 				}
-				break;
-			default:
 				break;
 			}
 		}

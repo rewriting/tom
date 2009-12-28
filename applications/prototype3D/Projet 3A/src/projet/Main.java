@@ -3,6 +3,11 @@ package projet;
 import fenetre.Interface;
 
 public class Main {
+	
+	/*
+	 * Derniere mise a jour : 23/12/2010
+	 */
+	
 
 	/**
 	 * @param args

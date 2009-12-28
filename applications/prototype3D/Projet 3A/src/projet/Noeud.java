@@ -6,29 +6,22 @@ public class Noeud implements Comparable<Noeud> {
 
 	private final float[] coordonnees = new float[3];
 
-	private final String etat;
-
 	private int profondeurInitiale;
 
 	private int profondeur;
 
 	private boolean estFinal;
-	
-	private String position = "";
-	
-	private int numeroSequent;
-	
-	private Formule formule;
 
-	/*
-	 * N.B.: pour le moment, l'etat précis ("Or" ou "And") d'un noeud est une donnees inutile
-	 */
+	private String position = "";
+
+	private int numeroSequent;
+
+	private Formule formule;
 
 	public Noeud() {
 		coordonnees[0] = 0;
 		coordonnees[1] = 0;
 		coordonnees[2] = 0;
-		etat = "neutre";
 		estFinal = false;
 		position = "0";
 		numeroSequent = 0;
@@ -38,7 +31,6 @@ public class Noeud implements Comparable<Noeud> {
 		coordonnees[0] = x;
 		coordonnees[1] = y;
 		coordonnees[2] = z;
-		etat = "neutre";
 		estFinal = false;
 		position = "0";
 		numeroSequent = 0;
@@ -46,13 +38,12 @@ public class Noeud implements Comparable<Noeud> {
 		setProfondeur(1);
 	}
 
-	public Noeud(float x, float y, float z, int i, int j, String s1, String s2, int k) {
+	public Noeud(float x, float y, float z, int i, int j, String s, int k) {
 		coordonnees[0] = x;
 		coordonnees[1] = y;
 		coordonnees[2] = z;
-		etat = s1;
 		estFinal = false;
-		position = s2;
+		position = s;
 		numeroSequent = k;
 		setProfondeurInitiale(i);
 		setProfondeur(j);
@@ -69,20 +60,20 @@ public class Noeud implements Comparable<Noeud> {
 	public int getProfondeur() {
 		return profondeur;
 	}
-	
+
 	public String getPosition() {
 		return position;
 	}
-	
+
 	public int getNumeroSequent() {
 		return numeroSequent;
 	}
-	
+
 	public Formule getFormule() {
 		return formule;
 	}
-	
-	public void setFormule (Formule f) {
+
+	public void setFormule(Formule f) {
 		formule = f;
 	}
 
@@ -114,14 +105,10 @@ public class Noeud implements Comparable<Noeud> {
 		return coordonnees[2];
 	}
 
-	public String getEtat() {
-		return etat;
-	}
-
 	/*
-	 * Permet de comparer deux points entre eux dans l'espace. N est "plus petit"
-	 * que M si son X est plus petit et en cas d'egalite, si son Z est plus
-	 * petit sinon, ce sont les memes points (on ne compare que des points
+	 * Permet de comparer deux points entre eux dans l'espace. N est "plus
+	 * petit" que M si son X est plus petit et en cas d'egalite, si son Z est
+	 * plus petit sinon, ce sont les memes points (on ne compare que des points
 	 * situes dans un meme plan) (non-Javadoc)
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)

@@ -1,7 +1,6 @@
 package java3D;
 
 import projet.Noeud;
-import tom.Sequent;
 import fenetre.Interface;
 
 import java.applet.Applet;
@@ -13,45 +12,33 @@ import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.*;
 import javax.media.j3d.*;
-import javax.media.j3d.Locale;
 import javax.vecmath.*;
 
 public class Repere extends Applet {
 
-	private static final long serialVersionUID = 1L;
+	public static final Color3f COULEUR_CHERCHE = new Color3f(0.7f, 0.5f, 0.2f);
+
+	public static final Color3f COULEUR_OR = new Color3f(0.7f, 0.5f, 0.7f);
+
+	public static final Color3f COULEUR_AND = new Color3f(0.3f, 0.5f, 0.3f);
+
+	public static final Color3f COULEUR_DERIV = new Color3f(0.15f, 0.15f, 0.15f);
 
 	private static final double ECHELLE = 2;
+
+	private static final long serialVersionUID = 1L;
 
 	private Frame frame;
 
 	private BranchGroup parent = new BranchGroup();
 
-	private static BranchGroup conteneur = new BranchGroup();
-
-	private TransformGroup mouseTransform = new TransformGroup();
-
 	private LinkedList<Noeud> listeNoeud = new LinkedList<Noeud>();
-
-	public static final Color3f COULEUR = new Color3f(0.7f, 0.5f, 0.2f);
-	
-	public static final Color3f COULEUR_OR = new Color3f(0.7f, 0.5f, 0.7f);
-	
-	public static final Color3f COULEUR_AND = new Color3f(0.3f, 0.5f, 0.3f);
-
-	public static final Color3f COULEUR_DERIV = new Color3f(0.15f, 0.15f,
-			0.15f);
 
 	private int niveauMax = 1;
 
 	private static ViewingPlatform camera = null;
 
-	private static Viewer view = null;
-
 	private SimpleUniverse simpleU;
-
-	private Locale locale = null;
-
-	private static boolean premiereFenetre = true;
 
 	public Repere() {
 	}
@@ -60,16 +47,16 @@ public class Repere extends Applet {
 		return listeNoeud;
 	}
 
-	public static BranchGroup getConteneur() {
-		return conteneur;
-	}
+	/*
+	 * public static BranchGroup getConteneur() { return conteneur; }
+	 */
 
 	public static double getEchelle() {
 		return ECHELLE;
 	}
 
 	public static Color3f getCouleur() {
-		return COULEUR;
+		return COULEUR_CHERCHE;
 	}
 
 	public static Color3f getCouleurDerivation() {
@@ -85,7 +72,7 @@ public class Repere extends Applet {
 	 * 
 	 * @return scene 3D
 	 */
-	public BranchGroup createSceneGraph() {
+	public BranchGroup createSceneGraph(SimpleUniverse su) {
 		/*
 		 * Creation des axes qui serviront de repere
 		 */
@@ -95,6 +82,7 @@ public class Repere extends Applet {
 		axisX.setCoordinate(1, new Point3f(10f, 0f, 0f));
 		axisX.setColor(0, new Color3f(1f, 0f, 0f));
 		axisX.setColor(1, new Color3f(1f, 0f, 0f));
+		axisX.setUserData("axeX");
 
 		LineArray axisY = new LineArray(2, LineArray.COORDINATES
 				| LineArray.COLOR_3);
@@ -102,6 +90,7 @@ public class Repere extends Applet {
 		axisY.setCoordinate(1, new Point3f(0f, 10f, 0f));
 		axisY.setColor(0, new Color3f(0f, 1f, 0f));
 		axisY.setColor(1, new Color3f(0f, 1f, 0f));
+		axisY.setUserData("axeY");
 
 		LineArray axisZ = new LineArray(2, LineArray.COORDINATES
 				| LineArray.COLOR_3);
@@ -109,40 +98,66 @@ public class Repere extends Applet {
 		axisZ.setCoordinate(1, new Point3f(0f, 0f, 10f));
 		axisZ.setColor(0, new Color3f(0f, 0f, 1f));
 		axisZ.setColor(1, new Color3f(0f, 0f, 1f));
-
+		axisZ.setUserData("axeZ");
 		/*
-		 * Le groupe de transformation sera modifie par le comportement de la
-		 * souris
+		 * Creation du groupe de transformation a partir de l'objet
+		 * SimpleUniverse On recupere en fait la position de la camera qui sera
+		 * modifiee a la souris grace au TransformGroup tg
 		 */
-		mouseTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		mouseTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
+		TransformGroup tg = su.getViewingPlatform().getViewPlatformTransform();
 		/*
-		 * Creation comportement rotation a la souris
+		 * Creation comportement navigation (rotation) a la souris
 		 */
-		MouseRotate rotate = new MouseRotate(mouseTransform);
-		rotate.setSchedulingBounds(new BoundingSphere());
-		parent.addChild(rotate);
-
+		MouseRotate mouseRotate = new MouseRotate(MouseBehavior.INVERT_INPUT);
+		mouseRotate.setTransformGroup(tg);
 		/*
-		 * Creation comportement deplacement a la souris
+		 * Champ d'action de la souris (rotation)
 		 */
-		MouseTranslate translate = new MouseTranslate(mouseTransform);
-		translate.setSchedulingBounds(new BoundingSphere());
-		parent.addChild(translate);
-
+		mouseRotate
+				.setSchedulingBounds(new BoundingSphere(new Point3d(), 1000));
 		/*
-		 * Creation comportement zoom a la souris
+		 * Ajout du comportement rotation a la souris a l'objet parent de la
+		 * scene 3D
 		 */
-		MouseWheelZoom zoom = new MouseWheelZoom(mouseTransform);
-		zoom.setSchedulingBounds(new BoundingSphere());
-		parent.addChild(zoom);
-
-		mouseTransform.addChild(new Shape3D(axisX));
-		mouseTransform.addChild(new Shape3D(axisY));
-		mouseTransform.addChild(new Shape3D(axisZ));
-
-		parent.addChild(mouseTransform);
+		parent.addChild(mouseRotate);
+		/*
+		 * Creation comportement navigation (translation) a la souris
+		 */
+		MouseTranslate mouseTranslate = new MouseTranslate(
+				MouseBehavior.INVERT_INPUT);
+		mouseTranslate.setTransformGroup(tg);
+		/*
+		 * Champ d'action de la souris (translation)
+		 */
+		mouseTranslate.setSchedulingBounds(new BoundingSphere(new Point3d(),
+				1000));
+		/*
+		 * Ajout du comportement translation a la souris a l'objet parent de la
+		 * scene 3D
+		 */
+		parent.addChild(mouseTranslate);
+		/*
+		 * Creation comportement navigation (zoom) a la souris
+		 */
+		MouseWheelZoom mouseZoom = new MouseWheelZoom(
+				MouseBehavior.INVERT_INPUT);
+		mouseZoom.setFactor(0.05);
+		mouseZoom.setTransformGroup(tg);
+		/*
+		 * Champ d'action de la souris (zoom)
+		 */
+		mouseZoom.setSchedulingBounds(new BoundingSphere(new Point3d(), 1000));
+		/*
+		 * Ajout du comportement zoom a la souris a l'objet parent de la scene
+		 * 3D
+		 */
+		parent.addChild(mouseZoom);
+		/*
+		 * Ajout des trois axes a l'objet parent de la scene 3D
+		 */
+		parent.addChild(new Shape3D(axisX));
+		parent.addChild(new Shape3D(axisY));
+		parent.addChild(new Shape3D(axisZ));
 
 		return parent;
 	}
@@ -164,11 +179,12 @@ public class Repere extends Applet {
 		 */
 		Appearance app = new Appearance();
 		ColoringAttributes color = new ColoringAttributes();
-		if (estSelectionne(n) && k == Interface.getPositionSequent()) {
-			color.setColor(COULEUR);
-		} else {
-			color.setColor(0.6f, 0.6f, 0.6f);
-		}
+		/*
+		 * if (estSelectionne(n) && k == Interface.getNumeroSequent()) {
+		 * color.setColor(COULEUR_CHERCHE); } else {
+		 */
+		color.setColor(0.6f, 0.6f, 0.6f);
+		// }
 		app.setColoringAttributes(color);
 
 		/*
@@ -177,8 +193,9 @@ public class Repere extends Applet {
 		Transform3D translate = new Transform3D();
 		translate.set(new Vector3f(n.getX(), n.getY(), n.getZ()));
 		TransformGroup TG = new TransformGroup(translate);
-		TG.addChild(new Sphere(
-				(float) (1 / (Math.pow(2, n.getProfondeur() + 4))), app));
+		Sphere point = new Sphere((float) (1 / (Math.pow(2,
+				n.getProfondeur() + 4))), app);
+		TG.addChild(point);
 
 		/*
 		 * Mise a jour des donnees generales
@@ -187,7 +204,8 @@ public class Repere extends Applet {
 			niveauMax++;
 		}
 		listeNoeud.add(n);
-		mouseTransform.addChild(TG);
+
+		parent.addChild(TG);
 	}
 
 	public void dessinerSegment(Noeud n1, Noeud n2) {
@@ -200,10 +218,12 @@ public class Repere extends Applet {
 		segment.setCoordinate(1, new Point3f(n2.getX(), n2.getY(), n2.getZ()));
 		segment.setColor(0, new Color3f(0.6f, 0.6f, 0.6f));
 		segment.setColor(1, new Color3f(0.6f, 0.6f, 0.6f));
+		segment.setUserData("segment");
 
-		mouseTransform.addChild(new Shape3D(segment));
+		parent.addChild(new Shape3D(segment));
 	}
 
+	@SuppressWarnings("static-access")
 	public TreeSet<Noeud> dessinerOR(Noeud n, int k) {
 		/*
 		 * Creation des points engendres par le "OR" et affichage de ces
@@ -212,13 +232,13 @@ public class Repere extends Applet {
 		Noeud n1 = new Noeud((float) (n.getX() - (1 / (Math.pow(ECHELLE, n
 				.getProfondeur())))), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), n.getZ(),
-				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, "OR", n
+				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, n
 						.getPosition()
 						+ "0", k);
 		Noeud n2 = new Noeud((float) (n.getX() + (1 / (Math.pow(ECHELLE, n
 				.getProfondeur())))), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), n.getZ(),
-				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, "OR", n
+				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, n
 						.getPosition()
 						+ "1", k);
 		dessinerPoint(n1, k);
@@ -231,10 +251,18 @@ public class Repere extends Applet {
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
 		 * engendree par le "OR"
 		 */
-		mouseTransform
-				.addChild(new Triangle(n, n1, n2, this).creerTriangle("or", k, false));
-		mouseTransform
-				.addChild(new Triangle(n, n2, n1, this).creerTriangle("or", k, false));
+		Shape3D shape = new Triangle(n, n1, n2, this).creerTriangle("or", k,
+				false);
+		shape.setCapability(shape.ALLOW_GEOMETRY_WRITE);
+		shape.setCapability(shape.ALLOW_GEOMETRY_READ);
+
+		Shape3D shape2 = new Triangle(n, n2, n1, this).creerTriangle("or", k,
+				false);
+		shape2.setCapability(shape.ALLOW_GEOMETRY_WRITE);
+		shape2.setCapability(shape.ALLOW_GEOMETRY_READ);
+
+		parent.addChild(shape);
+		parent.addChild(shape2);
 
 		/*
 		 * Mise a jour des donnees generales
@@ -254,6 +282,7 @@ public class Repere extends Applet {
 		return liste;
 	}
 
+	@SuppressWarnings("static-access")
 	public TreeSet<Noeud> dessinerAND(Noeud n, int k, boolean deriv) {
 		/*
 		 * Creation des points engendres par le "AND" et affichage de ces
@@ -262,11 +291,11 @@ public class Repere extends Applet {
 		Noeud n1 = new Noeud(n.getX(), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), (float) (n.getZ() - (1 / (Math
 				.pow(ECHELLE, n.getProfondeur())))), n.getProfondeur() + 1, n
-				.getProfondeurInitiale() + 1, "AND", n.getPosition() + "1", k);
+				.getProfondeurInitiale() + 1, n.getPosition() + "1", k);
 		Noeud n2 = new Noeud(n.getX(), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), (float) (n.getZ() + (1 / (Math
 				.pow(ECHELLE, n.getProfondeur())))), n.getProfondeur() + 1, n
-				.getProfondeurInitiale() + 1, "AND", n.getPosition() + "0", k);
+				.getProfondeurInitiale() + 1, n.getPosition() + "0", k);
 		dessinerPoint(n1, k);
 		dessinerPoint(n2, k);
 		dessinerSegment(n, n1);
@@ -277,10 +306,18 @@ public class Repere extends Applet {
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
 		 * engendree par le "AND"
 		 */
-		mouseTransform
-				.addChild(new Triangle(n, n1, n2, this).creerTriangle("and", k, deriv));
-		mouseTransform
-				.addChild(new Triangle(n, n2, n1, this).creerTriangle("and", k, deriv));
+		Shape3D shape = new Triangle(n, n1, n2, this).creerTriangle("and", k,
+				deriv);
+		shape.setCapability(shape.ALLOW_GEOMETRY_WRITE);
+		shape.setCapability(shape.ALLOW_GEOMETRY_READ);
+
+		Shape3D shape2 = new Triangle(n, n2, n1, this).creerTriangle("and", k,
+				deriv);
+		shape2.setCapability(shape.ALLOW_GEOMETRY_WRITE);
+		shape2.setCapability(shape.ALLOW_GEOMETRY_READ);
+
+		parent.addChild(shape);
+		parent.addChild(shape2);
 
 		/*
 		 * Mise a jour des donnees generales
@@ -310,7 +347,7 @@ public class Repere extends Applet {
 		 */
 		Noeud n1 = new Noeud(n.getX(), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), n.getZ(),
-				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, "OR", n
+				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, n
 						.getPosition()
 						+ "1", k);
 		dessinerPoint(n1, k);
@@ -345,34 +382,11 @@ public class Repere extends Applet {
 
 		simpleU = new SimpleUniverse(canvas3D);
 		simpleU.getViewingPlatform().setNominalViewingTransform();
-		/*
-		 * if (premiereFenetre) { simpleU = new SimpleUniverse(canvas3D);
-		 * simpleU.getViewingPlatform().setNominalViewingTransform();
-		 * setCamera(); view = simpleU.getViewer(); premiereFenetre = false; }
-		 * else { simpleU = new SimpleUniverse(camera, view);
-		 * System.out.println("camera : " + camera); }
-		 */
-		/*
-		 * camera.setCapability(ViewPlatform.ALLOW_POLICY_READ);
-		 * camera.setCapability(ViewPlatform.ALLOW_POLICY_WRITE);
-		 */
-		/*
-		 * simpleU.removeAllLocales();
-		 * simpleU.getViewingPlatform().removeAllChildren();
-		 * System.out.println("parent : " + camera.getParent());
-		 * simpleU.getViewingPlatform().setViewPlatform(camera); }
-		 */
 
-		/*
-		 * scene.addChild(initialiser()); scene.addChild(conteneur);
-		 */
-		BranchGroup scene = createSceneGraph();
-		/* scene.addChild(createSceneGraph()); */
-		// scene.setCapability(BranchGroup.ALLOW_DETACH);
+		BranchGroup scene = createSceneGraph(simpleU);
 		scene.compile();
 
 		simpleU.addBranchGraph(scene);
-		// locale = simpleU.getLocale();
 
 		frame = new MainFrame(repere, 512, 512);
 	}
@@ -381,53 +395,46 @@ public class Repere extends Applet {
 		frame.setVisible(false);
 	}
 
-	public void actualiser2() {
-		System.out.println("fonction appelee");
-		System.out.println("place subsequent : "
-				+ Interface.getPlaceSubSequent());
-		for (int k = 0; k < mouseTransform.numChildren(); k++) {
-			Object o = mouseTransform.getChild(k);
-			// System.out.println(k + " type : " + o.toString());
+	public void actualiser() {
+		/*
+		 * Permet de changer en direct les couleurs des triangles
+		 */
+		for (int k = 0; k < parent.numChildren(); k++) {
+			Object o = parent.getChild(k);
 			if (o instanceof Shape3D) {
-				// System.out.println("Shape3D trouve");
 				Shape3D shape = (Shape3D) o;
-				// System.out.println("getUerData : "
-				// + shape.getUserData().toString());
-				if (!shape.getUserData().toString().equals("neutre")) {
-					System.out.println("trouve");
+				Enumeration e = shape.getAllGeometries();
+				while (e.hasMoreElements()) {
+					Geometry g = (Geometry) e.nextElement();
 					/*
-					 * shape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_WRITE);
-					 * shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-					 * shape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
-					 * shape.setCapability(Shape3D.ALLOW_APPEARANCE_OVERRIDE_READ);
+					 * On remet la couleur de base à tous les triangles
 					 */
-					Appearance app = new Appearance();
-					ColoringAttributes color = new ColoringAttributes();
-					color.setColor(new Color3f(0.5f, 0.5f, 0.5f));
-					app.setColoringAttributes(color);
+					if (!g.getUserData().toString().equals("segment")
+							&& !g.getUserData().toString().contains("axe")) {
+						TriangleArray t = (TriangleArray) g;
+						for (int i = 0; i < 3; i++) {
+							if (t.getUserData().toString().endsWith("or")) {
+								t.setColor(i, COULEUR_OR);
+							} else {
+								t.setColor(i, COULEUR_AND);
+							}
+						}
+					}
 					/*
-					 * Material material = new Material(new Color3f(0.0f, 0.0f,
-					 * 1.0f), new Color3f(0.0f, 0.0f, 0.0f), new Color3f( 0.5f,
-					 * 0.5f, 0.5f), new Color3f(1.0f, 1.0f, 1.0f), 64);
-					 * app.setMaterial(material);
+					 * Puis on fait ressortir ceux qui sont recherches
 					 */
-					shape.setAppearance(app);
-					shape.setUserData(Interface.getPlaceSubSequent());
+					if (g.getUserData().toString().startsWith(
+							Interface.getNumeroSequent()
+									+ Interface.getPlaceSubSequent())) {
+						TriangleArray t = (TriangleArray) g;
+						for (int i = 0; i < 3; i++) {
+							t.setColor(i, COULEUR_CHERCHE);
+						}
+					}
 				}
 			}
 		}
 	}
-
-	/*
-	 * public void actualiser() { BranchGroup ancienneScene = new BranchGroup();
-	 * ancienneScene = conteneur; BranchGroup nouvelleScene = new BranchGroup();
-	 * nouvelleScene.setCapability(BranchGroup.ALLOW_DETACH); nouvelleScene =
-	 * Sequent.genererGraphe(Interface.getListeSequent(),
-	 * Interface.getListeRepere().getLast()); nouvelleScene.compile();
-	 * locale.replaceBranchGraph(ancienneScene, Sequent.genererGraphe(
-	 * Interface.getListeSequent(), Interface.getListeRepere() .getLast())); //
-	 * conteneur = nouvelleScene; }
-	 */
 
 	public ViewingPlatform getCamera() {
 		return camera;
