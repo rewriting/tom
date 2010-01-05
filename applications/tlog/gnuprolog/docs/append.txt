@@ -1,0 +1,21 @@
+% This is a comment
+
+append([],X,X).
+
+append([X|Xs],Y,[X|Z]) :- append(Xs,Y,Z).
+
+/* a multiline comment here ...
+... ending in the middle of a line */
+nrev([],[]).
+nrev([X|Xs],Zs) :- nrev(Xs,Ys) , append(Ys,[X],Zs).
+
+/* nrev 30 has 496 logical inferences */
+nrev30 :- nrev([1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0],X).
+
+
+go([]).
+go([X|Xs]) :- nrev30, go(Xs).
+
+test(X) :- print(start) , nl, go(X), print(done),nl.
+
+nrev30x40:-go([1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0]).

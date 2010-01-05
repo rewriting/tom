@@ -43,15 +43,7 @@ public class TypeExpander {
 
   private GomEnvironment gomEnvironment;
 
-  public TypeExpander(GomStreamManager streamManager) {
-    this.gomEnvironment.setStreamManager(streamManager);
-  }
-
   public TypeExpander(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
-  public TypeExpander(GomStreamManager streamManager, GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
   }
 
@@ -64,9 +56,9 @@ public class TypeExpander {
   }
 
   /**
-    * We try here to get full sort definitions for each constructs
-    * Once the structure is correctly build, we can attach the hooks
-    */
+   * We try here to get full sort definitions for each constructs
+   * Once the structure is correctly build, we can attach the hooks
+   */
   public ModuleList expand(GomModuleList gomModuleList) {
     if (!(gomModuleList instanceof ConcGomModule)) {
       throw new RuntimeException("A GomModuleList should be a list");

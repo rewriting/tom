@@ -1,4 +1,16 @@
------------VERSION ACTUELLE----------
+------------VERSION GNU-PROLOG---------
+
+Modification de l'interpeteur Prolog GNU-PROLOG écrit en JAVA pour permettre l'interpretation dynamique de code Prolog
+et l'utilisation des résultats dans un programme JAVA.
+L'algorithme utilisé est SLD-Resolution et on rencontre les même problèmes de terminaison.
+
+Sources :
+Modification du code original + ajout de la classe "test/Context"
+
+Exemples :
+Voir la classe "test/DynamicProlog"
+
+-----------VERSION TOM-PROLOG----------
 
 Librairie dynamique Prolog.
 Algorithme SLD-Resolution naïf.
@@ -17,7 +29,6 @@ Arcs.t : exemple de construction d'un contexte.
 
 ------------A VOIR-------------
 
-* Ajouter les fonctions dans les termes
-* Etudier les implementations actuelles de PROLOG en JAVA
 * Etudier la possibilité d'améliorer l'algorithme
+* Recoder l'algorithme ou réutiliser l'existant ?
 
