@@ -18,6 +18,7 @@ public class Sequent {
 	private static boolean estFini = false;
 	private static LinkedList<Ligne> listeLigne = new LinkedList<Ligne>();
 	private static LinkedList<Ligne> listeLigneFinale = new LinkedList<Ligne>();
+	private static LinkedList<Couple> listeCouple = new LinkedList<Couple>();
 	
 	%include { donnees/Donnees.tom }
 	%include { sl.tom }
@@ -32,6 +33,10 @@ public class Sequent {
 
 	public static Repere getRepere() {
 		return repere;
+	}
+	
+	public static LinkedList<Couple> getListeCouple() {
+		return listeCouple;
 	}
 
 	public final static void main(String[] args, Repere rep) {
@@ -67,6 +72,7 @@ public class Sequent {
 			 * de depart de la construction de l'arbre et la sortie
 			 */
 			listeNoeud[3 * i] = new Noeud(3 * i, 0, 1, 1, 1, "-1", i);
+			listeNoeud[3 * i].setFormule(`False());
 			listeNoeud[3 * i].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i], i);
 			listeNoeud[3 * i + 1] = new Noeud(3 * i + 1, 0, 1, 1, 1,
@@ -75,6 +81,7 @@ public class Sequent {
 			listeNoeud[3 * i + 1].setFormule(sequent[i]);
 			listeNoeud[3 * i + 2] = new Noeud(3 * i + 2, 0, 1, 1, 1,
 					"-1", i);
+			listeNoeud[3 * i + 2].setFormule(`False());
 			listeNoeud[3 * i + 2].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i + 2], i);
 
@@ -150,7 +157,8 @@ public class Sequent {
 		n.setFormule(f);
 		TreeSet<Noeud> temp = new TreeSet<Noeud>();
 		%match(f) {
-			And(x,y) -> { temp = repere.dessinerAND(n, i, false);
+			And(x,y) -> { n.setFormule(`And(x,y));
+						  temp = repere.dessinerAND(n, i, false);
 						  LinkedList<Ligne> temp2 = (LinkedList<Ligne>) listeLigne
 								.clone();
 						  for (Ligne l : temp2) {
@@ -165,11 +173,11 @@ public class Sequent {
 								listeLigne.add(l2);
 							}
 						  }
-						  n.setFormule(`And(x,y));
 						  decomposerFormule(`x, temp.last(),i);
 						  decomposerFormule(`y, temp.first(),i);
 						}
-			Or(x,y) -> { temp = repere.dessinerOR(n, i);
+			Or(x,y) -> { n.setFormule(`Or(x,y));
+						 temp = repere.dessinerOR(n, i);
 						 for (Ligne l : listeLigne) {
 							if (l.getListePoints().contains(n)) {
 								l.enleverNoeud(n);
@@ -177,7 +185,6 @@ public class Sequent {
 								l.ajouterNoeud(temp.last());
 							}
 						 }
-						 n.setFormule(`Or(x,y));
 						 decomposerFormule(`x, temp.first(),i);
 						 decomposerFormule(`y, temp.last(),i);
 					    }
@@ -187,6 +194,8 @@ public class Sequent {
 						n.setEstFinal(); }
 			False() -> { n.setFormule(`False());
 						 n.setEstFinal(); }
+			Neg(x) -> { n.setFormule(`Neg(x));
+						n.setEstFinal(); }
 		}
 	}
 	
@@ -281,7 +290,7 @@ public class Sequent {
 		LinkedList<Couple> listeCoupleFinale = new LinkedList<Couple>();
 		for (int i=0; i<listeCouple.length; i++) {
 			couple = listeCouple[i].split(" ");
-			listeCoupleFinale.add(new Couple(reecrireFormule(couple[0]), reecrireFormule(couple[1])));
+			listeCoupleFinale.add(new Couple(new Noeud(reecrireFormule(couple[0])), new Noeud(reecrireFormule(couple[1])), repere));
 		}
 		boolean resultat = true;
 		boolean temp = false;
@@ -292,6 +301,22 @@ public class Sequent {
 				}
 			}
 			resultat = resultat && temp;
+		}
+		return resultat;
+	}
+	
+	public static boolean trouverPreuve() {
+		boolean resultat = true;
+		for (Ligne l : listeLigneFinale) {
+			if (l.contientCouple().estUnCouple()) {
+				listeCouple.add(l.contientCouple());
+			} else {
+				/*
+				 * Si au moins une ligne ne contient pas de "vrais" couples, il
+				 * n'y a pas de preuves
+				 */
+				resultat = false;
+			}
 		}
 		return resultat;
 	}
@@ -353,7 +378,7 @@ public class Sequent {
 							&& s.substring(i - 1, i).equals(")")) {
 						mot1 = s.substring(1, i - 1);
 					} else {
-						mot1 = s.substring(0, i - 1);
+						mot1 = s.substring(0, i);
 					}
 					if ((s.substring(i + 2).startsWith("(")) && s.endsWith(")")) {
 						mot2 = s.substring(i + 3, s.length() - 1);
@@ -362,6 +387,12 @@ public class Sequent {
 					}
 					return `And(reecrireFormule(mot1),
 							reecrireFormule(mot2));
+				}
+				break;
+			case 'N':
+				if (s.length() == 6) {
+					String mot1 = s.substring(i+4, s.length()-1);
+					return `Neg(reecrireFormule(mot1));					
 				}
 				break;
 			case 'T':

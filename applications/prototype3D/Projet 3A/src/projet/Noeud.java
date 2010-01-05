@@ -48,6 +48,16 @@ public class Noeud implements Comparable<Noeud> {
 		setProfondeurInitiale(i);
 		setProfondeur(j);
 	}
+	
+	public Noeud(Formule f) {
+		coordonnees[0] = 0;
+		coordonnees[1] = 0;
+		coordonnees[2] = 0;
+		estFinal = false;
+		position = "0";
+		numeroSequent = 0;
+		formule = f;
+	}
 
 	public float[] getCoordonnees() {
 		return coordonnees;

@@ -5,6 +5,7 @@ import fenetre.Interface;
 
 import java.applet.Applet;
 import java.awt.*;
+import java.awt.geom.Arc2D;
 import java.util.*;
 
 import com.sun.j3d.utils.applet.MainFrame;
@@ -12,6 +13,7 @@ import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.*;
 import javax.media.j3d.*;
+import javax.media.j3d.Locale;
 import javax.vecmath.*;
 
 public class Repere extends Applet {
@@ -24,6 +26,10 @@ public class Repere extends Applet {
 
 	public static final Color3f COULEUR_DERIV = new Color3f(0.15f, 0.15f, 0.15f);
 
+	public static final Color3f COULEUR_COUPLE = new Color3f(0.3f, 0.7f, 0.9f);
+
+	public static final Color3f COULEUR_ARRETE = new Color3f(0.6f, 0.6f, 0.6f);
+
 	private static final double ECHELLE = 2;
 
 	private static final long serialVersionUID = 1L;
@@ -31,6 +37,12 @@ public class Repere extends Applet {
 	private Frame frame;
 
 	private BranchGroup parent = new BranchGroup();
+
+	private BranchGroup removable = new BranchGroup();
+
+	private BranchGroup temp = new BranchGroup();
+
+	private Locale locale;
 
 	private LinkedList<Noeud> listeNoeud = new LinkedList<Noeud>();
 
@@ -46,10 +58,6 @@ public class Repere extends Applet {
 	public LinkedList<Noeud> getListeNoeud() {
 		return listeNoeud;
 	}
-
-	/*
-	 * public static BranchGroup getConteneur() { return conteneur; }
-	 */
 
 	public static double getEchelle() {
 		return ECHELLE;
@@ -183,7 +191,7 @@ public class Repere extends Applet {
 		 * if (estSelectionne(n) && k == Interface.getNumeroSequent()) {
 		 * color.setColor(COULEUR_CHERCHE); } else {
 		 */
-		color.setColor(0.6f, 0.6f, 0.6f);
+		color.setColor(COULEUR_ARRETE);
 		// }
 		app.setColoringAttributes(color);
 
@@ -205,10 +213,12 @@ public class Repere extends Applet {
 		}
 		listeNoeud.add(n);
 
+		//System.out.println("dessin" + n.getX() + " " + n.getFormule());
+
 		parent.addChild(TG);
 	}
 
-	public void dessinerSegment(Noeud n1, Noeud n2) {
+	public void dessinerSegment(Noeud n1, Noeud n2, boolean couple) {
 		/*
 		 * Creation du segment entre deux noeuds
 		 */
@@ -216,11 +226,37 @@ public class Repere extends Applet {
 				| LineArray.COLOR_3);
 		segment.setCoordinate(0, new Point3f(n1.getX(), n1.getY(), n1.getZ()));
 		segment.setCoordinate(1, new Point3f(n2.getX(), n2.getY(), n2.getZ()));
-		segment.setColor(0, new Color3f(0.6f, 0.6f, 0.6f));
-		segment.setColor(1, new Color3f(0.6f, 0.6f, 0.6f));
 		segment.setUserData("segment");
+		/*
+		 * On rend possible l'ajout apres generation du graphe si cela est
+		 * souhaite
+		 */
+		if (!couple) {
+			segment.setColor(0, COULEUR_ARRETE);
+			segment.setColor(1, COULEUR_ARRETE);
+			parent.addChild(new Shape3D(segment));
+		} else {
+			segment.setColor(0, COULEUR_COUPLE);
+			segment.setColor(1, COULEUR_COUPLE);
+			temp.addChild(new Shape3D(segment));
+		}
+	}
 
-		parent.addChild(new Shape3D(segment));
+	public void dessinerCourbe(Noeud n1, Noeud n2) {
+		if (n1 != n2) {
+			Noeud pointIntermediaire = new Noeud((n1.getX() + n2.getX()) / 2,
+					(float) (n1.getY() + 1), (n1.getZ() + n2.getZ()) / 2);
+			dessinerSegment(n1, pointIntermediaire, true);
+			dessinerSegment(n2, pointIntermediaire, true);
+		} else {
+			Noeud pointIntermediaire1 = new Noeud((float) (n1.getX() - (0.25)),
+					(float) (n1.getY() + 1), n1.getZ());
+			Noeud pointIntermediaire2 = new Noeud((float) (n1.getX() + (0.25)),
+					(float) (n1.getY() + 1), n1.getZ());
+			dessinerSegment(n1, pointIntermediaire1, true);
+			dessinerSegment(n2, pointIntermediaire2, true);
+			dessinerSegment(pointIntermediaire1, pointIntermediaire2, true);
+		}
 	}
 
 	@SuppressWarnings("static-access")
@@ -243,9 +279,9 @@ public class Repere extends Applet {
 						+ "1", k);
 		dessinerPoint(n1, k);
 		dessinerPoint(n2, k);
-		dessinerSegment(n, n1);
-		dessinerSegment(n, n2);
-		dessinerSegment(n1, n2);
+		dessinerSegment(n, n1, false);
+		dessinerSegment(n, n2, false);
+		dessinerSegment(n1, n2, false);
 
 		/*
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
@@ -298,9 +334,9 @@ public class Repere extends Applet {
 				.getProfondeurInitiale() + 1, n.getPosition() + "0", k);
 		dessinerPoint(n1, k);
 		dessinerPoint(n2, k);
-		dessinerSegment(n, n1);
-		dessinerSegment(n, n2);
-		dessinerSegment(n1, n2);
+		dessinerSegment(n, n1, false);
+		dessinerSegment(n, n2, false);
+		dessinerSegment(n1, n2, false);
 
 		/*
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
@@ -351,7 +387,7 @@ public class Repere extends Applet {
 						.getPosition()
 						+ "1", k);
 		dessinerPoint(n1, k);
-		dessinerSegment(n, n1);
+		dessinerSegment(n, n1, false);
 
 		/*
 		 * Mise a jour des donnees generales
@@ -384,15 +420,29 @@ public class Repere extends Applet {
 		simpleU.getViewingPlatform().setNominalViewingTransform();
 
 		BranchGroup scene = createSceneGraph(simpleU);
+		scene.addChild(removable);
+		removable.setCapability(removable.ALLOW_DETACH);
+		temp.setCapability(temp.ALLOW_DETACH);
 		scene.compile();
 
 		simpleU.addBranchGraph(scene);
+		locale = simpleU.getLocale();
 
 		frame = new MainFrame(repere, 512, 512);
 	}
 
 	public void fermerFenetre() {
 		frame.setVisible(false);
+	}
+
+	public void rajouterCouple() {
+		/*
+		 * Rajoute des liens entre les couples selectionnes
+		 */
+		temp.compile();
+		locale.replaceBranchGraph(removable, temp);
+		removable = temp;
+		temp = new BranchGroup();
 	}
 
 	public void actualiser() {

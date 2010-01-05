@@ -57,6 +57,15 @@ public abstract class Formule extends tom.donnees.DonneesAbstractType  {
   }
 
   /**
+   * Returns true if the term is rooted by the symbol Neg
+   *
+   * @return true if the term is rooted by the symbol Neg
+   */
+  public boolean isNeg() {
+    return false;
+  }
+
+  /**
    * Returns the subterm corresponding to the slot A
    *
    * @return the subterm corresponding to the slot A
@@ -192,6 +201,10 @@ public abstract class Formule extends tom.donnees.DonneesAbstractType  {
       results.add(tmp);
     }
     tmp = tom.donnees.types.formule.Or.fromTerm(convertedTerm,atConv);
+    if(tmp!=null) {
+      results.add(tmp);
+    }
+    tmp = tom.donnees.types.formule.Neg.fromTerm(convertedTerm,atConv);
     if(tmp!=null) {
       results.add(tmp);
     }

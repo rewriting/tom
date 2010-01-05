@@ -22,6 +22,8 @@ public class Sequent {
 
 	private static LinkedList<Ligne> listeLigneFinale = new LinkedList<Ligne>();
 
+	private static LinkedList<Couple> listeCouple = new LinkedList<Couple>();
+
 	private static boolean tom_equal_term_char(char t1, char t2) {
 		return t1 == t2;
 	}
@@ -36,14 +38,6 @@ public class Sequent {
 
 	private static boolean tom_is_sort_String(String t) {
 		return t instanceof String;
-	}
-
-	private static boolean tom_equal_term_Sequent(Object t1, Object t2) {
-		return (t1 == t2);
-	}
-
-	private static boolean tom_is_sort_Sequent(Object t) {
-		return (t instanceof tom.donnees.types.Sequent);
 	}
 
 	private static boolean tom_equal_term_Formule(Object t1, Object t2) {
@@ -120,6 +114,20 @@ public class Sequent {
 		return t.getf2();
 	}
 
+	private static boolean tom_is_fun_sym_Neg(tom.donnees.types.Formule t) {
+		return (t instanceof tom.donnees.types.formule.Neg);
+	}
+
+	private static tom.donnees.types.Formule tom_make_Neg(
+			tom.donnees.types.Formule t0) {
+		return tom.donnees.types.formule.Neg.make(t0);
+	}
+
+	private static tom.donnees.types.Formule tom_get_slot_Neg_f1(
+			tom.donnees.types.Formule t) {
+		return t.getf1();
+	}
+
 	private static boolean tom_equal_term_Strategy(Object t1, Object t2) {
 		return (t1.equals(t2));
 	}
@@ -160,6 +168,10 @@ public class Sequent {
 		return repere;
 	}
 
+	public static LinkedList<Couple> getListeCouple() {
+		return listeCouple;
+	}
+
 	public final static void main(String[] args, Repere rep) {
 		/*
 		 * On interprete les formules rentres par l'utilisateur en tant que
@@ -193,12 +205,14 @@ public class Sequent {
 			 * de depart de la construction de l'arbre et la sortie
 			 */
 			listeNoeud[3 * i] = new Noeud(3 * i, 0, 1, 1, 1, "-1", i);
+			listeNoeud[3 * i].setFormule(tom_make_False());
 			listeNoeud[3 * i].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i], i);
 			listeNoeud[3 * i + 1] = new Noeud(3 * i + 1, 0, 1, 1, 1, "", i);
 			repere.dessinerPoint(listeNoeud[3 * i + 1], i);
 			listeNoeud[3 * i + 1].setFormule(sequent[i]);
 			listeNoeud[3 * i + 2] = new Noeud(3 * i + 2, 0, 1, 1, 1, "-1", i);
+			listeNoeud[3 * i + 2].setFormule(tom_make_False());
 			listeNoeud[3 * i + 2].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i + 2], i);
 
@@ -280,6 +294,7 @@ public class Sequent {
 					if (tom_is_fun_sym_And(((tom.donnees.types.Formule) f))) {
 						tom.donnees.types.Formule tom_x = tom_get_slot_And_f1(((tom.donnees.types.Formule) f));
 						tom.donnees.types.Formule tom_y = tom_get_slot_And_f2(((tom.donnees.types.Formule) f));
+						n.setFormule(tom_make_And(tom_x, tom_y));
 						temp = repere.dessinerAND(n, i, false);
 						LinkedList<Ligne> temp2 = (LinkedList<Ligne>) listeLigne
 								.clone();
@@ -297,7 +312,6 @@ public class Sequent {
 								listeLigne.add(l2);
 							}
 						}
-						n.setFormule(tom_make_And(tom_x, tom_y));
 						decomposerFormule(tom_x, temp.last(), i);
 						decomposerFormule(tom_y, temp.first(), i);
 					}
@@ -308,6 +322,7 @@ public class Sequent {
 					if (tom_is_fun_sym_Or(((tom.donnees.types.Formule) f))) {
 						tom.donnees.types.Formule tom_x = tom_get_slot_Or_f1(((tom.donnees.types.Formule) f));
 						tom.donnees.types.Formule tom_y = tom_get_slot_Or_f2(((tom.donnees.types.Formule) f));
+						n.setFormule(tom_make_Or(tom_x, tom_y));
 						temp = repere.dessinerOR(n, i);
 						for (Ligne l : listeLigne) {
 							if (l.getListePoints().contains(n)) {
@@ -316,7 +331,6 @@ public class Sequent {
 								l.ajouterNoeud(temp.last());
 							}
 						}
-						n.setFormule(tom_make_Or(tom_x, tom_y));
 						decomposerFormule(tom_x, temp.first(), i);
 						decomposerFormule(tom_y, temp.last(), i);
 					}
@@ -343,6 +357,15 @@ public class Sequent {
 				if (tom_is_sort_Formule(f)) {
 					if (tom_is_fun_sym_False(((tom.donnees.types.Formule) f))) {
 						n.setFormule(tom_make_False());
+						n.setEstFinal();
+					}
+				}
+			}
+			{
+				if (tom_is_sort_Formule(f)) {
+					if (tom_is_fun_sym_Neg(((tom.donnees.types.Formule) f))) {
+						n
+								.setFormule(tom_make_Neg(tom_get_slot_Neg_f1(((tom.donnees.types.Formule) f))));
 						n.setEstFinal();
 					}
 				}
@@ -474,8 +497,9 @@ public class Sequent {
 		LinkedList<Couple> listeCoupleFinale = new LinkedList<Couple>();
 		for (int i = 0; i < listeCouple.length; i++) {
 			couple = listeCouple[i].split(" ");
-			listeCoupleFinale.add(new Couple(reecrireFormule(couple[0]),
-					reecrireFormule(couple[1])));
+			listeCoupleFinale.add(new Couple(new Noeud(
+					reecrireFormule(couple[0])), new Noeud(
+					reecrireFormule(couple[1])), repere));
 		}
 		boolean resultat = true;
 		boolean temp = false;
@@ -486,6 +510,22 @@ public class Sequent {
 				}
 			}
 			resultat = resultat && temp;
+		}
+		return resultat;
+	}
+
+	public static boolean trouverPreuve() {
+		boolean resultat = true;
+		for (Ligne l : listeLigneFinale) {
+			if (l.contientCouple().estUnCouple()) {
+				listeCouple.add(l.contientCouple());
+			} else {
+				/*
+				 * Si au moins une ligne ne contient pas de "vrais" couples, il
+				 * n'y a pas de preuves
+				 */
+				resultat = false;
+			}
 		}
 		return resultat;
 	}
@@ -676,7 +716,7 @@ public class Sequent {
 							&& s.substring(i - 1, i).equals(")")) {
 						mot1 = s.substring(1, i - 1);
 					} else {
-						mot1 = s.substring(0, i - 1);
+						mot1 = s.substring(0, i);
 					}
 					if ((s.substring(i + 2).startsWith("(")) && s.endsWith(")")) {
 						mot2 = s.substring(i + 3, s.length() - 1);
@@ -685,6 +725,12 @@ public class Sequent {
 					}
 					return tom_make_And(reecrireFormule(mot1),
 							reecrireFormule(mot2));
+				}
+				break;
+			case 'N':
+				if (s.length() == 6) {
+					String mot1 = s.substring(i + 4, s.length() - 1);
+					return tom_make_Neg(reecrireFormule(mot1));
 				}
 				break;
 			case 'T':

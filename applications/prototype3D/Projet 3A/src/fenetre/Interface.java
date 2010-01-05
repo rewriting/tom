@@ -1,7 +1,7 @@
 package fenetre;
 
 import tom.Sequent;
-import tom.donnees.types.Formule;
+import tom.Couple;
 import java3D.Repere;
 
 import javax.swing.JButton;
@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,7 +19,7 @@ import java.util.LinkedList;
 
 /*
  * Exemple : (A\/(A\/False))/\(True\/False)
- * Exemple 2 : True\/(A/\True),(B\/(C\/False))/\(True\/False)
+ * Exemple 2 : (B\/(C\/False))/\(True\/False),Neg(A)\/(A/\A)
  * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
  * Exemple 4 : True\/(A/\True),(A\/(A\/False))/\(True\/False),(A/\(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
  * Exemple 5 : (A\/True)\/(A/\False)
@@ -177,7 +178,6 @@ public class Interface extends JFrame {
 			jContentPane.setLayout(grid);
 			contraintes = new GridBagConstraints();
 			contraintes.insets = new Insets(3, 3, 3, 3);
-
 			/*
 			 * Rentrer un sequent
 			 */
@@ -348,6 +348,17 @@ public class Interface extends JFrame {
 			jContentPane.add(comp);
 		}
 		return jContentPane;
+	}
+	
+	/*
+	 * Verifie l'entree de l'utilisateur : entree non-vide, pas d'espace, etc.
+	 */
+	public String verifierEntree(String s) {
+		String resultat = "";
+		if (s.length() > 0) {
+			resultat = s.replace(" ", "");
+		}
+		return resultat;
 	}
 
 	/**
@@ -572,7 +583,9 @@ public class Interface extends JFrame {
 					 * On met a jour le subsequent selectionne
 					 */
 					if (parcourirSequentVisible) {
-						sequent.setText(sequent.getText().replace(" ", ""));
+						if (verifierEntree(sequent.getText()).length() > 0) {
+							sequent.setText(verifierEntree(sequent.getText()));
+						}
 						listeSequent = sequent.getText().split(",");
 						subSequent.setText(listeSequent[0]);
 						listeSubSequent.add(listeSequent[0]);
@@ -837,7 +850,9 @@ public class Interface extends JFrame {
 			send.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					derivation = false;
-					sequent.setText(sequent.getText().replace(" ", ""));
+					if (verifierEntree(sequent.getText()).length() > 0) {
+						sequent.setText(verifierEntree(sequent.getText()));
+					}
 					listeSequent = sequent.getText().split(",");
 					listeRepere.add(new Repere());
 					Sequent.main(listeSequent, listeRepere.getLast());
@@ -861,7 +876,9 @@ public class Interface extends JFrame {
 					.addActionListener(new java.awt.event.ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
 							derivation = true;
-							sequent.setText(sequent.getText().replace(" ", ""));
+							if (verifierEntree(sequent.getText()).length() > 0) {
+								sequent.setText(verifierEntree(sequent.getText()));
+							}
 							listeSequent = sequent.getText().split(",");
 							listeRepere.add(new Repere());
 							Sequent.main(listeSequent, listeRepere.getLast());
@@ -883,7 +900,26 @@ public class Interface extends JFrame {
 			findProof.setText("Find Proof");
 			findProof.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-
+					if (!listeRepere.isEmpty()) {
+						if (Sequent.trouverPreuve()) {
+							System.out.println("Couples : ");
+							for (Couple c : Sequent.getListeCouple()) {
+								if (c.getF1().isTrue()) {
+									System.out.println(c.getF1() + ",");
+								} else if (c.getF2().isTrue()) {
+									System.out.println(c.getF2() + ",");
+								} else {
+									System.out.println(c.getF1() + " "
+											+ c.getF2() + ",");
+								}
+								c.dessinerCouple();
+							}
+							listeRepere.getLast().rajouterCouple();
+							System.out.println("Il y a une preuve.");
+						} else {
+							System.out.println("Il n'y a pas de preuves.");
+						}
+					}
 				}
 			});
 		}
@@ -905,7 +941,9 @@ public class Interface extends JFrame {
 					/*
 					 * On met a jour la liste des couples retenus
 					 */
-					couple.setText(couple.getText().replace("  ", " "));
+					if (verifierEntree(couple.getText()).length() > 0) {
+						couple.setText(verifierEntree(couple.getText()));
+					}
 					listeCouple = couple.getText().split(",");
 					if (!listeRepere.isEmpty()) {
 						System.out.println("Est-ce une preuve ? "
@@ -1019,6 +1057,11 @@ public class Interface extends JFrame {
 					} else {
 						return mot2;
 					}
+				}
+				break;
+			case 'N':
+				if (s1.length() == 6) {
+					return s1;
 				}
 				break;
 			case 'T':
