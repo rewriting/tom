@@ -1,0 +1,18 @@
+module tom.Donnees
+imports String
+abstract syntax
+
+Formule = Input(A:String)
+        | False()
+        | True()
+        | And(f1:Formule, f2:Formule)
+        | Or(f1:Formule, f2:Formule)
+        | Neg(f1:Formule)
+        
+/*module tom.Donnees:rules() {
+	Neg(Neg(x)) -> x
+	Neg(And(x,y)) -> Or(Neg(x),Neg(y))
+	Neg(Or(x,y)) -> And(Neg(x),Neg(y))
+	Neg(True()) -> False()
+	Neg(False()) -> True()
+}*/
