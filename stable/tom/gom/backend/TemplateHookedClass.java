@@ -65,11 +65,11 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
-    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch380__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch380__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch380_8= tomMatch380__end__4.getHeadConcHook() ;if ( (tomMatch380_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
+    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch401__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch401__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch401_8= tomMatch401__end__4.getHeadConcHook() ;if ( (tomMatch401_8 instanceof tom.gom.adt.objects.types.hook.BlockHook) ) {
 
-        res.append(CodeGen.generateCode( tomMatch380_8.getCode() ));
+        res.append(CodeGen.generateCode( tomMatch401_8.getCode() ));
         res.append("\n");
-      }}if ( tomMatch380__end__4.isEmptyConcHook() ) {tomMatch380__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch380__end__4= tomMatch380__end__4.getTailConcHook() ;}}} while(!( (tomMatch380__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
+      }}if ( tomMatch401__end__4.isEmptyConcHook() ) {tomMatch401__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch401__end__4= tomMatch401__end__4.getTailConcHook() ;}}} while(!( (tomMatch401__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
 
     return res.toString();
   }
@@ -77,11 +77,11 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
-    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch381__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch381__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch381_8= tomMatch381__end__4.getHeadConcHook() ;if ( (tomMatch381_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
+    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch402__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch402__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch402_8= tomMatch402__end__4.getHeadConcHook() ;if ( (tomMatch402_8 instanceof tom.gom.adt.objects.types.hook.ImportHook) ) {
 
-        res.append(CodeGen.generateCode( tomMatch381_8.getCode() ));
+        res.append(CodeGen.generateCode( tomMatch402_8.getCode() ));
         res.append("\n");
-      }}if ( tomMatch381__end__4.isEmptyConcHook() ) {tomMatch381__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch381__end__4= tomMatch381__end__4.getTailConcHook() ;}}} while(!( (tomMatch381__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
+      }}if ( tomMatch402__end__4.isEmptyConcHook() ) {tomMatch402__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch402__end__4= tomMatch402__end__4.getTailConcHook() ;}}} while(!( (tomMatch402__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
 
     return res.toString();
   }
@@ -89,12 +89,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
     HookList h = tom_append_list_ConcHook(hooks, tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() );
-    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch382__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch382__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch382_8= tomMatch382__end__4.getHeadConcHook() ;if ( (tomMatch382_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
+    {{if ( (h instanceof tom.gom.adt.objects.types.HookList) ) {if ( (((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ((( tom.gom.adt.objects.types.HookList )h) instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) ) { tom.gom.adt.objects.types.HookList  tomMatch403__end__4=(( tom.gom.adt.objects.types.HookList )h);do {{if (!( tomMatch403__end__4.isEmptyConcHook() )) { tom.gom.adt.objects.types.Hook  tomMatch403_8= tomMatch403__end__4.getHeadConcHook() ;if ( (tomMatch403_8 instanceof tom.gom.adt.objects.types.hook.InterfaceHook) ) {
 
         res.append(",");
-        res.append(CodeGen.generateCode( tomMatch382_8.getCode() ));
+        res.append(CodeGen.generateCode( tomMatch403_8.getCode() ));
         res.append("\n");
-      }}if ( tomMatch382__end__4.isEmptyConcHook() ) {tomMatch382__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch382__end__4= tomMatch382__end__4.getTailConcHook() ;}}} while(!( (tomMatch382__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
+      }}if ( tomMatch403__end__4.isEmptyConcHook() ) {tomMatch403__end__4=(( tom.gom.adt.objects.types.HookList )h);} else {tomMatch403__end__4= tomMatch403__end__4.getTailConcHook() ;}}} while(!( (tomMatch403__end__4==(( tom.gom.adt.objects.types.HookList )h)) ));}}}}
 
     return res.toString();
   }

@@ -59,9 +59,6 @@ public abstract class GomGenericPlugin implements Plugin {
   public final static String KEY_LAST_GEN_MAPPING = "lastGeneratedMapping";
   public final static String KEY_LAST_READ_LINE = "lastReadLine";
 
-  /** The streamanager */
-  //protected GomStreamManager streamManager;
-
   /** myadd : GomEnvironment is not yet a Singleton class, therefore it has to be an attribute
    * => need to modify environment() method => become abstract and defined in extended classes
    * add get/set methods
@@ -89,32 +86,19 @@ public abstract class GomGenericPlugin implements Plugin {
     return statusHandler;
   }
 
-  /*
-    protected GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  } */
-
-  // protected abstract GomEnvironment environment();
-
-  // myadd-begin
-  public abstract GomEnvironment getGomEnvironment();
-  public abstract void setGomEnvironment(GomEnvironment gomEnvironment);
-  /*protected GomEnvironment getGomEnvironment() {
+  public GomEnvironment getGomEnvironment() {
     return gomEnvironment;
   }
 
-  protected void setGomEnvironment(GomEnvironment gomEnvironment) {
+  public void setGomEnvironment(GomEnvironment gomEnvironment) {
     this.gomEnvironment = gomEnvironment;
-  }*/
-  // myadd-end
+  }
 
   public GomStreamManager getStreamManager() {
-    //return streamManager;
     return gomEnvironment.getStreamManager();
   }
 
   public void setStreamManager(GomStreamManager m) {
-    //streamManager = m;
     gomEnvironment.setStreamManager(m);
   }
 
