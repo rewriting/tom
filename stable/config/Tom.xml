@@ -49,16 +49,12 @@
       class="tom.engine.starter.TomStarter"/>
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
-    <!--plugin name="Syntax checker"
-      class="tom.engine.checker.TomSyntaxCheckerAp"/-->
     <plugin name="Desugar"
       class="tom.engine.desugarer.Desugarer"/>
     <plugin name="Typer"
       class="tom.engine.typer.TomTyper"/>
-    <plugin name="NewVersionTyper1"
+    <plugin name="NewVersionTyper"
       class="tom.engine.typer.Typer"/>
-    <plugin name="NewVersionTyper2:"
-      class="tom.engine.typer.NewTyper"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"
