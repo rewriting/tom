@@ -28,7 +28,7 @@ package tom.gom.expander.rule;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.tree.Tree;
-import tom.gom.adt.rule.RuleRuleAdaptor;
+import tom.gom.adt.rule.RuleAdaptor;
 import java.util.logging.Level;
 import java.util.Map;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class RuleExpander {
     RuleList rulelist = `RuleList();
     try {
       Tree ast = (Tree) parser.ruleset().getTree();
-      rulelist = (RuleList) RuleRuleAdaptor.getTerm(ast);
+      rulelist = (RuleList) RuleAdaptor.getTerm(ast);
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
@@ -202,7 +202,7 @@ public class RuleExpander {
             String varname = "_";
             %match(var) {
                 VarStar(name) -> { varname = `name; }
-            } 
+            }
             getLogger().log(Level.WARNING, GomMessage.variadicRuleStartingWithStar.getMessage(),
                     new Object[]{`(listOp),varname});
         }
@@ -386,7 +386,7 @@ public class RuleExpander {
     return ref.val;
   }
   static class OpRef { OperatorDecl val; }
-  %typeterm OpRef { 
+  %typeterm OpRef {
     implement { OpRef }
     is_sort(t) { ($t instanceof OpRef) }
   }

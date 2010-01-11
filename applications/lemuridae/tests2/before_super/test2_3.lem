@@ -1,0 +1,12 @@
+term modulo { }
+
+prop modulo { 
+  r0 : [n,m] Eq(s(n),s(m)) -> Eq(n,m)
+  r1 : []    Eq(z(),z())   -> True
+}
+
+prop fold { }
+
+
+rootR(
+  <r:Eq(s(s(s(z()))),s(s(s(z()))))> trueR(r))

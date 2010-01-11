@@ -48,24 +48,24 @@ public interface Visitable {
      */
     public Visitable[] getChildren();
 
-    /** 
+    /**
      * Returns the child at the specified position
      *
      * @param i index of the element to return
      * @return the child at the specified position in the list
      */
-    public Visitable getChildAt(int i); 
+    public Visitable getChildAt(int i);
 
-    /** 
+    /**
      * Replaces a child at the specified position
      *
      * @param i index of the element to return
      * @param child element to set up
      * @return the current Visitable
      */
-    public Visitable setChildAt(int i, Visitable child); 
+    public Visitable setChildAt(int i, Visitable child);
 
-    /** 
+    /**
      * Returns the number of children of the current Visitable
      *
      * @return the number of children

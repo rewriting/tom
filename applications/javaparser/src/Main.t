@@ -49,7 +49,6 @@ public class Main {
       JavaLexer lexer = new JavaLexer(new ANTLRInputStream(input));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       JavaParser parser = new JavaParser(tokens);
-      //parser.setTreeAdaptor(new CommonTreeAdaptor());
 
       Tree tree = (Tree) parser.compilationUnit().getTree();
       CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);

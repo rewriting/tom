@@ -1,0 +1,14 @@
+term modulo { }
+
+prop modulo { }
+
+prop fold { }
+
+
+rootR(
+  <r:(A=>B)=>(A=>B)> implyR(
+    <x:A=>B><a:A=>B> implyR(
+      <y:A><b:B> implyL(
+        <z:B> ax(z,b),
+        <c:A> ax(y,c),x),a),r))
+ 

@@ -57,14 +57,7 @@ public class CompilerPlugin extends GomGenericPlugin {
   public CompilerPlugin() {
     super("GomCompiler");
   }
-  
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
 
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -88,11 +81,11 @@ public class CompilerPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public void run(Map<String,String> informationTracker) {
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    getLogger().log(Level.INFO, "Start compilation");
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
     Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
-    if(classList == null) {
+    if (null == classList) {
       getLogger().log(Level.SEVERE,
           GomMessage.compilationIssue.getMessage(),
           getStreamManager().getInputFileName());
@@ -101,8 +94,10 @@ public class CompilerPlugin extends GomGenericPlugin {
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
       getLogger().log(Level.FINE, "Compiled Modules:\n{0}",swriter);
-      getLogger().log(Level.INFO, "Compilation succeeds");
-      if(intermediate) {
+      getLogger().info("GOM Compilation phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
+      if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
@@ -116,7 +111,9 @@ public class CompilerPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{classList, getGomEnvironment()};
+    return new Object[]{
+      classList,
+      getGomEnvironment()
+    };
   }
-
 }

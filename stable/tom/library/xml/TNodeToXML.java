@@ -47,7 +47,7 @@ public class TNodeToXML {
   private OutputStream out = System.out;
   private Writer writer = null;
 
-  /** 
+  /**
    * Set up the output stream
    *
    * @param out the output stream to set up
@@ -56,7 +56,7 @@ public class TNodeToXML {
     this.out = out;
   }
 
-  /** 
+  /**
    * Set up the writer
    *
    * @param writer the writer to set up
@@ -65,19 +65,9 @@ public class TNodeToXML {
     this.writer = writer;
   }
 
-  /*
-public void convert(String filename) {
-    try {
-      convert(SingletonFactory.getInstance().readFromFile(filename));
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-    }
-  }
-*/
-
-  /** 
+  /**
    * Return a string representation of a TNode
-   * 
+   *
    * @param n the TNode which is converted into xml
    * @return a string representation of the xml node
    */
@@ -88,7 +78,7 @@ public void convert(String filename) {
 		return str_res.toString();
   }
 
-  /** 
+  /**
    * Convert a TNode to XML
    *
    * @param n the TNode to convert
@@ -118,7 +108,7 @@ public void convert(String filename) {
           write(" ["+tom_internalSubset+"]");
           write(">\n");
           return;
-      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch581_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch581_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch581_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch581_15.isEmptyconcTNode() ) {
+      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch604_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch604_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch604_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch604_15.isEmptyconcTNode() ) {
 
         write("<"+ (( tom.library.adt.tnode.types.TNode )n).getName() );
         tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );

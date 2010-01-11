@@ -5,7 +5,8 @@
   <target name="build" depends="init">
     <gom.preset srcdir="${examples.dir}"
       destdir="${examples.gen}">
-      <include name="${example}/Rule.gom"/>
+      <include name="${example}/*.gom"/>
+      <exclude name="${example}/Term.gom"/>
     </gom.preset>
     <gom.preset srcdir="${examples.dir}"
       termgraph="true" 
@@ -15,44 +16,39 @@
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
-      package="${example}"
-      grammar="Rule">
-      <include name="${example}/**/Rule.gom"/>
+      package="${example}">
+      <include name="${example}/**/*.gom"/>
+      <exclude name="${example}/Term.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
       package="${example}"
-      termgraph="true" 
-      grammar="Graph">
+      termgraph="true">
       <include name="${example}/**/Term.gom"/>
     </gomantlradapter.preset>
-    <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${example}/Rule.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-      <include name="${example}/Rule.g.t"/>
-    </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${example}/Graph.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-      <include name="${example}/Graph.g.t"/>
-    </tom.preset>
     <tomcompile/>
+    <!-- build parser -->
     <mkdir dir="${examples.gen}/${example}"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
     </taskdef>
-    <antlr3 target="${examples.gen}/${example}/Rule.g"
+    <antlr3 target="${examples.dir}/${example}/ListInt.g"
             outputdirectory="${examples.gen}/${example}"
-            libdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/listint"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>
-    <antlr3 target="${examples.gen}/${example}/Graph.g"
+    <antlr3 target="${examples.dir}/${example}/Rule.g"
             outputdirectory="${examples.gen}/${example}"
-            libdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/rule"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <antlr3 target="${examples.dir}/${example}/Graph.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/term"
             multithreaded="true">
       <classpath refid="tom.classpath"/>
     </antlr3>

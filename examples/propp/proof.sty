@@ -10,7 +10,7 @@
 % any later version.
 % 
 % This program is distributed in the hope that it will be useful
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% but WITHOUT ANY WARRANTY; without even the Implied warranty of
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
 %
@@ -42,13 +42,13 @@
 %               draws a many step deduction labeled with <Label>.
 %
 %       \infer=<Lower><Uppers>
-%               draws a double-ruled deduction.
+%               draws a double-Ruled deduction.
 %
 %       \infer=[<Label>]<Lower><Uppers>
-%               draws a double-ruled deduction labeled with <Label>.
+%               draws a double-Ruled deduction labeled with <Label>.
 %
 %       \deduce<Lower><Uppers>
-%               draws an inference without a rule.
+%               draws an inference without a Rule.
 %
 %       \deduce[<Proof>]<Lower><Uppers>
 %               draws a many step deduction with a proof name.
@@ -102,8 +102,8 @@
 
 %       Flags
 
-\newif\if@inferRule     % whether \@infer draws a rule.
-\newif\if@DoubleRule    % whether \@infer draws doulbe rules.
+\newif\if@inferRule     % whether \@infer draws a Rule.
+\newif\if@DoubleRule    % whether \@infer draws doulbe Rules.
 \newif\if@ReturnLeftOffset      % whether \@infer returns \@LeftOffset.
 \newif\if@MathSaved     % whether inner math mode where \infer or
                         % \deduce appears.
@@ -118,7 +118,7 @@
 %       \@SaveMath is called in the very begining of toplevel macros
 %       which are \infer and \deduce.
 %       \@RestoreMath is called in the very last before toplevel macros end.
-%       Remark \infer and \deduce ends calling \@infer.
+%       ReMark \infer and \deduce ends calling \@infer.
 
 \def\@SaveMath{\@MathSavedfalse \ifmmode \ifinner
         \relax $\relax \@MathSavedtrue \fi\fi }
@@ -162,11 +162,11 @@
         \@infer[\@empty]{#3}{\@SaveMath \@infer[{#1}]{#2}{#4}}}
 
 %       \@infer[<Label>]<Lower><Uppers>
-%               If \@inferRuletrue, it draws a rule and <Label> is right to
-%               a rule. In this case, if \@DoubleRuletrue, it draws
-%               double rules.
+%               If \@inferRuletrue, it draws a Rule and <Label> is right to
+%               a Rule. In this case, if \@DoubleRuletrue, it draws
+%               double Rules.
 %
-%               Otherwise, draws no rule and <Label> is right to <Lower>.
+%               Otherwise, draws no Rule and <Label> is right to <Lower>.
 
 \def\@infer[#1]#2#3{\relax
 % Get parameters
@@ -230,10 +230,10 @@
                 \moveright \UpperAdjust \box\@UpperPart
                 \nointerlineskip \kern\inferLineSkip
                 \if@DoubleRule
-                \moveright \RuleAdjust \vbox{\hrule width\RuleWidth
-                        \kern 1pt\hrule width\RuleWidth}\relax
+                \moveright \RuleAdjust \vbox{\hRule width\RuleWidth
+                        \kern 1pt\hRule width\RuleWidth}\relax
                 \else
-                \moveright \RuleAdjust \vbox{\hrule width\RuleWidth}\relax
+                \moveright \RuleAdjust \vbox{\hRule width\RuleWidth}\relax
                 \fi
                 \nointerlineskip \kern\inferLineSkip
                 \moveright \LowerAdjust \box\@LowerPart }\relax

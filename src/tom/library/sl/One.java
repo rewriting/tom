@@ -31,12 +31,12 @@
 package tom.library.sl;
 
 
-/**                                                                                                                
- * <p>                                                 
+/**
+ * <p>
  * Basic strategy combinator with one strategy argument <code>s</code>, that
  * applies this strategy <code>s</code> to exactly one child. If for all children
  * the strategy <code>s</code> fails, <code>One(s)</code>
- * fails. Applying <code>One</code> combinator to a constant always                                    
+ * fails. Applying <code>One</code> combinator to a constant always
  * fails.
  * <p>
  * <code>One(s)[f(t1,...,ti,...,tn)]=f(t1,...,ti',...,,tn)</code> if <code>s[t1], ..., s[ti-1]</code> fail and <code>s[ti]=ti'</code>
@@ -45,7 +45,7 @@ package tom.library.sl;
  * <p>
  * <code> One(s)[c]</code> fails if <code>c</code> is a constant
  * <p>
- */       
+ */
 
 public class One extends AbstractStrategyCombinator {
   public final static int ARG = 0;
@@ -56,7 +56,7 @@ public class One extends AbstractStrategyCombinator {
 
   /** Method herited from the apply() method of mutraveler library
    * @deprecated use fire() instead
-   */ 
+   */
   @Deprecated
   public <T> T visitLight(T any, Introspector introspector) throws VisitFailure {
     int childCount = introspector.getChildCount(any);

@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2009, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,13 +33,13 @@ package propp;
 import propp.seq.*;
 import propp.seq.types.*;
 import java.io.*;
-import antlr.CommonAST;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.tree.Tree;
 
 public class RecPropp extends SPropp {
 
-	// ------------------------------------------------------------  
 	%include { seq/Seq.tom }
-	// ------------------------------------------------------------  
 
 	//{{{ public void run(Sequent query)
 	public void run(Sequent query) {
@@ -60,10 +60,10 @@ public class RecPropp extends SPropp {
 		System.out.println("Build Proof Term");
 		ListProof proofTerm = buildProofTerm(initSeq);
 		System.out.println("Proof term = " + proofTerm);
-		ListPair tex_proofs = `concPair();
+		ListPair tex_proofs = `ConcPair();
 		%match(ListProof proofTerm) {
-			concProof(_*,p,_*) -> {
-				tex_proofs = insertPair(`pair(1,proofToTex(p)),tex_proofs);
+			ConcProof(_*,p,_*) -> {
+				tex_proofs = insertPair(`Pair(1,proofToTex(p)),tex_proofs);
 			}
 		}
 
@@ -80,91 +80,91 @@ public class RecPropp extends SPropp {
 	public ListSequent Step(Sequent subject) {
 		%match(Sequent subject) {
 
-			// {{{	negd
-			seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
-				Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
-				rules_appl.add(`rappl(negd(),subject,concSequent(prod)));
+			// {{{	Negd
+			Seq(ConcPred(X*),ConcPred(Y*,Neg(Z),R*)) -> {
+				Sequent prod = `Seq(ConcPred(X*,Z),ConcPred(Y*,R*));
+				Rules_appl.add(`Rappl(Negd(),subject,ConcSequent(prod)));
 				return Step(prod);
 			}
 			// }}}
 
-			//{{{ disjd
-			seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
-				Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
-				rules_appl.add(`rappl(disjd(),subject,concSequent(prod)));
+			//{{{ Disjd
+			Seq(ConcPred(X*),ConcPred(Y*,Vee(Z,R),S*)) -> {
+				Sequent prod = `Seq(ConcPred(X*),ConcPred(Y*,Z,R,S*));
+				Rules_appl.add(`Rappl(Disjd(),subject,ConcSequent(prod)));
 				return Step(prod);
 			}
 			//}}}			
 
-			//{{{ impd
-			seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
-				Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
-				rules_appl.add(`rappl(impd(),subject,concSequent(prod)));
+			//{{{ Impd
+			Seq(ConcPred(X*),ConcPred(S*,Impl(Y,Z),R*)) -> {
+				Sequent prod = `Seq(ConcPred(X*,Y),ConcPred(S*,Z,R*));
+				Rules_appl.add(`Rappl(Impd(),subject,ConcSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
 
-			//{{{ negg
-			seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
-				Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
-				rules_appl.add(`rappl(negg(),subject,concSequent(prod)));
+			//{{{ Negg
+			Seq(ConcPred(X*,Neg(Y),S*),ConcPred(Z*)) -> {
+				Sequent prod = `Seq(ConcPred(X*,S*),ConcPred(Y,Z*));
+				Rules_appl.add(`Rappl(Negg(),subject,ConcSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
 
-			//{{{ conjg
-			seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
-				Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));		
-				rules_appl.add(`rappl(conjg(),subject,concSequent(prod)));
+			//{{{ Conjg
+			Seq(ConcPred(X*,Wedge(Y,Z),S*),ConcPred(R*)) -> {
+				Sequent prod = `Seq(ConcPred(X*,Y,Z,S*),ConcPred(R*));
+				Rules_appl.add(`Rappl(Conjg(),subject,ConcSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
 
-			//{{{ disjg
-			seq(concPred(X*,vee(Y,Z),S*),concPred(R*)) -> {
-				Sequent s1 = `seq(concPred(X*,Y,S*),concPred(R*));
-				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
+			//{{{ Disjg
+			Seq(ConcPred(X*,Vee(Y,Z),S*),ConcPred(R*)) -> {
+				Sequent s1 = `Seq(ConcPred(X*,Y,S*),ConcPred(R*));
+				Sequent s2 = `Seq(ConcPred(X*,Z,S*),ConcPred(R*));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
-				rules_appl.add(`rappl(disjg(),subject,concSequent(s1,s2)));
-				return `concSequent(l1*,l2*);
+				Rules_appl.add(`Rappl(Disjg(),subject,ConcSequent(s1,s2)));
+				return `ConcSequent(l1*,l2*);
 			}
 			//}}}
 
-			//{{{ conjd
-			seq(concPred(R*),concPred(X*,wedge(Y,Z),S*)) -> {
-				Sequent s1 = `seq(concPred(R*),concPred(X*,Y,S*));
-				Sequent s2 = `seq(concPred(R*),concPred(X*,Z,S*));
+			//{{{ Conjd
+			Seq(ConcPred(R*),ConcPred(X*,Wedge(Y,Z),S*)) -> {
+				Sequent s1 = `Seq(ConcPred(R*),ConcPred(X*,Y,S*));
+				Sequent s2 = `Seq(ConcPred(R*),ConcPred(X*,Z,S*));
 				ListSequent l1 = Step(s1);	
 				ListSequent l2 = Step(s2);	
-				rules_appl.add(`rappl(conjd(),subject,concSequent(s1,s2)));
-				return `concSequent(l1*,l2*);
+				Rules_appl.add(`Rappl(Conjd(),subject,ConcSequent(s1,s2)));
+				return `ConcSequent(l1*,l2*);
 			}
 			//}}}
 
-			//{{{ impg
-			seq(concPred(X*,impl(Y,Z),S*),concPred(R*)) -> {
-				Sequent s1 = `seq(concPred(X*,S*),concPred(R*,Y));
-				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
+			//{{{ Impg
+			Seq(ConcPred(X*,Impl(Y,Z),S*),ConcPred(R*)) -> {
+				Sequent s1 = `Seq(ConcPred(X*,S*),ConcPred(R*,Y));
+				Sequent s2 = `Seq(ConcPred(X*,Z,S*),ConcPred(R*));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
-				rules_appl.add(`rappl(impg(),subject,concSequent(s1,s2)));
-				return `concSequent(l1*,l2*);
+				Rules_appl.add(`Rappl(Impg(),subject,ConcSequent(s1,s2)));
+				return `ConcSequent(l1*,l2*);
 			}
 			//}}}
 
 			//{{{ axio
-			seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
+			Seq(ConcPred(_*,X,_*),ConcPred(_*,X,_*)) -> {
 				if (`X != `EmptyP()) {
 					Sequent prod = `PROOF();
-					rules_appl.add(`rappl(axiom(),subject,concSequent()));
-					return `concSequent(prod);
+					Rules_appl.add(`Rappl(Axiom(),subject,ConcSequent()));
+					return `ConcSequent(prod);
 				}
 			}
 			//}}}
 
 		}// end %match
-		return `concSequent(END()); 
+		return `ConcSequent(END());
 
 	}
 	//}}}
@@ -176,9 +176,11 @@ public class RecPropp extends SPropp {
 		Sequent query = null;
 		try {
 			//query = args[0];
-			SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
-			SeqParser parser = new SeqParser(lexer);
-			query = parser.seq();
+			SeqLexer lexer = new SeqLexer(new ANTLRInputStream(System.in));
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+			SeqParser parser = new SeqParser(tokens);
+			Tree t = (Tree) parser.seq().getTree();
+      query = (Sequent) SeqAdaptor.getTerm(t);
 			System.out.println("Query : "+query);
 		} catch (Exception e) {
 			System.err.println("exception: "+e);

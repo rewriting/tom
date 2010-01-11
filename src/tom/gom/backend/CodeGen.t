@@ -53,7 +53,6 @@ public class CodeGen {
     } catch (java.io.IOException e) {
       Logger.getLogger("CodeGen").log(
           Level.SEVERE,"Failed to generate code for " + code);
-
     }
     return writer.toString();
   }

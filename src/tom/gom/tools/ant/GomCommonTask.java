@@ -90,7 +90,7 @@ public class GomCommonTask extends MatchingTask {
   protected boolean multithread = false;
   protected boolean nosharing = false;
 
-  protected String protectedFileSeparator = "\\"+File.separatorChar;
+  protected final String protectedFileSeparator = "\\"+File.separatorChar;
 
   protected Java javaRunner;
 
@@ -107,7 +107,7 @@ public class GomCommonTask extends MatchingTask {
   }
 
   public Path createSrc() {
-    if (src == null) {
+    if (null == src) {
       src = new Path(getProject());
     }
     return src.createPath();
@@ -119,7 +119,7 @@ public class GomCommonTask extends MatchingTask {
   }
 
   public void setSrcdir(Path srcDir) {
-    if (src == null) {
+    if (null == src) {
       src = srcDir;
     } else {
       src.append(srcDir);

@@ -1,0 +1,20 @@
+term modulo { }
+
+prop modulo { }
+
+prop fold { }
+
+
+rootR(
+  <th:A=>A> cut(
+    <r:(A\/B)=>(A\/B)> implyR(
+      <x:A\/B><a:A\/B> orR(
+        <b:A><c:B> orL(
+          <y:A> ax(y,b),
+          <z:B> ax(z,c),x),a),r),
+    <x:(A\/B)=>(A\/B)> implyR(
+      <y:A><a:A> implyL(
+        <z:A\/B> ax(y,a),
+        <b:A\/B> orR(
+          <b1:A><b2:B> ax(y,b1),b),x),th)))
+

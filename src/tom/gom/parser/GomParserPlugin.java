@@ -1,25 +1,25 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.parser;
@@ -41,7 +41,7 @@ import tom.gom.tools.GomEnvironment;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
-import tom.gom.adt.gom.GomLanguageGomAdaptor;
+import tom.gom.adt.gom.GomAdaptor;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
@@ -61,14 +61,6 @@ public class GomParserPlugin extends GomGenericPlugin {
   /** The constructor*/
   public GomParserPlugin() {
     super("GomParser");
-  }
-
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -93,8 +85,9 @@ public class GomParserPlugin extends GomGenericPlugin {
    * Create the initial GomModule parsed from the input file
    */
   public synchronized void run(Map<String,String> informationTracker) {
-    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    if (inputReader == null)
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
+    if (null == inputReader)
       return;
     CharStream input = null;
     try {
@@ -109,15 +102,14 @@ public class GomParserPlugin extends GomGenericPlugin {
 		GomLanguageLexer lex = new GomLanguageLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    getLogger().log(Level.INFO, "Start parsing");
     try {
       // Parse the input expression
-      Tree tree = (Tree)parser.module().getTree();
-      module = (GomModule) GomLanguageGomAdaptor.getTerm(tree);
+      Tree tree = (Tree) parser.module().getTree();
+      module = (GomModule) GomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
       getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);
-      if (module == null) {
+      if (null == module) {
         getLogger().log(new PlatformLogRecord(Level.SEVERE,
               GomMessage.detailedParseException,
               "", inputFileName, lex.getLine()));
@@ -136,18 +128,20 @@ public class GomParserPlugin extends GomGenericPlugin {
           new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
     } finally {
-      if (inputReader != null){
+      if (null != inputReader) {
         try {
           inputReader.close();
-        } catch(java.io.IOException ioExcep){
+        } catch(java.io.IOException ioExcep) {
           // nothing to do
           getLogger().log(Level.INFO, GomMessage.unableToCloseReaderMessage.getMessage(),
               new Object[]{});
         }
       }
     }
-    getLogger().log(Level.INFO, "Parsing succeeds");
-    if(intermediate) {
+    getLogger().info("GOM Parsing phase ("
+          + (System.currentTimeMillis()-startChrono)
+          + " ms)");
+    if (intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }

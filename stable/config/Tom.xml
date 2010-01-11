@@ -53,6 +53,8 @@
       class="tom.engine.desugarer.Desugarer"/>
     <plugin name="Typer"
       class="tom.engine.typer.TomTyper"/>
+    <plugin name="NewVersionTyper"
+      class="tom.engine.typer.Typer"/>
     <plugin name="Type checker"
       class="tom.engine.checker.TomTypeChecker"/>
     <plugin name="Expander"

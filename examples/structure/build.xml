@@ -3,27 +3,33 @@
   <import file="../common.xml"/>
   <property name="example" value="structure"/>
   <target name="build" depends="init">
-    <!-- build adt -->    
+    <!-- build adt -->
     <gombuild/>
+    <gomantlradapter.preset
+      srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      package="${example}">
+      <include name="${example}/**/Structures.gom"/>
+    </gomantlradapter.preset>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
       <!-- stamp not yet ready for apigen list -->
       <include name="${example}/**/*.t"/>
-      <exclude name="${example}/**/StructuresParser.g.t"/>
-      <!--      <exclude name="${example}/**/StructureCDT.t"/> -->
-    </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${example}/StructuresParser.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-      <include name="${example}/**/StructuresParser.g.t"/>
+      <exclude name="${example}/**/Structures.g.t"/>
     </tom.preset>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${example}"/>
-    <tomantlr target="${examples.gen}/${example}/StructuresParser.g"
-              outputdirectory="${examples.gen}/${example}">
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
-    </tomantlr>
+    </taskdef>
+    <antlr3 target="${examples.dir}/${example}/Structures.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/structures"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
     <!-- build java source -->
     <javacompile/>
     <!-- copy resources -->

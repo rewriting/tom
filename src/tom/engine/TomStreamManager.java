@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2009, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -52,7 +52,7 @@ import tom.platform.OptionManager;
  */
 public class TomStreamManager {
 
-  /** 
+  /**
    * The symbol table for the current platform execution
    * shouldnt be here but as the VasStreamManager is use for one execution...
    */
@@ -61,7 +61,7 @@ public class TomStreamManager {
   /** List of import paths. */
   private List<File> userImportList;
 
-  /** Absolute path where file are generated. */ 
+  /** Absolute path where file are generated. */
   private File destDir;
 
   /** the input file name */
@@ -80,13 +80,13 @@ public class TomStreamManager {
   /* in/out suffixes */
   private String inputSuffix;
   private String outputSuffix;
-  
+
   /* subdir added to the import search path */
 	private String importLanguageSubdir;
 
   /** list of non managed imported file */
   private Collection<String> importsToDiscard;
-  
+
   public TomStreamManager(){
     symbolTable = new SymbolTable();
     importsToDiscard = new HashSet<String>();
@@ -97,7 +97,7 @@ public class TomStreamManager {
     importsToDiscard.add("aterm.tom");
     clear();
   }
-  
+
   /**
    * Initializes the TomStreamManager.
    */
@@ -116,12 +116,12 @@ public class TomStreamManager {
   public void initializeFromOptionManager(OptionManager optionManager) {
     List<File> localUserImportList = new ArrayList<File>();
     String localDestDir = null;
-    
+
     symbolTable.init(optionManager);
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
-    
+
     if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
@@ -138,14 +138,14 @@ public class TomStreamManager {
       inputSuffix = ".t";
       outputSuffix = ".py";
 			importLanguageSubdir = "java";
-    } else { 
+    } else {
       throw new TomRuntimeException("No code generator selected");
     }
-    
+
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
     // paths are separated by File.pathSeparator
-    StringTokenizer st = new StringTokenizer(imports, File.pathSeparator); 
+    StringTokenizer st = new StringTokenizer(imports, File.pathSeparator);
     try {
       while( st.hasMoreTokens() ) {
         String next = st.nextToken();
@@ -170,7 +170,7 @@ public class TomStreamManager {
       setUserOutputFile(commandLineUserOutputFile);
     }
   }
-  
+
   public void prepareForInputFile(String localInputFileName) { // updateInputOutputFiles + init
     // compute inputFile:
     //  - add a suffix if necessary
@@ -178,7 +178,7 @@ public class TomStreamManager {
       localInputFileName += getInputSuffix();
     }
     setInputFile(localInputFileName);
-    
+
     // compute outputFile:
     //  - either use the given UserOutputFileName
     //  - either concatenate
@@ -203,10 +203,10 @@ public class TomStreamManager {
       }
     }
   }
-  
+
   /**
    * An accessor method.
-   * 
+   *
    * @return the symbolTable
    */
   public SymbolTable getSymbolTable() {
@@ -216,7 +216,7 @@ public class TomStreamManager {
   public String getOutputSuffix() {
     return outputSuffix;
   }
-  
+
   public void setOutputSuffix(String string) {
     outputSuffix = string;
   }
@@ -262,11 +262,11 @@ public class TomStreamManager {
     }
     return importList;
   }
-  
+
   public String getInputSuffix() {
     return inputSuffix;
   }
-  
+
   public void setInputSuffix(String inputSuffix) {
     this.inputSuffix = inputSuffix;
   }
@@ -275,7 +275,7 @@ public class TomStreamManager {
     this.packagePath = packagePath.replace('.',File.separatorChar);
     updateOutputFileOnPackageChanged();
   }
-  
+
   public String getPackagePath() {
     return packagePath;
   }
@@ -288,7 +288,7 @@ public class TomStreamManager {
       e.printStackTrace();
     }
   }
-  
+
   public File getDestDir() {
     return destDir;
   }
@@ -296,7 +296,7 @@ public class TomStreamManager {
   public void setInputFile(String sInputFile) {
     this.inputFileName = sInputFile;
   }
-  
+
   public String getInputFileName() {
     return inputFileName;
   }
@@ -336,7 +336,7 @@ public class TomStreamManager {
     //System.out.println("IFNWS : " +res);
     return res;
   }
-  
+
   public String getOutputFileName() {
     return getOutputFile().getPath();
   }
@@ -350,7 +350,7 @@ public class TomStreamManager {
       e.printStackTrace();
     }
   }
-  
+
   public File getOutputFile() {
     return outputFile;
   }
@@ -378,15 +378,14 @@ public class TomStreamManager {
       e.printStackTrace();
     }
   }
- 
+
   public File getUserOutputFile() {
     return userOutputFile;
   }
-  
+
   public String getRawFileName() {
     String rawInputFileName = new File(getInputFileName()).getName();
     String res = rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
-    //System.out.println("Raw file name : " + res);
     return res;
   }
 
@@ -396,21 +395,16 @@ public class TomStreamManager {
 
   public File findFile(File parent, String fileName) {
     File file = new File(parent, fileName);
-    //System.out.println("look for: '" + fileName + "'");
     if(file.exists()) {
-      //System.out.println("found!"); 
       return file;
     }
     // Look for importList
     for(int i=0 ; i<getImportList().size() ; i++) {
-      //System.out.println("look in: '" + getImportList().get(i) + "'");
       file = new File(getImportList().get(i),fileName);
       if(file.exists()) {
-        //System.out.println("found!"); 
         return file;
       }
     }
-    //System.out.println("not found!"); 
     return null;
   }
 

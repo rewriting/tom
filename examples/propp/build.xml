@@ -4,17 +4,24 @@
   <property name="example" value="propp"/>
   <target name="build" depends="init">
     <gombuild/>
+    <gomantlradapter.preset
+      srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      package="${example}">
+      <include name="${example}/**/Seq.gom"/>
+    </gomantlradapter.preset>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${example}/SeqParser.g"
-                import="${examples.gen}/${example}"
-                srcdir="${examples.dir}"> 
-      <include name="${example}/**/SeqParser.g.t"/>
-    </tom.preset>
     <mkdir dir="${examples.gen}/${example}"/>
-    <tomantlr target="${examples.gen}/${example}/SeqParser.g"
-              outputdirectory="${examples.gen}/${example}">
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="tom.classpath"/>
-    </tomantlr>
+    </taskdef>
+    <antlr3 target="${examples.dir}/${example}/Seq.g"
+            outputdirectory="${examples.gen}/${example}"
+            libdirectory="${examples.gen}/${example}/seq"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
     <tomcompile/>
     <javacompile/>
     <!-- copy resources -->

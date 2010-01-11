@@ -1,0 +1,18 @@
+term modulo { }
+
+prop modulo { 
+  r0 : []  G -> forall x, A(x) => B
+  r1 : [x] A(x) -> C(x) /\ D(x)
+  r2 : []  B -> E \/ F
+}
+
+prop fold { }
+
+
+rootR(
+  <r:(H /\ (forall x, (C(x) /\ D(x)) => E \/ F)) => (H /\ G)> implyR(
+    <x:H /\ (forall x, A(x) => E \/ F)> <a:H /\ (forall x, (C(x) /\ D(x)) => B)> andL(
+      <y:H><z:forall x, (C(x) /\ D(x)) => B> andR(
+        <b:H> ax(y,b),
+        <c:G> ax(z,c),a),x),r))
+  

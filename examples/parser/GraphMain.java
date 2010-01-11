@@ -3,7 +3,7 @@ package parser;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
-import parser.term.GraphTermAdaptor;
+import parser.term.TermAdaptor;
 
 public class GraphMain {
 
@@ -14,7 +14,7 @@ public class GraphMain {
       GraphParser parser = new GraphParser(tokens);
       // Parse the input expression
       Tree b = (Tree) parser.node().getTree();
-      System.out.println("Result = " + GraphTermAdaptor.getTerm(b));
+      System.out.println("Result = " + TermAdaptor.getTerm(b));
     } catch (Exception e) {
       System.err.println("exception: " + e);
       e.printStackTrace();

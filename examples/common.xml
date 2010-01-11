@@ -94,12 +94,10 @@
       </sequential>
     </macrodef>
     <macrodef name="gomantlradapterbuild">
-      <attribute name="grammar"/>
       <sequential>
         <gomantlradapter.preset srcdir="${examples.dir}"
                                 package="${example}" 
-                                destdir="${examples.gen}"
-                                grammar="@{grammar}">
+                                destdir="${examples.gen}">
           <include name="${example}/**/*.gom"/>
         </gomantlradapter.preset>
       </sequential>

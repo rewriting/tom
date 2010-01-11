@@ -1,3 +1,14 @@
+2009-11-25 tonio
+ * remove the "production rule" syntax support for gom, and the sorts section
+
+2009-11-11 tonio
+ * bootstrap
+ * tom src adapted to use the new gomantlradaptor
+
+2009-10-31 tonio
+ * gomantlradapter now generates a .tokens file instead of a TokenList.txt
+   It is now possible to avoid using tom only to include the tokens.
+
 2009-10-06 pem
  * compile non-linear AC patterns of the form f(X*,Y*,...,Y*)
 	 not yet f(X*,X*,Y*,Y*) or f(X*,Y*...,Y*,Z*,...,Z*)
@@ -141,11 +152,11 @@
   * adapted few examples that used Gom.getInstance()
 
 2008-11-24 jcb
-  * changed static variables and methods in compiler package 
+  * changed static variables and methods in compiler package
     (in order to become thread-safe)
 
 2008-04-19 pem
-  * improved the implementation of Position and Environment 
+  * improved the implementation of Position and Environment
     (no longer use getHead and getTail)
   * added a int[] toIntArray() method in Path
 
@@ -160,7 +171,7 @@
   * use Position.makeFromPath() instead of new Position(Path)
   * ...
   * use length() instead of depth()
-  * setValue(int[]) has been removed 
+  * setValue(int[]) has been removed
 
 2008-04-11 tonio
   * let the ant task for tom know ccode and camlcode options
@@ -171,7 +182,7 @@
 
 2008-24-10 pem
   * fixed bug related to non linear variables: g(x) || f(x,x)
-  * compile disjuntion of patterns by duplicating the action, to make 
+  * compile disjuntion of patterns by duplicating the action, to make
     the semantics correct
 
 2008-18-10 pem
@@ -227,7 +238,7 @@
   * tom 2.6-rc2
 
 2008-04-08 balland
-  * add a new variadic strategy combinator ChoiceUndet corresponding to undeterministic choice 
+  * add a new variadic strategy combinator ChoiceUndet corresponding to undeterministic choice
 
 2008-03-25 pem
   * a default "make" is added only if no other mapping is defined
@@ -257,7 +268,7 @@
 
 2008-02-12 balland
   * fix PR-4932
-  * fix PR-5053 
+  * fix PR-5053
 
 2008-02-01 pem
   * fix PR-4960
@@ -273,7 +284,7 @@
   * re-activated the TypeChecker
   * introduce a new TypeWithSymbol
   * prepare to improve the TypeChecker
-  
+
 2008-01-07 balland
   * remove autodispatch option (default behaviour)
   * simplify Gom consequently (remove the generation of BasicStrategy and VisitorFwd classes)

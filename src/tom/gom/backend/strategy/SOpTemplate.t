@@ -74,7 +74,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   private static final String msg = "Not an @className(operator)@";
   /* Manage an internal environment */
   protected tom.library.sl.Environment environment;
-  
+
   public void setEnvironment(tom.library.sl.Environment env) {
     this.environment = env;
   }
@@ -195,7 +195,7 @@ public class @className()@ implements tom.library.sl.Strategy {
           } else if(newChild != oldChild) {
             childs = introspector.getChildren(any);
             childs[nbi] = newChild;
-          } 
+          }
           environment.upLocal();
           nbi++;
       }

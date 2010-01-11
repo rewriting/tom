@@ -1,0 +1,46 @@
+
+%include { string.tom }
+
+%typeterm Formule {
+  implement { tom.donnees.types.Formule }
+  is_sort(t) { ($t instanceof tom.donnees.types.Formule) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Formule Input(A:String) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.Input) }
+  get_slot(A, t) { $t.getA() }
+  make(t0) { tom.donnees.types.formule.Input.make($t0) }
+}
+
+%op Formule False() {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.False) }
+  make() { tom.donnees.types.formule.False.make() }
+}
+
+%op Formule True() {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.True) }
+  make() { tom.donnees.types.formule.True.make() }
+}
+
+%op Formule And(f1:Formule, f2:Formule) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.And) }
+  get_slot(f1, t) { $t.getf1() }
+  get_slot(f2, t) { $t.getf2() }
+  make(t0, t1) { tom.donnees.types.formule.And.make($t0, $t1) }
+}
+
+%op Formule Or(f1:Formule, f2:Formule) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.Or) }
+  get_slot(f1, t) { $t.getf1() }
+  get_slot(f2, t) { $t.getf2() }
+  make(t0, t1) { tom.donnees.types.formule.Or.make($t0, $t1) }
+}
+
+%op Formule Neg(f1:Formule) {
+  is_fsym(t) { ($t instanceof tom.donnees.types.formule.Neg) }
+  get_slot(f1, t) { $t.getf1() }
+  make(t0) { tom.donnees.types.formule.Neg.make($t0) }
+}
+

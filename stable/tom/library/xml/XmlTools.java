@@ -55,7 +55,7 @@ public class XmlTools {
     x2t = new XMLToTNode();
   }
 
-  /** 
+  /**
    * Set up the deleteWhiteSpaceNodes variable
    *
    * @param b_d a boolean which allows to define if white space nodes have to be deleted or not*/
@@ -63,7 +63,7 @@ public class XmlTools {
     x2t.setDeletingWhiteSpaceNodes(b_d);
   }
 
-  /** 
+  /**
    * Returns a TNode by providing a Node
    *
    * @param node the Node to normalize and convert
@@ -72,8 +72,8 @@ public class XmlTools {
   public TNode nodeToTNode(Node node) {
     return x2t.xmlToTNode(node);
   }
- 
-  /** 
+
+  /**
    * Returns an ATerm representation of a NodeList
    *
    * @param n the NodeList
@@ -83,9 +83,9 @@ public class XmlTools {
     return x2t.nodeListToAterm(n);
   }
 
-  /** 
+  /**
    * Converts XML to Node by providing a file name
-   * 
+   *
    * @param filename the filename
    * @return the Node representation of the XML file
    */
@@ -93,9 +93,9 @@ public class XmlTools {
     return x2t.convertToNode(filename);
   }
 
-  /** 
+  /**
    * Converts XML to Node by providing an InputStream
-   * 
+   *
    * @param is the InputStream
    * @return the Node representation of XML
    */

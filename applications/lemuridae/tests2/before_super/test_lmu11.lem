@@ -1,0 +1,11 @@
+term modulo { }
+
+prop modulo { }
+
+prop fold { }
+
+rootR(
+  <th:P(f()) => exists x, P(x)> implyR(
+    <x:P(f())><a:exists x, P(x)> existsR(
+      <b:P(f())> ax(x,b),f(),a),th))
+

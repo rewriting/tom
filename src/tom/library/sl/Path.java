@@ -43,10 +43,10 @@ public interface Path {
    * Computes the path from the source of this to the target of the parameter p.
    * The addition of two paths must respect the following equations:
    * <p>
-   * <code>t1.add(t2) = (t1.getTail().add(t2)).conc(t1.getHead()) if t1.length()>0,</code> 
+   * <code>t1.add(t2) = (t1.getTail().add(t2)).conc(t1.getHead()) if t1.length()>0,</code>
    * <p>
    * <code>t1.add(t2) = t2</code>  otherwise.
-   * @param p the path to add. 
+   * @param p the path to add.
    * @return the path corresponding to the addition of this and the parameter p.
    */
   public Path add(Path p);
@@ -55,9 +55,9 @@ public interface Path {
    * Computes the path from the target of this to the target of the parameter p.
    * The subtraction of two paths must respect the following equation:
    * <p>
-   * <code>t1.sub(t2) = t2.inverse().add(t1),</code> 
+   * <code>t1.sub(t2) = t2.inverse().add(t1),</code>
    * @return the path corresponding to the subtraction of this and the parameter p.
-   * @param p the path to subtract. 
+   * @param p the path to subtract.
    */
   public Path sub(Path p);
 
@@ -65,18 +65,18 @@ public interface Path {
    * Computes the path from the target of this to the source of this.
    * The inverse operation  must respect the following equations:
    * <p>
-    * <code>t.inverse() = t.getTail().inverse().add(-t.getHead()) if t.length()>0,</code> 
+    * <code>t.inverse() = t.getTail().inverse().add(-t.getHead()) if t.length()>0,</code>
    * <p>
-   * <code>t.inverse() = t</code> otherwise 
+   * <code>t.inverse() = t</code> otherwise
    * @return the path corresponding to the inverse path of this.
    */
   public Path inverse();
-  
+
   /**
    * Gives the canonical form of a path.
    * Two paths are equivalent if for every source the corresponding targets are
    * the same. In an equivalence class, the canonical form is the smallest path.
-   * @return its canonical form 
+   * @return its canonical form
    */
   public Path getCanonicalPath();
 
@@ -84,7 +84,7 @@ public interface Path {
    * Computes the length which corresponds to the number of moves
    * needed to go from the source to the target.
    * @return the length of the path
-   */   
+   */
   public int length();
 
   /**

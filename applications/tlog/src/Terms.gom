@@ -1,0 +1,18 @@
+
+	
+		module PrologTerms
+		imports int String
+		abstract syntax
+		
+		Term = constant(name:String) | variable(name:String)
+		TermList = tList(Term*)
+		
+		Fact = fact(name:String,arity:int,subTerms:TermList)
+		FactList = fList(Fact*)
+
+		Rule = rule(goal:Fact,body:FactList)
+		RuleList = rList(Rule*)
+		
+		Substitution = subs(variable:Term,constant:Term)
+		SubstitutionList = sList(Substitution*)
+		

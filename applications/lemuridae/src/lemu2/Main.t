@@ -50,6 +50,8 @@ public class Main {
       System.out.println(Pretty.pretty(prules.export()));
       PropRewriteRules pfrules = parser.propfold().convert();
       System.out.println(Pretty.pretty(pfrules.export()));
+      PropRewriteRules psrules = parser.propsuper().convert();
+      System.out.println(Pretty.pretty(psrules.export()));
       ProofTerm pt = parser.proofterm().convert();
       System.out.println(Pretty.pretty(pt.export()));
       System.out.println();

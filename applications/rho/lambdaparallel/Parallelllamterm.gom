@@ -26,10 +26,11 @@ app:make(lhs,rhs){
 		}
 	}
 }
+parallel:FL() {}
 parallel:make_insert(x,l){
 	%match(Parallellamterm x,	Parallellamterm l){
 		y, parallel(X*,y,Z*)->{
-			//we know that l does not contain any doubloon by induction hypothesis
+			//we know that l does not contain any doublon by induction hypothesis
 			return `l;
 		}
 		//this is a flatten rule **that should not be used**

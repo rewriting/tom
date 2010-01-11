@@ -61,6 +61,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>multithread</li>
  * <li>failonerror</li>
  * <li>nowarn</li>
+ * <li>nostatic</li>
  * <li>fork</li>
  * </ul>
  * Of these arguments, only <b>sourcedir</b> is required.
@@ -87,6 +88,7 @@ public class TomTask extends MatchingTask {
   private boolean verbose = false;
   private boolean multithread = false;
   private boolean nowarn = false;
+  private boolean nostatic = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean pretty = false;
@@ -443,6 +445,22 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, enable the --noStatic option.
+   * @param flag if true, enable the --noStatic option
+   */
+  public void setNostatic(boolean flag) {
+    this.nostatic = flag;
+  }
+
+  /**
+   * Should the --noStatic option be used.
+   * @return true if the --noStatic option should be used
+   */
+  public boolean getNostatic() {
+    return this.nostatic;
+  }
+
+  /**
    * If true, run Tom in a new JVM
    * @param flag if true, executes in a new JVM
    */
@@ -657,6 +675,9 @@ public class TomTask extends MatchingTask {
       }
       if(nowarn == false) {
         javaRunner.createArg().setValue("--wall");
+      }
+      if(nostatic == true) {
+        javaRunner.createArg().setValue("--noStatic");
       }
       if(verbose == true) {
         javaRunner.createArg().setValue("--verbose");
