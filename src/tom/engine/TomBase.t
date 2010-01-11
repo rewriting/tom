@@ -93,8 +93,8 @@ public final class TomBase {
    */
   public static String getTLType(TomType type) {
     %match(type) {
-      TLType[]  -> { /*System.out.println("(DEBUG) TomBase.getTLType / type = " + type);*/return getTLCode(type); }
-      Type[TlType=tlType] -> { /*System.out.println("(DEBUG) TomBase.getTLType / type = " + type + " / tlType = " + `tlType);*/return getTLCode(`tlType); }
+      TLType[]  -> { return getTLCode(type); }
+      Type[TlType=tlType] -> { return getTLCode(`tlType); }
     }
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
@@ -106,6 +106,7 @@ public final class TomBase {
     %match(type) {
       TLType(str)  -> { return `str; }
     }
+    System.out.println("getTLCode error on term: " + type);
     throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 

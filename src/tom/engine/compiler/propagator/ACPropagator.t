@@ -77,10 +77,10 @@ public class ACPropagator implements IBasePropagator {
     result = `RepeatId(TopDown(PerformAbstraction(this))).visitLight(result);		
     result = `TopDown(CleanSingleVariable()).visitLight(result);		
     //Constraint res = `TopDownWhenConstraint(ACMatching(this)).visitLight(constraint);		
-//    if(result!=constraint) {
-//      System.out.println("after propagate:");
-//      System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
-//    }
+    if(result!=constraint) {
+      System.out.println("after propagate:");
+      System.out.println(TomConstraintPrettyPrinter.prettyPrint(result));
+    }
     return result;
   }	
 

@@ -221,14 +221,7 @@ public class KernelTomTyper {
     }
 
     visit TomTerm {
-      RecordAppl[Option=option,NameList=nameList@(Name(tomName),abab*),Slots=slotList,Constraints=constraints] -> {
-        
-        //if(`abab != `concTomName()) {
-//          System.out.println("(DEBUG) KernelTomTyper - nameList = " + `nameList);
-//          System.out.println("(DEBUG) KernelTomTyper - tomName = " + `tomName + "\n");
-        //}
-
-
+      RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
           try {
@@ -391,7 +384,6 @@ public class KernelTomTyper {
       Collection matchAndNumericConstraints, KernelTomTyper kernelTomTyper) extends Fail() {
     visit Constraint {
       constraint@MatchConstraint[Pattern=pattern,Subject=subject] -> {
-        //System.out.println("(DEBUG) KernelTomTyper / `subject = " + `subject);
         BQTerm newSubject = `subject;
         TomType newSubjectType = `EmptyType();
         %match(subject) {
@@ -406,7 +398,7 @@ public class KernelTomTyper {
               if(newSubjectType != null) {
                 newVariable = `BQVariable(variableOption,astName,newSubjectType);
               } else {
-                  throw new TomRuntimeException("No symbol found for name1 '" + `name + "'");
+                  throw new TomRuntimeException("No symbol found for name '" + `name + "'");
               }
             } else {
               newVariable = `subject;
@@ -435,7 +427,7 @@ public class KernelTomTyper {
               }
             }
             if (type == null) {
-              throw new TomRuntimeException("No symbol found for name2 '" + `name + "'");
+              throw new TomRuntimeException("No symbol found for name '" + `name + "'");
             } else {
               newSubjectType = type;
             }                   
@@ -638,9 +630,6 @@ matchL:  %match(subject,s){
             }
           } else {
             SlotList sl = typeVariableList(`symb,`tail);
-            //SlotList slTest = `concSlot(PairSlotAppl(slotName,typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
-            //System.out.println("(DEBUG) KernelTomTyper / slTest = " + slTest + "\n");
-            //return slTest;
             return `concSlot(PairSlotAppl(slotName,typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
           }
         }
