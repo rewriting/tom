@@ -195,7 +195,8 @@ public class Desugarer extends TomGenericPlugin {
         }
       }
       %match(pairNameDeclList){
-        !concPairNameDecl() -> { 
+        !concPairNameDecl() -> {
+          System.out.println("(DEBUG) Desugarer / pairNameDeclList = " + `pairNameDeclList);
           throw new TomRuntimeException("The symbol '"
                 +
                 `pairNameDeclList.getHeadconcPairNameDecl().getSlotName().getString() + "' has a bad arity"); }

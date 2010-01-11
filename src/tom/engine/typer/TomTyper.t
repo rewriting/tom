@@ -110,16 +110,28 @@ public class TomTyper extends TomGenericPlugin {
       updateSymbolTable();
 
       Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
+//System.out.println("(DEBUG) TomTyper --------------------------- 1 ");
+//System.out.println("(DEBUG) TomTyper / SymbolTable, before =\n" + getStreamManager().getSymbolTable().getMapSymbolName());
+//System.out.println("(DEBUG) TomTyper --------------------------- 2 ");
       Code variableExpandedCode = (Code) kernelTomTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+//System.out.println("(DEBUG) TomTyper --------------------------- 3 ");
+//System.out.println("(DEBUG) TomTyper / SymbolTable, after =\n" + getStreamManager().getSymbolTable().getMapSymbolName());
+//System.out.println("(DEBUG) TomTyper --------------------------- 4 ");
      
+//            System.out.println("(DEBUG) TomTyper / after expandType and typeVariable / ");
       Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
+//            System.out.println("(DEBUG) TomTyper / 1");
       typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
+//            System.out.println("(DEBUG) TomTyper / 2");
       typedCode = kernelTomTyper.propagateVariablesTypes(typedCode);
 
+//            System.out.println("(DEBUG) TomTyper / after propagate");
       /* transform each BackQuoteTerm into its compiled form */
       typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
       
+//            System.out.println("(DEBUG) TomTyper / before setWorkingTerm");
       setWorkingTerm(typedCode);      
+//            System.out.println("(DEBUG) TomTyper / after setWorkingTerm ");
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -183,7 +195,7 @@ public class TomTyper extends TomGenericPlugin {
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
+    //Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
 
     while(it.hasNext()) {
       String tomName = it.next();
@@ -201,7 +213,13 @@ public class TomTyper extends TomGenericPlugin {
       try {
         tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+//System.out.println("(DEBUG) TomTyper in updateSymbolTable() --------------------------- 1 ");
+//System.out.println("(DEBUG) TomTyper / SymbolTable, before =\n" + getStreamManager().getSymbolTable().getMapSymbolName());
+//System.out.println("(DEBUG) TomTyper in updateSymbolTable() --------------------------- 2 ");
         tomSymbol = ((TomTerm) kernelTomTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
+//System.out.println("(DEBUG) TomTyper in updateSymbolTable() --------------------------- 3 ");
+//System.out.println("(DEBUG) TomTyper / SymbolTable, after =\n" + getStreamManager().getSymbolTable().getMapSymbolName());
+//System.out.println("(DEBUG) TomTyper in updateSymbolTable() --------------------------- 4 ");
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");

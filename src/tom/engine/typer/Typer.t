@@ -192,7 +192,7 @@ public class Typer extends TomGenericPlugin {
    * this post-processing phase replaces untyped (universalType) codomain
    * by their precise type (according to the symbolTable)
    */
-  %strategy updateCodomain(typer:Typer) extends `Identity() {
+  %strategy updateCodomain(typer:Typer) extends Identity() {
     visit Declaration {
       GetHeadDecl[] -> {
           throw new TomRuntimeException("updateCodomain");
