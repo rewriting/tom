@@ -1,19 +1,20 @@
 module logo.Ast
-imports String int
+imports String int boolean
 abstract syntax
 
 Instruction = LC()
             | BC()
-            | AV(distance:Expression)
-            | RE(distance:Expression)
-            | TG(angle:Expression)
-            | TD(angle:Expression)
-            | REP(nb:int,il:InstructionList)
+            | AV(Distance:Expression)
+            | RE(Distance:Expression)
+            | TG(Angle:Expression)
+            | TD(Angle:Expression)
+            | REP(Nb:int,Il:InstructionList)
+            | WORLD(Il:InstructionList)
 
-Expression = Cst(value:int)
-           | Plus(e1:Expression,e2:Expression)
+Expression = Cst(Value:int)
+           | Plus(E1:Expression,E2:Expression)
 
 InstructionList = InstructionList(Instruction*)
 
-
+State = Tortue(X:int,Y:int,Angle:int,CrayonBas:boolean)
 
