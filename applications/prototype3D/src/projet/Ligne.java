@@ -85,5 +85,13 @@ public class Ligne {
 			precedent = n;
 		}
 	}
+	
+	public void ajouterNumeroNoeud() {
+		int i = 0;
+		for (Noeud n : listePoints) {
+			n.setNumeroNoeud(i);
+			i++;
+		}
+	}
 
 }

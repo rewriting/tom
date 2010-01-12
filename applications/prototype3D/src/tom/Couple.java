@@ -125,10 +125,10 @@ public class Couple {
 		boolean temp1 = false;
 		boolean temp2 = false;
 		for (Noeud n : l.getListePoints()) {
-			if (n.getFormule() == n1.getFormule()) {
+			if (n.compareTo(n1) == 0) {
 				temp1 = true;
 			}
-			if (n.getFormule() == n2.getFormule()) {
+			if (n.compareTo(n2) == 0) {
 				temp2 = true;
 			}
 		}

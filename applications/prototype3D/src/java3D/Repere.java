@@ -36,6 +36,8 @@ public class Repere extends Applet {
 
 	private Frame frame;
 
+	private SimpleUniverse simpleU;
+
 	private BranchGroup parent = new BranchGroup();
 
 	private BranchGroup removable = new BranchGroup();
@@ -46,11 +48,11 @@ public class Repere extends Applet {
 
 	private LinkedList<Noeud> listeNoeud = new LinkedList<Noeud>();
 
+	private TreeSet<Point> listePoints = new TreeSet<Point>();
+
+	private TreeSet<Point> listePointsTotal = new TreeSet<Point>();
+
 	private int niveauMax = 1;
-
-	private static ViewingPlatform camera = null;
-
-	private SimpleUniverse simpleU;
 
 	public Repere() {
 	}
@@ -59,11 +61,23 @@ public class Repere extends Applet {
 		return listeNoeud;
 	}
 
+	public void addListePoints(Point p) {
+		listePoints.add(p);
+	}
+
+	public TreeSet<Point> getListePoints() {
+		return listePoints;
+	}
+
+	public void addListeNoeud(Noeud n) {
+		listeNoeud.add(n);
+	}
+
 	public static double getEchelle() {
 		return ECHELLE;
 	}
 
-	public static Color3f getCouleur() {
+	public static Color3f getCouleurCherche() {
 		return COULEUR_CHERCHE;
 	}
 
@@ -73,6 +87,18 @@ public class Repere extends Applet {
 
 	public int getNiveauMax() {
 		return niveauMax;
+	}
+
+	public void setNiveauMax() {
+		niveauMax++;
+	}
+
+	public void setListePoints(TreeSet<Point> liste) {
+		listePoints = liste;
+	}
+
+	public void addPoint(Point p) {
+		listePointsTotal.add(p);
 	}
 
 	/**
@@ -182,40 +208,7 @@ public class Repere extends Applet {
 	}
 
 	public void dessinerPoint(Noeud n, int k) {
-		/*
-		 * Creation d'une apparence pour la sphere
-		 */
-		Appearance app = new Appearance();
-		ColoringAttributes color = new ColoringAttributes();
-		/*
-		 * if (estSelectionne(n) && k == Interface.getNumeroSequent()) {
-		 * color.setColor(COULEUR_CHERCHE); } else {
-		 */
-		color.setColor(COULEUR_ARRETE);
-		// }
-		app.setColoringAttributes(color);
-
-		/*
-		 * Creation de la translation pour placer notre sphere ou on veut
-		 */
-		Transform3D translate = new Transform3D();
-		translate.set(new Vector3f(n.getX(), n.getY(), n.getZ()));
-		TransformGroup TG = new TransformGroup(translate);
-		Sphere point = new Sphere((float) (1 / (Math.pow(2,
-				n.getProfondeur() + 4))), app);
-		TG.addChild(point);
-
-		/*
-		 * Mise a jour des donnees generales
-		 */
-		if (n.getProfondeur() > niveauMax) {
-			niveauMax++;
-		}
-		listeNoeud.add(n);
-
-		//System.out.println("dessin" + n.getX() + " " + n.getFormule());
-
-		parent.addChild(TG);
+		parent.addChild(new Point(n, this).creerPoint(k));
 	}
 
 	public void dessinerSegment(Noeud n1, Noeud n2, boolean couple) {
@@ -277,6 +270,7 @@ public class Repere extends Applet {
 				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, n
 						.getPosition()
 						+ "1", k);
+
 		dessinerPoint(n1, k);
 		dessinerPoint(n2, k);
 		dessinerSegment(n, n1, false);
@@ -332,6 +326,7 @@ public class Repere extends Applet {
 				ECHELLE, n.getProfondeur())))), (float) (n.getZ() + (1 / (Math
 				.pow(ECHELLE, n.getProfondeur())))), n.getProfondeur() + 1, n
 				.getProfondeurInitiale() + 1, n.getPosition() + "0", k);
+
 		dessinerPoint(n1, k);
 		dessinerPoint(n2, k);
 		dessinerSegment(n, n1, false);
@@ -342,13 +337,13 @@ public class Repere extends Applet {
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
 		 * engendree par le "AND"
 		 */
-		Shape3D shape = new Triangle(n, n1, n2, this).creerTriangle("and", k,
-				deriv);
+		Shape3D shape = new Triangle(n, n1, n2, this).creerTriangle(deriv
+				+ "and", k, deriv);
 		shape.setCapability(shape.ALLOW_GEOMETRY_WRITE);
 		shape.setCapability(shape.ALLOW_GEOMETRY_READ);
 
-		Shape3D shape2 = new Triangle(n, n2, n1, this).creerTriangle("and", k,
-				deriv);
+		Shape3D shape2 = new Triangle(n, n2, n1, this).creerTriangle(deriv
+				+ "and", k, deriv);
 		shape2.setCapability(shape.ALLOW_GEOMETRY_WRITE);
 		shape2.setCapability(shape.ALLOW_GEOMETRY_READ);
 
@@ -384,8 +379,7 @@ public class Repere extends Applet {
 		Noeud n1 = new Noeud(n.getX(), (float) (n.getY() + (1 / (Math.pow(
 				ECHELLE, n.getProfondeur())))), n.getZ(),
 				n.getProfondeur() + 1, n.getProfondeurInitiale() + 1, n
-						.getPosition()
-						+ "1", k);
+						.getPosition(), k);
 		dessinerPoint(n1, k);
 		dessinerSegment(n, n1, false);
 
@@ -435,14 +429,73 @@ public class Repere extends Applet {
 		frame.setVisible(false);
 	}
 
+	@SuppressWarnings("static-access")
 	public void rajouterCouple() {
 		/*
 		 * Rajoute des liens entre les couples selectionnes
 		 */
 		temp.compile();
-		locale.replaceBranchGraph(removable, temp);
+		try {
+			locale.replaceBranchGraph(removable, temp);
+		} catch (CapabilityNotSetException e) {
+			System.out.println("Capability Not Set Exception : " + e);
+		}
 		removable = temp;
 		temp = new BranchGroup();
+		temp.setCapability(temp.ALLOW_DETACH);
+	}
+
+	@SuppressWarnings("static-access")
+	public void effacerCouple() {
+		temp = new BranchGroup();
+		temp.setCapability(temp.ALLOW_DETACH);
+		temp.compile();
+		try {
+			locale.replaceBranchGraph(removable, temp);
+		} catch (CapabilityNotSetException e) {
+			System.out.println("Capability Not Set Exception : " + e);
+		}
+		removable = temp;
+		temp = new BranchGroup();
+		temp.setCapability(temp.ALLOW_DETACH);
+	}
+
+	public Point getPoint(TreeSet<Point> liste, int k) {
+		/*
+		 * Donne le k-ème element de la liste triee 'liste'
+		 */
+		Iterator i = liste.iterator();
+		int j = 0;
+		Point temp = new Point();
+		while (j != k) {
+			temp = (Point) i.next();
+			j++;
+		}
+		return temp;
+	}
+
+	public void actualiserPointsCouples() {
+		for (Point p : listePoints) {
+			/*
+			 * On colorie differemment un point si c'est celui selectionne, ou
+			 * bien s'il a ete valide
+			 */
+			if (p.getUserData().equals(Interface.getNumeroNode() + "")
+					|| Interface.getListeNumeroPoints().contains(
+							Integer.valueOf(p.getUserData()))) {
+				p.changerCouleur(COULEUR_COUPLE);
+			} else if ((p.getN().getNumeroSequent() + p.getN().getPosition())
+					.startsWith(Interface.getNumeroSequent()
+							+ Interface.getPlaceSubSequent())) {
+				/*System.out.println("place subsequent : "
+						+ Interface.getPlaceSubSequent());
+				System.out.println((p.getN().getNumeroSequent())
+						+ p.getN().getPosition());*/
+				p.changerCouleur(COULEUR_CHERCHE);
+			} else {
+				p.changerCouleur(COULEUR_ARRETE);
+			}
+		}
 	}
 
 	public void actualiser() {
@@ -451,6 +504,9 @@ public class Repere extends Applet {
 		 */
 		for (int k = 0; k < parent.numChildren(); k++) {
 			Object o = parent.getChild(k);
+			/*
+			 * Cas des triangles
+			 */
 			if (o instanceof Shape3D) {
 				Shape3D shape = (Shape3D) o;
 				Enumeration e = shape.getAllGeometries();
@@ -460,13 +516,24 @@ public class Repere extends Applet {
 					 * On remet la couleur de base à tous les triangles
 					 */
 					if (!g.getUserData().toString().equals("segment")
-							&& !g.getUserData().toString().contains("axe")) {
+							&& !g.getUserData().toString().contains("axe")
+							&& !g.getUserData().toString().equals("point")) {
 						TriangleArray t = (TriangleArray) g;
 						for (int i = 0; i < 3; i++) {
-							if (t.getUserData().toString().endsWith("or")) {
-								t.setColor(i, COULEUR_OR);
+							/*
+							 * Cas normal
+							 */
+							if (t.getUserData().toString().contains("false")) {
+								if (t.getUserData().toString().endsWith("or")) {
+									t.setColor(i, COULEUR_OR);
+								} else {
+									t.setColor(i, COULEUR_AND);
+								}
+								/*
+								 * Cas d'un triangle obtenu par derivation
+								 */
 							} else {
-								t.setColor(i, COULEUR_AND);
+								t.setColor(i, COULEUR_DERIV);
 							}
 						}
 					}
@@ -484,14 +551,10 @@ public class Repere extends Applet {
 				}
 			}
 		}
-	}
-
-	public ViewingPlatform getCamera() {
-		return camera;
-	}
-
-	public void setCamera() {
-		camera = simpleU.getViewingPlatform();
+		/*
+		 * On traite egalement le cas des points
+		 */
+		actualiserPointsCouples();
 	}
 
 	public static void main(String[] args) {

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import java3D.Repere;
+import java3D.Point;
 import projet.Noeud;
 import projet.Ligne;
 import fenetre.Interface;
@@ -23,6 +24,12 @@ public class Sequent {
 	private static LinkedList<Ligne> listeLigneFinale = new LinkedList<Ligne>();
 
 	private static LinkedList<Couple> listeCouple = new LinkedList<Couple>();
+
+	private static TreeSet<Noeud> listeAndTemp = new TreeSet<Noeud>();
+
+	private static TreeSet<Noeud> listeAndTemp2 = new TreeSet<Noeud>();
+
+	private static TreeSet<Noeud> listeAndTempDroit = new TreeSet<Noeud>();
 
 	private static boolean tom_equal_term_char(char t1, char t2) {
 		return t1 == t2;
@@ -174,6 +181,10 @@ public class Sequent {
 
 	public final static void main(String[] args, Repere rep) {
 		/*
+		 * On prepare le futur graphe
+		 */
+		supprimerLigne();
+		/*
 		 * On interprete les formules rentres par l'utilisateur en tant que
 		 * Formule puis on genere les arbres respectifs
 		 */
@@ -186,6 +197,7 @@ public class Sequent {
 			noeudTerminaux();
 			dessiner();
 		}
+		ordonnerNoeudsTerminaux();
 		/*
 		 * On dessine le tout dans le repere
 		 */
@@ -253,16 +265,18 @@ public class Sequent {
 							.getProfondeur()
 							+ i)));
 				}
-				Noeud temp = new Noeud(n.getX(), n.getY() + hauteur, n.getZ(),
-						n.getProfondeurInitiale(), repere.getNiveauMax(), "-1",
-						0);
-				repere.dessinerPoint(temp, -1);
-				n.setEstFinal();
-				temp.setFormule(n.getFormule());
-				for (Ligne l : listeLigne) {
-					if (l.getListePoints().contains(n)) {
-						l.enleverNoeud(n);
-						l.ajouterNoeud(temp);
+				if (hauteur != 0) {
+					Noeud temp = new Noeud(n.getX(), n.getY() + hauteur, n
+							.getZ(), n.getProfondeurInitiale(), repere
+							.getNiveauMax(), "-1", 0);
+					repere.dessinerPoint(temp, -1);
+					n.setEstFinal();
+					temp.setFormule(n.getFormule());
+					for (Ligne l : listeLigne) {
+						if (l.getListePoints().contains(n)) {
+							l.enleverNoeud(n);
+							l.ajouterNoeud(temp);
+						}
 					}
 				}
 			}
@@ -273,6 +287,7 @@ public class Sequent {
 		listeLigneFinale = (LinkedList<Ligne>) listeLigne.clone();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void dessiner() {
 		/*
 		 * Une fois que l'on a dessine toutes les lignes, on les supprime pour
@@ -281,7 +296,55 @@ public class Sequent {
 		LinkedList<Ligne> temp = (LinkedList<Ligne>) listeLigne.clone();
 		for (Ligne l : temp) {
 			l.relierPoints();
-			listeLigne.remove(l);
+		}
+	}
+
+	public static void supprimerLigne() {
+		/*
+		 * Permet de reinitialiser les listes de lignes en vue du prochain
+		 * graphe
+		 */
+		listeLigne.clear();
+		listeLigneFinale.clear();
+	}
+
+	public static void supprimerCouple() {
+		/*
+		 * Permet de reinitialiser la liste des couples en vue de nouvelles
+		 * recherches de preuves
+		 */
+		listeCouple.clear();
+	}
+
+	public static void ordonnerNoeudsTerminaux() {
+		int i = 1;
+		/*
+		 * On fait la correspondance entre les points des lignes terminales et
+		 * ceux des points terminaux
+		 */
+		for (Point p : repere.getListePoints()) {
+			for (Ligne l : listeLigneFinale) {
+				for (Noeud n : l.getListePoints()) {
+					if (p.getN().compareTo(n) == 0) {
+						p.getN().setEstDansLigneFinale(true);
+					}
+				}
+			}
+		}
+		/*
+		 * On garde comme points seulement ceux qui constituent les lignes
+		 * finales
+		 */
+		TreeSet<Point> temp = new TreeSet<Point>();
+		for (Point p : repere.getListePoints()) {
+			if (p.getN().getEstDansLigneFinale()) {
+				temp.add(p);
+			}
+		}
+		repere.setListePoints(temp);
+		for (Point p : repere.getListePoints()) {
+			p.addUserData(i + "");
+			i++;
 		}
 	}
 
@@ -414,10 +477,12 @@ public class Sequent {
 								if (tom_is_fun_sym_And(((tom.donnees.types.Formule) tomMatch2NameNumber_freshVar_4))) {
 									tom.donnees.types.Formule tom_x = tom_get_slot_And_f1(((tom.donnees.types.Formule) tomMatch2NameNumber_freshVar_4));
 									tom.donnees.types.Formule tom_y = tom_get_slot_And_f2(((tom.donnees.types.Formule) tomMatch2NameNumber_freshVar_4));
-									decomposerFormuleDerivation(dupliquerFormule(
-											"and", l, n, true, tom_x, tom_y));
-									decomposerFormuleDerivation(dupliquerFormule(
-											"and", l, n, false, tom_x, tom_y));
+									Ligne temporaire = dupliquerFormule("and",
+											l, n, true, tom_x, tom_y);
+									Ligne temporaire2 = dupliquerFormule("and",
+											l, n, false, tom_x, tom_y);
+									decomposerFormuleDerivation(temporaire);
+									decomposerFormuleDerivation(temporaire2);
 									termine = true;
 								}
 							}
@@ -432,6 +497,7 @@ public class Sequent {
 		 * tant que telle
 		 */
 		if (!termine) {
+			l.ajouterNumeroNoeud();
 			listeLigneFinale.add(l);
 		}
 	}
@@ -454,14 +520,18 @@ public class Sequent {
 				if (s.equals("or")) {
 					nouvelleListePoints.add(repere.dessinerORDerivation(n1,
 							n1.getNumeroSequent()).getLast());
-				} else if (gauche) {
-					TreeSet<Noeud> temp2 = repere.dessinerAND(n1, n1
-							.getNumeroSequent(), true);
-					nouvelleListePoints.add(temp2.first());
 				} else {
-					TreeSet<Noeud> temp2 = repere.dessinerAND(n1, n1
-							.getNumeroSequent(), true);
-					nouvelleListePoints.add(temp2.last());
+					if (gauche) {
+						listeAndTemp = repere.dessinerAND(n1, n1
+								.getNumeroSequent(), true);
+						nouvelleListePoints.add(listeAndTemp.first());
+						listeAndTempDroit.add(listeAndTemp.last());
+					} else {
+						for (Noeud n2 : listeAndTempDroit) {
+							nouvelleListePoints.add(n2);
+						}
+						listeAndTempDroit.clear();
+					}
 				}
 			}
 		}
@@ -475,36 +545,29 @@ public class Sequent {
 			temp.last().setFormule(f2);
 			nouvelleListePoints.add(temp.last());
 		} else {
-			temp = repere.dessinerAND(n, n.getNumeroSequent(), false);
 			if (gauche) {
-				temp.first().setFormule(f2);
-				nouvelleListePoints.add(temp.first());
+				listeAndTemp2 = repere.dessinerAND(n, n.getNumeroSequent(),
+						false);
+				listeAndTemp2.first().setFormule(f2);
+				nouvelleListePoints.add(listeAndTemp2.first());
 			} else {
-				temp.last().setFormule(f1);
-				nouvelleListePoints.add(temp.last());
+				listeAndTemp2.last().setFormule(f1);
+				nouvelleListePoints.add(listeAndTemp2.last());
 			}
 		}
-		listeLigne.remove(l);
 		return new Ligne(nouvelleListePoints, repere);
 	}
 
-	public static boolean verifierPreuve(String[] listeCouple) {
+	public static boolean verifierPreuve(LinkedList<Couple> listeCouple) {
 		/*
-		 * On commence par creer les couples de formules correspondant aux
-		 * entrees de l'utilisateur
+		 * On regarde si chaque ligne finale contient au moins l'un des couples
+		 * selectionnes
 		 */
-		String[] couple = new String[2];
-		LinkedList<Couple> listeCoupleFinale = new LinkedList<Couple>();
-		for (int i = 0; i < listeCouple.length; i++) {
-			couple = listeCouple[i].split(" ");
-			listeCoupleFinale.add(new Couple(new Noeud(
-					reecrireFormule(couple[0])), new Noeud(
-					reecrireFormule(couple[1])), repere));
-		}
 		boolean resultat = true;
 		boolean temp = false;
 		for (Ligne l : listeLigneFinale) {
-			for (Couple c : listeCoupleFinale) {
+			temp = false;
+			for (Couple c : listeCouple) {
 				if (c.estDansLigne(l)) {
 					temp = true;
 				}
