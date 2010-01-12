@@ -29,7 +29,7 @@
  * 
  **/
 
-%include {char.tom}
+%include { char.tom }
 %typeterm String {
   implement { String }
   is_sort(t) { $t instanceof String }

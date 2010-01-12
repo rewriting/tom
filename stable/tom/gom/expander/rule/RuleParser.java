@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2009-11-11 11:08:16
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g 2010-01-08 17:38:19
 
 package tom.gom.expander.rule;
 
@@ -13,60 +13,60 @@ import org.antlr.runtime.tree.*;
 
 public class RuleParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "PathTerm", "RefTerm", "LabTerm", "BuiltinString", "BuiltinInt", "Anti", "At", "UnnamedVarStar", "UnnamedVar", "VarStar", "Var", "Appl", "CondMatch", "CondOr", "CondAnd", "CondGreaterThan", "CondGreaterEquals", "CondLessThan", "CondLessEquals", "CondNotEquals", "CondEquals", "TermList", "RuleList", "ConditionalRule", "Rule", "ARROW", "IF", "OR", "AND", "EQUALS", "NOTEQUALS", "LEQ", "LT", "GEQ", "GT", "MATCH", "LPAR", "RPAR", "ID", "COMA", "AT", "UNDERSCORE", "STAR", "NOT", "INT", "STRING", "COLON", "AMPERCENT", "ESC", "WS", "SLCOMMENT"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "PathTerm", "RefTerm", "LabTerm", "BuiltinString", "BuiltinInt", "Anti", "At", "UnnamedVarStar", "UnnamedVar", "VarStar", "Var", "Appl", "TermList", "ConditionalRule", "Rule", "RuleList", "CondMatch", "CondOr", "CondAnd", "CondGreaterThan", "CondGreaterEquals", "CondLessThan", "CondLessEquals", "CondNotEquals", "CondEquals", "ARROW", "IF", "OR", "AND", "EQUALS", "NOTEQUALS", "LEQ", "LT", "GEQ", "GT", "MATCH", "LPAR", "RPAR", "ID", "COMA", "AT", "UNDERSCORE", "STAR", "NOT", "INT", "STRING", "COLON", "AMPERCENT", "ESC", "WS", "SLCOMMENT"
     };
-    public static final int CondEquals=30;
-    public static final int RefTerm=11;
-    public static final int Anti=15;
-    public static final int LPAR=46;
-    public static final int ARROW=35;
-    public static final int LEQ=41;
-    public static final int GEQ=43;
-    public static final int RuleList=32;
-    public static final int OR=37;
-    public static final int BuiltinInt=14;
-    public static final int BuiltinString=13;
-    public static final int AND=38;
-    public static final int SLCOMMENT=60;
-    public static final int CondLessEquals=28;
-    public static final int INT=54;
-    public static final int CondLessThan=27;
-    public static final int UnnamedVar=18;
-    public static final int CondGreaterEquals=26;
-    public static final int Var=20;
-    public static final int AT=50;
-    public static final int At=16;
-    public static final int ID=48;
-    public static final int NOTEQUALS=40;
-    public static final int UnnamedVarStar=17;
-    public static final int RPAR=47;
-    public static final int LabTerm=12;
-    public static final int WS=59;
-    public static final int STRING=55;
-    public static final int CondOr=23;
     public static final int LT=42;
-    public static final int ConditionalRule=33;
-    public static final int GT=44;
-    public static final int Rule=34;
-    public static final int CondAnd=24;
-    public static final int MATCH=45;
-    public static final int ESC=58;
-    public static final int Appl=21;
-    public static final int EQUALS=39;
-    public static final int AMPERCENT=57;
-    public static final int CondMatch=22;
-    public static final int VarStar=19;
-    public static final int IF=36;
-    public static final int EOF=-1;
-    public static final int COLON=56;
-    public static final int TermList=31;
-    public static final int CondNotEquals=29;
-    public static final int PathTerm=10;
-    public static final int CondGreaterThan=25;
-    public static final int COMA=49;
     public static final int STAR=52;
+    public static final int ESC=58;
+    public static final int RuleList=25;
+    public static final int SLCOMMENT=60;
+    public static final int EQUALS=39;
     public static final int NOT=53;
+    public static final int AND=38;
+    public static final int ID=48;
+    public static final int EOF=-1;
+    public static final int CondMatch=26;
+    public static final int UnnamedVar=18;
+    public static final int CondEquals=34;
+    public static final int UnnamedVarStar=17;
+    public static final int IF=36;
+    public static final int AT=50;
+    public static final int CondLessEquals=32;
+    public static final int LPAR=46;
+    public static final int CondGreaterThan=29;
+    public static final int TermList=22;
+    public static final int BuiltinString=13;
+    public static final int GEQ=43;
+    public static final int CondLessThan=31;
+    public static final int BuiltinInt=14;
+    public static final int At=16;
+    public static final int VarStar=19;
+    public static final int CondOr=27;
+    public static final int NOTEQUALS=40;
     public static final int UNDERSCORE=51;
+    public static final int MATCH=45;
+    public static final int INT=54;
+    public static final int COMA=49;
+    public static final int CondNotEquals=33;
+    public static final int COLON=56;
+    public static final int WS=59;
+    public static final int CondAnd=28;
+    public static final int Rule=24;
+    public static final int LabTerm=12;
+    public static final int OR=37;
+    public static final int Appl=21;
+    public static final int ConditionalRule=23;
+    public static final int RefTerm=11;
+    public static final int ARROW=35;
+    public static final int GT=44;
+    public static final int RPAR=47;
+    public static final int AMPERCENT=57;
+    public static final int PathTerm=10;
+    public static final int CondGreaterEquals=30;
+    public static final int Anti=15;
+    public static final int Var=20;
+    public static final int STRING=55;
+    public static final int LEQ=41;
 
     // delegates
     // delegators
@@ -90,7 +90,7 @@ public class RuleParser extends Parser {
     }
 
     public String[] getTokenNames() { return RuleParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g"; }
 
 
     public static class ruleset_return extends ParserRuleReturnScope {
@@ -99,7 +99,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "ruleset"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:15:1: ruleset : ( rule )* EOF -> ^( RuleList ( rule )* ) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:15:1: ruleset : ( rule )* EOF -> ^( RuleList ( rule )* ) ;
     public final RuleParser.ruleset_return ruleset() throws RecognitionException {
         RuleParser.ruleset_return retval = new RuleParser.ruleset_return();
         retval.start = input.LT(1);
@@ -114,10 +114,10 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
         RewriteRuleSubtreeStream stream_rule=new RewriteRuleSubtreeStream(adaptor,"rule rule");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:15:8: ( ( rule )* EOF -> ^( RuleList ( rule )* ) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:16:3: ( rule )* EOF
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:15:8: ( ( rule )* EOF -> ^( RuleList ( rule )* ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:16:3: ( rule )* EOF
             {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:16:3: ( rule )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:16:3: ( rule )*
             loop1:
             do {
                 int alt1=2;
@@ -130,7 +130,7 @@ public class RuleParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:16:4: rule
+            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:16:4: rule
             	    {
             	    pushFollow(FOLLOW_rule_in_ruleset52);
             	    rule1=rule();
@@ -165,12 +165,12 @@ public class RuleParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 16:15: -> ^( RuleList ( rule )* )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:16:18: ^( RuleList ( rule )* )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:16:18: ^( RuleList ( rule )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RuleList, "RuleList"), root_1);
 
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:16:29: ( rule )*
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:16:29: ( rule )*
                 while ( stream_rule.hasNext() ) {
                     adaptor.addChild(root_1, stream_rule.nextTree());
 
@@ -209,7 +209,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "rule"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:18:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:18:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) ;
     public final RuleParser.rule_return rule() throws RecognitionException {
         RuleParser.rule_return retval = new RuleParser.rule_return();
         retval.start = input.LT(1);
@@ -227,14 +227,14 @@ public class RuleParser extends Parser {
 
         Tree ARROW4_tree=null;
         Tree IF6_tree=null;
-        RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleTokenStream stream_ARROW=new RewriteRuleTokenStream(adaptor,"token ARROW");
-        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
+        RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleSubtreeStream stream_pattern=new RewriteRuleSubtreeStream(adaptor,"rule pattern");
+        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:18:5: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:19:3: pattern ARROW term ( IF cond= condition )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:18:5: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( Rule pattern term ) -> ^( ConditionalRule pattern term $cond) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:19:3: pattern ARROW term ( IF cond= condition )?
             {
             pushFollow(FOLLOW_pattern_in_rule76);
             pattern3=pattern();
@@ -251,7 +251,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_term.add(term5.getTree());
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:19:22: ( IF cond= condition )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:19:22: ( IF cond= condition )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -260,7 +260,7 @@ public class RuleParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:19:23: IF cond= condition
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:19:23: IF cond= condition
                     {
                     IF6=(Token)match(input,IF,FOLLOW_IF_in_rule83);  
                     stream_IF.add(IF6);
@@ -280,20 +280,20 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: pattern, term, cond, term, pattern
+            // elements: cond, pattern, term, pattern, term
             // token labels: 
-            // rule labels: cond, retval
+            // rule labels: retval, cond
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
-            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
 
             root_0 = (Tree)adaptor.nil();
             // 20:5: -> { cond == null }? ^( Rule pattern term )
             if ( cond == null ) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:20:26: ^( Rule pattern term )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:20:26: ^( Rule pattern term )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Rule, "Rule"), root_1);
@@ -307,7 +307,7 @@ public class RuleParser extends Parser {
             }
             else // 21:5: -> ^( ConditionalRule pattern term $cond)
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:21:8: ^( ConditionalRule pattern term $cond)
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:21:8: ^( ConditionalRule pattern term $cond)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
@@ -348,7 +348,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "graphruleset"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:23:1: graphruleset : ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:23:1: graphruleset : ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) ;
     public final RuleParser.graphruleset_return graphruleset() throws RecognitionException {
         RuleParser.graphruleset_return retval = new RuleParser.graphruleset_return();
         retval.start = input.LT(1);
@@ -363,10 +363,10 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
         RewriteRuleSubtreeStream stream_graphrule=new RewriteRuleSubtreeStream(adaptor,"rule graphrule");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:23:13: ( ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:3: ( graphrule )* EOF
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:23:13: ( ( graphrule )* EOF -> ^( RuleList ( graphrule )* ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:24:3: ( graphrule )* EOF
             {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:3: ( graphrule )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:24:3: ( graphrule )*
             loop3:
             do {
                 int alt3=2;
@@ -379,7 +379,7 @@ public class RuleParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:4: graphrule
+            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:24:4: graphrule
             	    {
             	    pushFollow(FOLLOW_graphrule_in_graphruleset132);
             	    graphrule7=graphrule();
@@ -414,12 +414,12 @@ public class RuleParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 24:20: -> ^( RuleList ( graphrule )* )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:23: ^( RuleList ( graphrule )* )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:24:23: ^( RuleList ( graphrule )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RuleList, "RuleList"), root_1);
 
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:34: ( graphrule )*
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:24:34: ( graphrule )*
                 while ( stream_graphrule.hasNext() ) {
                     adaptor.addChild(root_1, stream_graphrule.nextTree());
 
@@ -458,7 +458,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "graphrule"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:26:1: graphrule : lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:26:1: graphrule : lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) ;
     public final RuleParser.graphrule_return graphrule() throws RecognitionException {
         RuleParser.graphrule_return retval = new RuleParser.graphrule_return();
         retval.start = input.LT(1);
@@ -476,13 +476,13 @@ public class RuleParser extends Parser {
 
         Tree ARROW9_tree=null;
         Tree IF10_tree=null;
-        RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleTokenStream stream_ARROW=new RewriteRuleTokenStream(adaptor,"token ARROW");
+        RewriteRuleTokenStream stream_IF=new RewriteRuleTokenStream(adaptor,"token IF");
         RewriteRuleSubtreeStream stream_labelledpattern=new RewriteRuleSubtreeStream(adaptor,"rule labelledpattern");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:26:10: (lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:27:3: lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:26:10: (lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )? -> { cond == null }? ^( Rule $lhs $rhs) -> ^( ConditionalRule $lhs $rhs $cond) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:27:3: lhs= labelledpattern ARROW rhs= labelledpattern ( IF cond= condition )?
             {
             pushFollow(FOLLOW_labelledpattern_in_graphrule158);
             lhs=labelledpattern();
@@ -499,7 +499,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_labelledpattern.add(rhs.getTree());
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:27:49: ( IF cond= condition )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:27:49: ( IF cond= condition )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -508,7 +508,7 @@ public class RuleParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:27:50: IF cond= condition
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:27:50: IF cond= condition
                     {
                     IF10=(Token)match(input,IF,FOLLOW_IF_in_graphrule167);  
                     stream_IF.add(IF10);
@@ -528,22 +528,22 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: rhs, rhs, lhs, cond, lhs
+            // elements: rhs, lhs, lhs, cond, rhs
             // token labels: 
-            // rule labels: lhs, cond, retval, rhs
+            // rule labels: retval, rhs, cond, lhs
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
-            RewriteRuleSubtreeStream stream_lhs=new RewriteRuleSubtreeStream(adaptor,"rule lhs",lhs!=null?lhs.tree:null);
-            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
             RewriteRuleSubtreeStream stream_rhs=new RewriteRuleSubtreeStream(adaptor,"rule rhs",rhs!=null?rhs.tree:null);
+            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
+            RewriteRuleSubtreeStream stream_lhs=new RewriteRuleSubtreeStream(adaptor,"rule lhs",lhs!=null?lhs.tree:null);
 
             root_0 = (Tree)adaptor.nil();
             // 28:5: -> { cond == null }? ^( Rule $lhs $rhs)
             if ( cond == null ) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:28:26: ^( Rule $lhs $rhs)
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:28:26: ^( Rule $lhs $rhs)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Rule, "Rule"), root_1);
@@ -557,7 +557,7 @@ public class RuleParser extends Parser {
             }
             else // 29:5: -> ^( ConditionalRule $lhs $rhs $cond)
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:29:8: ^( ConditionalRule $lhs $rhs $cond)
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:29:8: ^( ConditionalRule $lhs $rhs $cond)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(ConditionalRule, "ConditionalRule"), root_1);
@@ -598,7 +598,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "condition"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:31:1: condition : cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:31:1: condition : cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond;
     public final RuleParser.condition_return condition() throws RecognitionException {
         RuleParser.condition_return retval = new RuleParser.condition_return();
         retval.start = input.LT(1);
@@ -615,8 +615,8 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_OR=new RewriteRuleTokenStream(adaptor,"token OR");
         RewriteRuleSubtreeStream stream_andcondition=new RewriteRuleSubtreeStream(adaptor,"rule andcondition");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:31:10: (cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond)
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:3: cond= andcondition (or= OR andcondition )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:31:10: (cond= andcondition (or= OR andcondition )* -> {or!=null}? ^( CondOr ( andcondition )* ) -> $cond)
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:32:3: cond= andcondition (or= OR andcondition )*
             {
             pushFollow(FOLLOW_andcondition_in_condition221);
             cond=andcondition();
@@ -624,7 +624,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_andcondition.add(cond.getTree());
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:21: (or= OR andcondition )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:32:21: (or= OR andcondition )*
             loop5:
             do {
                 int alt5=2;
@@ -637,7 +637,7 @@ public class RuleParser extends Parser {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:22: or= OR andcondition
+            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:32:22: or= OR andcondition
             	    {
             	    or=(Token)match(input,OR,FOLLOW_OR_in_condition226);  
             	    stream_OR.add(or);
@@ -660,25 +660,25 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: andcondition, cond
+            // elements: cond, andcondition
             // token labels: 
-            // rule labels: cond, retval
+            // rule labels: retval, cond
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
-            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
 
             root_0 = (Tree)adaptor.nil();
             // 33:3: -> {or!=null}? ^( CondOr ( andcondition )* )
             if (or!=null) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:18: ^( CondOr ( andcondition )* )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:33:18: ^( CondOr ( andcondition )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondOr, "CondOr"), root_1);
 
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:27: ( andcondition )*
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:33:27: ( andcondition )*
                 while ( stream_andcondition.hasNext() ) {
                     adaptor.addChild(root_1, stream_andcondition.nextTree());
 
@@ -722,7 +722,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "andcondition"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:36:1: andcondition : cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:36:1: andcondition : cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond;
     public final RuleParser.andcondition_return andcondition() throws RecognitionException {
         RuleParser.andcondition_return retval = new RuleParser.andcondition_return();
         retval.start = input.LT(1);
@@ -739,8 +739,8 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_AND=new RewriteRuleTokenStream(adaptor,"token AND");
         RewriteRuleSubtreeStream stream_simplecondition=new RewriteRuleSubtreeStream(adaptor,"rule simplecondition");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:36:13: (cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond)
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:37:3: cond= simplecondition (and= AND simplecondition )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:36:13: (cond= simplecondition (and= AND simplecondition )* -> {and!=null}? ^( CondAnd ( simplecondition )* ) -> $cond)
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:37:3: cond= simplecondition (and= AND simplecondition )*
             {
             pushFollow(FOLLOW_simplecondition_in_andcondition261);
             cond=simplecondition();
@@ -748,7 +748,7 @@ public class RuleParser extends Parser {
             state._fsp--;
 
             stream_simplecondition.add(cond.getTree());
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:37:24: (and= AND simplecondition )*
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:37:24: (and= AND simplecondition )*
             loop6:
             do {
                 int alt6=2;
@@ -761,7 +761,7 @@ public class RuleParser extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:37:25: and= AND simplecondition
+            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:37:25: and= AND simplecondition
             	    {
             	    and=(Token)match(input,AND,FOLLOW_AND_in_andcondition266);  
             	    stream_AND.add(and);
@@ -784,25 +784,25 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: simplecondition, cond
+            // elements: cond, simplecondition
             // token labels: 
-            // rule labels: cond, retval
+            // rule labels: retval, cond
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
-            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+            RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
 
             root_0 = (Tree)adaptor.nil();
             // 38:3: -> {and!=null}? ^( CondAnd ( simplecondition )* )
             if (and!=null) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:19: ^( CondAnd ( simplecondition )* )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:38:19: ^( CondAnd ( simplecondition )* )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondAnd, "CondAnd"), root_1);
 
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:29: ( simplecondition )*
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:38:29: ( simplecondition )*
                 while ( stream_simplecondition.hasNext() ) {
                     adaptor.addChild(root_1, stream_simplecondition.nextTree());
 
@@ -846,7 +846,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "simplecondition"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:41:1: simplecondition : (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond);
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:41:1: simplecondition : (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond);
     public final RuleParser.simplecondition_return simplecondition() throws RecognitionException {
         RuleParser.simplecondition_return retval = new RuleParser.simplecondition_return();
         retval.start = input.LT(1);
@@ -890,19 +890,19 @@ public class RuleParser extends Parser {
         Tree MATCH19_tree=null;
         Tree LPAR20_tree=null;
         Tree RPAR21_tree=null;
-        RewriteRuleTokenStream stream_EQUALS=new RewriteRuleTokenStream(adaptor,"token EQUALS");
-        RewriteRuleTokenStream stream_LEQ=new RewriteRuleTokenStream(adaptor,"token LEQ");
-        RewriteRuleTokenStream stream_LT=new RewriteRuleTokenStream(adaptor,"token LT");
-        RewriteRuleTokenStream stream_GT=new RewriteRuleTokenStream(adaptor,"token GT");
         RewriteRuleTokenStream stream_NOTEQUALS=new RewriteRuleTokenStream(adaptor,"token NOTEQUALS");
+        RewriteRuleTokenStream stream_GT=new RewriteRuleTokenStream(adaptor,"token GT");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
-        RewriteRuleTokenStream stream_GEQ=new RewriteRuleTokenStream(adaptor,"token GEQ");
+        RewriteRuleTokenStream stream_LT=new RewriteRuleTokenStream(adaptor,"token LT");
         RewriteRuleTokenStream stream_MATCH=new RewriteRuleTokenStream(adaptor,"token MATCH");
+        RewriteRuleTokenStream stream_EQUALS=new RewriteRuleTokenStream(adaptor,"token EQUALS");
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
-        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
+        RewriteRuleTokenStream stream_GEQ=new RewriteRuleTokenStream(adaptor,"token GEQ");
+        RewriteRuleTokenStream stream_LEQ=new RewriteRuleTokenStream(adaptor,"token LEQ");
         RewriteRuleSubtreeStream stream_condition=new RewriteRuleSubtreeStream(adaptor,"rule condition");
+        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:41:16: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond)
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:41:16: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term ) -> {p2!=null}? ^( CondEquals $p1 $p2) -> {p3!=null}? ^( CondNotEquals $p1 $p3) -> {p4!=null}? ^( CondLessEquals $p1 $p4) -> {p5!=null}? ^( CondLessThan $p1 $p5) -> {p6!=null}? ^( CondGreaterEquals $p1 $p6) -> {p7!=null}? ^( CondGreaterThan $p1 $p7) -> ^( CondMatch $p1 $p8) | LPAR cond= condition RPAR -> $cond)
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -920,7 +920,7 @@ public class RuleParser extends Parser {
             }
             switch (alt8) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:42:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
                     {
                     pushFollow(FOLLOW_term_in_simplecondition301);
                     p1=term();
@@ -928,7 +928,7 @@ public class RuleParser extends Parser {
                     state._fsp--;
 
                     stream_term.add(p1.getTree());
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:42:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | MATCH p8= term )
                     int alt7=7;
                     switch ( input.LA(1) ) {
                     case EQUALS:
@@ -975,7 +975,7 @@ public class RuleParser extends Parser {
 
                     switch (alt7) {
                         case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:12: EQUALS p2= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:42:12: EQUALS p2= term
                             {
                             EQUALS13=(Token)match(input,EQUALS,FOLLOW_EQUALS_in_simplecondition304);  
                             stream_EQUALS.add(EQUALS13);
@@ -990,7 +990,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:43:13: NOTEQUALS p3= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:43:13: NOTEQUALS p3= term
                             {
                             NOTEQUALS14=(Token)match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_simplecondition322);  
                             stream_NOTEQUALS.add(NOTEQUALS14);
@@ -1005,7 +1005,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:44:13: LEQ p4= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:44:13: LEQ p4= term
                             {
                             LEQ15=(Token)match(input,LEQ,FOLLOW_LEQ_in_simplecondition340);  
                             stream_LEQ.add(LEQ15);
@@ -1020,7 +1020,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:45:13: LT p5= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:45:13: LT p5= term
                             {
                             LT16=(Token)match(input,LT,FOLLOW_LT_in_simplecondition358);  
                             stream_LT.add(LT16);
@@ -1035,7 +1035,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 5 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:46:13: GEQ p6= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:46:13: GEQ p6= term
                             {
                             GEQ17=(Token)match(input,GEQ,FOLLOW_GEQ_in_simplecondition376);  
                             stream_GEQ.add(GEQ17);
@@ -1050,7 +1050,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 6 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:47:13: GT p7= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:47:13: GT p7= term
                             {
                             GT18=(Token)match(input,GT,FOLLOW_GT_in_simplecondition394);  
                             stream_GT.add(GT18);
@@ -1065,7 +1065,7 @@ public class RuleParser extends Parser {
                             }
                             break;
                         case 7 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:13: MATCH p8= term
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:48:13: MATCH p8= term
                             {
                             MATCH19=(Token)match(input,MATCH,FOLLOW_MATCH_in_simplecondition412);  
                             stream_MATCH.add(MATCH19);
@@ -1085,27 +1085,27 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: p1, p7, p6, p1, p1, p1, p4, p8, p5, p1, p1, p3, p2, p1
+                    // elements: p1, p1, p7, p1, p2, p4, p1, p3, p1, p5, p1, p1, p6, p8
                     // token labels: 
-                    // rule labels: p3, p8, p6, p1, p5, p4, p7, p2, retval
+                    // rule labels: p7, p6, retval, p5, p4, p3, p2, p1, p8
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_p3=new RewriteRuleSubtreeStream(adaptor,"rule p3",p3!=null?p3.tree:null);
-                    RewriteRuleSubtreeStream stream_p8=new RewriteRuleSubtreeStream(adaptor,"rule p8",p8!=null?p8.tree:null);
+                    RewriteRuleSubtreeStream stream_p7=new RewriteRuleSubtreeStream(adaptor,"rule p7",p7!=null?p7.tree:null);
                     RewriteRuleSubtreeStream stream_p6=new RewriteRuleSubtreeStream(adaptor,"rule p6",p6!=null?p6.tree:null);
-                    RewriteRuleSubtreeStream stream_p1=new RewriteRuleSubtreeStream(adaptor,"rule p1",p1!=null?p1.tree:null);
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
                     RewriteRuleSubtreeStream stream_p5=new RewriteRuleSubtreeStream(adaptor,"rule p5",p5!=null?p5.tree:null);
                     RewriteRuleSubtreeStream stream_p4=new RewriteRuleSubtreeStream(adaptor,"rule p4",p4!=null?p4.tree:null);
-                    RewriteRuleSubtreeStream stream_p7=new RewriteRuleSubtreeStream(adaptor,"rule p7",p7!=null?p7.tree:null);
+                    RewriteRuleSubtreeStream stream_p3=new RewriteRuleSubtreeStream(adaptor,"rule p3",p3!=null?p3.tree:null);
                     RewriteRuleSubtreeStream stream_p2=new RewriteRuleSubtreeStream(adaptor,"rule p2",p2!=null?p2.tree:null);
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+                    RewriteRuleSubtreeStream stream_p1=new RewriteRuleSubtreeStream(adaptor,"rule p1",p1!=null?p1.tree:null);
+                    RewriteRuleSubtreeStream stream_p8=new RewriteRuleSubtreeStream(adaptor,"rule p8",p8!=null?p8.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
                     // 50:5: -> {p2!=null}? ^( CondEquals $p1 $p2)
                     if (p2!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:20: ^( CondEquals $p1 $p2)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:50:20: ^( CondEquals $p1 $p2)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondEquals, "CondEquals"), root_1);
@@ -1119,7 +1119,7 @@ public class RuleParser extends Parser {
                     }
                     else // 51:5: -> {p3!=null}? ^( CondNotEquals $p1 $p3)
                     if (p3!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:20: ^( CondNotEquals $p1 $p3)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:51:20: ^( CondNotEquals $p1 $p3)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondNotEquals, "CondNotEquals"), root_1);
@@ -1133,7 +1133,7 @@ public class RuleParser extends Parser {
                     }
                     else // 52:5: -> {p4!=null}? ^( CondLessEquals $p1 $p4)
                     if (p4!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:20: ^( CondLessEquals $p1 $p4)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:52:20: ^( CondLessEquals $p1 $p4)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondLessEquals, "CondLessEquals"), root_1);
@@ -1147,7 +1147,7 @@ public class RuleParser extends Parser {
                     }
                     else // 53:5: -> {p5!=null}? ^( CondLessThan $p1 $p5)
                     if (p5!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:20: ^( CondLessThan $p1 $p5)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:53:20: ^( CondLessThan $p1 $p5)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondLessThan, "CondLessThan"), root_1);
@@ -1161,7 +1161,7 @@ public class RuleParser extends Parser {
                     }
                     else // 54:5: -> {p6!=null}? ^( CondGreaterEquals $p1 $p6)
                     if (p6!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:54:20: ^( CondGreaterEquals $p1 $p6)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:54:20: ^( CondGreaterEquals $p1 $p6)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondGreaterEquals, "CondGreaterEquals"), root_1);
@@ -1175,7 +1175,7 @@ public class RuleParser extends Parser {
                     }
                     else // 55:5: -> {p7!=null}? ^( CondGreaterThan $p1 $p7)
                     if (p7!=null) {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:20: ^( CondGreaterThan $p1 $p7)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:55:20: ^( CondGreaterThan $p1 $p7)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondGreaterThan, "CondGreaterThan"), root_1);
@@ -1189,7 +1189,7 @@ public class RuleParser extends Parser {
                     }
                     else // 56:5: -> ^( CondMatch $p1 $p8)
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:8: ^( CondMatch $p1 $p8)
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:56:8: ^( CondMatch $p1 $p8)
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(CondMatch, "CondMatch"), root_1);
@@ -1206,7 +1206,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:5: LPAR cond= condition RPAR
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:57:5: LPAR cond= condition RPAR
                     {
                     LPAR20=(Token)match(input,LPAR,FOLLOW_LPAR_in_simplecondition558);  
                     stream_LPAR.add(LPAR20);
@@ -1225,13 +1225,13 @@ public class RuleParser extends Parser {
                     // AST REWRITE
                     // elements: cond
                     // token labels: 
-                    // rule labels: cond, retval
+                    // rule labels: retval, cond
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+                    RewriteRuleSubtreeStream stream_cond=new RewriteRuleSubtreeStream(adaptor,"rule cond",cond!=null?cond.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
                     // 58:3: -> $cond
@@ -1269,7 +1269,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "pattern"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:60:1: pattern : ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) );
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:60:1: pattern : ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) );
     public final RuleParser.pattern_return pattern() throws RecognitionException {
         RuleParser.pattern_return retval = new RuleParser.pattern_return();
         retval.start = input.LT(1);
@@ -1315,18 +1315,18 @@ public class RuleParser extends Parser {
         Tree UNDERSCORE35_tree=null;
         Tree STAR36_tree=null;
         Tree NOT37_tree=null;
-        RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
-        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
+        RewriteRuleTokenStream stream_AT=new RewriteRuleTokenStream(adaptor,"token AT");
+        RewriteRuleTokenStream stream_UNDERSCORE=new RewriteRuleTokenStream(adaptor,"token UNDERSCORE");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
+        RewriteRuleTokenStream stream_STAR=new RewriteRuleTokenStream(adaptor,"token STAR");
         RewriteRuleTokenStream stream_NOT=new RewriteRuleTokenStream(adaptor,"token NOT");
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
-        RewriteRuleTokenStream stream_UNDERSCORE=new RewriteRuleTokenStream(adaptor,"token UNDERSCORE");
-        RewriteRuleTokenStream stream_AT=new RewriteRuleTokenStream(adaptor,"token AT");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
-        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
+        RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleSubtreeStream stream_pattern=new RewriteRuleSubtreeStream(adaptor,"rule pattern");
+        RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:60:8: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:60:8: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( Appl ID ^( TermList ( term )* ) ) | (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) ) | UNDERSCORE -> ^( UnnamedVar ) | UNDERSCORE STAR -> ^( UnnamedVarStar ) | NOT pattern -> ^( Anti pattern ) )
             int alt13=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -1379,7 +1379,7 @@ public class RuleParser extends Parser {
 
             switch (alt13) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:3: ID LPAR ( term ( COMA term )* )? RPAR
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:3: ID LPAR ( term ( COMA term )* )? RPAR
                     {
                     ID22=(Token)match(input,ID,FOLLOW_ID_in_pattern580);  
                     stream_ID.add(ID22);
@@ -1387,7 +1387,7 @@ public class RuleParser extends Parser {
                     LPAR23=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern582);  
                     stream_LPAR.add(LPAR23);
 
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:11: ( term ( COMA term )* )?
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:11: ( term ( COMA term )* )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -1396,7 +1396,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt10) {
                         case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:12: term ( COMA term )*
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:12: term ( COMA term )*
                             {
                             pushFollow(FOLLOW_term_in_pattern585);
                             term24=term();
@@ -1404,7 +1404,7 @@ public class RuleParser extends Parser {
                             state._fsp--;
 
                             stream_term.add(term24.getTree());
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:17: ( COMA term )*
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:17: ( COMA term )*
                             loop9:
                             do {
                                 int alt9=2;
@@ -1417,7 +1417,7 @@ public class RuleParser extends Parser {
 
                                 switch (alt9) {
                             	case 1 :
-                            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:18: COMA term
+                            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:18: COMA term
                             	    {
                             	    COMA25=(Token)match(input,COMA,FOLLOW_COMA_in_pattern588);  
                             	    stream_COMA.add(COMA25);
@@ -1461,18 +1461,18 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 61:37: -> ^( Appl ID ^( TermList ( term )* ) )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:40: ^( Appl ID ^( TermList ( term )* ) )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:40: ^( Appl ID ^( TermList ( term )* ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_1);
 
                         adaptor.addChild(root_1, stream_ID.nextNode());
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:50: ^( TermList ( term )* )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:50: ^( TermList ( term )* )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_2);
 
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:61: ( term )*
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:61:61: ( term )*
                         while ( stream_term.hasNext() ) {
                             adaptor.addChild(root_2, stream_term.nextTree());
 
@@ -1491,10 +1491,10 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:5: (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:5: (varname= ID ) AT (funname= ID ) LPAR ( term ( COMA term )* )? RPAR
                     {
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:5: (varname= ID )
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:6: varname= ID
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:5: (varname= ID )
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:6: varname= ID
                     {
                     varname=(Token)match(input,ID,FOLLOW_ID_in_pattern620);  
                     stream_ID.add(varname);
@@ -1505,8 +1505,8 @@ public class RuleParser extends Parser {
                     AT28=(Token)match(input,AT,FOLLOW_AT_in_pattern623);  
                     stream_AT.add(AT28);
 
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:21: (funname= ID )
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:22: funname= ID
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:21: (funname= ID )
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:22: funname= ID
                     {
                     funname=(Token)match(input,ID,FOLLOW_ID_in_pattern628);  
                     stream_ID.add(funname);
@@ -1517,7 +1517,7 @@ public class RuleParser extends Parser {
                     LPAR29=(Token)match(input,LPAR,FOLLOW_LPAR_in_pattern631);  
                     stream_LPAR.add(LPAR29);
 
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:39: ( term ( COMA term )* )?
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:39: ( term ( COMA term )* )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -1526,7 +1526,7 @@ public class RuleParser extends Parser {
                     }
                     switch (alt12) {
                         case 1 :
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:40: term ( COMA term )*
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:40: term ( COMA term )*
                             {
                             pushFollow(FOLLOW_term_in_pattern634);
                             term30=term();
@@ -1534,7 +1534,7 @@ public class RuleParser extends Parser {
                             state._fsp--;
 
                             stream_term.add(term30.getTree());
-                            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:45: ( COMA term )*
+                            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:45: ( COMA term )*
                             loop11:
                             do {
                                 int alt11=2;
@@ -1547,7 +1547,7 @@ public class RuleParser extends Parser {
 
                                 switch (alt11) {
                             	case 1 :
-                            	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:46: COMA term
+                            	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:46: COMA term
                             	    {
                             	    COMA31=(Token)match(input,COMA,FOLLOW_COMA_in_pattern637);  
                             	    stream_COMA.add(COMA31);
@@ -1579,38 +1579,38 @@ public class RuleParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: term, funname, varname
-                    // token labels: varname, funname
+                    // elements: varname, term, funname
+                    // token labels: funname, varname
                     // rule labels: retval
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
-                    RewriteRuleTokenStream stream_varname=new RewriteRuleTokenStream(adaptor,"token varname",varname);
                     RewriteRuleTokenStream stream_funname=new RewriteRuleTokenStream(adaptor,"token funname",funname);
+                    RewriteRuleTokenStream stream_varname=new RewriteRuleTokenStream(adaptor,"token varname",varname);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Tree)adaptor.nil();
                     // 62:65: -> ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:68: ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:68: ^( At $varname ^( Appl $funname ^( TermList ( term )* ) ) )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(At, "At"), root_1);
 
                         adaptor.addChild(root_1, stream_varname.nextNode());
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:82: ^( Appl $funname ^( TermList ( term )* ) )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:82: ^( Appl $funname ^( TermList ( term )* ) )
                         {
                         Tree root_2 = (Tree)adaptor.nil();
                         root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_2);
 
                         adaptor.addChild(root_2, stream_funname.nextNode());
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:98: ^( TermList ( term )* )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:98: ^( TermList ( term )* )
                         {
                         Tree root_3 = (Tree)adaptor.nil();
                         root_3 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_3);
 
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:109: ( term )*
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:62:109: ( term )*
                         while ( stream_term.hasNext() ) {
                             adaptor.addChild(root_3, stream_term.nextTree());
 
@@ -1632,7 +1632,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:63:5: UNDERSCORE
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:63:5: UNDERSCORE
                     {
                     UNDERSCORE34=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern674);  
                     stream_UNDERSCORE.add(UNDERSCORE34);
@@ -1652,7 +1652,7 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 63:16: -> ^( UnnamedVar )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:63:19: ^( UnnamedVar )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:63:19: ^( UnnamedVar )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(UnnamedVar, "UnnamedVar"), root_1);
@@ -1666,7 +1666,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:64:5: UNDERSCORE STAR
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:64:5: UNDERSCORE STAR
                     {
                     UNDERSCORE35=(Token)match(input,UNDERSCORE,FOLLOW_UNDERSCORE_in_pattern686);  
                     stream_UNDERSCORE.add(UNDERSCORE35);
@@ -1689,7 +1689,7 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 64:21: -> ^( UnnamedVarStar )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:64:24: ^( UnnamedVarStar )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:64:24: ^( UnnamedVarStar )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(UnnamedVarStar, "UnnamedVarStar"), root_1);
@@ -1703,7 +1703,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:65:5: NOT pattern
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:65:5: NOT pattern
                     {
                     NOT37=(Token)match(input,NOT,FOLLOW_NOT_in_pattern700);  
                     stream_NOT.add(NOT37);
@@ -1729,7 +1729,7 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 65:17: -> ^( Anti pattern )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:65:20: ^( Anti pattern )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:65:20: ^( Anti pattern )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Anti, "Anti"), root_1);
@@ -1770,7 +1770,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "term"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:67:1: term : ( pattern | var | builtin );
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:67:1: term : ( pattern | var | builtin );
     public final RuleParser.term_return term() throws RecognitionException {
         RuleParser.term_return retval = new RuleParser.term_return();
         retval.start = input.LT(1);
@@ -1786,7 +1786,7 @@ public class RuleParser extends Parser {
 
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:67:5: ( pattern | var | builtin )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:67:5: ( pattern | var | builtin )
             int alt14=3;
             switch ( input.LA(1) ) {
             case ID:
@@ -1828,7 +1828,7 @@ public class RuleParser extends Parser {
 
             switch (alt14) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:68:3: pattern
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:68:3: pattern
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -1842,7 +1842,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:69:5: var
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:69:5: var
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -1856,7 +1856,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:70:5: builtin
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:70:5: builtin
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -1895,7 +1895,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "builtin"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:72:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:72:1: builtin : ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) );
     public final RuleParser.builtin_return builtin() throws RecognitionException {
         RuleParser.builtin_return retval = new RuleParser.builtin_return();
         retval.start = input.LT(1);
@@ -1911,7 +1911,7 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_STRING=new RewriteRuleTokenStream(adaptor,"token STRING");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:72:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:72:8: ( INT -> ^( BuiltinInt INT ) | STRING -> ^( BuiltinString STRING ) )
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1929,7 +1929,7 @@ public class RuleParser extends Parser {
             }
             switch (alt15) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:73:3: INT
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:73:3: INT
                     {
                     INT42=(Token)match(input,INT,FOLLOW_INT_in_builtin740);  
                     stream_INT.add(INT42);
@@ -1949,7 +1949,7 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 73:7: -> ^( BuiltinInt INT )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:73:10: ^( BuiltinInt INT )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:73:10: ^( BuiltinInt INT )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinInt, "BuiltinInt"), root_1);
@@ -1965,7 +1965,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:74:5: STRING
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:74:5: STRING
                     {
                     STRING43=(Token)match(input,STRING,FOLLOW_STRING_in_builtin754);  
                     stream_STRING.add(STRING43);
@@ -1985,7 +1985,7 @@ public class RuleParser extends Parser {
                     root_0 = (Tree)adaptor.nil();
                     // 74:12: -> ^( BuiltinString STRING )
                     {
-                        // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:74:15: ^( BuiltinString STRING )
+                        // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:74:15: ^( BuiltinString STRING )
                         {
                         Tree root_1 = (Tree)adaptor.nil();
                         root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(BuiltinString, "BuiltinString"), root_1);
@@ -2026,7 +2026,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "labelledpattern"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:77:1: labelledpattern : (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p;
     public final RuleParser.labelledpattern_return labelledpattern() throws RecognitionException {
         RuleParser.labelledpattern_return retval = new RuleParser.labelledpattern_return();
         retval.start = input.LT(1);
@@ -2044,10 +2044,10 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleSubtreeStream stream_graphpattern=new RewriteRuleSubtreeStream(adaptor,"rule graphpattern");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )? p= graphpattern
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:77:16: ( (namelabel= ID COLON )? p= graphpattern -> {$namelabel!=null}? ^( LabTerm $namelabel $p) -> $p)
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )? p= graphpattern
             {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:78:3: (namelabel= ID COLON )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -2060,7 +2060,7 @@ public class RuleParser extends Parser {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:78:4: namelabel= ID COLON
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:78:4: namelabel= ID COLON
                     {
                     namelabel=(Token)match(input,ID,FOLLOW_ID_in_labelledpattern775);  
                     stream_ID.add(namelabel);
@@ -2085,19 +2085,19 @@ public class RuleParser extends Parser {
             // AST REWRITE
             // elements: p, p, namelabel
             // token labels: namelabel
-            // rule labels: p, retval
+            // rule labels: retval, p
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
             RewriteRuleTokenStream stream_namelabel=new RewriteRuleTokenStream(adaptor,"token namelabel",namelabel);
-            RewriteRuleSubtreeStream stream_p=new RewriteRuleSubtreeStream(adaptor,"rule p",p!=null?p.tree:null);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+            RewriteRuleSubtreeStream stream_p=new RewriteRuleSubtreeStream(adaptor,"rule p",p!=null?p.tree:null);
 
             root_0 = (Tree)adaptor.nil();
             // 79:3: -> {$namelabel!=null}? ^( LabTerm $namelabel $p)
             if (namelabel!=null) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:26: ^( LabTerm $namelabel $p)
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:79:26: ^( LabTerm $namelabel $p)
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(LabTerm, "LabTerm"), root_1);
@@ -2142,7 +2142,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "graphpattern"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:82:1: graphpattern : ( constructor | var | builtin | ref );
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:82:1: graphpattern : ( constructor | var | builtin | ref );
     public final RuleParser.graphpattern_return graphpattern() throws RecognitionException {
         RuleParser.graphpattern_return retval = new RuleParser.graphpattern_return();
         retval.start = input.LT(1);
@@ -2160,7 +2160,7 @@ public class RuleParser extends Parser {
 
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:82:13: ( constructor | var | builtin | ref )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:82:13: ( constructor | var | builtin | ref )
             int alt17=4;
             switch ( input.LA(1) ) {
             case ID:
@@ -2201,7 +2201,7 @@ public class RuleParser extends Parser {
 
             switch (alt17) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:3: constructor
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:83:3: constructor
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -2215,7 +2215,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:84:5: var
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:84:5: var
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -2229,7 +2229,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:85:5: builtin
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:85:5: builtin
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -2243,7 +2243,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:86:5: ref
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:86:5: ref
                     {
                     root_0 = (Tree)adaptor.nil();
 
@@ -2282,7 +2282,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "var"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:88:1: var : ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:88:1: var : ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) ;
     public final RuleParser.var_return var() throws RecognitionException {
         RuleParser.var_return retval = new RuleParser.var_return();
         retval.start = input.LT(1);
@@ -2298,13 +2298,13 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:88:4: ( ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:89:3: ID (s= STAR )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:88:4: ( ID (s= STAR )? -> {null==s}? ^( Var ID ) -> ^( VarStar ID ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:89:3: ID (s= STAR )?
             {
             ID49=(Token)match(input,ID,FOLLOW_ID_in_var842);  
             stream_ID.add(ID49);
 
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:89:6: (s= STAR )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:89:6: (s= STAR )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -2313,7 +2313,7 @@ public class RuleParser extends Parser {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:89:7: s= STAR
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:89:7: s= STAR
                     {
                     s=(Token)match(input,STAR,FOLLOW_STAR_in_var847);  
                     stream_STAR.add(s);
@@ -2339,7 +2339,7 @@ public class RuleParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 89:16: -> {null==s}? ^( Var ID )
             if (null==s) {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:89:30: ^( Var ID )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:89:30: ^( Var ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Var, "Var"), root_1);
@@ -2352,7 +2352,7 @@ public class RuleParser extends Parser {
             }
             else // 89:40: -> ^( VarStar ID )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:89:42: ^( VarStar ID )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:89:42: ^( VarStar ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(VarStar, "VarStar"), root_1);
@@ -2391,7 +2391,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "ref"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:91:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:91:1: ref : AMPERCENT ID -> ^( RefTerm ID ) ;
     public final RuleParser.ref_return ref() throws RecognitionException {
         RuleParser.ref_return retval = new RuleParser.ref_return();
         retval.start = input.LT(1);
@@ -2407,8 +2407,8 @@ public class RuleParser extends Parser {
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
 
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:91:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:92:3: AMPERCENT ID
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:91:4: ( AMPERCENT ID -> ^( RefTerm ID ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:92:3: AMPERCENT ID
             {
             AMPERCENT50=(Token)match(input,AMPERCENT,FOLLOW_AMPERCENT_in_ref875);  
             stream_AMPERCENT.add(AMPERCENT50);
@@ -2431,7 +2431,7 @@ public class RuleParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 92:16: -> ^( RefTerm ID )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:92:19: ^( RefTerm ID )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:92:19: ^( RefTerm ID )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(RefTerm, "RefTerm"), root_1);
@@ -2470,7 +2470,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start "constructor"
-    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:94:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
+    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:94:1: constructor : ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) ;
     public final RuleParser.constructor_return constructor() throws RecognitionException {
         RuleParser.constructor_return retval = new RuleParser.constructor_return();
         retval.start = input.LT(1);
@@ -2490,14 +2490,14 @@ public class RuleParser extends Parser {
         Tree LPAR53_tree=null;
         Tree COMA55_tree=null;
         Tree RPAR57_tree=null;
-        RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleTokenStream stream_RPAR=new RewriteRuleTokenStream(adaptor,"token RPAR");
         RewriteRuleTokenStream stream_LPAR=new RewriteRuleTokenStream(adaptor,"token LPAR");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
+        RewriteRuleTokenStream stream_COMA=new RewriteRuleTokenStream(adaptor,"token COMA");
         RewriteRuleSubtreeStream stream_labelledpattern=new RewriteRuleSubtreeStream(adaptor,"rule labelledpattern");
         try {
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:94:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:95:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:94:12: ( ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR -> ^( Appl ID ^( TermList ( labelledpattern )* ) ) )
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:95:3: ID LPAR ( labelledpattern ( COMA labelledpattern )* )? RPAR
             {
             ID52=(Token)match(input,ID,FOLLOW_ID_in_constructor894);  
             stream_ID.add(ID52);
@@ -2505,7 +2505,7 @@ public class RuleParser extends Parser {
             LPAR53=(Token)match(input,LPAR,FOLLOW_LPAR_in_constructor896);  
             stream_LPAR.add(LPAR53);
 
-            // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:95:11: ( labelledpattern ( COMA labelledpattern )* )?
+            // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:95:11: ( labelledpattern ( COMA labelledpattern )* )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -2514,7 +2514,7 @@ public class RuleParser extends Parser {
             }
             switch (alt20) {
                 case 1 :
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:95:12: labelledpattern ( COMA labelledpattern )*
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:95:12: labelledpattern ( COMA labelledpattern )*
                     {
                     pushFollow(FOLLOW_labelledpattern_in_constructor899);
                     labelledpattern54=labelledpattern();
@@ -2522,7 +2522,7 @@ public class RuleParser extends Parser {
                     state._fsp--;
 
                     stream_labelledpattern.add(labelledpattern54.getTree());
-                    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:95:28: ( COMA labelledpattern )*
+                    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:95:28: ( COMA labelledpattern )*
                     loop19:
                     do {
                         int alt19=2;
@@ -2535,7 +2535,7 @@ public class RuleParser extends Parser {
 
                         switch (alt19) {
                     	case 1 :
-                    	    // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:95:29: COMA labelledpattern
+                    	    // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:95:29: COMA labelledpattern
                     	    {
                     	    COMA55=(Token)match(input,COMA,FOLLOW_COMA_in_constructor902);  
                     	    stream_COMA.add(COMA55);
@@ -2567,7 +2567,7 @@ public class RuleParser extends Parser {
 
 
             // AST REWRITE
-            // elements: ID, labelledpattern
+            // elements: labelledpattern, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2579,18 +2579,18 @@ public class RuleParser extends Parser {
             root_0 = (Tree)adaptor.nil();
             // 96:3: -> ^( Appl ID ^( TermList ( labelledpattern )* ) )
             {
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:96:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:96:6: ^( Appl ID ^( TermList ( labelledpattern )* ) )
                 {
                 Tree root_1 = (Tree)adaptor.nil();
                 root_1 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(Appl, "Appl"), root_1);
 
                 adaptor.addChild(root_1, stream_ID.nextNode());
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:96:16: ^( TermList ( labelledpattern )* )
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:96:16: ^( TermList ( labelledpattern )* )
                 {
                 Tree root_2 = (Tree)adaptor.nil();
                 root_2 = (Tree)adaptor.becomeRoot((Tree)adaptor.create(TermList, "TermList"), root_2);
 
-                // /Users/tonio/Documents/workspace/jtom/src/tom/gom/expander/rule/Rule.g:96:27: ( labelledpattern )*
+                // /home/jcb/workspace/gitexperiment/jtom2/src/tom/gom/expander/rule/Rule.g:96:27: ( labelledpattern )*
                 while ( stream_labelledpattern.hasNext() ) {
                     adaptor.addChild(root_2, stream_labelledpattern.nextTree());
 

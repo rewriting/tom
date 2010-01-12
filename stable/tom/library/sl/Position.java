@@ -76,7 +76,7 @@ public class Position implements Cloneable,Path {
   public static Position makeFromPath(Path p) {
     return makeFromArrayWithoutCopy(p.toIntArray());
   }
-  
+
   public Object clone() {
     Position clone = null;
     try {

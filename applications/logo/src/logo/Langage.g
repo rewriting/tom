@@ -26,6 +26,7 @@ instruction :
   | TourneDroite e=expression -> ^(TD $e)
   | Recule e=expression -> ^(RE $e)
   | Repete n=INT '[' il=instructionlist ']' -> ^(REP $n $il)
+  | '[' il=instructionlist ']' -> ^(WORLD $il)
   ;
 
 expression :

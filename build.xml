@@ -88,7 +88,7 @@
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 
-  <property name="multithread"    value="false"/>
+  <property name="multithread"    value="true"/>
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
@@ -388,7 +388,7 @@
   <!-- compile adt's -->
   <target name="buildadt" depends="-withstable,-withsrc">
     <gomcompile fork="no"
-      multithread="false"
+      multithread="true"
       srcdir="${src.src}"
       package="tom.library.adt"
       destdir="${src.gen}">
@@ -396,7 +396,7 @@
       <exclude name="tom/library/adt/Bytecode.gom"/>
     </gomcompile>
     <gomcompile fork="no"
-      multithread="false"
+      multithread="true"
       termgraph="on"
       srcdir="${src.src}"
       package="tom.library.adt"
@@ -404,7 +404,7 @@
       <include name="tom/library/adt/Bytecode.gom"/>
     </gomcompile>
     <gomcompile fork="no"
-      multithread="false"
+      multithread="true"
       srcdir="${src.src}"
       package="tom.platform.adt"
       destdir="${src.gen}">
@@ -421,7 +421,7 @@
       -->
 
     <gomcompile srcdir="${src.src}"
-      multithread="false"
+      multithread="true"
       withSeparateCongruenceStrategies="true"
       package="tom.engine.adt"
       destdir="${src.gen}">
@@ -429,14 +429,14 @@
     </gomcompile>
 
     <gomcompile srcdir="${src.src}"
-      multithread="false"
+      multithread="true"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/Il.gom"/>
     </gomcompile>
 
     <gomcompile srcdir="${src.src}"
-      multithread="false"
+      multithread="true"
       package="tom.engine.adt"
       destdir="${src.gen}">
       <include name="tom/engine/adt/Zenon.gom"/>
@@ -444,7 +444,7 @@
 
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
-      multithread="false"
+      multithread="true"
       package="tom.gom.adt"
       destdir="${src.gen}">
       <include name="tom/gom/adt/*.gom"/>

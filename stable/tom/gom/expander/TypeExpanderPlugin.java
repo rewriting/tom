@@ -55,14 +55,6 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     super("TypeExpander");
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
-  }
-
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
