@@ -40,29 +40,29 @@ public class Compiler {
       s@Tortue[X=x,Y=y,Angle=a],AV(dist) -> {
         int value = eval(`dist);
         System.out.println("avance " + value);
-        int newX = `x + (value*Math.cos((double)`a));
-        int newY = `y + (value*Math.sin((double)`a));
+        int newX = `x + (int)(value*Math.cos((2*Math.PI/360)*(double)`a));
+        int newY = `y + (int)(value*Math.sin((2*Math.PI/360)*(double)`a));
         return `s.setX(newX).setY(newY);
       }
       
       s@Tortue[X=x,Y=y,Angle=a],RE(dist) -> {
         int value = eval(`dist);
         System.out.println("recule " + value);
-        int newX = `x - (value*Math.cos((double)`a));
-        int newY = `y - (value*Math.sin((double)`a));
+        int newX = `x - (int)(value*Math.cos((2*Math.PI/360)*(double)`a));
+        int newY = `y - (int)(value*Math.sin((2*Math.PI/360)*(double)`a));
         return `s.setX(newX).setY(newY);
       }
       
       s@Tortue[Angle=a],TG(angle) -> {
         int value = eval(`angle);
         System.out.println("tourne gauche " + value);
-        return `s.setAngle((`a+value)%360);
+        return `s.setAngle((`a + value) % 360);
       }
 
       s@Tortue[Angle=a],TD(angle) -> {
         int value = eval(`angle);
         System.out.println("tourne droite " + value);
-        return `s.setAngle((`a-value)%360);
+        return `s.setAngle((`a - value) % 360);
       }
 
       s@Tortue[],REP(n,il) -> {
