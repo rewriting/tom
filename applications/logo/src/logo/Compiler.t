@@ -77,9 +77,9 @@ public class Compiler {
           State tmp = eval(`s,`il);
           return `s;
       }
-
-
     }
+
+    throw new RuntimeException("should not be there");
   }
 
   public static int eval(Expression exp) {
