@@ -212,7 +212,7 @@ public class NewKernelTyper {
     substitutions = new HashMap<TomType,TomType>();
   }
 
-  private Code inferTypeCode(Code code) {
+  public Code inferTypeCode(Code code) {
     try {
       init();
       //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
