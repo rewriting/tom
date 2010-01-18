@@ -562,7 +562,7 @@ public class NewKernelTyper {
   private void solveConstraints() {
     // Add a new substitution in "substitutions"
   }
-/*
+
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       concTypeConstraint(_*,Equation(Type(tName1,_),Type(tName2@!TName1,_)),_*) -> {
@@ -570,35 +570,22 @@ public class NewKernelTyper {
             + " = " + `tName2);
       }
 
-      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
-        `substitutions.put(typeVar,type);
+      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_),type),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`type);
         TypeConstraintList lSubTCList = `leftTCList;
         TypeConstraintList rSubTCList = `rightTCList;
-        if(findTypeVars(typeVar,lSubTCList)) {
-          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
+        if(nkt.findTypeVars(`typeVar,lSubTCList)) {
+          lSubTCList = nkt.applySubstitution(`typeVar,`type,lSubTCList);
         }
-        if(findTypeVars(typeVar,rSubTCList)) {
-          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
+        if(nkt.findTypeVars(`typeVar,rSubTCList)) {
+          rSubTCList = nkt.applySubstitution(`typeVar,`type,rSubTCList);
         }
-        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
-      }
-
-      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
-        `substitutions.put(typeVar,type);
-        TypeConstraintList lSubTCList = `leftTCList;
-        TypeConstraintList rSubTCList = `rightTCList;
-        if(findTypeVars(typeVar,lSubTCList)) {
-          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
-        }
-        if(findTypeVars(typeVar,rSubTCList)) {
-          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
-        }
-        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
+        return `concTypeConstraint(lSubTCList*,Equation(type,type),rSubTCList*);
       }
     }
   }
-*/
-  private static boolean findTypeVars(TomType typeVar, TypeConstraintList
+
+  private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {
     %match {
       concTypeConstraint(_*,Equation(type1,type2),_*) << tcList &&
