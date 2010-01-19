@@ -215,16 +215,33 @@ public class NewKernelTyper {
   public Code inferTypeCode(Code code) {
     try {
       init();
+      System.out.println("\n Test pour inferTypeCode -- ligne 1.");
       //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
-      return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
+      //return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
+      return `TopDown(inferCode(this)).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
   }
 
-  %strategy inferInstruction(nkt:NewKernelTyper) extends Fail() {
+  %strategy inferCode(nkt:NewKernelTyper) extends Identity() {
+    visit Code {
+      InstructionToCode(instruction) -> {
+        try {
+          System.out.println("\n Test pour inferCode -- ligne 1.");
+          Instruction result = `RepeatId(inferInstruction(nkt)).visitLight(`instruction);
+          return `InstructionToCode(result);
+        } catch(tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("inferCode: failure on " + `instruction);
+        }
+      }
+    }
+  }  
+
+  %strategy inferInstruction(nkt:NewKernelTyper) extends Identity() {
     visit Instruction {
       Match(constraintInstructionList,options) -> {
+      System.out.println("\n Test pour inferInstruction -- ligne 1.");
         try {
           // Generate type constraints for a %match
           ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
@@ -241,18 +258,24 @@ public class NewKernelTyper {
   }
 
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
+    System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
       concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,_),tailCIList*) -> {
         try {
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPatternList
           ConstraintInstruction typedHead =
             `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 3.");
           `TopDown(inferConstraint(this)).visitLight(`constraint);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
+          //`TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
           `TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 5.");
           resetVarPatternList();
           ConstraintInstructionList typedTail =
             `inferConstraintInstructionList(tailCIList);
