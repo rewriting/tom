@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
+ * Cláudia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
  **/
 
 package tom.engine.typer;
@@ -46,8 +49,6 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 import tom.engine.adt.tomterm.types.tomlist.concTomTerm;
 import tom.engine.adt.code.types.*;
-import tom.engine.adt.typeconstraints.*;
-import tom.engine.adt.typeconstraints.types.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
@@ -97,8 +98,7 @@ public class NewTyper extends TomGenericPlugin {
     newKernelTyper = new NewKernelTyper();
   }
 
-
-  /**
+ /**
    * The run() method performs type inference for variables
    * occurring in patterns and propagate this information for
    * variables occurring in actions (BQVariables).
@@ -108,45 +108,46 @@ public class NewTyper extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
 
     if(getOptionBooleanValue("newtyper")) {
+ 
       TomTerm typedTerm = null;
       try {
         /**
-         * Typing variables whose types are unknown with fresh type variables before
-         * start inference
-         */
+          * Typing variables whose types are unknown with fresh type variables before
+          * start inference
+          */
         Code typedCodeWithTypeVariables = collectKnownTypes((Code)getWorkingTerm());
-
+        
         /**
-         * Start by typing variables with fresh type variables
-         * Perform type inference over patterns 
-         */
-        Code inferedTypeForCode = newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
-
+          * Start by typing variables with fresh type variables
+          * Perform type inference over patterns 
+          */
+        Code inferedTypeForCode = (Code) newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
+        
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
-         * desugarer phase before perform type inference 
-         */
+          * desugarer phase before perform type inference 
+          */
         // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
         /** Transform a string into an array of characters before type inference, 
-         * so we can apply inference just once on all terms 
-         */
+          * so we can apply inference just once on all terms 
+          */
         //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
 
         // Update type information for codomain in symbol table
         Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferedTypeForCode);
-
+      
         //Propagate type information for all variables with same name
-//        typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
+        //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
         setWorkingTerm(typedCode); 
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)));    
-      } catch (Exception e) {
+            new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
             new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
         e.printStackTrace();
         return;
       }
+      /* Add a suffix for the compilation option --intermediate during typing phase*/
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPED_SUFFIX, typedTerm);
@@ -155,7 +156,7 @@ public class NewTyper extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      logger.log(Level.INFO, "The new typer is not used.");
+      logger.log(Level.INFO, "The new typer is not in use.");
     }
   }
 
@@ -170,16 +171,16 @@ public class NewTyper extends TomGenericPlugin {
     }
   }
 
-  %strategy collectKnownTypes(nt:NewTyper) extends Identity() {
+  %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
     visit TomType {
       Type(typeName,EmptyType()) -> {
         // "getType" gets the java type class refered by tomType
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
-        TomType javaClassType = nt.symbolTable().getType(`typeName);
+        TomType javaClassType = newTyper.symbolTable().getType(`typeName);
         if(javaClassType == null) {
           // This happens when typeName = unknown type and javaClassType = null 
           javaClassType = newKernelTyper.getFreshTypeVar(); 
-          nt.symbolTable().putType(`typeName,javaClassType);
+          newTyper.symbolTable().putType(`typeName,javaClassType);
           javaClassType = `Type(typeName,javaClassType);
         }
         return javaClassType;
@@ -187,14 +188,18 @@ public class NewTyper extends TomGenericPlugin {
     }
   }
 
-  %strategy updateCodomain(nt:NewTyper) extends Identity() {
+  /*
+   * this post-processing phase replaces untyped (universalType) codomain
+   * by their precise type (according to the symbolTable)
+   */
+  %strategy updateCodomain(newTyper:NewTyper) extends `Identity() {
     visit Declaration {
       GetHeadDecl[] -> {
-        throw new TomRuntimeException("updateCodomain");
+          throw new TomRuntimeException("updateCodomain");
       }
       // In case of constants, where the domain is the codomain 
       decl@GetHeadDecl[Opname=Name(opName)] -> {
-        TomSymbol tomSymbol = nt.getSymbolFromName(`opName);
+        TomSymbol tomSymbol = newTyper.getSymbolFromName(`opName);
         TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
           Declaration t = (Declaration)`decl;
@@ -206,7 +211,7 @@ public class NewTyper extends TomGenericPlugin {
       }
 
       decl@GetHeadDecl[Variable=BQVariable[AstType=domain]] -> {
-        TomSymbol tomSymbol = nt.getSymbolFromType(`domain);
+        TomSymbol tomSymbol = newTyper.getSymbolFromType(`domain);
         if(tomSymbol != null) {
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
 
@@ -221,5 +226,4 @@ public class NewTyper extends TomGenericPlugin {
       }
     } // end match
   }
-
-} //
+}
