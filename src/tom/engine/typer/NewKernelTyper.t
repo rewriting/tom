@@ -212,42 +212,70 @@ public class NewKernelTyper {
     substitutions = new HashMap<TomType,TomType>();
   }
 
-  private Code inferTypeCode(Code code) {
+  public Code inferTypeCode(Code code) {
     try {
       init();
+      System.out.println("\n Test pour inferTypeCode -- ligne 1.");
       //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
-      return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
+      //return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
+      return `TopDown(inferCode(this)).visitLight(code);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
   }
 
-  %strategy inferInstruction(nkt:NewKernelTyper) extends Fail() {
+  %strategy inferCode(nkt:NewKernelTyper) extends Identity() {
+    visit Code {
+      InstructionToCode(instruction) -> {
+        try {
+          System.out.println("\n Test pour inferCode -- ligne 1.");
+          Instruction result = `RepeatId(inferInstruction(nkt)).visitLight(`instruction);
+          return `InstructionToCode(result);
+        } catch(tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("inferCode: failure on " + `instruction);
+        }
+      }
+    }
+  }  
+
+  %strategy inferInstruction(nkt:NewKernelTyper) extends Identity() {
     visit Instruction {
       Match(constraintInstructionList,options) -> {
-        // Generate type constraints for a %match
-        ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
-        nkt.solveConstraints();
-        nkt.init(); // Reset all lists for the next independent match block 
-        result = nkt.replaceInConstraintInstructionList(`result);
-        return `Match(result,options);
+      System.out.println("\n Test pour inferInstruction -- ligne 1.");
+        try {
+          // Generate type constraints for a %match
+          ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
+          `RepeatId(solveConstraints(nkt)).visitLight(nkt.typeConstraints);
+          result = nkt.replaceInConstraintInstructionList(`result);
+          nkt.printGeneratedConstraints(nkt.typeConstraints);
+          nkt.init(); // Reset all lists for the next independent match block 
+          return `Match(result,options);
+        } catch(tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("inferInstruction: failure on " + nkt.typeConstraints);
+        }
       }
     } 
   }
 
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
+    System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
     %match(cilist) {
       concConstraintInstruction() -> { return cilist; }
       concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,_),tailCIList*) -> {
         try {
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPatternList
           ConstraintInstruction typedHead =
             `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 3.");
           `TopDown(inferConstraint(this)).visitLight(`constraint);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
+          //`TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
           `TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
+          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 5.");
           resetVarPatternList();
           ConstraintInstructionList typedTail =
             `inferConstraintInstructionList(tailCIList);
@@ -559,46 +587,46 @@ public class NewKernelTyper {
   }
 
   // TODO
-  private void solveConstraints() {
+  //private void solveConstraints() {
     // Add a new substitution in "substitutions"
-  }
-/*
+  //}
+
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-      concTypeConstraint(_*,Equation(Type(tName1,_),Type(tName2@!TName1,_)),_*) -> {
+      concTypeConstraint(_*,Equation(Type(tName1,_),Type(tName2@!tName1,_)),_*) -> {
         throw new RuntimeException("solveConstraints: failure on " + `tName1
             + " = " + `tName2);
       }
 
-      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
-        `substitutions.put(typeVar,type);
+      concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_),type),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`type);
         TypeConstraintList lSubTCList = `leftTCList;
         TypeConstraintList rSubTCList = `rightTCList;
-        if(findTypeVars(typeVar,lSubTCList)) {
-          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
+        if(nkt.findTypeVars(`typeVar,lSubTCList)) {
+          lSubTCList = nkt.applySubstitution(`typeVar,`type,lSubTCList);
         }
-        if(findTypeVars(typeVar,rSubTCList)) {
-          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
+        if(nkt.findTypeVars(`typeVar,rSubTCList)) {
+          rSubTCList = nkt.applySubstitution(`typeVar,`type,rSubTCList);
         }
-        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
+        return `concTypeConstraint(lSubTCList*,Equation(type,type),rSubTCList*);
       }
 
-      tcList@concTypeConstraint(leftTCList*,Equation(typeVar@TVar(_),type),rightTCList*) -> {
-        `substitutions.put(typeVar,type);
+      concTypeConstraint(leftTCList*,Equation(type,typeVar@TypeVar(_)),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`type);
         TypeConstraintList lSubTCList = `leftTCList;
         TypeConstraintList rSubTCList = `rightTCList;
-        if(findTypeVars(typeVar,lSubTCList)) {
-          lSubTCList = `applySubstitution(typeVar,type,lSubTCList);
+        if(nkt.findTypeVars(`typeVar,lSubTCList)) {
+          lSubTCList = nkt.applySubstitution(`typeVar,`type,lSubTCList);
         }
-        if(findTypeVars(typeVar,rSubTCList)) {
-          rSubTCList = `applySubstitution(typeVar,type,rSubTCList);
+        if(nkt.findTypeVars(`typeVar,rSubTCList)) {
+          rSubTCList = nkt.applySubstitution(`typeVar,`type,rSubTCList);
         }
-        return `concTypeConstraint(lSubTCList,Equation(type,type),rSubTCList);
+        return `concTypeConstraint(lSubTCList*,Equation(type,type),rSubTCList*);
       }
     }
   }
-*/
-  private static boolean findTypeVars(TomType typeVar, TypeConstraintList
+
+  private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {
     %match {
       concTypeConstraint(_*,Equation(type1,type2),_*) << tcList &&
@@ -636,10 +664,9 @@ public class NewKernelTyper {
     return replacedCIList;
   }
 
-  // TODO : verify oldtt
   %strategy replaceFreshTypeVar(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      oldtt -> { return newtt; }
+      typeVar && (typeVar == oldtt) -> { return newtt; }
     }
   }
 
@@ -671,14 +698,34 @@ public class NewKernelTyper {
     }
   }
 */
-  //TODO : write a sexy print method
-  public void printGeneratedConstraints() {
-    System.out.println("Generated constraints :\n" + `typeConstraints);
+
+  public void printGeneratedConstraints(TypeConstraintList TCList) {
+    %match(TCList) {
+      !concTypeConstraint() -> { 
+        System.out.println("\n------ Type Constraints : \n {");
+        printEachConstraint(TCList);
+        System.out.println("}");
+      }
+    }
   }
-
-
-/*
-  %strategy propagate(nkt:NewKernelTyper) extends Fail() {}
-*/
-
+  public void printEachConstraint(TypeConstraintList TCList) {
+    %match(TCList) {
+      concTypeConstraint(Equation(type1,type2),tailTCList*) -> {
+        printType(`type1);
+        System.out.println(" = ");
+        printType(`type2);
+        if (`tailTCList != `concTypeConstraint()) {
+            System.out.println(", "); 
+            printEachConstraint(`tailTCList);
+        }
+      }
+    }
+  }
+    
+  public void printType(TomType type) {
+    %match(type) {
+      Type[TomType=nameType] -> { System.out.println(`nameType); }
+      TypeVar[Index=i] -> { System.out.println("x" + `i); }
+    }
+  }
 } // NewKernelTyper
