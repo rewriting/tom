@@ -1,3 +1,0 @@
-test file in order to check the synchronization between git and svn
-
-modified line
