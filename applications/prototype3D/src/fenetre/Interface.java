@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.JList;
 
 /*
  * Exemple : (A\/(A\/False))/\(True\/False)
@@ -36,7 +37,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class Interface extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+	private final static long serialVersionUID = 1L;
 
 	private final static boolean RIGHT_TO_LEFT = false;
 
@@ -803,11 +804,11 @@ public class Interface extends JFrame {
 								listeRepere.getLast().getListePoints(),
 								numeroNode);
 						couple.setText(p.getN().getFormule() + "");
-						listeRepere.getLast().actualiserPointsCouples();
+						listeRepere.getLast().actualiserPoints();
 					}
 					if (!listeRepere.isEmpty()) {
 						listeRepere.getLast().effacerCouple();
-						listeRepere.getLast().actualiserPointsCouples();
+						listeRepere.getLast().actualiserPoints();
 					}
 				}
 			});
@@ -836,7 +837,7 @@ public class Interface extends JFrame {
 								listeRepere.getLast().getListePoints(),
 								numeroNode);
 						couple.setText(p.getN().getFormule() + "");
-						listeRepere.getLast().actualiserPointsCouples();
+						listeRepere.getLast().actualiserPoints();
 					}
 				}
 			});
@@ -866,7 +867,7 @@ public class Interface extends JFrame {
 								listeRepere.getLast().getListePoints(),
 								numeroNode);
 						couple.setText(p.getN().getFormule() + "");
-						listeRepere.getLast().actualiserPointsCouples();
+						listeRepere.getLast().actualiserPoints();
 					}
 				}
 			});
@@ -1045,22 +1046,23 @@ public class Interface extends JFrame {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (!listeRepere.isEmpty()) {
 						if (Sequent.trouverPreuve()) {
-							System.out.println("Couples : ");
+							String s = "Couples : \n";
+							int steps = 0;
 							for (Couple c : Sequent.getListeCouple()) {
+								steps++;
 								if (c.getF1().isTrue()) {
-									System.out.println(c.getF1() + ",");
+									s = s + c.getF1() + ", \n";
 								} else if (c.getF2().isTrue()) {
-									System.out.println(c.getF2() + ",");
+									s = s + c.getF2() + ", \n";
 								} else {
-									System.out.println(c.getF1() + " "
-											+ c.getF2() + ",");
+									s = s + c.getF1() + " "+ c.getF2() + ", \n";
 								}
 								c.dessinerCouple();
 							}
 							listeRepere.getLast().rajouterCouple();
-							System.out.println("Il y a une preuve.");
+							new Popup("There's a proof", s, steps).setVisible(true);
 						} else {
-							System.out.println("Il n'y a pas de preuves.");
+							new Popup("There's no proof").setVisible(true);
 						}
 						Sequent.supprimerCouple();
 					}
@@ -1086,16 +1088,24 @@ public class Interface extends JFrame {
 					 * On met a jour la liste des couples retenus
 					 */
 					if (!listeRepere.isEmpty() && !listeCouple.isEmpty()) {
-						System.out.println("Est-ce une preuve ? "
-								+ Sequent.verifierPreuve(listeCouple));
+						String s = "Couples : \n";
+						int steps = 0;
+						for (Couple c : listeCouple) {
+							steps++;
+							if (c.getF1().isTrue()) {
+								s = s + c.getF1() + ", \n";
+							} else if (c.getF2().isTrue()) {
+								s = s + c.getF2() + ", \n";
+							} else {
+								s = s + c.getF1() + " "+ c.getF2() + ", \n";
+							}
+						}
+						if (Sequent.verifierPreuve(listeCouple)) {
+							new Popup("That's a proof", s, steps).setVisible(true);
+						} else {
+							new Popup("That's not a proof", s, steps).setVisible(true);
+						}
 					}
-					/*
-					 * if (verifierEntree(couple.getText(), false).length() > 0) {
-					 * couple.setText(verifierEntree(couple.getText(), false));
-					 * listeCouple = couple.getText().split(","); if
-					 * (!listeRepere.isEmpty()) { System.out.println("Est-ce une
-					 * preuve ? " + Sequent.verifierPreuve(listeCouple)); } }
-					 */
 				}
 			});
 		}
