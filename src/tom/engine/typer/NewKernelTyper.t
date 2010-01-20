@@ -216,9 +216,16 @@ public class NewKernelTyper {
     try {
       init();
       System.out.println("\n Test pour inferTypeCode -- ligne 1.");
+      System.out.println("\n Original Code = " + code + '\n');
       //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
       //return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
-      return `TopDown(inferCode(this)).visitLight(code);
+      %match(code) {
+        Tom(codes@concCode(_,_*)) -> {
+          CodeList result = `RepeatId(inferCode(this)).visitLight(`codes);
+          return `Tom(result);
+        }
+      }
+      return code;
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("inferTypeCode: failure on " + code);
     }
@@ -226,18 +233,39 @@ public class NewKernelTyper {
 
   %strategy inferCode(nkt:NewKernelTyper) extends Identity() {
     visit Code {
-      InstructionToCode(instruction) -> {
+      code@InstructionToCode(Match(constraintInstructionList,options)) -> {
+        try {
+          // Generate type constraints for a %match
+          ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
+          `RepeatId(solveConstraints(nkt)).visitLight(nkt.typeConstraints);
+          result = nkt.replaceInConstraintInstructionList(`result);
+          nkt.printGeneratedConstraints(nkt.typeConstraints);
+          nkt.init(); // Reset all lists for the next independent match block 
+          return `InstructionToCode(Match(result,options));
+        } catch(tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("inferCode: failure on " + `code);
+        }
+      }
+    }
+  }
+ /* 
+  %strategy inferAbstractBlock(nkt:NewKernelTyper) extends Identity() {
+    visit AbstractBlock{
+      IList@concInstruction(_,_*) -> {
         try {
           System.out.println("\n Test pour inferCode -- ligne 1.");
-          Instruction result = `RepeatId(inferInstruction(nkt)).visitLight(`instruction);
+          Instruction result =
+            `RepeatId(inferInstruction(nkt)).visitLight(`IList);
           return `InstructionToCode(result);
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("inferCode: failure on " + `instruction);
         }
       }
     }
-  }  
+  }   
+*/
 
+  // FIXME
   %strategy inferInstruction(nkt:NewKernelTyper) extends Identity() {
     visit Instruction {
       Match(constraintInstructionList,options) -> {
@@ -256,7 +284,6 @@ public class NewKernelTyper {
       }
     } 
   }
-
   private ConstraintInstructionList inferConstraintInstructionList(ConstraintInstructionList cilist) {
     System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
     %match(cilist) {
@@ -274,8 +301,12 @@ public class NewKernelTyper {
           // In inferInstruction we can call this method
           // inferConstraintInstructionList 
           //`TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
-          `TopDown(_concInstruction(inferInstruction(this))).visitLight(`action);
-          System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 5.");
+          %match(action) {
+            RawAction(AbstractBlock(instructions@concInstruction(_,_*))) -> {
+              InstructionList result = `RepeatId(inferInstruction(this)).visitLight(`instructions);
+              System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 5.");
+            }
+          }
           resetVarPatternList();
           ConstraintInstructionList typedTail =
             `inferConstraintInstructionList(tailCIList);
