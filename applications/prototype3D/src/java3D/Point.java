@@ -78,6 +78,7 @@ public class Point implements Comparable<Point> {
 		TransformGroup TG = new TransformGroup(translate);
 		sphere = new Sphere((float) (1 / (Math.pow(repere.getEchelle(), n
 				.getProfondeur() + 4))), app);
+		sphere.setUserData("neutre");
 		TG.addChild(sphere);
 		/*
 		 * Mise a jour des donnees generales

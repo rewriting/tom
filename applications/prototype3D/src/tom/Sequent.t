@@ -134,8 +134,8 @@ public class Sequent {
 				if (hauteur != 0) {
 					Noeud temp = new Noeud(n.getX(), n.getY() + hauteur, n
 							.getZ(), n.getProfondeurInitiale(), repere
-							.getNiveauMax(), "-1", 0);
-					repere.dessinerPoint(temp, -1);
+							.getNiveauMax(), n.getPosition(), 0);
+					repere.dessinerPoint(temp, n.getNumeroSequent());
 					n.setEstFinal();
 					temp.setFormule(n.getFormule());
 					for (Ligne l : listeLigne) {
@@ -176,10 +176,9 @@ public class Sequent {
 	public static void ordonnerNoeudsTerminaux() {
 		int i = 1;
 		/*
-		 * On fait la correspondance entre les points des lignes terminales et ceux
-		 * des points terminaux
+		 * On fait la correspondance entre les points des lignes terminales et
+		 * ceux des points terminaux
 		 */
-		System.out.println(repere.getListePoints().size());
 		for (Point p : repere.getListePoints()) {
 			for (Ligne l : listeLigneFinale) {
 				for (Noeud n : l.getListePoints()) {
@@ -196,14 +195,12 @@ public class Sequent {
 		TreeSet<Point> temp = new TreeSet<Point>();
 		for (Point p : repere.getListePoints()) {
 			if (p.getN().getEstDansLigneFinale()) {
+				p.addUserData(i + "");
+				i++;
 				temp.add(p);
 			}
 		}
 		repere.setListePoints(temp);
-		for (Point p : repere.getListePoints()) {
-			p.addUserData(i + "");
-			i++;
-		}
 	}
 	
 	public static void decomposerFormule(Formule f, Noeud n, int i) {
