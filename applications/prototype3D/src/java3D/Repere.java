@@ -474,23 +474,16 @@ public class Repere extends Applet {
 		return temp;
 	}
 
-	public void actualiserPointsCouples() {
-		for (Point p : listePoints) {
-			/*
-			 * On colorie differemment un point si c'est celui selectionne, ou
-			 * bien s'il a ete valide
-			 */
-			if (p.getUserData().equals(Interface.getNumeroNode() + "")
-					|| Interface.getListeNumeroPoints().contains(
-							Integer.valueOf(p.getUserData()))) {
+	public void actualiserPoints() {
+		for (Point p : listePointsTotal) {
+			if (!p.getUserData().startsWith("neutre")
+					&& (p.getUserData().equals(Interface.getNumeroNode() + "") || Interface
+							.getListeNumeroPoints().contains(
+									Integer.valueOf(p.getUserData())))) {
 				p.changerCouleur(COULEUR_COUPLE);
 			} else if ((p.getN().getNumeroSequent() + p.getN().getPosition())
 					.startsWith(Interface.getNumeroSequent()
 							+ Interface.getPlaceSubSequent())) {
-				/*System.out.println("place subsequent : "
-						+ Interface.getPlaceSubSequent());
-				System.out.println((p.getN().getNumeroSequent())
-						+ p.getN().getPosition());*/
 				p.changerCouleur(COULEUR_CHERCHE);
 			} else {
 				p.changerCouleur(COULEUR_ARRETE);
@@ -554,7 +547,7 @@ public class Repere extends Applet {
 		/*
 		 * On traite egalement le cas des points
 		 */
-		actualiserPointsCouples();
+		actualiserPoints();
 	}
 
 	public static void main(String[] args) {
