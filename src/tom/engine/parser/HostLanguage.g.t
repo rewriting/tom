@@ -617,7 +617,7 @@ gomsignature [List<Code> list] throws TomException
      * 
      * Anyway, for an empty gom signature, no files are generated 
      */
-    if (generatedMapping != null){
+    if (generatedMapping != null) {
     	includeFile(generatedMapping, list);
     }
     updatePosition();
