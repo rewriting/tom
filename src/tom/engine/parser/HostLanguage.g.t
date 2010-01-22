@@ -327,7 +327,7 @@ options{
           Code astTom = parser.input();
           %match(astTom) {
             Tom(concCode(_*,c,_*)) -> {
-              list.add(`c); 
+              list.add(`c);
             }
           }
         } catch (IOException e) {
@@ -358,20 +358,20 @@ options{
 		for(int i=0 ; i<code.length() ; i++) {
 			char c = code.charAt(i);
 			switch(c) {
-				case '\n': 
+				case '\n':
 					sb.append(bs);
 					sb.append('n');
 					break;
-				case '\r': 
+				case '\r':
 					sb.append(bs);
 					sb.append('r');
 					break;
-				case '\t': 
+				case '\t':
 					sb.append(bs);
 					sb.append('t');
 					break;
-				case '\"': 
-				case '\\': 
+				case '\"':
+				case '\\':
 					sb.append(bs);
 					sb.append(c);
 					break;
@@ -503,7 +503,7 @@ gomsignature [List<Code> list] throws TomException
   }
   {
     synchronized(Tom.getLock()) {
-    tom.gom.parser.BlockParser blockparser = 
+    tom.gom.parser.BlockParser blockparser =
       tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
     gomCode = cleanCode(blockparser.block().trim());
 
@@ -537,7 +537,7 @@ gomsignature [List<Code> list] throws TomException
     String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
     String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
     String subPackageName = "";
-    if(packageName.equals("")) {
+    if (packageName.equals("")) {
       subPackageName = inputFileNameWithoutExtension;
     } else {
       subPackageName = packageName + "." + inputFileNameWithoutExtension;
@@ -575,26 +575,25 @@ gomsignature [List<Code> list] throws TomException
       }
     }
 
-    File tmpFile = null;
+    final File tmpFile;
     try {
-      String tmpFilename="tmp" + (int)(Math.random()*1000000000) + ".gom";
-      tmpFile = new File(getStreamManager().getDestDir(), tmpFilename).getCanonicalFile();
+      tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
+      parameters.add(tmpFile.getPath());
     } catch (IOException e) {
-      System.out.println("IO Exception when computing importList");
+      getLogger().log(Level.SEVERE, "IO Exception when creating gom temp file" + e.getMessage());
       e.printStackTrace();
+      return;
     }
-    parameters.add(tmpFile.getPath());
 
-    getLogger().log(Level.FINE,"Calling gom with: "+parameters);
-    //InputStream backupIn = System.in;
+    getLogger().log(Level.FINE,"Writing temp file for gom: " +tmpFile.getPath());
     try {
-      //System.setIn(new ByteArrayInputStream(gomCode.getBytes("UTF-8")));
-        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
-        writer.write(new String(gomCode.getBytes("UTF-8"))); 
-        writer.flush();
-        writer.close();
-    } catch(IOException e) {
-      getLogger().log(Level.SEVERE, "Failed calling gom: " + e.getMessage());
+      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
+      writer.write(new String(gomCode.getBytes("UTF-8")));
+      writer.flush();
+      writer.close();
+    } catch (IOException e) {
+      getLogger().log(Level.SEVERE, "Failed writing gom temp file: " + e.getMessage());
+      return;
     }
 
     /* Prepare arguments */
@@ -603,19 +602,17 @@ gomsignature [List<Code> list] throws TomException
     for (int i = 0; i < preparams.length; i++) {
       params[i] = (String)preparams[i];
     }
-   
+
     int res = 1;
     Map<String,String> informationTracker = new HashMap<String,String>();
     informationTracker.put(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING,null);
-    
+
     informationTracker.put("gomBegin",""+initialGomLine);
     informationTracker.put("inputFileName",getStreamManager().getInputFileName());
-    
+
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
-    //tmpFile.deleteOnExit();
     tmpFile.delete();
-    //System.setIn(backupIn);
     if (res != 0 ) {
        getLogger().log(
            new PlatformLogRecord(Level.SEVERE,
@@ -630,8 +627,8 @@ gomsignature [List<Code> list] throws TomException
     /*
      * We shall not need to test the validity of the generatedMapping file name
      * as gom returned <> 0 if it is not valid
-     * 
-     * Anyway, for an empty gom signature, no files are generated 
+     *
+     * Anyway, for an empty gom signature, no files are generated
      */
     if (generatedMapping != null) {
     	includeFile(generatedMapping, list);
@@ -700,8 +697,8 @@ operatorList [List list] throws TomException
 }
     :
         (
-            t1:OPERATORLIST { line=t1.getLine();column=t1.getColumn(); } 
-        )    
+            t1:OPERATORLIST { line=t1.getLine();column=t1.getColumn(); }
+        )
         {
             String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
@@ -929,7 +926,7 @@ INCLUDE
     ;
 GOM
     : "%gom"
-      ( 
+      (
       |
       (
        '('
@@ -975,14 +972,14 @@ ID
 options{testLiterals = true;}
     :
         ('_')? LETTER
-        ( 
+        (
             options{greedy = true;}:
             ( LETTER | DIGIT | '_' )
-        )* 
+        )*
         {
             target.append($getText);
         }
-    ;   
+    ;
 */
 
 protected
