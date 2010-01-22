@@ -2,7 +2,7 @@ header{/*
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -606,7 +606,7 @@ gomsignature [List<Code> list] throws TomException
    
     int res = 1;
     Map<String,String> informationTracker = new HashMap<String,String>();
-    informationTracker.put("lastGeneratedMapping",null);
+    informationTracker.put(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING,null);
     
     informationTracker.put("gomBegin",""+initialGomLine);
     informationTracker.put("inputFileName",getStreamManager().getInputFileName());
@@ -624,7 +624,7 @@ gomsignature [List<Code> list] throws TomException
              currentFile, initialGomLine));
       return;
     }
-    String generatedMapping = (String)informationTracker.get("lastGeneratedMapping");
+    String generatedMapping = (String)informationTracker.get(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING);
 
     // Simulate the inclusion of generated Tom file
     /*
@@ -633,7 +633,7 @@ gomsignature [List<Code> list] throws TomException
      * 
      * Anyway, for an empty gom signature, no files are generated 
      */
-    if (generatedMapping != null){
+    if (generatedMapping != null) {
     	includeFile(generatedMapping, list);
     }
     updatePosition();

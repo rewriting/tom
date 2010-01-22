@@ -2,7 +2,7 @@
  *
  * PrintGomModule
  *
- * Copyright (c) 2007-2009, INRIA
+ * Copyright (c) 2007-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
