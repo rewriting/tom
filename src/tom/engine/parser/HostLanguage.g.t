@@ -574,12 +574,26 @@ gomsignature [List<Code> list] throws TomException
         parameters.add(userOpts[i]);
       }
     }
-    parameters.add("-");
-    getLogger().log(Level.FINE,"Calling gom with: "+parameters);
-    InputStream backupIn = System.in;
+
+    File tmpFile = null;
     try {
-      System.setIn(new ByteArrayInputStream(gomCode.getBytes("UTF-8")));
-    } catch(java.io.UnsupportedEncodingException e) {
+      String tmpFilename="tmp" + (int)(Math.random()*1000000000) + ".gom";
+      tmpFile = new File(getStreamManager().getDestDir(), tmpFilename).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception when computing importList");
+      e.printStackTrace();
+    }
+    parameters.add(tmpFile.getPath());
+
+    getLogger().log(Level.FINE,"Calling gom with: "+parameters);
+    //InputStream backupIn = System.in;
+    try {
+      //System.setIn(new ByteArrayInputStream(gomCode.getBytes("UTF-8")));
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
+        writer.write(new String(gomCode.getBytes("UTF-8"))); 
+        writer.flush();
+        writer.close();
+    } catch(IOException e) {
       getLogger().log(Level.SEVERE, "Failed calling gom: " + e.getMessage());
     }
 
@@ -599,7 +613,9 @@ gomsignature [List<Code> list] throws TomException
     
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
-    System.setIn(backupIn);
+    //tmpFile.deleteOnExit();
+    tmpFile.delete();
+    //System.setIn(backupIn);
     if (res != 0 ) {
        getLogger().log(
            new PlatformLogRecord(Level.SEVERE,

@@ -153,7 +153,17 @@ public abstract class TemplateHookedClass extends TemplateClass {
       }
       tomParams.add("--output");
       tomParams.add(file_path);
-      tomParams.add("-");
+    
+      File tmpFile = null;
+      try {
+        String tmpFilename="tmp" + (int)(Math.random()*1000000000) + ".t";
+        tmpFile = new File( getGomEnvironment().getStreamManager().getDestDir(), tmpFilename).getCanonicalFile();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing importList");
+        e.printStackTrace();
+        return 1;
+      }
+      tomParams.add(tmpFile.getPath());
 
       //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
@@ -163,12 +173,19 @@ public abstract class TemplateHookedClass extends TemplateClass {
       try {
         StringWriter gen = new StringWriter();
         generate(gen);
+
         InputStream backupIn = System.in;
         System.setIn(new ByteArrayInputStream(gen.toString().getBytes("UTF-8")));
+
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
+        writer.write(new String(gen.toString().getBytes("UTF-8"))); 
+        writer.flush();
+        writer.close();
+
         int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
+        tmpFile.delete();
 
         //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
-        System.setIn(backupIn);
         if (res != 0 ) {
           getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
           return res;
@@ -177,7 +194,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.SEVERE,
             "Failed generate Tom code: " + e.getMessage());
       }
-
 
 
     } else {
