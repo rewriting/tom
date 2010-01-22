@@ -154,10 +154,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
       tomParams.add("--output");
       tomParams.add(file_path);
     
-      File tmpFile = null;
+      final File tmpFile;
       try {
-        String tmpFilename="tmp" + (int)(Math.random()*1000000000) + ".t";
-        tmpFile = new File( getGomEnvironment().getStreamManager().getDestDir(), tmpFilename).getCanonicalFile();
+        tmpFile = File.createTempFile("tmp", ".t", getGomEnvironment().getStreamManager().getDestDir()).getCanonicalFile();
       } catch (IOException e) {
         System.out.println("IO Exception when computing importList");
         e.printStackTrace();
@@ -173,9 +172,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
       try {
         StringWriter gen = new StringWriter();
         generate(gen);
-
-        InputStream backupIn = System.in;
-        System.setIn(new ByteArrayInputStream(gen.toString().getBytes("UTF-8")));
 
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
         writer.write(new String(gen.toString().getBytes("UTF-8"))); 
@@ -194,7 +190,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
         getLogger().log(Level.SEVERE,
             "Failed generate Tom code: " + e.getMessage());
       }
-
 
     } else {
       try {
