@@ -179,7 +179,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
         writer.close();
 
         int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
-        tmpFile.delete();
+        if (!tmpFile.delete()) {
+          getLogger().log(Level.SEVERE, "Could not delete temporary file " + tmpFile.getPath());
+        }
 
         //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         if (res != 0 ) {
