@@ -39,21 +39,11 @@ import tom.gom.tools.GomEnvironment;
  */
 public class Starter extends GomGenericPlugin {
 
-  /** The args to set during run and to return */
-  private Object[] argToRelay;
   /** Saved information during setArgs */
   private String fileName;
 
   public Starter() {
     super("GomStarter");
-  }
-
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
-  public void setGomEnvironment(GomEnvironment gomEnvironment) {
-    this.gomEnvironment = gomEnvironment;
   }
 
   /**
@@ -78,7 +68,6 @@ public class Starter extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     getStreamManager().initializeFromOptionManager(getOptionManager());
     getStreamManager().prepareForInputFile(fileName);
-    argToRelay = new Object[]{ getGomEnvironment() };
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
 
@@ -87,6 +76,6 @@ public class Starter extends GomGenericPlugin {
    * returns argTorelay initialized during run call
    */
   public Object[] getArgs() {
-    return argToRelay;
+    return new Object[] { getGomEnvironment() };
   }
 }
