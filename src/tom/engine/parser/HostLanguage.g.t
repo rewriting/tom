@@ -213,7 +213,7 @@ options{
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     if(fileName.equals("")) {
-      throw new TomIncludeException(TomMessage.missingIncludedFile,new Object[]{currentFile, new Integer(getLine())});
+      throw new TomIncludeException(TomMessage.missingIncludedFile,new Object[]{currentFile, Integer.valueOf(getLine())});
     }
 
     file = new File(fileName);
@@ -234,12 +234,12 @@ options{
     }
 
     if(file == null) {
-      throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
+      throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{fileName, currentFile, Integer.valueOf(getLine()), currentFile});
     }
     try {
       fileCanonicalName = file.getCanonicalPath();
       //if(testIncludedFile(fileCanonicalName, includedFileSet)) {
-        //throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
+        //throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, Integer.valueOf(getLine()), currentFile});
       //}
 
       // if trying to include a file twice, or if in a cycle: discard
@@ -271,7 +271,7 @@ options{
           new Object[]{e.getClass(),
             fileName,
             currentFile,
-            new Integer(getLine()),
+            Integer.valueOf(getLine()),
             sw.toString()
           });
     }
@@ -617,7 +617,7 @@ gomsignature [List<Code> list] throws TomException
        getLogger().log(
            new PlatformLogRecord(Level.SEVERE,
              TomMessage.gomFailure,
-             new Object[]{currentFile,new Integer(initialGomLine)},
+             new Object[]{currentFile,Integer.valueOf(initialGomLine)},
              currentFile, initialGomLine));
       return;
     }
