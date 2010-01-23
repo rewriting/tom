@@ -5,5 +5,6 @@ stable/gen/
 src/build/
 src/dist/
 src/gen/
+src/tags
 local.properties
 .*.swp
