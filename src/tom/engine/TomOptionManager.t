@@ -185,7 +185,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         return Boolean.valueOf(false);
       }
       PluginOption[Value=IntegerValue(value)]   -> {
-        return new Integer(`value);
+        return Integer.valueOf(`value);
       }
       PluginOption[Value=StringValue(value)]    -> {
         return `value;
@@ -459,7 +459,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
               PluginOption[Value=IntegerValue[]] -> {
                 String t = argumentList[++i];
-                setOptionValue(argument, new Integer(t));
+                setOptionValue(argument, Integer.valueOf(t));
               }
 
               PluginOption[Value=StringValue[]] -> {

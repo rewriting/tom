@@ -141,7 +141,7 @@ public class NewTyper extends TomGenericPlugin {
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
             new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
         e.printStackTrace();

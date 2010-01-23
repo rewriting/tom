@@ -122,7 +122,7 @@ public class TomTyper extends TomGenericPlugin {
       setWorkingTerm(typedCode);      
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)));
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );

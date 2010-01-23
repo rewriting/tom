@@ -1,25 +1,25 @@
 header{
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -63,14 +63,14 @@ class TomParser extends Parser;
 
 options{
     k=1; // the lookahead value during parsing
-    defaultErrorHandler = false;        
+    defaultErrorHandler = false;
 }
 
     {
     //--------------------------
     %include{ ../adt/tomsignature/TomSignature.tom }
     //--------------------------
-        
+
     public String currentFile(){
         return targetparser.getCurrentFile();
     }
@@ -82,8 +82,8 @@ options{
 
     //store information for the OriginalText contained in the OptionList
     private StringBuilder text = new StringBuilder();
-    
-    private int lastLine; 
+
+    private int lastLine;
 
     private SymbolTable symbolTable;
 
@@ -95,7 +95,7 @@ options{
         this.symbolTable = target.getSymbolTable();
         this.bqparser = new BackQuoteParser(state,this);
     }
-    
+
     private void putType(String name, TomType type) {
         symbolTable.putType(name,type);
     }
@@ -103,7 +103,7 @@ options{
     private void putSymbol(String name, TomSymbol symbol) {
         symbolTable.putSymbol(name,symbol);
     }
-    
+
     private int getLine(){
         return tomlexer.getLine();
     }
@@ -111,7 +111,7 @@ options{
     public void updatePosition(int i, int j){
         targetparser.updatePosition(i,j);
     }
-    
+
     public void addTargetCode(Token t){
         targetparser.addTargetCode(t);
     }
@@ -127,7 +127,7 @@ options{
     protected TokenStreamSelector selector(){
         return targetparser.getSelector();
     }
-    
+
     private Logger getLogger() {
       return Logger.getLogger(getClass().getName());
     }
@@ -136,7 +136,7 @@ options{
 
 // the %match construct :
 matchConstruct [Option ot] returns [Instruction result] throws TomException
-{ 
+{
     result = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     List<BQTerm> argumentList = new LinkedList<BQTerm>();
@@ -147,36 +147,36 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
   : (
             LPAREN matchArguments[argumentList] RPAREN
             LBRACE { subjectList = ASTFactory.makeBQTermList(argumentList); }
-            ( 
+            (
              patternInstruction[subjectList,constraintInstructionList,patternType]
-            )* 
-            t1:RBRACE 
+            )*
+            t1:RBRACE
             {
                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
                // update for new target block...
                updatePosition(t1.getLine(),t1.getColumn());
-               // Match is finished : pop the tomlexer and return in the target parser.  
-               selector().pop(); 
+               // Match is finished : pop the tomlexer and return in the target parser.
+               selector().pop();
             }
             |
             LBRACE { subjectList = ASTFactory.makeBQTermList(argumentList); }
-            ( 
+            (
              constraintInstruction[constraintInstructionList,patternType]
-            )* 
-            t2:RBRACE 
-            { 
+            )*
+            t2:RBRACE
+            {
                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
                // update for new target block...
                updatePosition(t2.getLine(),t2.getColumn());
-               // Match is finished : pop the tomlexer and return in the target parser.  
-               selector().pop(); 
+               // Match is finished : pop the tomlexer and return in the target parser.
+               selector().pop();
             }
 
         )
   ;
 
 matchArguments [List<BQTerm> list] throws TomException
-    :   
+    :
         ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
 
@@ -185,66 +185,69 @@ matchArgument [List<BQTerm> list] throws TomException
   BQTerm subject1 = null;
   BQTerm subject2 = null;
   TomType tomType = null;
-  
+
   String s1 = null;
   String s2 = null;
 }
-    :   
+    :
 
-    subject1 = plainBQTerm { 
+    subject1 = plainBQTerm {
       s1 = text.toString();
-      text.delete(0, text.length()); 
+      text.delete(0, text.length());
     }
     (BACKQUOTE { text.delete(0, text.length()); } )?
     (subject2 = plainBQTerm { s2 = text.toString(); })?
 {
       if(subject2==null) {
         // System.out.println("matchArgument = " + subject1);
-        list.add(subject1);        
+        list.add(subject1);
       } else {
         if(subject1.isBQVariable()) {
           String type = subject1.getAstName().getString();
           %match(subject2){
             BQVariable[AstName=name] -> {
               Option ot = `OriginTracking(name, lastLine, currentFile());
-              list.add(`BQVariable(concOption(ot),name,Type(type,EmptyType())));  
+              list.add(`BQVariable(concOption(ot),name,Type(type,EmptyType())));
               return;
             }
-            t@BQAppl[] -> { 
+            t@BQAppl[] -> {
               list.`add(t); return;
             }
-          }        
-        }  
+          }
+        }
         throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
       }
 }
 ;
 
 patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, TomType rhsType] throws TomException
-{    
+{
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
-        
-    Constraint constraint = `TrueConstraint();    
+
+    Constraint constraint = `TrueConstraint();
     Constraint constr = null;
     OptionList optionList = null;
     Option option = null;
-        
+
     boolean isAnd = false;
-    
+
     clearText();
 }
     :   (
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
-             option = matchPattern[matchPatternList,true] 
+             option = matchPattern[matchPatternList,true]
             {
-              if(matchPatternList.size() != subjectList.length()) {                       
-                getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
-                    new Object[]{new Integer(subjectList.length()), new Integer(matchPatternList.size())},
+              if(matchPatternList.size() != subjectList.length()) {
+                getLogger().log(new PlatformLogRecord(Level.SEVERE,
+                    TomMessage.badMatchNumberArgument,
+                    new Object[]{
+                      Integer.valueOf(subjectList.length()),
+                      Integer.valueOf(matchPatternList.size())},
                     currentFile(), getLine()));
                 return;
               }
-              
+
               int counter = 0;
               %match(subjectList) {
                 concBQTerm(_*,subjectAtIndex,_*) -> {
@@ -252,22 +255,22 @@ patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, To
                   counter++;
                 }
               }
-              
+
               optionList = `concOption(option, OriginalText(Name(text.toString())));
-              
+
               matchPatternList.clear();
               clearText();
-            } 
+            }
             (
-              ( 
-               AND_CONNECTOR { isAnd = true;} 
-               | OR_CONNECTOR  { isAnd = false;} 
+              (
+               AND_CONNECTOR { isAnd = true;}
+               | OR_CONNECTOR  { isAnd = false;}
               )
 //              constr = matchConstraintComposition[optionListLinked]
               constr = matchOrConstraint[optionListLinked]
-              { 
+              {
                 constraint = isAnd ? `AndConstraint(constraint,constr) : `OrConstraint(constraint,constr);
-              }                                         
+              }
             )?
             arrowAndAction[list,optionList,optionListLinked,label,rhsType,constraint]
         )
@@ -277,49 +280,49 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
 {
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
-        
-    Constraint constraint = `TrueConstraint();    
+
+    Constraint constraint = `TrueConstraint();
     Constraint constr = null;
     OptionList optionList = null;
     Option option = null;
-        
+
     boolean isAnd = false;
- 
+
     List<Code> blockList = new LinkedList<Code>();
     BQTerm rhsTerm = null;
-   
+
     clearText();
 }
     :   (
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
-             option = matchPattern[matchPatternList,true] 
+             option = matchPattern[matchPatternList,true]
             {
             int subjectListLength = 1;
-              if(matchPatternList.size() != subjectListLength) {                       
+              if(matchPatternList.size() != subjectListLength) {
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
-                    new Object[]{subjectListLength, new Integer(matchPatternList.size())},
+                    new Object[]{subjectListLength, Integer.valueOf(matchPatternList.size())},
                     currentFile(), getLine()));
                 return;
               }
-              
+
               BQTerm subject = `BQVariable(concOption(),Name("tom__arg"),rhsType);
               constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(0),subject));
               //optionList = `concOption(option, OriginalText(Name(text.toString())));
-              
+
               matchPatternList.clear();
               clearText();
-            } 
+            }
             (
-              ( 
-               AND_CONNECTOR { isAnd = true;} 
-               | OR_CONNECTOR  { isAnd = false;} 
+              (
+               AND_CONNECTOR { isAnd = true;}
+               | OR_CONNECTOR  { isAnd = false;}
               )
               constr = matchOrConstraint[optionListLinked]
-              { 
+              {
                 constraint = isAnd ? `AndConstraint(constraint,constr) : `OrConstraint(constraint,constr);
-              }                                         
+              }
             )?
-   ARROW 
+   ARROW
    {
        optionList = `concOption();
        for(Option op:optionListLinked) {
@@ -331,7 +334,7 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
        }
 
    }
-(t:LBRACE 
+(t:LBRACE
  {
  // update for new target block
  updatePosition(t.getLine(),t.getColumn());
@@ -367,7 +370,7 @@ arrowAndAction[List<ConstraintInstruction> list, OptionList optionList, List<Opt
   List<Code> blockList = new LinkedList<Code>();
   BQTerm rhsTerm = null;
 } :
-   ARROW 
+   ARROW
    {
        optionList = `concOption();
        for(Option op:optionListLinked) {
@@ -378,7 +381,7 @@ arrowAndAction[List<ConstraintInstruction> list, OptionList optionList, List<Opt
          optionList = `concOption(Label(Name(label.getText())),optionList*);
        }
    }
-   t:LBRACE 
+   t:LBRACE
    {
        // update for new target block
        updatePosition(t.getLine(),t.getColumn());
@@ -394,31 +397,31 @@ arrowAndAction[List<ConstraintInstruction> list, OptionList optionList, List<Opt
            RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
            optionList)
        );
-   } 
+   }
   ;
 
 
 constraintInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomException
-{    
+{
     List<Option> optionListLinked = new LinkedList<Option>();
     Constraint constraint = `TrueConstraint();
     clearText();
 }
-    :   ( 
+    :   (
             //constraint = matchConstraintComposition[optionListLinked]
             constraint = matchOrConstraint[optionListLinked]
-            arrowAndAction[list,null,optionListLinked,null,rhsType,constraint]                                 
+            arrowAndAction[list,null,optionListLinked,null,rhsType,constraint]
         )
     ;
 
 matchOrConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
-  {     
-    result = null;  
+  {
+    result = null;
     Constraint constr = null;
-  } :  
-    result = matchAndConstraint[optionListLinked] 
-    ( 
-        OR_CONNECTOR 
+  } :
+    result = matchAndConstraint[optionListLinked]
+    (
+        OR_CONNECTOR
         constr = matchAndConstraint[optionListLinked]
         {
           result = `OrConstraint(result,constr);
@@ -427,13 +430,13 @@ matchOrConstraint [List<Option> optionListLinked] returns [Constraint result] th
   ;
 
 matchAndConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
-  {     
-    result = null;  
+  {
+    result = null;
     Constraint constr = null;
-  } :  
+  } :
     result = matchParanthesedConstraint[optionListLinked]
-    ( 
-        AND_CONNECTOR 
+    (
+        AND_CONNECTOR
         constr = matchParanthesedConstraint[optionListLinked]
         {
           result = `AndConstraint(result,constr);
@@ -442,16 +445,16 @@ matchAndConstraint [List<Option> optionListLinked] returns [Constraint result] t
   ;
 
 matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
-    {     
-      result = null; 
+    {
+      result = null;
       List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
-    } :  
+    } :
       (matchPattern[matchPatternList,true]) => result = constraint[optionListLinked]
       | LPAREN result = matchOrConstraint[optionListLinked] RPAREN
-    ;    
-       
+    ;
+
 constraint [List<Option> optionListLinked] returns [Constraint result] throws TomException:
-(matchPattern[null,true] MATCH_CONSTRAINT) => result = matchConstraint[optionListLinked] 
+(matchPattern[null,true] MATCH_CONSTRAINT) => result = matchConstraint[optionListLinked]
 | result = numericConstraint
 ;
 
@@ -463,18 +466,18 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
   result = null;
   int consType = -1;
 }
-:   
-    option = matchPattern[matchPatternList,true] 
-    MATCH_CONSTRAINT 
+:
+    option = matchPattern[matchPatternList,true]
+    MATCH_CONSTRAINT
     matchArgument[matchSubjectList]
     {
       optionListLinked.add(option);
       TomTerm left  = matchPatternList.get(0);
       BQTerm right = matchSubjectList.get(0);
-      return `MatchConstraint(left,right);           
+      return `MatchConstraint(left,right);
     }
 ;
- 
+
 numericConstraint returns [Constraint result] throws TomException
 {
   //TODO could be simplified without using matchArgument rule
@@ -484,34 +487,34 @@ numericConstraint returns [Constraint result] throws TomException
   result = null;
   int consType = -1;
 }
-:   
-    matchArgument[matchLhsList] 
+:
+    matchArgument[matchLhsList]
     consType=numconstraintType
     matchArgument[matchRhsList]
     {
       BQTerm left  = matchLhsList.get(0);
       BQTerm right = matchRhsList.get(0);
-      
+
     switch(consType) {
-        case XML_START : {         
-          return `NumericConstraint(left,right, NumLessThan());           
+        case XML_START : {
+          return `NumericConstraint(left,right, NumLessThan());
         }
-        case LESSOREQUAL_CONSTRAINT : {         
-          return `NumericConstraint(left,right, NumLessOrEqualThan());           
+        case LESSOREQUAL_CONSTRAINT : {
+          return `NumericConstraint(left,right, NumLessOrEqualThan());
         }
-        case XML_CLOSE : {         
-          return `NumericConstraint(left,right, NumGreaterThan());           
+        case XML_CLOSE : {
+          return `NumericConstraint(left,right, NumGreaterThan());
         }
-        case GREATEROREQUAL_CONSTRAINT : {         
-          return `NumericConstraint(left,right, NumGreaterOrEqualThan());           
+        case GREATEROREQUAL_CONSTRAINT : {
+          return `NumericConstraint(left,right, NumGreaterOrEqualThan());
         }
-        case DIFFERENT_CONSTRAINT : {         
-          return `NumericConstraint(left,right, NumDifferent());           
+        case DIFFERENT_CONSTRAINT : {
+          return `NumericConstraint(left,right, NumDifferent());
         }
-        case DOUBLEEQ : {         
-          return `NumericConstraint(left,right, NumEqual());           
-        }      
-      } 
+        case DOUBLEEQ : {
+          return `NumericConstraint(left,right, NumEqual());
+        }
+      }
       // should never reach this statement because of the parsing error that should occur before
       throw new TomException(TomMessage.invalidConstraintType);
   }
@@ -528,7 +531,7 @@ numconstraintType returns [int result]
       | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
       | DOUBLEEQ                    { result = DOUBLEEQ; }
       | DIFFERENT_CONSTRAINT        { result = DIFFERENT_CONSTRAINT; }
-    )      
+    )
 ;
 
 matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result] throws TomException
@@ -537,13 +540,13 @@ matchPattern [List<TomTerm> list, boolean allowImplicit] returns [Option result]
     TomTerm term = null;
 }
     :   (
-             term = annotatedTerm[allowImplicit] 
+             term = annotatedTerm[allowImplicit]
             {
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
-            } 
-            ( 
-                COMMA {text.append('\n');}  
+            }
+            (
+                COMMA {text.append('\n');}
                 term = annotatedTerm[allowImplicit] {list.add(term);}
             )*
         )
@@ -576,17 +579,17 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         }
         }
         (
-            LPAREN (firstSlot1:ALL_ID (colon:COLON)? secondSlot1:ALL_ID 
+            LPAREN (firstSlot1:ALL_ID (colon:COLON)? secondSlot1:ALL_ID
             {
               if(colon != null) {
-                stringSlotName = firstSlot1.getText(); 
-                stringTypeArg = secondSlot1.getText(); 
+                stringSlotName = firstSlot1.getText();
+                stringTypeArg = secondSlot1.getText();
                 } else {
-                stringSlotName = secondSlot1.getText(); 
-                stringTypeArg = firstSlot1.getText(); 
+                stringSlotName = secondSlot1.getText();
+                stringTypeArg = firstSlot1.getText();
                 }
                 TomName astName = `Name(stringSlotName);
-                slotNameList.add(astName); 
+                slotNameList.add(astName);
 
                 TomType strategyType = `Type("Strategy",EmptyType());
 
@@ -597,7 +600,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
                 Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
-                pairNameDeclList.add(`PairNameDecl(astName,slotDecl)); 
+                pairNameDeclList.add(`PairNameDecl(astName,slotDecl));
                 types = `concTomType(types*,Type(stringTypeArg,EmptyType()));
             }
             (
@@ -605,11 +608,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 firstSlot2:ALL_ID (colon2:COLON)? secondSlot2:ALL_ID
                 {
               if(colon != null) {
-              stringSlotName = firstSlot2.getText(); 
-              stringTypeArg = secondSlot2.getText(); 
+              stringSlotName = firstSlot2.getText();
+              stringTypeArg = secondSlot2.getText();
               } else {
-              stringSlotName = secondSlot2.getText(); 
-              stringTypeArg = firstSlot2.getText(); 
+              stringSlotName = secondSlot2.getText();
+              stringTypeArg = firstSlot2.getText();
               }
               TomName astName = ASTFactory.makeName(stringSlotName);
               if(slotNameList.indexOf(astName) != -1) {
@@ -617,7 +620,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                   new Object[]{stringSlotName},
                   currentFile(), getLine()));
               }
-              slotNameList.add(astName); 
+              slotNameList.add(astName);
 
                 TomType strategyType = `Type("Strategy",EmptyType());
                     // Define get<slot> method.
@@ -627,7 +630,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
                     Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
-                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl)); 
+                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl));
                     types = `concTomType(types*,Type(stringTypeArg,EmptyType()));
                 }
             )*
@@ -652,7 +655,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 
            BQTerm arg = `BQVariable(concOption(),Name(argName),makeTypes.getHeadconcTomType());
            makeArgs = `concBQTerm(makeArgs*,arg);
-           
+
 					 makeTypes = makeTypes.getTailconcTomType();
            index++;
          }
@@ -693,11 +696,11 @@ strategyVisit [List<TomVisit> list] throws TomException
   TomType vType = null;
   clearText();
 }
-    :   
+    :
   (
     "visit" type:ALL_ID LBRACE
     { vType = `Type(type.getText(),EmptyType()); }
-    ( visitInstruction[constraintInstructionList,vType] )* 
+    ( visitInstruction[constraintInstructionList,vType] )*
     RBRACE
   )
   {
@@ -718,29 +721,29 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
     boolean anti = false;
 }
     :   (
-            ( 
-                (ALL_ID COLON) => lname:ALL_ID COLON 
+            (
+                (ALL_ID COLON) => lname:ALL_ID COLON
                 {
                     text.append(lname.getText());
                     text.append(':');
                     labeledName = `Name(lname.getText());
                     line = lname.getLine();
                 }
-            )? 
-            ( 
-                (ALL_ID AT) => name:ALL_ID AT 
+            )?
+            (
+                (ALL_ID AT) => name:ALL_ID AT
                 {
                     text.append(name.getText());
                     text.append('@');
                     annotatedName = `Name(name.getText());
                     line = name.getLine();
                 }
-            )? 
+            )?
           (
             {allowImplicit}?
-            result = plainTerm[labeledName,annotatedName,line] 
+            result = plainTerm[labeledName,annotatedName,line]
             | {!allowImplicit}?
-              (a:ANTI_SYM {anti = !anti;} )* 
+              (a:ANTI_SYM {anti = !anti;} )*
               result = simplePlainTerm[labeledName,annotatedName,line, new LinkedList(), new LinkedList<Option>(), new LinkedList<Option>(), new LinkedList<Constraint>(), anti]
           )
        )
@@ -749,10 +752,10 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
 // a plainTerm that doesn't allow the notation (...)
 simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List list,
                  List<Option> secondOptionList, List<Option> optionList,
-                 List<Constraint> constraintList, boolean anti] 
+                 List<Constraint> constraintList, boolean anti]
                  returns [TomTerm result] throws TomException
 {
-    result = null;   
+    result = null;
     TomNameList nameList = `concTomName();
     TomName name = null;
     boolean implicit = false;
@@ -762,9 +765,9 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
     }
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, currentFile()));
-    }    
+    }
 }
-    :         
+    :
         ( // xml term
           result = xmlTerm[optionList, constraintList]
           {
@@ -772,18 +775,18 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
           }
 
         | // var* or _*
-          {!anti}? // do not allow anti symbols on var* or _* 
-          (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
+          {!anti}? // do not allow anti symbols on var* or _*
+          (variableStar[null,null]) => result = variableStar[optionList,constraintList]
 
         | // _
           {!anti}? // do not allow anti symbols on _
-          result = unamedVariable[optionList,constraintList] 
+          result = unamedVariable[optionList,constraintList]
 
         | // for a single constant: i.e. a variable
           // ambiguous with the next rule so:
-          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}? 
-          name = headSymbol[optionList] 
-          {            
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}?
+          name = headSymbol[optionList]
+          {
             result = `Variable(ASTFactory.makeOptionList(optionList),name,
               SymbolTable.TYPE_UNKNOWN,ASTFactory.makeConstraintList(constraintList));
             if(anti) { result = `AntiTerm(result); }
@@ -791,8 +794,8 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 
         | // for a disjuntion of constants: 1, 3.14, "foo", or (1|2|3) for instance
           // ambiguous with the next rule so:
-          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}? 
-          nameList = headConstantList[optionList] 
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK && LA(2) != QQMARK}?
+          nameList = headConstantList[optionList]
           {
             optionList.add(`Constant());
             result = `TermAppl(
@@ -804,19 +807,19 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
           }
 
         | // f(...) or f[...] or !f(...) or !f[...]
-          name = headSymbol[optionList] 
+          name = headSymbol[optionList]
 
       (
-      st:QQMARK { 
+      st:QQMARK {
         if(st!=null) {
-              name = `Name(name.getString()); 
+              name = `Name(name.getString());
               optionList.add(`MatchingTheory(concElementaryTheory(AC())));
         }
       }
       |
-       qm:QMARK { 
+       qm:QMARK {
         if(qm!=null) {
-              name = `Name(name.getString()); 
+              name = `Name(name.getString());
               optionList.add(`MatchingTheory(concElementaryTheory(AU())));
         }
        }
@@ -842,12 +845,12 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
             }
             if(anti) { result = `AntiTerm(result); }
           }
-            
-        | // (f|g...) 
+
+        | // (f|g...)
           // ambiguity with the last rule so use a lookahead
           // if ALTERNATIVE then parse headSymbolList
-          {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-          implicit = args[list, secondOptionList] 
+          {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList]
+          implicit = args[list, secondOptionList]
           {
             if(implicit) {
               result = `RecordAppl(
@@ -865,7 +868,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
                   );
             }
             if(anti) { result = `AntiTerm(result); }
-          }      
+          }
         )
     ;
 
@@ -877,32 +880,32 @@ plainBQTerm  returns [BQTerm result]
     BQTerm tmp;
     BQTermList l = `concBQTerm();
 }
-    :  name = headSymbol[optionList] 
-      (star:STAR | (args:LPAREN 
-         (tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })? 
-         (COMMA tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })* 
+    :  name = headSymbol[optionList]
+      (star:STAR | (args:LPAREN
+         (tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })?
+         (COMMA tmp=plainBQTerm { l = `concBQTerm(l*,tmp); })*
        RPAREN))?
-       { 
+       {
          if (args==null) {
            if (star == null) {
-             result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); 
+             result = `BQVariable(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN);
            } else {
-             result = `BQVariableStar(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN); 
+             result = `BQVariableStar(ASTFactory.makeOptionList(optionList),name,SymbolTable.TYPE_UNKNOWN);
            }
          } else {
            result = `BQAppl(ASTFactory.makeOptionList(optionList),name,l);
          }
        }
-    | number:NUM_INT { 
+    | number:NUM_INT {
       String val = number.getText();
-      ASTFactory.makeIntegerSymbol(symbolTable,val,optionList); 
-      result = `BuildConstant(Name(val)); 
+      ASTFactory.makeIntegerSymbol(symbolTable,val,optionList);
+      result = `BuildConstant(Name(val));
     }
 
-    | string:STRING { 
+    | string:STRING {
       String val = string.getText();
-      ASTFactory.makeStringSymbol(symbolTable,val,optionList); 
-      result = `BuildConstant(Name(val)); 
+      ASTFactory.makeStringSymbol(symbolTable,val,optionList);
+      result = `BuildConstant(Name(val));
     }
 
     //| name = headConstant[optionList] { result = `BuildConstant(name); }
@@ -913,20 +916,20 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
     List<Option> optionList = new LinkedList<Option>();
     List<Option> secondOptionList = new LinkedList<Option>();
     List list = new LinkedList();
-    List<Constraint> constraintList = new LinkedList<Constraint>(); 
+    List<Constraint> constraintList = new LinkedList<Constraint>();
     result = null;
     boolean anti = false;
 }
-    : 
-      (a:ANTI_SYM {anti = !anti;} )* 
-      ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }? 
-        result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]             
+    :
+      (a:ANTI_SYM {anti = !anti;} )*
+      ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }?
+        result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]
       | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
-      {  return result; } 
+      {  return result; }
     ;
 
 // a plainTerm that allows the (...) notation
-implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line, 
+implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line,
                           List list, List<Option> secondOptionList,
                           List<Option> optionList, List<Constraint> constraintList,
                           boolean anti]
@@ -969,7 +972,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
   boolean implicit;
   TomNameList nameList, closingNameList;
   OptionList option = null;
-  ConstraintList constraint;  
+  ConstraintList constraint;
 }
     :
         (
@@ -980,7 +983,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
             {
                 if(implicit) { optionList.add(`ImplicitXMLAttribut()); }
             }
-            (   // case: /> 
+            (   // case: />
                 XML_CLOSE_SINGLETON
                 {
                     text.append("\\>");
@@ -1007,7 +1010,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                         }
                         // TODO find the orgTrack of the match
                         throw new TomException(TomMessage.malformedXMLTerm,
-                            new Object[]{currentFile(), new Integer(getLine()), 
+                            new Object[]{currentFile(), Integer.valueOf(getLine()),
                             "match", expected.substring(1), found.substring(1)});
                     }
                     if(implicit) {
@@ -1020,7 +1023,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                             optionList.add(`ImplicitXMLChild());
                         }
                     }
-                    option = ASTFactory.makeOptionList(optionList);    
+                    option = ASTFactory.makeOptionList(optionList);
                 }
             ) // end choice
             {
@@ -1097,7 +1100,7 @@ xmlAttributeList [List<TomTerm> list] returns [boolean result] throws TomExcepti
                 (
                     COMMA {text.append("(");}
                     term = xmlAttribute {list.add(term);}
-                )*  
+                )*
             )?
             RBRACKET
             {
@@ -1111,7 +1114,7 @@ xmlAttributeList [List<TomTerm> list] returns [boolean result] throws TomExcepti
                 (
                     COMMA {text.append(",");}
                     term = xmlAttribute {list.add(term);}
-                )*  
+                )*
             )?
             RPAREN
             {
@@ -1163,7 +1166,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             {
                 name = ASTFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
-                termName = `TermAppl(concOption(),nameList,concTomTerm(),concConstraint());                
+                termName = `TermAppl(concOption(),nameList,concTomTerm(),concConstraint());
             }
         | // [anno1@]_ = [anno2@](_|String|Identifier)
             (
@@ -1182,16 +1185,16 @@ xmlAttribute returns [TomTerm result] throws TomException
                     anno2ConstraintList.add(ASTFactory.makeAliasTo(`Name(anno3.getText()), getLine(), currentFile()));
                 }
             )?
-            (b:ANTI_SYM {anti = !anti;} )*		
+            (b:ANTI_SYM {anti = !anti;} )*
             term = unamedVariableOrTermStringIdentifier[optionListAnno2,anno2ConstraintList]
         )
         {
             if (!varStar) {
-            	
-            	if (anti){
-            		term = `AntiTerm(term);
-            	}
-            	
+
+              if (anti){
+                term = `AntiTerm(term);
+              }
+
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
                 optionList.add(`OriginTracking(Name("_"),getLine(),currentFile()));
@@ -1201,15 +1204,15 @@ xmlAttribute returns [TomTerm result] throws TomException
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);            
+                option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
-                
+
                 nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
                 result = `RecordAppl(option,
                     nameList,
                     ASTFactory.makeSlotList(slotList),
                     constraint);
-            }   
+            }
         }
     ;
 
@@ -1233,18 +1236,18 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
     int decLine = 0;
     boolean anti = false;
 }
-    :    	
+    :
         (
-        	(a:ANTI_SYM {anti = !anti;} )*	
+         (a:ANTI_SYM {anti = !anti;} )*
             name:ALL_ID
             {
                 text.append(name.getText());
                 XMLName.append(name.getText());
-                decLine = name.getLine();                
-                if (anti) { 
-                	result =  `concTomName(AntiName(Name(name.getText())));
-                }else{
-	               	result = `concTomName(Name(name.getText()));
+                decLine = name.getLine();
+                if (anti) {
+                  result =  `concTomName(AntiName(Name(name.getText())));
+                } else {
+                  result = `concTomName(Name(name.getText()));
                 }
             }
         |   name2:UNDERSCORE
@@ -1259,10 +1262,10 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 text.append(name3.getText());
                 XMLName.append(name3.getText());
                 decLine = name3.getLine();
-                if (anti) { 
-                	result =  `concTomName(AntiName(Name(name3.getText())));
-                }else{
-                	result = `concTomName(Name(name3.getText()));
+                if (anti) {
+                  result =  `concTomName(AntiName(Name(name3.getText())));
+                } else {
+                  result = `concTomName(Name(name3.getText()));
                 }
 
             }
@@ -1271,10 +1274,10 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 {
                     text.append("|"+name4.getText());
                     XMLName.append("|"+name4.getText());
-                    if (anti) { 
-                    	result = `concTomName(result*,AntiName(Name(name4.getText())));
-                    }else{
-                    	result = `concTomName(result*,Name(name4.getText()));
+                    if (anti) {
+                      result = `concTomName(result*,AntiName(Name(name4.getText())));
+                    } else {
+                      result = `concTomName(result*,Name(name4.getText()));
                     }
                 }
             )*
@@ -1338,7 +1341,7 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
                 result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,constraints);
             }
         |
-            nameString:STRING 
+            nameString:STRING
             {
                 text.append(nameString.getText());
                 optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),currentFile()));
@@ -1385,7 +1388,7 @@ xmlChilds [List list] returns [boolean result] throws TomException
 }
     :
         (
-            //(implicitTermList[null]) => 
+            //(implicitTermList[null]) =>
             {LA(1) == LBRACKET}? result = implicitTermList[childs]
         |   result = xmlTermList[childs]
         )
@@ -1404,30 +1407,30 @@ args [List list, List<Option> optionList] returns [boolean result] throws TomExc
 }
     :   (
             // (term , term , ...)
-            t1:LPAREN {text.append('(');} 
-            ( termList[list] )? 
-            t2:RPAREN 
+            t1:LPAREN {text.append('(');}
+            ( termList[list] )?
+            t2:RPAREN
             {
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t2.getLine());
 
                 text.append(t2.getText());
-            
+
                 result = false;
                 optionList.add(`OriginTracking(Name(""),t1.getLine(),currentFile()));
             }
-            
+
         |   // [term = term , term = term , ...]
-            t3:LBRACKET {text.append('[');} 
-            ( pairList[list] )? 
-            t4:RBRACKET 
+            t3:LBRACKET {text.append('[');}
+            ( pairList[list] )?
+            t4:RBRACKET
             {
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t4.getLine());
                 text.append(t4.getText());
-                
+
                 result = true;
                 optionList.add(`OriginTracking(Name(""),t3.getLine(),currentFile()));
             }
@@ -1449,43 +1452,43 @@ pairList [List<Slot> list] throws TomException
     TomTerm term = null;
 }
     :   (
-            name:ALL_ID EQUAL 
+            name:ALL_ID EQUAL
             {
                 text.append(name.getText());
                 text.append('=');
-            } 
-            term = annotatedTerm[true] 
+            }
+            term = annotatedTerm[true]
             {list.add(`PairSlotAppl(Name(name.getText()),term));}
-            ( COMMA {text.append(',');} 
-                name2:ALL_ID EQUAL 
+            ( COMMA {text.append(',');}
+                name2:ALL_ID EQUAL
                 {
                     text.append(name2.getText());
                     text.append('=');
-                } 
-                term = annotatedTerm[true] 
+                }
+                term = annotatedTerm[true]
                 {list.add(`PairSlotAppl(Name(name2.getText()),term));}
             )*
         )
 ;
 
-// _* or var*       
+// _* or var*
 bqVariableStar [List<Option> optionList, List<Constraint> constraintList] returns [BQTerm result]
-{ 
-    result = null; 
+{
+    result = null;
     String name = null;
     int line = 0;
     OptionList options = null;
     ConstraintList constraints = null;
 }
     :   (
-            ( 
-                name1:ALL_ID 
+            (
+                name1:ALL_ID
                 {
                     name = name1.getText();
                     line = name1.getLine();
                 }
-            ) 
-            t:STAR 
+            )
+            t:STAR
             {
                 text.append(name);
                 text.append(t.getText());
@@ -1493,7 +1496,7 @@ bqVariableStar [List<Option> optionList, List<Constraint> constraintList] return
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t.getLine());
-                
+
                 optionList.add(`OriginTracking(Name(name),line,currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
@@ -1502,36 +1505,36 @@ bqVariableStar [List<Option> optionList, List<Constraint> constraintList] return
                         Name(name),
                         SymbolTable.TYPE_UNKNOWN
                   );
-                
+
             }
         )
     ;
 
 
 
-// _* or var*       
+// _* or var*
 variableStar [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result]
-{ 
-    result = null; 
+{
+    result = null;
     String name = null;
     int line = 0;
     OptionList options = null;
     ConstraintList constraints = null;
 }
     :   (
-            ( 
-                name1:ALL_ID 
+            (
+                name1:ALL_ID
                 {
                     name = name1.getText();
                     line = name1.getLine();
                 }
-            |   name2:UNDERSCORE 
+            |   name2:UNDERSCORE
                 {
                     name = name2.getText();
                     line = name2.getLine();
                 }
-            ) 
-            t:STAR 
+            )
+            t:STAR
             {
                 text.append(name);
                 text.append(t.getText());
@@ -1539,7 +1542,7 @@ variableStar [List<Option> optionList, List<Constraint> constraintList] returns 
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t.getLine());
-                
+
                 optionList.add(`OriginTracking(Name(name),line,currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
@@ -1563,13 +1566,13 @@ variableStar [List<Option> optionList, List<Constraint> constraintList] returns 
 
 // _
 unamedVariable [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result]
-{ 
+{
     result = null;
     OptionList options = null;
     ConstraintList constraints = null;
 }
     :   (
-            t:UNDERSCORE 
+            t:UNDERSCORE
             {
                 text.append(t.getText());
                 setLastLine(t.getLine());
@@ -1578,38 +1581,38 @@ unamedVariable [List<Option> optionList, List<Constraint> constraintList] return
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `UnamedVariable(options,SymbolTable.TYPE_UNKNOWN,constraints);
-            } 
+            }
         )
     ;
 
 // ( id | id | ...)
 headSymbolList [List<Option> optionList] returns [TomNameList result]
-{ 
+{
     result = `concTomName();
     TomName name = null;
 }
     :
         (
             LPAREN {text.append('(');}
-            name = headSymbolOrConstant[optionList] 
+            name = headSymbolOrConstant[optionList]
             {
-            	result = `concTomName(result*,name);            	
+              result = `concTomName(result*,name);
             }
 
             ALTERNATIVE {text.append('|');}
-            name = headSymbolOrConstant[optionList] 
+            name = headSymbolOrConstant[optionList]
             {
-            	result = `concTomName(result*,name);                
+              result = `concTomName(result*,name);
             }
 
-            ( 
+            (
                 ALTERNATIVE {text.append('|');}
-                name = headSymbolOrConstant[optionList] 
+                name = headSymbolOrConstant[optionList]
                 {
-                	result = `concTomName(result*,name);                    
+                  result = `concTomName(result*,name);
                 }
-            )* 
-            t:RPAREN 
+            )*
+            t:RPAREN
             {
                 text.append(t.getText());
                 setLastLine(t.getLine());
@@ -1625,14 +1628,14 @@ headSymbolOrConstant [List<Option> optionList] returns [TomName result]
     );
 
 headSymbol [List<Option> optionList] returns [TomName result]
-{ 
+{
   //String buf="";
  // TomName name = null;
-  result = null; 
+  result = null;
 }
-: 
+:
   (i:ALL_ID /*{buf=i.getText(); System.out.println("buf = " + buf);}
-   (DOT {buf+=".";}  name = headSymbol[optionList]{buf+=name.getString();System.out.println("buf2 = " + buf);})* 
+   (DOT {buf+=".";}  name = headSymbol[optionList]{buf+=name.getString();System.out.println("buf2 = " + buf);})*
    */
   {
     String name = i.getText();
@@ -1672,13 +1675,13 @@ constant returns [Token result]
     ;
 
 headConstant [List<Option> optionList] returns [TomName result]
-{ 
+{
     result = null;
     Token t;
-} : 
+} :
   t=constant // add to symbol table
-{ 
-	String name = t.getText();        
+{
+	String name = t.getText();
 	int line = t.getLine();
 	text.append(name);
 	setLastLine(line);
@@ -1720,33 +1723,33 @@ operator returns [Declaration result] throws TomException
     Declaration attribute;
 }
     :
-      type:ALL_ID name:ALL_ID 
+      type:ALL_ID name:ALL_ID
         {
             ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
         }
         (
-            LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
+            LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID
             {
-                stringSlotName = slotName.getText(); 
+                stringSlotName = slotName.getText();
                 astName = `Name(stringSlotName);
-                slotNameList.add(astName); 
-                pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration())); 
+                slotNameList.add(astName);
+                pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
                 types = `concTomType(types*,Type(typeArg.getText(),EmptyType()));
             }
             (
                 COMMA
                 slotName2:ALL_ID COLON typeArg2:ALL_ID
                 {
-                    stringSlotName = slotName2.getText(); 
+                    stringSlotName = slotName2.getText();
                     astName = ASTFactory.makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
                       getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
                         new Object[]{stringSlotName},
                         currentFile(), getLine()));
                     }
-                    slotNameList.add(astName); 
-                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration())); 
+                    slotNameList.add(astName);
+                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration()));
                     types = `concTomType(types*,Type(typeArg2.getText(),EmptyType()));
                 }
             )*
@@ -1787,13 +1790,13 @@ operator returns [Declaration result] throws TomException
               }
               if(msg != null) {
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, msg,
-                      new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-                      "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ,
+                      new Object[]{currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
+                      "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString()} ,
                     currentFile(), getLine()));
               } else {
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
               }
-            }   
+            }
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(`DeclarationToOption(attribute)); }
         )*
@@ -1807,7 +1810,7 @@ operator returns [Declaration result] throws TomException
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
-          selector().pop(); 
+          selector().pop();
         }
     ;
 
@@ -1820,7 +1823,7 @@ operator returns [Declaration result] throws TomException
     String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID 
+        type:ALL_ID name:ALL_ID
         {
 	  opName = name.getText();
 	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
@@ -1846,13 +1849,13 @@ operator returns [Declaration result] throws TomException
             { options.add(attribute); }
         )*
         t:RBRACE
-        { 
+        {
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
             TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyType()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
             result = `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
-            selector().pop(); 
+            selector().pop();
         }
     ;
 
@@ -1889,7 +1892,7 @@ operatorArray returns [Declaration result] throws TomException
             { options.add(`DeclarationToOption(attribute)); }
         )*
         t:RBRACE
-        { 
+        {
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
             TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyType()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
@@ -1898,7 +1901,7 @@ operatorArray returns [Declaration result] throws TomException
 
             updatePosition(t.getLine(),t.getColumn());
 
-            selector().pop(); 
+            selector().pop();
         }
     ;
 
@@ -1913,7 +1916,7 @@ typeTerm returns [Declaration result] throws TomException
 }
     :   (
             type:ALL_ID
-            { 
+            {
                 ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
             }
             LBRACE
@@ -1930,7 +1933,7 @@ typeTerm returns [Declaration result] throws TomException
         )
 {
   TomType astType = `Type(type.getText(),TLType(implement.getCode()));
-          putType(type.getText(), astType); 
+          putType(type.getText(), astType);
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
@@ -1952,7 +1955,7 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
         )
     ;
 
- 
+
 keywordEquals[String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -1960,7 +1963,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
 }
     :
         (
-            t:EQUALS 
+            t:EQUALS
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
@@ -1968,10 +1971,10 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
-                
+
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
+                selector().pop();
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText());
                 result = `EqualTermDecl(
                     BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
@@ -1988,17 +1991,17 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
 }
     :
         (
-            t:IS_SORT 
+            t:IS_SORT
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
-                
+
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
-                
+                selector().pop();
+
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `IsSortDecl(
                     BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
@@ -2014,7 +2017,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
 }
     :
         (
-            t:GET_HEAD 
+            t:GET_HEAD
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
@@ -2023,7 +2026,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
 
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
+                selector().pop();
 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
@@ -2041,7 +2044,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
 }
     :
         (
-            t:GET_TAIL 
+            t:GET_TAIL
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
@@ -2050,7 +2053,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
 
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
+                selector().pop();
 
                 result = `GetTailDecl(opname,
                     BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
@@ -2067,7 +2070,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
 }
     :
         (
-            t:IS_EMPTY 
+            t:IS_EMPTY
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
@@ -2076,12 +2079,12 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
 
                 selector().push("targetlexer");
                 TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop(); 
+                selector().pop();
 
                 result = `IsEmptyDecl(opname,
                     BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
-                    ot); 
+                    ot);
             }
         )
     ;
@@ -2093,7 +2096,7 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
 }
     :
         (
-            t:GET_ELEMENT 
+            t:GET_ELEMENT
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
@@ -2101,11 +2104,11 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
-                
+
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
-                
+                selector().pop();
+
                 result = `GetElementDecl(opname,
                     BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
                     BQVariable(option2,Name(name2.getText()),Type("int",EmptyType())),
@@ -2130,7 +2133,7 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
 
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop();  
+                selector().pop();
 
                 result = `GetSizeDecl(opname,
                     BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
@@ -2196,13 +2199,13 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
             t:GET_SLOT
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN slotName:ALL_ID COMMA name:ALL_ID RPAREN
-            {                
+            {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
-                
+
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
-                selector().pop(); 
+                selector().pop();
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
@@ -2226,8 +2229,8 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
         (
             t:MAKE
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-                (LPAREN 
-                ( 
+                (LPAREN
+                (
                     nameArg:ALL_ID
                     {
                         if( !(nbTypes > 0) ) {
@@ -2235,9 +2238,9 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         } else {
                             type = TomBase.elementAt(types,index++);
                         }
-                        Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());  
+                        Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
                         OptionList option1 = `concOption(info1);
-                        
+
                         args = `concBQTerm(args*,BQVariable(
                                 option1,
                                 Name(nameArg.getText()),
@@ -2245,7 +2248,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                             ));
                         varnameList.add(nameArg.getText());
                     }
-                    ( 
+                    (
                         COMMA nameArg2:ALL_ID
                         {
                             if( index >= nbTypes ) {
@@ -2255,7 +2258,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                             }
                             Option info2 = `OriginTracking(Name(nameArg2.getText()),nameArg2.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);
-                            
+
                             args = `concBQTerm(args*,BQVariable(
                                     option2,
                                     Name(nameArg2.getText()),
@@ -2264,7 +2267,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                             varnameList.add(nameArg2.getText());
                         }
                     )*
-                )? 
+                )?
                 RPAREN )?
             l:LBRACE
             {
@@ -2293,9 +2296,9 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
     :
         t:MAKE_EMPTY (LPAREN RPAREN)?
         { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        
+
         LBRACE
-        {   
+        {
             selector().push("targetlexer");
             List blockList = new LinkedList();
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
@@ -2321,7 +2324,7 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
@@ -2356,7 +2359,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
         LPAREN listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
 
             selector().push("targetlexer");
@@ -2374,7 +2377,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }
-    ;   
+    ;
 
 keywordMakeAddArray[String name, String listType, String elementType] returns [Declaration result] throws TomException
 {
@@ -2392,7 +2395,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             selector().pop();
             blockList.add(tlCode);
 
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
@@ -2418,7 +2421,7 @@ options {
     testLiterals = false;
 }
 
-tokens { 
+tokens {
     WHERE="where";
     IF="if";
     EXTENDS="extends";
@@ -2458,7 +2461,7 @@ AT          :   '@' ;
 STAR        :   '*' ;
 QMARK       :   '?' ;
 QQMARK      :   "??" ;
-UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ; 
+UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 BACKQUOTE   :   "`" ;
 
 //XML Tokens
@@ -2492,7 +2495,7 @@ SLCOMMENT
   : "//"
     (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
     {
-            $setType(Token.SKIP); 
+            $setType(Token.SKIP);
             newline();
         }
   ;
@@ -2500,7 +2503,7 @@ SLCOMMENT
 // tokens to skip : Multi Lines Comments
 ML_COMMENT
   : "/*"
-    ( 
+    (
       options {
         generateAmbigWarnings=false;
       }
@@ -2527,16 +2530,16 @@ STRING
 ANTI_SYM  : '!';
 MATCH_CONSTRAINT  : "<<";
 LESS_CONSTRAINT  : "<:";
-LESSOREQUAL_CONSTRAINT  : "<=";  
+LESSOREQUAL_CONSTRAINT  : "<=";
 //GREATER_CONSTRAINT  : ":>";
-GREATEROREQUAL_CONSTRAINT  : ">=";  
+GREATEROREQUAL_CONSTRAINT  : ">=";
 DIFFERENT_CONSTRAINT  : "!=";
 //EQUAL_CONSTRAINT = DOUBLEEQ;
-  
+
 AND_CONNECTOR  : "&&";
 OR_CONNECTOR  : "||";
 
-CONSTRAINT_GROUP_START : '{' ;  
+CONSTRAINT_GROUP_START : '{' ;
 CONSTRAINT_GROUP_END : '}' ;
 
 protected
@@ -2595,17 +2598,17 @@ protected ID
 options{testLiterals = true;}
     :
         ('_')? LETTER
-        ( 
+        (
             options{greedy = true;}:
             ( LETTER | DIGIT | '_' | '.' )
-        )* 
-    ;   
+        )*
+    ;
 
 protected ID_MINUS
     :
-        ID MINUS ('a'..'z' | 'A'..'Z') 
-        ( 
-            MINUS ('a'..'z' | 'A'..'Z') 
+        ID MINUS ('a'..'z' | 'A'..'Z')
+        (
+            MINUS ('a'..'z' | 'A'..'Z')
         |   ID
         )*
     ;
