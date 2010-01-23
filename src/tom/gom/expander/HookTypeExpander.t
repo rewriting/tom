@@ -42,7 +42,7 @@ public class HookTypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
-  private ModuleList moduleList;
+  private final ModuleList moduleList;
   private ArrayList<Decl> sortsWithGraphrules;
   private GomEnvironment gomEnvironment;
 
@@ -380,7 +380,7 @@ public class HookTypeExpander {
                 _ -> {
                   getLogger().log(Level.SEVERE,
                       GomMessage.badHookArguments.getMessage(),
-                      new Object[]{ `(hookName), new Integer(args.length())});
+                      new Object[]{ `(hookName), Integer.valueOf(args.length())});
                   return null;
                 }
               }
@@ -407,7 +407,7 @@ public class HookTypeExpander {
                 _ -> {
                   getLogger().log(Level.SEVERE,
                       GomMessage.badHookArguments.getMessage(),
-                      new Object[]{ `(hookName), new Integer(args.length())});
+                      new Object[]{ `(hookName), Integer.valueOf(args.length())});
                   return null;
                 }
               }

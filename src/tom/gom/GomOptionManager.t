@@ -166,7 +166,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       %match(option) {
         PluginOption[Value=BooleanValue(True())]  -> { return Boolean.valueOf(true); }
         PluginOption[Value=BooleanValue(False())] -> { return Boolean.valueOf(false); }
-        PluginOption[Value=IntegerValue(value)]   -> { return new Integer(`value); }
+        PluginOption[Value=IntegerValue(value)]   -> { return Integer.valueOf(`value); }
         PluginOption[Value=StringValue(value)]    -> { return `value; }
       }
     } else {
@@ -424,7 +424,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
               PluginOption[Value=IntegerValue[]] -> {
                 String t = argumentList[++i];
-                setOptionValue(argument, new Integer(t));
+                setOptionValue(argument, Integer.valueOf(t));
               }
 
               PluginOption[Value=StringValue[]] -> {

@@ -140,7 +140,7 @@ public class ToolBox {
   public static Object buildConstant(Value value) {
     %match(value){
       StringValue(v) -> { return `v;}
-      IntValue(v) -> {return new Integer(`v);}
+      IntValue(v) -> {return Integer.valueOf(`v);}
       LongValue(v) -> {return new Long(`v);}
       FloatValue(v) -> {return new Float(`v);}
       DoubleValue(v) -> {return new Double(`v);}
