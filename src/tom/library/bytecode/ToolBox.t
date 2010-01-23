@@ -141,7 +141,7 @@ public class ToolBox {
     %match(value){
       StringValue(v) -> { return `v;}
       IntValue(v) -> {return Integer.valueOf(`v);}
-      LongValue(v) -> {return new Long(`v);}
+      LongValue(v) -> {return Long.valueOf(`v);}
       FloatValue(v) -> {return new Float(`v);}
       DoubleValue(v) -> {return new Double(`v);}
     }
