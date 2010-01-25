@@ -107,69 +107,41 @@ public class Backend {
     }
     // generate a class for each element of the list
     if(multithread) {
-      try {
-        ExecutorService exec = Executors.newCachedThreadPool();
-        while (!classList.isEmptyConcGomClass()) {
-          final GomClass gomclass = classList.getHeadConcGomClass();
-          classList = classList.getTailConcGomClass();
-
-          //System.out.println("generateClass: " + gomclass.getClassName());
-              generateClass(gomclass,generators);
-              /*
-          exec.execute(new Runnable() {
-              public void run() {
-              generateClass(gomclass,generators);
-              }
-              });
-*/
-        }
-        exec.shutdown();
-        if(!exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS)) {
-          System.out.println("Pool did not terminate");
-        }
-      } catch(InterruptedException e) {
-        e.printStackTrace();
+      while (!classList.isEmptyConcGomClass()) {
+        final GomClass gomclass = classList.getHeadConcGomClass();
+        classList = classList.getTailConcGomClass();
+        errno += generateClass(gomclass,generators);
+      }
+      /* The mappings may need to access generators */
+      for(final MappingTemplateClass templateClass : mappingSet) {
+        templateClass.addTemplates(generators);
       }
 
+      /* generation of files in parallel */
       try {
-        ExecutorService exec = Executors.newCachedThreadPool();
-        /* The mappings may need to access generators */
-        for(final MappingTemplateClass templateClass : mappingSet) {
-          //System.out.println("addTemplate: ");
-          templateClass.addTemplates(generators);
-         /*
-          exec.execute(new Runnable() {
-              public void run() {
-              templateClass.addTemplates(generators);
-              }
-              });
-          */
-        }
-        exec.shutdown();
-        exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-      } catch(InterruptedException e) {
-        e.printStackTrace();
-      }
-
-      try {
-        ExecutorService exec = Executors.newCachedThreadPool();
+        int poolSize = 4;
+        int maxPoolSize = 8;
+        long keepAliveTime = 10;
+        final ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(generators.size());
+        ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, maxPoolSize,
+            keepAliveTime, TimeUnit.SECONDS, queue);
+        //ExecutorService exec = Executors.newCachedThreadPool();
         for (final ClassName clsName : generators.keySet()) {
           //System.out.println("generateFile: "+clsName.getName());
-          generators.get(clsName).generateFile();
-           /*
+          //generators.get(clsName).generateFile();
           exec.execute(new Runnable() {
               public void run() {
               generators.get(clsName).generateFile();
               }
               });
-          */
+          //System.out.println("Task count.." + queue.size());
         }
         exec.shutdown();
         exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        //System.out.println("Largest pool size.." + exec.getLargestPoolSize());
       } catch(InterruptedException e) {
         e.printStackTrace();
       }
-
 
     } else {
       while (!classList.isEmptyConcGomClass()) {
