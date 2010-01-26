@@ -1,8 +1,0 @@
-#!/bin/bash
-
-export 
-CLASSPATH=/usr/share/java/vecmath.jar:/usr/share/java/j3dcore.jar:/usr/share/java/j3dutils.jar:${CLASSPATH}
-export LD_LIBRARY_PATH=/usr/lib/jni/:${LD_LIBRARY_PATH}
-
-java Main
-

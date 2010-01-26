@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,8 +94,12 @@ public class ExpanderPlugin extends GomGenericPlugin {
           getStreamManager().getInputFileName());
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
-      try { tom.library.utils.Viewer.toTree(modules,swriter); }
-      catch(java.io.IOException e) { e.printStackTrace(); }
+      try {
+        tom.library.utils.Viewer.toTree(modules,swriter);
+      } catch(java.io.IOException e) {
+        getLogger().log(Level.SEVERE, "Viewer.toTree failed",e);
+        e.printStackTrace();
+      }
       getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
       getLogger().info("GOM Expansion phase ("
           + (System.currentTimeMillis()-startChrono)

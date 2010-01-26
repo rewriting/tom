@@ -1603,6 +1603,7 @@
       </fileset>
     </path>
     <findbugs home="${findbugs.home}"
+      jvmargs="-Xmx256m"
       output="html"
       outputFile="tom-fb.html" >
       <auxClasspath refid="src.dist.classpath" />

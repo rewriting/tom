@@ -83,29 +83,29 @@ public class ACGenerator implements IBaseGenerator {
   %strategy Generator(acg:ACGenerator) extends Identity() {
     visit Expression {
       ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(symbolName)),Slots=concSlot(PairSlotAppl[Appl=var_x@VariableStar[AstName=Name(name_x)]],tail*)],subject)) -> {
-        if(TomBase.hasTheory(`pattern,`AC())) {
-          int mult_x=1;
-          int mult_y=0;
+        if (TomBase.hasTheory(`pattern,`AC())) {
+          int mult_x = 1;
+          int mult_y = 0;
           String name_y = null;
-          TomTerm var_y=null;
+          TomTerm var_y = null;
 
           //System.out.println("\n *** ACGenerator on: " + `pattern);
 
           for(Slot t:`tail.getCollectionconcSlot()) {
             %match(t) {
               PairSlotAppl[Appl=var@VariableStar[AstName=Name(name)]] -> {
-                if(`name!=`name_x && name_y==null) {
-                  name_y=`name;
-                  var_y=`var;
+                if (null == name_y && ! (`name).equals(`name_x)) {
+                  name_y = `name;
+                  var_y = `var;
                 }
 
                 //System.out.println("name   = " + `name);
                 //System.out.println("name_x = " + `name_x);
                 //System.out.println("name_y = " + name_y);
 
-                if(`name==`name_x) {
+                if ((`name).equals(`name_x)) {
                   mult_x++;
-                } else if(`name==name_y) {
+                } else if ((`name).equals(name_y)) {
                   mult_y++;
                 } else {
                   throw new TomRuntimeException("Bad VariableStar: " + `var);
@@ -115,9 +115,9 @@ public class ACGenerator implements IBaseGenerator {
           }
           //System.out.println("mult_x = " + mult_x);
           //System.out.println("mult_y = " + mult_y);
-          if(mult_x>=1 && mult_y==1) {
+          if (mult_x>=1 && mult_y==1) {
             return `ACMatchLoop(symbolName,var_x,var_y,mult_x,subject);
-          } else if(mult_x==1 && mult_y>=1) {
+          } else if (mult_x==1 && mult_y>=1) {
             return `ACMatchLoop(symbolName,var_y,var_x,mult_y,subject);
           } else {
             throw new TomRuntimeException("Bad AC pattern: " + `pattern);

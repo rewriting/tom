@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -140,8 +140,8 @@ public class ToolBox {
   public static Object buildConstant(Value value) {
     %match(value){
       StringValue(v) -> { return `v;}
-      IntValue(v) -> {return new Integer(`v);}
-      LongValue(v) -> {return new Long(`v);}
+      IntValue(v) -> {return Integer.valueOf(`v);}
+      LongValue(v) -> {return Long.valueOf(`v);}
       FloatValue(v) -> {return new Float(`v);}
       DoubleValue(v) -> {return new Double(`v);}
     }
