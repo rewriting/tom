@@ -1,5 +1,22 @@
 package fenetre;
 
+/*
+ * Interface class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import tom.Sequent;
 import tom.Couple;
 import java3D.Point;
@@ -27,9 +44,9 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.JList;
 
 /*
- * Exemple : (A\/(A\/False))/\(True\/False)
- * Exemple 2 : (B\/(C\/False))/\(True\/False),Neg(A)\/(A/\A)
- * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
+ * Exemple :   (A\/(Neg(A)\/False))/\(True\/False) 
+ * Exemple 2 : (B\/(C\/False))/\(True\/False),Neg(A)\/(A/\A) 
+ * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False))) 
  * Exemple 4 : True\/(A/\True),(A\/(A\/False))/\(True\/False),(A/\(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
  * Exemple 5 : (A\/True)\/(A/\False)
  * Exemple 6 : (A\/True)\/(((A\/((A\/False)\/True))\/False)/\A)
@@ -84,6 +101,8 @@ public class Interface extends JFrame {
 	private JButton validateNode = null;
 
 	private JButton validateCouple = null;
+
+	private JButton clearCouple = null;
 
 	private JButton genererDerivation = null;
 
@@ -375,6 +394,11 @@ public class Interface extends JFrame {
 			comp = getNextNode();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
+
+			contraintes.gridx = 9;
+			comp = getClearCouple();
+			grid.setConstraints(comp, contraintes);
+			jContentPane.add(comp);
 		}
 		return jContentPane;
 	}
@@ -382,14 +406,10 @@ public class Interface extends JFrame {
 	/*
 	 * Verifie l'entree de l'utilisateur : entree non-vide, pas d'espace, etc.
 	 */
-	public String verifierEntree(String s, boolean seq) {
+	public String verifierEntree(String s) {
 		String resultat = "";
 		if (s.length() > 0) {
-			if (seq) {
-				resultat = s.replace(" ", "");
-			} else {
-				resultat = s.replace("  ", " ");
-			}
+			resultat = s.replace(" ", "");
 			/*
 			 * while (s.charAt(0) == ',') { resultat = s.substring(1,
 			 * s.length()); } while (s.charAt(s.length()) == ',') { resultat =
@@ -549,9 +569,8 @@ public class Interface extends JFrame {
 					 * On met a jour le subsequent selectionne
 					 */
 					if (parcourirSequentVisible) {
-						if (verifierEntree(sequent.getText(), true).length() > 0) {
-							sequent.setText(verifierEntree(sequent.getText(),
-									true));
+						if (verifierEntree(sequent.getText()).length() > 0) {
+							sequent.setText(verifierEntree(sequent.getText()));
 						}
 						listeSequent = sequent.getText().split(",");
 						subSequent.setText(listeSequent[0]);
@@ -776,6 +795,7 @@ public class Interface extends JFrame {
 					nextNode.setVisible(coupleVisible);
 					validateNode.setVisible(coupleVisible);
 					validateCouple.setVisible(coupleVisible);
+					clearCouple.setVisible(coupleVisible);
 					/*
 					 * On reinitialise le choix des couples
 					 */
@@ -825,7 +845,7 @@ public class Interface extends JFrame {
 	private JButton getPreviousNode() {
 		if (previousNode == null) {
 			previousNode = new JButton();
-			previousNode.setText("Previous Node");
+			previousNode.setText("Previous Formula");
 			previousNode.setVisible(false);
 			previousNode.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -854,13 +874,13 @@ public class Interface extends JFrame {
 	private JButton getNextNode() {
 		if (nextNode == null) {
 			nextNode = new JButton();
-			nextNode.setText("Next Node");
+			nextNode.setText("Next Formula");
 			nextNode.setVisible(false);
 			nextNode.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (!listeRepere.isEmpty()) {
-						if (numeroNode < listeRepere.getLast().getListePoints()
-								.size()) {
+						if (numeroNode < listeRepere.getLast()
+								.getListePoints().size()) {
 							numeroNode++;
 						}
 						Point p = listeRepere.getLast().getPoint(
@@ -884,7 +904,7 @@ public class Interface extends JFrame {
 	private JButton getValidateNode() {
 		if (validateNode == null) {
 			validateNode = new JButton();
-			validateNode.setText("Validate Node");
+			validateNode.setText("Validate Formula");
 			validateNode.setVisible(false);
 			validateNode.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -961,6 +981,33 @@ public class Interface extends JFrame {
 	}
 
 	/**
+	 * This method initializes clearCouple
+	 * 
+	 * @return javax.swing.JRadioButton
+	 */
+
+	private JButton getClearCouple() {
+		if (clearCouple == null) {
+			clearCouple = new JButton();
+			clearCouple.setText("Clear Formulas");
+			clearCouple.setVisible(false);
+			clearCouple.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if (!listeRepere.isEmpty()) {
+						while (nombreNoeudCouple > 0) {
+							listeNumeroPoint.removeLast();
+							nombreNoeudCouple--;
+						}
+						coupleTemporaire = new Noeud[2];
+						listeRepere.getLast().actualiserPoints();
+					}
+				}
+			});
+		}
+		return clearCouple;
+	}
+
+	/**
 	 * This method initializes couple
 	 * 
 	 * @return javax.swing.JTextField
@@ -991,9 +1038,9 @@ public class Interface extends JFrame {
 			send.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					derivation = false;
-					if (verifierEntree(sequent.getText(), true).length() > 0) {
+					if (verifierEntree(sequent.getText()).length() > 0) {
 						sequent
-								.setText(verifierEntree(sequent.getText(), true));
+								.setText(verifierEntree(sequent.getText()));
 					}
 					listeSequent = sequent.getText().split(",");
 					listeRepere.add(new Repere());
@@ -1018,10 +1065,10 @@ public class Interface extends JFrame {
 					.addActionListener(new java.awt.event.ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
 							derivation = true;
-							if (verifierEntree(sequent.getText(), true)
+							if (verifierEntree(sequent.getText())
 									.length() > 0) {
 								sequent.setText(verifierEntree(sequent
-										.getText(), true));
+										.getText()));
 							}
 							listeSequent = sequent.getText().split(",");
 							listeRepere.add(new Repere());
@@ -1055,12 +1102,14 @@ public class Interface extends JFrame {
 								} else if (c.getF2().isTrue()) {
 									s = s + c.getF2() + ", \n";
 								} else {
-									s = s + c.getF1() + " "+ c.getF2() + ", \n";
+									s = s + c.getF1() + " " + c.getF2()
+											+ ", \n";
 								}
 								c.dessinerCouple();
 							}
 							listeRepere.getLast().rajouterCouple();
-							new Popup("There's a proof", s, steps).setVisible(true);
+							new Popup("There's a proof", s, steps)
+									.setVisible(true);
 						} else {
 							new Popup("There's no proof").setVisible(true);
 						}
@@ -1097,13 +1146,15 @@ public class Interface extends JFrame {
 							} else if (c.getF2().isTrue()) {
 								s = s + c.getF2() + ", \n";
 							} else {
-								s = s + c.getF1() + " "+ c.getF2() + ", \n";
+								s = s + c.getF1() + " " + c.getF2() + ", \n";
 							}
 						}
 						if (Sequent.verifierPreuve(listeCouple)) {
-							new Popup("That's a proof", s, steps).setVisible(true);
+							new Popup("That's a proof", s, steps)
+									.setVisible(true);
 						} else {
-							new Popup("That's not a proof", s, steps).setVisible(true);
+							new Popup("That's not a proof", s, steps)
+									.setVisible(true);
 						}
 					}
 				}

@@ -1,5 +1,22 @@
 package tom;
 
+/*
+ * Sequent class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -159,7 +176,7 @@ public class Sequent {
 		 * Une fois que l'on a dessine toutes les lignes, on les supprime pour
 		 * preparer le graphe suivant
 		 */
-		LinkedList<Ligne> temp = (LinkedList<Ligne>) listeLigne.clone();
+		LinkedList<Ligne> temp = (LinkedList<Ligne>) listeLigneFinale.clone();
 		for (Ligne l : temp) {
 			l.relierPoints();
 		}		
@@ -173,14 +190,21 @@ public class Sequent {
 		listeLigneFinale.clear();
 	}
 	
+	public static void supprimerCouple() {
+		/*
+		 * Permet de reinitialiser la liste des couples en vue de nouvelles
+		 * recherches de preuves
+		 */
+		listeCouple.clear();
+	}
+	
 	public static void ordonnerNoeudsTerminaux() {
 		int i = 1;
 		/*
-		 * On fait la correspondance entre les points des lignes terminales et
-		 * ceux des points terminaux
+		 * On fait la correspondance entre les noeuds des lignes et les points
 		 */
 		for (Point p : repere.getListePoints()) {
-			for (Ligne l : listeLigneFinale) {
+			for (Ligne l : listeLigne) {
 				for (Noeud n : l.getListePoints()) {
 					if (p.getN().compareTo(n) == 0) {
 						p.getN().setEstDansLigneFinale(true);
@@ -189,12 +213,12 @@ public class Sequent {
 			}
 		}
 		/*
-		 * On garde comme points seulement ceux qui constituent les lignes
-		 * finales
+		 * On garde comme points seulement ceux qui constituent les lignes (definis ci-dessus)
+		 * On ne prend pas les points superflus (debut et fin de formules)
 		 */
 		TreeSet<Point> temp = new TreeSet<Point>();
 		for (Point p : repere.getListePoints()) {
-			if (p.getN().getEstDansLigneFinale()) {
+			if (p.getN().getEstDansLigneFinale() && (p.getN().getY()>0 || !p.getN().getFormule().isFalse())) {
 				p.addUserData(i + "");
 				i++;
 				temp.add(p);
@@ -294,6 +318,7 @@ public class Sequent {
 		 */
 		TreeSet<Noeud> temp = (TreeSet<Noeud>) l.getListePoints().clone();
 		TreeSet<Noeud> nouvelleListePoints = new TreeSet<Noeud>();
+		Noeud noeudTemp = new Noeud();
 		temp.remove(n);
 		/*
 		 * copie de la formule "principale"
@@ -301,12 +326,16 @@ public class Sequent {
 		for (Noeud n1 : temp) {
 			if (!n1.getEstFinal()) {
 				if (s.equals("or")) {
-					nouvelleListePoints.add(repere.dessinerORDerivation(n1,
-							n1.getNumeroSequent()).getLast());
+					noeudTemp = repere.dessinerORDerivation(n1,
+							n1.getNumeroSequent()).getLast();
+					noeudTemp.setFormule(n1.getFormule());
+					nouvelleListePoints.add(noeudTemp);
 				} else {
 					if (gauche) {
 						listeAndTemp = repere.dessinerAND(n1, n1
 								.getNumeroSequent(), true);
+						listeAndTemp.first().setFormule(n1.getFormule());
+						listeAndTemp.last().setFormule(n1.getFormule());
 						nouvelleListePoints.add(listeAndTemp.first());
 						listeAndTempDroit.add(listeAndTemp.last());
 					} else {
