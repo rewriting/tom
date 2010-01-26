@@ -109,7 +109,7 @@ public class NewTyper extends TomGenericPlugin {
 
     if(getOptionBooleanValue("newtyper")) {
  
-      TomTerm typedTerm = null;
+      Code typedCode = null;
       try {
         /**
           * Typing variables whose types are unknown with fresh type variables before
@@ -121,7 +121,9 @@ public class NewTyper extends TomGenericPlugin {
           * Start by typing variables with fresh type variables
           * Perform type inference over patterns 
           */
-        Code inferedTypeForCode = (Code) newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
+        System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
+        Code inferredTypeForCode = newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
+        System.out.println("Code after inference = \n" + inferredTypeForCode);
         
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
           * desugarer phase before perform type inference 
@@ -133,8 +135,15 @@ public class NewTyper extends TomGenericPlugin {
         //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
 
         // Update type information for codomain in symbol table
-        Code typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferedTypeForCode);
-      
+        typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferredTypeForCode);
+        System.out.println("Code after updateCodomain = \n" + typedCode);
+
+        /** 
+         * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
+         */
+        typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+        System.out.println("Code after typeBQAppl = \n" + typedCode);
+
         //Propagate type information for all variables with same name
         //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
         setWorkingTerm(typedCode); 
@@ -150,7 +159,7 @@ public class NewTyper extends TomGenericPlugin {
       /* Add a suffix for the compilation option --intermediate during typing phase*/
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_SUFFIX, typedTerm);
+            + TYPED_SUFFIX, typedCode);
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
       }
@@ -174,7 +183,7 @@ public class NewTyper extends TomGenericPlugin {
   %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
     visit TomType {
       type@Type(typeName,javaType@EmptyType()) -> {
-        System.out.println("in NewTyper, the type to get javaClassType = " + `type);
+        //DEBUG System.out.println("in NewTyper, the type to get javaClassType = " + `type);
         // "getType" gets the java type class refered by tomType
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
         TomType javaClassType = `javaType;
@@ -187,7 +196,7 @@ public class NewTyper extends TomGenericPlugin {
           newTyper.symbolTable().putType(`typeName,javaClassType);
           javaClassType = `Type(typeName,javaClassType);
         }
-        System.out.println("in NewTyper, type to return = " + `javaClassType);
+        //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
         return javaClassType;
       }
     }
@@ -230,5 +239,38 @@ public class NewTyper extends TomGenericPlugin {
         }
       }
     } // end match
+  }
+
+  /*
+   * transform a BQAppl into its compiled form
+   */
+  %strategy typeBQAppl(newTyper:NewTyper) extends Identity() {
+    visit BQTerm {
+      BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
+        TomSymbol tomSymbol = newTyper.getSymbolFromName(`tomName);
+        BQTermList args  = `TopDownIdStopOnSuccess(typeBQAppl(newTyper)).visitLight(`l);
+        //System.out.println("BackQuoteTerm: " + `tomName);
+        //System.out.println("tomSymbol: " + tomSymbol);
+        if(TomBase.hasConstant(`optionList)) {
+          return `BuildConstant(name);
+        } else if(tomSymbol != null) {
+          if(TomBase.isListOperator(tomSymbol)) {
+            return ASTFactory.buildList(`name,args,newTyper.symbolTable());
+          } else if(TomBase.isArrayOperator(tomSymbol)) {
+            return ASTFactory.buildArray(`name,args,newTyper.symbolTable());
+          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
+          } else {
+            String moduleName = TomBase.getModuleName(`optionList);
+            if(moduleName==null) {
+              moduleName = TomBase.DEFAULT_MODULE_NAME;
+            }
+            return `BuildTerm(name,args,moduleName);
+          }
+        } else {
+          return `FunctionCall(name,EmptyType(),args);
+        }
+      }
+    }
   }
 }
