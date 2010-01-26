@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -54,10 +54,10 @@ public class StatusHandler extends Handler {
     Level recordLevel = record.getLevel();
     Integer newStats;
     if(!levelStats.containsKey(recordLevel)) {
-      newStats = new Integer(1);
+      newStats = Integer.valueOf(1);
     } else {
       Integer oldStats = levelStats.get(recordLevel);
-      newStats = new Integer(oldStats.intValue()+1);
+      newStats = Integer.valueOf(oldStats.intValue()+1);
     }
     levelStats.put(recordLevel, newStats);
     if(!(record instanceof PlatformLogRecord)) {

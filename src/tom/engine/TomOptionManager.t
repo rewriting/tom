@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -185,7 +185,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         return Boolean.valueOf(false);
       }
       PluginOption[Value=IntegerValue(value)]   -> {
-        return new Integer(`value);
+        return Integer.valueOf(`value);
       }
       PluginOption[Value=StringValue(value)]    -> {
         return `value;
@@ -345,7 +345,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public static void displayVersion() {
     System.out.println("\njtom " + Tom.VERSION + "\n" +
-                       "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
+                       "Copyright (c) 2000-2010, INPL, INRIA, Nancy, France.\n");
   }
 
   /**
@@ -459,7 +459,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
               PluginOption[Value=IntegerValue[]] -> {
                 String t = argumentList[++i];
-                setOptionValue(argument, new Integer(t));
+                setOptionValue(argument, Integer.valueOf(t));
               }
 
               PluginOption[Value=StringValue[]] -> {

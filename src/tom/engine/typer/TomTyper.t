@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -122,7 +122,7 @@ public class TomTyper extends TomGenericPlugin {
       setWorkingTerm(typedCode);      
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)));
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );

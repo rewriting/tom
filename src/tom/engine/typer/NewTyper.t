@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -141,7 +141,7 @@ public class NewTyper extends TomGenericPlugin {
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
             new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
         e.printStackTrace();
@@ -173,16 +173,21 @@ public class NewTyper extends TomGenericPlugin {
 
   %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
     visit TomType {
-      Type(typeName,EmptyType()) -> {
+      type@Type(typeName,javaType@EmptyType()) -> {
+        System.out.println("in NewTyper, the type to get javaClassType = " + `type);
         // "getType" gets the java type class refered by tomType
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
-        TomType javaClassType = newTyper.symbolTable().getType(`typeName);
-        if(javaClassType == null) {
+        TomType javaClassType = `javaType;
+        if (`typeName != "unknown type") {
+          javaClassType = newTyper.symbolTable().getType(`typeName);
+        }
+        if(javaClassType == null || javaClassType == `EmptyType()) {
           // This happens when typeName = unknown type and javaClassType = null 
           javaClassType = newKernelTyper.getFreshTypeVar(); 
           newTyper.symbolTable().putType(`typeName,javaClassType);
           javaClassType = `Type(typeName,javaClassType);
         }
+        System.out.println("in NewTyper, type to return = " + `javaClassType);
         return javaClassType;
       }
     }

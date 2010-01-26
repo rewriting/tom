@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2009, INRIA
+ * Copyright (c) 2006-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.*;
 
 import tom.gom.GomMessage;
 import tom.gom.tools.error.GomRuntimeException;
@@ -77,7 +78,7 @@ public class Backend {
   public int generate(GomClassList classList) {
     int errno = 0;
     Set<MappingTemplateClass> mappingSet = new HashSet<MappingTemplateClass>();
-    Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
+    final Map<ClassName,TemplateClass> generators = new HashMap<ClassName,TemplateClass>();
     // prepare stuff for the mappings
     %match(classList) {
       ConcGomClass(_*,
@@ -105,21 +106,63 @@ public class Backend {
       }
     }
     // generate a class for each element of the list
-    while (!classList.isEmptyConcGomClass()) {
-      GomClass gomclass = classList.getHeadConcGomClass();
-      classList = classList.getTailConcGomClass();
-      errno += generateClass(gomclass,generators);
-    }
-    /* The mappings may need to access generators */
-    for(final MappingTemplateClass templateClass : mappingSet) {
-      templateClass.addTemplates(generators);
-    }
+    if(multithread) {
+      while (!classList.isEmptyConcGomClass()) {
+        final GomClass gomclass = classList.getHeadConcGomClass();
+        classList = classList.getTailConcGomClass();
+        errno += generateClass(gomclass,generators);
+      }
+      /* The mappings may need to access generators */
+      for(final MappingTemplateClass templateClass : mappingSet) {
+        templateClass.addTemplates(generators);
+      }
 
-    for (final ClassName clsName : generators.keySet()) {
-      generators.get(clsName).generateFile();
+      /* generation of files in parallel */
+      try {
+        int poolSize = 4;
+        int maxPoolSize = 8;
+        long keepAliveTime = 10;
+        final ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(generators.size());
+        ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, maxPoolSize,
+            keepAliveTime, TimeUnit.SECONDS, queue);
+        //ExecutorService exec = Executors.newCachedThreadPool();
+        for (final ClassName clsName : generators.keySet()) {
+          //System.out.println("generateFile: "+clsName.getName());
+          //generators.get(clsName).generateFile();
+          exec.execute(new Runnable() {
+              public void run() {
+              generators.get(clsName).generateFile();
+              }
+              });
+          //System.out.println("Task count.." + queue.size());
+        }
+        exec.shutdown();
+        exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        //System.out.println("Largest pool size.." + exec.getLargestPoolSize());
+      } catch(InterruptedException e) {
+        e.printStackTrace();
+      }
+
+    } else {
+      while (!classList.isEmptyConcGomClass()) {
+        final GomClass gomclass = classList.getHeadConcGomClass();
+        classList = classList.getTailConcGomClass();
+        errno += generateClass(gomclass,generators);
+      }
+      /* The mappings may need to access generators */
+      for(final MappingTemplateClass templateClass : mappingSet) {
+        templateClass.addTemplates(generators);
+      }
+
+      for (final ClassName clsName : generators.keySet()) {
+        generators.get(clsName).generateFile();
+      }
     }
+    
     return 1;
   }
+
+
 
   /*
    * Create template classes for the different classes to generate

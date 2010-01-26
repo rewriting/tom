@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -537,7 +537,7 @@ public class KernelTyper {
              * assign the type "list" to each subtermlist: conc(...)
              */
             %match(slotAppl) {
-              /*
+              /**
                * Continuation of CT-STAR rule (applying to premises):
                * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
                * THEN infers type of both sublist "l(e1,...,en)" and last argument
@@ -557,7 +557,7 @@ public class KernelTyper {
                 //return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,constraints)),sl*);
               }
 
-              /*
+              /**
                * Continuation of CT-MERGE rule (applying to premises):
                * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
                * THEN infers type of both sublist "l(e1,...,en)" and last argument
@@ -574,7 +574,7 @@ public class KernelTyper {
                 }
               }
                              
-              /*
+              /**
                * Continuation of CT-ELEM rule (applying to premises which are
                * not lists):
                * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
@@ -591,7 +591,7 @@ public class KernelTyper {
               }
             }
           } 
-          /*
+          /**
            * Continuation of CT-FUN rule (applying to premises):
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
            * THEN infers type of arguments and adds a type constraint "Ai =

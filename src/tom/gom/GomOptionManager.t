@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2009, INRIA
+ * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -166,7 +166,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       %match(option) {
         PluginOption[Value=BooleanValue(True())]  -> { return Boolean.valueOf(true); }
         PluginOption[Value=BooleanValue(False())] -> { return Boolean.valueOf(false); }
-        PluginOption[Value=IntegerValue(value)]   -> { return new Integer(`value); }
+        PluginOption[Value=IntegerValue(value)]   -> { return Integer.valueOf(`value); }
         PluginOption[Value=StringValue(value)]    -> { return `value; }
       }
     } else {
@@ -310,7 +310,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   public void displayVersion() {
     System.out.println("Gom " + tom.engine.Tom.VERSION + "\n\n"
-                       + "Copyright (c) 2000-2009, INRIA, Nancy, France.\n");
+                       + "Copyright (c) 2000-2010, INPL, INRIA, Nancy, France.\n");
   }
 
   /**
@@ -424,7 +424,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
               PluginOption[Value=IntegerValue[]] -> {
                 String t = argumentList[++i];
-                setOptionValue(argument, new Integer(t));
+                setOptionValue(argument, Integer.valueOf(t));
               }
 
               PluginOption[Value=StringValue[]] -> {

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2006-2009, INRIA
+ * Copyright (c) 2006-2010, INPL, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,8 @@ public class MappingTemplate extends MappingTemplateClass {
         this.sortClasses = `sortClasses;
         this.operatorClasses = `ops;
         this.strategyMapping = strategyMapping;
+
+        assert this.templates!=null ;
         return;
       }
     }
@@ -120,6 +122,9 @@ public class MappingTemplate extends MappingTemplateClass {
       ConcGomClass(_*,
           OperatorClass[ClassName=opName],
           _*) -> {
+        //System.out.println("templates = " + templates);
+        //System.out.println("opname    = " + `opName);
+        //System.out.println("result    = " + templates.get(`opName));
         (templates.get(`opName))
           .generateTomMapping(writer);
       }
