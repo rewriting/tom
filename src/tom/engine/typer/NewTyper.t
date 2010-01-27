@@ -111,6 +111,10 @@ public class NewTyper extends TomGenericPlugin {
  
       Code typedCode = null;
       try {
+        newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+
+        updateSymbolTable();
+
         /**
           * Typing variables whose types are unknown with fresh type variables before
           * start inference
@@ -141,6 +145,7 @@ public class NewTyper extends TomGenericPlugin {
         /** 
          * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
          */
+        //TODO typeString
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
         System.out.println("Code after typeBQAppl = \n" + typedCode);
 
@@ -172,6 +177,17 @@ public class NewTyper extends TomGenericPlugin {
   /*
    * Type unknown types with fresh type variables 
    */
+  private TomTerm collectKnownTypes(TomTerm subject) {
+    try {
+      return `TopDownIdStopOnSuccess(collectKnownTypes(this)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
+    }
+  }
+
+  /*
+   * Type unknown types with fresh type variables 
+   */
   private Code collectKnownTypes(Code subject) {
     try {
       return `TopDownIdStopOnSuccess(collectKnownTypes(this)).visitLight(subject);
@@ -182,7 +198,7 @@ public class NewTyper extends TomGenericPlugin {
 
   %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
     visit TomType {
-      type@Type(typeName,javaType@EmptyType()) -> {
+      Type(typeName,javaType@EmptyType()) -> {
         //DEBUG System.out.println("in NewTyper, the type to get javaClassType = " + `type);
         // "getType" gets the java type class refered by tomType
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
@@ -199,6 +215,30 @@ public class NewTyper extends TomGenericPlugin {
         //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
         return javaClassType;
       }
+    }
+  }
+
+  /**
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - each Type(_,EmptyType()) is replaced by Type(_,TypeVar(i))
+   */
+  public void updateSymbolTable() {
+    SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    Iterator<String> it = symbolTable.keySymbolIterator();
+
+    while(it.hasNext()) {
+      String tomName = it.next();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      try {
+        tomSymbol = collectKnownTypes(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
+      } catch(tom.library.sl.VisitFailure e) {
+        System.out.println("should not be there");
+      }
+      //System.out.println("symbol = " + tomSymbol);
+      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
