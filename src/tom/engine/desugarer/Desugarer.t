@@ -70,6 +70,25 @@ public class Desugarer extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
+  %typeterm Desugarer { implement { tom.engine.desugarer.Desugarer }}
+
+  private SymbolTable symbolTable;
+  private int freshCounter = 0;
+
+  // FIXME : generate truly fresh variables
+  private TomName getFreshVariable() {
+    freshCounter++;
+    return `Name("_f_r_e_s_h_v_a_r_" + freshCounter);
+  }
+
+  public SymbolTable getSymbolTable() {
+    return this.symbolTable;
+  } 
+
+  public void setSymbolTable(SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
+  }
+
   public Desugarer() {
     super("Desugarer");
   }
@@ -77,7 +96,8 @@ public class Desugarer extends TomGenericPlugin {
   public void run(Map informationTracker) {
     // long startChrono = System.currentTimeMillis();
     try {
-
+      setSymbolTable(getStreamManager().getSymbolTable());
+      updateSymbolTable();
       Code syntaxExpandedTerm = (Code) getWorkingTerm();
 
       // replace underscores by fresh variables
@@ -101,15 +121,6 @@ public class Desugarer extends TomGenericPlugin {
     }
   }
 
-  // FIXME : generate truly fresh variables
-  private int freshCounter = 0;
-  private TomName getFreshVariable() {
-    freshCounter++;
-    return `Name("_f_r_e_s_h_v_a_r_" + freshCounter);
-  }
-
-  %typeterm Desugarer { implement { tom.engine.desugarer.Desugarer }}
-
   /* replaces  _  by a fresh variable
      _* by a fresh varstar    */
   %strategy DesugarUnderscore(desugarer:Desugarer) extends Identity() {
@@ -123,7 +134,78 @@ public class Desugarer extends TomGenericPlugin {
     }
   }
 
-  /*
+  /**
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - default IsFsymDecl and MakeDecl are added
+   */
+  public void updateSymbolTable() {
+    SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    Iterator<String> it = symbolTable.keySymbolIterator();
+    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
+
+    while(it.hasNext()) {
+      String tomName = it.next();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      /*
+       * add default IsFsymDecl unless it is a builtin type
+       * add default IsFsymDecl and MakeDecl unless:
+       *  - it is a builtin type
+       *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
+       */
+      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+        tomSymbol = addDefaultMake(tomSymbol);
+        tomSymbol = addDefaultIsFsym(tomSymbol);
+      }
+      try {
+        tomSymbol = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(tomSymbol);
+      } catch(tom.library.sl.VisitFailure e) {
+        System.out.println("should not be there");
+      }
+      //System.out.println("symbol = " + tomSymbol);
+      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+    }
+  }
+
+  private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
+    %match(tomSymbol) {
+      Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+        return tomSymbol;
+      }
+
+      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
+        Declaration isfsym = `IsFsymDecl(name,BQVariable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom),FalseTL(),OriginTracking(Name("is_fsym"),line,file));
+        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
+      }
+    }
+    return tomSymbol;
+  }
+
+  private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
+    %match(tomSymbol) {
+      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+        return tomSymbol;
+      }
+      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
+        //build variables for make
+        BQTermList argsAST = `concBQTerm();
+        int index = 0;
+        for(TomType subtermType:(concTomType)`domain) {
+          BQTerm variable = `BQVariable(concOption(),Name("t"+index),subtermType);
+          argsAST = `concBQTerm(argsAST*,variable);
+          index++;
+        }
+        BQTerm functionCall = `FunctionCall(name,codomain,argsAST);
+        Declaration make = `MakeDecl(name,codomain,argsAST,BQTermToInstruction(functionCall),
+            OriginTracking(Name("make"),line,file));
+        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(make),X2*));
+      }
+    }
+    return tomSymbol;
+  }
+
+  /**
    * The 'replaceTermApplTomSyntax' phase replaces:
    * - each 'TermAppl' by its typed record form:
    *    placeholders are not removed
@@ -142,8 +224,8 @@ public class Desugarer extends TomGenericPlugin {
     }
   }
 
-  /*
-   * replace 'TermAppl' by its 'RecordAppl' form
+  /**
+   * Replace 'TermAppl' by its 'RecordAppl' form
    * when no slotName exits, the position becomes the slotName
    */
   protected TomTerm replaceTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
@@ -205,6 +287,10 @@ public class Desugarer extends TomGenericPlugin {
     return `RecordAppl(option,nameList,slotList,constraints);
   }
 
+  /**
+   * Replace 'XMLAppl' by its 'RecordAppl' form
+   * when no slotName exits, the position becomes the slotName
+   */
   protected TomTerm replaceXMLAppl(OptionList optionList, TomNameList nameList,
       TomList attrList, TomList childList, ConstraintList constraints) {
     boolean implicitAttribute = TomBase.hasImplicitXMLAttribut(optionList);
