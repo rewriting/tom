@@ -30,6 +30,7 @@ package tom.engine.typer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
@@ -170,7 +171,7 @@ public class NewKernelTyper {
   }
 
   protected void addConstraint(TypeConstraint constraint) {
-    this.typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
+    typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
   }
 
   protected void addTomTerm(TomTerm term) {
@@ -243,12 +244,12 @@ public class NewKernelTyper {
           // Generate type constraints for a %match
           ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
-          System.out.println("\n typeConstraints before solve = " + nkt.typeConstraints);
+          //DEBUG System.out.println("\n typeConstraints before solve = " + nkt.typeConstraints);
           nkt.typeConstraints = `RepeatId(solveConstraints(nkt)).visitLight(nkt.typeConstraints);
-          System.out.println("\n typeConstraints aftersolve = " + nkt.typeConstraints);
+          //DEBUG System.out.println("\n typeConstraints aftersolve = " + nkt.typeConstraints);
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 3.");
           result = nkt.replaceInConstraintInstructionList(result);
-          //TODO replaceInSymbolTable
+          nkt.replaceInSymbolTable();
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 4.");
           //DEBUG nkt.printGeneratedConstraints(nkt.typeConstraints);
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
@@ -651,10 +652,8 @@ public class NewKernelTyper {
             + " = " + `t2);
       }
 
-      //TODO if apply substitution on both sublists, so return these ones
       //without Equation(type,type)
-      concTypeConstraint(leftTCList*,Equation(typeVar@Type(_,TypeVar(_)),type),rightTCList*) -> {
-        System.out.println("\n Test pour solveConstraints -- ligne 1.");
+      concTypeConstraint(leftTCList*,Equation(typeVar@Type(_,TypeVar(_)),type@!typeVar),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
           !concTypeConstraint() << leftTCList -> {
@@ -672,8 +671,7 @@ public class NewKernelTyper {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
 
-      concTypeConstraint(leftTCList*,Equation(type,typeVar@Type(_,TypeVar(_))),rightTCList*) -> {
-        System.out.println("\n Test pour solveConstraints -- ligne 2.");
+      concTypeConstraint(leftTCList*,Equation(type@Type(_,TLType(_)),typeVar@Type(_,TypeVar(_))),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
           !concTypeConstraint() << leftTCList -> {
@@ -733,6 +731,27 @@ public class NewKernelTyper {
           replacedCIList);
     }
     return replacedCIList;
+  }
+
+
+  private void replaceInSymbolTable() {
+    TomType newtt;
+    Iterator<String> it = symbolTable.keySymbolIterator();
+
+    while(it.hasNext()) {
+      String tomName = it.next();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      try {
+        for (TomType ttToSubstitute : substitutions.keySet()) {
+          newtt = substitutions.get(ttToSubstitute);
+          `TopDown(replaceFreshTypeVar(ttToSubstitute,newtt,this)).visitLight(tomSymbol);
+        }
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("replaceInSymbolTable: failure on " +
+          tomSymbol);
+      }
+      symbolTable.putSymbol(tomName,tomSymbol);
+    }
   }
 
   %strategy replaceFreshTypeVar(oldtt:TomType,newtt:TomType,nkt:NewKernelTyper) extends Identity() {

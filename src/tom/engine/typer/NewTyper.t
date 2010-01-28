@@ -125,9 +125,9 @@ public class NewTyper extends TomGenericPlugin {
           * Start by typing variables with fresh type variables
           * Perform type inference over patterns 
           */
-        System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
+        //DEBUG System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
         Code inferredTypeForCode = newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
-        System.out.println("Code after inference = \n" + inferredTypeForCode);
+        //DEBUGSystem.out.println("Code after inference = \n" + inferredTypeForCode);
         
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
           * desugarer phase before perform type inference 
@@ -140,18 +140,23 @@ public class NewTyper extends TomGenericPlugin {
 
         // Update type information for codomain in symbol table
         typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferredTypeForCode);
-        System.out.println("Code after updateCodomain = \n" + typedCode);
+        //DEBUG System.out.println("Code after updateCodomain = \n" + typedCode);
 
         /** 
          * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
          */
         //TODO typeString
+        
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
-        System.out.println("Code after typeBQAppl = \n" + typedCode);
-
+        System.out.println("Code after type inference = \n" + typedCode);
+/*
+        System.out.println("\nSymbolTable after type inference = \n");
+        newKernelTyper.getSymbolTable().printMapSymbolName();
+*/
         //Propagate type information for all variables with same name
         //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
-        setWorkingTerm(typedCode); 
+        setWorkingTerm(typedCode);
+        //getStreamManager().setSymbolTable(newKernelTyper.getSymbolTable());
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
@@ -224,7 +229,7 @@ public class NewTyper extends TomGenericPlugin {
    * this is performed by recursively traversing each symbol
    * - each Type(_,EmptyType()) is replaced by Type(_,TypeVar(i))
    */
-  public void updateSymbolTable() {
+  private void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     Iterator<String> it = symbolTable.keySymbolIterator();
 
