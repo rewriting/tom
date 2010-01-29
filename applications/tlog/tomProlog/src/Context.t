@@ -27,7 +27,7 @@ public class Context {
 		try {
 			process(this.ruleList,Facts,Unification.emptyUnification(),0);
 		} catch (MaxDepthReachedException e) {
-			System.out.println("Maximum depth reached : search aborted.");
+			System.out.println("Maximum depth ("+maxDepth+") reached : search aborted.");
 		}
 		System.out.println("Request done in "+(System.currentTimeMillis()-start)/1000+" s.");
 	}
@@ -38,7 +38,7 @@ public class Context {
 		}
 		%match(FactsToTest,rules) {
 			fList(),_ -> {
-				unif.display(FactsToSolve);
+				unif.display();
 				waitForUser();
 			}
 			fList(Fact,tail1*),rList(_*,rule,_*) -> { 
@@ -47,9 +47,10 @@ public class Context {
 					rule(goal,body) -> {
 						Unification unifAttempt = Unification.unify(`Fact,`goal,unif);
 						if (unifAttempt.succeed()) {
-							//System.out.println("goal : " +`goal +" matched !"); 
 							FactList newBody = unifAttempt.substitutesVariables(`body);
-							`process(this.ruleList,fList(newBody*,tail1*),unifAttempt,depth+1);
+							FactList newTail = unifAttempt.substitutesVariables(`tail1);
+							//System. out.println(newBody);
+							`process(this.ruleList,fList(newBody*,newTail*),unifAttempt,depth+1);
 						}	
 					}
 				}
@@ -69,7 +70,7 @@ public class Context {
 	
 	%strategy renameTerm(String suffix) extends Identity(){
   		visit Term {
-  			variable(name) -> {String newName = `name+suffix; return `variable(newName);}
+  			variable(name,_) -> {String newName = `name+suffix; return `variable(newName,1);}
   		}
     }
     
@@ -103,6 +104,23 @@ public class Context {
 		try {
 			reader.readLine();
 		} catch (IOException e) {}
+	}
+
+	public static String termToString(Term t){
+		%match(t){
+			constant(name) -> {return `name;}
+			variable(name,_) -> {return `name;}
+			function(name,termList) -> {return `name+"("+termListToString(`termList)+")";}
+		}
+		return null;
+	}
+	
+	public static String termListToString(TermList tl){
+		String result ="";
+		%match(tl){
+			tList(_*,t,_*) -> {result+=termToString(`t)+",";}
+		}
+		return result.substring(0,result.length()-1);
 	}
 
 }

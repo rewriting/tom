@@ -4,7 +4,7 @@
 		imports int String
 		abstract syntax
 		
-		Term = constant(name:String) | variable(name:String)
+		Term = constant(name:String) | variable(name:String,isTemp:int) | function(name:String,terms:TermList)
 		TermList = tList(Term*)
 		
 		Fact = fact(name:String,arity:int,subTerms:TermList)

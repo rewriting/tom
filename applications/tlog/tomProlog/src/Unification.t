@@ -1,8 +1,10 @@
 import prologterms.types.*;
+import tom.library.sl.*;
 
 public class Unification {
 
 	%include {prologterms/PrologTerms.tom}
+	%include {sl.tom}
 
 	private boolean unificationSucceed ;
 	private SubstitutionList substitutions = `sList();
@@ -24,7 +26,7 @@ public class Unification {
 		return unificationSucceed; 
 	}
 	
-	public SubstitutionList getSubstituions(){
+	public SubstitutionList getSubstitutions(){
 		return substitutions;
 	}
 	
@@ -41,70 +43,132 @@ public class Unification {
 		return null;
 	}
 	
+	private Unification unificationAfterAddingSubstitutionList(SubstitutionList sl){
+		Unification result = new Unification(this.substitutions);
+		%match(sl) {
+			sList(_*,sub,_*) -> {result=result.unificationAfterAddingSubstitution(`sub);}
+			}
+		return result;
+	}
+	
 	public static Unification unify(Fact factToUnify, Fact goal, Unification unif){
-		//System.out.println("Trying "+factToUnify+" against "+goal);
+	
 		%match(factToUnify,goal) {
 			fact(n1,a1,_),fact(n2,a2,_) -> {
 				if (`n1!=`n2 || `a1!=`a2) {return new Unification(false);}
 			}
 			
-			fact(n1,a1,tList()),fact(n2,a2,tList()) -> {
-				return unif;
+			fact(n1,a1,tl1),fact(n2,a2,tl2) -> {
+				return unify(`tl1,`tl2,unif);
 			}
-			
-			fact(n1,a1,tList(constant(constant1),tail1*)),fact(n2,a2,tList(constant(constant2),tail2*)) -> {
-				if (`constant1==`constant2) {return unify(`fact(n1,a1,tail1*),`fact(n2,a2,tail2*),unif);} else
-				{return new Unification(false);}
-			}
-			
-			fact(n1,a1,tList(variable(variable1),tail1*)),fact(n2,a2,tList(constant(constant2),tail2*)) -> {
-				Unification res = unify(`fact(n1,a1,tail1*),`fact(n2,a2,tail2*),unif);
+		}
+		return null;
+	}
+	
+	private static Unification unify(TermList termToUnify, TermList goal, Unification unif){
+		
+		%match(termToUnify,goal) {
+			tList(),tList() -> {return unif;}
+			tList(t1,tail1*),tList(t2,tail2*) -> {
+				Unification res = unify(`t1,`t2);
 				if (res.succeed()) {
-					return res.unificationAfterAddingSubstitution(`subs(variable(variable1),constant(constant2)));
+					return unify(`tail1*,`tail2*,unif).unificationAfterAddingSubstitutionList(res.getSubstitutions());
 				} else {
-					return new Unification(false); 
-				}
-			}
-			
-			fact(n1,a1,tList(constant(constant1),tail1*)),fact(n2,a2,tList(variable(variable2),tail2*)) -> {
-				Unification res = unify(`fact(n1,a1,tail1*),`fact(n2,a2,tail2*),unif);
-				if (res.succeed()) {
-					return res.unificationAfterAddingSubstitution(`subs(variable(variable2),constant(constant1)));
-				} else {
-					return new Unification(false); 
-				}
-			}
-			
-			fact(n1,a1,tList(variable(variable1),tail1*)),fact(n2,a2,tList(variable(variable2),tail2*)) -> {
-				Unification res = unify(`fact(n1,a1,tail1*),`fact(n2,a2,tail2*),unif);
-				if (res.succeed()) {
-					return res.unificationAfterAddingSubstitution(`subs(variable(variable2),variable(variable1)));
-				} else {
-					return new Unification(false); 
+					return new Unification(false);
 				}
 			}
 		}
 		return null;
 	}
 	
-	public FactList substitutesVariables(FactList factList){
-		%match(factList,substitutions){
-			fList(X1*,fact(n,a,tList(X*,variable(name),Y*)),Y1*),sList(X2*,subs(variable(name),atomToSubstitute),Y2*) -> {
-				substitutions = `sList(X2*,Y2*);
-				return `substitutesVariables(fList(X1*,fact(n,a,tList(X*,atomToSubstitute,Y*)),Y1*));
+	private static Unification unify(Term termToUnify, Term goal){
+		
+		%match(termToUnify,goal) {
+			
+			constant(constant1),constant(constant2) -> {
+				if (`constant1==`constant2) {return new Unification(true);} else {return new Unification(false);}
 			}
+			
+			variable(variable1,t),constant(constant2) -> {
+				return new Unification(`sList(subs(variable(variable1,t),constant(constant2))));
+			}
+			
+			constant(constant1),variable(variable2,t) -> {
+				return new Unification(`sList(subs(variable(variable2,t),constant(constant1))));
+			}
+			
+			variable(variable1,t1),variable(variable2,t2) -> {
+				return new Unification(`sList(subs(variable(variable2,t2),variable(variable1,t1))));
+			}
+			
+			variable(variable1,t1),function(name,termList) -> {
+				return new Unification(`sList(subs(variable(variable1,t1),function(name,termList))));
+			}
+			
+			function(name,termList),variable(variable2,t2) -> {
+				return new Unification(`sList(subs(variable(variable2,t2),function(name,termList))));
+			}
+			
+			function(name1,termList1),function(name2,termList2) -> {
+				if (`name1 != `name2) {return new Unification(false);} else {
+					return unify(`termList1,`termList2,new Unification(true));
+				}
+			}
+			
 		}
-		return factList;
+		
+		return new Unification(false);
 	}
 	
-	public void display(FactList factsToSolve){
+	public FactList substitutesVariables(FactList factList){
+		FactList result = null;
+		try {
+			result = (FactList) `TopDown(substitutesVariablesInFact(substitutions)).visit(factList);
+		} catch (VisitFailure vf) {System.out.println("Visit failure");}
+		return result;
+	}
+	
+	%strategy substitutesVariablesInFact(SubstitutionList subs) extends Identity(){
+  		visit Fact {
+  			fact(n,a,tl) -> {
+  				try {
+					return `fact(n,a,(TermList) TopDown(substitutesVariablesInTerm(subs)).visit(tl));
+				} catch (VisitFailure vf) {System.out.println("Visit failure");}
+			}
+			
+  		}
+        }
+        
+        %strategy substitutesVariablesInTerm(SubstitutionList subs) extends Identity(){
+  		visit Term {
+  			constant(name) -> {return `constant(name);}
+			variable(name1,t1) -> {
+				%match(subs) {
+					sList(_*,subs(variable(name2,t2),atomToSubstitute),_*) -> {
+						if (`name1==`name2) {return `atomToSubstitute;}
+					}
+				}
+				return `variable(name1,t1);
+			}
+			function(name,terms) -> {
+				try {
+					return `function(name,(TermList) TopDown(substitutesVariablesInTerm(subs)).visit(terms));
+				} catch (VisitFailure vf) {System.out.println("Visit failure");}
+			}
+  		}
+        }
+	
+	public void display(){
 		String result = "";
 		if (!unificationSucceed) {
 			result = "Unification failed";
 		} else {
-			%match(substitutions,factsToSolve) {
-				sList(_*,subs(variable(variable),constant(constant)),_*),fList(_*,fact(_,_,tList(_*,variable(variable),_*)),_*) -> {
-					result += `variable+" = "+`constant+" , ";
+			%match(substitutions) {
+				sList(_*,subs(variable(variableName,0),term),_*) -> {
+					try {
+						Term newTerm = `TopDown(substitutesVariablesInTerm(substitutions)).visit(`term);
+						result += `variableName+" = "+Context.termToString(newTerm)+" , ";
+					} catch (VisitFailure vf) {System.out.println("Visit failure");}
 				}
 			}
 			if (result.length()==0) {
