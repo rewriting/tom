@@ -115,6 +115,9 @@ public class NewTyper extends TomGenericPlugin {
 
         updateSymbolTable();
 
+        //DEBUG System.out.println("\nSymbolTable before type inference = \n");
+        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
+
         /**
           * Typing variables whose types are unknown with fresh type variables before
           * start inference
@@ -148,11 +151,11 @@ public class NewTyper extends TomGenericPlugin {
         //TODO typeString
         
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
-        System.out.println("Code after type inference = \n" + typedCode);
-/*
-        System.out.println("\nSymbolTable after type inference = \n");
-        newKernelTyper.getSymbolTable().printMapSymbolName();
-*/
+        System.out.println("\nCode after type inference = \n" + typedCode);
+
+        //DEBUG System.out.println("\nSymbolTable after type inference = \n");
+        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
+
         //Propagate type information for all variables with same name
         //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
         setWorkingTerm(typedCode);
