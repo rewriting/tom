@@ -221,8 +221,6 @@ public class NewKernelTyper {
       init();
       //DEBUG System.out.println("\n Test pour inferTypeCode -- ligne 1.");
       //DEBUG System.out.println("\n Original Code = \n" + code + '\n');
-      //return `TopDownStopOnSuccess(splitConstraintInstruction(this)).visitLight(code);
-      //return `TopDown(_InstructionToCode(inferInstruction(this))).visitLight(code);
       %match(code) {
         Tom(codes@concCode(_,_*)) -> {
           CodeList result = `_concCode(inferCode(this)).visitLight(`codes);
@@ -244,9 +242,9 @@ public class NewKernelTyper {
           // Generate type constraints for a %match
           ConstraintInstructionList result = nkt.inferConstraintInstructionList(`constraintInstructionList);
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
-          //DEBUG System.out.println("\n typeConstraints before solve = " + nkt.typeConstraints);
+          System.out.println("\n typeConstraints before solve = " + nkt.typeConstraints);
           nkt.typeConstraints = `RepeatId(solveConstraints(nkt)).visitLight(nkt.typeConstraints);
-          //DEBUG System.out.println("\n typeConstraints aftersolve = " + nkt.typeConstraints);
+          System.out.println("\n typeConstraints aftersolve = " + nkt.typeConstraints);
           //DEBUG System.out.println("\n Test pour inferCode -- ligne 3.");
           result = nkt.replaceInConstraintInstructionList(result);
           nkt.replaceInSymbolTable();
