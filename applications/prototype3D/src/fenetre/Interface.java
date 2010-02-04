@@ -44,11 +44,11 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.JList;
 
 /*
- * Exemple :   (A\/(Neg(A)\/False))/\(True\/False) 
+ * Exemple : (A\/(Neg(A)\/False))/\(True\/False) 
  * Exemple 2 : (B\/(C\/False))/\(True\/False),Neg(A)\/(A/\A) 
  * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False))) 
  * Exemple 4 : True\/(A/\True),(A\/(A\/False))/\(True\/False),(A/\(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
- * Exemple 5 : (A\/True)\/(A/\False)
+ * Exemple 5 : (A\/True)\/(A/\False) 
  * Exemple 6 : (A\/True)\/(((A\/((A\/False)\/True))\/False)/\A)
  */
 
@@ -126,6 +126,8 @@ public class Interface extends JFrame {
 
 	private static LinkedList<Couple> listeCouple = new LinkedList<Couple>(); // @jve:decl-index=0:
 
+	private static LinkedList<Popup> listePopup = new LinkedList<Popup>();
+	
 	private static Noeud[] coupleTemporaire = new Noeud[2];
 
 	private static String placeSubSequent = ""; // @jve:decl-index=0:
@@ -408,21 +410,37 @@ public class Interface extends JFrame {
 	 */
 	public String verifierEntree(String s) {
 		String resultat = "";
+		String temp2 = "";
 		if (s.length() > 0) {
 			resultat = s.replace(" ", "");
-			/*
-			 * while (s.charAt(0) == ',') { resultat = s.substring(1,
-			 * s.length()); } while (s.charAt(s.length()) == ',') { resultat =
-			 * s.substring(0, s.length() - 1); }
-			 */
-			/*
-			 * try { String temp; Pattern p = Pattern .compile("!");
-			 * //|:|;|,|?|.|//|§|ù|%|*|µ|^|£|$|<|>"); Matcher m =
-			 * p.matcher(resultat); while (m.find()) {
-			 * System.out.println("coucou"); temp = resultat; resultat =
-			 * temp.substring(0, m.start()) + temp .substring(m.end(),
-			 * temp.length()); } } catch (PatternSyntaxException pse) { }
-			 */
+			try {
+				boolean termine = false;
+				String temp = resultat;
+				/*
+				 * Liste des caracteres qui seront automatiquement supprimes
+				 * lors de la generation du graphe
+				 */
+				Pattern p = Pattern.compile("!|:|;|§|ù|µ|£|<|>|%");
+				Matcher m;
+				while (!termine) {
+					System.out.println(resultat);
+					m = p.matcher(resultat);
+					System.out.println(m);
+					if (m.find()) {
+						temp = resultat;
+						temp2 = resultat;
+						resultat = temp.replace(temp.substring(m.start(), m
+								.end()), "");
+					} else {
+						termine = true;
+					}
+					if (resultat.length() <= 0 || temp2.equals(resultat)) {
+						termine = true;
+					}
+				}
+			} catch (PatternSyntaxException pse) {
+				System.err.println("Error : " + pse);
+			}
 		}
 		return resultat;
 	}
@@ -879,8 +897,8 @@ public class Interface extends JFrame {
 			nextNode.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (!listeRepere.isEmpty()) {
-						if (numeroNode < listeRepere.getLast()
-								.getListePoints().size()) {
+						if (numeroNode < listeRepere.getLast().getListePoints()
+								.size()) {
 							numeroNode++;
 						}
 						Point p = listeRepere.getLast().getPoint(
@@ -1039,8 +1057,7 @@ public class Interface extends JFrame {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					derivation = false;
 					if (verifierEntree(sequent.getText()).length() > 0) {
-						sequent
-								.setText(verifierEntree(sequent.getText()));
+						sequent.setText(verifierEntree(sequent.getText()));
 					}
 					listeSequent = sequent.getText().split(",");
 					listeRepere.add(new Repere());
@@ -1065,8 +1082,7 @@ public class Interface extends JFrame {
 					.addActionListener(new java.awt.event.ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
 							derivation = true;
-							if (verifierEntree(sequent.getText())
-									.length() > 0) {
+							if (verifierEntree(sequent.getText()).length() > 0) {
 								sequent.setText(verifierEntree(sequent
 										.getText()));
 							}
@@ -1108,10 +1124,13 @@ public class Interface extends JFrame {
 								c.dessinerCouple();
 							}
 							listeRepere.getLast().rajouterCouple();
-							new Popup("There's a proof", s, steps)
-									.setVisible(true);
+							Popup p = new Popup("There's a proof", s, steps);
+							p.setVisible(true);
+							listePopup.add(p);
 						} else {
-							new Popup("There's no proof").setVisible(true);
+							Popup p = new Popup("There's no proof");
+							p.setVisible(true);
+							listePopup.add(p);
 						}
 						Sequent.supprimerCouple();
 					}
@@ -1150,11 +1169,13 @@ public class Interface extends JFrame {
 							}
 						}
 						if (Sequent.verifierPreuve(listeCouple)) {
-							new Popup("That's a proof", s, steps)
-									.setVisible(true);
+							Popup p = new Popup("There's a proof", s, steps);
+							p.setVisible(true);
+							listePopup.add(p);
 						} else {
-							new Popup("That's not a proof", s, steps)
-									.setVisible(true);
+							Popup p = new Popup("There's no proof");
+							p.setVisible(true);
+							listePopup.add(p);
 						}
 					}
 				}
@@ -1196,9 +1217,15 @@ public class Interface extends JFrame {
 			quit.setText("Quit");
 			quit.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
+					/*
+					 * On ferme toutes les fenêtres
+					 */
 					inter.setVisible(false);
 					for (Repere rep : listeRepere) {
 						rep.fermerFenetre();
+					}
+					for (Popup pop : listePopup) {
+						pop.fermerPopup();
 					}
 				}
 			});
