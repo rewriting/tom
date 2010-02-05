@@ -50,7 +50,7 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
-public abstract class TomGenericGenerator extends TomAbstractGenerator {
+public abstract class GenericGenerator extends AbstractGenerator {
 
   protected HashMap<String,String> isFsymMap = new HashMap<String,String>();
   protected boolean lazyMode;
@@ -59,7 +59,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected boolean inlineplus; // perform inlining even if no substitution has been done
   protected String modifier = ""; // the value is instantiated when creating the real backend (TomJavaBackend for instance)
 
-  public TomGenericGenerator(OutputCode output, OptionManager optionManager,
+  public GenericGenerator(OutputCode output, OptionManager optionManager,
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
 
@@ -129,7 +129,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(" >= ");
     %match(opNameAST) {
       EmptyName() -> {
-        throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+        throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
       }
     }
     String opName = opNameAST.getString();
@@ -261,7 +261,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, BQTerm var, String moduleName) throws IOException {
     %match(opNameAST) {
       EmptyName() -> {
-        throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+        throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
       }
     }
     String opName = opNameAST.getString();
@@ -507,7 +507,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             EmptyName() -> {
               returnType = TomBase.getTLCode(codomain);
               argType = TomBase.getTLCode(domain);
-              throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+              throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
             }
 
             Name(opName) -> {
@@ -550,7 +550,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
                 EmptyName() -> {
                   returnType = TomBase.getTLCode(tlType);
                   argType = returnType;
-                  throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                  throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
                 }
 
                 Name(opName) -> {
@@ -590,7 +590,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             %match(opNameAST) {
               EmptyName() -> {
                 argType = TomBase.getTLCode(tlType);
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }
 
               Name(opName) -> {
@@ -631,7 +631,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           } else {
             %match(opNameAST) {
               EmptyName() -> {
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }
             }
 
@@ -671,7 +671,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           } else {
             %match(opNameAST) {
               EmptyName() -> {
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }
 
               Name(opName) -> {
@@ -695,7 +695,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         %match(opNameAST) {
           EmptyName() -> {
-            throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+            throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
           }
         }
         String opName = opNameAST.getString();

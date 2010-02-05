@@ -65,12 +65,12 @@ import tom.library.sl.*;
  * The Desugarer plugin.
  * Perform syntax expansion and more.
  */
-public class Desugarer extends TomGenericPlugin {
+public class DesugarerPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
-  %typeterm Desugarer { implement { tom.engine.desugarer.Desugarer }}
+  %typeterm DesugarerPlugin { implement { tom.engine.desugarer.DesugarerPlugin }}
 
   private SymbolTable symbolTable;
   private int freshCounter = 0;
@@ -89,8 +89,8 @@ public class Desugarer extends TomGenericPlugin {
     this.symbolTable = symbolTable;
   }
 
-  public Desugarer() {
-    super("Desugarer");
+  public DesugarerPlugin() {
+    super("DesugarerPlugin");
   }
 
   public void run(Map informationTracker) {
@@ -123,7 +123,7 @@ public class Desugarer extends TomGenericPlugin {
 
   /* replaces  _  by a fresh variable
      _* by a fresh varstar    */
-  %strategy DesugarUnderscore(desugarer:Desugarer) extends Identity() {
+  %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
       UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
         return `Variable(opts,desugarer.getFreshVariable(),ty,constr);
@@ -211,7 +211,7 @@ public class Desugarer extends TomGenericPlugin {
    *    placeholders are not removed
    *    slotName are attached to arguments
    */
-  %strategy replaceTermApplTomSyntax(desugarer:Desugarer) extends Identity() {
+  %strategy replaceTermApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
       TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
         return desugarer.replaceTermAppl(`option,`nameList,`args,`constraints);
@@ -452,6 +452,5 @@ matchBlock:
     System.out.println("Warning: no OriginTracking information");
     return `concOption();
   }
-
 
 }

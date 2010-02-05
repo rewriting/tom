@@ -37,7 +37,7 @@ import tom.engine.tools.TomGenericPlugin;
  * and to initalize the plugin platform set/getargs process with it.
  * The StreamManager contains also the reference to the SymbolTable.
  */
-public class TomStarter extends TomGenericPlugin {
+public class StarterPlugin extends TomGenericPlugin {
 
   /** The args to set during run and to return */
   private Object[] argToRelay;
@@ -45,8 +45,8 @@ public class TomStarter extends TomGenericPlugin {
   private String fileName;
   
   /** Constructor*/
-  public TomStarter() {
-    super("TomStarter");
+  public StarterPlugin() {
+    super("StarterPlugin");
   }
   
   /**
@@ -58,7 +58,7 @@ public class TomStarter extends TomGenericPlugin {
       fileName = (String)arg[0];
     } else {
       getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
-                      new Object[]{"TomStarter", "[String]", getArgumentArrayString(arg)});
+                      new Object[]{"StarterPlugin", "[String]", getArgumentArrayString(arg)});
     }
   }
 

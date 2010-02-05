@@ -62,14 +62,14 @@ import tom.library.sl.*;
 /**
  * The Expander plugin.
  */
-public class Expander extends TomGenericPlugin {
+public class ExpanderPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
 
-  %typeterm Expander { implement { Expander } }
+  %typeterm ExpanderPlugin { implement { ExpanderPlugin } }
 
   /** some output suffixes */
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
@@ -118,8 +118,8 @@ public class Expander extends TomGenericPlugin {
   }
 
   /** Constructor */
-  public Expander() {
-    super("Expander");
+  public ExpanderPlugin() {
+    super("ExpanderPlugin");
   }
 
   public void run(Map informationTracker) {
@@ -140,13 +140,13 @@ public class Expander extends TomGenericPlugin {
       }
     } catch(Exception e) {
       getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "Expander", e.getMessage()} );
+          new Object[]{getStreamManager().getInputFileName(), "ExpanderPlugin", e.getMessage()} );
       e.printStackTrace();
     }
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(Expander.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
   }
 
   /*
@@ -160,11 +160,11 @@ public class Expander extends TomGenericPlugin {
     try {
       return `TopDownIdStopOnSuccess(Expand_once(this)).visitLight(subject);
     } catch(VisitFailure e) {
-      throw new TomRuntimeException("Expander.expand: fail on " + subject);
+      throw new TomRuntimeException("ExpanderPlugin.expand: fail on " + subject);
     }
   }
 
-  %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
+  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
     visit BQTerm {
       t@(BQVariable|BQVariableStar)[] -> {
         return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
@@ -172,7 +172,7 @@ public class Expander extends TomGenericPlugin {
     }
   }
 
-  %strategy Expand_once(expander:Expander) extends Identity() {
+  %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
     visit BQTerm {
       BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
         return TomBase.convertFromVarToBQVar(`var);
@@ -238,8 +238,8 @@ matchBlock: {
                 }
 
                 _ -> {
-                  System.out.println("Expander.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
-                  throw new TomRuntimeException("Expander.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
+                  System.out.println("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
+                  throw new TomRuntimeException("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
                 }
               }
             } // end matchBlock

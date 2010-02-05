@@ -49,14 +49,14 @@ import tom.platform.OptionManager;
 
 import aterm.*;
 
-public abstract class TomAbstractGenerator {
+public abstract class AbstractGenerator {
 
   protected OutputCode output;
   protected OptionManager optionManager;
   protected SymbolTable symbolTable;
   protected boolean prettyMode;
 
-  public TomAbstractGenerator(OutputCode output, OptionManager optionManager,
+  public AbstractGenerator(OutputCode output, OptionManager optionManager,
                               SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
     this.optionManager = optionManager;
@@ -1007,4 +1007,4 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType tlType1, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType tlType, Expression code, String moduleName) throws IOException;
 
-} // class TomAbstractGenerator
+}
