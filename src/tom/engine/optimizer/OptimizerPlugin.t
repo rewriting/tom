@@ -62,7 +62,7 @@ import tom.library.sl.*;
 /**
  * The TomOptimizer plugin.
  */
-public class TomOptimizer extends TomGenericPlugin {
+public class OptimizerPlugin extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
@@ -75,7 +75,7 @@ public class TomOptimizer extends TomGenericPlugin {
     equals(l1,l2)  { $l1.equals($l2) }
   }
 
-  %typeterm TomOptimizer { implement { TomOptimizer } }
+  %typeterm OptimizerPlugin { implement { OptimizerPlugin } }
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
@@ -89,7 +89,7 @@ public class TomOptimizer extends TomGenericPlugin {
     "</options>";
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomOptimizer.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(OptimizerPlugin.DECLARED_OPTIONS);
   }
 
   public void optionChanged(String optionName, Object optionValue) {
@@ -100,14 +100,14 @@ public class TomOptimizer extends TomGenericPlugin {
 
   // this static field is necessary for %strategy instructions that generate static code
   private static PILFactory factory = new PILFactory();
-  private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
+  private static Logger logger = Logger.getLogger("tom.engine.optimizer.OptimizerPlugin");
   private static void info(TomMessage msg, int value, String name) {
     logger.log( Level.INFO, msg.getMessage(), new Object[]{ Integer.valueOf(value), name });
   }
 
   /** Constructor */
-  public TomOptimizer() {
-    super("TomOptimizer");
+  public OptimizerPlugin() {
+    super("OptimizerPlugin");
   }
 
   public void run(Map informationTracker) {
@@ -146,7 +146,7 @@ public class TomOptimizer extends TomGenericPlugin {
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         logger.log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-            new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
+            new Object[]{"OptimizerPlugin", getStreamManager().getInputFileName(), e.getMessage()} );
 
         e.printStackTrace();
          return;
@@ -463,7 +463,7 @@ public class TomOptimizer extends TomGenericPlugin {
       // should not happen
       (Assign|AssignArray)[Variable=BQVariable[AstName=varname]] -> {
         if(variableName.equals(`varname)) {
-          logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
+          logger.log( Level.SEVERE, "OptimizerPlugin: Assignment cannot be done for the variable "+variableName+" declared in a let", new Object[]{} );
         }
       }
     }
@@ -668,7 +668,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy IfSwapping(optimizer:TomOptimizer) extends Identity() {
+  %strategy IfSwapping(optimizer:OptimizerPlugin) extends Identity() {
     visit Instruction {
       AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
         String s1 = factory.prettyPrint(factory.remove(`cond1));
@@ -745,7 +745,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy InterBlock(optimizer:TomOptimizer) extends Identity() {
+  %strategy InterBlock(optimizer:OptimizerPlugin) extends Identity() {
     visit Instruction {
       /* interleave two incompatible conditions */
       AbstractBlock(concInstruction(X1*,
@@ -760,7 +760,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy NormExpr(optimizer:TomOptimizer) extends Identity() {
+  %strategy NormExpr(optimizer:OptimizerPlugin) extends Identity() {
     visit Expression {
       Or(_,TrueTL()) -> TrueTL()
       Or(TrueTL(),_) -> TrueTL()
@@ -804,4 +804,4 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-} // class TomOptimizer
+}

@@ -62,15 +62,15 @@ import aterm.ATerm;
 import tom.library.sl.*;
 
 /**
- * The TomTyper plugin.
+ * The Typer plugin.
  * Perform syntax expansion and more.
  */
-public class TomTyper extends TomGenericPlugin {
+public class TyperPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
-  %typeterm TomTyper { implement { TomTyper } }
+  %typeterm TyperPlugin { implement { TyperPlugin } }
 
 
   /** some output suffixes */
@@ -80,16 +80,16 @@ public class TomTyper extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='type' altName='' description='TomTyper (activated by default)' value='true'/>" +
+    "<boolean name='type' altName='' description='TyperPlugin (activated by default)' value='true'/>" +
     "</options>";
 
   /** the kernel typer acting at very low level */
-  private KernelTomTyper kernelTomTyper;
+  private KernelTyper kernelTyper;
 
   /** Constructor*/
-  public TomTyper() {
-    super("TomTyper");
-    kernelTomTyper = new KernelTomTyper();
+  public TyperPlugin() {
+    super("TyperPlugin");
+    kernelTyper = new KernelTyper();
   }
 
   /**
@@ -103,18 +103,18 @@ public class TomTyper extends TomGenericPlugin {
     //TomTerm typedTerm = null;
     Code typedCode = null;
     try {
-      kernelTomTyper.setSymbolTable(getStreamManager().getSymbolTable());
+      kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
       //no more necessary: realised by the desugarer
       //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
 
       updateSymbolTable();
 
       Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-      Code variableExpandedCode = (Code) kernelTomTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+      Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
      
       Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
       typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
-      typedCode = kernelTomTyper.propagateVariablesTypes(typedCode);
+      typedCode = kernelTyper.propagateVariablesTypes(typedCode);
 
       /* transform each BackQuoteTerm into its compiled form */
       typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
@@ -159,7 +159,7 @@ public class TomTyper extends TomGenericPlugin {
     }
   }
 
-  %strategy expandType(typer:TomTyper) extends Identity() {
+  %strategy expandType(typer:TyperPlugin) extends Identity() {
     visit TomType {
       subject@Type(tomType,EmptyType()) -> {
         TomType type = typer.symbolTable().getType(`tomType);
@@ -201,7 +201,7 @@ public class TomTyper extends TomGenericPlugin {
       try {
         tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-        tomSymbol = ((TomTerm) kernelTomTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
+        tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
@@ -250,7 +250,7 @@ public class TomTyper extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomTyper.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(TyperPlugin.DECLARED_OPTIONS);
   }
 
   /*
@@ -259,7 +259,7 @@ public class TomTyper extends TomGenericPlugin {
    *    placeholders are not removed
    *    slotName are attached to arguments
    */
-  %strategy typeTermApplTomSyntax(typer:TomTyper) extends Identity() {
+  %strategy typeTermApplTomSyntax(typer:TyperPlugin) extends Identity() {
     visit TomTerm {
       TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
         return typer.typeTermAppl(`option,`nameList,`args,`constraints);
@@ -276,7 +276,7 @@ public class TomTyper extends TomGenericPlugin {
      * this post-processing phase replaces untyped (universalType) codomain
      * by their precise type (according to the symbolTable)
      */
-    %strategy updateCodomain(typer:TomTyper) extends `Identity() {
+    %strategy updateCodomain(typer:TyperPlugin) extends `Identity() {
       visit Declaration {
         GetHeadDecl[] -> {
             throw new TomRuntimeException("updateCodomain");
@@ -314,7 +314,7 @@ public class TomTyper extends TomGenericPlugin {
     /*
      * replace conc('abc') by conc('a','b','c')
      */
-    %strategy typeString(typer:TomTyper) extends `Identity() {
+    %strategy typeString(typer:TyperPlugin) extends `Identity() {
       visit TomTerm {
         appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
@@ -452,7 +452,7 @@ public class TomTyper extends TomGenericPlugin {
     /*
      * transform a BQAppl into its compiled form
      */
-    %strategy typeBQAppl(typer:TomTyper) extends Identity() {
+    %strategy typeBQAppl(typer:TyperPlugin) extends Identity() {
       visit BQTerm {
         BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);

@@ -49,14 +49,14 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomPythonGenerator extends TomGenericGenerator {
+public class PythonGenerator extends GenericGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
 
-  public TomPythonGenerator(OutputCode output, OptionManager optionManager,
+  public PythonGenerator(OutputCode output, OptionManager optionManager,
                                 SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }

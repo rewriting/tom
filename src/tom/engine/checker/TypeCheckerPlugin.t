@@ -59,7 +59,7 @@ import tom.library.sl.*;
 /**
  * The TomTypeChecker plugin.
  */
-public class TomTypeChecker extends TomChecker {
+public class TypeCheckerPlugin extends CheckerPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
@@ -74,12 +74,12 @@ public class TomTypeChecker extends TomChecker {
    * inherited from OptionOwner interface (plugin) 
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomTypeChecker.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(TypeCheckerPlugin.DECLARED_OPTIONS);
   }
 
   /** Constructor */
-  public TomTypeChecker() {
-    super("TomTypeChecker");
+  public TypeCheckerPlugin() {
+    super("TypeCheckerPlugin");
   }
 
   public void run(Map informationTracker) {
@@ -119,21 +119,21 @@ public class TomTypeChecker extends TomChecker {
    * Main type checking entry point:
    * We check all Match
    */
-  %typeterm TomTypeChecker { implement { TomTypeChecker } }
+  %typeterm TypeCheckerPlugin { implement { TypeCheckerPlugin } }
 
-  %strategy checkTypeInference(ttc:TomTypeChecker) extends Identity() {
+  %strategy checkTypeInference(tcp:TypeCheckerPlugin) extends Identity() {
     visit Instruction {
       Match(constraintInstructionList, oplist) -> {  
-        ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
-        ttc.verifyMatchVariable(`constraintInstructionList);
+        tcp.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
+        tcp.verifyMatchVariable(`constraintInstructionList);
         throw new tom.library.sl.VisitFailure();// to stop the top-downd
       }
     }
 
     visit Declaration {
       Strategy(_,_,visitList,orgTrack) -> {
-        ttc.currentTomStructureOrgTrack = `orgTrack;
-        ttc.verifyStrategyVariable(`visitList);
+        tcp.currentTomStructureOrgTrack = `orgTrack;
+        tcp.verifyStrategyVariable(`visitList);
         throw new tom.library.sl.VisitFailure();// to stop the top-downd
       }
     }
@@ -143,14 +143,14 @@ public class TomTypeChecker extends TomChecker {
   /* 
    * Collect unknown (not in symbol table) appls without ()
    */
-  %strategy collectUnknownAppls(ttc:TomTypeChecker) extends Identity() {
+  %strategy collectUnknownAppls(tcp:TypeCheckerPlugin) extends Identity() {
     visit TomTerm {
       app@TermAppl[] -> {
-        if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
-          ttc.messageError(ttc.findOriginTrackingFileName(`app.getOption()),
-              ttc.findOriginTrackingLine(`app.getOption()),
+        if(tcp.symbolTable().getSymbolFromName(tcp.getName(`app))==null) {
+          tcp.messageError(tcp.findOriginTrackingFileName(`app.getOption()),
+              tcp.findOriginTrackingLine(`app.getOption()),
               TomMessage.unknownVariableInWhen,
-              new Object[]{ttc.getName(`app)});
+              new Object[]{tcp.getName(`app)});
         }
         // else, it's actually app()
         // else, it's a unknown (ie : java) function
@@ -224,12 +224,12 @@ public class TomTypeChecker extends TomChecker {
     }
   }
  
-  %strategy checkVariableStar(ttc:TomTypeChecker) extends Identity() {
+  %strategy checkVariableStar(tcp:TypeCheckerPlugin) extends Identity() {
     visit BQTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
         if(!`listName.equals(`rootName)) {
-          ttc.messageError(ttc.findOriginTrackingFileName(`options),
-              ttc.findOriginTrackingLine(`options),
+          tcp.messageError(tcp.findOriginTrackingFileName(`options),
+              tcp.findOriginTrackingLine(`options),
               TomMessage.incoherentVariableStar,
               new Object[]{ (`variableName),(`rootName),(`listName) });
         }

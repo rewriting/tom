@@ -153,9 +153,9 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Bad number of '@' in %[...]%");
 
   public static final TomMessage backendInactivated    =
-      new TomMessage("The TomBackend plugin is not activated and thus WILL NOT RUN:No output will be generated ");
+      new TomMessage("The BackendPlugin is not activated and thus WILL NOT RUN:No output will be generated ");
   public static final TomMessage backendIOException    =
-      new TomMessage("TomBackend: IOException occurs writting to file ''{0}'': {1} ");
+      new TomMessage("BackendPlugin : IOException occurs writting to file ''{0}'': {1} ");
   public static final TomMessage deprecatedDisjunction =
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =

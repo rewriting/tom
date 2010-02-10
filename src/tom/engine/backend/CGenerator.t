@@ -47,9 +47,9 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
-public class TomCGenerator extends TomCFamilyGenerator {
+public class CGenerator extends CFamilyGenerator {
 
-  public TomCGenerator(OutputCode output, OptionManager optionManager,
+  public CGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
@@ -176,4 +176,4 @@ public class TomCGenerator extends TomCFamilyGenerator {
   protected void buildFunctionDef(int deep, String tomName, BQTermList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     throw new TomRuntimeException("Function not yet supported in C");
   }
-} // class TomCGenerator
+}

@@ -50,7 +50,7 @@ import tom.engine.tools.TomGenericPlugin;
 import tom.platform.PlatformLogRecord;
 
 
-abstract public class TomChecker extends TomGenericPlugin {
+abstract public class CheckerPlugin extends TomGenericPlugin {
   
     // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -71,7 +71,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected boolean strictType = false;
   protected Option currentTomStructureOrgTrack;
     
-  public TomChecker(String name) {
+  public CheckerPlugin(String name) {
     super(name);
   }
 

@@ -48,14 +48,14 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public abstract class TomCFamilyGenerator extends TomGenericGenerator {
+public abstract class CFamilyGenerator extends GenericGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
 
-  public TomCFamilyGenerator(OutputCode output, OptionManager optionManager,
+  public CFamilyGenerator(OutputCode output, OptionManager optionManager,
       SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }

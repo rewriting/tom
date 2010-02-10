@@ -50,10 +50,10 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomCamlGenerator extends TomGenericGenerator {
+public class CamlGenerator extends GenericGenerator {
   protected LinkedList<BQTerm> env = new LinkedList<BQTerm>();
 
-  public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
+  public CamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
   
@@ -208,7 +208,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
 
   /*
-   * redefinition of TomAbstractGenerator.getVariableName
+   * redefinition of AbstractGenerator.getVariableName
    * add a ! for variables under a LetRef
    */
   protected String getVariableName(BQTerm var) {
@@ -468,4 +468,4 @@ public class TomCamlGenerator extends TomGenericGenerator {
     
   }
 
-} // class TomCamlGenerator
+}
