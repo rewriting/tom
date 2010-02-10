@@ -1,5 +1,22 @@
 package projet;
 
+/*
+ * Noeud class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import java.util.LinkedList;
 
 import tom.donnees.types.*;
@@ -24,7 +41,7 @@ public class Noeud implements Comparable<Noeud> {
 	private String position = "";
 
 	private Formule formule;
-	
+
 	public Noeud() {
 		coordonnees[0] = 0;
 		coordonnees[1] = 0;
@@ -145,7 +162,7 @@ public class Noeud implements Comparable<Noeud> {
 	public float getZ() {
 		return coordonnees[2];
 	}
-	
+
 	/*
 	 * Permet de comparer deux points entre eux dans l'espace. A Y donne, N est
 	 * "plus petit" que M si son X est plus petit et en cas d'egalite, si son Z
