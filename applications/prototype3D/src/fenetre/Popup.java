@@ -101,7 +101,6 @@ public class Popup extends JFrame{
 			jContentPane
 					.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		}
-
 		/*
 		 * Permet de placer les elements dans la fenetre d'affichage; autorise
 		 * le redimensionnement de la fenetre tout en gardant une place

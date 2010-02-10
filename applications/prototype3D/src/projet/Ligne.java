@@ -1,5 +1,23 @@
 package projet;
 
+/*
+ * Ligne class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 import tom.Couple;
@@ -10,8 +28,12 @@ import java3D.Repere;
 public class Ligne {
 
 	private TreeSet<Noeud> listePoints;
+	
+	private LinkedList<Ligne> lignesFilles = new LinkedList<Ligne>();
 
 	private Repere repere;
+	
+	private boolean validee = false;
 
 	public Ligne(Repere r) {
 		listePoints = new TreeSet<Noeud>();
@@ -33,6 +55,21 @@ public class Ligne {
 
 	public void enleverNoeud(Noeud n) {
 		listePoints.remove(n);
+	}
+	
+	public boolean getValidee() {
+		return validee;
+	}
+	
+	public void validerLigne() {
+		validee = true;
+		for (Ligne l : lignesFilles) {
+			l.validerLigne();
+		}
+	}
+	
+	public void ajouterLigneFille(Ligne l) {
+		lignesFilles.add(l);
 	}
 
 	public Couple contientCouple() {
@@ -79,6 +116,9 @@ public class Ligne {
 	}
 
 	public void relierPoints() {
+		/*
+		 * Relie tous les points de la ligne entre eux
+		 */
 		Noeud precedent = listePoints.first();
 		for (Noeud n : listePoints) {
 			repere.dessinerSegment(precedent, n, false);

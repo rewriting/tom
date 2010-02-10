@@ -43,15 +43,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.JList;
 
-/*
- * Exemple : (A\/(Neg(A)\/False))/\(True\/False) 
- * Exemple 2 : (B\/(C\/False))/\(True\/False),Neg(A)\/(A/\A) 
- * Exemple 3 : (A\/(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False))) 
- * Exemple 4 : True\/(A/\True),(A\/(A\/False))/\(True\/False),(A/\(True/\(False\/A)))/\((A\/(True/\False))/\(A\/(True\/False)))
- * Exemple 5 : (A\/True)\/(A/\False) 
- * Exemple 6 : (A\/True)\/(((A\/((A\/False)\/True))\/False)/\A)
- */
-
 public class Interface extends JFrame {
 
 	private final static long serialVersionUID = 1L;
@@ -127,7 +118,7 @@ public class Interface extends JFrame {
 	private static LinkedList<Couple> listeCouple = new LinkedList<Couple>(); // @jve:decl-index=0:
 
 	private static LinkedList<Popup> listePopup = new LinkedList<Popup>();
-	
+
 	private static Noeud[] coupleTemporaire = new Noeud[2];
 
 	private static String placeSubSequent = ""; // @jve:decl-index=0:
@@ -221,7 +212,6 @@ public class Interface extends JFrame {
 			jContentPane
 					.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		}
-
 		/*
 		 * Permet de placer les elements dans la fenetre d'affichage; autorise
 		 * le redimensionnement de la fenetre tout en gardant une place
@@ -277,7 +267,6 @@ public class Interface extends JFrame {
 			comp = getFalse();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
-
 			/*
 			 * Parcourir les sequents
 			 */
@@ -323,7 +312,6 @@ public class Interface extends JFrame {
 			comp = getBack();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
-
 			/*
 			 * Generer les arbres et/ou les preuves
 			 */
@@ -358,7 +346,6 @@ public class Interface extends JFrame {
 			comp = getQuit();
 			grid.setConstraints(comp, contraintes);
 			jContentPane.add(comp);
-
 			/*
 			 * Creer liste couple pour verification/recherche de preuves
 			 */
@@ -417,15 +404,13 @@ public class Interface extends JFrame {
 				boolean termine = false;
 				String temp = resultat;
 				/*
-				 * Liste des caracteres qui seront automatiquement supprimes
-				 * lors de la generation du graphe
+				 * Liste des caracteres qui seront automatiquement supprimes de
+				 * l'entree utilisateur lors de la generation du graphe
 				 */
 				Pattern p = Pattern.compile("!|:|;|§|ù|µ|£|<|>|%");
 				Matcher m;
 				while (!termine) {
-					System.out.println(resultat);
 					m = p.matcher(resultat);
-					System.out.println(m);
 					if (m.find()) {
 						temp = resultat;
 						temp2 = resultat;
@@ -474,10 +459,9 @@ public class Interface extends JFrame {
 			sequent.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					/*
-					 * Pour rentrer les sequents, il faut respecter les regles
-					 * suivantes : separer les sequents par des virgules; ne pas
-					 * mettre d'espaces; ne pas mettre de parenthèses inutiles
-					 * (ex: ne pas entourer un sequent de parenthèses)
+					 * Pour rentrer les sequents, il faut respecter certaines
+					 * regles typographiques. Se referer au Guide d'Utilisation
+					 * pour plus de precision
 					 */
 				}
 			});
@@ -1169,11 +1153,11 @@ public class Interface extends JFrame {
 							}
 						}
 						if (Sequent.verifierPreuve(listeCouple)) {
-							Popup p = new Popup("There's a proof", s, steps);
+							Popup p = new Popup("That's a proof", s, steps);
 							p.setVisible(true);
 							listePopup.add(p);
 						} else {
-							Popup p = new Popup("There's no proof");
+							Popup p = new Popup("That's not a proof");
 							p.setVisible(true);
 							listePopup.add(p);
 						}
@@ -1237,7 +1221,7 @@ public class Interface extends JFrame {
 		/*
 		 * Meme principe que pour la decomposition de la formule
 		 * (tom/Sequent.java decomposerFormule) mais seul l'affichage de la
-		 * partie droite ou gauche est ici utile
+		 * partie droite ou gauche de la selection est ici utile
 		 */
 		int compteur = 0;
 		for (int i = 0; i < s1.length(); i++) {

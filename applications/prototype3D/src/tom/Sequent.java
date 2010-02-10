@@ -208,7 +208,7 @@ public class Sequent {
 		genererGraphe(args, rep);
 		/*
 		 * On reporte les noeuds terminaux au plus haut niveau, et on les relie
-		 * entre eux seulement si ce n'est pas un graphe "de derivation"
+		 * entre eux seulement si ce n'est pas un graphe de derivation
 		 */
 		if (!Interface.getDerivation()) {
 			noeudTerminaux();
@@ -244,7 +244,6 @@ public class Sequent {
 			listeNoeud[3 * i + 2].setFormule(tom_make_False());
 			listeNoeud[3 * i + 2].setEstFinal();
 			repere.dessinerPoint(listeNoeud[3 * i + 2], i);
-
 			/*
 			 * On prepare la ligne initiale
 			 */
@@ -252,7 +251,6 @@ public class Sequent {
 			l.ajouterNoeud(listeNoeud[3 * i + 1]);
 			l.ajouterNoeud(listeNoeud[3 * i + 2]);
 		}
-
 		/*
 		 * Dans le cas de la derivation, on lance la procedure en traitant la
 		 * premiere ligne
@@ -307,8 +305,7 @@ public class Sequent {
 	@SuppressWarnings("unchecked")
 	public static void dessiner() {
 		/*
-		 * Une fois que l'on a dessine toutes les lignes, on les supprime pour
-		 * preparer le graphe suivant
+		 * On relie les points de toutes les lignes
 		 */
 		LinkedList<Ligne> temp = (LinkedList<Ligne>) listeLigneFinale.clone();
 		for (Ligne l : temp) {
@@ -571,7 +568,9 @@ public class Sequent {
 				nouvelleListePoints.add(listeAndTemp2.last());
 			}
 		}
-		return new Ligne(nouvelleListePoints, repere);
+		Ligne l1 = new Ligne(nouvelleListePoints, repere);
+		l.ajouterLigneFille(l1);
+		return l1;
 	}
 
 	public static boolean verifierPreuve(LinkedList<Couple> listeCouple) {
@@ -579,16 +578,35 @@ public class Sequent {
 		 * On regarde si chaque ligne finale contient au moins l'un des couples
 		 * selectionnes
 		 */
+		/*
+		 * Cas du graphe normal
+		 */
 		boolean resultat = true;
-		boolean temp = false;
-		for (Ligne l : listeLigneFinale) {
-			temp = false;
-			for (Couple c : listeCouple) {
-				if (c.estDansLigne(l)) {
-					temp = true;
+		if (!Interface.getDerivation()) {
+			boolean temp = false;
+			for (Ligne l : listeLigneFinale) {
+				temp = false;
+				for (Couple c : listeCouple) {
+					if (c.estDansLigne(l)) {
+						temp = true;
+					}
+				}
+				resultat = resultat && temp;
+			}
+		/*
+		 * Cas de la derivation
+		 */
+		} else {
+			for (Ligne l : listeLigne) {
+				for (Couple c : listeCouple) {
+					if (c.estDansLigne(l)) {
+						l.validerLigne();
+					}
 				}
 			}
-			resultat = resultat && temp;
+			for (Ligne l : listeLigneFinale) {
+				resultat = resultat && l.getValidee();
+			}
 		}
 		return resultat;
 	}

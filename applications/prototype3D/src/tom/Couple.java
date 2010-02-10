@@ -1,5 +1,22 @@
 package tom;
 
+/*
+ * Couple class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import projet.Ligne;
 import projet.Noeud;
 import java3D.Repere;
@@ -105,8 +122,8 @@ public class Couple {
 
 	public boolean estUnCouple() {
 		/*
-		 * Un couple est un couple si les deux formules qui le composent sont
-		 * une negation l'une de l'autre
+		 * Un couple est un "vrai" couple si les deux formules qui le composent
+		 * sont une negation l'une de l'autre
 		 */
 		boolean resultat = false;
 		Formule temp1 = tom_make_Neg(n1.getFormule());
@@ -122,6 +139,9 @@ public class Couple {
 	}
 
 	public boolean estDansLigne(Ligne l) {
+		/*
+		 * Test si le couple fait parti de la ligne consideree
+		 */
 		boolean temp1 = false;
 		boolean temp2 = false;
 		for (Noeud n : l.getListePoints()) {
