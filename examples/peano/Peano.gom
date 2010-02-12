@@ -1,4 +1,4 @@
-module peano.Peano
+module Peano
 abstract syntax
 Nat = zero()
     | suc(pred:Nat) 

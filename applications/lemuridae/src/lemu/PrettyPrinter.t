@@ -188,8 +188,17 @@ class PrettyPrinter {
       }
 
       // set theory pretty print
-      relationAppl("in",(x,y)) -> {
-        return toLatex(`x) + " : " + toLatex(`y);
+      relationAppl("int",(x,y)) -> {
+        return toLatex(`x) + " \\interm " + toLatex(`y);
+      }
+      relationAppl("inp",(x,y)) -> {
+        return toLatex(`x) + " \\intermlist " + toLatex(`y);
+      }
+      relationAppl("intlist",(x,y)) -> {
+        return toLatex(`x) + " \\inpattern " + toLatex(`y);
+      }
+      relationAppl("inplist",(x,y)) -> {
+        return toLatex(`x) + " \\inpatternlist " + toLatex(`y);
       }
       relationAppl("subset",(x,y)) -> {
         return toLatex(`x) + " \\subset " + toLatex(`y);
@@ -255,6 +264,10 @@ class PrettyPrinter {
       Var(n) -> { return `n; }
 
       // arithmetic
+      funAppl("rhd",(x,y)) -> {
+        return toLatex(`x) + " \\rhd " + toLatex(`y);
+      }
+
       funAppl("z",()) -> { return "0"; }
       i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
@@ -289,17 +302,17 @@ class PrettyPrinter {
       }
 
       // finite 1st order theory of classes pretty print
-      funAppl("appl",(p,x*)) -> {
-        return `toLatex(p) + "["+ toLatex(`x*) + "]";
+      funAppl("app",(p,x*)) -> {
+        return `toLatex(p) + "\\ @\\ "+ toLatex(`x*);
       }
       funAppl("nil",()) -> {
-        return ("nil");
+        return ("\\nil");
       }
       funAppl("fEq",(x,y)) -> {
         return toLatex(`x) + "\\dot{=}" + `toLatex(y);
       }
       l@funAppl("cons",(x,y)) -> {
-        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle "; 
+        if (endedByNil(`l)) return "[" + listToLatex(`l) + "]"; 
         else return toLatex(`x) + "::" + toLatex(`y);
       }
 

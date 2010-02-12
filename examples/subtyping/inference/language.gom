@@ -1,4 +1,4 @@
-module subtyping.Language
+module Language
 imports String int
 abstract syntax
 

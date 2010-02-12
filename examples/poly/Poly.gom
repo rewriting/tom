@@ -1,4 +1,4 @@
-module poly.Poly
+module Poly
 abstract syntax
 
 Term = zero() | one()

@@ -31,10 +31,10 @@
 
   <target name="build" depends="init">
 
-    <!--
     <gom.preset srcdir="${lemu.src}"
       destdir="${lemu.gen}"
-      package="lemu">
+      package="lemu"
+      options="-wscs">
       <include name="lemu/*.gom"/>
     </gom.preset>
 
@@ -61,7 +61,6 @@
     </antlr3>
 
     <copy file="proof.sty" todir="${lemu.build}" />
-    -->
 
     <gom.preset 
       fresh="true"

@@ -59,7 +59,7 @@ public class LKMtoLKF {
                       OrLPrem1(y,A2,prem1),
                       OrLPrem2(z,B2,prem2),x)),a);
         }
-        nprop(x,r@implies(A1,B1)), cnprop(a,l@implies(A2,B2)) -> {
+        nprop(x,implies(A1,B1)), cnprop(a,implies(A2,B2)) -> {
           Name y = Name.freshName(`x);
           Name z = Name.freshName(`x);
           CoName b = CoName.freshCoName(`a);
