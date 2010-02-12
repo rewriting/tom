@@ -1,0 +1,37 @@
+term modulo { }
+
+prop modulo { 
+  r1 : [] In(r(),r()) -> forall y, Eq(y,r()) => In(r(),y) => A => A
+  r2 : [y,z] Eq(y,z) -> forall x, In(x,y) => In(x,z)
+}
+
+prop fold { }
+
+prop super { }
+
+rootR(
+<r:A=>A>
+cut(
+  <a:In(r(),r())>forallR(
+    <b:Eq(x,r()) => In(r(),x) => A => A><x>implyR(
+      <x:Eq(x,r())><c:In(r(),x) => A => A>implyR(
+        <y:In(r(),x)><d:A => A>cut(
+          <e:In(r(),r())>forallL(
+            <w:In(r(),x) => In(r(),r())>implyL(
+              <z1:In(r(),r())>ax(z1,e),<f:In(r(),x)>ax(y,f),w),r(),x),
+              <z:In(r(),r())>forallL(
+                <z1:Eq(r(),r()) => In(r(),r()) => A => A>implyL(
+                  <z2:In(r(),r()) => A => A> implyL(
+                  <z3:A => A>ax(z3,r),<a:In(r(),r())>ax(z,a),z2),
+                <a1:Eq(r(),r())> forallR(
+                  <a2:In(y,r()) => In(y,r())><y> implyR(
+                    <z3:In(y,r())><a3:In(y,r())>ax(z3,a3),a2),a1),z1),r(),z)),c),b),a),
+  <z:In(r(),r())> forallL(
+            <z1:Eq(r(),r()) => In(r(),r()) => A => A>implyL(
+              <z2:In(r(),r()) => A => A> implyL(
+                <z3:A => A>ax(z3,r),<a:In(r(),r())>ax(z,a),z2),
+              <a1:Eq(r(),r())> forallR(
+                <a2:In(y,r()) => In(y,r())><y>implyR(
+                  <z3:In(y,r())><a3:In(y,r())>ax(z3,a3),a2),a1),z1),r(),z)
+))
+

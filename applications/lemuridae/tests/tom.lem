@@ -1,0 +1,28 @@
+termrule ran(g()) -> cons(s1(),cons(s2(),nil())).
+termrule ran(f()) -> cons(s1(),nil()).
+termrule ran(a()) -> nil().
+
+termrule domain(g()) -> s1().
+termrule domain(f()) -> s1().
+termrule domain(a()) -> s2().
+
+proprule eq(x,x) -> True.
+
+rule WSrhd(rhd(lhs,rhs),s) -> WSp(lhs,s) /\ (WSt(lhs,s) => WSt(rhs,s)).
+proprule WSp(p,s) -> inp(p,s).
+proprule WSt(t,s) -> int(t,s).
+
+rule int(app(f,l),s) -> eq(domain(f),s) /\ intlist(l,ran(f)).
+rule intlist(cons(t,ts),cons(s,ss)) -> int(t,s) /\ intlist(ts,ss).
+rule intlist(nil(),nil()) -> True.
+
+rule inp(app(f,l),s) -> eq(domain(f),s) /\ inplist(l,ran(f)).
+rule inp(var(x),s) -> True.
+rule inplist(cons(t,ts),cons(s,ss)) -> inp(t,s) /\ inplist(ts,ss).
+rule inplist(nil(),nil()) -> True.
+
+proof thm: forall x,
+  WSrhd(rhd(app(f(),cons(var(x),nil())),
+            app(g(),cons(var(x),cons(app(a(),nil()),nil())))),s1()).
+autoreduce.
+display thm.

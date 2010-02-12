@@ -1,0 +1,41 @@
+proof th:
+
+   (forall x, eq(x,x))
+=> (forall x y, eq(x,y) => eq(y,x))
+=> (forall x y z, eq(x,y) => eq(y,z) => eq(x,z))
+=> (forall x y, eq(x,y) => eq(S(x),S(y)))
+=> (forall x y z, eq(x,y) => eq(x+z,y+z))
+=> (forall x y z, eq(x,y) => eq(z+x,z+y))
+
+=> (eq(0,0) <=> True)
+=> (forall x, eq(0,S(x)) <=> False)
+=> (forall x, eq(S(x),0) <=> False)
+=> (forall x y, eq(S(x),S(y)) <=> eq(x,y))
+
+=> (forall x, eq(0+x,x))
+=> (forall x y, eq(S(x)+y,S(x+y)))
+
+=> eq(S(S(0)),S(0)+S(0)).
+
+
+intros.
+focus h13. intro. 0.
+focus h13. intro. S(0).
+focus h12. intro. S(0).
+focus h4. intro. (0+S(0)).
+focus h4. intro. S(0).
+focus h4. intro.
+focus h3. duplicate.
+focus h3. intro. S(0)+S(0).
+focus h3. intro. S(0+S(0)).
+focus h3. intro. S(S(0)).
+focus h3. intro.
+focus h3. intro.
+focus h2. intro. S(0)+S(0).
+focus h2. intro. S(S(0)).
+focus h2. intro.
+axiom.
+axiom.
+axiom.
+axiom.
+axiom.
