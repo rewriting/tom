@@ -57,6 +57,8 @@ public class KernelTyper {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
 
+  private static Logger logger = Logger.getLogger("tom.engine.typer.TyperPlugin");
+  
   %typeterm KernelTyper {
     implement { KernelTyper }
     is_sort(t) { ($t instanceof KernelTyper) }
@@ -398,17 +400,16 @@ public class KernelTyper {
               if(newSubjectType != null) {
                 newVariable = `BQVariable(variableOption,astName,newSubjectType);
               } else {
-                  throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+                String n = `name;
+                logger.log( Level.SEVERE, TomMessage.cannotGuessMatchType.getMessage(),
+                    new Object[]{n} );
+                throw new VisitFailure();
               }
             } else {
               newVariable = `subject;
             }
-            if(newVariable == null) {
-                throw new TomRuntimeException("Type cannot be guessed for '" + `subject + "'");
-            } else {
-              newSubject = newVariable;
-              newSubjectType = newVariable.getAstType();
-            }                  
+            newSubject = newVariable;
+            newSubjectType = newVariable.getAstType();
           }
 
           t@BQAppl[AstName=n@Name(name),Args=args] -> {
