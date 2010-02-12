@@ -400,9 +400,8 @@ public class KernelTyper {
               if(newSubjectType != null) {
                 newVariable = `BQVariable(variableOption,astName,newSubjectType);
               } else {
-                String n = `name;
                 logger.log( Level.SEVERE, TomMessage.cannotGuessMatchType.getMessage(),
-                    new Object[]{n} );
+                    new Object[]{`(name)} );
                 throw new VisitFailure();
               }
             } else {
