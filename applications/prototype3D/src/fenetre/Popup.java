@@ -1,5 +1,22 @@
 package fenetre;
 
+/*
+ * Popup class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import java.awt.ComponentOrientation;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,6 +76,10 @@ public class Popup extends JFrame{
 		initialize("Answer");
 	}
 	
+	public void fermerPopup() {
+		pop.setVisible(false);
+	}
+	
 	/**
 	 * This method initializes this
 	 * 
@@ -80,7 +101,6 @@ public class Popup extends JFrame{
 			jContentPane
 					.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		}
-
 		/*
 		 * Permet de placer les elements dans la fenetre d'affichage; autorise
 		 * le redimensionnement de la fenetre tout en gardant une place

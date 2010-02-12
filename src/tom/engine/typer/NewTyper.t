@@ -111,6 +111,13 @@ public class NewTyper extends TomGenericPlugin {
  
       Code typedCode = null;
       try {
+        newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+
+        updateSymbolTable();
+
+        //DEBUG System.out.println("\nSymbolTable before type inference = \n");
+        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
+
         /**
           * Typing variables whose types are unknown with fresh type variables before
           * start inference
@@ -121,9 +128,9 @@ public class NewTyper extends TomGenericPlugin {
           * Start by typing variables with fresh type variables
           * Perform type inference over patterns 
           */
-        System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
+        //DEBUG System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
         Code inferredTypeForCode = newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
-        System.out.println("Code after inference = \n" + inferredTypeForCode);
+        //DEBUGSystem.out.println("Code after inference = \n" + inferredTypeForCode);
         
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
           * desugarer phase before perform type inference 
@@ -136,17 +143,23 @@ public class NewTyper extends TomGenericPlugin {
 
         // Update type information for codomain in symbol table
         typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferredTypeForCode);
-        System.out.println("Code after updateCodomain = \n" + typedCode);
+        //DEBUG System.out.println("Code after updateCodomain = \n" + typedCode);
 
         /** 
          * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
          */
+        //TODO typeString
+        
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
-        System.out.println("Code after typeBQAppl = \n" + typedCode);
+        System.out.println("\nCode after type inference = \n" + typedCode);
+
+        //DEBUG System.out.println("\nSymbolTable after type inference = \n");
+        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
 
         //Propagate type information for all variables with same name
         //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
-        setWorkingTerm(typedCode); 
+        setWorkingTerm(typedCode);
+        //getStreamManager().setSymbolTable(newKernelTyper.getSymbolTable());
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
@@ -172,6 +185,17 @@ public class NewTyper extends TomGenericPlugin {
   /*
    * Type unknown types with fresh type variables 
    */
+  private TomTerm collectKnownTypes(TomTerm subject) {
+    try {
+      return `TopDownIdStopOnSuccess(collectKnownTypes(this)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
+    }
+  }
+
+  /*
+   * Type unknown types with fresh type variables 
+   */
   private Code collectKnownTypes(Code subject) {
     try {
       return `TopDownIdStopOnSuccess(collectKnownTypes(this)).visitLight(subject);
@@ -182,7 +206,7 @@ public class NewTyper extends TomGenericPlugin {
 
   %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
     visit TomType {
-      type@Type(typeName,javaType@EmptyType()) -> {
+      Type(typeName,javaType@EmptyType()) -> {
         //DEBUG System.out.println("in NewTyper, the type to get javaClassType = " + `type);
         // "getType" gets the java type class refered by tomType
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
@@ -199,6 +223,30 @@ public class NewTyper extends TomGenericPlugin {
         //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
         return javaClassType;
       }
+    }
+  }
+
+  /**
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - each Type(_,EmptyType()) is replaced by Type(_,TypeVar(i))
+   */
+  private void updateSymbolTable() {
+    SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    Iterator<String> it = symbolTable.keySymbolIterator();
+
+    while(it.hasNext()) {
+      String tomName = it.next();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      try {
+        tomSymbol = collectKnownTypes(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
+      } catch(tom.library.sl.VisitFailure e) {
+        System.out.println("should not be there");
+      }
+      //System.out.println("symbol = " + tomSymbol);
+      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 

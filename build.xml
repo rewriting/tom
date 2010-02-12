@@ -1605,6 +1605,7 @@
     <findbugs home="${findbugs.home}"
       jvmargs="-Xmx256m"
       output="html"
+      stylesheet="fancy-hist.xsl"
       outputFile="tom-fb.html" >
       <auxClasspath refid="src.dist.classpath" />
       <sourcePath path="${src.src}" />

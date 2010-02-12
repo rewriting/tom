@@ -1,6 +1,24 @@
 package java3D;
 
+/*
+ * Repere class.
+ * 
+ * Copyright (C) 2009-2010 Thomas Boudin (Thomas.Boudin at mines.inpl-nancy.fr)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * To have a copy of the GNU General Public License, please see <http://www.gnu.org/licenses/>.
+ */
+
 import projet.Noeud;
+import tom.Sequent;
 import fenetre.Interface;
 
 import java.applet.Applet;
@@ -52,6 +70,8 @@ public class Repere extends Applet {
 
 	private TreeSet<Point> listePointsTotal = new TreeSet<Point>();
 
+	private Sequent sequent;
+
 	private int niveauMax = 1;
 
 	public Repere() {
@@ -67,6 +87,10 @@ public class Repere extends Applet {
 
 	public TreeSet<Point> getListePoints() {
 		return listePoints;
+	}
+
+	public TreeSet<Point> getListePointsTotal() {
+		return listePointsTotal;
 	}
 
 	public void addListeNoeud(Noeud n) {
@@ -91,6 +115,14 @@ public class Repere extends Applet {
 
 	public void setNiveauMax() {
 		niveauMax++;
+	}
+
+	public void setSequent(Sequent s) {
+		sequent = s;
+	}
+
+	public Sequent getSequent() {
+		return sequent;
 	}
 
 	public void setListePoints(TreeSet<Point> liste) {
@@ -135,7 +167,7 @@ public class Repere extends Applet {
 		axisZ.setUserData("axeZ");
 		/*
 		 * Creation du groupe de transformation a partir de l'objet
-		 * SimpleUniverse On recupere en fait la position de la camera qui sera
+		 * SimpleUniverse. On recupere en fait la position de la camera qui sera
 		 * modifiee a la souris grace au TransformGroup tg
 		 */
 		TransformGroup tg = su.getViewingPlatform().getViewPlatformTransform();
@@ -236,12 +268,21 @@ public class Repere extends Applet {
 	}
 
 	public void dessinerCourbe(Noeud n1, Noeud n2) {
+		/*
+		 * Creation du lien entre deux formules d'un couple
+		 */
 		if (n1 != n2) {
+			/*
+			 * Cas general
+			 */
 			Noeud pointIntermediaire = new Noeud((n1.getX() + n2.getX()) / 2,
 					(float) (n1.getY() + 1), (n1.getZ() + n2.getZ()) / 2);
 			dessinerSegment(n1, pointIntermediaire, true);
 			dessinerSegment(n2, pointIntermediaire, true);
 		} else {
+			/*
+			 * Cas d'une formule TRUE
+			 */
 			Noeud pointIntermediaire1 = new Noeud((float) (n1.getX() - (0.25)),
 					(float) (n1.getY() + 1), n1.getZ());
 			Noeud pointIntermediaire2 = new Noeud((float) (n1.getX() + (0.25)),
@@ -276,7 +317,6 @@ public class Repere extends Applet {
 		dessinerSegment(n, n1, false);
 		dessinerSegment(n, n2, false);
 		dessinerSegment(n1, n2, false);
-
 		/*
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
 		 * engendree par le "OR"
@@ -293,7 +333,6 @@ public class Repere extends Applet {
 
 		parent.addChild(shape);
 		parent.addChild(shape2);
-
 		/*
 		 * Mise a jour des donnees generales
 		 */
@@ -302,7 +341,6 @@ public class Repere extends Applet {
 		}
 		listeNoeud.add(n1);
 		listeNoeud.add(n2);
-
 		/*
 		 * On renvoie les points crees pour continuer l'algorithme
 		 */
@@ -332,7 +370,6 @@ public class Repere extends Applet {
 		dessinerSegment(n, n1, false);
 		dessinerSegment(n, n2, false);
 		dessinerSegment(n1, n2, false);
-
 		/*
 		 * Creation d'un double triangle (deux faces) pour colorier la structure
 		 * engendree par le "AND"
@@ -349,7 +386,6 @@ public class Repere extends Applet {
 
 		parent.addChild(shape);
 		parent.addChild(shape2);
-
 		/*
 		 * Mise a jour des donnees generales
 		 */
@@ -362,7 +398,6 @@ public class Repere extends Applet {
 		}
 		listeNoeud.add(n1);
 		listeNoeud.add(n2);
-
 		/*
 		 * On renvoie les points crees pour continuer l'algorithme
 		 */
@@ -382,7 +417,6 @@ public class Repere extends Applet {
 						.getPosition(), k);
 		dessinerPoint(n1, k);
 		dessinerSegment(n, n1, false);
-
 		/*
 		 * Mise a jour des donnees generales
 		 */
@@ -391,7 +425,6 @@ public class Repere extends Applet {
 		}
 		n1.setFormule(n.getFormule());
 		listeNoeud.add(n1);
-
 		/*
 		 * On renvoie les points crees pour continuer l'algorithme
 		 */
@@ -400,6 +433,7 @@ public class Repere extends Applet {
 		return liste;
 	}
 
+	@SuppressWarnings( { "static-access", "static-access" })
 	public void dessiner(Repere repere) {
 		/*
 		 * Dessine la fenêtre 3D avec les objets qui vont avec
@@ -447,6 +481,9 @@ public class Repere extends Applet {
 
 	@SuppressWarnings("static-access")
 	public void effacerCouple() {
+		/*
+		 * Supprime les couples et les liens entre ceux-ci
+		 */
 		temp = new BranchGroup();
 		temp.setCapability(temp.ALLOW_DETACH);
 		temp.compile();
@@ -475,6 +512,10 @@ public class Repere extends Applet {
 	}
 
 	public void actualiserPoints() {
+		/*
+		 * Actualise la couleur des points que se soit pour See Sequent ou bien
+		 * pour les couples
+		 */
 		for (Point p : listePointsTotal) {
 			if (!p.getUserData().startsWith("neutre")
 					&& (p.getUserData().equals(Interface.getNumeroNode() + "") || Interface
