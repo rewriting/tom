@@ -448,7 +448,7 @@ public class KernelTyper {
         newSubjectType = kernelTyper.typeVariable(contextType,newSubjectType);
         newSubject = kernelTyper.typeVariable(newSubjectType, newSubject);                  
         TomTerm newPattern = kernelTyper.typeVariable(newSubjectType, `pattern);
-        TomBase.collectVariable(lhsVariable,newPattern);
+        TomBase.collectVariable(lhsVariable,newPattern,false);
         return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
 

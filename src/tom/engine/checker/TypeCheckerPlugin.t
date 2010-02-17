@@ -164,7 +164,7 @@ public class TypeCheckerPlugin extends CheckerPlugin {
 
         // collect variables
         ArrayList<TomTerm> variableList = new ArrayList<TomTerm>();
-        TomBase.collectVariable(variableList, `constraint);
+        TomBase.collectVariable(variableList, `constraint, false); 
         verifyVariableTypeListCoherence(variableList);        
 
         // TODO: check in the action that a VariableStar is under the right symbol

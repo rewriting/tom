@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
 import tom.engine.adt.tomconstraint.types.*;
 import java.util.*;
+
 import tom.engine.tools.ASTFactory;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.platform.OptionParser;
@@ -432,21 +433,31 @@ public class Compiler extends TomGenericPlugin {
 
     visit Instruction {
       CompiledPattern(patternList,instruction) -> {
-        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
+        // only variables found in LHS that are not already used in some constraint's RHS 
+        // have to be renamed (this avoids that the JAVA ones are renamed)
         Collection newContext = new HashSet();
-        `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
+        Collection rhsContext = new HashSet();
+        `TopDownCollect(CollectLHSVars(newContext,rhsContext)).visitLight(`patternList);        
         newContext.addAll(context);
         return `TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
       }
     }  
   }  
 
-  %strategy CollectLHSVars(Collection bag) extends Identity() {
+  %strategy CollectLHSVars(Collection bag, Collection alreadyInRhs) extends Identity() {
     visit Constraint {
-      MatchConstraint(p,_) -> {        
+      MatchConstraint(p,s) -> {          
+        
+        Map rhsMap = TomBase.collectMultiplicity(`s);
+        alreadyInRhs.addAll(rhsMap.keySet());
+        
         Map map = TomBase.collectMultiplicity(`p);
         Collection newContext = new HashSet(map.keySet());
-        bag.addAll(newContext);
+        for (Object o:newContext) {
+          if (!alreadyInRhs.contains(o)) {
+            bag.add(o);       
+          }
+        }        
         throw new VisitFailure();// to stop the top-down
       }
     }
