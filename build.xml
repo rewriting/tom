@@ -638,13 +638,13 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
       <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${stable.dist}/lib/tom-compiler-full.jar">
+    </jar>
+    <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
@@ -834,13 +834,13 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${src.dist}/lib/tom-runtime-full.jar">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
       <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${src.dist}/lib/tom-compiler-full.jar">
+    </jar>
+    <jar jarfile="${src.dist}/lib/tom-compiler-full.jar">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
