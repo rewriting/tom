@@ -153,7 +153,8 @@ public class NewKernelTyper {
       (BQVariable|BQVariableStar)[AstType=type] -> {
         return `type;
       }
-      BQAppl[AstName=Name(name)] -> {
+      // Which constructors of BQTerm we need to treat?? 
+      (BQAppl|BuildConstant)[AstName=Name(name)] -> {
         if(`name.equals("")) {
           // Maybe we need to discover the symbol using the context type
           // information (i.e. the type of subject)
@@ -175,7 +176,13 @@ public class NewKernelTyper {
   }
 
   protected void addConstraint(TypeConstraint constraint) {
-    typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
+    %match {
+      !concTypeConstraint(_*,tConstraint,_*) << typeConstraints &&
+      tConstraint << TypeConstraint constraint -> {
+        typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
+      }
+    }
+    // typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
   }
 
   protected void addTomTerm(TomTerm term) {
@@ -480,6 +487,7 @@ public class NewKernelTyper {
     visit Constraint {
       constraint -> {
         //DEBUG System.out.println("\n Test pour inferConstraint in MatchConstraint -- ligne 1.");
+        //DEBUG System.out.println("constraint = " + `constraint);
         //DEBUG System.out.println("varPatternList = " + `nkt.varPatternList);
         //DEBUG System.out.println("varList = " + `nkt.varList);
         %match {
@@ -519,15 +527,15 @@ public class NewKernelTyper {
             nkt.inferBQTerm(`subject,freshType2);
           }
 
-          NumericConstraint(left,right,_) << constraint &&
-          concBQTerm(_*,left,_*) << nkt.varList &&
-          concBQTerm(_*,right,_*) << nkt.varList -> {
+          NumericConstraint(left,right,_) << constraint -> {
             TomType freshType1 = nkt.getUnknownFreshTypeVar();
             TomType freshType2 = nkt.getUnknownFreshTypeVar();
             // It will be useful for subtyping
             // TomType freshType3 = nkt.getUnknownFreshTypeVar();
             nkt.addConstraint(`Equation(freshType1,nkt.getType(left)));
+            //DEBUG System.out.println("inferConstraint l1 - typeConstraints = " + nkt.typeConstraints);
             nkt.addConstraint(`Equation(freshType2,nkt.getType(right)));
+            //DEBUG System.out.println("inferConstraint l2 - typeConstraints = " + nkt.typeConstraints);
             nkt.addConstraint(`Equation(freshType1,freshType2));
             nkt.inferBQTerm(`left,freshType1);
             nkt.inferBQTerm(`right,freshType2);
@@ -548,8 +556,14 @@ public class NewKernelTyper {
        * IF found "x:A" and "x:T" already exists in SymbolTable 
        * THEN add a type constraint "A = T"
        */
-      (Variable|VariableStar)[AstType=type] -> {
+      (Variable|VariableStar)[AstType=type,Constraints=constraintList] -> {
         addConstraint(`Equation(type,freshType));  
+        %match(constraintList) {
+          // How many "AliasTo" constructors can concConstraint have?
+          concConstraint(AliasTo(term)) -> { addConstraint(`Equation(getType(term),freshType)); }
+        }
+
+
       }
 
       /**
@@ -585,11 +599,17 @@ public class NewKernelTyper {
        */
       //TODO Extends this case to TermAppl and XMLAppl
       //(TermAppl|RecordAppl|XMLAppl)[NameList=(Name(tomName),_*),Slots=slotList] -> {
-      RecordAppl[NameList=concTomName(Name(tomName),_*),Slots=slotList] -> {
+      RecordAppl[NameList=concTomName(Name(tomName),_*),Slots=slotList,Constraints=constraintList] -> {
         // Do we need to test if the nameList is equal to ""???
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomName = " + `tomName);
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomSymbol = " + tomSymbol);
+  
+        %match(constraintList) {
+          // How many "AliasTo" constructors can concConstraint have?
+          concConstraint(AliasTo(term)) -> { addConstraint(`Equation(getType(term),freshType)); }
+        }
+
         if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
           TomType codomain = getSymbolCodomain(tomSymbol);
           addConstraint(`Equation(codomain,freshType));
@@ -608,7 +628,7 @@ public class NewKernelTyper {
       }
 
       BQAppl[AstName=Name(tomName),Args=bqTList] -> {
-        // Do we need to test if the nameList is equal to ""???
+        //TODO Do we need to test if the nameList is equal to ""???
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
         if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
           TomType codomain = getSymbolCodomain(tomSymbol);
