@@ -63,7 +63,8 @@ TOM_LIB="${@TOM_HOME@}/lib"
 TOM_JAR="${TOM_LIB}/tom-compiler-full.jar:${TOM_LIB}/tom-runtime-full.jar"
 JAVACMD=java$JAVA_ARGS
 
-if [ -z "$LOCALCLASSPATH" ] ; then
+if [ -z "$LOCALCLASSPATH" ]
+then
   LOCALCLASSPATH=$TOM_JAR
 else
   LOCALCLASSPATH=$TOM_JAR:$LOCALCLASSPATH
