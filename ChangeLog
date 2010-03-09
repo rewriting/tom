@@ -1600,7 +1600,8 @@
 2001-03-07  Pierre-Etienne Moreau  <moreau@loria.fr>
 
 
-  * src/jtom/compiler/TomCompiler.t: generation of access and building functions
+  * src/jtom/compiler/TomCompiler.t: generation of access and building
+  functions
   - GET_HEAD, GET_TAIL, IS_EMPTY, MAKE_EMPTY, MAKE_ADD
   - the parsing of list-pattern is not yet implemented
 
