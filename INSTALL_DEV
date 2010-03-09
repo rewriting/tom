@@ -62,7 +62,7 @@ to do:
     or the src/dist directory. Using stable/dist is the safest option. If you
     use src/dist, the 'tom' command will be equivalent to the 'tom.src'
     command, and the source version will always be used. (If you do not set
-    TOM_HOME, stable/dist will be the default).
+    TOM_HOME, stable/dist will be the default for tom).
   - Optionally, set the JAVA_HOME environment variable.
     This should be set to the directory where your JDK is installed.
   - To run the examples, we also suggest you to define a TOM_LIB variable
