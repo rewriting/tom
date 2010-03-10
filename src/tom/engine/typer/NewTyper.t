@@ -129,7 +129,7 @@ public class NewTyper extends TomGenericPlugin {
           * Perform type inference over patterns 
           */
         //DEBUG System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
-        Code inferredTypeForCode = newKernelTyper.inferTypeCode(typedCodeWithTypeVariables);
+        Code inferredTypeForCode = newKernelTyper.inferCode(typedCodeWithTypeVariables);
         //DEBUGSystem.out.println("Code after inference = \n" + inferredTypeForCode);
         
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
