@@ -95,7 +95,7 @@ public class NewKernelTyper {
   }
 
   protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
-    return TomBase.getSymbolFromTerm(bqTerm, getSymbolTable());
+    return TomBase.getSymbolFromTerm(bqTerm,getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
@@ -108,7 +108,7 @@ public class NewKernelTyper {
         return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
       }
     }
-    return TomBase.getSymbolFromType(type, getSymbolTable()); 
+    return TomBase.getSymbolFromType(type,getSymbolTable()); 
   }
 
   protected TomType getType(TomTerm term) {
@@ -125,9 +125,7 @@ public class NewKernelTyper {
         TomSymbol tomSymbol = getSymbolFromName(`name);
         return getSymbolCodomain(tomSymbol);
       }
-      AntiTerm(atomicTerm) -> {
-        return getType(`atomicTerm);
-      }
+      AntiTerm(atomicTerm) -> { return getType(`atomicTerm); }
     } 
     throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
@@ -176,8 +174,10 @@ public class NewKernelTyper {
     varList = `concBQTerm(term,varList*);
   }
 
-  //Before resetting varPatternList, we need to check if varList contains
-  //a corresponding BQTerm, and also remove it from varList
+  /**
+   * Empties varPatternList after checking if varList contains
+   * a corresponding BQTerm in order to remove it from varList too
+   */
   protected void resetVarPatternList() {
     for(TomTerm tomTerm: varPatternList.getCollectionconcTomTerm()) {
       %match(tomTerm,varList) {
@@ -190,10 +190,10 @@ public class NewKernelTyper {
     varPatternList = `concTomTerm();
   }
 
-  protected void initBQTerm() {
-    varList = `concBQTerm();
-  }
-
+  /**
+   * Empties all global lists and hashMaps which means to
+   * empty varPatternList, varList, typeConstraints and substitutions
+   */
   private void init() {
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
@@ -201,6 +201,21 @@ public class NewKernelTyper {
     substitutions = new HashMap<TomType,TomType>();
   }
 
+  /**
+   * Starts inference proccess which takes one %match
+   * instruction ("InstructionToCode(Match(...))") at a time
+   * <ul>
+   *  <li> each "constraintInstructionList" corresponds to a pair [condition,action]
+   *  <li> each pair is traversed in order to generate type constraints
+   *  <li> the type constraints of "typeConstraints" list are solved at the end
+   *        of the current %match instruction generating a mapping (a set of
+   *        substitutions for each type variable)
+   *  <li> the mapping is applied over the whole %match instruction
+   *  <li> all lists and hashMaps are reset
+   * </ul>
+   * @param code  the tom code to be type inferred
+   * @return      the tom typed code 
+   */
   public Code inferCode(Code code) {
     init();
     //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
@@ -236,7 +251,6 @@ public class NewKernelTyper {
                     `headCodeList);
               } 
             }
-
           }
           codeResult = `concCode(codeResult*,headCodeList);
         }
