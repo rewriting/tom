@@ -175,8 +175,9 @@ public class NewKernelTyper {
   }
 
   /**
-   * Empties varPatternList after checking if varList contains
-   * a corresponding BQTerm in order to remove it from varList too
+   * The method <code>resetVarPatternList</code> empties varPatternList after
+   * checking if <code>varList</code> contains
+   * a corresponding BQTerm in order to remove it from <code>varList</code. too
    */
   protected void resetVarPatternList() {
     for(TomTerm tomTerm: varPatternList.getCollectionconcTomTerm()) {
@@ -191,8 +192,9 @@ public class NewKernelTyper {
   }
 
   /**
-   * Empties all global lists and hashMaps which means to
-   * empty varPatternList, varList, typeConstraints and substitutions
+   * The method <code>init</code> empties all global lists and hashMaps which means to
+   * empty <code>varPatternList</code>, <code>varList</code>,
+   * <code>typeConstraints</code> and <code>substitutions</code>
    */
   private void init() {
     varPatternList = `concTomTerm();
@@ -202,19 +204,20 @@ public class NewKernelTyper {
   }
 
   /**
-   * Starts inference proccess which takes one %match
-   * instruction ("InstructionToCode(Match(...))") at a time
+   * The method <code>inferCode</code> starts inference process which takes one
+   * <code>%match</code> instruction ("InstructionToCode(Match(...))") at a time
    * <ul>
-   *  <li> each "constraintInstructionList" corresponds to a pair [condition,action]
+   *  <li> each "constraintInstructionList" element corresponds to a pair
+   *  "condition -> action"
    *  <li> each pair is traversed in order to generate type constraints
    *  <li> the type constraints of "typeConstraints" list are solved at the end
-   *        of the current %match instruction generating a mapping (a set of
+   *        of the current <code>%match</code> instruction generating a mapping (a set of
    *        substitutions for each type variable)
-   *  <li> the mapping is applied over the whole %match instruction
+   *  <li> the mapping is applied over the whole <code>%match</code> instruction
    *  <li> all lists and hashMaps are reset
    * </ul>
    * @param code  the tom code to be type inferred
-   * @return      the tom typed code 
+   * @return      the tom typed code
    */
   public Code inferCode(Code code) {
     init();
@@ -261,9 +264,26 @@ public class NewKernelTyper {
     return code;
   }
 
-  private void inferConstraintInstructionList(ConstraintInstructionList cilist) {
+  /**
+   * The method <code>inferConstraintInstructionList</code> applies rule CT-RULE
+   * to a pair "condition -> action" in order to collect all variables occurring
+   * in the condition and put them into <code>varPatternList</code> (for those
+   * variables occurring in match constraints) and <code>varList</code> (for
+   * those variables occurring in numeric constraints) to be able to handle non-linearity.
+   * The condition (left-hand side) is traversed and then the action (right-hand
+   * side) is traversed in order to generate type constraints.
+   * <p>
+   * CT-RULE rule:
+   * IF found "cond --> (e1,...,en)" where "ei" are backquote terms composing
+   * the action
+   * THEN infers types of condition (by calling <code>inferConstraint</code>
+   * method) and action (by calling <code>inferConstraintList</code> for each
+   * match constraint occurring in the action) 
+   * @param ciList  the pair "condition -> action" to be type inferred 
+   */
+  private void inferConstraintInstructionList(ConstraintInstructionList ciList) {
     //DEBUG System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
-    %match(cilist) {
+    %match(ciList) {
       concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,_),tailCIList*) -> {
         try {
           //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
@@ -303,6 +323,25 @@ public class NewKernelTyper {
     }
   }
 
+  /**
+   * The class <code>CollectVars</code> is generated from a strategy which
+   * search for variables occurring in a condition:
+   * <ul>
+   * <li> variables of type "TomTerm" are adedd to the <code>varPatternList</code> (for those
+   * variables occurring in match constraints) if they have not yet been added
+   * there; otherwise, a type constraint is added to
+   * <code>typeConstraints</code> to ensure that both variables have same type
+   * (this happens in case of non-linearity)
+   * <li> variables of type "BQTerm" are added to the <code>varList</code> (for
+   * those variables occurring in numeric constraints) if they have been added
+   * neither in <code>varPatternList</code> nor <code>varList</code> (since a
+   * BQVariable/BQVariableStar can have occurred in a previous match constraint
+   * as a Variable/VariableStar, in the case of a composed condition);
+   * otherwise, a type constraint is added to
+   * <code>typeConstraints</code> to ensure that both variables have same type
+   * (this happens in case of non-linearity)
+   * </ul>
+   */
   %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
       var -> {
@@ -379,7 +418,32 @@ public class NewKernelTyper {
       }
     }
   }
-  
+
+  /**
+   * The method <code>inferConstraint</code> applies rule CT-MATCH, CT-EQ, CT-CONJ,
+   * or CT-DISJ to a "condition" in order to infer its type.
+   * <p>
+   * CT-MATCH rule:
+   * IF found "e1 << [T] e2"
+   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
+   * "Ti" is a fresh type variable generated to "ei"
+   * <p>
+   * CT-EQ rule:
+   * IF found "e1 == e2", "e1 <= e2", "e1 < e2", "e1 >= e2" or "e1 > e2"
+   * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
+   * "Ti" is a fresh type variable generated to "ei"  
+   * <p>
+   * CT-CONJ rule:
+   * IF found "cond1 && cond2"
+   * THEN infers type of cond1 and cond2 (by calling
+   * <code>inferConstraint</code> for each condition)
+   * <p>
+   * CT-DISJ rule:
+   * IF found "cond1 || cond2"
+   * THEN infers type of cond1 and cond2 (by calling
+   * <code>inferConstraint</code> for each condition)
+   * @param constraint the "condition" to be type inferred 
+   */
   private void inferConstraint(Constraint constraint) {
     %match(constraint) {
       MatchConstraint(pattern,subject) -> { 
