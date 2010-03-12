@@ -527,7 +527,8 @@ public class NewKernelTyper {
    * Equals to CT-MERGE but with a star variable "x*" instead of "e"
    * This rule is necessary because it differed from CT-MERGE in the
    * sense of the type of the last argument ("x*" here) is unknown 
-   * @param constraint the "condition" to be type inferred 
+   * @param term      the TomTerm to be inferred
+   * @param freshType the fresh generated previously and attributed to the TomTerm
    */
   private void inferTomTerm(TomTerm term, TomType freshType) {
     //DEBUG System.out.println("\n Test pour inferTomTerm. Term = " + term);
