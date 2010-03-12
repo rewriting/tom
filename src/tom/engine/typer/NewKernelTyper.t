@@ -424,22 +424,18 @@ public class NewKernelTyper {
    * or CT-DISJ to a "condition" in order to infer its type.
    * <p>
    * CT-MATCH rule:
-   * IF found "e1 << [T] e2"
+   * IF found "e1 << [T] e2" 
    * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
-   * "Ti" is a fresh type variable generated to "ei"
+   * "Ti" is a fresh type variable generated to "ei" (by
+   * <code>inferBQTerm</code>, a type constraint "T = T2" will be added)
    * <p>
    * CT-EQ rule:
    * IF found "e1 == e2", "e1 <= e2", "e1 < e2", "e1 >= e2" or "e1 > e2"
    * THEN infers type of e1 and e2 and add a type constraint "T1 = T2", where
    * "Ti" is a fresh type variable generated to "ei"  
    * <p>
-   * CT-CONJ rule:
-   * IF found "cond1 && cond2"
-   * THEN infers type of cond1 and cond2 (by calling
-   * <code>inferConstraint</code> for each condition)
-   * <p>
-   * CT-DISJ rule:
-   * IF found "cond1 || cond2"
+   * CT-CONJ rule (resp. CT-DISJ):
+   * IF found "cond1 && cond2" (resp. "cond1 || cond2")
    * THEN infers type of cond1 and cond2 (by calling
    * <code>inferConstraint</code> for each condition)
    * @param constraint the "condition" to be type inferred 
@@ -447,6 +443,7 @@ public class NewKernelTyper {
   private void inferConstraint(Constraint constraint) {
     %match(constraint) {
       MatchConstraint(pattern,subject) -> { 
+        System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType freshType1 = getUnknownFreshTypeVar();
         TomType freshType2 = getUnknownFreshTypeVar();
         addConstraint(`Equation(freshType1,getType(pattern)));
@@ -488,58 +485,63 @@ public class NewKernelTyper {
     }
   }
 
+  /**
+   * The method <code>inferTomTerm</code> applies rule CT-ANTI, CT-VAR, CT-SVAR, CT-FUN,
+   * CT-EMPTY, CT-ELEM, CT-MERGE or CT-STAR to a "pattern" (a TomTerm) in order
+   * to infer its type.
+   * <p>
+   * CT-ANTI rule:
+   * IF found "!(e):A"
+   * THEN infers type of e
+   * <p>
+   * CT-VAR rule (resp. CT-SVAR): 
+   * IF found "x:A" (resp. "x*:A") and "x:T" (resp. "x*:T") already exists in SymbolTable 
+   * THEN add a type constraint "A = T"
+   * <p>
+   * CT-FUN rule:
+   * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
+   * THEN infers type of arguments and add a type constraint "A = T" and
+   *      calls the TypeVariableList method which adds a type constraint "Ai =
+   *      Ti" for each argument, where Ai is a fresh type variable
+   * <p>
+   * CT-EMPTY rule:
+   * IF found "l():AA" and "l:T*->TT" exists in SymbolTable
+   * THEN add a type constraint "AA = TT"       
+   * <p>
+   * CT-ELEM rule:
+   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * THEN infers type of both sublist "l(e1,...,en)" and last argument
+   *      "e" and adds a type constraint "AA = TT" and calls the
+   *      TypeVariableList method which adds a type constraint "A =T"
+   *      for the last argument, where A is a fresh type variable and
+   *      "e" does not represent a list with head symbol "l"
+   * <p>
+   * CT-MERGE rule:
+   * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+   * THEN infers type of both sublist "l(e1,...,en)" and last argument
+   *      "e" and adds a type constraint "AA = TT" and calls the
+   *      TypeVariableList method, where "e" represents a list with
+   *      head symbol "l"
+   * <p>
+   * CT-STAR rule:
+   * Equals to CT-MERGE but with a star variable "x*" instead of "e"
+   * This rule is necessary because it differed from CT-MERGE in the
+   * sense of the type of the last argument ("x*" here) is unknown 
+   * @param constraint the "condition" to be type inferred 
+   */
   private void inferTomTerm(TomTerm term, TomType freshType) {
     //DEBUG System.out.println("\n Test pour inferTomTerm. Term = " + term);
     %match(term) {
       AntiTerm(atomicTerm) -> { inferTomTerm(`atomicTerm,freshType); }
 
-      /**
-       * Type a variable
-       * CT-VAR rule: 
-       * IF found "x:A" and "x:T" already exists in SymbolTable 
-       * THEN add a type constraint "A = T"
-       */
       (Variable|VariableStar)[AstType=type,Constraints=constraintList] -> {
         addConstraint(`Equation(type,freshType));  
         %match(constraintList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(term)) -> { addConstraint(`Equation(getType(term),freshType)); }
         }
-
-
       }
 
-      /**
-       * CT-FUN rule:
-       * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-       * THEN infers type of arguments and add a type constraint "A = T" and
-       *      calls the TypeVariableList method which adds a type constraint "Ai =
-       *      Ti" for each argument, where Ai is a fresh type variable
-       *
-       * CT-EMPTY rule:
-       * IF found "l():AA" and "l:T*->TT" exists in SymbolTable
-       * THEN add a type constraint "AA = TT"       
-       *
-       * CT-ELEM rule:
-       * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-       * THEN infers type of both sublist "l(e1,...,en)" and last argument
-       *      "e" and adds a type constraint "AA = TT" and calls the
-       *      TypeVariableList method which adds a type constraint "A =T"
-       *      for the last argument, where A is a fresh type variable and
-       *      "e" does not represent a list with head symbol "l"
-       *
-       * CT-MERGE rule:
-       * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-       * THEN infers type of both sublist "l(e1,...,en)" and last argument
-       *      "e" and adds a type constraint "AA = TT" and calls the
-       *      TypeVariableList method, where "e" represents a list with
-       *      head symbol "l"
-       *
-       * CT-STAR rule:
-       * Equals to CT-MERGE but with a star variable "x*" instead of "e"
-       * This rule is necessary because it differed from CT-MERGE in the
-       * sense of the type of the last argument ("x*" here) is unknown 
-       */
       //TODO Extends this case to TermAppl and XMLAppl
       //(TermAppl|RecordAppl|XMLAppl)[NameList=(Name(tomName),_*),Slots=slotList] -> {
       RecordAppl[NameList=concTomName(Name(tomName),_*),Slots=slotList,Constraints=constraintList] -> {
