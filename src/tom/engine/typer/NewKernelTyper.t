@@ -305,6 +305,7 @@ public class NewKernelTyper {
                     inferConstraintInstructionList(`constraintInstructionList);
                     //DEBUG printGeneratedConstraints(typeConstraints);
                   }
+                  //TODO : add case for java methods or bqvariables or bqapp 
                 }
               }  
             }
