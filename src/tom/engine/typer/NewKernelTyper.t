@@ -225,15 +225,17 @@ public class NewKernelTyper {
     System.out.println("\n Original Code = \n" + code + '\n');
     %match(code) {
       Tom(codes@concCode(_,_*)) -> {
+        boolean flagInnerMatch = false;
         CodeList codeResult = `concCode();
         for(Code headCodeList : `codes.getCollectionconcCode()) {
           %match(headCodeList) {
             InstructionToCode(Match(constraintInstructionList,options)) -> {
               try {
+                flagInnerMatch = false;
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
                 // Generate type constraints for a %match
                 //DEBUG System.out.println("CIList avant = " + `constraintInstructionList);
-                inferConstraintInstructionList(`constraintInstructionList);
+                inferConstraintInstructionList(`constraintInstructionList,flagInnerMatch);
                 //DEBUG System.out.println("CIList après= " + result + "\n\n");
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
                 System.out.println("\n typeConstraints before solve = " + typeConstraints);
@@ -281,48 +283,59 @@ public class NewKernelTyper {
    * match constraint occurring in the action) 
    * @param ciList  the pair "condition -> action" to be type inferred 
    */
-  private void inferConstraintInstructionList(ConstraintInstructionList ciList) {
+  private void inferConstraintInstructionList(ConstraintInstructionList ciList,
+      boolean flagInnerMatch) {
     //DEBUG System.out.println("\n Test pour inferConstraintInstructionList -- ligne 1.");
     %match(ciList) {
       concConstraintInstruction(headCIList@ConstraintInstruction(constraint,action,_),tailCIList*) -> {
         try {
+          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
           //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 2.");
           // Collect variables and type them with fresh type variables
           // Rename variables of pattern that already exist in varPatternList
-          `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
           //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 3.");
           //DEBUG System.out.println("\n varPatternList = " + `varPatternList);
           //DEBUG System.out.println("\n varList = " + `varList);
           //DEBUG System.out.println("\n Constraints = " + typeConstraints);
           inferConstraint(`constraint);
-          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList dans un match -- ligne 4.");
-          %match(action) {
-            RawAction(AbstractBlock(instructions@concInstruction(_,_*))) -> {
-              for(Instruction headInstruction : `instructions.getCollectionconcInstruction()) {
-                %match(headInstruction) {
-                  Match(constraintInstructionList,_) -> {
-                    // Generate type constraints for a %match in action side
-                    inferConstraintInstructionList(`constraintInstructionList);
-                    //DEBUG printGeneratedConstraints(typeConstraints);
-                  }
-                  //TODO : add case for java methods or bqvariables or bqapp 
-                }
-              }  
-            }
+          inferAction(`action);
+          if (!flagInnerMatch) {
+            `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
+            System.out.println("\n Test pour inferConstraintInstructionList après reset.");
+            System.out.println("\n varPatternList avant = " + `varPatternList);
+            //DEBUG System.out.println("\n varList avant = " + `varList); 
+            resetVarPatternList();
+            System.out.println("\n varPatternList après = " + `varPatternList);
+            //DEBUG System.out.println("\n varList après = " + `varList);
           }
-          //DEBUG System.out.println("\n Test pour inferConstraintInstructionList après reset.");
-          //DEBUG System.out.println("\n varPatternList avant = " + `varPatternList);
-          //DEBUG System.out.println("\n varList avant = " + `varList);
-          resetVarPatternList();
-          //DEBUG System.out.println("\n varPatternList après = " + `varPatternList);
-          //DEBUG System.out.println("\n varList après = " + `varList);
-          inferConstraintInstructionList(`tailCIList);
+          inferConstraintInstructionList(`tailCIList,flagInnerMatch);
         } catch(tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("inferConstraintInstructionList: failure on " + `headCIList);
         }
       }
     }
   }
+
+  private void inferAction(Instruction action) {
+    %match(action) {
+      RawAction(AbstractBlock(instructions@concInstruction(_,_*))) -> {
+        boolean flagInnerMatch = true;
+        for(Instruction headInstruction : `instructions.getCollectionconcInstruction()) {
+          %match(headInstruction) {
+            Match(constraintInstructionList,_) -> {
+              flagInnerMatch = true; 
+              // Generate type constraints for a %match in action side
+              inferConstraintInstructionList(`constraintInstructionList,flagInnerMatch);
+              //DEBUG printGeneratedConstraints(typeConstraints);
+            }
+            //TODO : add case for java methods or bqvariables or bqapp 
+          }
+        }  
+      }
+    }
+  }
+
+
 
   /**
    * The class <code>CollectVars</code> is generated from a strategy which
@@ -444,7 +457,7 @@ public class NewKernelTyper {
   private void inferConstraint(Constraint constraint) {
     %match(constraint) {
       MatchConstraint(pattern,subject) -> { 
-        System.out.println("inferConstraint l1 -- subject = " + `subject);
+        //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType freshType1 = getUnknownFreshTypeVar();
         TomType freshType2 = getUnknownFreshTypeVar();
         addConstraint(`Equation(freshType1,getType(pattern)));
