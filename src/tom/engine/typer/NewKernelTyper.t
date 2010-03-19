@@ -136,7 +136,7 @@ public class NewKernelTyper {
         return `type;
       }
       // Which constructors of BQTerm we need to treat?? 
-      (BQAppl|BuildConstant)[AstName=Name(name)] -> {
+      (BQAppl|FunctionCall|BuildConstant)[AstName=Name(name)] -> {
         if(`name.equals("")) {
           // Maybe we need to discover the symbol using the context type
           // information (i.e. the type of subject)
@@ -587,12 +587,14 @@ public class NewKernelTyper {
         addConstraint(`Equation(type,freshType));  
       }
 
-      BQAppl[AstName=Name(tomName),Args=bqTList] -> {
+      (BQAppl|FunctionCall)[AstName=Name(tomName),Args=bqTList] -> {
         //TODO Do we need to test if the nameList is equal to ""???
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
         if (tomSymbol != `emptySymbol()) { // Do we REALLY need this test???
           TomType codomain = getSymbolCodomain(tomSymbol);
           addConstraint(`Equation(codomain,freshType));
+          System.out.println("\n---- Constraint : Equation(" + codomain + "," +
+              freshType + ")\n");
           if (!`bqTList.isEmptyconcBQTerm()) {
             inferBQTermList(`bqTList,`tomSymbol,freshType);
           }
@@ -763,10 +765,18 @@ public class NewKernelTyper {
       TypeConstraintList tcList) {
     try {
       return (TypeConstraintList)
-        //`TopDown(replaceFreshTypeVar(oldtt,newtt,this)).visitLight(tcList);
-        `TopDown(replaceFreshTypeVar(this)).visitLight(tcList);
+        `TopDown(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
+        //`TopDown(replaceFreshTypeVar(this)).visitLight(tcList);
     } catch(tom.library.sl.VisitFailure e) {
       throw new RuntimeException("applySubstitution: should not be here.");
+    }
+  }
+
+  %strategy replaceTypeConstraints(oldtt:TomType, newtt:TomType) extends Identity() {
+    visit TomType {
+      typeVar && (oldtt == typeVar) -> {
+          return newtt; 
+      }
     }
   }
 
@@ -804,9 +814,11 @@ public class NewKernelTyper {
 
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      typeVar && Type(_,TypeVar(_)) << typeVar -> {
+      typeVar && Type(tName,TypeVar(_)) << typeVar -> {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
+        } else {
+          System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
         }    
       }
     }
