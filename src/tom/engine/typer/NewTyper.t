@@ -82,7 +82,7 @@ public class NewTyper extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='newtyper' altName='nt' description='New version of Typer (working in progress)' value='false'/>" +
+    "<boolean name='newtyper' altName ='nt' description='New version of Typer (working in progress)' value='true'/>" +
     "</options>";
 
   public PlatformOptionList getDeclaredOptionList() {
@@ -123,6 +123,7 @@ public class NewTyper extends TomGenericPlugin {
           * start inference
           */
         Code typedCodeWithTypeVariables = collectKnownTypes((Code)getWorkingTerm());
+        //newKernelTyper.setSymbolTable(symbolTable());
         
         /**
           * Start by typing variables with fresh type variables
@@ -212,12 +213,14 @@ public class NewTyper extends TomGenericPlugin {
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
         TomType javaClassType = `javaType;
         if (`typeName != "unknown type") {
-          javaClassType = newTyper.symbolTable().getType(`typeName);
+          //javaClassType = newTyper.symbolTable().getType(`typeName);
+          javaClassType = newKernelTyper.getSymbolTable().getType(`typeName);
         }
         if(javaClassType == null || javaClassType == `EmptyType()) {
           // This happens when typeName = unknown type and javaClassType = null 
           javaClassType = newKernelTyper.getFreshTypeVar(); 
-          newTyper.symbolTable().putType(`typeName,javaClassType);
+          //newTyper.symbolTable().putType(`typeName,javaClassType);
+          newKernelTyper.getSymbolTable().putType(`typeName,javaClassType);
           javaClassType = `Type(typeName,javaClassType);
         }
         //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
@@ -246,7 +249,7 @@ public class NewTyper extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      //getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
@@ -303,10 +306,16 @@ public class NewTyper extends TomGenericPlugin {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
+            System.out.println("A list operator '" + `tomName + "' : " +
+                `tomSymbol + '\n');
             return ASTFactory.buildList(`name,args,newTyper.symbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
+            System.out.println("An array operator '" + `tomName + "' : " +
+                `tomSymbol + '\n');
             return ASTFactory.buildArray(`name,args,newTyper.symbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+          } else if(TomBase.isDefinedSymbol(tomSymbol) || `tomName == "realMake") {
+            System.out.println("A defined symbol '" + `tomName + "' : " +
+                `tomSymbol + '\n');
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
           } else {
             String moduleName = TomBase.getModuleName(`optionList);
