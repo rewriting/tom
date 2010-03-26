@@ -82,7 +82,7 @@ public class NewTyper extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='newtyper' altName ='nt' description='New version of Typer (working in progress)' value='true'/>" +
+    "<boolean name='newtyper' altName ='nt' description='New version of Typer (working in progress)' value='false'/>" +
     "</options>";
 
   public PlatformOptionList getDeclaredOptionList() {
@@ -95,7 +95,7 @@ public class NewTyper extends TomGenericPlugin {
   /** Constructor */
   public NewTyper() {
     super("NewTyper");
-    newKernelTyper = new NewKernelTyper();
+    newKernelTyper = new NewKernelTyper(this);
   }
 
  /**
@@ -111,7 +111,7 @@ public class NewTyper extends TomGenericPlugin {
  
       Code typedCode = null;
       try {
-        newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+        //newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
 
         updateSymbolTable();
 
@@ -213,18 +213,34 @@ public class NewTyper extends TomGenericPlugin {
         // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
         TomType javaClassType = `javaType;
         if (`typeName != "unknown type") {
-          //javaClassType = newTyper.symbolTable().getType(`typeName);
-          javaClassType = newKernelTyper.getSymbolTable().getType(`typeName);
+          javaClassType = newTyper.symbolTable().getType(`typeName);
+          //javaClassType = newKernelTyper.getSymbolTable().getType(`typeName);
         }
         if(javaClassType == null || javaClassType == `EmptyType()) {
           // This happens when typeName = unknown type and javaClassType = null 
           javaClassType = newKernelTyper.getFreshTypeVar(); 
-          //newTyper.symbolTable().putType(`typeName,javaClassType);
-          newKernelTyper.getSymbolTable().putType(`typeName,javaClassType);
+          newTyper.symbolTable().putType(`typeName,javaClassType);
+          //newKernelTyper.getSymbolTable().putType(`typeName,javaClassType);
           javaClassType = `Type(typeName,javaClassType);
         }
         //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
         return javaClassType;
+      }
+    }
+
+    visit TomSymbol {
+      Symbol[AstName=astName@Name(name),TypesToType=t@TypesToType(domain,codomain),PairNameDeclList=decl,Option=option] -> {
+        System.out.println("NT - updateSymbolTable before = " + `t);
+        TomTypeList newDomain = `concTomType();
+        //TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
+        for(TomType headDomain : `domain.getCollectionconcTomType()) {
+          newDomain = `concTomType(newDomain*,newKernelTyper.getType(headDomain));
+        }
+        TomType newCodomain = newKernelTyper.getType(`codomain);
+        TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
+        System.out.println("NT - updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
+        newTyper.symbolTable().putSymbol(`name,newTomSymbol);
+        return newTomSymbol;
       }
     }
   }
@@ -236,7 +252,8 @@ public class NewTyper extends TomGenericPlugin {
    * - each Type(_,EmptyType()) is replaced by Type(_,TypeVar(i))
    */
   private void updateSymbolTable() {
-    SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    //SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    SymbolTable symbolTable = symbolTable();
     Iterator<String> it = symbolTable.keySymbolIterator();
 
     while(it.hasNext()) {

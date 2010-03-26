@@ -63,7 +63,6 @@ public class NewKernelTyper {
     is_sort(t) { ($t instanceof NewKernelTyper) }
   }
 
-  private SymbolTable symbolTable;
   private int freshTypeVarCounter = 0;
   // List for variables of pattern (match constraints)
   private TomList varPatternList;
@@ -73,17 +72,14 @@ public class NewKernelTyper {
   private TypeConstraintList typeConstraints;
   // Set of pairs (freshVar,groundVar)
   private HashMap<TomType,TomType> substitutions;
+  private NewTyper newTyper;
 
-  public NewKernelTyper() {
-    super();
+  public NewKernelTyper(NewTyper nTyper) {
+    newTyper = nTyper;
   }
 
   public SymbolTable getSymbolTable() {
-    return this.symbolTable;
-  }
-
-  public void setSymbolTable(SymbolTable symbolTable) {
-    this.symbolTable = symbolTable;
+    return newTyper.symbolTable();
   }
 
   protected void updateSymbol(TomSymbol tomSymbol) {
@@ -98,7 +94,7 @@ public class NewKernelTyper {
         TomType newCodomain = getType(`codomain);
         TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
         System.out.println("updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
-        symbolTable.putSymbol(`name,newTomSymbol);
+        getSymbolTable().putSymbol(`name,newTomSymbol);
       }
     }
   }
@@ -116,35 +112,35 @@ public class NewKernelTyper {
   }
 
   protected TomSymbol getSymbolFromTerm(TomTerm tomTerm) {
-    return TomBase.getSymbolFromTerm(tomTerm, symbolTable);
+    return TomBase.getSymbolFromTerm(tomTerm, getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
-    return TomBase.getSymbolFromTerm(bqTerm,symbolTable);
+    return TomBase.getSymbolFromTerm(bqTerm,getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
-    return TomBase.getSymbolFromName(tomName, symbolTable);
+    return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromType(TomType type) {
     %match(type) {
       TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-        return TomBase.getSymbolFromType(`Type(tomType,tlType), symbolTable); 
+        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
       }
     }
-    return TomBase.getSymbolFromType(type,symbolTable); 
+    return TomBase.getSymbolFromType(type,getSymbolTable()); 
   }
 
   protected TomType getType(String typeName) {
-    return symbolTable.getType(typeName); 
+    return getSymbolTable().getType(typeName); 
   }
 
   protected TomType getType(TomType tomType) {
     %match(tomType) {
       Type(typeName,EmptyType()) -> {
         System.out.println("This never happens 2!! before -- " + `tomType);
-        TomType typeWithTLType = symbolTable.getType(`typeName);
+        TomType typeWithTLType = getSymbolTable().getType(`typeName);
         System.out.println("This never happens 2!! after -- " + `typeWithTLType);
         if(typeWithTLType != null) {
           //type.setTlType(typeWithTLType);
@@ -675,7 +671,7 @@ public class NewKernelTyper {
           if (tomSymbol == null) {
             tomSymbol =
               `Symbol(tomName,TypesToType(concTomType(freshType),freshType),concPairNameDecl(),oList);
-            symbolTable.putSymbol("realMake",tomSymbol);
+            getSymbolTable().putSymbol("realMake",tomSymbol);
           }
         }
 
@@ -926,7 +922,7 @@ matchL:    %match(bqTList,tomSymbol) {
 
 
   private void replaceInSymbolTable() {
-    Iterator<String> it = symbolTable.keySymbolIterator();
+    Iterator<String> it = getSymbolTable().keySymbolIterator();
     while(it.hasNext()) {
       String tomName = it.next();
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
@@ -941,7 +937,7 @@ matchL:    %match(bqTList,tomSymbol) {
       }
       //DEBUG System.out.println("replaceInSymboltable() - tomSymbol after strategy: "
       //DEBUG     + tomSymbol);
-      symbolTable.putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
@@ -950,8 +946,8 @@ matchL:    %match(bqTList,tomSymbol) {
       typeVar && Type(_,TypeVar(_)) << typeVar -> {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
-        //DEBUG } else {
-          //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+        } else {
+          System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
         }    
       }
     }
