@@ -87,20 +87,25 @@ public class NewKernelTyper {
   }
 
   protected void updateSymbol(TomSymbol tomSymbol) {
-    /*TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
-    for(TomType headDomain : domain.getCollectionconcTomType()) {
-      symbolTablegetType(headDomain);
-    }*/
-
-    // call getType("type") for each type in domain and codomain
-    // replace domain and codomain in tomSymbol and put it in symbolTable
-
-
+    %match(tomSymbol) {
+      Symbol[AstName=astName@Name(name),TypesToType=t@TypesToType(domain,codomain),PairNameDeclList=decl,Option=option] -> {
+        System.out.println("updateSymbolTable before = " + `t);
+        TomTypeList newDomain = `concTomType();
+        //TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
+        for(TomType headDomain : `domain.getCollectionconcTomType()) {
+          newDomain = `concTomType(newDomain*,getType(headDomain));
+        }
+        TomType newCodomain = getType(`codomain);
+        TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
+        System.out.println("updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
+        symbolTable.putSymbol(`name,newTomSymbol);
+      }
+    }
   }
 
 
   protected TomType getCodomain(TomSymbol tomSymbol) {
-    // TODO : verify if it is really necessary
+    System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
     return TomBase.getSymbolCodomain(tomSymbol);
     // Replace EmptyType() by FreshTypeVar() to avoid errors in
     // solveConstraints, i.e. Equation(EmptyType(),Type(TomType,TlType)
