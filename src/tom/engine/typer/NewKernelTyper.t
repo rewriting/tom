@@ -82,33 +82,15 @@ public class NewKernelTyper {
     return newTyper.symbolTable();
   }
 
-  protected void updateSymbol(TomSymbol tomSymbol) {
-    %match(tomSymbol) {
-      Symbol[AstName=astName@Name(name),TypesToType=t@TypesToType(domain,codomain),PairNameDeclList=decl,Option=option] -> {
-        System.out.println("updateSymbolTable before = " + `t);
-        TomTypeList newDomain = `concTomType();
-        //TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
-        for(TomType headDomain : `domain.getCollectionconcTomType()) {
-          newDomain = `concTomType(newDomain*,getType(headDomain));
-        }
-        TomType newCodomain = getType(`codomain);
-        TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
-        System.out.println("updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
-        getSymbolTable().putSymbol(`name,newTomSymbol);
-      }
-    }
-  }
-
-
   protected TomType getCodomain(TomSymbol tomSymbol) {
-    System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
-    return TomBase.getSymbolCodomain(tomSymbol);
+    //DEBUG System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
+    TomType type = TomBase.getSymbolCodomain(tomSymbol); 
+    if (type == `EmptyType()) {
+      `type = getUnknownFreshTypeVar(); 
+    }
+    return type;
     // Replace EmptyType() by FreshTypeVar() to avoid errors in
     // solveConstraints, i.e. Equation(EmptyType(),Type(TomType,TlType)
-    /*
-       if (type == `EmptyType()) {
-       `type = getUnknownFreshTypeVar(); 
-       }*/
   }
 
   protected TomSymbol getSymbolFromTerm(TomTerm tomTerm) {
@@ -136,20 +118,34 @@ public class NewKernelTyper {
     return getSymbolTable().getType(typeName); 
   }
 
+/*
   protected TomType getType(TomType tomType) {
     %match(tomType) {
-      Type(typeName,EmptyType()) -> {
+      Type(typeName,javaClassType@EmptyType()) -> {
         System.out.println("This never happens 2!! before -- " + `tomType);
+        // "getType" gets the java type class refered by tomType
+        // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
         TomType typeWithTLType = getSymbolTable().getType(`typeName);
         System.out.println("This never happens 2!! after -- " + `typeWithTLType);
-        if(typeWithTLType != null) {
+        %match(typeWithTLType) {
+          Type(typeName,javaClassType@!EmptyType()) -> {
+            return typeWithTLType;
+          }
+        }
+        // typeWithTLTyp == null || javaClassType == EmptyType()
+        
+
+
+        if(typeWithTLType != null && ) {
           //type.setTlType(typeWithTLType);
           return typeWithTLType;
         }
       }
+      `tomType = `Type(typeName,getFreshVar());
     }
     return tomType;
   }
+*/
 
   protected TomType getType(TomTerm term) {
     %match(term) {
@@ -618,7 +614,7 @@ public class NewKernelTyper {
         %match(constraintList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(boundTerm)) -> {
-            System.out.println("InferTomTerm -- constraint = " +
+            System.out.println("InferTomTerm 1 -- constraint = " +
                 getType(`boundTerm) + " = " + `freshType);
             addConstraint(`Equation(getType(boundTerm),freshType)); }
         }
@@ -630,13 +626,12 @@ public class NewKernelTyper {
         // Do we need to test if the nameList is equal to ""???
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomName = " + `tomName);
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
-        updateSymbol(tomSymbol);
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomSymbol = " + tomSymbol);
   
         %match(constraintList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(boundTerm)) -> {
-            System.out.println("InferTomTerm -- constraint = " +
+            System.out.println("InferTomTerm 2 -- constraint = " +
                 getType(`boundTerm) + " = " + freshType);
             addConstraint(`Equation(getType(boundTerm),freshType)); }
         }
@@ -645,7 +640,7 @@ public class NewKernelTyper {
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. codomain = " + codomain);
         //DEBUG System.out.println("inferTomTerm: " + `codomain + " = " + freshType);
         addConstraint(`Equation(codomain,freshType));
-        System.out.println("InferTomTerm -- constraint = " + codomain + " = " + freshType);
+        System.out.println("InferTomTerm 3 -- constraint = " + codomain + " = " + freshType);
         if (!`slotList.isEmptyconcSlot()) {
           inferSlotList(`slotList,`tomSymbol,freshType);
         }
@@ -678,7 +673,6 @@ public class NewKernelTyper {
       BQAppl[AstName=Name(tomName),Args=bqTList] -> {
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tomName = " + `tomName);
         TomSymbol tomSymbol = getSymbolFromName(`tomName);
-        updateSymbol(tomSymbol);
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tomSymbol= " + `tomSymbol);
         TomType codomain = getCodomain(tomSymbol);
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. codomain = " + codomain + '\n');
@@ -696,7 +690,6 @@ public class NewKernelTyper {
   private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType freshType) {
     %match(slotList,tomSymbol) {
       concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
-        TomType headDomain = getType(`headTTList);
         TomType argFreshType = freshType;
         // In case of a list
         if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
@@ -712,9 +705,9 @@ public class NewKernelTyper {
              *      "e" does not represent a list with head symbol "l"
              */
             argFreshType = getUnknownFreshTypeVar();
-            addConstraint(`Equation(argFreshType,headDomain));
+            addConstraint(`Equation(argFreshType,headTTList));
             System.out.println("InferSlotList CT-ELEM -- constraint = " + argFreshType +
-                " = " + headDomain);
+                " = " + `headTTList);
           }
           /**
            * Continuation of CT-MERGE rule (applying to premises):
@@ -744,7 +737,7 @@ public class NewKernelTyper {
            */
           for(Slot arg : `slotList.getCollectionconcSlot()) {
             argTerm = arg.getAppl();
-            argType = getType(symDomain.getHeadconcTomType());
+            argType = symDomain.getHeadconcTomType();
             argFreshType = getUnknownFreshTypeVar();
             addConstraint(`Equation(argFreshType,argType));
             System.out.println("InferSlotList CT-FUN -- constraint = " + argFreshType +
@@ -771,16 +764,15 @@ matchL:    %match(bqTList,tomSymbol) {
         }
 
       concBQTerm(term,tailBQTList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
-        TomType headDomain = getType(`headTTList);
         TomType argFreshType = freshType;
         // In case of a list
         if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
           TomSymbol argSymb = getSymbolFromTerm(`term);
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             argFreshType = getUnknownFreshTypeVar();
-            addConstraint(`Equation(argFreshType,headDomain));
+            addConstraint(`Equation(argFreshType,headTTList));
             System.out.println("InferBQTermList -- constraint = " + argFreshType +
-                " = " + headDomain);
+                " = " + `headTTList);
           }
           `inferBQTerm(term,argFreshType);
           `inferBQTermList(tailBQTList,tomSymbol,freshType);
@@ -789,7 +781,7 @@ matchL:    %match(bqTList,tomSymbol) {
           TomType argType;
           TomTypeList symDomain = `domain;
           for(BQTerm arg : `bqTList.getCollectionconcBQTerm()) {
-            argType = getType(symDomain.getHeadconcTomType());
+            argType = symDomain.getHeadconcTomType();
             argFreshType = getUnknownFreshTypeVar();
             addConstraint(`Equation(argFreshType,argType));
             System.out.println("InferBQTermList -- constraint = " + argFreshType +
@@ -805,7 +797,6 @@ matchL:    %match(bqTList,tomSymbol) {
 
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-/*
       concTypeConstraint(_*,eq@Equation(Type(_,EmptyType()),_),_*) -> {
         System.out.println("SolveConstraints -- eq = " + `eq);
       }
@@ -814,7 +805,6 @@ matchL:    %match(bqTList,tomSymbol) {
         System.out.println("SolveConstraints -- eq = " + `eq);
       }
 
-*/
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
       concTypeConstraint(_*,Equation(t1@Type(tName1,_),t2@Type(tName2@!tName1,_)),_*) &&
       (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
@@ -927,6 +917,7 @@ matchL:    %match(bqTList,tomSymbol) {
       String tomName = it.next();
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
       TomSymbol tomSymbol = getSymbolFromName(tomName);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
       //DEBUG System.out.println("replaceInSymboltable() - tomSymbol before strategy: "
       //DEBUG     + tomSymbol);
       try {
@@ -937,17 +928,17 @@ matchL:    %match(bqTList,tomSymbol) {
       }
       //DEBUG System.out.println("replaceInSymboltable() - tomSymbol after strategy: "
       //DEBUG     + tomSymbol);
-      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      typeVar && Type(_,TypeVar(_)) << typeVar -> {
+      typeVar && Type(typeName,TypeVar(_)) << typeVar -> {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
         } else {
           System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+          return `Type(typeName,EmptyType());
         }    
       }
     }
