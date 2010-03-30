@@ -144,8 +144,6 @@ public class NewTyper extends TomGenericPlugin {
 
         // Update type information for codomain in symbol table
         typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(inferredTypeForCode);
-        //System.out.println("\nCode after type inference 1 = \n" +
-        //    typedCode);
         //DEBUG System.out.println("Code after updateCodomain = \n" + typedCode);
 
         /** 
@@ -154,7 +152,7 @@ public class NewTyper extends TomGenericPlugin {
         //TODO typeString
         
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
-        System.out.println("\nCode after type inference 2 = \n" + typedCode);
+        System.out.println("\nCode after type inference = \n" + typedCode);
 
         //DEBUG System.out.println("\nSymbolTable after type inference = \n");
         //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
@@ -208,47 +206,67 @@ public class NewTyper extends TomGenericPlugin {
   }
 
   %strategy collectKnownTypes(newTyper:NewTyper) extends Identity() {
+    /*
     visit TomType {
-      type@Type(typeName,javaClassType@EmptyType()) -> {
-        // "getType" gets the java type class refered by tomType
-        // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
-        System.out.println("in NewTyper, collectKnownTypes before = " + `type);
-        TomType typeWithTLType = newTyper.symbolTable().getType(`typeName);
-        //typeWithTLType == EmptyType() or typeWithTLType = Type(_,EmptyType())
-        //or typeWithTLType == null
-        if (typeWithTLType == `EmptyType() || typeWithTLType == `type || typeWithTLType == null) {
-          `javaClassType = newKernelTyper.getFreshTypeVar();
-          typeWithTLType = `Type(typeName,javaClassType);
+      Type(typeName,javaType@EmptyType()) -> {
+        TomType newType = null;
+        if (`typeName != "unknown type") {
+          newType = newTyper.symbolTable().getType(`typeName);
         }
-        System.out.println("in NewTyper, collectKnownTypes after = " +
-            `typeWithTLType);
-        newTyper.symbolTable().putType(`typeName,typeWithTLType);
-        return typeWithTLType;
+        if (newType == null && newType == `EmptyType()) {
+          `javaType = newKernelTyper.getFreshTypeVar();
+          newType = `Type(typeName,javaType);
+          newTyper.symbolTable().putType(`typeName,newType);
+        }
+        return newType;
       }
     }
-/*
+*/
+
+
     visit TomType {
-      type@Type(typeName,javaClassType@EmptyType()) -> {
-        //DEBUG System.out.println("in NewTyper, the type to get javaClassType = " + `type);
+      Type(typeName,javaType@EmptyType()) -> {
+        //DEBUG System.out.println("in NewTyper, the type to get newType == " + `type);
         // "getType" gets the java type class refered by tomType
-        // e.g. typeName = A and javaClassType = Type("A",TLType(" test.test.types.A "))
-        TomType newType = `type;
+        // e.g. typeName = A and newType = Type("A",TLType(" test.test.types.A "))
+        TomType newType = null;
         if (`typeName != "unknown type") {
-          //System.out.println("collectKnownTypes : getType = " +
-          //    newTyper.symbolTable().getType(`typeName));
           newType = newTyper.symbolTable().getType(`typeName);
-          //javaClassType = newKernelTyper.getSymbolTable().getType(`typeName);
         }
-        if(`javaClassType == `EmptyType() || newType == null || newType == `EmptyType()) {
-          // This happens when typeName = unknown type and javaClassType = null 
-          `javaClassType = newKernelTyper.getFreshTypeVar(); 
-          newType = `Type(typeName,javaClassType);
-          System.out.println("In collectKnownTypes : newType = " + newType);
+        if(newType == null || newType == `EmptyType()) {
+          // This happens when :
+          // * typeName != unknown type AND 
+          //   (newType == null or newType == EmptyType())
+          // * typeName == unknown (consequently, newType == EmptyType())
+          newType = newKernelTyper.getFreshTypeVar(); 
+          newType = `Type(typeName,newType);
           newTyper.symbolTable().putType(`typeName,newType);
-          //newKernelTyper.getSymbolTable().putType(`typeName,javaClassType);
         }
-        //DEBUG System.out.println("in NewTyper, type to return = " + `javaClassType);
+        //DEBUG System.out.println("in NewTyper, type to return = " + `newType);
         return newType;
+      }
+/*
+      EmptyType() -> {
+        TomType type = `Type("unknown type", newKernelTyper.getFreshTypeVar());
+        newTyper.symbolTable().putType("unknown type",type);
+        return type;
+      }
+      */
+    }
+/*
+    visit TomSymbol {
+      Symbol[AstName=astName@Name(name),TypesToType=t@TypesToType(domain,codomain),PairNameDeclList=decl,Option=option] -> {
+        System.out.println("NT - updateSymbolTable before = " + `t);
+        TomTypeList newDomain = `concTomType();
+        //TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
+        for(TomType headDomain : `domain.getCollectionconcTomType()) {
+          newDomain = `concTomType(newDomain*,newKernelTyper.getType(headDomain));
+        }
+        TomType newCodomain = newKernelTyper.getType(`codomain);
+        TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
+        System.out.println("NT - updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
+        newTyper.symbolTable().putSymbol(`name,newTomSymbol);
+        return newTomSymbol;
       }
     }
     */
@@ -333,16 +351,16 @@ public class NewTyper extends TomGenericPlugin {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
-            System.out.println("A list operator '" + `tomName + "' : " +
-                `tomSymbol + '\n');
+            //DEBUG System.out.println("A list operator '" + `tomName + "' : " +
+            //DEBUG     `tomSymbol + '\n');
             return ASTFactory.buildList(`name,args,newTyper.symbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
-            System.out.println("An array operator '" + `tomName + "' : " +
-                `tomSymbol + '\n');
+            //DEBUG System.out.println("An array operator '" + `tomName + "' : " +
+            //DEBUG     `tomSymbol + '\n');
             return ASTFactory.buildArray(`name,args,newTyper.symbolTable());
           } else if(TomBase.isDefinedSymbol(tomSymbol) || `tomName == "realMake") {
-            System.out.println("A defined symbol '" + `tomName + "' : " +
-                `tomSymbol + '\n');
+            //DEBUG System.out.println("A defined symbol '" + `tomName + "' : " +
+            //DEBUG     `tomSymbol + '\n');
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
           } else {
             String moduleName = TomBase.getModuleName(`optionList);
@@ -352,7 +370,6 @@ public class NewTyper extends TomGenericPlugin {
             return `BuildTerm(name,args,moduleName);
           }
         } else {
-          //System.out.println("in typeBQAppl : bqAppl );
           return `FunctionCall(name,EmptyType(),args);
         }
       }
