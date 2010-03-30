@@ -100,8 +100,9 @@ public class FreshExpander {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@InnerMap]%);
-        } else
+        } else {
           buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
+        }
       } else {
         buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
       }
@@ -114,8 +115,9 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       String aid = st.getFullSortClassName(a);
       buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) {
         buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
+      }
     }
     return buf.toString();
   }
@@ -124,15 +126,19 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       if(st.isPatternType(sort)) {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.ExportMap<@aid@> @a@InnerMap]%);
-        } else
+        } else {
           buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
+        }
       } else {
         buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
       }
@@ -144,12 +150,16 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ExportMap<@aid@>()]%);
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) {
         buf.append(%[,new tom.library.freshgom.ExportMap<@aid@>()]%);
+      }
     }
     return buf.toString();
   }
@@ -158,15 +168,19 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       if(st.isPatternType(sort)) {
         if (st.getBoundAtoms(sort).contains(a)) {
           buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@OuterMap]%);
           buf.append(%[,tom.library.freshgom.ConvertMap<@aid@> @a@InnerMap]%);
-        } else
+        } else {
           buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
+        }
       } else {
         buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
       }
@@ -178,12 +192,16 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
-      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a))
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) {
         buf.append(%[,new tom.library.freshgom.ConvertMap<@aid@>()]%);
+      }
     }
     return buf.toString();
   }
@@ -202,8 +220,9 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(%[,@a@Map]%);
-      if(st.getBoundAtoms(sort).contains(a))
+      if(st.getBoundAtoms(sort).contains(a)) {
         buf.append(%[,@a@InnerMap]%);
+      }
     }
     return buf.toString();
   }
@@ -212,10 +231,11 @@ public class FreshExpander {
   private String alphaRecCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(st.getBoundAtoms(fromsort).contains(a))
+      if(st.getBoundAtoms(fromsort).contains(a)) {
         buf.append(%[,@a@InnerMap]%);
-      else
+      } else {
         buf.append(%[,@a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -224,10 +244,11 @@ public class FreshExpander {
   private String alphaRecCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(st.getBoundAtoms(fromsort).contains(a))
+      if(st.getBoundAtoms(fromsort).contains(a)) {
         buf.append(%[,@a@OuterMap]%);
-      else
+      } else {
         buf.append(%[,@a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -249,7 +270,9 @@ public class FreshExpander {
       if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(%[,@a@OuterMap]%);
         buf.append(%[,@a@InnerMap]%);
-      } else buf.append(%[,@a@Map]%);
+      } else {
+        buf.append(%[,@a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -260,8 +283,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(%[@a@Map]%);
     }
     return buf.toString();
@@ -272,11 +298,15 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(%[@a@Map]%);
-      if(st.getBoundAtoms(sort).contains(a))
+      if(st.getBoundAtoms(sort).contains(a)) {
         buf.append(%[,@a@InnerMap]%);
+      }
     }
     return buf.toString();
   }
@@ -286,12 +316,16 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(!first) buf.append(",");
-      else first = false;
-      if(st.getBoundAtoms(fromsort).contains(a))
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
+      if(st.getBoundAtoms(fromsort).contains(a)) {
         buf.append(%[@a@InnerMap]%);
-      else
+      } else {
         buf.append(%[@a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -301,12 +335,16 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(!first) buf.append(",");
-      else first = false;
-      if(st.getBoundAtoms(fromsort).contains(a))
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
+      if(st.getBoundAtoms(fromsort).contains(a)) {
         buf.append(%[@a@OuterMap]%);
-      else
+      } else {
         buf.append(%[@a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -316,8 +354,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(%[@a@Map]%);
     }
     return buf.toString();
@@ -328,8 +369,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       // bound atoms have to be the same
       if(st.getBoundAtoms(tosort).contains(a)) {
         buf.append(%[@a@OuterMap]%);
@@ -344,8 +388,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getBoundAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       buf.append( %[java.util.Hashtable<@aid@,@aid@> @a@Map]% );
     }
@@ -357,8 +404,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getBoundAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       String aid = st.getFullSortClassName(a);
       buf.append(%[new java.util.Hashtable<@aid@,@aid@>()]%);
     }
@@ -370,8 +420,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getBoundAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
+      if(!first) {
+        buf.append(", ");
+      } else {
+        first = false;
+      }
       buf.append(%[@a@Map]%);
     }
     return buf.toString();
@@ -384,8 +437,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String f: st.getFields(cons)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(gomEnvironment.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
     }
     return buf.toString();
@@ -398,8 +454,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String f: st.getFields(cons)) {
-      if(!first) buf.append(",");
-      else first = false;
+      if(!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(gomEnvironment.isBuiltin(st.getSort(cons,f))? st.rawGetter(cons,f) :f);
     }
     return buf.toString();
@@ -411,8 +470,9 @@ public class FreshExpander {
   %strategy AddHook(sort:String,hook:Production) extends Fail() {
     visit ProductionList {
       (p@SortType[Type=GomType[Name=n]],ps*) -> {
-        if(`n.equals(sort))
+        if(`n.equals(sort)) {
           return `ConcProduction(p,hook,ps*);
+        }
       }
     }
   }
@@ -516,9 +576,11 @@ public class FreshExpander {
   /* -- sort hooks -- */
 
   private GomModuleList addSortHooks(GomModuleList ml) {
-    for(String s: st.getSorts())
-      if(st.isExpressionType(s) || st.isPatternType(s))
+    for(String s: st.getSorts()) {
+      if(st.isExpressionType(s) || st.isPatternType(s)) {
         ml = addSortBlockHook(ml,s,sortBlockHookString(s));
+      }
+    }
     return ml;
   }
 
@@ -601,9 +663,11 @@ public class FreshExpander {
   /* -- raw sort hooks -- */
 
   private GomModuleList addRawSortHooks(GomModuleList ml) {
-    for(String s: st.getSorts())
-      if(st.isExpressionType(s) || st.isPatternType(s))
+    for(String s: st.getSorts()) {
+      if(st.isExpressionType(s) || st.isPatternType(s)) {
         ml = addSortBlockHook(ml,st.rawSort(s),rawSortBlockHookString(s));
+      }
+    }
     return ml;
   }
 
@@ -646,11 +710,15 @@ public class FreshExpander {
   /* -- non variadic constructor hooks -- */
 
   private GomModuleList addConstructorHooks(GomModuleList ml) {
-    for(String s: st.getSorts())
-      if(st.isExpressionType(s) || st.isPatternType(s))
-        for(String c: st.getConstructors(s))
-          if(! st.isVariadic(c))
+    for(String s: st.getSorts()) {
+      if(st.isExpressionType(s) || st.isPatternType(s)) {
+        for(String c: st.getConstructors(s)) {
+          if(! st.isVariadic(c)) {
             ml = addConstructorBlockHook(ml,c,constructorBlockHookString(c));
+          }
+        }
+      }
+    }
     return ml;
   }
 
@@ -660,15 +728,18 @@ public class FreshExpander {
     String atomSortId = st.getFullSortClassName(atomSort);
     for(String f: st.getFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {
+        continue;
+      }
       if (st.isAtomType(fsort)) {
-        if (fsort.equals(atomSort))
+        if (fsort.equals(atomSort)) {
           res += %[
             @atomSortId@ n_@f@ = map.get(get@f@());
         if (n_@f@ != null) res = res.set@f@(n_@f@);
         ]%;
+        }
       } else {
-        if (!st.getAccessibleAtoms(fsort).contains(atomSort)) continue;
+        if (!st.getAccessibleAtoms(fsort).contains(atomSort)) {continue;}
         res += %[ res = res.set@f@(get@f@().rename@atomSort@(map)); ]%;
       }
     }
@@ -681,7 +752,7 @@ public class FreshExpander {
     String res = %[@sortid@ res = this;]%;
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {continue;}
       if (st.isAtomType(fsort)) {
         String fsortid = st.getFullSortClassName(fsort);
         res += %[
@@ -701,10 +772,11 @@ public class FreshExpander {
     }
     for(String f: st.getInnerFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {continue;}
       for(String a: st.getBoundAtoms(sort)) {
-        if (st.getAccessibleAtoms(fsort).contains(a))
+        if (st.getAccessibleAtoms(fsort).contains(a)) {
           res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
+        }
       }
     }
     return res + "return res;";
@@ -770,16 +842,17 @@ public class FreshExpander {
           String fsortid = st.getFullSortClassName(fsort);
           String rawfsortid = st.qualifiedRawSortId(fsort);
           if (st.isAtomType(fsort)) {
-            if (st.isBound(c,f))
+            if (st.isBound(c,f)) {
               res += %[
                 if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
                   throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
-                else
+            } else {
                   res += %[
                     if (!@fsort@Map.equal(get@f@(),o.get@f@()))
                       throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
+            }
           } else if (st.isInner(c,f)) /* must be expression type */ {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall3(fsort,sort)@);]%;
           } else if (st.isOuter(c,f)) /* must be expression type */ {
@@ -804,7 +877,7 @@ public class FreshExpander {
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (gomEnvironment.isBuiltin(fsort)) continue;
+        if (gomEnvironment.isBuiltin(fsort)) {continue;}
         String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -836,14 +909,15 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (gomEnvironment.isBuiltin(fsort)) continue;
+        if (gomEnvironment.isBuiltin(fsort)) {continue;}
         String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
-          if (st.isBound(c,f))
+          if (st.isBound(c,f)) {
             res += %[String raw_@f@ = @fsort@InnerMap.get(get@f@());]%;
-          else
+          } else {
             res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
+          }
         } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@
             = get@f@()._export(@recCall3(fsort,sort)@);]%;
@@ -868,7 +942,7 @@ public class FreshExpander {
     String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {continue;}
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[atoms.add(get@f@());]%;
@@ -887,7 +961,7 @@ public class FreshExpander {
     String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {continue;}
       if (st.isAtomType(fsort)) {
         if (fsort.equals(a)) {
           res += %[
@@ -969,12 +1043,16 @@ public class FreshExpander {
   /* -- non variadic raw constructor hooks -- */
 
   private GomModuleList addRawConstructorHooks(GomModuleList ml) {
-    for(String s: st.getSorts())
-      if(st.isExpressionType(s) || st.isPatternType(s))
-        for(String c: st.getConstructors(s))
-          if(! st.isVariadic(c))
+    for(String s: st.getSorts()) {
+      if(st.isExpressionType(s) || st.isPatternType(s)) {
+        for(String c: st.getConstructors(s)) {
+          if(! st.isVariadic(c)) {
             ml = addRawConstructorBlockHook(
                 ml,c,rawConstructorBlockHookString(c));
+          }
+        }
+      }
+    }
     return ml;
   }
 
@@ -985,7 +1063,7 @@ public class FreshExpander {
     String res = "";
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (gomEnvironment.isBuiltin(fsort)) continue;
+      if (gomEnvironment.isBuiltin(fsort)) {continue;}
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[
@@ -1010,7 +1088,7 @@ public class FreshExpander {
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (gomEnvironment.isBuiltin(fsort)) continue;
+        if (gomEnvironment.isBuiltin(fsort)) {continue;}
         String fsortid = st.getFullSortClassName(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -1044,13 +1122,14 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (gomEnvironment.isBuiltin(fsort)) continue;
+        if (gomEnvironment.isBuiltin(fsort)) {continue;}
         String fsortid = st.getFullSortClassName(fsort);
         if (st.isAtomType(fsort)) {
-          if (st.isBound(c,f))
+          if (st.isBound(c,f)) {
             res += %[@fsortid@ @f@ = @fsort@InnerMap.get(@st.rawGetter(c,f)@);]%;
-          else
+          } else {
             res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
+          }
         } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@
             = @st.rawGetter(c,f)@._convert(@recCall3(fsort,sort)@);]%;
@@ -1166,8 +1245,9 @@ public class FreshExpander {
         ProductionList nps = addRaw(st,`ps);
         %match(p) {
           SortType[Type=GomType[Name=n]] -> {
-            if (st.isFreshType(`n) && !st.isAtomType(`n))
+            if (st.isFreshType(`n) && !st.isAtomType(`n)) {
               return `ConcProduction(p,rawify(p,st),nps*);
+            }
           }
         }
         return `ConcProduction(p,nps*);
@@ -1180,8 +1260,8 @@ public class FreshExpander {
   %strategy Rawify(st:SymbolTable,fe:FreshExpander) extends Identity() {
     visit GomType {
       gt@GomType[Name=n] -> {
-        if (st.isAtomType(`n)) return `gt.setName("String");
-        else if (!fe.getGomEnvironment().isBuiltin(`n)) return `gt.setName(st.rawSort(`n));
+        if (st.isAtomType(`n)) { return `gt.setName("String"); }
+        else if (!fe.getGomEnvironment().isBuiltin(`n)) { return `gt.setName(st.rawSort(`n)); }
       }
     }
     visit Alternative {
@@ -1199,9 +1279,11 @@ public class FreshExpander {
   /* -- tweaked mappings generation */
 
   private GomModuleList addMappingHooks(GomModuleList ml) {
-    for(String c: st.getFreshConstructors())
-      if(st.containsRefreshPoint(c))
+    for(String c: st.getFreshConstructors()) {
+      if(st.containsRefreshPoint(c)) {
         ml = addConstructorMappingHook(ml,c,mappingString(c));
+      }
+    }
     return ml;
   }
 
@@ -1213,8 +1295,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
     for(String arg: st.getFields(c)) {
-      if (!first) buf.append(",");
-      else first = false;
+      if (!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(arg+":"+st.getSort(c,arg));
     }
     return buf.toString();
@@ -1227,8 +1312,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
     for(String arg: st.getFields(c)) {
-      if (!first) buf.append(",");
-      else first = false;
+      if (!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append(arg);
     }
     return buf.toString();
@@ -1241,8 +1329,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
     for(String arg: st.getFields(c)) {
-      if (!first) buf.append(",");
-      else first = false;
+      if (!first) {
+        buf.append(",");
+      } else {
+        first = false;
+      }
       buf.append("$" + arg);
     }
     return buf.toString();
@@ -1257,10 +1348,11 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     boolean first=true;
     for(String arg: st.getFields(c)) {
-      if(st.isRefreshPoint(c,arg))
+      if(st.isRefreshPoint(c,arg)) {
         buf.append(%[get_slot(@arg@,t) { $t.get@arg@().refresh() }]% + "\n");
-      else
+      } else {
         buf.append(%[get_slot(@arg@,t) { $t.get@arg@() }]% + "\n");
+      }
     }
     return buf.toString();
   }
@@ -1273,8 +1365,11 @@ public class FreshExpander {
       String consid = st.getFullConstructorClassName("Cons" + c);
       String nilid = st.getFullConstructorClassName("Empty" + c);
       String gethead = null;
-      if(st.isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
-      else gethead = %[getHead@c@()]%;
+      if(st.isRefreshPoint(c)) {
+        gethead = %[getHead@c@().refresh()]%;
+      } else {
+        gethead = %[getHead@c@()]%;
+      }
       return %[{
         %oplist @codomain@ @c@(@domain@*) {
           is_fsym(t) { (($t instanceof @consid@) || ($t instanceof @nilid@)) }

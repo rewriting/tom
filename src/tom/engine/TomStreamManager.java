@@ -385,8 +385,7 @@ public class TomStreamManager {
 
   public String getRawFileName() {
     String rawInputFileName = new File(getInputFileName()).getName();
-    String res = rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
-    return res;
+    return rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
   }
 
   public boolean isSilentDiscardImport(String fileName) {

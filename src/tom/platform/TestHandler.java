@@ -91,7 +91,9 @@ public class TestHandler extends Handler {
   public int nbOfLogs(Level level) {
     int nb_rec =0;
     for (LogRecord record : records) {
-      if(record.getLevel().equals(level)) nb_rec ++;
+      if(record.getLevel().equals(level)) {
+        nb_rec ++;
+      }
     }
     return nb_rec;
   }

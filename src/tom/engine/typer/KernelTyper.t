@@ -254,11 +254,6 @@ public class KernelTyper {
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
 
-            _ -> {
-              // do nothing
-              //System.out.println("contextType = " + contextType);
-              //System.out.println("subject        = " + subject);
-            }
           }
         }
       }
@@ -317,12 +312,6 @@ public class KernelTyper {
             type@(Type|TypeWithSymbol)[] -> {
               BQTermList subterm = kernelTyper.typeVariableList(`emptySymbol(), `args);
               return `BQAppl(option,name,subterm);
-            }
-
-            _ -> {
-              // do nothing
-              //System.out.println("contextType = " + contextType);
-              //System.out.println("subject        = " + subject);
             }
           }
         }
@@ -671,8 +660,7 @@ matchL:  %match(subject,s){
   }
 
   private TomType getType(String tomName) {
-    TomType tomType = getSymbolTable().getType(tomName);
-    return tomType;
+    return getSymbolTable().getType(tomName);
   }
 
   /**

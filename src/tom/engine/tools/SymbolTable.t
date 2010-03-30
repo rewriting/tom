@@ -106,8 +106,8 @@ public class SymbolTable {
   }
 
   public TomSymbol getSymbolFromName(String name) {
-    TomSymbol res = mapSymbolName.get(name);
-    return res;
+    return mapSymbolName.get(name);
+    
   }
 
   public TomSymbolList getSymbolFromType(TomType type) {
@@ -399,8 +399,7 @@ public class SymbolTable {
 
   public Iterator<String> keySymbolIterator() {
     Set<String> keys = mapSymbolName.keySet();
-    Iterator<String> it = keys.iterator();
-    return it;
+    return keys.iterator();
   }
 
   public void fromTerm(TomSymbolTable table) {

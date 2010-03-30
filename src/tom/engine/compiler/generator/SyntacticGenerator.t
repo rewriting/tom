@@ -82,8 +82,7 @@ public class SyntacticGenerator implements IBaseGenerator {
       // generate is_fsym(t,f)
       ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=(name)],SymbolOf(subject))) -> {
         TomType termType = sg.getCompiler().getTermTypeFromName(`name);
-        Expression check = sg.buildEqualFunctionSymbol(termType,`subject,`name,TomBase.getTheory(`currentTerm));
-        return check;
+        return sg.buildEqualFunctionSymbol(termType,`subject,`name,TomBase.getTheory(`currentTerm));
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {

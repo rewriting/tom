@@ -364,14 +364,12 @@ public abstract class CFamilyGenerator extends GenericGenerator {
 
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get = getGetHead(name,tomType,subject,moduleName);
-    return get;
+    return getGetHead(name,tomType,subject,moduleName);
   }
 
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get= getGetTail(name,tomType,subject,moduleName);
-    return get;
+    return getGetTail(name,tomType,subject,moduleName);
   }
 
   private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {

@@ -647,8 +647,8 @@ public class GraphExpander {
         Ref@`sortName@[label@`sortName@=label] -> {
           if (map.containsKey(`label)) {
             Position target = (Position) map.get(`label);
-            @CodeGen.generateCode(`FullSortClass(sDecl))@ ref = (@CodeGen.generateCode(`FullSortClass(sDecl))@) (Path@`sortName@.make(target.sub(getEnvironment().getPosition())).getCanonicalPath());
-            return ref;
+            /*@CodeGen.generateCode(`FullSortClass(sDecl))@ ref = */ return (@CodeGen.generateCode(`FullSortClass(sDecl))@) (Path@`sortName@.make(target.sub(getEnvironment().getPosition())).getCanonicalPath());
+            //return ref;
           }
         }
       }
