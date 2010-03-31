@@ -82,7 +82,7 @@ public class NewTyper extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='newtyper' altName ='nt' description='New version of Typer (working in progress)' value='false'/>" +
+    "<boolean name='newtyper' altName ='nt' description='New version of Typer (working in progress)' value='true'/>" +
     "</options>";
 
   public PlatformOptionList getDeclaredOptionList() {
