@@ -1,3 +1,7 @@
+2010-03-31 tavaresc
+  * Apply replacement of typeVars not only in a ConstraintInstructionList
+    but also in the rest of the code (which is not necessarily a InstructionToCode).
+
 2010-03-31 pem
  * switch for TyperPlugin vs NewTyper
  * improved code of NewTyper
