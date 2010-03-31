@@ -112,15 +112,15 @@ public class BackendPlugin extends TomGenericPlugin {
           if(getOptionBooleanValue("noOutput")) {
             throw new TomRuntimeException("Backend activated, but noOutput is set");
           } else if(getOptionBooleanValue("cCode")) {
-            generator = new CGenerator(output, getOptionManager(), symbolTable());
+            generator = new CGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("camlCode")) {
-            generator = new CamlGenerator(output, getOptionManager(), symbolTable());
+            generator = new CamlGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("pCode")) {
-            generator = new PythonGenerator(output, getOptionManager(), symbolTable());
+            generator = new PythonGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("csCode")) {
-            generator = new CSharpGenerator(output, getOptionManager(), symbolTable());
+            generator = new CSharpGenerator(output, getOptionManager(), getSymbolTable());
           } else if(getOptionBooleanValue("jCode")) {
-            generator = new JavaGenerator(output, getOptionManager(), symbolTable());
+            generator = new JavaGenerator(output, getOptionManager(), getSymbolTable());
           } else {
             throw new TomRuntimeException("no selected language for the Backend");
           }
@@ -201,9 +201,9 @@ public class BackendPlugin extends TomGenericPlugin {
     //Using of the moduleName
     ////////
 
-    //System.out.println(symbolTable().toTerm());
+    //System.out.println(getSymbolTable().toTerm());
 
-    return symbolTable();
+    return getSymbolTable();
   }
   /**
    * inherited from plugin interface

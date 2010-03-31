@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Cl√°udia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Cl·udia Tavares  e-mail: Claudia.Tavares@loria.fr
  * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
  *
  **/
@@ -72,14 +72,15 @@ public class NewKernelTyper {
   private TypeConstraintList typeConstraints;
   // Set of pairs (freshVar,groundVar)
   private HashMap<TomType,TomType> substitutions;
-  private NewTyper newTyper;
 
-  public NewKernelTyper(NewTyper nTyper) {
-    newTyper = nTyper;
+  private SymbolTable symbolTable;
+
+  public void setSymbolTable(SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
   }
 
-  public SymbolTable getSymbolTable() {
-    return newTyper.symbolTable();
+  protected SymbolTable getSymbolTable() {
+    return symbolTable;
   }
 
   protected TomType getCodomain(TomSymbol tomSymbol) {
@@ -245,7 +246,7 @@ public class NewKernelTyper {
                 // Generate type constraints for a %match
                 //DEBUG System.out.println("CIList avant = " + `constraintInstructionList);
                 inferConstraintInstructionList(`constraintInstructionList,flagInnerMatch);
-                //DEBUG System.out.println("CIList apr√®s= " + result + "\n\n");
+                //DEBUG System.out.println("CIList aprËs= " + result + "\n\n");
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
                 //DEBUG System.out.println("\n typeConstraints before solve = " + typeConstraints);
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
@@ -311,12 +312,12 @@ public class NewKernelTyper {
           inferAction(`action);
           if (!flagInnerMatch) {
             `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
-            //DEBUG System.out.println("\n Test pour inferConstraintInstructionList apr√®s reset.");
+            //DEBUG System.out.println("\n Test pour inferConstraintInstructionList aprËs reset.");
             //DEBUG System.out.println("\n varPatternList avant = " + `varPatternList);
             //DEBUG System.out.println("\n varList avant = " + `varList); 
             resetVarPatternList();
-            //DEBUG System.out.println("\n varPatternList apr√®s = " + `varPatternList);
-            //DEBUG System.out.println("\n varList apr√®s = " + `varList);
+            //DEBUG System.out.println("\n varPatternList aprËs = " + `varPatternList);
+            //DEBUG System.out.println("\n varList aprËs = " + `varList);
           }
           inferConstraintInstructionList(`tailCIList,flagInnerMatch);
         } catch(tom.library.sl.VisitFailure e) {

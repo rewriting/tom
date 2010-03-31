@@ -146,7 +146,7 @@ public class TypeCheckerPlugin extends CheckerPlugin {
   %strategy collectUnknownAppls(tcp:TypeCheckerPlugin) extends Identity() {
     visit TomTerm {
       app@TermAppl[] -> {
-        if(tcp.symbolTable().getSymbolFromName(tcp.getName(`app))==null) {
+        if(tcp.getSymbolTable().getSymbolFromName(tcp.getName(`app))==null) {
           tcp.messageError(tcp.findOriginTrackingFileName(`app.getOption()),
               tcp.findOriginTrackingLine(`app.getOption()),
               TomMessage.unknownVariableInWhen,

@@ -64,6 +64,11 @@ import tom.library.sl.*;
 /**
  * The Desugarer plugin.
  * Perform syntax expansion and more.
+ *
+ * replaces  _  by a fresh variable _* by a fresh varstar 
+ * replaces 'TermAppl' by its 'RecordAppl' form
+ * replaces 'XMLAppl' by its 'RecordAppl' form
+ *   when no slotName exits, the position becomes the slotName
  */
 public class DesugarerPlugin extends TomGenericPlugin {
 
@@ -121,8 +126,9 @@ public class DesugarerPlugin extends TomGenericPlugin {
     }
   }
 
-  /* replaces  _  by a fresh variable
-     _* by a fresh varstar    */
+  /* 
+   * replaces  _  by a fresh variable _* by a fresh varstar    
+   */
   %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
       UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
@@ -298,7 +304,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().TYPE_UNKNOWN,concConstraint());
+    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -367,7 +373,7 @@ matchBlock:
         }
 
         concTomName(_*,Name(name),_*) -> {
-          newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(symbolTable(),name)));
+          newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(getSymbolTable(),name)));
         }
       }
     }
@@ -379,7 +385,7 @@ matchBlock:
     TomTerm xmlHead;
 
     if(newNameList.isEmptyconcTomName()) {
-      xmlHead = `UnamedVariable(concOption(),symbolTable().TYPE_UNKNOWN,concConstraint());
+      xmlHead = `UnamedVariable(concOption(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
     } else {
       xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
     }

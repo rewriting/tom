@@ -26,9 +26,10 @@
 package tom.engine.typer;
 
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -76,6 +77,7 @@ public class TyperPlugin extends TomGenericPlugin {
   /** some output suffixes */
   public static final String TYPED_SUFFIX       = ".tfix.typed";
   public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
+  private static Logger logger = Logger.getLogger("tom.engine.typer.TyperPlugin");
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
@@ -98,43 +100,48 @@ public class TyperPlugin extends TomGenericPlugin {
   public void run(Map informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-    //System.out.println("(debug) I'm in the Tom typer : TSM"+getStreamManager().toString());
-    
-    //TomTerm typedTerm = null;
-    Code typedCode = null;
-    try {
-      kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
-      //no more necessary: realised by the desugarer
-      //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
+    boolean newtyper = getOptionBooleanValue("newtyper");
 
-      updateSymbolTable();
+    if(newtyper==false) {
+      Code typedCode = null;
+      try {
+        kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
+        //no more necessary: realised by the desugarer
+        //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
 
-      Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-      Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
-     
-      Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
-      typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
-      typedCode = kernelTyper.propagateVariablesTypes(typedCode);
+        updateSymbolTable();
 
-      /* transform each BackQuoteTerm into its compiled form */
-      typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
-      
-      setWorkingTerm(typedCode);      
-      // verbose
-      getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-    } catch (Exception e) {
-      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
-      e.printStackTrace();
-      return;
+        Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
+        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+
+        Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
+        typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
+        typedCode = kernelTyper.propagateVariablesTypes(typedCode);
+
+        /* transform each BackQuoteTerm into its compiled form */
+        typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+
+        setWorkingTerm(typedCode);      
+        // verbose
+        getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      } catch (Exception e) {
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+            new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
+        e.printStackTrace();
+        return;
+      }
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_SUFFIX, typedCode);
+        Tools.generateOutput(getStreamManager().getOutputFileName()
+            + TYPED_TABLE_SUFFIX, getSymbolTable().toTerm());
+      }
+    } else {
+      // not active plugin
+      logger.log(Level.INFO, "The default typer is not in use.");
     }
-    if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileName()
-          + TYPED_SUFFIX, typedCode);
-      Tools.generateOutput(getStreamManager().getOutputFileName()
-          + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
-    }
+
   }
 
   /*
@@ -162,7 +169,7 @@ public class TyperPlugin extends TomGenericPlugin {
   %strategy expandType(typer:TyperPlugin) extends Identity() {
     visit TomType {
       subject@Type(tomType,EmptyType()) -> {
-        TomType type = typer.symbolTable().getType(`tomType);
+        TomType type = typer.getSymbolTable().getType(`tomType);
         if(type != null) {
           return type;
         } else {
@@ -350,7 +357,7 @@ public class TyperPlugin extends TomGenericPlugin {
             TomSymbol stringSymbol = getSymbolFromName(`tomName);
             TomType termType = stringSymbol.getTypesToType().getCodomain();
             String type = termType.getTomType();
-            if(symbolTable().isCharType(type) && `tomName.length()>3) {
+            if(getSymbolTable().isCharType(type) && `tomName.length()>3) {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
                 SlotList newArgs = `concSlot();
                 String substring = `tomName.substring(1,`tomName.length()-1);
@@ -363,7 +370,7 @@ public class TyperPlugin extends TomGenericPlugin {
                   char c = substring.charAt(i);
                   String newName = "'" + c + "'";
                   TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
-                  symbolTable().putSymbol(newName,newSymbol);
+                  getSymbolTable().putSymbol(newName,newSymbol);
 
                   Slot newHead = `PairSlotAppl(slotName,RecordAppl(optionList,concTomName(Name(newName)),concSlot(),concConstraint()));
                   newArgs = `concSlot(newHead,newArgs*);
@@ -373,8 +380,8 @@ public class TyperPlugin extends TomGenericPlugin {
                 ConstraintList newConstraintList = `concConstraint();
                 %match(constraintList) {
                   concConstraint(AliasTo(var@Variable[AstType=vartype])) -> {
-                    if(symbolTable().isCharType(TomBase.getTomType(`vartype))) {
-                      newConstraintList = `concConstraint(AliasTo(var.setAstType(symbolTable().getStringType())));
+                    if(getSymbolTable().isCharType(TomBase.getTomType(`vartype))) {
+                      newConstraintList = `concConstraint(AliasTo(var.setAstType(getSymbolTable().getStringType())));
                     }
                   }
                 }
@@ -463,9 +470,9 @@ public class TyperPlugin extends TomGenericPlugin {
             return `BuildConstant(name);
           } else if(tomSymbol != null) {
             if(TomBase.isListOperator(tomSymbol)) {
-              return ASTFactory.buildList(`name,args,typer.symbolTable());
+              return ASTFactory.buildList(`name,args,typer.getSymbolTable());
             } else if(TomBase.isArrayOperator(tomSymbol)) {
-              return ASTFactory.buildArray(`name,args,typer.symbolTable());
+              return ASTFactory.buildArray(`name,args,typer.getSymbolTable());
             } else if(TomBase.isDefinedSymbol(tomSymbol)) {
               return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
             } else {
@@ -561,7 +568,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
       TomList newAttrList  = `concTomTerm();
       TomList newChildList = `concTomTerm();
-      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().TYPE_UNKNOWN,concConstraint());
+      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
       if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
       if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -630,7 +637,7 @@ matchBlock:
           }
 
           concTomName(_*,Name(name),_*) -> {
-            newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(symbolTable(),name)));
+            newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(getSymbolTable(),name)));
           }
         }
       }
@@ -642,7 +649,7 @@ matchBlock:
       TomTerm xmlHead;
 
       if(newNameList.isEmptyconcTomName()) {
-        xmlHead = `UnamedVariable(concOption(),symbolTable().TYPE_UNKNOWN,concConstraint());
+        xmlHead = `UnamedVariable(concOption(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
       } else {
         xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
       }
