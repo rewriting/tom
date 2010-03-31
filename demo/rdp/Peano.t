@@ -1,6 +1,6 @@
-import peano.example.*;
+import peano.peano.*;
 import peano.peano.types.*;
-public class Peano{
+public class Peano {
  %gom {
     module Peano
     imports int
@@ -19,8 +19,7 @@ public class Peano{
       mult(x, suc(y))    -> plus(x,mult(x,y))
       fib(zero()) -> suc(zero())
       
-    fib(suc(zero())) -> suc(zero())
-      
+      fib(suc(zero())) -> suc(zero())      
       fib(suc(suc(x))) -> plus(fib(x),fib(suc(x)))
 
     } 

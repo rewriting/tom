@@ -1,6 +1,6 @@
 import term.term.types.*;
-class Term {
-
+public class Term {
+ 
   %gom {
     module Term
     imports String
@@ -11,12 +11,20 @@ class Term {
         | c()
         | f(x1:T, x2:T) 
         | g(x1:T)  
+
+    L = conc( T* )
+
   }
 
   public final static void main(String[] args) {
-    T s = `a();
+    L s = `conc(a(),b(),c(),a(),b());
     System.out.println("s = " + s);
-
+    %match(s) {
+      conc(C1*,x,C2*,y,_*) -> {
+        return `conc(C1*,y,C2*,x,)
+      }
+    }
+    
   }
  
 }
