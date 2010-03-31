@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Cláudia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Cl?udia Tavares  e-mail: Claudia.Tavares@loria.fr
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -203,59 +203,28 @@ public class NewTyper extends TomGenericPlugin {
   }
 
   %strategy collectKnownTypes(nkt:NewKernelTyper) extends Identity() {
-    /*
-    visit TomType {
-      Type(typeName,javaType@EmptyType()) -> {
-        TomType newType = null;
-        if (`typeName != "unknown type") {
-          newType = newTyper.getSymbolTable().getType(`typeName);
-        }
-        if (newType == null && newType == `EmptyType()) {
-          `javaType = newKernelTyper.getFreshTypeVar();
-          newType = `Type(typeName,javaType);
-          newTyper.getSymbolTable().putType(`typeName,newType);
-        }
-        return newType;
-      }
-    }
-*/
-
+    
     visit TomType {
       Type(typeName,EmptyType()) -> {
-        //DEBUG System.out.println("in NewTyper, the type to get newType == " + `type);
-        // "getType" gets the java type class refered by tomType
-        // e.g. typeName = A and newType = Type("A",TLType(" test.test.types.A "))
-        TomType newType = nkt.getSymbolTable().getType(`typeName);
-        if(newType == null || newType == `EmptyType()) {
+        TomType newType = null;
+        // two tomtypes 'Type("unknown type",EmptyType())' may have different
+        // TlType. So, if there already exists a 'Type("unknown type",TypeVar(i))'
+        // into the symbolTable, we don't take this in account; we call
+        // getType(typeName) otherwise
+        if (!nkt.getSymbolTable().isUnknownTypeName(`typeName)) {
+          newType = nkt.getSymbolTable().getType(`typeName);
+        }
+        if (newType == null) {
           // This happens when :
-          // * typeName != unknown type AND 
-          //   (newType == null or newType == EmptyType())
-          // * typeName == unknown (consequently, newType == EmptyType())
+          // * typeName != unknown type AND (newType == null)
+          // * typeName == unknown type
           newType = `Type(typeName,nkt.getFreshTypeVar());
           nkt.getSymbolTable().putType(`typeName,newType);
           return newType;
         }
-        //DEBUG System.out.println("in NewTyper, type to return = " + `newType);
         return newType;
       }
     }
-/*
-    visit TomSymbol {
-      Symbol[AstName=astName@Name(name),TypesToType=t@TypesToType(domain,codomain),PairNameDeclList=decl,Option=option] -> {
-        System.out.println("NT - updateSymbolTable before = " + `t);
-        TomTypeList newDomain = `concTomType();
-        //TomTypeList domain = TomBase.getSymbolDomain(tomSymbol);
-        for(TomType headDomain : `domain.getCollectionconcTomType()) {
-          newDomain = `concTomType(newDomain*,newKernelTyper.getType(headDomain));
-        }
-        TomType newCodomain = newKernelTyper.getType(`codomain);
-        TomSymbol newTomSymbol = `Symbol(astName,TypesToType(newDomain,newCodomain),decl,option); 
-        System.out.println("NT - updateSymbolTable after = " + `TypesToType(newDomain,newCodomain));
-        newTyper.getSymbolTable().putSymbol(`name,newTomSymbol);
-        return newTomSymbol;
-      }
-    }
-    */
   }
 
   /**
