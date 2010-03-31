@@ -355,7 +355,7 @@ public final class TomBase {
 
   public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
     %match(theory) {
-      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) return true; }
+      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) { return true; } }
     }
     return false;
   }

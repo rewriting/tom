@@ -247,8 +247,7 @@ matchBlock: {
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
         }
 
-        Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
-        return newMatch;
+        return `Match(newConstraintInstructionList, matchOptionList);
       }
 
     } // end visit
@@ -392,7 +391,6 @@ matchBlock: {
                                 composite =  `Composite(composite*,CompositeTL(ITL("null")));
                                 if(i < arity-1) {
                                   composite =  `Composite(composite*,CompositeTL(ITL(",")));
-                                } else {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {

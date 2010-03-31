@@ -104,10 +104,11 @@ public class TNodeToXML {
           throw new RuntimeException("Problem in DocumentTypeNode");
         }
         write(`systemId+"\"");
-        if (!`internalSubset.equals("UNDEF"))
+        if (!`internalSubset.equals("UNDEF")) {
           write(" ["+`internalSubset+"]");
-          write(">\n");
-          return;
+        }
+        write(">\n");
+        return;
       }
       ElementNode(name,attrList,concTNode()) -> {
         write("<"+`name);

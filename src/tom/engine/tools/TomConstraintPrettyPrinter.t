@@ -270,7 +270,7 @@ public class TomConstraintPrettyPrinter {
         s += prettyPrint(`t)+",";
       }
     }
-    if (! s.equals("")) return s.substring(0,s.length()-1);
+    if (! s.equals("")) { return s.substring(0,s.length()-1); }
 
     return subject.toString();
   }

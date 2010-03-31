@@ -73,24 +73,25 @@ import org.apache.tools.ant.types.Environment.Variable;
 
 public class GomCommonTask extends MatchingTask {
 
-  protected Path src;
-  protected String options;
-  protected File   destdir;
-  protected String packagePrefix = null;
-  protected File configFile = null;
-  protected File[] compileList = null;
-  protected boolean verbose = false;
-  protected boolean failOnError = true;
-  protected boolean fork = false;
-  protected boolean termpointer = false;
-  protected boolean termgraph = false;
-  protected boolean withCongruenceStrategies = false;
-  protected boolean withSeparateCongruenceStrategies = false;
-  protected boolean fresh = false;
-  protected boolean multithread = false;
-  protected boolean nosharing = false;
+  private Path src;
+  private String options;
+  private File   destdir;
+  private String packagePrefix = null;
+  private File configFile = null;
+  private File[] compileList = null;
+  private boolean verbose = false;
+  private boolean failOnError = true;
+  private boolean fork = false;
+  private boolean termpointer = false;
+  private boolean termgraph = false;
+  private boolean withCongruenceStrategies = false;
+  private boolean withSeparateCongruenceStrategies = false;
+  private boolean fresh = false;
+  private boolean multithread = false;
+  private boolean nosharing = false;
 
   protected final String protectedFileSeparator = "\\"+File.separatorChar;
+  private static final String TOM_HOME = "tom.home";
 
   protected Java javaRunner;
 
@@ -292,8 +293,9 @@ public class GomCommonTask extends MatchingTask {
       int end = 0;
       List<String> list = new ArrayList<String>();
       while(end < str.length()) {
-        while(end < str.length() && str.charAt(end) != ' ')
+        while(end < str.length() && str.charAt(end) != ' ') {
           end++;
+        }
         list.add(str.substring(begin, end));
         begin = ++end;
       }
@@ -308,7 +310,7 @@ public class GomCommonTask extends MatchingTask {
    * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
-    if (configFile == null && getProject().getProperty("tom.home") == null) {
+    if (configFile == null && getProject().getProperty(TOM_HOME) == null) {
       throw new BuildException(
           "config attribute has to be defined, or the tom.home property",
           getLocation());
@@ -360,11 +362,11 @@ public class GomCommonTask extends MatchingTask {
       resetFileLists();
 
       /* If "tom.home" is defined in the ant project, pass it to Gom */
-      String tom_home = getProject().getProperty("tom.home");
+      String tom_home = getProject().getProperty(TOM_HOME);
       if (tom_home != null) {
-        System.setProperty("tom.home",tom_home);
+        System.setProperty(TOM_HOME,tom_home);
         Variable var = new Variable();
-        var.setKey("tom.home");
+        var.setKey(TOM_HOME);
         var.setValue(tom_home);
         javaRunner.addSysproperty(var);
       } else {
@@ -438,7 +440,7 @@ public class GomCommonTask extends MatchingTask {
       }
 
       if(compileList.length > 0) {
-        int err = -1;
+        //int err = -1;
         javaRunner.setFork(getFork());
         javaRunner.setClassname("tom.gom.Gom");
         javaRunner.setFailonerror(failOnError);
@@ -486,7 +488,7 @@ public class GomCommonTask extends MatchingTask {
     if (configFile != null) {
       return configFile;
     } else {
-      String tom_home = getProject().getProperty("tom.home");
+      String tom_home = getProject().getProperty(TOM_HOME);
       try {
         return new File(tom_home,File.separator+defaultConfigName()).getCanonicalFile();
       } catch (IOException e) {

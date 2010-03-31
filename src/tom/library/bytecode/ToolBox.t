@@ -91,8 +91,9 @@ public class ToolBox {
     AccessList list = `AccessList();
 
     for(int i = 0; i < accessFlags.length; i++) {
-      if((access & accessFlags[i]) != 0)
+      if((access & accessFlags[i]) != 0) {
         list = `ConsAccessList(accessObj[i], list);
+      }
     }
 
     return list;
@@ -123,17 +124,21 @@ public class ToolBox {
   }
 
   public static Value buildValue(Object v) {
-    if(v instanceof String)
+    if(v instanceof String) {
       return `StringValue((String)v);
-    else if(v instanceof Integer)
+    }
+    else if(v instanceof Integer) {
       return `IntValue(((Integer)v).intValue());
-    else if(v instanceof Long)
+    }
+    else if(v instanceof Long) {
       return `LongValue(((Long)v).longValue());
-    else if(v instanceof Float)
+    }
+    else if(v instanceof Float) {
       return `FloatValue(((Float)v).floatValue());
-    else if(v instanceof Double)
+    }
+    else if(v instanceof Double) {
       return `DoubleValue(((Double)v).doubleValue());
-
+    }
     return null;
   }
 
@@ -203,8 +208,9 @@ public class ToolBox {
   public static FieldDescriptor buildFieldDescriptor(String desc) {
     Counter count = new Counter();
     FieldDescriptor fDesc = buildFieldDescriptorFrom(desc, count);
-    if(count.count != desc.length())
+    if(count.count != desc.length()) {
       System.err.println("Malformed descriptor : " + desc);
+    }
     return fDesc;
   }
 
@@ -214,8 +220,9 @@ public class ToolBox {
       case 'L':
         count.count++;
         int j = desc.indexOf(';', count.count);
-        if(j == -1)
+        if(j == -1) {
           System.err.println("Malformed descriptor : " + desc);
+        }
         String className = desc.substring(count.count, j);
         count.count += className.length() + 1;
         fDesc = `ObjectType(className);
@@ -257,29 +264,32 @@ public class ToolBox {
         fDesc = `Z();
         break;
     }
-    if(fDesc == null)
+    if(fDesc == null) {
       System.err.println("Malformed descriptor : " + desc);
+    }
     return fDesc;
   }
 
   public static ReturnDescriptor buildReturnDescriptor(String desc) {
-    if(desc.charAt(0) == 'V' && desc.length() == 1)
+    if(desc.charAt(0) == 'V' && desc.length() == 1) {
       return `Void();
+    }
     return `ReturnDescriptor(buildFieldDescriptor(desc));
   }
 
   public static MethodDescriptor buildMethodDescriptor(String desc) {
     int endParam = desc.indexOf(')', 1);
-    if(desc.charAt(0) != '(' || endParam == -1)
+    if(desc.charAt(0) != '(' || endParam == -1) {
       System.err.println("Malformed descriptor : " + desc);
-
+    }
     FieldDescriptorList fList = `FieldDescriptorList();
     Counter count = new Counter();
     count.count++;
     while(count.count < endParam)
       fList = `FieldDescriptorList(fList*, buildFieldDescriptorFrom(desc, count));
-    if(count.count != endParam)
+    if(count.count != endParam) {
       System.err.println("Malformed descriptor : " + desc);
+    }
     ReturnDescriptor ret = buildReturnDescriptor(desc.substring(count.count + 1));
     return `MethodDescriptor(fList, ret);
   }
