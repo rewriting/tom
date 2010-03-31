@@ -15,13 +15,13 @@ class Strategy {
         | b()
         | c()
   }
-
+ 
   public final static void main(String[] args) {
     T t = `f(g(a()),g(a()));
     try {
-      Collection bag = new ArrayList();
-      T result = (T) `TopDown(Collect(bag)).visit(t);
-      System.out.println("result = " + bag)
+      Collection bag = new HashSet();
+      T result = (T) `BottomUp(Collect(bag)).visit(t);
+      System.out.println("result = " + bag);
     } catch(VisitFailure e) {
       System.out.println("failure on " + t);
     }

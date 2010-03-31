@@ -1,3 +1,7 @@
+2010-03-31 pem
+ * switch for TyperPlugin vs NewTyper
+ * improved code of NewTyper
+
 2009-11-25 tonio
  * remove the "production rule" syntax support for gom, and the sorts section
 
