@@ -830,25 +830,6 @@ matchL:    %match(bqTList,tomSymbol) {
       TypeConstraintList tcList) {
     
     try {
-      //TODO : search for a pair (x |-> oldtt) and replace oldtt by newtt
-      /*
-      Set<TomType> keys = substitutions.keySet();
-      Iterator<TomType> it = keys.iterator();
-      while(it.hasNext()) {
-        TomType type = it.next();
-
-        TomSymbol tomSymbol = getSymbolFromName(tomName);
-        try {
-          tomSymbol = collectKnownTypes(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-          symbolTable().putSymbol(tomName,tomSymbol);
-          tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
-        
-        
-        
-        
-        }
-
-        */
         return (TypeConstraintList)
           `TopDown(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
     } catch(tom.library.sl.VisitFailure e) {
