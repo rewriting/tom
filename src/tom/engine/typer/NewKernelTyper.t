@@ -64,10 +64,16 @@ public class NewKernelTyper {
   }
 
   private int freshTypeVarCounter = 0;
+  /*
+   * pem: why use a state variable here ?
+   */
   // List for variables of pattern (match constraints)
   private TomList varPatternList;
   // List for variables of subject and of numeric constraints
   private BQTermList varList;
+  /*
+   * pem: why use a state variable here ?
+   */
   // List for type constraints (for fresh type variables)
   private TypeConstraintList typeConstraints;
   // Set of pairs (freshVar,groundVar)
@@ -161,6 +167,9 @@ public class NewKernelTyper {
     return `Type("unknown type",TypeVar(freshTypeVarCounter++));
   }
 
+  /*
+     * pem: use if(...==... && typeConstraints.contains(...))
+     */
   protected void addConstraint(TypeConstraint constraint) {
     %match {
       !concTypeConstraint(_*,tConstraint,_*) << typeConstraints &&
@@ -246,9 +255,10 @@ public class NewKernelTyper {
                 //DEBUG System.out.println("\n typeConstraints aftersolve = " + typeConstraints);
                 //DEBUG System.out.println("\n substitutions= " + substitutions);
                 //DEBUG printGeneratedConstraints(typeConstraints);
+                //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
-                    `headCodeList);
+                    headCodeList);
               } 
             }
           }
@@ -353,6 +363,10 @@ public class NewKernelTyper {
    * <code>typeConstraints</code> to ensure that both variables have same type
    * (this happens in case of non-linearity)
    * </ul>
+   */
+
+  /*
+   * pem: simplify the following code to do only one loop
    */
   %strategy CollectVars(nkt:NewKernelTyper) extends Identity() {
     visit TomTerm {
