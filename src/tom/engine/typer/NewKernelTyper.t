@@ -890,7 +890,7 @@ matchL:    %match(bqTList,tomSymbol) {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
         } else {
-          System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+          //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
           return `Type(typeName,EmptyType());
         }    
       }

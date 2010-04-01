@@ -108,6 +108,7 @@ public class NewTyper extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
 
+    System.out.println("NewTyper : newtyper = " + newtyper);
     if(newtyper) {
  
       Code typedCode = null;
@@ -211,7 +212,7 @@ public class NewTyper extends TomGenericPlugin {
         // TlType. So, if there already exists a 'Type("unknown type",TypeVar(i))'
         // into the symbolTable, we don't take this in account; we call
         // getType(typeName) otherwise
-        if (!nkt.getSymbolTable().isUnknownTypeName(`typeName)) {
+        if (!nkt.getSymbolTable().isUnknownType(`typeName)) {
           newType = nkt.getSymbolTable().getType(`typeName);
         }
         if (newType == null) {
