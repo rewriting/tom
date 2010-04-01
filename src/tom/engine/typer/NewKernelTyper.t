@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Cláudia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Cl?udia Tavares  e-mail: Claudia.Tavares@loria.fr
  * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
  *
  **/
@@ -90,14 +90,8 @@ public class NewKernelTyper {
   }
 
   protected TomType getCodomain(TomSymbol tomSymbol) {
-    System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
+    //DEBUG System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
     return TomBase.getSymbolCodomain(tomSymbol);
-    // Replace EmptyType() by FreshTypeVar() to avoid errors in
-    // solveConstraints, i.e. Equation(EmptyType(),Type(TomType,TlType)
-    /*
-       if (type == `EmptyType()) {
-       `type = getUnknownFreshTypeVar(); 
-       }*/
   }
 
   protected TomSymbol getSymbolFromTerm(TomTerm tomTerm) {
@@ -240,8 +234,7 @@ public class NewKernelTyper {
    */
   public Code inferCode(Code code) {
     init();
-    //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
-    System.out.println("\n Original Code = \n" + code + '\n');
+    //DEBUG System.out.println("\n Original Code = \n" + code + '\n');
     %match(code) {
       Tom(codes@concCode(_,_*)) -> {
         boolean flagInnerMatch = false;
@@ -255,17 +248,12 @@ public class NewKernelTyper {
                 // Generate type constraints for a %match
                 //DEBUG System.out.println("CIList avant = " + `constraintInstructionList);
                 inferConstraintInstructionList(`constraintInstructionList,flagInnerMatch);
-                //DEBUG System.out.println("CIList après= " + result + "\n\n");
+                //DEBUG System.out.println("CIList apr?s= " + result + "\n\n");
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
                 //DEBUG System.out.println("\n typeConstraints before solve = " + typeConstraints);
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
                 //DEBUG System.out.println("\n typeConstraints aftersolve = " + typeConstraints);
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 3.");
                 //DEBUG System.out.println("\n substitutions= " + substitutions);
-                ConstraintInstructionList result =
-                  replaceInConstraintInstructionList(`constraintInstructionList);
-                replaceInSymbolTable();
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 4.");
                 //DEBUG printGeneratedConstraints(typeConstraints);
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
                 init(); // Reset all lists for the next independent match block 
@@ -273,11 +261,14 @@ public class NewKernelTyper {
                 headCodeList = `InstructionToCode(Match(result,options));
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
-                    `headCodeList);
+                    headCodeList);
               } 
             }
           }
-          codeResult = `concCode(codeResult*,headCodeList);
+          Code headCodeResult = replaceInCode(`headCodeList);
+          codeResult = `concCode(codeResult*,headCodeResult);
+          replaceInSymbolTable();
+          init();
         }
         return `Tom(codeResult);
       }
@@ -321,12 +312,12 @@ public class NewKernelTyper {
           inferAction(`action);
           if (!flagInnerMatch) {
             `TopDownCollect(CollectVars(this)).visitLight(`headCIList);
-            //DEBUG System.out.println("\n Test pour inferConstraintInstructionList après reset.");
+            //DEBUG System.out.println("\n Test pour inferConstraintInstructionList apr?s reset.");
             //DEBUG System.out.println("\n varPatternList avant = " + `varPatternList);
             //DEBUG System.out.println("\n varList avant = " + `varList); 
             resetVarPatternList();
-            //DEBUG System.out.println("\n varPatternList après = " + `varPatternList);
-            //DEBUG System.out.println("\n varList après = " + `varList);
+            //DEBUG System.out.println("\n varPatternList apr?s = " + `varPatternList);
+            //DEBUG System.out.println("\n varList apr?s = " + `varList);
           }
           inferConstraintInstructionList(`tailCIList,flagInnerMatch);
         } catch(tom.library.sl.VisitFailure e) {
@@ -855,31 +846,41 @@ matchL:    %match(bqTList,tomSymbol) {
     }
   }
  
-  private ConstraintInstructionList
-    replaceInConstraintInstructionList(ConstraintInstructionList ciList) {
-      //DEBUG System.out.println("\n Test pour replaceInConstraintInstructionList -- ligne 1.");
-      //DEBUG System.out.println("\n Substitutions = " + `substitutions);
-      //DEBUG System.out.println("\n CIList = " + ciList);
-      ConstraintInstructionList replacedCIList = ciList;
-      //DEBUG System.out.println("replaceInConstraintInstruction() - replacedCIList before strategy: "
-      //DEBUG    + replacedCIList);
-      try {
-        replacedCIList =
-          `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(ciList);
-      } catch(tom.library.sl.VisitFailure e) {
-        throw new TomRuntimeException("replaceInConstraintInstructionList: failure on " +
-            replacedCIList);
-      }
-      //DEBUG System.out.println("replaceInConstraintInstruction() - replacedCIList after strategy: "
-      //DEBUG     + replacedCIList);
-      return replacedCIList;
+  private Code replaceInCode(Code code) {
+    Code replacedCode = code;
+    try {
+      replacedCode =
+        `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(code);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInCode: failure on " +
+          replacedCode);
+    }
+    return replacedCode;
   }
 
 
   private void replaceInSymbolTable() {
-    Iterator<String> it = getSymbolTable().keySymbolIterator();
-    while(it.hasNext()) {
-      String tomName = it.next();
+    Iterator<String> itForType = getSymbolTable().keySymbolIterator();
+    while(itForType.hasNext()) {
+      String tomName = itForType.next();
+      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
+      TomType type = getType(tomName);
+      %match(type) {
+        Type(typeName,typeVar@TypeVar(_)) -> {
+          if (substitutions.containsKey(`typeVar)) {
+            type = substitutions.get(`typeVar);
+          } else {
+            //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+            type = `Type(typeName,EmptyType());
+          }    
+          getSymbolTable().putType(`typeName,type);
+        }
+      }
+    }
+
+    Iterator<String> itForSymbol = getSymbolTable().keySymbolIterator();
+    while(itForSymbol.hasNext()) {
+      String tomName = itForSymbol.next();
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       //DEBUG System.out.println("replaceInSymboltable() - tomSymbol before strategy: "
@@ -888,7 +889,7 @@ matchL:    %match(bqTList,tomSymbol) {
         tomSymbol = `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("replaceInSymbolTable: failure on " +
-          tomSymbol);
+            tomSymbol);
       }
       //DEBUG System.out.println("replaceInSymboltable() - tomSymbol after strategy: "
       //DEBUG     + tomSymbol);
@@ -902,7 +903,7 @@ matchL:    %match(bqTList,tomSymbol) {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
         } else {
-          //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+          System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
           return `Type(typeName,EmptyType());
         }    
       }
