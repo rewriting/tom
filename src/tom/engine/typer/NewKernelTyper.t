@@ -64,10 +64,16 @@ public class NewKernelTyper {
   }
 
   private int freshTypeVarCounter = 0;
+  /*
+   * pem: why use a state variable here ?
+   */
   // List for variables of pattern (match constraints)
   private TomList varPatternList;
   // List for variables of subject and of numeric constraints
   private BQTermList varList;
+  /*
+   * pem: why use a state variable here ?
+   */
   // List for type constraints (for fresh type variables)
   private TypeConstraintList typeConstraints;
   // Set of pairs (freshVar,groundVar)
@@ -167,6 +173,9 @@ public class NewKernelTyper {
     return `Type("unknown type",TypeVar(freshTypeVarCounter++));
   }
 
+  /*
+     * pem: use if(...==... && typeConstraints.contains(...))
+     */
   protected void addConstraint(TypeConstraint constraint) {
     %match {
       !concTypeConstraint(_*,tConstraint,_*) << typeConstraints &&
@@ -261,7 +270,7 @@ public class NewKernelTyper {
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
                 init(); // Reset all lists for the next independent match block 
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 6.");
-                `headCodeList = `InstructionToCode(Match(result,options));
+                headCodeList = `InstructionToCode(Match(result,options));
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
                     `headCodeList);
