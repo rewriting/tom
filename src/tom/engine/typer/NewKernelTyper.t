@@ -241,7 +241,7 @@ public class NewKernelTyper {
         CodeList codeResult = `concCode();
         for(Code headCodeList : `codes.getCollectionconcCode()) {
           %match(headCodeList) {
-            InstructionToCode(Match(constraintInstructionList,options)) -> {
+            InstructionToCode(Match(constraintInstructionList,_)) -> {
               try {
                 flagInnerMatch = false;
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
@@ -253,7 +253,7 @@ public class NewKernelTyper {
                 //DEBUG System.out.println("\n typeConstraints before solve = " + typeConstraints);
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
                 //DEBUG System.out.println("\n typeConstraints aftersolve = " + typeConstraints);
-                //DEBUG System.out.println("\n substitutions= " + substitutions);
+                System.out.println("\n substitutions= " + substitutions);
                 //DEBUG printGeneratedConstraints(typeConstraints);
                 //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
               } catch(tom.library.sl.VisitFailure e) {
@@ -644,7 +644,7 @@ public class NewKernelTyper {
 
   private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType freshType) {
     %match(slotList,tomSymbol) {
-      concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
+      concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argFreshType = freshType;
         // In case of a list
         if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
@@ -664,20 +664,29 @@ public class NewKernelTyper {
             //DEBUG System.out.println("InferSlotList CT-ELEM -- constraint = " + argFreshType +
             //DEBUG     " = " + `headTTList);
           }
+          
           /**
-           * Continuation of CT-MERGE rule (applying to premises):
-           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-           * THEN infers type of both sublist "l(e1,...,en)" and last argument
-           *      "e", where "e" represents a list with
-           *      head symbol "l"
-           *
            * Continuation of CT-STAR rule (applying to premises):
            * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
            * THEN infers type of both sublist "l(e1,...,en)" and last argument
            *      "x", where "x" represents a list with
            *      head symbol "l"
            */
-          `inferTomTerm(term,argFreshType);
+          TomTerm newTerm = `term;
+          %match(term) {
+            VariableStar[Option=options,AstName=name,Constraints=constraints] -> {
+              newTerm =
+                `VariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName),constraints);  
+            }
+          }
+          /**
+           * Continuation of CT-MERGE rule (applying to premises):
+           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
+           * THEN infers type of both sublist "l(e1,...,en)" and last argument
+           *      "e", where "e" represents a list with
+           *      head symbol "l"
+           */
+          `inferTomTerm(newTerm,argFreshType);
           `inferSlotList(tailSList,tomSymbol,freshType);
         } else {
           // In case of a function
@@ -718,7 +727,7 @@ matchL:    %match(bqTList,tomSymbol) {
           break matchL;
         }
 
-      concBQTerm(term,tailBQTList*),Symbol[TypesToType=TypesToType(domain@concTomType(headTTList,_*),_)] -> {
+      concBQTerm(term,tailBQTList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argFreshType = freshType;
         // In case of a list
         if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
@@ -728,6 +737,13 @@ matchL:    %match(bqTList,tomSymbol) {
             addConstraint(`Equation(argFreshType,headTTList));
             //DEBUG System.out.println("InferBQTermList -- constraint = " + argFreshType +
             //DEBUG     " = " + `headTTList);
+          }
+          BQTerm newTerm = `term;
+          %match(term) {
+            BQVariableStar[Option=options,AstName=name] -> {
+              newTerm =
+                `BQVariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName));  
+            }
           }
           `inferBQTerm(term,argFreshType);
           `inferBQTermList(tailBQTList,tomSymbol,freshType);
@@ -752,33 +768,36 @@ matchL:    %match(bqTList,tomSymbol) {
 
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-/*
-      concTypeConstraint(_*,eq@Equation(Type(_,EmptyType()),_),_*) -> {
-        System.out.println("SolveConstraints -- eq = " + `eq);
-      }
-
-      concTypeConstraint(_*,eq@Equation(_,Type(_,EmptyType())),_*) -> {
-        System.out.println("SolveConstraints -- eq = " + `eq);
-      }
-
-*/
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(_*,Equation(t1@Type(tName1,_),t2@Type(tName2@!tName1,_)),_*) &&
+      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1]),_*) &&
       (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
         throw new RuntimeException("solveConstraints: failure on " + `t1
             + " = " + `t2);
       }
 
-      //TODO take care about  TypeWithSymbol(TomType:String,TlType:TomType,RootSymbolName:TomName)
-      // E.g. Equation(Type("unknown type",TypeVar(0)),Type("B",TypeVar(0)))
-      concTypeConstraint(_*,Equation(t1@Type(_,tType1@TLType(_)),t2@Type(_,tType2@TLType(_))),_*) &&
-      (tType1 != tType2)  -> {
+      // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
+      concTypeConstraint(_*,Equation(t1@Type[TomType=tName1],t2@(Type|TypeWithSymbol)[TomType=tName2@!tName1]),_*) &&
+      (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+        throw new RuntimeException("solveConstraints: failure on " + `t1
+            + " = " + `t2);
+      }
+
+      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
+      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TlType=tType1@TLType(_)],t2@Type[TlType=tType2@TLType(_)]),_*) &&
+        (tType1 != tType2)  -> {
+        throw new RuntimeException("solveConstraints: failure on " + `t1
+            + " = " + `t2);
+      }
+      
+      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
+      concTypeConstraint(_*,Equation(t1@Type[TlType=tType1@TLType(_)],t2@(Type|TypeWithSymbol)[TlType=tType2@TLType(_)]),_*) &&
+        (tType1 != tType2)  -> {
         throw new RuntimeException("solveConstraints: failure on " + `t1
             + " = " + `t2);
       }
 
       //without Equation(type,type)
-      concTypeConstraint(leftTCList*,Equation(typeVar@Type(_,TypeVar(_)),type@!typeVar),rightTCList*) -> {
+      concTypeConstraint(leftTCList*,Equation(typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)],type@!typeVar),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
           !concTypeConstraint() << leftTCList -> {
@@ -796,7 +815,7 @@ matchL:    %match(bqTList,tomSymbol) {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
 
-      concTypeConstraint(leftTCList*,Equation(type@Type(_,!TypeVar(_)),typeVar@Type(_,TypeVar(_))),rightTCList*) -> {
+      concTypeConstraint(leftTCList*,Equation(type@(Type|TypeWithSymbol)[TlType=!TypeVar(_)],typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)]),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
           !concTypeConstraint() << leftTCList -> {
@@ -871,7 +890,7 @@ matchL:    %match(bqTList,tomSymbol) {
           if (substitutions.containsKey(`typeVar)) {
             type = substitutions.get(`typeVar);
           } else {
-            //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+            System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
             type = `Type(typeName,EmptyType());
           }    
           getSymbolTable().putType(`typeName,type);
@@ -904,7 +923,7 @@ matchL:    %match(bqTList,tomSymbol) {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
         } else {
-          //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
+          System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
           return `Type(typeName,EmptyType());
         }    
       }
