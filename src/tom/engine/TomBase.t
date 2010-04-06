@@ -62,6 +62,7 @@ public final class TomBase {
   %include { ./adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
   %include { ../platform/adt/platformoption/PlatformOption.tom }
+  %include { ../library/mapping/java/boolean.tom }
 
   %typeterm Collection {
     implement { java.util.Collection }
@@ -274,14 +275,21 @@ public final class TomBase {
    * @param collection the bag which collect the results
    * @param subject the term to traverse
    */
-  public static void collectVariable(Collection<TomTerm> collection, tom.library.sl.Visitable subject) {
+  public static void collectVariable(Collection<TomTerm> collection, 
+          tom.library.sl.Visitable subject, boolean considerBQVars) {
     try {
       //TODO: replace TopDownCollect by continuations
-      `TopDownCollect(collectVariable(collection)).visitLight(`subject);
+      `TopDownCollect(collectVariable(collection,considerBQVars)).visitLight(`subject);
     } catch(VisitFailure e) { }
   }
 
-  %strategy collectVariable(collection:Collection) extends `Identity() {
+  %strategy collectVariable(collection:Collection, considerBQVars:boolean) extends `Identity() {
+    visit BQTerm {
+        v@BQVariable[] -> {
+          if (considerBQVars) { collection.add(convertFromBQVarToVar(`v)); } 
+        }
+    }
+    
     visit TomTerm {
       v@(Variable|VariableStar)[Constraints=constraintList] -> {
         collection.add(`v);
@@ -302,7 +310,7 @@ public final class TomBase {
 
       // to collect annoted nodes but avoid collect variables in optionSymbol
       t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
-        collectVariable(collection,`subterms);
+        collectVariable(collection,`subterms,considerBQVars);
         TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
@@ -319,7 +327,7 @@ public final class TomBase {
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     Collection<TomTerm> variableList = new HashSet<TomTerm>();
-    collectVariable(variableList,`subject);
+    collectVariable(variableList,`subject,true);
     // compute multiplicities
     HashMap<TomName,Integer> multiplicityMap = new HashMap<TomName,Integer>();
     for(TomTerm variable:variableList) {
@@ -347,7 +355,7 @@ public final class TomBase {
 
   public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
     %match(theory) {
-      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) return true; }
+      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) { return true; } }
     }
     return false;
   }

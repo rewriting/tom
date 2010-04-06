@@ -35,8 +35,8 @@ class Explore {
   // Collect variable
   %strategy ComputeNext(t:T, c:Collection) extends Identity() {
     visit T {
-      a() -> { c.add( getEnvironment().getPosition().getReplace(`b()).visitLight(`t) ); }
-      a() -> { c.add( getEnvironment().getPosition().getReplace(`c()).visitLight(`t) ); }
+      a() -> { c.add( getPosition().getReplace(`b()).visitLight(`t) ); }
+      a() -> { c.add( getPosition().getReplace(`c()).visitLight(`t) ); }
     }
   }
   

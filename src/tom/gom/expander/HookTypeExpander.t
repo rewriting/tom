@@ -498,8 +498,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+    }
 
     HookDeclList acHooks = `ConcHookDecl();
      /*
@@ -565,8 +566,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+  }
 
     /* start with AU normalization */
     HookDeclList acuHooks = makeAUHookList(opName, mdecl, scode);
@@ -622,8 +624,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+    }
 
     HookDeclList auHooks = `ConcHookDecl();
     String userNeutral = trimBracket(scode);

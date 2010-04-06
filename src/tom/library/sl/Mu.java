@@ -114,8 +114,6 @@ public class Mu extends AbstractStrategyCombinator {
                 //System.out.println("childNumber: " + childNumber);
                 //System.out.println("V: " + m.arguments[Mu.V]);
                 parent.setChildAt(childNumber,m.arguments[Mu.V]);
-              } else {
-                //System.out.println("strange: " + muvar);
               }
               return;
             }

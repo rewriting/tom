@@ -258,8 +258,7 @@ writer.write(
     at = atConv.convert(at);
     if(at instanceof aterm.ATermInt) {
       aterm.ATermInt atint = (aterm.ATermInt) at;
-      boolean atbool = (atint.getInt()==0?false:true);
-      return atbool;
+      return (atint.getInt()==0?false:true);
     }
     throw new RuntimeException("Not a Boolean : " + at);
   }
@@ -276,8 +275,7 @@ writer.write(
     if(at instanceof aterm.ATermInt) {
       int atint = ((aterm.ATermInt)at).getInt();
       atint = atint + (int)'0';
-      char atchar = (char) atint;
-      return atchar;
+      return (char) atint;
     }
     throw new RuntimeException("Not a Char : " + at);
   }

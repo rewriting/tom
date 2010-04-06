@@ -162,7 +162,9 @@ public class PreGenerator {
     do {
   //    System.out.println("C = " + buildAndConstraintFromArray(array));
 block: {
-      for(int i=0 ; i<array.length-1 ; i++) {
+      // start from 1 to ignore the first constraint which is only due to  
+      // renaming subjects 
+      for(int i=1 ; i<array.length-1 ; i++) {
 loop_j: for(int j=i+1 ; j<array.length ; j++) {
           Constraint first = array[i];
           Constraint second = array[j];

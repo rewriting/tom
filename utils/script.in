@@ -30,7 +30,8 @@ case "`uname`" in
   Darwin*) darwin=true ;;
 esac
 
-if [ -z "$@TOM_HOME@" -o ! -d "$@TOM_HOME@" ] ; then
+if [ -z "$@TOM_HOME@" -o ! -d "$@TOM_HOME@" ]
+then
   ## resolve links - $0 may be a link to tom's home
   PRG="$0"
   progname=`basename "$0"`
@@ -53,7 +54,8 @@ if [ -z "$@TOM_HOME@" -o ! -d "$@TOM_HOME@" ] ; then
 fi
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched
-if $cygwin ; then
+if $cygwin
+then
   [ -n "$@TOM_HOME@" ] &&
     @TOM_HOME@=`cygpath --unix "$@TOM_HOME@"`
 fi
@@ -63,7 +65,8 @@ TOM_LIB="${@TOM_HOME@}/lib"
 TOM_JAR="${TOM_LIB}/tom-compiler-full.jar:${TOM_LIB}/tom-runtime-full.jar"
 JAVACMD=java$JAVA_ARGS
 
-if [ -z "$LOCALCLASSPATH" ] ; then
+if [ -z "$LOCALCLASSPATH" ]
+then
   LOCALCLASSPATH=$TOM_JAR
 else
   LOCALCLASSPATH=$TOM_JAR:$LOCALCLASSPATH
@@ -73,7 +76,8 @@ SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
 SCRIPT_CONFIG_FILE="${@TOM_HOME@}/@CONFIG_FILE@"
 
 # For Cygwin, switch paths to Windows format before running java
-if $cygwin; then
+if $cygwin
+then
   @TOM_HOME@=`cygpath --windows "$@TOM_HOME@"`
   SCRIPT_INC=`cygpath --windows "$SCRIPT_INC"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`

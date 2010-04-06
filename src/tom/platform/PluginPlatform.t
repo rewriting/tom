@@ -130,7 +130,9 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
         String initArgument = input;
         boolean success = true;
         statusHandler.clear();
-        if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
+        if(this.testHandler!=null) {
+          Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
+        }
         testHandler = new TestHandler(input);
         if(!testHandler.hasError()) {
           Logger.getLogger(loggerRadical).addHandler(this.testHandler);

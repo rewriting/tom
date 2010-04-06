@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/pem/eclipse/plugins/fr.loria.eclipse.tom_2.5.4/lib/aircube-bundle.jar"/>
+	<classpathentry kind="lib" path="/Users/pem/eclipse/plugins/fr.loria.eclipse.tom_2.7.0/lib/aircube-bundle.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

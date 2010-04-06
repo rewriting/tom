@@ -179,7 +179,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
       }
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
+        TomSymbol tomSymbol = expander.getSymbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
         BQTermList tomListArgs = TomBase.slotListToBQTermList(newTermArgs);
         
@@ -187,9 +187,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,expander.symbolTable());
+            return ASTFactory.buildList(`name,tomListArgs,expander.getSymbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,expander.symbolTable());
+            return ASTFactory.buildArray(`name,tomListArgs,expander.getSymbolTable());
           } else if(TomBase.isDefinedSymbol(tomSymbol)) {
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
@@ -247,8 +247,7 @@ matchBlock: {
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
         }
 
-        Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
-        return newMatch;
+        return `Match(newConstraintInstructionList, matchOptionList);
       }
 
     } // end visit
@@ -265,7 +264,7 @@ matchBlock: {
           DeclarationList l = `concDeclaration();
           //generate the code for every method of Instrospector interface
 
-          SymbolTable symbolTable = expander.symbolTable();
+          SymbolTable symbolTable = expander.getSymbolTable();
           Collection<TomType> types = symbolTable.getUsedTypes();
 
           /**
@@ -392,7 +391,6 @@ matchBlock: {
                                 composite =  `Composite(composite*,CompositeTL(ITL("null")));
                                 if(i < arity-1) {
                                   composite =  `Composite(composite*,CompositeTL(ITL(",")));
-                                } else {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {

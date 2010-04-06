@@ -162,7 +162,7 @@ public class SymbolTable {
 
   public void generateConsAndNils() {
     for(String c: getConstructors()) {
-      if(!isVariadic(c)) continue;
+      if(!isVariadic(c)) { continue; }
       String dom = getDomain(c);
       String codom = getCoDomain(c);
       FieldDescriptionList ConsFields = null; // head and tail
@@ -727,7 +727,7 @@ public class SymbolTable {
     FieldDescriptionList l = getFieldList(cons);
     %match(l) {
       concFieldDescription(_*,FieldDescription[FieldName=n,Sort=sort],_*) -> {
-        if (`n.equals(field)) return `sort;
+        if (`n.equals(field)) { return `sort; }
       }
     }
     getLogger().log(Level.SEVERE,GomMessage.shouldNeverHappen.getMessage(),new Object[]{cons,field});
@@ -909,7 +909,7 @@ public class SymbolTable {
   private void computeSortDependences() {
     sortDependences.clear();
     for(String sort: getSorts()) {
-      if (getGomEnvironment().isBuiltin(sort)) continue;
+      if (getGomEnvironment().isBuiltin(sort)) { continue; }
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {

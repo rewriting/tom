@@ -638,13 +638,13 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
       <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${stable.dist}/lib/tom-compiler-full.jar">
+    </jar>
+    <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
@@ -834,13 +834,13 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${src.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
       <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${src.dist}/lib/tom-compiler-full.jar">
+    </jar>
+    <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
@@ -1559,6 +1559,27 @@
       classpathref="tom.findbugs"/>
   </target>
 
+  <target name="findbugs" depends="src.dist, init.task.findbugs">
+    <path id="src.dist.classpath">
+      <fileset dir="${src.dist.lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+    <findbugs home="${findbugs.home}"
+      jvmargs="-Xmx256m"
+      output="html"
+      stylesheet="fancy-hist.xsl"
+      outputFile="tom-fb.html" >
+      <auxClasspath refid="src.dist.classpath" />
+      <sourcePath path="${src.src}" />
+      <sourcePath path="${src.gen}" />
+      <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
+    </findbugs>
+  </target>
+
   <target name="init.task.clover">
     <available property="clover.present"
       classname="com.cenqua.clover.CloverInstr"
@@ -1594,27 +1615,6 @@
 
   <target name="clover.clean" depends="with.clover">
     <clover-clean keepdb="true"/>
-  </target>
-
-  <target name="findbugs" depends="src.dist, init.task.findbugs">
-    <path id="src.dist.classpath">
-      <fileset dir="${src.dist.lib}">
-        <include name="**/*.jar"/>
-      </fileset>
-    </path>
-    <findbugs home="${findbugs.home}"
-      jvmargs="-Xmx256m"
-      output="html"
-      stylesheet="fancy-hist.xsl"
-      outputFile="tom-fb.html" >
-      <auxClasspath refid="src.dist.classpath" />
-      <sourcePath path="${src.src}" />
-      <sourcePath path="${src.gen}" />
-      <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
-      <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
-      <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
-    </findbugs>
   </target>
 
   <!-- <target name="tags">

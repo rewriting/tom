@@ -1,3 +1,152 @@
+2010-03-31 tavaresc
+  * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
+    but also in the rest of the code (which is not necessarily a InstructionToCode).
+
+2010-03-31 pem
+ * switch for TyperPlugin vs NewTyper
+ * improved code of NewTyper
+
+2010-03-30 jcb
+ * improve code to be more respectful of standards and good practices (need
+   bootstrap to be visible in sonar application)
+
+2010-03-25 tavares
+ * improve new typer
+ * modify SymbolTable
+
+2010-03-12 tavares
+ * light documentation of new typer code
+
+2010-03-09 tonio
+ * improve code (formatting, cosmetics, etc.)
+
+2010-03-03 tavares
+ * dislunction, numeric match and alias in the new typer
+
+2010-02-18 tonio
+ * use jar instead of zip to build jars
+ * avoid duplicate files in jar (for standards)
+
+2010-02-17 radu
+ * fix bug #8955 (which was caused by having the same variable both as subject
+	 and tom variable)
+
+2010-02-17 balland
+ * fix package name in examples
+ * few "admin tasks"
+
+2010-02-12 balland
+ * fix the bug #9607 (a Tom error is now logged when the type of the subject cannot be inferred
+ * fix current typer
+
+2010-02-12 brauner
+ * modified lemu in order to detect loops and pretty print proofs as trees
+
+2010-02-06 tonio
+ * improve findbugs output
+ * improve code
+
+2010-02-05 jcb
+ * remove useless files
+ * rename & adapt Tom plugins
+ * update config/Tom.xml
+
+2010-02-04 tavares
+ * fix/debug new typer
+ * improve new typer
+
+2010-01-27 jcb
+ * add a multithread ant configuration file (buildMT.xml)
+
+2010-01-27 tavares
+ * Add some pre-processing in Desugarer.t
+ * Type untyped terms in SymbolTable.
+
+2010-01-26 tavares
+ * Typing is OK (but Desugarer needs to be fixed)
+
+2010-01-25 tonio
+ * improve error reporting
+
+2010-01-25 tavares
+ * improve new typer (fix variables replacement)
+
+2010-01-25 pem
+ * parallelize the generation of files only
+
+2010-01-23 tonio
+ * enable findbugs to work
+ * improve code
+ * simplify Gom starter
+
+2010-01-22 tonio
+ * improve code
+
+2010-01-22 pem
+ * start parallelizing gom
+
+2010-01-22 jcb
+ * replace System.in by tmp files in Gom
+
+2010-01-19 tavares
+ * improve new typer (fix errors and congruence strategies)
+
+2010-01-19 jcb
+ * add new typer plugin
+
+2010-01-18 tavares
+ * fix errors
+
+2010-01-12 pem
+ * improve and fix logo
+ * improve compiler
+
+2010-01-11 jcb
+ * improve code (minor modifications)
+
+2010-01-09 tonio
+ * fix build of src by stable
+
+2010-01-08 jcb
+ * bootstrap with Gom multithread option activated (to be able to use Tom
+	 multithread multithread option)
+ * activate both Gom and Tom multithread option
+
+2009-12-30 tonio
+ * fix PR #9337: add a nostatic attribute to the tom ant task
+ * improve code
+
+2009-12-16 tavares
+ * solve constraints in new typer
+
+2009-12-15 jcb
+ * improve new typer
+
+2009-12-11 tonio
+ * improve code (factorisation)
+
+2009-12-09 jcb
+ * update applications/tlog
+
+2009-12-07 tavares
+ * start type inference
+
+2009-12-03 jcb
+ * improve code
+
+2009-12-03 tonio
+ * remove dead code
+ * improve code
+
+2009-12-03 jcb
+ * fix few errors
+
+2009-11-30 tavares
+ * Start new typer
+
+2009-11-27 tavares
+ * bugfix (wrong condition in SymbolTable for C code)
+
 2009-11-25 tonio
  * remove the "production rule" syntax support for gom, and the sorts section
 
@@ -1600,7 +1749,8 @@
 2001-03-07  Pierre-Etienne Moreau  <moreau@loria.fr>
 
 
-  * src/jtom/compiler/TomCompiler.t: generation of access and building functions
+  * src/jtom/compiler/TomCompiler.t: generation of access and building
+  functions
   - GET_HEAD, GET_TAIL, IS_EMPTY, MAKE_EMPTY, MAKE_ADD
   - the parsing of list-pattern is not yet implemented
 

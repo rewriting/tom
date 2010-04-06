@@ -268,9 +268,8 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
-        } else {
-          // Skip builtin childs
         }
+        // else : Skip builtin childs
       }
     }
     if (res.length() != 0) {
