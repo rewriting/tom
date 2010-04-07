@@ -121,26 +121,26 @@ public class NewTyper extends TomGenericPlugin {
         //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
 
         /**
-          * Typing variables whose types are unknown with fresh type variables before
-          * start inference
-          */
+         * Typing variables whose types are unknown with fresh type variables before
+         * start inference
+         */
         Code typedCodeWithTypeVariables = collectKnownTypesFromCode((Code)getWorkingTerm());
-        
+
         /**
-          * Start by typing variables with fresh type variables
-          * Perform type inference over patterns 
-          */
+         * Start by typing variables with fresh type variables
+         * Perform type inference over patterns 
+         */
         //DEBUG System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
         Code inferredTypeForCode = newKernelTyper.inferCode(typedCodeWithTypeVariables);
         //DEBUGSystem.out.println("Code after inference = \n" + inferredTypeForCode);
-        
+
         /** Transform each BackQuoteTerm into its compiled form --> maybe to
-          * desugarer phase before perform type inference 
-          */
+         * desugarer phase before perform type inference 
+         */
         // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
         /** Transform a string into an array of characters before type inference, 
-          * so we can apply inference just once on all terms 
-          */
+         * so we can apply inference just once on all terms 
+         */
         //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
 
         // Update type information for codomain in symbol table
@@ -151,7 +151,7 @@ public class NewTyper extends TomGenericPlugin {
          * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
          */
         //TODO typeString
-        
+
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(typedCode);
         System.out.println("\nCode after type inference = \n" + typedCode);
 
@@ -165,7 +165,8 @@ public class NewTyper extends TomGenericPlugin {
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
-            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    } catch (Exception e) {
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+      } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
             new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
         e.printStackTrace();
@@ -247,7 +248,7 @@ public class NewTyper extends TomGenericPlugin {
         getSymbolTable().putSymbol(tomName,tomSymbol);
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
-        System.out.println("should not be there");
+        throw new TomRuntimeException("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
       //getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
@@ -258,19 +259,20 @@ public class NewTyper extends TomGenericPlugin {
    * this post-processing phase replaces untyped (universalType) codomain
    * by their precise type (according to the symbolTable)
    */
-  %strategy updateCodomain(nkt:NewKernelTyper) extends `Identity() {
+  %strategy updateCodomain(nkt:NewKernelTyper) extends Identity() {
     visit Declaration {
+
+      // pem: why this case ?
       GetHeadDecl[] -> {
-          throw new TomRuntimeException("updateCodomain");
+        throw new TomRuntimeException("updateCodomain");
       }
+
       // In case of constants, where the domain is the codomain 
       decl@GetHeadDecl[Opname=Name(opName)] -> {
         TomSymbol tomSymbol = nkt.getSymbolFromName(`opName);
         TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
-          Declaration t = (Declaration)`decl;
-          t = t.setCodomain(codomain.getHeadconcTomType());
-          return t;
+          return `decl.setCodomain(codomain.getHeadconcTomType());
         } else {
           throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
         }
@@ -280,11 +282,8 @@ public class NewTyper extends TomGenericPlugin {
         TomSymbol tomSymbol = nkt.getSymbolFromType(`domain);
         if(tomSymbol != null) {
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
-
           if(codomain.length()==1) {
-            Declaration t = (Declaration)`decl;
-            t = t.setCodomain(codomain.getHeadconcTomType());
-            return t;
+            return `decl.setCodomain(codomain.getHeadconcTomType());
           } else {
             throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
           }
@@ -296,6 +295,7 @@ public class NewTyper extends TomGenericPlugin {
   /*
    * transform a BQAppl into its compiled form
    */
+  // pem: why this strategy ? there is a similar code in ExpanderPlugin
   %strategy typeBQAppl(nkt:NewKernelTyper) extends Identity() {
     visit BQTerm {
       BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
