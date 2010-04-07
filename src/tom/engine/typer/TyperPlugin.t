@@ -111,6 +111,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         updateSymbolTable();
 
+        System.out.println("In code = " + getWorkingTerm());
         Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
         Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
 
@@ -120,6 +121,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+        System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -169,6 +171,11 @@ public class TyperPlugin extends TomGenericPlugin {
   %strategy expandType(typer:TyperPlugin) extends Identity() {
     visit TomType {
       subject@Type(tomType,EmptyType()) -> {
+        if (!typer.getSymbolTable().isUnknownType(`tomType)) {
+          if (typer.getSymbolTable().getType(`tomType) == null || typer.getSymbolTable().getType(`tomType) == `EmptyType()) {
+            System.out.println("type known = " + `tomType + " with EmptyType().");
+          }
+        }
         TomType type = typer.getSymbolTable().getType(`tomType);
         if(type != null) {
           return type;
