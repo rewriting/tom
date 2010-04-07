@@ -481,7 +481,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     }
   }
 
-  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName)
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TargetLanguageType domain, TargetLanguageType codomain, Expression code, String moduleName)
     throws IOException {
       String opname = opNameAST.getString();
       boolean inlined = inlineplus;
@@ -607,7 +607,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
       }
 
-      protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType domain, Expression code, String moduleName) throws IOException {
+      protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, Expression code, String moduleName) throws IOException {
 
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
@@ -650,7 +650,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
       }
 
-      protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType domain, Expression code, String moduleName) throws IOException {
+      protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException {
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
@@ -692,7 +692,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
        * the method implementations are here common to C, Java, C#, caml and python
        */
 
-      protected void buildExpGetElement(int deep, TomName opNameAST, TargetLanguageType domain, TargetLanguageType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
+      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         %match(opNameAST) {
           EmptyName() -> {
             throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);

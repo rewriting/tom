@@ -108,7 +108,6 @@ public class NewTyper extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     boolean newtyper = getOptionBooleanValue("newtyper");
 
-    System.out.println("NewTyper : newtyper = " + newtyper);
     if(newtyper) {
  
       Code typedCode = null;
@@ -211,7 +210,7 @@ public class NewTyper extends TomGenericPlugin {
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     
     visit TomType {
-      Type(typeName,EmptyType()) -> {
+      Type(typeName,EmptyTargetLanguageType()) -> {
         TomType newType = null;
         // two tomtypes 'Type("unknown type",EmptyType())' may have different
         // TlType. So, if there already exists a 'Type("unknown type",TypeVar(i))'
@@ -242,7 +241,7 @@ public class NewTyper extends TomGenericPlugin {
    * updateSymbol is called after a first syntax expansion phase
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
-   * - each Type(_,EmptyType()) is replaced by Type(_,TypeVar(i))
+   * - each Type(_,EmptyTargetLanguageType()) is replaced by Type(_,TypeVar(i))
    */
   private void updateSymbolTable() {
     //SymbolTable symbolTable = getStreamManager().getSymbolTable();

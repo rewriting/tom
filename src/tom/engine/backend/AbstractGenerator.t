@@ -406,7 +406,7 @@ public abstract class AbstractGenerator {
       }
 
       GetElement(opNameAST,codomain, varName, varIndex) -> {
-        buildExpGetElement(deep,`opNameAST,getTermType(`varName),`codomain, `varName, `varIndex, moduleName);
+        buildExpGetElement(deep,`opNameAST,getTermType(`varName),`varName, `varIndex, moduleName);
         return;
       }
 
@@ -789,21 +789,21 @@ public abstract class AbstractGenerator {
       }
 
       GetElementDecl[Opname=opNameAST@Name(opname),
-        Variable=BQVariable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=tlType1@TLType[]]],
+        Variable=BQVariable[AstName=Name(name1), AstType=Type[TomType=type1,TlType=TLType[]]],
         Index=BQVariable[AstName=Name(name2)],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-            `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, code, moduleName);
+            `buildGetElementDecl(deep, opNameAST, name1, name2, type1, code, moduleName);
           }
           return;
         }
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
         Variable=BQVariable[AstName=Name(name),
-        AstType=Type(type,tlType@TLType[])],
+        AstType=Type(type,TLType[])],
         Expr=code] -> {
           if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-            `buildGetSizeDecl(deep, opNameAST, name, type, tlType, code, moduleName);
+            `buildGetSizeDecl(deep, opNameAST, name, type, code, moduleName);
           }
           return;
         }
@@ -972,7 +972,7 @@ public abstract class AbstractGenerator {
   protected abstract void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, BQTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetTail(int deep, String opName, TomType type1, BQTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, BQTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException;
   protected abstract void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
@@ -1000,11 +1000,11 @@ public abstract class AbstractGenerator {
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2, String type1, String type2, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
       String type1, Expression expr, String moduleName) throws IOException;
-  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName) throws IOException;
+  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TargetLanguageType domain, TargetLanguageType codomain, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
       TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
-  protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TargetLanguageType tlType1, Expression code, String moduleName) throws IOException;
-  protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TargetLanguageType tlType, Expression code, String moduleName) throws IOException;
+  protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, Expression code, String moduleName) throws IOException;
+  protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException;
 
 }

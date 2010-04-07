@@ -80,12 +80,9 @@ public final class TomBase {
    */
   public static String getTomType(TomType type) {
     %match(type) {
-      Type(s,EmptyTargetLanguageType()) -> {return `s;}
-      Type(s,_) -> {return `s;}
+      (Type|TypeWithSymbol)[TomType=s] -> { return `s; }
       EmptyType() -> {return null;}
-      TypeWithSymbol[TomType=s] -> { return `s; }
     }
-    System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
