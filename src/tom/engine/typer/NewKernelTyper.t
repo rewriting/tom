@@ -159,7 +159,7 @@ public class NewKernelTyper {
     throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
 
-  protected TomType getFreshTypeVar() {
+  protected TargetLanguageType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
   }
 
@@ -891,7 +891,7 @@ matchL:    %match(bqTList,tomSymbol) {
             type = substitutions.get(`typeVar);
           } else {
             System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
-            type = `Type(typeName,EmptyType());
+            type = `Type(typeName,EmptyTargetLanguageType());
           }    
           getSymbolTable().putType(`typeName,type);
         }
@@ -924,7 +924,7 @@ matchL:    %match(bqTList,tomSymbol) {
           return nkt.substitutions.get(`typeVar);
         } else {
           System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
-          return `Type(typeName,EmptyType());
+          return `Type(typeName,EmptyTargetLanguageType());
         }    
       }
     }

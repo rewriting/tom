@@ -140,14 +140,19 @@ public class JavaGenerator extends CFamilyGenerator {
     }
     output.write(deep, stratmodifier + "class " + tomName);
     //write extends
-		%match(extendsType) {
-			Type(code,EmptyType()) -> {
+matchblock: {
+              %match(extendsType) {
+			Type(_,TLType(code)) -> {
 				output.write(deep," extends " + `code);
+        break matchblock;
 			}
-      TLType(code) -> {
-        output.write(deep," extends " + `code);
-      }
+
+			Type(code,EmptyTargetLanguageType()) -> {
+				output.write(deep," extends " + `code);
+        break matchblock;
+			}
     }
+            }
     output.writeln(deep," {");
     int args = names.size();
     //write Declarations
@@ -270,15 +275,19 @@ public class JavaGenerator extends CFamilyGenerator {
       }
     }
     output.writeln(deep,")");
-
+matchblock: {
     %match(throwsType) {
-      TLType[String=str] -> {
-        output.write(deep," throws " + `str);
-      }
-      Type(str,EmptyType()) -> {
-        output.write(deep," throws " + `str);
-      }
+			Type(_,TLType(code)) -> {
+				output.write(deep," throws " + `code);
+        break matchblock;
+			}
+
+			Type(code,EmptyTargetLanguageType()) -> {
+				output.write(deep," throws " + `code);
+        break matchblock;
+			}
     }
+  }
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);

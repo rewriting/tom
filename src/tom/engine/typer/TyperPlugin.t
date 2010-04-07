@@ -170,10 +170,10 @@ public class TyperPlugin extends TomGenericPlugin {
 
   %strategy expandType(typer:TyperPlugin) extends Identity() {
     visit TomType {
-      subject@Type(tomType,EmptyType()) -> {
+      subject@Type(tomType,EmptyTargetLanguageType()) -> {
         if (!typer.getSymbolTable().isUnknownType(`tomType)) {
-          if (typer.getSymbolTable().getType(`tomType) == null || typer.getSymbolTable().getType(`tomType) == `EmptyType()) {
-            System.out.println("type known = " + `tomType + " with EmptyType().");
+          if (typer.getSymbolTable().getType(`tomType) == null) {
+            System.out.println("type known = " + `tomType + " with tltype null.");
           }
         }
         TomType type = typer.getSymbolTable().getType(`tomType);

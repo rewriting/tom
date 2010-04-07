@@ -134,7 +134,7 @@ public class CSharpGenerator extends CFamilyGenerator {
     output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(extendsType) {
-			Type(code,EmptyType()) -> {
+			Type(code,EmptyTargetLanguageType()) -> {
 				output.write(deep," : " + `code);
 			}
     }
@@ -255,13 +255,6 @@ public class CSharpGenerator extends CFamilyGenerator {
       }
     }
     output.writeln(deep,")");
-/*
-    %match(TomType throwsType){
-      Type(throws,EmptyType()) -> {
-        output.write(deep," throws " + `throws);
-      }
-    }
-    */
 
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);

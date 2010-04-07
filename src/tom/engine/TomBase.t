@@ -80,12 +80,9 @@ public final class TomBase {
    */
   public static String getTomType(TomType type) {
     %match(type) {
-      Type(s,EmptyType()) -> {return `s;}
-      Type(s,_) -> {return `s;}
+      (Type|TypeWithSymbol)[TomType=s] -> { return `s; }
       EmptyType() -> {return null;}
-      TypeWithSymbol[TomType=s] -> { return `s; }
     }
-    System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
@@ -94,7 +91,6 @@ public final class TomBase {
    */
   public static String getTLType(TomType type) {
     %match(type) {
-      TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
     }
     throw new TomRuntimeException("getTLType error on term: " + type);
@@ -103,7 +99,7 @@ public final class TomBase {
   /**
    * Returns the implementation-type of a <code>TLType</code>
    */
-  public static String getTLCode(TomType type) {
+  public static String getTLCode(TargetLanguageType type) {
     %match(type) {
       TLType(str)  -> { return `str; }
     }

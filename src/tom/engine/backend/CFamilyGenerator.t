@@ -150,7 +150,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     output.write(" ) ");
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     output.write("((" + TomBase.getTLCode(tlType) + ")");
     generateExpression(deep,exp,moduleName);
     output.write(")");
@@ -185,7 +185,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     return;
   }
 
-  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType,
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType,
                           Expression exp, Instruction body, String moduleName) throws IOException {
     //output.writeln(deep,"{");
     output.write(deep+1,TomBase.getTLCode(tlType) + " ");
@@ -194,7 +194,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     //output.writeln(deep,"}");
   }
 
-  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType,
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }

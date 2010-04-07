@@ -1,3 +1,7 @@
+2010-04-07 pem
+  * add a newtyper option in ant task
+	* introduced TargetLanguageType for TLType and EmptyTargetLanguageType
+
 2010-03-31 tavaresc
   * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
     but also in the rest of the code (which is not necessarily a InstructionToCode).
