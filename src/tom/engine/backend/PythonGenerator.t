@@ -147,7 +147,7 @@ public class PythonGenerator extends GenericGenerator {
     output.write(" ) ");
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     generateExpression(deep,exp,moduleName);
   }
 
@@ -179,13 +179,13 @@ public class PythonGenerator extends GenericGenerator {
     generateInstructionList(deep, instructionList, moduleName);
   }
 
-  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
-  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }

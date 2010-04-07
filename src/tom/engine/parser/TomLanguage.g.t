@@ -207,7 +207,7 @@ matchArgument [List<BQTerm> list] throws TomException
           %match(subject2){
             BQVariable[AstName=name] -> {
               Option ot = `OriginTracking(name, lastLine, currentFile());
-              list.add(`BQVariable(concOption(ot),name,Type(type,EmptyType())));
+              list.add(`BQVariable(concOption(ot),name,Type(type,EmptyTargetLanguageType())));
               return;
             }
             t@BQAppl[] -> {
@@ -591,7 +591,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName);
 
-                TomType strategyType = `Type("Strategy",EmptyType());
+                TomType strategyType = `Type("Strategy",EmptyTargetLanguageType());
 
                 // Define get<slot> method.
                 Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
@@ -601,7 +601,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
                 pairNameDeclList.add(`PairNameDecl(astName,slotDecl));
-                types = `concTomType(types*,Type(stringTypeArg,EmptyType()));
+                types = `concTomType(types*,Type(stringTypeArg,EmptyTargetLanguageType()));
             }
             (
                 COMMA
@@ -622,7 +622,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
               }
               slotNameList.add(astName);
 
-                TomType strategyType = `Type("Strategy",EmptyType());
+                TomType strategyType = `Type("Strategy",EmptyTargetLanguageType());
                     // Define get<slot> method.
                     Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
                     String varname = "t";
@@ -631,7 +631,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl));
-                    types = `concTomType(types*,Type(stringTypeArg,EmptyType()));
+                    types = `concTomType(types*,Type(stringTypeArg,EmptyTargetLanguageType()));
                 }
             )*
             )? RPAREN
@@ -661,7 +661,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          }
 				 makeTlCode += ")";
 
-         TomType strategyType = `Type("Strategy",EmptyType());
+         TomType strategyType = `Type("Strategy",EmptyTargetLanguageType());
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType, makeArgs, CodeToInstruction(TargetLanguageToCode(ITL(makeTlCode))), makeOption);
           options.add(`DeclarationToOption(makeDecl));
@@ -699,7 +699,7 @@ strategyVisit [List<TomVisit> list] throws TomException
     :
   (
     "visit" type:ALL_ID LBRACE
-    { vType = `Type(type.getText(),EmptyType()); }
+    { vType = `Type(type.getText(),EmptyTargetLanguageType()); }
     ( visitInstruction[constraintInstructionList,vType] )*
     RBRACE
   )
@@ -1735,7 +1735,7 @@ operator returns [Declaration result] throws TomException
                 astName = `Name(stringSlotName);
                 slotNameList.add(astName);
                 pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration()));
-                types = `concTomType(types*,Type(typeArg.getText(),EmptyType()));
+                types = `concTomType(types*,Type(typeArg.getText(),EmptyTargetLanguageType()));
             }
             (
                 COMMA
@@ -1750,7 +1750,7 @@ operator returns [Declaration result] throws TomException
                     }
                     slotNameList.add(astName);
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration()));
-                    types = `concTomType(types*,Type(typeArg2.getText(),EmptyType()));
+                    types = `concTomType(types*,Type(typeArg2.getText(),EmptyTargetLanguageType()));
                 }
             )*
             )? RPAREN
@@ -1761,7 +1761,7 @@ operator returns [Declaration result] throws TomException
             astName = `Name(name.getText());
         }
         (
-            attribute = keywordMake[name.getText(),`Type(type.getText(),EmptyType()),types]
+            attribute = keywordMake[name.getText(),`Type(type.getText(),EmptyTargetLanguageType()),types]
             { options.add(`DeclarationToOption(attribute)); }
 
         |   attribute = keywordGetSlot[astName,type.getText()]
@@ -1806,7 +1806,7 @@ operator returns [Declaration result] throws TomException
 
           //System.out.println("pairNameDeclList = " + pairNameDeclList);
 
-          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(type.getText(),EmptyType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `Type(type.getText(),EmptyTargetLanguageType()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
@@ -1831,7 +1831,7 @@ operator returns [Declaration result] throws TomException
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
-            types = `concTomType(types*,Type(typeArg.getText(),EmptyType()));
+            types = `concTomType(types*,Type(typeArg.getText(),EmptyTargetLanguageType()));
         }
         LBRACE
         (
@@ -1851,7 +1851,7 @@ operator returns [Declaration result] throws TomException
         t:RBRACE
         {
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyType()), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyTargetLanguageType()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
             result = `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
@@ -1876,7 +1876,7 @@ operatorArray returns [Declaration result] throws TomException
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
-            types = `concTomType(types*,Type(typeArg.getText(),EmptyType()));
+            types = `concTomType(types*,Type(typeArg.getText(),EmptyTargetLanguageType()));
         }
         LBRACE
         (
@@ -1894,7 +1894,7 @@ operatorArray returns [Declaration result] throws TomException
         t:RBRACE
         {
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyType()), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `Type(type.getText(),EmptyTargetLanguageType()), types, pairNameDeclList, options);
             putSymbol(opName,astSymbol);
 
             result = `ArraySymbolDecl(Name(opName));
@@ -1977,8 +1977,8 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 selector().pop();
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText());
                 result = `EqualTermDecl(
-                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
-                    BQVariable(option2,Name(name2.getText()),Type(type,EmptyType())),
+                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyTargetLanguageType())),
+                    BQVariable(option2,Name(name2.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(code), ot);
             }
         )
@@ -2004,7 +2004,7 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
 
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `IsSortDecl(
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(code), ot);
             }
         )
@@ -2030,7 +2030,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
@@ -2056,7 +2056,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();
 
                 result = `GetTailDecl(opname,
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
@@ -2082,7 +2082,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();
 
                 result = `IsEmptyDecl(opname,
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
@@ -2110,8 +2110,8 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 selector().pop();
 
                 result = `GetElementDecl(opname,
-                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyType())),
-                    BQVariable(option2,Name(name2.getText()),Type("int",EmptyType())),
+                    BQVariable(option1,Name(name1.getText()),Type(type,EmptyTargetLanguageType())),
+                    BQVariable(option2,Name(name2.getText()),Type("int",EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText())), ot);
             }
         )
@@ -2136,7 +2136,7 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();
 
                 result = `GetSizeDecl(opname,
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),ot);
             }
         )
@@ -2161,7 +2161,7 @@ keywordIsFsym[TomName astName, String typeString] returns [Declaration result] t
 
             String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
             result = `IsFsymDecl(astName,
-                BQVariable(option,Name(name.getText()),Type(typeString,EmptyType())),
+                BQVariable(option,Name(name.getText()),Type(typeString,EmptyTargetLanguageType())),
                 Code(code),ot);
         }
     ;
@@ -2183,7 +2183,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList<Code>());
             selector().pop();
 
-            result = `GetImplementationDecl(BQVariable(option,Name(name.getText()),Type(typeString,EmptyType())),
+            result = `GetImplementationDecl(BQVariable(option,Name(name.getText()),Type(typeString,EmptyTargetLanguageType())),
                 Return(Composite(CompositeTL(tlCode))),ot);
         }
     ;
@@ -2209,7 +2209,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
-                    BQVariable(option,Name(name.getText()),Type(type,EmptyType())),
+                    BQVariable(option,Name(name.getText()),Type(type,EmptyTargetLanguageType())),
                      Code(code), ot);
             }
         )
@@ -2252,7 +2252,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
                         COMMA nameArg2:ALL_ID
                         {
                             if( index >= nbTypes ) {
-                                type = `EmptyType();
+                              type = `EmptyType();
                             } else {
                               type = TomBase.elementAt(types,index++);
                             }
@@ -2337,13 +2337,13 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
               result = `MakeAddList(Name(name),
-                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyTargetLanguageType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())),
                   ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeAddList(Name(name),
-                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyTargetLanguageType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }
@@ -2370,10 +2370,10 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),listName.getText());
               result = `MakeEmptyArray(Name(name),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())), ExpressionToInstruction(Code(code)),ot);
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())), ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeEmptyArray(Name(name),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }
@@ -2402,13 +2402,13 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             if(blockList.size()==1) {
               String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
               result = `MakeAddArray(Name(name),
-                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyTargetLanguageType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())),
                   ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeAddArray(Name(name),
-                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyType())),
-                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyType())),
+                  BQVariable(elementOption,Name(elementName.getText()),Type(elementType,EmptyTargetLanguageType())),
+                  BQVariable(listOption,Name(listName.getText()),Type(listType,EmptyTargetLanguageType())),
                   AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         }

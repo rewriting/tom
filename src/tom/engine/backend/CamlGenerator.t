@@ -175,12 +175,12 @@ public class CamlGenerator extends GenericGenerator {
     output.write(")");
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     generateExpression(deep,exp,moduleName);
   }
 
   protected void buildLet(int deep, BQTerm var, OptionList optionList,
-                          TomType tlType, 
+                          TargetLanguageType tlType, 
                           Expression exp, Instruction body, String moduleName) throws IOException {
 
     output.indent(deep);
@@ -194,7 +194,7 @@ public class CamlGenerator extends GenericGenerator {
  
 
   protected void buildLetRef(int deep, BQTerm var, OptionList optionList,
-                             TomType tlType, 
+                             TargetLanguageType tlType, 
                              Expression exp, Instruction body, String moduleName) throws IOException {
     output.indent(deep);
     output.write("let ");
@@ -375,7 +375,7 @@ public class CamlGenerator extends GenericGenerator {
     output.write(s);
   }
   
-  protected void buildDeclaration(int deep, BQTerm var, String type, TomType tlType, String moduleName) throws IOException {
+  protected void buildDeclaration(int deep, BQTerm var, String type, TargetLanguageType tlType, String moduleName) throws IOException {
     output.write(deep,"let ");
     generateBQTerm(deep,var,moduleName);
     System.out.println("buildDeclaration : this is a deprecated code");

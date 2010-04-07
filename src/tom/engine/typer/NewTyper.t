@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Cl?udia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Claudia Tavares  e-mail: Claudia.Tavares@loria.fr
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -190,7 +190,7 @@ public class NewTyper extends TomGenericPlugin {
    */
   private TomSymbol collectKnownTypesFromTomSymbol(TomSymbol subject) {
     try {
-      return `TopDownIdStopOnSuccess(collectKnownTypes(newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
@@ -198,13 +198,17 @@ public class NewTyper extends TomGenericPlugin {
 
   private Code collectKnownTypesFromCode(Code subject) {
     try {
-      return `TopDownIdStopOnSuccess(collectKnownTypes(newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
   }
 
-  %strategy collectKnownTypes(nkt:NewKernelTyper) extends Identity() {
+  /*
+   * Type(name, EmptyType()) -> Type(name, foundType) if name in TypeTable
+   * Type(name, EmptyType()) -> Type(name, Var(i)) if name not in TypeTable
+   */
+  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     
     visit TomType {
       Type(typeName,EmptyType()) -> {
@@ -214,7 +218,12 @@ public class NewTyper extends TomGenericPlugin {
         // into the symbolTable, we don't take this in account; we call
         // getType(typeName) otherwise
         if (!nkt.getSymbolTable().isUnknownType(`typeName)) {
+
           newType = nkt.getSymbolTable().getType(`typeName);
+          if(newType == null) {
+            throw new TomRuntimeException("newType==null with typeName = " + `typeName);
+          }
+
         }
         if (newType == null) {
           // This happens when :
@@ -242,8 +251,8 @@ public class NewTyper extends TomGenericPlugin {
 
     while(it.hasNext()) {
       String tomName = it.next();
-      TomSymbol tomSymbol = getSymbolFromName(tomName);
       try {
+        TomSymbol tomSymbol = getSymbolFromName(tomName);
         tomSymbol = collectKnownTypesFromTomSymbol(tomSymbol);
         getSymbolTable().putSymbol(tomName,tomSymbol);
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(`tomSymbol);

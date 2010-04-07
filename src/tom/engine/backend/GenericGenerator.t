@@ -300,7 +300,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-                                            TomType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
+                                            TargetLanguageType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
     String args[];
     if(lazyMode) {
       TomType argType = getUniversalType();
@@ -320,7 +320,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String typename,
-                                            TomType tlType, Instruction instr, String moduleName) throws IOException {
+                                            TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = TomBase.getTLCode(tlType);
@@ -339,7 +339,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
    * generate the function declaration when no substituion has been done
    */
   protected void buildIsFsymDecl(int deep, String tomName, String varname,
-                                 TomType tlType, Expression code, String moduleName) throws IOException {
+                                 TargetLanguageType tlType, Expression code, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     boolean inlined = inlineplus; //false;
@@ -368,7 +368,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String varname,
-      TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
+      TargetLanguageType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
@@ -523,7 +523,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       }
     }
 
-  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName)
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TargetLanguageType tlType, Expression code, String moduleName)
         throws IOException {
           String opname = opNameAST.getString();
           boolean inlined = inlineplus;
@@ -568,7 +568,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         }
 
       protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-          TomType tlType, Expression code, String moduleName) throws IOException {
+          TargetLanguageType tlType, Expression code, String moduleName) throws IOException {
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
@@ -692,7 +692,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
        * the method implementations are here common to C, Java, C#, caml and python
        */
 
-      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
+      protected void buildExpGetElement(int deep, TomName opNameAST, TargetLanguageType domain, TargetLanguageType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         %match(opNameAST) {
           EmptyName() -> {
             throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
