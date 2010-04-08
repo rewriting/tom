@@ -186,7 +186,7 @@ public class KernelTyper {
     }
 
     visit TomType {
-      subject@Type(tomType,EmptyType()) -> {
+      subject@Type(tomType,EmptyTargetLanguageType()) -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
           return type;
@@ -258,7 +258,7 @@ public class KernelTyper {
         }
       }
 
-      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
+      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -317,7 +317,7 @@ public class KernelTyper {
         }
       }
 
-      var@BQVariable[AstType=Type(tomType,EmptyType())] -> {
+      var@BQVariable[AstType=Type(tomType,EmptyTargetLanguageType())] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {

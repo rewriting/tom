@@ -201,7 +201,7 @@ public class TypeCheckerPlugin extends CheckerPlugin {
 
   private void verifyStrategyVariable(TomVisitList list) {
     %match(list) {
-      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyType()),_,options),_*) -> {
+      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,options),_*) -> {
         String fileName = findOriginTrackingFileName(`options);
         messageError(fileName,
             findOriginTrackingLine(`options),

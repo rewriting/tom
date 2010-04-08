@@ -81,15 +81,15 @@ public class ExpanderPlugin extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final TomType objectType = `TLType("Object");
-  private static final TomType genericType = `TLType("T");
-  private static final TomType methodparameterType = `TLType("<T> T");
-  private static final TomType objectArrayType = `TLType("Object[]");
+  private static final TomType objectType = ASTFactory.makeType("undefined","Object");
+  private static final TomType genericType = ASTFactory.makeType("undefined","T");
+  private static final TomType methodparameterType = ASTFactory.makeType("undefined","<T> T");
+  private static final TomType objectArrayType = ASTFactory.makeType("undefined","Object[]");
   private static final TomType intType = ASTFactory.makeType("int","int");
   
-  private static final TomType basicStratType = `TLType("tom.library.sl.AbstractStrategyBasic");
-  private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
-  private static final TomType visitfailureType = `TLType("tom.library.sl.VisitFailure");
+  private static final TomType basicStratType = ASTFactory.makeType("undefined","tom.library.sl.AbstractStrategyBasic");
+  private static final TomType introspectorType = ASTFactory.makeType("undefined","tom.library.sl.Introspector");
+  private static final TomType visitfailureType = ASTFactory.makeType("undefined","tom.library.sl.VisitFailure");
   // introspector argument of visitLight
   private static final BQTerm introspectorVar = `BQVariable(concOption(),Name("introspector"),introspectorType);
   private static final BQTerm objectVar = `BQVariable(concOption(),Name("o"),objectType);
@@ -589,7 +589,7 @@ matchBlock: {
           Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
           Instruction return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                ExpressionToBQTerm(Bottom(Type("Object",EmptyType()))),TomBase.convertFromBQVarToVar(environmentVar)));
+                ExpressionToBQTerm(Bottom(Type("Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),

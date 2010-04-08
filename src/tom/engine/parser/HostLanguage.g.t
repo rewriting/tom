@@ -561,6 +561,9 @@ gomsignature [List<Code> list] throws TomException
     if(Boolean.TRUE == getOptionManager().getOptionValue("optimize2")) {
       parameters.add("--optimize2");
     }
+    if(Boolean.TRUE == getOptionManager().getOptionValue("newtyper")) {
+      parameters.add("--newtyper");
+    }
     parameters.add("--intermediateName");
     parameters.add(getStreamManager().getRawFileName()+".t.gom");
     if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {

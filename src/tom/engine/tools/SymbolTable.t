@@ -60,7 +60,7 @@ public class SymbolTable {
   private final static String TYPE_INT_ARRAY = "intarray";
   private final static String INT_ARRAY_OP   = "concInt";
 
-  public final static TomType TYPE_UNKNOWN   = `Type("unknown type",EmptyType());
+  public final static TomType TYPE_UNKNOWN   = `Type("unknown type",EmptyTargetLanguageType());
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
@@ -335,7 +335,7 @@ public class SymbolTable {
   }
   
   public boolean isUnknownType(String type) {
-    return `Type(type,EmptyType()).equals(TYPE_UNKNOWN);
+    return `Type(type,EmptyTargetLanguageType()).equals(TYPE_UNKNOWN);
   }
 
   public String builtinToWrapper(String type) {
@@ -363,8 +363,8 @@ public class SymbolTable {
   }
 
   public boolean isNumericType(TomType type) {    
-    %match(type){
-      Type(str,EmptyType()) -> {
+    %match(type) {
+      Type(str,EmptyTargetLanguageType()) -> {
         return isNumericType(`str);
       }
     }

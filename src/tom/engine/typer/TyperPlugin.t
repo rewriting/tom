@@ -168,7 +168,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
   %strategy expandType(typer:TyperPlugin) extends Identity() {
     visit TomType {
-      subject@Type(tomType,EmptyType()) -> {
+      subject@Type(tomType,EmptyTargetLanguageType()) -> {
         TomType type = typer.getSymbolTable().getType(`tomType);
         if(type != null) {
           return type;
