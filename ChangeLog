@@ -1,3 +1,6 @@
+2010-04-08 pem
+  * removed unecessary code in Typer (work was done twice!)
+
 2010-04-07 pem
   * add a newtyper option in ant task
 	* introduced TargetLanguageType for TLType and EmptyTargetLanguageType

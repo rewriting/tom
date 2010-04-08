@@ -107,14 +107,11 @@ public class SymbolTable {
 
   public TomSymbol getSymbolFromName(String name) {
     return mapSymbolName.get(name);
-    
   }
 
   public TomSymbolList getSymbolFromType(TomType type) {
     TomSymbolList res = `concTomSymbol();
-    Iterator<TomSymbol> it = mapSymbolName.values().iterator();
-    while(it.hasNext()) {
-      TomSymbol symbol = it.next();
+    for(TomSymbol symbol:mapSymbolName.values()) {
       if(symbol.getTypesToType().getCodomain() == type) {
         res = `concTomSymbol(symbol,res*);
       }
@@ -294,10 +291,6 @@ public class SymbolTable {
     return ASTFactory.makeType(TYPE_VOID,type);
   }
 
-  //public TomType getUnknownType() {
-  //  return `Type(TYPE_UNKNOWN,EmptyType());
-  //}
-
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
   }
@@ -395,6 +388,10 @@ public class SymbolTable {
     }
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
+  }
+
+  public Iterable<String> keySymbolIterable() {
+    return mapSymbolName.keySet();
   }
 
   public Iterator<String> keySymbolIterator() {
