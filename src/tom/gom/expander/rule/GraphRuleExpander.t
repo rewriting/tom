@@ -696,8 +696,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             path = `PathTerm(path*,head);
           }
           //transform the path to obtain the corresponding one in the pattern
-          Term newpath = `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
-          return newpath;
+          return `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
         }
       }
     }

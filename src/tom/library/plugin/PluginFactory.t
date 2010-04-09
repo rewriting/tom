@@ -208,8 +208,9 @@ public class PluginFactory implements Plugin {
 
         while( it.hasNext() ) {
           String name = it.next();
-          if( !name.equals(flagName) ) // require that the other aren't
+          if( !name.equals(flagName) ) { // require that the other aren't
             allRequiredOptions = `concPlatformOption(PluginOption(name, "", "", BooleanValue(False()),""), allRequiredOptions*);
+          }
         }
       }
     }

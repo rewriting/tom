@@ -100,7 +100,7 @@ public class KernelTyper {
    * with type 'unknown' get this type
    *  - apply this for each rhs
    */
-  protected Code propagateVariablesTypes(Code workingTerm){
+  protected Code propagateVariablesTypes(Code workingTerm) {
     try{
       return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(workingTerm);  
     } catch(tom.library.sl.VisitFailure e) {
@@ -186,7 +186,7 @@ public class KernelTyper {
     }
 
     visit TomType {
-      subject@Type(tomType,EmptyType()) -> {
+      subject@Type(tomType,EmptyTargetLanguageType()) -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
           return type;
@@ -254,16 +254,11 @@ public class KernelTyper {
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
 
-            _ -> {
-              // do nothing
-              //System.out.println("contextType = " + contextType);
-              //System.out.println("subject        = " + subject);
-            }
           }
         }
       }
 
-      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=constraints] -> {
+      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -318,17 +313,11 @@ public class KernelTyper {
               BQTermList subterm = kernelTyper.typeVariableList(`emptySymbol(), `args);
               return `BQAppl(option,name,subterm);
             }
-
-            _ -> {
-              // do nothing
-              //System.out.println("contextType = " + contextType);
-              //System.out.println("subject        = " + subject);
-            }
           }
         }
       }
 
-      var@BQVariable[AstType=Type(tomType,EmptyType())] -> {
+      var@BQVariable[AstType=Type(tomType,EmptyTargetLanguageType())] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -671,8 +660,7 @@ matchL:  %match(subject,s){
   }
 
   private TomType getType(String tomName) {
-    TomType tomType = getSymbolTable().getType(tomName);
-    return tomType;
+    return getSymbolTable().getType(tomName);
   }
 
   /**

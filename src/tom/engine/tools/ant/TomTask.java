@@ -54,6 +54,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>genIntrospector</li>
  * <li>outputfile</li>
  * <li>import</li>
+ * <li>newtyper</li>
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>pretty</li>
@@ -89,6 +90,7 @@ public class TomTask extends MatchingTask {
   private boolean multithread = false;
   private boolean nowarn = false;
   private boolean nostatic = false;
+  private boolean newtyper = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean pretty = false;
@@ -311,6 +313,18 @@ public class TomTask extends MatchingTask {
    */
   public boolean getMultithread() {
     return multithread;
+  }
+
+  /**
+   * If true, compiles with new typer enabled.
+   * @param flag if true compile with new typer
+   */
+  public void setNewtyper(boolean newtyper) {
+    this.newtyper = newtyper;
+  }
+
+  public boolean getNewtyper() {
+    return newtyper;
   }
 
   /**
@@ -648,6 +662,9 @@ public class TomTask extends MatchingTask {
           javaRunner.createArg().setValue("--import");
           javaRunner.createArg().setFile(new File(elem));
         }
+      }
+      if(newtyper == true) {
+        javaRunner.createArg().setValue("--newtyper");
       }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");

@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -64,14 +66,19 @@ import tom.library.sl.*;
 /**
  * The Desugarer plugin.
  * Perform syntax expansion and more.
+ *
+ * replaces  _  by a fresh variable _* by a fresh varstar 
+ * replaces 'TermAppl' by its 'RecordAppl' form
+ * replaces 'XMLAppl' by its 'RecordAppl' form
+ *   when no slotName exits, the position becomes the slotName
  */
 public class DesugarerPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
-
   %typeterm DesugarerPlugin { implement { tom.engine.desugarer.DesugarerPlugin }}
 
+  private static Logger logger = Logger.getLogger("tom.engine.desugarer.DesugarerPlugin");
   private SymbolTable symbolTable;
   private int freshCounter = 0;
 
@@ -94,7 +101,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
-    // long startChrono = System.currentTimeMillis();
+    long startChrono = System.currentTimeMillis();
     try {
       setSymbolTable(getStreamManager().getSymbolTable());
       updateSymbolTable();
@@ -104,12 +111,18 @@ public class DesugarerPlugin extends TomGenericPlugin {
       syntaxExpandedTerm = 
         `TopDown(DesugarUnderscore(this)).visitLight(syntaxExpandedTerm);
 
-      //replace TermAppl and XmlAppl by RecordAppl
+      // replace TermAppl and XmlAppl by RecordAppl
       syntaxExpandedTerm = 
         `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(syntaxExpandedTerm);
 
+      // replace 'abc' by concString('a','b','c')
+      syntaxExpandedTerm = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(syntaxExpandedTerm);
+
       setWorkingTerm(syntaxExpandedTerm);      
 
+        // verbose
+        getLogger().log(Level.INFO, TomMessage.tomDesugaringPhase.getMessage(),
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{
@@ -121,8 +134,9 @@ public class DesugarerPlugin extends TomGenericPlugin {
     }
   }
 
-  /* replaces  _  by a fresh variable
-     _* by a fresh varstar    */
+  /* 
+   * replaces  _  by a fresh variable _* by a fresh varstar    
+   */
   %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
       UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
@@ -135,18 +149,14 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   /**
-   * updateSymbol is called after a first syntax expansion phase
-   * this phase updates the symbolTable according to the typeTable
+   * updateSymbol is called before a first syntax expansion phase
+   * this phase updates the symbolTable 
    * this is performed by recursively traversing each symbol
    * - default IsFsymDecl and MakeDecl are added
+   * - TermAppl are transformed into RecordAppl
    */
   public void updateSymbolTable() {
-    SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
-
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:getSymbolTable().keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
        * add default IsFsymDecl unless it is a builtin type
@@ -154,7 +164,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
@@ -164,7 +174,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
@@ -276,7 +286,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
           System.out.println("should not be there");
         }
       }
-      %match(pairNameDeclList){
+      %match(pairNameDeclList) {
         !concPairNameDecl() -> { 
           throw new TomRuntimeException("The symbol '"
                 +
@@ -298,7 +308,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().TYPE_UNKNOWN,concConstraint());
+    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -367,7 +377,7 @@ matchBlock:
         }
 
         concTomName(_*,Name(name),_*) -> {
-          newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(symbolTable(),name)));
+          newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(getSymbolTable(),name)));
         }
       }
     }
@@ -379,7 +389,7 @@ matchBlock:
     TomTerm xmlHead;
 
     if(newNameList.isEmptyconcTomName()) {
-      xmlHead = `UnamedVariable(concOption(),symbolTable().TYPE_UNKNOWN,concConstraint());
+      xmlHead = `UnamedVariable(concOption(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
     } else {
       xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
     }
@@ -453,4 +463,85 @@ matchBlock:
     return `concOption();
   }
 
+    /*
+     * replace conc('abc') by conc('a','b','c')
+     */
+    %strategy desugarString(desugarer:DesugarerPlugin) extends `Identity() {
+      visit TomTerm {
+        appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
+          TomSymbol tomSymbol = desugarer.getSymbolFromName(`tomName);
+          //System.out.println("appl = " + subject);
+          if(tomSymbol != null) {
+            if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+              //System.out.println("appl = " + subject);
+              SlotList newArgs = desugarer.typeChar(tomSymbol,`args);
+              if(newArgs!=`args) {
+                return `appl.setSlots(newArgs);
+              }
+            }
+          }
+        }
+      } // end match
+    }
+
+    /*
+     * detect ill-formed char: 'abc'
+     * and type it into a list of char: 'a','b','c'
+     */
+    private SlotList typeChar(TomSymbol tomSymbol,SlotList args) {
+      if(args.isEmptyconcSlot()) {
+        return args;
+      } else {
+        Slot head = args.getHeadconcSlot();
+        SlotList tail = typeChar(tomSymbol,args.getTailconcSlot());
+        %match(head) {
+          PairSlotAppl(slotName,RecordAppl[Option=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
+            /*
+             * ensure that the argument contains at least 1 character and 2 single quotes
+             */
+            TomSymbol stringSymbol = getSymbolFromName(`tomName);
+            TomType termType = stringSymbol.getTypesToType().getCodomain();
+            String type = termType.getTomType();
+            if(getSymbolTable().isCharType(type) && `tomName.length()>3) {
+              if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
+                SlotList newArgs = `concSlot();
+                String substring = `tomName.substring(1,`tomName.length()-1);
+                //System.out.println("bingo -> " + substring);
+                substring = substring.replace("\\'","'"); // replace backslash-quote by quote
+                substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
+                //System.out.println("after encoding -> " + substring);
+
+                for(int i=substring.length()-1 ; i>=0 ;  i--) {
+                  char c = substring.charAt(i);
+                  String newName = "'" + c + "'";
+                  TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
+                  getSymbolTable().putSymbol(newName,newSymbol);
+
+                  Slot newHead = `PairSlotAppl(slotName,RecordAppl(optionList,concTomName(Name(newName)),concSlot(),concConstraint()));
+                  newArgs = `concSlot(newHead,newArgs*);
+                  //System.out.println("newHead = " + newHead);
+                  //System.out.println("newSymb = " + getSymbolFromName(newName));
+                }
+                ConstraintList newConstraintList = `concConstraint();
+                %match(constraintList) {
+                  concConstraint(AliasTo(var@Variable[AstType=vartype])) -> {
+                    if(getSymbolTable().isCharType(TomBase.getTomType(`vartype))) {
+                      newConstraintList = `concConstraint(AliasTo(var.setAstType(getSymbolTable().getStringType())));
+                    }
+                  }
+                }
+
+                TomTerm newSublist = `RecordAppl(concOption(),concTomName(tomSymbol.getAstName()),newArgs,newConstraintList);
+                Slot newSlot = `PairSlotAppl(slotName,newSublist);
+                return `concSlot(newSlot,tail*);
+              } else {
+                throw new TomRuntimeException("typeChar: strange char: " + `tomName);
+              }
+            }
+          }
+        }
+        return `concSlot(head,tail*);
+      }
+    }
+    
 }

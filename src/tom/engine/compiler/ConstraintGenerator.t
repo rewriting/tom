@@ -127,8 +127,7 @@ public class ConstraintGenerator {
     // it is done innermost because the expression is also simplified		
     expression = `TopDown(ReplaceSubterms(this)).visitLight(expression);
     // generate automata
-    Instruction automata = generateAutomata(expression,action);    
-    return automata;
+    return generateAutomata(expression,action);    
   }
 
   /**

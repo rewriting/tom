@@ -81,15 +81,15 @@ public class ExpanderPlugin extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final TomType objectType = `TLType("Object");
-  private static final TomType genericType = `TLType("T");
-  private static final TomType methodparameterType = `TLType("<T> T");
-  private static final TomType objectArrayType = `TLType("Object[]");
+  private static final TomType objectType = ASTFactory.makeType("undefined","Object");
+  private static final TomType genericType = ASTFactory.makeType("undefined","T");
+  private static final TomType methodparameterType = ASTFactory.makeType("undefined","<T> T");
+  private static final TomType objectArrayType = ASTFactory.makeType("undefined","Object[]");
   private static final TomType intType = ASTFactory.makeType("int","int");
   
-  private static final TomType basicStratType = `TLType("tom.library.sl.AbstractStrategyBasic");
-  private static final TomType introspectorType = `TLType("tom.library.sl.Introspector");
-  private static final TomType visitfailureType = `TLType("tom.library.sl.VisitFailure");
+  private static final TomType basicStratType = ASTFactory.makeType("undefined","tom.library.sl.AbstractStrategyBasic");
+  private static final TomType introspectorType = ASTFactory.makeType("undefined","tom.library.sl.Introspector");
+  private static final TomType visitfailureType = ASTFactory.makeType("undefined","tom.library.sl.VisitFailure");
   // introspector argument of visitLight
   private static final BQTerm introspectorVar = `BQVariable(concOption(),Name("introspector"),introspectorType);
   private static final BQTerm objectVar = `BQVariable(concOption(),Name("o"),objectType);
@@ -149,13 +149,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
   }
 
-  /*
-   * Expand:
-   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
-   *
-   * abstract list-matching patterns
-   */
-
   private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {
     try {
       return `TopDownIdStopOnSuccess(Expand_once(this)).visitLight(subject);
@@ -164,13 +157,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
     }
   }
 
-  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> {
-        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
-      }
-    }
-  }
+  /*
+   * Expand_once:
+   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
+   * replaces RawAction by TypedAction (with If(true,action))
+   * compiles %strategy
+   */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
     visit BQTerm {
@@ -179,7 +171,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
       }
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
+        TomSymbol tomSymbol = expander.getSymbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
         BQTermList tomListArgs = TomBase.slotListToBQTermList(newTermArgs);
         
@@ -187,9 +179,9 @@ public class ExpanderPlugin extends TomGenericPlugin {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,expander.symbolTable());
+            return ASTFactory.buildList(`name,tomListArgs,expander.getSymbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,expander.symbolTable());
+            return ASTFactory.buildArray(`name,tomListArgs,expander.getSymbolTable());
           } else if(TomBase.isDefinedSymbol(tomSymbol)) {
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
@@ -247,8 +239,7 @@ matchBlock: {
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
         }
 
-        Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
-        return newMatch;
+        return `Match(newConstraintInstructionList, matchOptionList);
       }
 
     } // end visit
@@ -265,7 +256,7 @@ matchBlock: {
           DeclarationList l = `concDeclaration();
           //generate the code for every method of Instrospector interface
 
-          SymbolTable symbolTable = expander.symbolTable();
+          SymbolTable symbolTable = expander.getSymbolTable();
           Collection<TomType> types = symbolTable.getUsedTypes();
 
           /**
@@ -392,7 +383,6 @@ matchBlock: {
                                 composite =  `Composite(composite*,CompositeTL(ITL("null")));
                                 if(i < arity-1) {
                                   composite =  `Composite(composite*,CompositeTL(ITL(",")));
-                                } else {
                                 }
                               }
                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {
@@ -591,7 +581,7 @@ matchBlock: {
           Instruction return1 = `Return(ExpressionToBQTerm(Cast(type,TomInstructionToExpression(CodeToInstruction(TargetLanguageToCode(ITL("any.visit(environment,introspector)")))))));
           Instruction return2 = `Return(Composite(CompositeTL(ITL("any.visitLight(arg,introspector)"))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                ExpressionToBQTerm(Bottom(Type("Object",EmptyType()))),TomBase.convertFromBQVarToVar(environmentVar)));
+                ExpressionToBQTerm(Bottom(Type("Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
           l = `concDeclaration(l*,MethodDef(
                 Name("_" + dispatchInfo.get(type)),
@@ -615,5 +605,13 @@ matchBlock: {
       }        
     }//end visit Declaration
   } // end strategy
+
+  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
+    visit BQTerm {
+      t@(BQVariable|BQVariableStar)[] -> {
+        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
+      }
+    }
+  }
 
 }

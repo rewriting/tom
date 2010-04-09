@@ -789,7 +789,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
          * may be true for list operator with domain=codomain
          * two if_sym(f)==is_fsym(g) may be true due to mapping
          */
-        TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
+        TomSymbol tomSymbol = optimizer.getSymbolTable().getSymbolFromName(`name1.getString());
         if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
           TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
           TomType codomain = TomBase.getSymbolCodomain(tomSymbol);

@@ -104,13 +104,13 @@ public class GomTask extends GomCommonTask {
   }
 
   protected void processAdditionalOptions(Java runner) {
-    if(optimize == true) {
+    if(optimize) {
       javaRunner.createArg().setValue("--optimize");
     }
-    if(optimize2 == true) {
+    if(optimize2) {
       javaRunner.createArg().setValue("--optimize2");
     }
-    if(inlineplus == true) {
+    if(inlineplus) {
       javaRunner.createArg().setValue("--inlineplus");
     }
   }
