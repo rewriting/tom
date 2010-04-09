@@ -100,7 +100,7 @@ public class KernelTyper {
    * with type 'unknown' get this type
    *  - apply this for each rhs
    */
-  protected Code propagateVariablesTypes(Code workingTerm){
+  protected Code propagateVariablesTypes(Code workingTerm) {
     try{
       return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(workingTerm);  
     } catch(tom.library.sl.VisitFailure e) {

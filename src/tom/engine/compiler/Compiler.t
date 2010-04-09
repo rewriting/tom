@@ -313,7 +313,7 @@ public class Compiler extends TomGenericPlugin {
     }
   }
 
-  private BQTerm getUniversalObjectForSubject(TomType subjectType){    
+  private BQTerm getUniversalObjectForSubject(TomType subjectType) {
     if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {
