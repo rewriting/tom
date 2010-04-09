@@ -24,15 +24,8 @@
 
 package tom.gom.compiler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import tom.gom.GomMessage;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
