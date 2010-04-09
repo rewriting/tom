@@ -36,7 +36,6 @@ import tom.gom.GomMessage;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.gom.tools.error.GomRuntimeException;
 
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
