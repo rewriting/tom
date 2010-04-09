@@ -141,18 +141,14 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   /**
-   * updateSymbol is called after a first syntax expansion phase
-   * this phase updates the symbolTable according to the typeTable
+   * updateSymbol is called before a first syntax expansion phase
+   * this phase updates the symbolTable 
    * this is performed by recursively traversing each symbol
    * - default IsFsymDecl and MakeDecl are added
+   * - TermAppl are transformed into RecordAppl
    */
   public void updateSymbolTable() {
-    SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
-
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:getSymbolTable().keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
        * add default IsFsymDecl unless it is a builtin type
@@ -160,7 +156,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
@@ -170,7 +166,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
@@ -282,7 +278,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
           System.out.println("should not be there");
         }
       }
-      %match(pairNameDeclList){
+      %match(pairNameDeclList) {
         !concPairNameDecl() -> { 
           throw new TomRuntimeException("The symbol '"
                 +

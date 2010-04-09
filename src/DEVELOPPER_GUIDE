@@ -4,6 +4,38 @@ Tom Developper Guide
 This file explains how the compiler works and should help to understand in
 which part of the compiler particular treatment is done
 
+* Compiler plugins
+------------------
+The compiler is composed of several plugins, which are executed in the following order:
+- Starter
+  initialize the platform and run the others plugins
+
+- Parser
+  parse the input file
+  call gom
+
+- Desugarer
+  replaces  _  by a fresh variable _* by a fresh varstar 
+  replaces 'TermAppl' by its 'RecordAppl' form
+  replaces 'XMLAppl' by its 'RecordAppl' form
+  update the SymbolTable
+  add default IsFsym and default Make to symbols
+
+- Typer
+  
+
+- Type checker
+
+- Expander
+
+- Compiler
+
+- Optimizer
+
+- Backend
+
+
+
 
 * AC Matching
 -------------

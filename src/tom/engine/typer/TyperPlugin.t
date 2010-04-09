@@ -106,8 +106,6 @@ public class TyperPlugin extends TomGenericPlugin {
       Code typedCode = null;
       try {
         kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
-        //no more necessary: realised by the desugarer
-        //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
 
         updateSymbolTable();
 
@@ -196,11 +194,8 @@ public class TyperPlugin extends TomGenericPlugin {
    */
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
 
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:symbolTable.keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
        * add default IsFsymDecl unless it is a builtin type
@@ -208,12 +203,12 @@ public class TyperPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
-        tomSymbol = addDefaultMake(tomSymbol);
-        tomSymbol = addDefaultIsFsym(tomSymbol);
-      }
+      //if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      //  tomSymbol = addDefaultMake(tomSymbol);
+      //  tomSymbol = addDefaultIsFsym(tomSymbol);
+      //}
       try {
-        tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
+        //tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);

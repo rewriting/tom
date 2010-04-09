@@ -149,13 +149,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
   }
 
-  /*
-   * Expand:
-   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
-   *
-   * abstract list-matching patterns
-   */
-
   private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {
     try {
       return `TopDownIdStopOnSuccess(Expand_once(this)).visitLight(subject);
@@ -164,13 +157,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
     }
   }
 
-  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> {
-        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
-      }
-    }
-  }
+  /*
+   * Expand_once:
+   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
+   * replaces RawAction by TypedAction (with If(true,action))
+   * compiles %strategy
+   */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
     visit BQTerm {
@@ -613,5 +605,13 @@ matchBlock: {
       }        
     }//end visit Declaration
   } // end strategy
+
+  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
+    visit BQTerm {
+      t@(BQVariable|BQVariableStar)[] -> {
+        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
+      }
+    }
+  }
 
 }
