@@ -40,7 +40,6 @@ import tom.gom.tools.error.GomRuntimeException;
 
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
-import tom.library.sl.VisitFailure;
 
 public class Compiler {
 
