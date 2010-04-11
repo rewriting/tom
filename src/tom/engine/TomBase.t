@@ -275,7 +275,9 @@ public final class TomBase {
     try {
       //TODO: replace TopDownCollect by continuations
       `TopDownCollect(collectVariable(collection,considerBQVars)).visitLight(`subject);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("Should not be there");
+    }
   }
 
   %strategy collectVariable(collection:Collection, considerBQVars:boolean) extends `Identity() {

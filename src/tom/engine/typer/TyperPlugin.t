@@ -115,8 +115,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         updateSymbolTable();
 
-        Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
 
         typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
 
@@ -143,42 +142,6 @@ public class TyperPlugin extends TomGenericPlugin {
       // not active plugin
       logger.log(Level.INFO, "The default typer is not in use.");
     }
-
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private Code expandType(Code subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private TomTerm expandType(TomTerm subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  %strategy expandType(typer:TyperPlugin) extends Identity() {
-    visit TomType {
-      subject@Type(tomType,EmptyTargetLanguageType()) -> {
-        TomType type = typer.getSymbolTable().getType(`tomType);
-        if(type != null) {
-          return type;
-        } else {
-          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
-        }
-      }
-    }
   }
 
   /*
@@ -186,7 +149,7 @@ public class TyperPlugin extends TomGenericPlugin {
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
    * - backquote are typed
-   * - each TomTypeAlone is replaced by the corresponding TomType
+   * - replace a TomType(_,EmptyTargetLanguageType()) by its expanded form (TomType)
    * - default IsFsymDecl and MakeDecl are added
    */
   public void updateSymbolTable() {
@@ -195,7 +158,6 @@ public class TyperPlugin extends TomGenericPlugin {
     for(String tomName:symbolTable.keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       try {
-        tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
@@ -206,38 +168,38 @@ public class TyperPlugin extends TomGenericPlugin {
     }
   }
 
-    /*
-     * transform a BQAppl into its compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
-     * can only be done after typing because BQAppl are treated by the typing algorithm
-     */
-    %strategy TransformBQAppl(typer:TyperPlugin) extends Identity() {
-      visit BQTerm {
-        BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
-          TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
-          BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(typer)).visitLight(`l);
-          //System.out.println("BackQuoteTerm: " + `tomName);
-          //System.out.println("tomSymbol: " + tomSymbol);
-          if(TomBase.hasConstant(`optionList)) {
-            return `BuildConstant(name);
-          } else if(tomSymbol != null) {
-            if(TomBase.isListOperator(tomSymbol)) {
-              return ASTFactory.buildList(`name,args,typer.getSymbolTable());
-            } else if(TomBase.isArrayOperator(tomSymbol)) {
-              return ASTFactory.buildArray(`name,args,typer.getSymbolTable());
-            } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-              return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
-            } else {
-              String moduleName = TomBase.getModuleName(`optionList);
-              if(moduleName==null) {
-                moduleName = TomBase.DEFAULT_MODULE_NAME;
-              }
-              return `BuildTerm(name,args,moduleName);
-            }
+  /*
+   * transform a BQAppl into its compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
+   * can only be done after typing because BQAppl are treated by the typing algorithm
+   */
+  %strategy TransformBQAppl(typer:TyperPlugin) extends Identity() {
+    visit BQTerm {
+      BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
+        TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
+        BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(typer)).visitLight(`l);
+        //System.out.println("BackQuoteTerm: " + `tomName);
+        //System.out.println("tomSymbol: " + tomSymbol);
+        if(TomBase.hasConstant(`optionList)) {
+          return `BuildConstant(name);
+        } else if(tomSymbol != null) {
+          if(TomBase.isListOperator(tomSymbol)) {
+            return ASTFactory.buildList(`name,args,typer.getSymbolTable());
+          } else if(TomBase.isArrayOperator(tomSymbol)) {
+            return ASTFactory.buildArray(`name,args,typer.getSymbolTable());
+          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
           } else {
-            return `FunctionCall(name,EmptyType(),args);
+            String moduleName = TomBase.getModuleName(`optionList);
+            if(moduleName==null) {
+              moduleName = TomBase.DEFAULT_MODULE_NAME;
+            }
+            return `BuildTerm(name,args,moduleName);
           }
+        } else {
+          return `FunctionCall(name,EmptyType(),args);
         }
       }
     }
-
   }
+
+}

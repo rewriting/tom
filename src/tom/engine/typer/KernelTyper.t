@@ -107,6 +107,7 @@ public class KernelTyper {
       throw new TomRuntimeException("propagateVariablesTypes: failure on " + workingTerm);
     }
   }
+
   %strategy ProcessRhsForVarTypePropagation() extends Identity() {
     visit ConstraintInstruction {
       c@ConstraintInstruction(constr,action,option) -> {
@@ -154,6 +155,7 @@ public class KernelTyper {
    * - Match
    *
    * The types of subjects are inferred from the patterns
+   * Type(_,EmptyTargetLanguageType()) are expanded
    *
    * Variable and TermAppl are typed in the TomTerm case
    */
@@ -176,16 +178,19 @@ public class KernelTyper {
   %strategy replace_typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
 
     visit Option {
+      // cut the traversal
       subject@OriginTracking[] -> { return `subject; }
     }
 
     visit TargetLanguage {
+      // cut the traversal
       subject@TL[] -> { return `subject; }
       subject@ITL[] -> { return `subject; }
       subject@Comment[] -> { return `subject; }
     }
 
     visit TomType {
+      // Type(_,EmptyTargetLanguageType()) are expanded
       subject@Type(tomType,EmptyTargetLanguageType()) -> {
         TomType type = kernelTyper.getType(`tomType);
         if(type != null) {
@@ -198,13 +203,14 @@ public class KernelTyper {
 
     visit TomVisit {
       v@VisitTerm(type,constraintInstructionList,options) -> {
+        // expands the type (remember that the strategy is applied top-down)
         TomType newType = `kernelTyper.typeVariable(contextType,`type);
-        //if (`type != newType) {
-        //  System.out.println("\nLe type avant = " + `type + " et le type apres = " + newType);
-        //}
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        // collect one level of MatchConstraint and NumericConstraint
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
-        return `VisitTerm(newType, kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
+        ConstraintInstructionList newConstraintInstructionList = 
+          kernelTyper.typeConstraintInstructionList(newType,`constraintInstructionList,matchAndNumericConstraints);
+        return `VisitTerm(newType,newConstraintInstructionList,options);
       }
     }
 
@@ -218,7 +224,9 @@ public class KernelTyper {
         TomType newType = contextType;
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
         `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
-        return `Match(kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
+        ConstraintInstructionList newConstraintInstructionList = 
+          kernelTyper.typeConstraintInstructionList(newType,`constraintInstructionList,matchAndNumericConstraints);
+        return `Match(newConstraintInstructionList,options);
       }
     }
 
@@ -249,7 +257,7 @@ public class KernelTyper {
 
           %match(contextType) {
             type@(Type|TypeWithSymbol)[] -> {
-              SlotList subterm = kernelTyper.typeVariableList(`emptySymbol(), `slotList);
+              SlotList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `slotList);
               ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
@@ -310,7 +318,7 @@ public class KernelTyper {
 
           %match(contextType) {
             type@(Type|TypeWithSymbol)[] -> {
-              BQTermList subterm = kernelTyper.typeVariableList(`emptySymbol(), `args);
+              BQTermList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `args);
               return `BQAppl(option,name,subterm);
             }
           }
@@ -337,7 +345,7 @@ public class KernelTyper {
   }
 
   /*
-   *
+   ** type all elements of the ConstraintInstructionList
    * @param contextType
    * @param constraintInstructionList a list of ConstraintInstruction
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
@@ -358,7 +366,9 @@ public class KernelTyper {
           newAction = typeVariable(`EmptyType(),`newAction);
           ConstraintInstructionList newTail = typeConstraintInstructionList(contextType,`tail,matchAndNumericConstraints);
           return `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionConstraint),newTail*);
-        } catch(VisitFailure e) {}
+        } catch(VisitFailure e) {
+          throw new TomRuntimeException("should not be there");
+        }
       }
     }        
     throw new TomRuntimeException("Bad ConstraintInstruction: " + constraintInstructionList);
@@ -379,25 +389,23 @@ public class KernelTyper {
         TomType newSubjectType = `EmptyType();
         %match(subject) {
           (BQVariable|BQVariableStar)(variableOption,astName@Name(name),tomType) -> {
-            BQTerm newVariable = null;
-            // tomType may be a TomTypeAlone or a type from an typed variable
+            // tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable
             String type = TomBase.getTomType(`tomType);
             //System.out.println("match type = " + type);
             if(kernelTyper.getType(`type) == null) {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(newSubjectType != null) {
-                newVariable = `BQVariable(variableOption,astName,newSubjectType);
+                newSubject = `BQVariable(variableOption,astName,newSubjectType);
               } else {
                 logger.log( Level.SEVERE, TomMessage.cannotGuessMatchType.getMessage(),
                     new Object[]{`(name)} );
                 throw new VisitFailure();
               }
             } else {
-              newVariable = `subject;
+              newSubject = `subject;
             }
-            newSubject = newVariable;
-            newSubjectType = newVariable.getAstType();
+            newSubjectType = newSubject.getAstType();
           }
 
           t@BQAppl[AstName=n@Name(name),Args=args] -> {
@@ -415,7 +423,7 @@ public class KernelTyper {
                 newSubject = `FunctionCall(n,type,args);
               }
             }
-            if (type == null) {
+            if(type == null) {
               throw new TomRuntimeException("No symbol found for name '" + `name + "'");
             } else {
               newSubjectType = type;
@@ -424,14 +432,20 @@ public class KernelTyper {
 
           // the user specified the type (already checked for consistence in SyntaxChecker)
           term@BuildReducedTerm[AstType=userType] -> {            
-            newSubjectType = `userType;
             newSubject = `term;
+            newSubjectType = `userType;
           }
           
-         c@BuildConstant(Name(n)) -> {
-            newSubjectType = TomBase.getSymbolCodomain(kernelTyper.getSymbolTable().getSymbolFromName(`n));
+          c@BuildConstant(Name(name)) -> {
             newSubject = `c;
-         } 
+            TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
+            TomType type = TomBase.getSymbolCodomain(symbol);
+            if(type!=null) {
+              newSubjectType = type;
+            } else {
+              throw new TomRuntimeException("No type found for name '" + `name + "'");
+            }
+          } 
         } // end match subject     
         
         newSubjectType = kernelTyper.typeVariable(contextType,newSubjectType);
@@ -441,13 +455,12 @@ public class KernelTyper {
         return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
 
-      constraint@NumericConstraint[Left=lhs,Right=rhs] -> {
+      constraint@NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {
         //System.out.println("\nNumeric constraint = " + `constraint);
-
         // if it is numeric, we do not care about the type
         BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhs);                  
         BQTerm newRhs = kernelTyper.typeVariable(`EmptyType(), `rhs);                  
-        return `constraint.setLeft(newLhs).setRight(newRhs);               
+        return `NumericConstraint(lhs,rhs,nct);
       }       
     } 
   }
@@ -457,8 +470,8 @@ public class KernelTyper {
       %match(constr) {
         MatchConstraint(pattern,s) -> {
           // we want two terms to be equal even if their option is different 
-          // ( because of their possition for example )
-matchL:  %match(subject,s){
+          // ( because of their position for example )
+matchL:  %match(subject,s) {
            BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
            BQAppl[AstName=astName,Args=tomList],BQAppl[AstName=astName,Args=tomList] -> {break matchL;}
            BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
@@ -470,10 +483,9 @@ matchL:  %match(subject,s){
          }
          %match(patt) {
            (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
-             TomSymbol symbol = null;
-             symbol = getSymbolFromName(`name);
+             TomSymbol symbol = getSymbolFromName(`name);
              // System.out.println("name = " + `name);
-             if( symbol != null ) {
+             if(symbol != null) {
                return TomBase.getSymbolCodomain(symbol);
              }
            }      
@@ -499,7 +511,7 @@ matchL:  %match(subject,s){
 
     //System.out.println("symbol = " + symbol.getastname());
     %match(symbol, subtermList) {
-      symb@emptySymbol(), concBQTerm(head,tail*) -> {
+      symb@EmptySymbol(), concBQTerm(head,tail*) -> {
         /*
          * if the top symbol is unknown, the subterms
          * are typed in an empty context
@@ -565,7 +577,7 @@ matchL:  %match(subject,s){
 
     //System.out.println("symbol = " + symbol.getastname());
     %match(symbol, subtermList) {
-      symb@emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+      symb@EmptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
         /*
          * if the top symbol is unknown, the subterms
          * are typed in an empty context
