@@ -133,6 +133,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
+      if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
+        tomParams.add("--newtyper");
+      }
       if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
         tomParams.add("--optimize");
       }
