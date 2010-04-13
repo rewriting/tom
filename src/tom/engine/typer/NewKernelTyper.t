@@ -157,10 +157,24 @@ public class NewKernelTyper {
     } 
     throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
-
+/* TO REPLACE getFreshTypeVar()
+  protected int getFreshTlTIndex() {
+    return freshTypeVarCounter++;
+   }
+*/
   protected TargetLanguageType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
   }
+
+/* TO REPLACE getUnknownFreshTypeVar()  
+   protected TomType getUnknownFreshTypeVar() {
+    TomType tType = symbolTable.UNKNOWN_TYPE;
+    %match(tType) {
+      Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex())}
+    }
+    throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
+   }
+*/
 
   protected TomType getUnknownFreshTypeVar() {
     return `Type("unknown type",TypeVar(freshTypeVarCounter++));
@@ -836,7 +850,15 @@ matchL:    %match(bqTList,tSymbol) {
           throw new RuntimeException("solveConstraints: failure on " + `tLType1
               + " = " + `tLType2);
         }
-      //without Equation(type,type)
+
+      /**
+       * Equation(typeVar,type) U TCList and Map 
+       *    --> Equation(type,type) U [typeVar/type]TCList and
+       *        [typeVar/type]Map
+       */
+      // TO REPLACE next line
+      //concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar),rightTCList*) -> {
+
       concTypeConstraint(leftTCList*,Equation(typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)],type@!typeVar),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -855,6 +877,30 @@ matchL:    %match(bqTList,tSymbol) {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
 
+      /**
+       * Equation(groundType,typeVar) U TCList and Map 
+       *    --> Equation(groundType,groundType) U [typeVar/groundType]TCList and
+       *        [typeVar/groundType]Map
+       */
+      /* TO REPLACE next block
+      concTypeConstraint(leftTCList*,Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_)),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`groundType);
+        %match {
+          !concTypeConstraint() << leftTCList -> {
+            if(nkt.findTypeVars(`typeVar,`leftTCList)) {
+              `leftTCList = nkt.applySubstitution(`typeVar,`groundType,`leftTCList);
+            }
+          }
+
+          !concTypeConstraint() << rightTCList -> {
+            if(nkt.findTypeVars(`typeVar,`rightTCList)) {
+              `rightTCList = nkt.applySubstitution(`typeVar,`groundType,`rightTCList);
+            }
+          }
+        }
+        return `concTypeConstraint(leftTCList*,Equation(groundType,groundType),rightTCList*);
+      }
+*/
       concTypeConstraint(leftTCList*,Equation(type@(Type|TypeWithSymbol)[TlType=!TypeVar(_)],typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)]),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -873,7 +919,7 @@ matchL:    %match(bqTList,tSymbol) {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
     }
-  }
+    }
 
   private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {

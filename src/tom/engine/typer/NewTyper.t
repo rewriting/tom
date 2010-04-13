@@ -204,6 +204,33 @@ public class NewTyper extends TomGenericPlugin {
   }
 
   /*
+   * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
+   * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
+   */
+  /* TO REPLACE CollectKnownTypes(nkt:NewKernelTyper) strategy
+  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
+    visit TomType {
+      Type(typeName,EmptyTargetLanguageType()) -> {
+        TomType newType = null;
+        newType = nkt.getSymbolTable().getType(`typeName);
+        if (newType == null) {
+          // This happens when :
+          // * typeName != unknown type AND (newType == null)
+          // * typeName == unknown type
+          newType = `TypeVar(typeName,nkt.getFreshTlIndex());
+          if (!nkt.getSymbolTable().isUnknownType(typeName)) {
+            // A type typeVar will be add to the typeTable only for the first
+            // occurence, because for the other ones, newType will not be 'null'
+            nkt.getSymbolTable().putType(`typeName,newType);
+          }
+          return newType;
+        }
+        return newType;
+      }
+    }
+  }
+*/
+  /*
    * Type(name, EmptyType()) -> Type(name, foundType) if name in TypeTable
    * Type(name, EmptyType()) -> Type(name, Var(i)) if name not in TypeTable
    */
@@ -241,7 +268,7 @@ public class NewTyper extends TomGenericPlugin {
    * updateSymbol is called after a first syntax expansion phase
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
-   * - each Type(_,EmptyTargetLanguageType()) is replaced by Type(_,TypeVar(i))
+   * - each Type(name,EmptyTargetLanguageType()) is replaced by TypeVar(name,i)
    */
   private void updateSymbolTable() {
     //SymbolTable symbolTable = getStreamManager().getSymbolTable();
