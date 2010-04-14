@@ -12,6 +12,7 @@ public class Test11 {
     B tt = `f(f(b()));
     %match{
       x << tt -> { System.out.println("l1 = " + `x); }
+      f(x) << tt -> { System.out.println("l2 = " + `x); }
     }
   }
 }

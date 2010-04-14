@@ -94,28 +94,28 @@ public class NewKernelTyper {
   }
 
   protected TomSymbol getSymbolFromTerm(TomTerm tTerm) {
-    return TomBase.getSymbolFromTerm(tTerm, getSymbolTable());
+    return TomBase.getSymbolFromTerm(tTerm, symbolTable);
    }
 
   protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
-    return TomBase.getSymbolFromTerm(bqTerm,getSymbolTable());
+    return TomBase.getSymbolFromTerm(bqTerm,symbolTable);
   }
 
   protected TomSymbol getSymbolFromName(String tName) {
-    return TomBase.getSymbolFromName(tName, getSymbolTable());
+    return TomBase.getSymbolFromName(tName, symbolTable);
    }
 
   protected TomSymbol getSymbolFromType(TomType tType) {
     %match(tType) {
        TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-         return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+         return TomBase.getSymbolFromType(`Type(tomType,tlType), symbolTable); 
        }
      }
-    return TomBase.getSymbolFromType(tType,getSymbolTable()); 
+    return TomBase.getSymbolFromType(tType,symbolTable); 
    }
 
   protected TomType getType(String tName) {
-    return getSymbolTable().getType(tName); 
+    return symbolTable.getType(tName); 
    }
 
   protected TomType getType(TomTerm tTerm) {
@@ -157,28 +157,18 @@ public class NewKernelTyper {
     } 
     throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
-/* TO REPLACE getFreshTypeVar()
+
   protected int getFreshTlTIndex() {
     return freshTypeVarCounter++;
    }
-*/
-  protected TargetLanguageType getFreshTypeVar() {
-    return `TypeVar(freshTypeVarCounter++);
-  }
 
-/* TO REPLACE getUnknownFreshTypeVar()  
    protected TomType getUnknownFreshTypeVar() {
-    TomType tType = symbolTable.UNKNOWN_TYPE;
+    TomType tType = symbolTable.TYPE_UNKNOWN;
     %match(tType) {
-      Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex())}
+      Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex()); }
     }
     throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
    }
-*/
-
-  protected TomType getUnknownFreshTypeVar() {
-    return `Type("unknown type",TypeVar(freshTypeVarCounter++));
-  }
 
   /*
      * pem: use if(...==... && typeConstraints.contains(...))
@@ -637,7 +627,7 @@ public class NewKernelTyper {
           if (tSymbol == null) {
             tSymbol =
               `Symbol(aName,TypesToType(concTomType(freshType),freshType),concPairNameDecl(),option);
-            getSymbolTable().putSymbol("realMake",tSymbol);
+            symbolTable.putSymbol("realMake",tSymbol);
           }
         }
 
@@ -856,10 +846,7 @@ matchL:    %match(bqTList,tSymbol) {
        *    --> Equation(type,type) U [typeVar/type]TCList and
        *        [typeVar/type]Map
        */
-      // TO REPLACE next line
-      //concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar),rightTCList*) -> {
-
-      concTypeConstraint(leftTCList*,Equation(typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)],type@!typeVar),rightTCList*) -> {
+      concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
           !concTypeConstraint() << leftTCList -> {
@@ -882,7 +869,6 @@ matchL:    %match(bqTList,tSymbol) {
        *    --> Equation(groundType,groundType) U [typeVar/groundType]TCList and
        *        [typeVar/groundType]Map
        */
-      /* TO REPLACE next block
       concTypeConstraint(leftTCList*,Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_)),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`groundType);
         %match {
@@ -900,26 +886,8 @@ matchL:    %match(bqTList,tSymbol) {
         }
         return `concTypeConstraint(leftTCList*,Equation(groundType,groundType),rightTCList*);
       }
-*/
-      concTypeConstraint(leftTCList*,Equation(type@(Type|TypeWithSymbol)[TlType=!TypeVar(_)],typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)]),rightTCList*) -> {
-        nkt.substitutions.put(`typeVar,`type);
-        %match {
-          !concTypeConstraint() << leftTCList -> {
-            if(nkt.findTypeVars(`typeVar,`leftTCList)) {
-              `leftTCList = nkt.applySubstitution(`typeVar,`type,`leftTCList);
-            }
-          }
-
-          !concTypeConstraint() << rightTCList -> {
-            if(nkt.findTypeVars(`typeVar,`rightTCList)) {
-              `rightTCList = nkt.applySubstitution(`typeVar,`type,`rightTCList);
-            }
-          }
-        }
-        return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
-      }
     }
-    }
+  }
 
   private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {
@@ -966,18 +934,21 @@ matchL:    %match(bqTList,tSymbol) {
 
 
   private void replaceInSymbolTable() {
-    for(String tomName:getSymbolTable().keySymbolIterable()) {
+    for(String tomName:symbolTable.keySymbolIterable()) {
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
       TomType type = getType(tomName);
       %match(type) {
-        Type(typeName,typeVar@TypeVar(_)) -> {
+        typeVar@TypeVar(tomType,_) -> {
           if (substitutions.containsKey(`typeVar)) {
             type = substitutions.get(`typeVar);
           } else {
             System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
-            type = `Type(typeName,EmptyTargetLanguageType());
-          }    
-          getSymbolTable().putType(`typeName,type);
+            type = `Type(tomType,EmptyTargetLanguageType());
+          }   
+          // TO VERIFY : is it a good test?
+          if (!symbolTable.isUnknownType(`tomType)) {
+            symbolTable.putType(`tomType,type);
+          }
         }
       }
     }
@@ -995,18 +966,18 @@ matchL:    %match(bqTList,tSymbol) {
       }
       //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
       //DEBUG     + tSymbol);
-      getSymbolTable().putSymbol(tomName,tSymbol);
+      symbolTable.putSymbol(tomName,tSymbol);
     }
   }
 
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      typeVar && Type(typeName,TypeVar(_)) << typeVar -> {
+      typeVar@TypeVar(tomType,_) -> {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
         } else {
           System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
-          return `Type(typeName,EmptyTargetLanguageType());
+          return `Type(tomType,EmptyTargetLanguageType());
         }    
       }
     }

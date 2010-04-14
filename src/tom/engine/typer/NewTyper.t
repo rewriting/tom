@@ -134,7 +134,7 @@ public class NewTyper extends TomGenericPlugin {
          * - transform each BackQuoteTerm into its compiled form
          */
         typedCode =
-          `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(inferredTypeForCode);
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(inferredTypeForCode);
 
         System.out.println("\nCode after type inference = \n" + typedCode);
 
@@ -185,21 +185,20 @@ public class NewTyper extends TomGenericPlugin {
    * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
    * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
    */
-  /* TO REPLACE CollectKnownTypes(nkt:NewKernelTyper) strategy
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      Type(typeName,EmptyTargetLanguageType()) -> {
+      Type(tomType,EmptyTargetLanguageType()) -> {
         TomType newType = null;
-        newType = nkt.getSymbolTable().getType(`typeName);
+        newType = nkt.getSymbolTable().getType(`tomType);
         if (newType == null) {
           // This happens when :
-          // * typeName != unknown type AND (newType == null)
-          // * typeName == unknown type
-          newType = `TypeVar(typeName,nkt.getFreshTlIndex());
-          if (!nkt.getSymbolTable().isUnknownType(typeName)) {
+          // * tomType != unknown type AND (newType == null)
+          // * tomType == unknown type
+          newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
+          if (!nkt.getSymbolTable().isUnknownType(`tomType)) {
             // A type typeVar will be add to the typeTable only for the first
             // occurence, because for the other ones, newType will not be 'null'
-            nkt.getSymbolTable().putType(`typeName,newType);
+            nkt.getSymbolTable().putType(`tomType,newType);
           }
           return newType;
         }
@@ -207,41 +206,6 @@ public class NewTyper extends TomGenericPlugin {
       }
     }
   }
-*/
-  /*
-   * Type(name, EmptyType()) -> Type(name, foundType) if name in TypeTable
-   * Type(name, EmptyType()) -> Type(name, Var(i)) if name not in TypeTable
-   */
-  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
-    
-    visit TomType {
-      Type(typeName,EmptyTargetLanguageType()) -> {
-        TomType newType = null;
-        // two tomtypes 'Type("unknown type",EmptyType())' may have different
-        // TlType. So, if there already exists a 'Type("unknown type",TypeVar(i))'
-        // into the symbolTable, we don't take this in account; we call
-        // getType(typeName) otherwise
-        if (!nkt.getSymbolTable().isUnknownType(`typeName)) {
-
-          newType = nkt.getSymbolTable().getType(`typeName);
-          if(newType == null) {
-            throw new TomRuntimeException("newType==null with typeName = " + `typeName);
-          }
-
-        }
-        if (newType == null) {
-          // This happens when :
-          // * typeName != unknown type AND (newType == null)
-          // * typeName == unknown type
-          newType = `Type(typeName,nkt.getFreshTypeVar());
-          nkt.getSymbolTable().putType(`typeName,newType);
-          return newType;
-        }
-        return newType;
-      }
-    }
-  }
-
   /**
    * updateSymbol is called after a first syntax expansion phase
    * this phase updates the symbolTable according to the typeTable
@@ -254,7 +218,7 @@ public class NewTyper extends TomGenericPlugin {
         TomSymbol tomSymbol = getSymbolFromName(tomName);
         tomSymbol = collectKnownTypesFromTomSymbol(tomSymbol);
         getSymbolTable().putSymbol(tomName,tomSymbol);
-        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(`tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");
       }
@@ -267,11 +231,11 @@ public class NewTyper extends TomGenericPlugin {
    * transform a BQAppl into its compiled form
    */
   // pem: why this strategy ? there is a similar code in ExpanderPlugin
-  %strategy typeBQAppl(nkt:NewKernelTyper) extends Identity() {
+  %strategy TransformBQAppl(nkt:NewKernelTyper) extends Identity() {
     visit BQTerm {
       BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
         TomSymbol tomSymbol = nkt.getSymbolFromName(`tomName);
-        BQTermList args  = `TopDownIdStopOnSuccess(typeBQAppl(nkt)).visitLight(`l);
+        BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(nkt)).visitLight(`l);
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tomSymbol: " + tomSymbol);
         if(TomBase.hasConstant(`optionList)) {

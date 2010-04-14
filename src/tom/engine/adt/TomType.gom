@@ -34,15 +34,14 @@ TomType =
          * @param RootSymbolName the name of the head symbol  
          */
         | TypeWithSymbol(TomType:String,TlType:TargetLanguageType,RootSymbolName:TomName)
-        //| TypeVar(TomType:String,Index:int)
-
-TargetLanguageType = TLType(String:String)
-         | EmptyTargetLanguageType()
         /**
          * TypeVar
          * @param TomType the name of the Tom sort name
          * @param Index the fresh variable to an unknown Tom sort
          */
-        | TypeVar(Index:int)
+        | TypeVar(TomType:String,Index:int)
+
+TargetLanguageType = TLType(String:String)
+         | EmptyTargetLanguageType()
 
 TomTypeList = concTomType(TomType*)
