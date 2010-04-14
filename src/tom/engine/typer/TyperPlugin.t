@@ -115,23 +115,13 @@ public class TyperPlugin extends TomGenericPlugin {
 
         updateSymbolTable();
 
-<<<<<<< ours
-        System.out.println("In code = " + getWorkingTerm());
-        Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
-=======
         Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
->>>>>>> theirs
 
         typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
 
         /* transform each BackQuoteTerm into its compiled form */
-<<<<<<< ours
         typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
         System.out.println("\nCode after type inference = \n" + typedCode);
-=======
-        typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
->>>>>>> theirs
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -153,50 +143,6 @@ public class TyperPlugin extends TomGenericPlugin {
       // not active plugin
       logger.log(Level.INFO, "The default typer is not in use.");
     }
-<<<<<<< ours
-
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private Code expandType(Code subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private TomTerm expandType(TomTerm subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  %strategy expandType(typer:TyperPlugin) extends Identity() {
-    visit TomType {
-      subject@Type(tomType,EmptyTargetLanguageType()) -> {
-        if (!typer.getSymbolTable().isUnknownType(`tomType)) {
-          if (typer.getSymbolTable().getType(`tomType) == null) {
-            System.out.println("type known = " + `tomType + " with tltype null.");
-          }
-        }
-        TomType type = typer.getSymbolTable().getType(`tomType);
-        if(type != null) {
-          return type;
-        } else {
-          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
-        }
-      }
-    }
-=======
->>>>>>> theirs
   }
 
   /*
