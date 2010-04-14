@@ -69,7 +69,7 @@ public class CodeGen {
 
         writer.write( (( tom.gom.adt.code.types.Code )code).getprog() );
         return;
-      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch382_6= false ; tom.gom.adt.gom.types.OperatorDecl  tomMatch382_4= null ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Empty) ) {{tomMatch382_6= true ;tomMatch382_4= (( tom.gom.adt.code.types.Code )code).getOperator() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Cons) ) {{tomMatch382_6= true ;tomMatch382_4= (( tom.gom.adt.code.types.Code )code).getOperator() ;}}}if (tomMatch382_6) { tom.gom.adt.gom.types.OperatorDecl  tom_opdecl=tomMatch382_4;{{if ( (tom_opdecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch383_2= (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getSort() ; String  tom_opName= (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getName() ;if ( (tomMatch383_2 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {if ( ( (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getProd()  instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch1_6= false ; tom.gom.adt.gom.types.OperatorDecl  tomMatch1_4= null ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Empty) ) {{tomMatch1_6= true ;tomMatch1_4= (( tom.gom.adt.code.types.Code )code).getOperator() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Cons) ) {{tomMatch1_6= true ;tomMatch1_4= (( tom.gom.adt.code.types.Code )code).getOperator() ;}}}if (tomMatch1_6) { tom.gom.adt.gom.types.OperatorDecl  tom_opdecl=tomMatch1_4;{{if ( (tom_opdecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch2_2= (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getSort() ; String  tom_opName= (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getName() ;if ( (tomMatch2_2 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {if ( ( (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getProd()  instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
 
 
 
@@ -84,8 +84,8 @@ public class CodeGen {
                 tName = "Cons" + tom_opName;
               }}}}
 
-            String sortNamePackage =  tomMatch383_2.getName() .toLowerCase();
-            ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch383_2.getModuleDecl() )+".types."+sortNamePackage, tName) 
+            String sortNamePackage =  tomMatch2_2.getName() .toLowerCase();
+            ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch2_2.getModuleDecl() )+".types."+sortNamePackage, tName) 
 
 ;
             writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
@@ -96,11 +96,11 @@ public class CodeGen {
             Level.SEVERE,"{Empty,Cons}: expecting varidic, but got {0}",
             new Object[] { (tom_opdecl) });
         return;
-      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch382_11= false ; tom.gom.adt.gom.types.OperatorDecl  tomMatch382_9= null ; String  tomMatch382_8= "" ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.IsEmpty) ) {{tomMatch382_11= true ;tomMatch382_8= (( tom.gom.adt.code.types.Code )code).getVar() ;tomMatch382_9= (( tom.gom.adt.code.types.Code )code).getOperator() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.IsCons) ) {{tomMatch382_11= true ;tomMatch382_8= (( tom.gom.adt.code.types.Code )code).getVar() ;tomMatch382_9= (( tom.gom.adt.code.types.Code )code).getOperator() ;}}}if (tomMatch382_11) { tom.gom.adt.gom.types.OperatorDecl  tom_opdecl=tomMatch382_9;{{if ( (tom_opdecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {if ( ( (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getProd()  instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
+      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch1_11= false ; tom.gom.adt.gom.types.OperatorDecl  tomMatch1_9= null ; String  tomMatch1_8= "" ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.IsEmpty) ) {{tomMatch1_11= true ;tomMatch1_8= (( tom.gom.adt.code.types.Code )code).getVar() ;tomMatch1_9= (( tom.gom.adt.code.types.Code )code).getOperator() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.IsCons) ) {{tomMatch1_11= true ;tomMatch1_8= (( tom.gom.adt.code.types.Code )code).getVar() ;tomMatch1_9= (( tom.gom.adt.code.types.Code )code).getOperator() ;}}}if (tomMatch1_11) { tom.gom.adt.gom.types.OperatorDecl  tom_opdecl=tomMatch1_9;{{if ( (tom_opdecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {if ( ((( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl) instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {if ( ( (( tom.gom.adt.gom.types.OperatorDecl )tom_opdecl).getProd()  instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {
 
 
 
-            writer.write(tomMatch382_8);
+            writer.write(tomMatch1_8);
             {{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.IsEmpty) ) {
 
                 writer.write(".isEmpty");
@@ -118,32 +118,32 @@ public class CodeGen {
             Level.SEVERE,"Is{Empty,Cons}: expecting varidic, but got {0}",
             new Object[] { (tom_opdecl) });
         return;
-      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullOperatorClass) ) { tom.gom.adt.gom.types.OperatorDecl  tomMatch382_13= (( tom.gom.adt.code.types.Code )code).getOperator() ;if ( (tomMatch382_13 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch382_16= tomMatch382_13.getSort() ;if ( (tomMatch382_16 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+      }}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullOperatorClass) ) { tom.gom.adt.gom.types.OperatorDecl  tomMatch1_13= (( tom.gom.adt.code.types.Code )code).getOperator() ;if ( (tomMatch1_13 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) { tom.gom.adt.gom.types.SortDecl  tomMatch1_16= tomMatch1_13.getSort() ;if ( (tomMatch1_16 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
 
 
 
 
 
-        String sortNamePackage =  tomMatch382_16.getName() .toLowerCase();
-        ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch382_16.getModuleDecl() )+".types."+sortNamePackage,  tomMatch382_13.getName() ) 
+        String sortNamePackage =  tomMatch1_16.getName() .toLowerCase();
+        ClassName className =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch1_16.getModuleDecl() )+".types."+sortNamePackage,  tomMatch1_13.getName() ) 
 
 ;
         writer.write(tom.gom.backend.TemplateClass.fullClassName(className));
         return;
-      }}}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch382_22= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch382_22 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+      }}}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch1_22= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch1_22 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
-        ClassName sortClassName =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch382_22.getModuleDecl() )+".types",  tomMatch382_22.getName() ) 
+        ClassName sortClassName =  tom.gom.adt.objects.types.classname.ClassName.make(tom.gom.compiler.Compiler.packagePrefix( tomMatch1_22.getModuleDecl() )+".types",  tomMatch1_22.getName() ) 
 ;
         writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));
         return;
-      }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch382_28= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch382_28 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
+      }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) { tom.gom.adt.gom.types.SortDecl  tomMatch1_28= (( tom.gom.adt.code.types.Code )code).getSort() ;if ( (tomMatch1_28 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {
 
-        writer.write( tomMatch382_28.getName() );
+        writer.write( tomMatch1_28.getName() );
         return;
-      }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch382_37= false ; tom.gom.adt.gom.types.SortDecl  tomMatch382_33= null ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) {{tomMatch382_37= true ;tomMatch382_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) {{tomMatch382_37= true ;tomMatch382_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}}}if (tomMatch382_37) {if ( (tomMatch382_33 instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {
+      }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {boolean tomMatch1_37= false ; tom.gom.adt.gom.types.SortDecl  tomMatch1_33= null ;if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.FullSortClass) ) {{tomMatch1_37= true ;tomMatch1_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}} else {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.ShortSortClass) ) {{tomMatch1_37= true ;tomMatch1_33= (( tom.gom.adt.code.types.Code )code).getSort() ;}}}if (tomMatch1_37) {if ( (tomMatch1_33 instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {
 
-        writer.write( tomMatch382_33.getName() );
+        writer.write( tomMatch1_33.getName() );
         return;
       }}}}{if ( (code instanceof tom.gom.adt.code.types.Code) ) {if ( ((( tom.gom.adt.code.types.Code )code) instanceof tom.gom.adt.code.types.code.Compare) ) {
 

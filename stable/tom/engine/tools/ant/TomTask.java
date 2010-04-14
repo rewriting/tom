@@ -319,8 +319,8 @@ public class TomTask extends MatchingTask {
    * If true, compiles with new typer enabled.
    * @param flag if true compile with new typer
    */
-  public void setNewtyper(boolean flag) {
-    this.newtyper = flag;
+  public void setNewtyper(boolean newtyper) {
+    this.newtyper = newtyper;
   }
 
   public boolean getNewtyper() {

@@ -48,14 +48,14 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public abstract class TomCFamilyGenerator extends TomGenericGenerator {
+public abstract class CFamilyGenerator extends GenericGenerator {
 
   // ------------------------------------------------------------
         private static   tom.engine.adt.code.types.BQTermList  tom_append_list_concBQTerm( tom.engine.adt.code.types.BQTermList l1,  tom.engine.adt.code.types.BQTermList  l2) {     if( l1.isEmptyconcBQTerm() ) {       return l2;     } else if( l2.isEmptyconcBQTerm() ) {       return l1;     } else if(  l1.getTailconcBQTerm() .isEmptyconcBQTerm() ) {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,l2) ;     } else {       return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( l1.getHeadconcBQTerm() ,tom_append_list_concBQTerm( l1.getTailconcBQTerm() ,l2)) ;     }   }   private static   tom.engine.adt.code.types.BQTermList  tom_get_slice_concBQTerm( tom.engine.adt.code.types.BQTermList  begin,  tom.engine.adt.code.types.BQTermList  end, tom.engine.adt.code.types.BQTermList  tail) {     if( (begin==end) ) {       return tail;     } else if( (end==tail)  && ( end.isEmptyconcBQTerm()  ||  (end== tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ) )) {       /* code to avoid a call to make, and thus to avoid looping during list-matching */       return begin;     }     return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make( begin.getHeadconcBQTerm() ,( tom.engine.adt.code.types.BQTermList )tom_get_slice_concBQTerm( begin.getTailconcBQTerm() ,end,tail)) ;   }    
   // ------------------------------------------------------------
 
 
-  public TomCFamilyGenerator(OutputCode output, OptionManager optionManager,
+  public CFamilyGenerator(OutputCode output, OptionManager optionManager,
       SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
@@ -150,7 +150,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.write(" ) ");
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     output.write("((" + TomBase.getTLCode(tlType) + ")");
     generateExpression(deep,exp,moduleName);
     output.write(")");
@@ -185,7 +185,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     return;
   }
 
-  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType,
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType,
                           Expression exp, Instruction body, String moduleName) throws IOException {
     //output.writeln(deep,"{");
     output.write(deep+1,TomBase.getTLCode(tlType) + " ");
@@ -194,7 +194,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     //output.writeln(deep,"}");
   }
 
-  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType,
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
@@ -258,9 +258,9 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(s);
     
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch62_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch62_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch62_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch62_2.getLine() ;if ( (tomMatch62_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
+    {{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) { tom.engine.adt.tomsignature.types.TextPosition  tomMatch1_2= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getStart() ; tom.engine.adt.tomsignature.types.TextPosition  tomMatch1_3= (( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode).getEnd() ;if ( (tomMatch1_2 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) { int  tom_startLine= tomMatch1_2.getLine() ;if ( (tomMatch1_3 instanceof tom.engine.adt.tomsignature.types.textposition.TextPosition) ) {
 
-        output.write(0,returnValue, tom_startLine,  tomMatch62_3.getLine() - tom_startLine);
+        output.write(0,returnValue, tom_startLine,  tomMatch1_3.getLine() - tom_startLine);
         return;
       }}}}}{if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {if ( ((( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode) instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {
 
@@ -364,14 +364,12 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get = getGetHead(name,tomType,subject,moduleName);
-    return get;
+    return getGetHead(name,tomType,subject,moduleName);
   }
 
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get= getGetTail(name,tomType,subject,moduleName);
-    return get;
+    return getGetTail(name,tomType,subject,moduleName);
   }
 
   private String genDeclGetHeadInSlice(String name, TomType domain, TomType codomain, String subject, String moduleName) {
@@ -487,17 +485,17 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
 
     boolean inlined = inlineplus;
     boolean isCode = false;
-    {{if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch63_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( (tomMatch63_1 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom_code= tomMatch63_1.getCode() ;
+    {{if ( (instr instanceof tom.engine.adt.tominstruction.types.Instruction) ) {if ( ((( tom.engine.adt.tominstruction.types.Instruction )instr) instanceof tom.engine.adt.tominstruction.types.instruction.ExpressionToInstruction) ) { tom.engine.adt.tomexpression.types.Expression  tomMatch2_1= (( tom.engine.adt.tominstruction.types.Instruction )instr).getExpr() ;if ( (tomMatch2_1 instanceof tom.engine.adt.tomexpression.types.expression.Code) ) { String  tom_code= tomMatch2_1.getCode() ;
 
         isCode = true;
         // perform the instantiation
         String ncode = tom_code;
         int index = 0;
-        {{if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch64__end__4=(( tom.engine.adt.code.types.BQTermList )argList);do {{if (!( tomMatch64__end__4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch64_8= tomMatch64__end__4.getHeadconcBQTerm() ;if ( (tomMatch64_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch64_7= tomMatch64_8.getAstName() ;if ( (tomMatch64_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        {{if ( (argList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )argList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch3__end__4=(( tom.engine.adt.code.types.BQTermList )argList);do {{if (!( tomMatch3__end__4.isEmptyconcBQTerm() )) { tom.engine.adt.code.types.BQTerm  tomMatch3_8= tomMatch3__end__4.getHeadconcBQTerm() ;if ( (tomMatch3_8 instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch3_7= tomMatch3_8.getAstName() ;if ( (tomMatch3_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
-            ncode = ncode.replace("{"+index+"}", tomMatch64_7.getString() );
+            ncode = ncode.replace("{"+index+"}", tomMatch3_7.getString() );
             index++;
-          }}}if ( tomMatch64__end__4.isEmptyconcBQTerm() ) {tomMatch64__end__4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch64__end__4= tomMatch64__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch64__end__4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
+          }}}if ( tomMatch3__end__4.isEmptyconcBQTerm() ) {tomMatch3__end__4=(( tom.engine.adt.code.types.BQTermList )argList);} else {tomMatch3__end__4= tomMatch3__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch3__end__4==(( tom.engine.adt.code.types.BQTermList )argList)) ));}}}}
 
 
         if(!ncode.equals(tom_code)) {
@@ -512,9 +510,9 @@ s = "\n  "+modifier+" "+utype+" tom_append_list_"+name+"("+utype+"l1, "+utype+" 
       while(!argList.isEmptyconcBQTerm()) {
         BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch65_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch65_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( (tomMatch65_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch65_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TomType  tomMatch65_6= tomMatch65_2.getTlType() ;if ( (tomMatch65_6 instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
+              {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch4_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch4_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( (tomMatch4_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch4_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) { tom.engine.adt.tomtype.types.TargetLanguageType  tomMatch4_6= tomMatch4_2.getTlType() ;if ( (tomMatch4_6 instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-                  s.append(TomBase.getTLCode(tomMatch65_6) + " " +  tomMatch65_1.getString() );
+                  s.append(TomBase.getTLCode(tomMatch4_6) + " " +  tomMatch4_1.getString() );
                   break matchBlock;
                 }}}}}}{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 
