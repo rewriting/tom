@@ -15,14 +15,25 @@ The compiler is composed of several plugins, which are executed in the following
   call gom
 
 - Desugarer
-  replaces  _  by a fresh variable _* by a fresh varstar 
-  replaces 'TermAppl' by its 'RecordAppl' form
-  replaces 'XMLAppl' by its 'RecordAppl' form
-  update the SymbolTable
-  add default IsFsym and default Make to symbols
+  update the SymbolTable. For each symbol:
+    add default IsFsym and default Make to symbols
+    replaces 'TermAppl' by its 'RecordAppl' form
+    replaces 'XMLAppl' by its 'RecordAppl' form
+  transforms the input term:
+    replaces  _  by a fresh variable _* by a fresh varstar 
+    replaces 'TermAppl' by its 'RecordAppl' form
+    replaces 'XMLAppl' by its 'RecordAppl' form
+    replaces 'abc' by concString('a','b','c')
 
 - Typer
-  
+  update the SymbolTable. For each symbol and for the input term:
+    typeVariable:
+      replace a TomType(_,EmptyTargetLanguageType()) by its expanded form (TomType)
+      perform type-inference
+    propagateVariablesTypes: in all constraints, if a variable has a type, this
+     type is propaged to all the variables of the constraint
+    TransformBQApp: lafter typing, transform each BackQuoteTerm into its
+     compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
 
 - Type checker
 

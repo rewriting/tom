@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Cl?udia Tavares  e-mail: Claudia.Tavares@loria.fr
+ * Claudia Tavares  e-mail: Claudia.Tavares@loria.fr
  * Jean-Christophe Bach e-mail: Jeanchristophe.Bach@loria.fr
  *
  **/
@@ -30,7 +30,6 @@ package tom.engine.typer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -89,41 +88,40 @@ public class NewKernelTyper {
     return symbolTable;
   }
 
-  protected TomType getCodomain(TomSymbol tomSymbol) {
-    //DEBUG System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tomSymbol));
-    return TomBase.getSymbolCodomain(tomSymbol);
+  protected TomType getCodomain(TomSymbol tSymbol) {
+    //DEBUG System.out.println("getCodomain = " + TomBase.getSymbolCodomain(tSymbol));
+    return TomBase.getSymbolCodomain(tSymbol);
   }
 
-  protected TomSymbol getSymbolFromTerm(TomTerm tomTerm) {
-    return TomBase.getSymbolFromTerm(tomTerm, getSymbolTable());
-  }
+  protected TomSymbol getSymbolFromTerm(TomTerm tTerm) {
+    return TomBase.getSymbolFromTerm(tTerm, getSymbolTable());
+   }
 
   protected TomSymbol getSymbolFromTerm(BQTerm bqTerm) {
     return TomBase.getSymbolFromTerm(bqTerm,getSymbolTable());
   }
 
-  protected TomSymbol getSymbolFromName(String tomName) {
-    return TomBase.getSymbolFromName(tomName, getSymbolTable());
-  }
+  protected TomSymbol getSymbolFromName(String tName) {
+    return TomBase.getSymbolFromName(tName, getSymbolTable());
+   }
 
-  protected TomSymbol getSymbolFromType(TomType type) {
-    %match(type) {
-      TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
-      }
-    }
-    return TomBase.getSymbolFromType(type,getSymbolTable()); 
-  }
+  protected TomSymbol getSymbolFromType(TomType tType) {
+    %match(tType) {
+       TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
+         return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+       }
+     }
+    return TomBase.getSymbolFromType(tType,getSymbolTable()); 
+   }
 
-  protected TomType getType(String typeName) {
-    return getSymbolTable().getType(typeName); 
-  }
+  protected TomType getType(String tName) {
+    return getSymbolTable().getType(tName); 
+   }
 
-  protected TomType getType(TomTerm term) {
-    %match(term) {
-      (Variable|VariableStar)[AstType=type] -> {
-        return `type;
-      }
+  protected TomType getType(TomTerm tTerm) {
+    %match(tTerm) {
+      (Variable|VariableStar)[AstType=aType] -> { return `aType; }
+
       RecordAppl[NameList=(Name(name),_*)] -> {
         if(`name.equals("")) {
           // Maybe we need to discover the symbol using the context type
@@ -131,20 +129,21 @@ public class NewKernelTyper {
           throw new TomRuntimeException("No symbol found because there is no name.");
         }
         //DEBUG System.out.println("\n------- getType : name = " + `name +'\n');
-        TomSymbol tomSymbol = getSymbolFromName(`name);
+        TomSymbol tSymbol = getSymbolFromName(`name);
         //DEBUG System.out.println("\n------- after getSymbolFromName");
-        return getCodomain(tomSymbol);
+        return getCodomain(tSymbol);
       }
       AntiTerm(atomicTerm) -> { return getType(`atomicTerm); }
     } 
     throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
 
-  protected TomType getType(BQTerm term) {
-    %match(term) {
-      (BQVariable|BQVariableStar|BuildReducedTerm)[AstType=type] -> {
-        return `type;
+  protected TomType getType(BQTerm bqTerm) {
+    %match(bqTerm) {
+      (BQVariable|BQVariableStar|BuildReducedTerm)[AstType=aType] -> {
+        return `aType;
       }
+
       // Which constructors of BQTerm we need to treat?? 
       (BQAppl|FunctionCall|BuildConstant)[AstName=Name(name)] -> {
         if(`name.equals("")) {
@@ -152,16 +151,30 @@ public class NewKernelTyper {
           // information (i.e. the type of subject)
           throw new TomRuntimeException("No symbol found because there is no name.");
         }
-        TomSymbol tomSymbol = getSymbolFromName(`name);
-        return getCodomain(tomSymbol);
+        TomSymbol tSymbol = getSymbolFromName(`name);
+        return getCodomain(tSymbol);
       }
     } 
     throw new TomRuntimeException("getType(BQTerm): should not be here.");
   }
-
+/* TO REPLACE getFreshTypeVar()
+  protected int getFreshTlTIndex() {
+    return freshTypeVarCounter++;
+   }
+*/
   protected TargetLanguageType getFreshTypeVar() {
     return `TypeVar(freshTypeVarCounter++);
   }
+
+/* TO REPLACE getUnknownFreshTypeVar()  
+   protected TomType getUnknownFreshTypeVar() {
+    TomType tType = symbolTable.UNKNOWN_TYPE;
+    %match(tType) {
+      Type[TomType=tomType] -> { return `TypeVar(tomType,getFreshTlTIndex())}
+    }
+    throw new TomRuntimeException("getUnknownFreshTypeVar: should not be here.");
+   }
+*/
 
   protected TomType getUnknownFreshTypeVar() {
     return `Type("unknown type",TypeVar(freshTypeVarCounter++));
@@ -170,22 +183,22 @@ public class NewKernelTyper {
   /*
      * pem: use if(...==... && typeConstraints.contains(...))
      */
-  protected void addConstraint(TypeConstraint constraint) {
+  protected void addConstraint(TypeConstraint tConstraint) {
     %match {
-      !concTypeConstraint(_*,tConstraint,_*) << typeConstraints &&
-      tConstraint << TypeConstraint constraint -> {
-        typeConstraints = `concTypeConstraint(constraint,typeConstraints*);
+      !concTypeConstraint(_*,typeConstraint,_*) << typeConstraints &&
+      typeConstraint << TypeConstraint tConstraint -> {
+        typeConstraints = `concTypeConstraint(tConstraint,typeConstraints*);
       }
     }
   }
 
-  protected void addTomTerm(TomTerm term) {
-    varPatternList = `concTomTerm(term,varPatternList*);
-  }
+  protected void addTomTerm(TomTerm tTerm) {
+    varPatternList = `concTomTerm(tTerm,varPatternList*);
+   }
 
-  protected void addBQTerm(BQTerm term) {
-    varList = `concBQTerm(term,varList*);
-  }
+  protected void addBQTerm(BQTerm bqTerm) {
+    varList = `concBQTerm(bqTerm,varList*);
+   }
 
   /**
    * The method <code>resetVarPatternList</code> empties varPatternList after
@@ -193,9 +206,9 @@ public class NewKernelTyper {
    * a corresponding BQTerm in order to remove it from <code>varList</code. too
    */
   protected void resetVarPatternList() {
-    for(TomTerm tomTerm: varPatternList.getCollectionconcTomTerm()) {
-      %match(tomTerm,varList) {
-        (Variable|VariableStar)[AstName=name],concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=name],y*)
+    for(TomTerm tTerm: varPatternList.getCollectionconcTomTerm()) {
+      %match(tTerm,varList) {
+        (Variable|VariableStar)[AstName=aName],concBQTerm(x*,(BQVariable|BQVariableStar)[AstName=aName],y*)
           -> {
             varList = `concBQTerm(x*,y*);
           }
@@ -374,30 +387,32 @@ public class NewKernelTyper {
         %match {
           // --- Case of Variable
           // If the variable already exists in varPatternList
-          Variable[AstName=name,AstType=type1] << var &&
-          concTomTerm(_*,(Variable|VariableStar)(_,name,type2@!type1,_),_*) << nkt.varPatternList -> {
-            //maybe this is not necessary since the variable generated has type2
-            nkt.addConstraint(`Equation(type1,type2));
-            //DEBUG System.out.println("CollectVars -- constraint = " + `type1 + " = " + `type2);
-          }
+          Variable[AstName=aName,AstType=aType1] << var &&
+            concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varPatternList -> {
+              //maybe this is not necessary since the variable generated has aType2
+              nkt.addConstraint(`Equation(aType1,aType2));
+              //DEBUG System.out.println("CollectVars -- constraint = " + `aType1
+              //+ " = " + `aType2);
+            }
+
           // If the variable doesn't exist in varPatternList
           // (or if varPatternlist is empty)
-          Variable[AstName=name] << var &&
-          !concTomTerm(_*,(Variable|VariableStar)(_,name,_,_),_*) << nkt.varPatternList -> {
+          Variable[AstName=aName] << var &&
+          !concTomTerm(_*,(Variable|VariableStar)[AstName=aName],_*) << nkt.varPatternList -> {
             nkt.addTomTerm(`var);
           }
 
           // --- Case of VariableStar
           // If the star variable already exists in varPatternList 
-          VariableStar[AstName=name,AstType=type1] << var &&
-          concTomTerm(_*,(Variable|VariableStar)(_,name,type2@!type1,_),_*) << nkt.varPatternList -> {
-            nkt.addConstraint(`Equation(type1,type2));
+          VariableStar[AstName=aName,AstType=aType1] << var &&
+          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varPatternList -> {
+            nkt.addConstraint(`Equation(aType1,aType2));
             //DEBUG System.out.println("CollectVars -- constraint = " + `type1 + " = " + `type2);
           }
           // If the star variable doesn't exist in varPatternList
           // (or if varPatternList is empty)
-          VariableStar[AstName=name] << var &&
-          !concTomTerm(_*,(Variable|VariableStar)(_,name,_,_),_*) << nkt.varPatternList -> {
+          VariableStar[AstName=aName] << var &&
+          !concTomTerm(_*,(Variable|VariableStar)[AstName=aName],_*) << nkt.varPatternList -> {
             nkt.addTomTerm(`var);
           }
         }
@@ -411,34 +426,34 @@ public class NewKernelTyper {
           // --- Case of Variable
           // If the backquote variable already exists in varPatternList 
           // (in the case of a inner match) or in varList
-          BQVariable[Option=option,AstName=name,AstType=type1] << bqvar &&
-          (concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,type2@!type1),_*) << nkt.varList ||
-          concTomTerm(_*,(Variable|VariableStar)(_,name,type2@!type1,_),_*) << nkt.varPatternList) -> {
-            nkt.addConstraint(`Equation(type1,type2));
-            newBQVar = `BQVariable(option,name,type2);
-          }
+          BQVariable[Option=option,AstName=aName,AstType=aType1] << bqvar &&
+          (concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varList ||
+          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varPatternList) -> {
+            nkt.addConstraint(`Equation(aType1,aType2));
+            newBQVar = `BQVariable(option,aName,aType2);
+         }
           // If the backquote variable exists neither in varPatternList nor in
           // varList (or if one of them, or both, are empty) 
-          BQVariable[AstName=name] << bqvar &&
-          !concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,_),_*) << nkt.varList &&
-          !concTomTerm(_*,(Variable|VariableStar)(_,name,_,_),_*) << nkt.varPatternList -> {
+          BQVariable[AstName=aName] << bqvar &&
+          !concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName],_*) << nkt.varList &&
+          !concTomTerm(_*,(Variable|VariableStar)[AstName=aName],_*) << nkt.varPatternList -> {
             nkt.addBQTerm(`bqvar);
           }
 
           // --- Case of VariableStar
           // If the backquote star variable already exists in varPatternList 
           // (in the case of a inner match) or in varList        
-          BQVariableStar[Option=option,AstName=name,AstType=type1] << bqvar &&
-          (concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,type2@!type1),_*) << nkt.varList ||
-          concTomTerm(_*,(Variable|VariableStar)(_,name,type2@!type1,_),_*) << nkt.varPatternList) -> {
-            nkt.addConstraint(`Equation(type1,type2));
-            newBQVar = `BQVariable(option,name,type2);
+          BQVariableStar[Option=option,AstName=aName,AstType=aType1] << bqvar &&
+          (concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varList ||
+          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*) << nkt.varPatternList) -> {
+            nkt.addConstraint(`Equation(aType1,aType2));
+            newBQVar = `BQVariable(option,aName,aType2);
           }
            // If the backquote star variable exists neither in varPatternList nor in
           // varList (or if one of them, or both, are empty)
-          BQVariable[AstName=name] << bqvar &&
-          !concBQTerm(_*,(BQVariable|BQVariableStar)(_,name,_),_*) << nkt.varList &&
-          !concTomTerm(_*,(Variable|VariableStar)(_,name,_,_),_*) << nkt.varPatternList -> {
+          BQVariable[AstName=aName] << bqvar &&
+          !concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName],_*) << nkt.varList &&
+          !concTomTerm(_*,(Variable|VariableStar)[AstName=aName],_*) << nkt.varPatternList -> {
             nkt.addBQTerm(`bqvar);
           }
         }
@@ -554,13 +569,13 @@ public class NewKernelTyper {
    * Equals to CT-MERGE but with a star variable "x*" instead of "e"
    * This rule is necessary because it differed from CT-MERGE in the
    * sense of the type of the last argument ("x*" here) is unknown 
-   * @param term      the TomTerm to be inferred
+   * @param tTerm      the TomTerm to be inferred
    * @param freshType the fresh generated previously and attributed to the TomTerm
    */
-  private void inferTomTerm(TomTerm term, TomType freshType) {
-    //DEBUG System.out.println("inferTomTerm -- term: " + term);
-    //DEBUG System.out.println("\n Test pour inferTomTerm. Term = " + term);
-    %match(term) {
+  private void inferTomTerm(TomTerm tTerm, TomType freshType) {
+    //DEBUG System.out.println("inferTomTerm -- tTerm: " + tTerm);
+    //DEBUG System.out.println("\n Test pour inferTomTerm. Term = " + tTerm);
+    %match(tTerm) {
       AntiTerm(atomicTerm) -> { inferTomTerm(`atomicTerm,freshType); }
 
       (Variable|VariableStar)[AstType=type,Constraints=constraintList] -> {
@@ -580,8 +595,9 @@ public class NewKernelTyper {
       RecordAppl[NameList=concTomName(Name(tomName),_*),Slots=slotList,Constraints=constraintList] -> {
         // Do we need to test if the nameList is equal to ""???
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomName = " + `tomName);
-        TomSymbol tomSymbol = getSymbolFromName(`tomName);
-        //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. tomSymbol = " + tomSymbol);
+        TomSymbol tSymbol = getSymbolFromName(`tomName);
+        //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl.
+        //tSymbol = " + tSymbol);
   
         %match(constraintList) {
           // How many "AliasTo" constructors can concConstraint have?
@@ -591,64 +607,65 @@ public class NewKernelTyper {
             addConstraint(`Equation(getType(boundTerm),freshType)); }
         }
 
-        TomType codomain = getCodomain(tomSymbol);
+        TomType codomain = getCodomain(tSymbol);
         //DEBUG System.out.println("\n Test pour inferTomTerm in RecordAppl. codomain = " + codomain);
         //DEBUG System.out.println("inferTomTerm: " + `codomain + " = " + freshType);
         addConstraint(`Equation(codomain,freshType));
         //DEBUG System.out.println("InferTomTerm -- constraint = " + codomain + " = " + freshType);
         if (!`slotList.isEmptyconcSlot()) {
-          inferSlotList(`slotList,`tomSymbol,freshType);
+          inferSlotList(`slotList,`tSymbol,freshType);
         }
       }
     }
   }
 
-  private void inferBQTerm(BQTerm term, TomType freshType) {
-    //DEBUG System.out.println("inferBQTerm -- term: " + term);
-    %match(term) {
-      (BQVariable|BQVariableStar)[AstType=type] -> {
-        //DEBUG System.out.println("inferBQTerm: " + `type + " = " + freshType);
-        addConstraint(`Equation(type,freshType));  
-        //DEBUG System.out.println("InferBQTerm -- constraint = " + `type + " = " + freshType);
+  private void inferBQTerm(BQTerm bqTerm, TomType freshType) {
+    //DEBUG System.out.println("inferBQTerm -- bqTerm: " + bqTerm);
+    %match(bqTerm) {
+      (BQVariable|BQVariableStar)[AstType=aType] -> {
+        //DEBUG System.out.println("inferBQTerm: " + `aType + " = " + freshType);
+        addConstraint(`Equation(aType,freshType));  
+        //DEBUG System.out.println("InferBQTerm -- constraint = " + `aType + " = " + freshType);
       }
 
       // Special case : when there is a block "rules" in %gom and "provisional
       // subjects" with name "realMake" are created but corresponding to none of
       // symbols existing in SymbolTable (i.e. having a "null" symbol)
-      BQAppl[Option=oList,AstName=tomName@Name("realMake"),Args=concBQTerm(BQVariable[AstName=Name("head")],BQVariable[AstName=Name("tail")])]
+      BQAppl[Option=option,AstName=aName@Name("realMake"),Args=concBQTerm(BQVariable[AstName=Name("head")],BQVariable[AstName=Name("tail")])]
         -> {
-          TomSymbol tomSymbol = getSymbolFromName("realMake");
-          if (tomSymbol == null) {
-            tomSymbol =
-              `Symbol(tomName,TypesToType(concTomType(freshType),freshType),concPairNameDecl(),oList);
-            getSymbolTable().putSymbol("realMake",tomSymbol);
+          TomSymbol tSymbol = getSymbolFromName("realMake");
+          if (tSymbol == null) {
+            tSymbol =
+              `Symbol(aName,TypesToType(concTomType(freshType),freshType),concPairNameDecl(),option);
+            getSymbolTable().putSymbol("realMake",tSymbol);
           }
         }
 
-      BQAppl[AstName=Name(tomName),Args=bqTList] -> {
+      BQAppl[AstName=Name(name),Args=bqTList] -> {
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tomName = " + `tomName);
-        TomSymbol tomSymbol = getSymbolFromName(`tomName);
-        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tomSymbol= " + `tomSymbol);
-        TomType codomain = getCodomain(tomSymbol);
+        TomSymbol tSymbol = getSymbolFromName(`name);
+        //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. tSymbol=
+        //" + `tSymbol);
+        TomType codomain = getCodomain(tSymbol);
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. codomain = " + codomain + '\n');
         //DEBUG System.out.println("\n Test pour inferBQTerm in BQAppl. freshType = " + freshType + '\n');
         //DEBUG System.out.println("inferBQTerm: " + `codomain + " = " + freshType);
         addConstraint(`Equation(codomain,freshType));
         //DEBUG System.out.println("InferBQTerm -- constraint = " + `codomain + " = " + freshType);
         if (!`bqTList.isEmptyconcBQTerm()) {
-          inferBQTermList(`bqTList,`tomSymbol,freshType);
+          inferBQTermList(`bqTList,`tSymbol,freshType);
         }
       }
     }
   }
 
-  private void inferSlotList(SlotList slotList, TomSymbol tomSymbol, TomType freshType) {
-    %match(slotList,tomSymbol) {
-      concSlot(PairSlotAppl[Appl=term],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+  private void inferSlotList(SlotList slotList, TomSymbol tSymbol, TomType freshType) {
+    %match(slotList,tSymbol) {
+      concSlot(PairSlotAppl[Appl=tTerm],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argFreshType = freshType;
         // In case of a list
-        if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(`term);
+        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+          TomSymbol argSymb = getSymbolFromTerm(`tTerm);
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             /**
              * Continuation of CT-ELEM rule (applying to premises which are
@@ -672,8 +689,8 @@ public class NewKernelTyper {
            *      "x", where "x" represents a list with
            *      head symbol "l"
            */
-          TomTerm newTerm = `term;
-          %match(term) {
+          TomTerm newTerm = `tTerm;
+          %match(tTerm) {
             VariableStar[Option=options,AstName=name,Constraints=constraints] -> {
               newTerm =
                 `VariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName),constraints);  
@@ -687,7 +704,7 @@ public class NewKernelTyper {
            *      head symbol "l"
            */
           `inferTomTerm(newTerm,argFreshType);
-          `inferSlotList(tailSList,tomSymbol,freshType);
+          `inferSlotList(tailSList,tSymbol,freshType);
         } else {
           // In case of a function
           TomType argType;
@@ -714,9 +731,9 @@ public class NewKernelTyper {
     }
   }
 
-  private void inferBQTermList(BQTermList bqTList, TomSymbol tomSymbol, TomType
+  private void inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
       freshType) {
-matchL:    %match(bqTList,tomSymbol) {
+matchL:    %match(bqTList,tSymbol) {
       concBQTerm(headBQTerm@BQVariable[AstName=Name("head")],tailBQTerm@BQVariable[AstName=Name("tail")]),
         Symbol[AstName=Name("realMake")]
         -> {
@@ -727,26 +744,26 @@ matchL:    %match(bqTList,tomSymbol) {
           break matchL;
         }
 
-      concBQTerm(term,tailBQTList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+      concBQTerm(bqTerm,tailBQTList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argFreshType = freshType;
         // In case of a list
-        if(TomBase.isListOperator(`tomSymbol) || TomBase.isArrayOperator(`tomSymbol)) {
-          TomSymbol argSymb = getSymbolFromTerm(`term);
+        if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
+          TomSymbol argSymb = getSymbolFromTerm(`bqTerm);
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             argFreshType = getUnknownFreshTypeVar();
             addConstraint(`Equation(argFreshType,headTTList));
             //DEBUG System.out.println("InferBQTermList -- constraint = " + argFreshType +
             //DEBUG     " = " + `headTTList);
           }
-          BQTerm newTerm = `term;
-          %match(term) {
+          BQTerm newTerm = `bqTerm;
+          %match(bqTerm) {
             BQVariableStar[Option=options,AstName=name] -> {
               newTerm =
                 `BQVariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName));  
             }
           }
-          `inferBQTerm(term,argFreshType);
-          `inferBQTermList(tailBQTList,tomSymbol,freshType);
+          `inferBQTerm(bqTerm,argFreshType);
+          `inferBQTermList(tailBQTList,tSymbol,freshType);
         } else {
           // In case of a function
           TomType argType;
@@ -768,6 +785,12 @@ matchL:    %match(bqTList,tomSymbol) {
 
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
+      /**
+       * Equation(groundListType,groundType) U TCList and Map 
+       *    --> Fail
+       * if groundListType = tName1^g and groundType = tName2^? 
+       * and tName1 != tName2
+       */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
       concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1]),_*) &&
       (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
@@ -775,6 +798,12 @@ matchL:    %match(bqTList,tomSymbol) {
             + " = " + `t2);
       }
 
+      /**
+       * Equation(groundType,groundListType) U TCList and Map 
+       *    --> Fail
+       * if groundType = tName1^? and groundListType = tName2^g 
+       * and tName1 != tName2
+       */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
       concTypeConstraint(_*,Equation(t1@Type[TomType=tName1],t2@(Type|TypeWithSymbol)[TomType=tName2@!tName1]),_*) &&
       (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
@@ -782,6 +811,13 @@ matchL:    %match(bqTList,tomSymbol) {
             + " = " + `t2);
       }
 
+      /**
+       * Equation(groundListType,groundType) U TCList and Map 
+       *    --> Fail
+       * if groundListType has "java type" = tType1
+       * and groundType has "java type" = tType2
+       * and tType1 != tType2
+       */
       // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
       concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TlType=tType1@TLType(_)],t2@Type[TlType=tType2@TLType(_)]),_*) &&
         (tType1 != tType2)  -> {
@@ -789,6 +825,13 @@ matchL:    %match(bqTList,tomSymbol) {
             + " = " + `t2);
       }
       
+      /**
+       * Equation(groundType,groundListType) U TCList and Map 
+       *    --> Fail
+       * if groundType has "java type" = tType1
+       * and groundListType has "java type" = tType2
+       * and tType1 != tType2
+       */
       // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
       concTypeConstraint(_*,Equation(t1@Type[TlType=tType1@TLType(_)],t2@(Type|TypeWithSymbol)[TlType=tType2@TLType(_)]),_*) &&
         (tType1 != tType2)  -> {
@@ -796,7 +839,26 @@ matchL:    %match(bqTList,tomSymbol) {
             + " = " + `t2);
       }
 
-      //without Equation(type,type)
+      /**
+       * Equation(groundListType1,groundListType2) U TCList and Map 
+       *    --> Fail
+       * if groundListType1 != groundListType2
+       */
+      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
+      concTypeConstraint(_*,Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_)),_*) &&
+        (tLType1 != tLType2)  -> {
+          throw new RuntimeException("solveConstraints: failure on " + `tLType1
+              + " = " + `tLType2);
+        }
+
+      /**
+       * Equation(typeVar,type) U TCList and Map 
+       *    --> Equation(type,type) U [typeVar/type]TCList and
+       *        [typeVar/type]Map
+       */
+      // TO REPLACE next line
+      //concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar),rightTCList*) -> {
+
       concTypeConstraint(leftTCList*,Equation(typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)],type@!typeVar),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -815,6 +877,30 @@ matchL:    %match(bqTList,tomSymbol) {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
 
+      /**
+       * Equation(groundType,typeVar) U TCList and Map 
+       *    --> Equation(groundType,groundType) U [typeVar/groundType]TCList and
+       *        [typeVar/groundType]Map
+       */
+      /* TO REPLACE next block
+      concTypeConstraint(leftTCList*,Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_)),rightTCList*) -> {
+        nkt.substitutions.put(`typeVar,`groundType);
+        %match {
+          !concTypeConstraint() << leftTCList -> {
+            if(nkt.findTypeVars(`typeVar,`leftTCList)) {
+              `leftTCList = nkt.applySubstitution(`typeVar,`groundType,`leftTCList);
+            }
+          }
+
+          !concTypeConstraint() << rightTCList -> {
+            if(nkt.findTypeVars(`typeVar,`rightTCList)) {
+              `rightTCList = nkt.applySubstitution(`typeVar,`groundType,`rightTCList);
+            }
+          }
+        }
+        return `concTypeConstraint(leftTCList*,Equation(groundType,groundType),rightTCList*);
+      }
+*/
       concTypeConstraint(leftTCList*,Equation(type@(Type|TypeWithSymbol)[TlType=!TypeVar(_)],typeVar@(Type|TypeWithSymbol)[TlType=TypeVar(_)]),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -833,7 +919,7 @@ matchL:    %match(bqTList,tomSymbol) {
         return `concTypeConstraint(leftTCList*,Equation(type,type),rightTCList*);
       }
     }
-  }
+    }
 
   private boolean findTypeVars(TomType typeVar, TypeConstraintList
       tcList) {
@@ -880,9 +966,7 @@ matchL:    %match(bqTList,tomSymbol) {
 
 
   private void replaceInSymbolTable() {
-    Iterator<String> itForType = getSymbolTable().keySymbolIterator();
-    while(itForType.hasNext()) {
-      String tomName = itForType.next();
+    for(String tomName:getSymbolTable().keySymbolIterable()) {
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
       TomType type = getType(tomName);
       %match(type) {
@@ -898,22 +982,20 @@ matchL:    %match(bqTList,tomSymbol) {
       }
     }
 
-    Iterator<String> itForSymbol = getSymbolTable().keySymbolIterator();
-    while(itForSymbol.hasNext()) {
-      String tomName = itForSymbol.next();
+    for(String tomName:symbolTable.keySymbolIterable()) {
       //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
-      TomSymbol tomSymbol = getSymbolFromName(tomName);
-      //DEBUG System.out.println("replaceInSymboltable() - tomSymbol before strategy: "
-      //DEBUG     + tomSymbol);
+      TomSymbol tSymbol = getSymbolFromName(tomName);
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
+      //DEBUG     + tSymbol);
       try {
-        tomSymbol = `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(tomSymbol);
+        tSymbol = `RepeatId(TopDown(replaceFreshTypeVar(this))).visitLight(tSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("replaceInSymbolTable: failure on " +
-            tomSymbol);
+            tSymbol);
       }
-      //DEBUG System.out.println("replaceInSymboltable() - tomSymbol after strategy: "
-      //DEBUG     + tomSymbol);
-      getSymbolTable().putSymbol(tomName,tomSymbol);
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
+      //DEBUG     + tSymbol);
+      getSymbolTable().putSymbol(tomName,tSymbol);
     }
   }
 

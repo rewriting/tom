@@ -36,6 +36,7 @@ import org.apache.tools.ant.taskdefs.Java;
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>inlineplus</li>
+ * <li>newtyper</li>
  * <li>package</li>
  * <li>options</li>
  * <li>failonerror</li>
@@ -55,6 +56,7 @@ import org.apache.tools.ant.taskdefs.Java;
 
 public class GomTask extends GomCommonTask {
 
+  private boolean newtyper = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean inlineplus = false;
@@ -65,6 +67,18 @@ public class GomTask extends GomCommonTask {
 
   protected String defaultConfigName() {
     return "Gom.xml";
+  }
+
+  /**
+   * If true, compiles with new typer enabled.
+   * @param flag if true compile with new typer
+   */
+  public void setNewtyper(boolean newtyper) {
+    this.newtyper = newtyper;
+  }
+
+  public boolean getNewtyper() {
+    return newtyper;
   }
 
   /**
@@ -104,6 +118,9 @@ public class GomTask extends GomCommonTask {
   }
 
   protected void processAdditionalOptions(Java runner) {
+    if(newtyper) {
+      javaRunner.createArg().setValue("--newtyper");
+    }
     if(optimize) {
       javaRunner.createArg().setValue("--optimize");
     }

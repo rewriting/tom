@@ -81,7 +81,7 @@ public final class TomBase {
   public static String getTomType(TomType type) {
     %match(type) {
       (Type|TypeWithSymbol)[TomType=s] -> { return `s; }
-      EmptyType() -> {return null;}
+      EmptyType() -> { return null; }
     }
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
@@ -103,7 +103,6 @@ public final class TomBase {
     %match(type) {
       TLType(str)  -> { return `str; }
     }
-    System.out.println("getTLCode error on term: " + type);
     throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 
@@ -276,7 +275,9 @@ public final class TomBase {
     try {
       //TODO: replace TopDownCollect by continuations
       `TopDownCollect(collectVariable(collection,considerBQVars)).visitLight(`subject);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("Should not be there");
+    }
   }
 
   %strategy collectVariable(collection:Collection, considerBQVars:boolean) extends `Identity() {
@@ -495,7 +496,7 @@ public final class TomBase {
 
   public static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
     if(symbol==null) {
-      System.out.println("isDefinedSymbol: symbol == null");
+      //System.out.println("isDefinedSymbol: symbol == null");
       return false;
     }
     %match(symbol) {

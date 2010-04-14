@@ -292,39 +292,39 @@ public class SymbolTable {
   }
 
   public boolean isIntType(String type) {
-    return type.equals(TYPE_INT);
+    return TYPE_INT.equals(type);
   }
 
   public boolean isIntArrayType(String type) {
-    return type.equals(TYPE_INT_ARRAY);
+    return TYPE_INT_ARRAY.equals(type);
   }
 
   public boolean isLongType(String type) {
-    return type.equals(TYPE_LONG);
+    return TYPE_LONG.equals(type);
   }
 
   public boolean isFloatType(String type) {
-    return type.equals(TYPE_FLOAT);
+    return TYPE_FLOAT.equals(type);
   }
 
   public boolean isCharType(String type) {
-    return type.equals(TYPE_CHAR);
+    return TYPE_CHAR.equals(type);
   }
 
   public boolean isStringType(String type) {
-    return type.equals(TYPE_STRING);
+    return TYPE_STRING.equals(type);
   }
 
   public boolean isBooleanType(String type) {
-    return type.equals(TYPE_BOOLEAN);
+    return TYPE_BOOLEAN.equals(type);
   }
 
   public boolean isDoubleType(String type) {
-    return type.equals(TYPE_DOUBLE);
+    return TYPE_DOUBLE.equals(type);
   }
 
   public boolean isVoidType(String type) {
-    return type.equals(TYPE_VOID);
+    return TYPE_VOID.equals(type);
   }
   
   public boolean isUnknownType(String type) {
@@ -361,10 +361,10 @@ public class SymbolTable {
         return isNumericType(`str);
       }
     }
-    if (type.equals(getIntType()) 
-        || type.equals(getLongType()) 
-        || type.equals(getFloatType())  
-        || type.equals(getDoubleType())) {
+    if (getIntType().equals(type) 
+        || getLongType().equals(type) 
+        || getFloatType().equals(type)  
+        || getDoubleType().equals(type)) {
       return true;
     }
     return false;    
