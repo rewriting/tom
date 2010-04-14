@@ -120,7 +120,7 @@ public class TyperPlugin extends TomGenericPlugin {
         typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
 
         /* transform each BackQuoteTerm into its compiled form */
-        typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+        typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
         System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
