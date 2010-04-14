@@ -119,6 +119,9 @@ public class TyperPlugin extends TomGenericPlugin {
 
         typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
 
+        // replace 'abc' by concString('a','b','c')
+        typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
+
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
         System.out.println("\nCode after type inference = \n" + typedCode);
@@ -203,4 +206,85 @@ public class TyperPlugin extends TomGenericPlugin {
     }
   }
 
+    /*
+     * replace conc('abc') by conc('a','b','c')
+     * cannot be performed in the desugarer since anonymous symbols have to be already typed and expanded
+     */
+    %strategy desugarString(typer:TyperPlugin) extends Identity() {
+      visit TomTerm {
+        appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
+          TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
+          //System.out.println("appl = " + subject);
+          if(tomSymbol != null) {
+            if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+              //System.out.println("appl = " + subject);
+              SlotList newArgs = typer.typeChar(tomSymbol,`args);
+              if(newArgs!=`args) {
+                return `appl.setSlots(newArgs);
+              }
+            }
+          }
+        }
+      } // end match
+    }
+
+    /*
+     * detect ill-formed char: 'abc'
+     * and type it into a list of char: 'a','b','c'
+     */
+    private SlotList typeChar(TomSymbol tomSymbol,SlotList args) {
+      if(args.isEmptyconcSlot()) {
+        return args;
+      } else {
+        Slot head = args.getHeadconcSlot();
+        SlotList tail = typeChar(tomSymbol,args.getTailconcSlot());
+        %match(head) {
+          PairSlotAppl(slotName,RecordAppl[Option=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
+            /*
+             * ensure that the argument contains at least 1 character and 2 single quotes
+             */
+            TomSymbol stringSymbol = getSymbolFromName(`tomName);
+            TomType termType = stringSymbol.getTypesToType().getCodomain();
+            String type = termType.getTomType();
+            if(getSymbolTable().isCharType(type) && `tomName.length()>3) {
+              if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
+                SlotList newArgs = `concSlot();
+                String substring = `tomName.substring(1,`tomName.length()-1);
+                //System.out.println("bingo -> " + substring);
+                substring = substring.replace("\\'","'"); // replace backslash-quote by quote
+                substring = substring.replace("\\\\","\\"); // replace backslash-backslash by backslash
+                //System.out.println("after encoding -> " + substring);
+
+                for(int i=substring.length()-1 ; i>=0 ;  i--) {
+                  char c = substring.charAt(i);
+                  String newName = "'" + c + "'";
+                  TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
+                  getSymbolTable().putSymbol(newName,newSymbol);
+
+                  Slot newHead = `PairSlotAppl(slotName,RecordAppl(optionList,concTomName(Name(newName)),concSlot(),concConstraint()));
+                  newArgs = `concSlot(newHead,newArgs*);
+                  //System.out.println("newHead = " + newHead);
+                  //System.out.println("newSymb = " + getSymbolFromName(newName));
+                }
+                ConstraintList newConstraintList = `concConstraint();
+                %match(constraintList) {
+                  concConstraint(AliasTo(var@Variable[AstType=vartype])) -> {
+                    if(getSymbolTable().isCharType(TomBase.getTomType(`vartype))) {
+                      newConstraintList = `concConstraint(AliasTo(var.setAstType(getSymbolTable().getStringType())));
+                    }
+                  }
+                }
+
+                TomTerm newSublist = `RecordAppl(concOption(),concTomName(tomSymbol.getAstName()),newArgs,newConstraintList);
+                Slot newSlot = `PairSlotAppl(slotName,newSublist);
+                return `concSlot(newSlot,tail*);
+              } else {
+                throw new TomRuntimeException("typeChar: strange char: " + `tomName);
+              }
+            }
+          }
+        }
+        return `concSlot(head,tail*);
+      }
+    }
 }

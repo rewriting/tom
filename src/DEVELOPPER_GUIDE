@@ -23,7 +23,6 @@ The compiler is composed of several plugins, which are executed in the following
     replaces  _  by a fresh variable _* by a fresh varstar 
     replaces 'TermAppl' by its 'RecordAppl' form
     replaces 'XMLAppl' by its 'RecordAppl' form
-    replaces 'abc' by concString('a','b','c')
 
 - Typer
   update the SymbolTable. For each symbol and for the input term:
@@ -32,6 +31,7 @@ The compiler is composed of several plugins, which are executed in the following
       perform type-inference
     propagateVariablesTypes: in all constraints, if a variable has a type, this
      type is propaged to all the variables of the constraint
+    replaces 'abc' by concString('a','b','c')
     TransformBQApp: lafter typing, transform each BackQuoteTerm into its
      compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
 
