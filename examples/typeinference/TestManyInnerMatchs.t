@@ -1,10 +1,10 @@
-import testplusieursmatchimbriques.testplusieursmatchimbriques.*;
-import testplusieursmatchimbriques.testplusieursmatchimbriques.types.*;
+import testmanyinnermatchs.testmanyinnermatchs.*;
+import testmanyinnermatchs.testmanyinnermatchs.types.*;
 
 
-public class TestPlusieursMatchImbriques {
+public class TestManyInnerMatchs {
   %gom {
-    module TestPlusieursMatchImbriques 
+    module TestManyInnerMatchs 
       imports int
       abstract syntax
       

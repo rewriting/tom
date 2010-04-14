@@ -1,7 +1,7 @@
-import testlinearite.testlinearite.types.*;
-public class TestLinearite {
+import testlinearity.testlinearity.types.*;
+public class TestLinearity {
   %gom {
-    module TestLinearite
+    module TestLinearity
       imports int
       abstract syntax
       B = b()
