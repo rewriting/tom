@@ -50,7 +50,7 @@ import tom.engine.tools.ASTFactory;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
-public abstract class TomGenericGenerator extends TomAbstractGenerator {
+public abstract class GenericGenerator extends AbstractGenerator {
 
   protected HashMap<String,String> isFsymMap = new HashMap<String,String>();
   protected boolean lazyMode;
@@ -59,7 +59,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected boolean inlineplus; // perform inlining even if no substitution has been done
   protected String modifier = ""; // the value is instantiated when creating the real backend (TomJavaBackend for instance)
 
-  public TomGenericGenerator(OutputCode output, OptionManager optionManager,
+  public GenericGenerator(OutputCode output, OptionManager optionManager,
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
 
@@ -129,7 +129,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(" >= ");
     {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
-        throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+        throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
       }}}}
 
     String opName = opNameAST.getString();
@@ -152,14 +152,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       OutputCode oldOutput=output;
       String instance = template;
       int index = 0;
-      {{if ( (termList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);do {{if (!( tomMatch73__end__4.isEmptyconcBQTerm() )) {
+      {{if ( (termList instanceof tom.engine.adt.code.types.BQTermList) ) {if ( (((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm) || ((( tom.engine.adt.code.types.BQTermList )termList) instanceof tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm)) ) { tom.engine.adt.code.types.BQTermList  tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )termList);do {{if (!( tomMatch2__end__4.isEmptyconcBQTerm() )) {
 
           output = new OutputCode(new StringWriter());
-          generateBQTerm(deep, tomMatch73__end__4.getHeadconcBQTerm() ,moduleName);
+          generateBQTerm(deep, tomMatch2__end__4.getHeadconcBQTerm() ,moduleName);
           String dump = output.stringDump();
           instance = instance.replace("{"+index+"}",dump);
           index++;
-        }if ( tomMatch73__end__4.isEmptyconcBQTerm() ) {tomMatch73__end__4=(( tom.engine.adt.code.types.BQTermList )termList);} else {tomMatch73__end__4= tomMatch73__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch73__end__4==(( tom.engine.adt.code.types.BQTermList )termList)) ));}}}}
+        }if ( tomMatch2__end__4.isEmptyconcBQTerm() ) {tomMatch2__end__4=(( tom.engine.adt.code.types.BQTermList )termList);} else {tomMatch2__end__4= tomMatch2__end__4.getTailconcBQTerm() ;}}} while(!( (tomMatch2__end__4==(( tom.engine.adt.code.types.BQTermList )termList)) ));}}}}
 
       //System.out.println("template: " + template);
       //System.out.println("instance: " + instance);
@@ -261,7 +261,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, BQTerm var, String moduleName) throws IOException {
     {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
-        throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+        throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
       }}}}
 
     String opName = opNameAST.getString();
@@ -300,7 +300,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-                                            TomType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
+                                            TargetLanguageType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
     String args[];
     if(lazyMode) {
       TomType argType = getUniversalType();
@@ -320,7 +320,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String typename,
-                                            TomType tlType, Instruction instr, String moduleName) throws IOException {
+                                            TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = TomBase.getTLCode(tlType);
@@ -339,7 +339,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * generate the function declaration when no substituion has been done
    */
   protected void buildIsFsymDecl(int deep, String tomName, String varname,
-                                 TomType tlType, Expression code, String moduleName) throws IOException {
+                                 TargetLanguageType tlType, Expression code, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     boolean inlined = inlineplus; //false;
@@ -368,7 +368,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String varname,
-      TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
+      TargetLanguageType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
@@ -481,7 +481,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName)
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TargetLanguageType domain, TargetLanguageType codomain, Expression code, String moduleName)
     throws IOException {
       String opname = opNameAST.getString();
       boolean inlined = inlineplus;
@@ -507,7 +507,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
               returnType = TomBase.getTLCode(codomain);
               argType = TomBase.getTLCode(domain);
-              throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+              throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
             }}}{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
@@ -523,7 +523,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
     }
 
-  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName)
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TargetLanguageType tlType, Expression code, String moduleName)
         throws IOException {
           String opname = opNameAST.getString();
           boolean inlined = inlineplus;
@@ -550,7 +550,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
                   returnType = TomBase.getTLCode(tlType);
                   argType = returnType;
-                  throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                  throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
                 }}}{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
@@ -568,7 +568,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         }
 
       protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-          TomType tlType, Expression code, String moduleName) throws IOException {
+          TargetLanguageType tlType, Expression code, String moduleName) throws IOException {
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
@@ -590,7 +590,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
                 argType = TomBase.getTLCode(tlType);
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }}}{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
@@ -607,7 +607,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         }
       }
 
-      protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType domain, Expression code, String moduleName) throws IOException {
+      protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, Expression code, String moduleName) throws IOException {
 
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
@@ -631,7 +631,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           } else {
             {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }}}}
 
 
@@ -650,7 +650,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         }
       }
 
-      protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType domain, Expression code, String moduleName) throws IOException {
+      protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, Expression code, String moduleName) throws IOException {
         String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
@@ -671,7 +671,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           } else {
             {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
-                throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+                throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
               }}}{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
@@ -692,10 +692,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
        * the method implementations are here common to C, Java, C#, caml and python
        */
 
-      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
+      protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException {
         {{if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {if ( ((( tom.engine.adt.tomname.types.TomName )opNameAST) instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {
 
-            throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
+            throw new TomRuntimeException("GenericGenerator: bad case: " + opNameAST);
           }}}}
 
         String opName = opNameAST.getString();
@@ -712,7 +712,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       protected void buildListOrArray(int deep, BQTerm list, String moduleName) throws IOException {
-        {{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_1= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_1.getString() ;
+        {{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyList) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_1= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch10_1.getString() ;
 
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(tom_name);
@@ -720,7 +720,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(prefix + tom_name+ "()");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_6= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_6.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsList) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_6= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch10_6.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
             String prefix = "tom_cons_list_";
@@ -733,16 +733,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_13= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendList) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_13= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            output.write("tom_append_list_" +  tomMatch81_13.getString() + "(");
+            output.write("tom_append_list_" +  tomMatch10_13.getString() + "(");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);
             output.write(")");
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_20= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_20.getString() ; tom.engine.adt.code.types.BQTerm  tom_size= (( tom.engine.adt.code.types.BQTerm )list).getSize() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildEmptyArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_20= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_20 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch10_20.getString() ; tom.engine.adt.code.types.BQTerm  tom_size= (( tom.engine.adt.code.types.BQTerm )list).getSize() ;
 
 
             String prefix = "tom_empty_array_";
@@ -753,7 +753,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_26= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch81_26.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildConsArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_26= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_26 instanceof tom.engine.adt.tomname.types.tomname.Name) ) { String  tom_name= tomMatch10_26.getString() ; tom.engine.adt.code.types.BQTerm  tom_headTerm= (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ; tom.engine.adt.code.types.BQTerm  tom_tailTerm= (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ;
 
 
             String template = getSymbolTable(moduleName).getMakeAddArray(tom_name);
@@ -766,10 +766,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch81_33= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch81_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+          }}}}{if ( (list instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )list) instanceof tom.engine.adt.code.types.bqterm.BuildAppendArray) ) { tom.engine.adt.tomname.types.TomName  tomMatch10_33= (( tom.engine.adt.code.types.BQTerm )list).getAstName() ;if ( (tomMatch10_33 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-            output.write("tom_append_array_" +  tomMatch81_33.getString() + "(");
+            output.write("tom_append_array_" +  tomMatch10_33.getString() + "(");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getHeadTerm() ,moduleName);
             output.write(",");
             generateBQTerm(deep, (( tom.engine.adt.code.types.BQTerm )list).getTailTerm() ,moduleName);

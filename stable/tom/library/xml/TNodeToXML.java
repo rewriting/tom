@@ -104,11 +104,12 @@ public class TNodeToXML {
           throw new RuntimeException("Problem in DocumentTypeNode");
         }
         write(tom_systemId+"\"");
-        if (!tom_internalSubset.equals("UNDEF"))
+        if (!tom_internalSubset.equals("UNDEF")) {
           write(" ["+tom_internalSubset+"]");
-          write(">\n");
-          return;
-      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch604_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch604_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch604_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch604_15.isEmptyconcTNode() ) {
+        }
+        write(">\n");
+        return;
+      }}}{if ( (n instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )n) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch1_15= (( tom.library.adt.tnode.types.TNode )n).getChildList() ;if ( ((tomMatch1_15 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch1_15 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch1_15.isEmptyconcTNode() ) {
 
         write("<"+ (( tom.library.adt.tnode.types.TNode )n).getName() );
         tnodeListToXML( (( tom.library.adt.tnode.types.TNode )n).getAttrList() );

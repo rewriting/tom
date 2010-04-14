@@ -49,14 +49,14 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomPythonGenerator extends TomGenericGenerator {
+public class PythonGenerator extends GenericGenerator {
 
   // ------------------------------------------------------------
       
   // ------------------------------------------------------------
 
 
-  public TomPythonGenerator(OutputCode output, OptionManager optionManager,
+  public PythonGenerator(OutputCode output, OptionManager optionManager,
                                 SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
@@ -147,7 +147,7 @@ public class TomPythonGenerator extends TomGenericGenerator {
     output.write(" ) ");
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+  protected void buildExpCast(int deep, TargetLanguageType tlType, Expression exp, String moduleName) throws IOException {
     generateExpression(deep,exp,moduleName);
   }
 
@@ -179,13 +179,13 @@ public class TomPythonGenerator extends TomGenericGenerator {
     generateInstructionList(deep, instructionList, moduleName);
   }
 
-  protected void buildLet(int deep, BQTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssign(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
   }
   
-  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLetRef(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
@@ -300,9 +300,9 @@ public class TomPythonGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcBQTerm()) {
       BQTerm arg = argList.getHeadconcBQTerm();
 matchBlock: {
-              {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch86_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch86_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( (tomMatch86_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch86_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch86_2.getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
+              {{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) { tom.engine.adt.tomname.types.TomName  tomMatch1_1= (( tom.engine.adt.code.types.BQTerm )arg).getAstName() ; tom.engine.adt.tomtype.types.TomType  tomMatch1_2= (( tom.engine.adt.code.types.BQTerm )arg).getAstType() ;if ( (tomMatch1_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {if ( (tomMatch1_2 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( tomMatch1_2.getTlType()  instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
 
-                  s.append( tomMatch86_1.getString() );
+                  s.append( tomMatch1_1.getString() );
                   break matchBlock;
                 }}}}}}{if ( (arg instanceof tom.engine.adt.code.types.BQTerm) ) {
 

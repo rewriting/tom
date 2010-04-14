@@ -68,6 +68,7 @@ public final class TomBase {
 
 
 
+
   public final static String DEFAULT_MODULE_NAME = "default";
   //size of cache
   private final static int LRUCACHE_SIZE = 5000;
@@ -78,13 +79,10 @@ public final class TomBase {
    * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
-    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {if ( ( (( tom.engine.adt.tomtype.types.TomType )type).getTlType()  instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
-return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
-return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
-return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {
- return  (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ; }}}}
+    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {boolean tomMatch1_3= false ; String  tomMatch1_1= "" ;if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{tomMatch1_3= true ;tomMatch1_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}} else {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) ) {{tomMatch1_3= true ;tomMatch1_1= (( tom.engine.adt.tomtype.types.TomType )type).getTomType() ;}}}if (tomMatch1_3) {
+ return tomMatch1_1; }}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.EmptyType) ) {
+ return null; }}}}
 
-    System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
@@ -92,9 +90,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
    * Returns the implementation-type of a <code>TomType</code>
    */
   public static String getTLType(TomType type) {
-    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
- /*System.out.println("(DEBUG) TomBase.getTLType / type = " + type);*/return getTLCode(type); }}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
- /*System.out.println("(DEBUG) TomBase.getTLType / type = " + type + " / tlType = " + `tlType);*/return getTLCode( (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ); }}}}
+    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {
+ return getTLCode( (( tom.engine.adt.tomtype.types.TomType )type).getTlType() ); }}}}
 
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
@@ -102,9 +99,9 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   /**
    * Returns the implementation-type of a <code>TLType</code>
    */
-  public static String getTLCode(TomType type) {
-    {{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {if ( ((( tom.engine.adt.tomtype.types.TomType )type) instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {
- return  (( tom.engine.adt.tomtype.types.TomType )type).getString() ; }}}}
+  public static String getTLCode(TargetLanguageType type) {
+    {{if ( (type instanceof tom.engine.adt.tomtype.types.TargetLanguageType) ) {if ( ((( tom.engine.adt.tomtype.types.TargetLanguageType )type) instanceof tom.engine.adt.tomtype.types.targetlanguagetype.TLType) ) {
+ return  (( tom.engine.adt.tomtype.types.TargetLanguageType )type).getString() ; }}}}
 
     throw new TomRuntimeException("getTLCode error on term: " + type);
   }
@@ -273,26 +270,35 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
    * @param collection the bag which collect the results
    * @param subject the term to traverse
    */
-  public static void collectVariable(Collection<TomTerm> collection, tom.library.sl.Visitable subject) {
+  public static void collectVariable(Collection<TomTerm> collection, 
+          tom.library.sl.Visitable subject, boolean considerBQVars) {
     try {
       //TODO: replace TopDownCollect by continuations
-      tom_make_TopDownCollect(tom_make_collectVariable(collection)).visitLight(subject);
-    } catch(VisitFailure e) { }
+      tom_make_TopDownCollect(tom_make_collectVariable(collection,considerBQVars)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("Should not be there");
+    }
   }
 
-  public static class collectVariable extends tom.library.sl.AbstractStrategyBasic {private  java.util.Collection  collection;public collectVariable( java.util.Collection  collection) {super(( new tom.library.sl.Identity() ));this.collection=collection;}public  java.util.Collection  getcollection() {return collection;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch11_3= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch11_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch11_3= true ;tomMatch11_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch11_3= true ;tomMatch11_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}}}if (tomMatch11_3) { tom.engine.adt.tomterm.types.TomTerm  tom_v=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);
+  public static class collectVariable extends tom.library.sl.AbstractStrategyBasic {private  java.util.Collection  collection;private  boolean  considerBQVars;public collectVariable( java.util.Collection  collection,  boolean  considerBQVars) {super(( new tom.library.sl.Identity() ));this.collection=collection;this.considerBQVars=considerBQVars;}public  java.util.Collection  getcollection() {return collection;}public  boolean  getconsiderBQVars() {return considerBQVars;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() {return 1;}public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  visit_BQTerm( tom.engine.adt.code.types.BQTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )tom__arg) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {
+
+
+          if (considerBQVars) { collection.add(convertFromBQVarToVar((( tom.engine.adt.code.types.BQTerm )tom__arg))); } 
+        }}}}return _visit_BQTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch12_3= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch12_3= true ;tomMatch12_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch12_3= true ;tomMatch12_1= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}}}if (tomMatch12_3) { tom.engine.adt.tomterm.types.TomTerm  tom_v=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);
+
+
 
 
         collection.add(tom_v);
-        TomTerm annotedVariable = getAliasToVariable(tomMatch11_1);
+        TomTerm annotedVariable = getAliasToVariable(tomMatch12_1);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
         ( new tom.library.sl.Fail() ).visitLight(tom_v);
-      }}}{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch11_7= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch11_5= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {{tomMatch11_7= true ;tomMatch11_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {{tomMatch11_7= true ;tomMatch11_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}}}if (tomMatch11_7) {
+      }}}{if ( (tom__arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch12_7= false ; tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12_5= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {{tomMatch12_7= true ;tomMatch12_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )tom__arg) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {{tomMatch12_7= true ;tomMatch12_5= (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() ;}}}if (tomMatch12_7) {
 
 
-        TomTerm annotedVariable = getAliasToVariable(tomMatch11_5);
+        TomTerm annotedVariable = getAliasToVariable(tomMatch12_5);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
@@ -301,13 +307,13 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
 
 
-        collectVariable(collection, (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getSlots() );
+        collectVariable(collection, (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getSlots() ,considerBQVars);
         TomTerm annotedVariable = getAliasToVariable( (( tom.engine.adt.tomterm.types.TomTerm )tom__arg).getConstraints() );
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
         ( new tom.library.sl.Fail() ).visitLight((( tom.engine.adt.tomterm.types.TomTerm )tom__arg));
-      }}}}return _visit_TomTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(( null  == environment))) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if (!(( null  == environment))) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_collectVariable( java.util.Collection  t0) { return new collectVariable(t0);}
+      }}}}return _visit_TomTerm(tom__arg,introspector);}@SuppressWarnings("unchecked")public  tom.engine.adt.tomterm.types.TomTerm  _visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.engine.adt.tomterm.types.TomTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public  tom.engine.adt.code.types.BQTerm  _visit_BQTerm( tom.engine.adt.code.types.BQTerm  arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if (!(  null ==environment )) {return (( tom.engine.adt.code.types.BQTerm )any.visit(environment,introspector));} else {return any.visitLight(arg,introspector);}}@SuppressWarnings("unchecked")public <T> T visitLight(T v, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {if ( (v instanceof tom.engine.adt.tomterm.types.TomTerm) ) {return ((T)visit_TomTerm((( tom.engine.adt.tomterm.types.TomTerm )v),introspector));}if ( (v instanceof tom.engine.adt.code.types.BQTerm) ) {return ((T)visit_BQTerm((( tom.engine.adt.code.types.BQTerm )v),introspector));}if (!(  null ==environment )) {return ((T)any.visit(environment,introspector));} else {return any.visitLight(v,introspector);}}}private static  tom.library.sl.Strategy  tom_make_collectVariable( java.util.Collection  t0,  boolean  t1) { return new collectVariable(t0,t1);}
 
 
 
@@ -318,7 +324,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     Collection<TomTerm> variableList = new HashSet<TomTerm>();
-    collectVariable(variableList,subject);
+    collectVariable(variableList,subject,true);
     // compute multiplicities
     HashMap<TomName,Integer> multiplicityMap = new HashMap<TomName,Integer>();
     for(TomTerm variable:variableList) {
@@ -334,8 +340,8 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   private static TomTerm getAliasToVariable(ConstraintList constraintList) {
-    {{if ( (constraintList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) { tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12__end__4=(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList);do {{if (!( tomMatch12__end__4.isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch12_8= tomMatch12__end__4.getHeadconcConstraint() ;if ( (tomMatch12_8 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch12_7= tomMatch12_8.getVar() ;if ( (tomMatch12_7 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
- return tomMatch12_7; }}}if ( tomMatch12__end__4.isEmptyconcConstraint() ) {tomMatch12__end__4=(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList);} else {tomMatch12__end__4= tomMatch12__end__4.getTailconcConstraint() ;}}} while(!( (tomMatch12__end__4==(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList)) ));}}}}
+    {{if ( (constraintList instanceof tom.engine.adt.tomconstraint.types.ConstraintList) ) {if ( (((( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint) || ((( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList) instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint)) ) { tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch13__end__4=(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList);do {{if (!( tomMatch13__end__4.isEmptyconcConstraint() )) { tom.engine.adt.tomconstraint.types.Constraint  tomMatch13_8= tomMatch13__end__4.getHeadconcConstraint() ;if ( (tomMatch13_8 instanceof tom.engine.adt.tomconstraint.types.constraint.AliasTo) ) { tom.engine.adt.tomterm.types.TomTerm  tomMatch13_7= tomMatch13_8.getVar() ;if ( (tomMatch13_7 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {
+ return tomMatch13_7; }}}if ( tomMatch13__end__4.isEmptyconcConstraint() ) {tomMatch13__end__4=(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList);} else {tomMatch13__end__4= tomMatch13__end__4.getTailconcConstraint() ;}}} while(!( (tomMatch13__end__4==(( tom.engine.adt.tomconstraint.types.ConstraintList )constraintList)) ));}}}}
 
     return null;
   }
@@ -345,73 +351,73 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
-    {{if ( (theory instanceof tom.engine.adt.theory.types.Theory) ) {if ( (((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory) || ((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory)) ) { tom.engine.adt.theory.types.Theory  tomMatch13__end__4=(( tom.engine.adt.theory.types.Theory )theory);do {{if (!( tomMatch13__end__4.isEmptyconcElementaryTheory() )) {
- if( tomMatch13__end__4.getHeadconcElementaryTheory() ==elementaryTheory) return true; }if ( tomMatch13__end__4.isEmptyconcElementaryTheory() ) {tomMatch13__end__4=(( tom.engine.adt.theory.types.Theory )theory);} else {tomMatch13__end__4= tomMatch13__end__4.getTailconcElementaryTheory() ;}}} while(!( (tomMatch13__end__4==(( tom.engine.adt.theory.types.Theory )theory)) ));}}}}
+    {{if ( (theory instanceof tom.engine.adt.theory.types.Theory) ) {if ( (((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory) || ((( tom.engine.adt.theory.types.Theory )theory) instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory)) ) { tom.engine.adt.theory.types.Theory  tomMatch14__end__4=(( tom.engine.adt.theory.types.Theory )theory);do {{if (!( tomMatch14__end__4.isEmptyconcElementaryTheory() )) {
+ if( tomMatch14__end__4.getHeadconcElementaryTheory() ==elementaryTheory) { return true; } }if ( tomMatch14__end__4.isEmptyconcElementaryTheory() ) {tomMatch14__end__4=(( tom.engine.adt.theory.types.Theory )theory);} else {tomMatch14__end__4= tomMatch14__end__4.getTailconcElementaryTheory() ;}}} while(!( (tomMatch14__end__4==(( tom.engine.adt.theory.types.Theory )theory)) ));}}}}
 
     return false;
   }
 
   public static Theory getTheory(TomTerm term) {
-    {{if ( (term instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )term) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch14_1= (( tom.engine.adt.tomterm.types.TomTerm )term).getOption() ;if ( ((tomMatch14_1 instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (tomMatch14_1 instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch14__end__6=tomMatch14_1;do {{if (!( tomMatch14__end__6.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch14_10= tomMatch14__end__6.getHeadconcOption() ;if ( (tomMatch14_10 instanceof tom.engine.adt.tomoption.types.option.MatchingTheory) ) {
- return  tomMatch14_10.getTheory() ; }}if ( tomMatch14__end__6.isEmptyconcOption() ) {tomMatch14__end__6=tomMatch14_1;} else {tomMatch14__end__6= tomMatch14__end__6.getTailconcOption() ;}}} while(!( (tomMatch14__end__6==tomMatch14_1) ));}}}}}
+    {{if ( (term instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )term) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch15_1= (( tom.engine.adt.tomterm.types.TomTerm )term).getOption() ;if ( ((tomMatch15_1 instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (tomMatch15_1 instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch15__end__6=tomMatch15_1;do {{if (!( tomMatch15__end__6.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch15_10= tomMatch15__end__6.getHeadconcOption() ;if ( (tomMatch15_10 instanceof tom.engine.adt.tomoption.types.option.MatchingTheory) ) {
+ return  tomMatch15_10.getTheory() ; }}if ( tomMatch15__end__6.isEmptyconcOption() ) {tomMatch15__end__6=tomMatch15_1;} else {tomMatch15__end__6= tomMatch15__end__6.getTailconcOption() ;}}} while(!( (tomMatch15__end__6==tomMatch15_1) ));}}}}}
 
     return  tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make( tom.engine.adt.theory.types.elementarytheory.Syntactic.make() , tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make() ) ;
   }
 
   public static Theory getTheory(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch15__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch15__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch15_8= tomMatch15__end__4.getHeadconcOption() ;if ( (tomMatch15_8 instanceof tom.engine.adt.tomoption.types.option.MatchingTheory) ) {
- return  tomMatch15_8.getTheory() ; }}if ( tomMatch15__end__4.isEmptyconcOption() ) {tomMatch15__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch15__end__4= tomMatch15__end__4.getTailconcOption() ;}}} while(!( (tomMatch15__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch16__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch16__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch16_8= tomMatch16__end__4.getHeadconcOption() ;if ( (tomMatch16_8 instanceof tom.engine.adt.tomoption.types.option.MatchingTheory) ) {
+ return  tomMatch16_8.getTheory() ; }}if ( tomMatch16__end__4.isEmptyconcOption() ) {tomMatch16__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch16__end__4= tomMatch16__end__4.getTailconcOption() ;}}} while(!( (tomMatch16__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return  tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make( tom.engine.adt.theory.types.elementarytheory.Syntactic.make() , tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make() ) ;
   }
 
   public static Declaration getIsFsymDecl(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch16__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch16__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch16_8= tomMatch16__end__4.getHeadconcOption() ;if ( (tomMatch16_8 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) { tom.engine.adt.tomdeclaration.types.Declaration  tomMatch16_7= tomMatch16_8.getAstDeclaration() ;if ( (tomMatch16_7 instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
- return tomMatch16_7; }}}if ( tomMatch16__end__4.isEmptyconcOption() ) {tomMatch16__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch16__end__4= tomMatch16__end__4.getTailconcOption() ;}}} while(!( (tomMatch16__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch17__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch17__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch17_8= tomMatch17__end__4.getHeadconcOption() ;if ( (tomMatch17_8 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) { tom.engine.adt.tomdeclaration.types.Declaration  tomMatch17_7= tomMatch17_8.getAstDeclaration() ;if ( (tomMatch17_7 instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
+ return tomMatch17_7; }}}if ( tomMatch17__end__4.isEmptyconcOption() ) {tomMatch17__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch17__end__4= tomMatch17__end__4.getTailconcOption() ;}}} while(!( (tomMatch17__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return null;
   }
 
   public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
-    {{if ( (tomSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch17_1= (( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol).getOption() ;if ( ((tomMatch17_1 instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (tomMatch17_1 instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch17__end__6=tomMatch17_1;do {{if (!( tomMatch17__end__6.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch17_10= tomMatch17__end__6.getHeadconcOption() ;if ( (tomMatch17_10 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) {if ( ( tomMatch17_10.getAstDeclaration()  instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
+    {{if ( (tomSymbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch18_1= (( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol).getOption() ;if ( ((tomMatch18_1 instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || (tomMatch18_1 instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch18__end__6=tomMatch18_1;do {{if (!( tomMatch18__end__6.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch18_10= tomMatch18__end__6.getHeadconcOption() ;if ( (tomMatch18_10 instanceof tom.engine.adt.tomoption.types.option.DeclarationToOption) ) {if ( ( tomMatch18_10.getAstDeclaration()  instanceof tom.engine.adt.tomdeclaration.types.declaration.IsFsymDecl) ) {
 
         return true;
-      }}}if ( tomMatch17__end__6.isEmptyconcOption() ) {tomMatch17__end__6=tomMatch17_1;} else {tomMatch17__end__6= tomMatch17__end__6.getTailconcOption() ;}}} while(!( (tomMatch17__end__6==tomMatch17_1) ));}}}}}
+      }}}if ( tomMatch18__end__6.isEmptyconcOption() ) {tomMatch18__end__6=tomMatch18_1;} else {tomMatch18__end__6= tomMatch18__end__6.getTailconcOption() ;}}} while(!( (tomMatch18__end__6==tomMatch18_1) ));}}}}}
 
     return false;
   }
 
   public static String getModuleName(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch18__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch18__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch18_8= tomMatch18__end__4.getHeadconcOption() ;if ( (tomMatch18_8 instanceof tom.engine.adt.tomoption.types.option.ModuleName) ) {
- return  tomMatch18_8.getString() ; }}if ( tomMatch18__end__4.isEmptyconcOption() ) {tomMatch18__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch18__end__4= tomMatch18__end__4.getTailconcOption() ;}}} while(!( (tomMatch18__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch19__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch19__end__4.isEmptyconcOption() )) { tom.engine.adt.tomoption.types.Option  tomMatch19_8= tomMatch19__end__4.getHeadconcOption() ;if ( (tomMatch19_8 instanceof tom.engine.adt.tomoption.types.option.ModuleName) ) {
+ return  tomMatch19_8.getString() ; }}if ( tomMatch19__end__4.isEmptyconcOption() ) {tomMatch19__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch19__end__4= tomMatch19__end__4.getTailconcOption() ;}}} while(!( (tomMatch19__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return null;
   }
 
   public static boolean hasConstant(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch19__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch19__end__4.isEmptyconcOption() )) {if ( ( tomMatch19__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.Constant) ) {
- return true; }}if ( tomMatch19__end__4.isEmptyconcOption() ) {tomMatch19__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch19__end__4= tomMatch19__end__4.getTailconcOption() ;}}} while(!( (tomMatch19__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
-
-    return false;
-  }
-
-  public static boolean hasDefinedSymbol(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch20__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch20__end__4.isEmptyconcOption() )) {if ( ( tomMatch20__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.DefinedSymbol) ) {
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch20__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch20__end__4.isEmptyconcOption() )) {if ( ( tomMatch20__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.Constant) ) {
  return true; }}if ( tomMatch20__end__4.isEmptyconcOption() ) {tomMatch20__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch20__end__4= tomMatch20__end__4.getTailconcOption() ;}}} while(!( (tomMatch20__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return false;
   }
 
-  public static boolean hasImplicitXMLAttribut(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch21__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch21__end__4.isEmptyconcOption() )) {if ( ( tomMatch21__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.ImplicitXMLAttribut) ) {
+  public static boolean hasDefinedSymbol(OptionList optionList) {
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch21__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch21__end__4.isEmptyconcOption() )) {if ( ( tomMatch21__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.DefinedSymbol) ) {
  return true; }}if ( tomMatch21__end__4.isEmptyconcOption() ) {tomMatch21__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch21__end__4= tomMatch21__end__4.getTailconcOption() ;}}} while(!( (tomMatch21__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return false;
   }
 
-  public static boolean hasImplicitXMLChild(OptionList optionList) {
-    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch22__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch22__end__4.isEmptyconcOption() )) {if ( ( tomMatch22__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.ImplicitXMLChild) ) {
+  public static boolean hasImplicitXMLAttribut(OptionList optionList) {
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch22__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch22__end__4.isEmptyconcOption() )) {if ( ( tomMatch22__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.ImplicitXMLAttribut) ) {
  return true; }}if ( tomMatch22__end__4.isEmptyconcOption() ) {tomMatch22__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch22__end__4= tomMatch22__end__4.getTailconcOption() ;}}} while(!( (tomMatch22__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
+
+    return false;
+  }
+
+  public static boolean hasImplicitXMLChild(OptionList optionList) {
+    {{if ( (optionList instanceof tom.engine.adt.tomoption.types.OptionList) ) {if ( (((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.ConsconcOption) || ((( tom.engine.adt.tomoption.types.OptionList )optionList) instanceof tom.engine.adt.tomoption.types.optionlist.EmptyconcOption)) ) { tom.engine.adt.tomoption.types.OptionList  tomMatch23__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);do {{if (!( tomMatch23__end__4.isEmptyconcOption() )) {if ( ( tomMatch23__end__4.getHeadconcOption()  instanceof tom.engine.adt.tomoption.types.option.ImplicitXMLChild) ) {
+ return true; }}if ( tomMatch23__end__4.isEmptyconcOption() ) {tomMatch23__end__4=(( tom.engine.adt.tomoption.types.OptionList )optionList);} else {tomMatch23__end__4= tomMatch23__end__4.getTailconcOption() ;}}} while(!( (tomMatch23__end__4==(( tom.engine.adt.tomoption.types.OptionList )optionList)) ));}}}}
 
     return false;
   }
@@ -466,10 +472,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomType getSlotType(TomSymbol symbol, TomName slotName) {
-    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomtype.types.TomType  tomMatch24_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;if ( (tomMatch24_1 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
+    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomtype.types.TomType  tomMatch25_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getTypesToType() ;if ( (tomMatch25_1 instanceof tom.engine.adt.tomtype.types.tomtype.TypesToType) ) {
 
         int index = getSlotIndex(symbol,slotName);
-        return elementAt( tomMatch24_1.getDomain() ,index);
+        return elementAt( tomMatch25_1.getDomain() ,index);
       }}}}}
 
     throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
@@ -490,15 +496,15 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
   public static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
     if(symbol==null) {
-      System.out.println("isDefinedSymbol: symbol == null");
+      //System.out.println("isDefinedSymbol: symbol == null");
       return false;
     }
-    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch26_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;if ( ((tomMatch26_1 instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || (tomMatch26_1 instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch26__end__6=tomMatch26_1;do {{if (!( tomMatch26__end__6.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch26_11= tomMatch26__end__6.getHeadconcPairNameDecl() ;if ( (tomMatch26_11 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) {
+    {{if ( (symbol instanceof tom.engine.adt.tomsignature.types.TomSymbol) ) {if ( ((( tom.engine.adt.tomsignature.types.TomSymbol )symbol) instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch27_1= (( tom.engine.adt.tomsignature.types.TomSymbol )symbol).getPairNameDeclList() ;if ( ((tomMatch27_1 instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl) || (tomMatch27_1 instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl)) ) { tom.engine.adt.tomslot.types.PairNameDeclList  tomMatch27__end__6=tomMatch27_1;do {{if (!( tomMatch27__end__6.isEmptyconcPairNameDecl() )) { tom.engine.adt.tomslot.types.PairNameDecl  tomMatch27_11= tomMatch27__end__6.getHeadconcPairNameDecl() ;if ( (tomMatch27_11 instanceof tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl) ) {
 
-        if( tomMatch26_11.getSlotName() ==slotName &&  tomMatch26_11.getSlotDecl() != tom.engine.adt.tomdeclaration.types.declaration.EmptyDeclaration.make() ) {
+        if( tomMatch27_11.getSlotName() ==slotName &&  tomMatch27_11.getSlotDecl() != tom.engine.adt.tomdeclaration.types.declaration.EmptyDeclaration.make() ) {
           return true;
         }
-      }}if ( tomMatch26__end__6.isEmptyconcPairNameDecl() ) {tomMatch26__end__6=tomMatch26_1;} else {tomMatch26__end__6= tomMatch26__end__6.getTailconcPairNameDecl() ;}}} while(!( (tomMatch26__end__6==tomMatch26_1) ));}}}}}
+      }}if ( tomMatch27__end__6.isEmptyconcPairNameDecl() ) {tomMatch27__end__6=tomMatch27_1;} else {tomMatch27__end__6= tomMatch27__end__6.getTailconcPairNameDecl() ;}}} while(!( (tomMatch27__end__6==tomMatch27_1) ));}}}}}
 
     return false;
   }
@@ -546,7 +552,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
-    {{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch28_6= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch28_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch28_6= true ;tomMatch28_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch28_6= true ;tomMatch28_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}}}if (tomMatch28_6) {if ( ((tomMatch28_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch28_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch28_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch28_1.getHeadconcTomName() ;
+    {{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch29_6= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch29_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch29_6= true ;tomMatch29_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch29_6= true ;tomMatch29_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}}}if (tomMatch29_6) {if ( ((tomMatch29_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch29_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch29_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch29_1.getHeadconcTomName() ;
 
         String tomName = null;
         if((tom_headName) instanceof AntiName) {
@@ -560,10 +566,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
         } else {
           return  tom.engine.adt.tomtype.types.tomtype.EmptyType.make() ;
         }
-      }}}}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch28_10= false ; tom.engine.adt.tomtype.types.TomType  tomMatch28_8= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch28_10= true ;tomMatch28_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch28_10= true ;tomMatch28_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {{tomMatch28_10= true ;tomMatch28_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {{tomMatch28_10= true ;tomMatch28_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}}}}}if (tomMatch28_10) {
+      }}}}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch29_10= false ; tom.engine.adt.tomtype.types.TomType  tomMatch29_8= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch29_10= true ;tomMatch29_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch29_10= true ;tomMatch29_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {{tomMatch29_10= true ;tomMatch29_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {{tomMatch29_10= true ;tomMatch29_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstType() ;}}}}}if (tomMatch29_10) {
 
 
-        return tomMatch28_8;
+        return tomMatch29_8;
       }}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
 
  return getTermType( (( tom.engine.adt.tomterm.types.TomTerm )t).getTomTerm() ,symbolTable);}}}}
@@ -575,9 +581,9 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomType getTermType(BQTerm t, SymbolTable symbolTable) {
-    {{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch29_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch29_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch29_3= true ;tomMatch29_1= (( tom.engine.adt.code.types.BQTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch29_3= true ;tomMatch29_1= (( tom.engine.adt.code.types.BQTerm )t).getAstType() ;}}}if (tomMatch29_3) {
+    {{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch30_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch30_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch30_3= true ;tomMatch30_1= (( tom.engine.adt.code.types.BQTerm )t).getAstType() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch30_3= true ;tomMatch30_1= (( tom.engine.adt.code.types.BQTerm )t).getAstType() ;}}}if (tomMatch30_3) {
 
-        return tomMatch29_1;
+        return tomMatch30_1;
       }}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) {
 
  return  (( tom.engine.adt.code.types.BQTerm )t).getAstType() ; }}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.ExpressionToBQTerm) ) {
@@ -586,10 +592,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
  return  (( tom.engine.adt.code.types.BQTerm )t).getCodomain() ; }}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.ListTail) ) {
 
- return getTermType( (( tom.engine.adt.code.types.BQTerm )t).getVariable() , symbolTable); }}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) { tom.engine.adt.tomname.types.TomName  tomMatch29_17= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;if ( (tomMatch29_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+ return getTermType( (( tom.engine.adt.code.types.BQTerm )t).getVariable() , symbolTable); }}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.Subterm) ) { tom.engine.adt.tomname.types.TomName  tomMatch30_17= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;if ( (tomMatch30_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName( tomMatch29_17.getString() );
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName( tomMatch30_17.getString() );
         return getSlotType(tomSymbol,  (( tom.engine.adt.code.types.BQTerm )t).getSlotName() );
       }}}}}
 
@@ -599,7 +605,7 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
-    {{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch30_6= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch30_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch30_6= true ;tomMatch30_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch30_6= true ;tomMatch30_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}}}if (tomMatch30_6) {if ( ((tomMatch30_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch30_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch30_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch30_1.getHeadconcTomName() ;
+    {{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch31_6= false ; tom.engine.adt.tomname.types.TomNameList  tomMatch31_1= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.TermAppl) ) {{tomMatch31_6= true ;tomMatch31_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.RecordAppl) ) {{tomMatch31_6= true ;tomMatch31_1= (( tom.engine.adt.tomterm.types.TomTerm )t).getNameList() ;}}}if (tomMatch31_6) {if ( ((tomMatch31_1 instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName) || (tomMatch31_1 instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName)) ) {if (!( tomMatch31_1.isEmptyconcTomName() )) { tom.engine.adt.tomname.types.TomName  tom_headName= tomMatch31_1.getHeadconcTomName() ;
 
         String tomName = null;
         if((tom_headName) instanceof AntiName) {
@@ -608,10 +614,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
           tomName = ((TomName)tom_headName).getString();
         }
         return symbolTable.getSymbolFromName(tomName);
-      }}}}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch30_12= false ; tom.engine.adt.tomname.types.TomName  tomMatch30_8= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch30_12= true ;tomMatch30_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch30_12= true ;tomMatch30_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;}}}if (tomMatch30_12) {if ( (tomMatch30_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+      }}}}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {boolean tomMatch31_12= false ; tom.engine.adt.tomname.types.TomName  tomMatch31_8= null ;if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch31_12= true ;tomMatch31_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;}} else {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch31_12= true ;tomMatch31_8= (( tom.engine.adt.tomterm.types.TomTerm )t).getAstName() ;}}}if (tomMatch31_12) {if ( (tomMatch31_8 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
 
-        return symbolTable.getSymbolFromName( tomMatch30_8.getString() );
+        return symbolTable.getSymbolFromName( tomMatch31_8.getString() );
       }}}}{if ( (t instanceof tom.engine.adt.tomterm.types.TomTerm) ) {if ( ((( tom.engine.adt.tomterm.types.TomTerm )t) instanceof tom.engine.adt.tomterm.types.tomterm.AntiTerm) ) {
 
  return getSymbolFromTerm( (( tom.engine.adt.tomterm.types.TomTerm )t).getTomTerm() ,symbolTable);}}}}
@@ -620,19 +626,19 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
   }
 
   public static TomSymbol getSymbolFromTerm(BQTerm t, SymbolTable symbolTable) {
-    {{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch31_5= false ; tom.engine.adt.tomname.types.TomName  tomMatch31_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch31_5= true ;tomMatch31_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch31_5= true ;tomMatch31_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;}}}if (tomMatch31_5) {if ( (tomMatch31_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+    {{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {boolean tomMatch32_5= false ; tom.engine.adt.tomname.types.TomName  tomMatch32_1= null ;if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariable) ) {{tomMatch32_5= true ;tomMatch32_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;}} else {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.BQVariableStar) ) {{tomMatch32_5= true ;tomMatch32_1= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;}}}if (tomMatch32_5) {if ( (tomMatch32_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
-        return symbolTable.getSymbolFromName( tomMatch31_1.getString() );
-      }}}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) { tom.engine.adt.tomname.types.TomName  tomMatch31_7= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;if ( (tomMatch31_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
+        return symbolTable.getSymbolFromName( tomMatch32_1.getString() );
+      }}}}{if ( (t instanceof tom.engine.adt.code.types.BQTerm) ) {if ( ((( tom.engine.adt.code.types.BQTerm )t) instanceof tom.engine.adt.code.types.bqterm.FunctionCall) ) { tom.engine.adt.tomname.types.TomName  tomMatch32_7= (( tom.engine.adt.code.types.BQTerm )t).getAstName() ;if ( (tomMatch32_7 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {
 
- return symbolTable.getSymbolFromName( tomMatch31_7.getString() ); }}}}}
+ return symbolTable.getSymbolFromName( tomMatch32_7.getString() ); }}}}}
 
     return null;
   }
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable) {
-    {{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {boolean tomMatch32_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch32_1= null ;if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {{tomMatch32_3= true ;tomMatch32_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetSlot) ) {{tomMatch32_3= true ;tomMatch32_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {{tomMatch32_3= true ;tomMatch32_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}}}}if (tomMatch32_3) {
- return tomMatch32_1; }}}{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.BQTermToExpression) ) {
+    {{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {boolean tomMatch33_3= false ; tom.engine.adt.tomtype.types.TomType  tomMatch33_1= null ;if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetHead) ) {{tomMatch33_3= true ;tomMatch33_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetSlot) ) {{tomMatch33_3= true ;tomMatch33_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}} else {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetElement) ) {{tomMatch33_3= true ;tomMatch33_1= (( tom.engine.adt.tomexpression.types.Expression )t).getCodomain() ;}}}}if (tomMatch33_3) {
+ return tomMatch33_1; }}}{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.BQTermToExpression) ) {
 
  return getTermType( (( tom.engine.adt.tomexpression.types.Expression )t).getAstTerm() , symbolTable); }}}{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetTail) ) {
  return getTermType( (( tom.engine.adt.tomexpression.types.Expression )t).getVariable() , symbolTable); }}}{if ( (t instanceof tom.engine.adt.tomexpression.types.Expression) ) {if ( ((( tom.engine.adt.tomexpression.types.Expression )t) instanceof tom.engine.adt.tomexpression.types.expression.GetSliceList) ) {
@@ -664,10 +670,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
     {{if ( (tomList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {if ( (( tom.engine.adt.tomterm.types.TomList )tomList).isEmptyconcTomTerm() ) {if ( (slotList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( (( tom.engine.adt.tomslot.types.SlotList )slotList).isEmptyconcSlot() ) {
 
         return  tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() ;
-      }}}}}}}{if ( (tomList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {if (!( (( tom.engine.adt.tomterm.types.TomList )tomList).isEmptyconcTomTerm() )) {if ( (slotList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if (!( (( tom.engine.adt.tomslot.types.SlotList )slotList).isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch34_13= (( tom.engine.adt.tomslot.types.SlotList )slotList).getHeadconcSlot() ;if ( (tomMatch34_13 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+      }}}}}}}{if ( (tomList instanceof tom.engine.adt.tomterm.types.TomList) ) {if ( (((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || ((( tom.engine.adt.tomterm.types.TomList )tomList) instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {if (!( (( tom.engine.adt.tomterm.types.TomList )tomList).isEmptyconcTomTerm() )) {if ( (slotList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )slotList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if (!( (( tom.engine.adt.tomslot.types.SlotList )slotList).isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch35_13= (( tom.engine.adt.tomslot.types.SlotList )slotList).getHeadconcSlot() ;if ( (tomMatch35_13 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
 
         SlotList sl = mergeTomListWithSlotList( (( tom.engine.adt.tomterm.types.TomList )tomList).getTailconcTomTerm() , (( tom.engine.adt.tomslot.types.SlotList )slotList).getTailconcSlot() );
-        return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( tom.engine.adt.tomslot.types.slot.PairSlotAppl.make( tomMatch34_13.getSlotName() ,  (( tom.engine.adt.tomterm.types.TomList )tomList).getHeadconcTomTerm() ) ,tom_append_list_concSlot(sl, tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() )) ;
+        return  tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make( tom.engine.adt.tomslot.types.slot.PairSlotAppl.make( tomMatch35_13.getSlotName() ,  (( tom.engine.adt.tomterm.types.TomList )tomList).getHeadconcTomTerm() ) ,tom_append_list_concSlot(sl, tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() )) ;
       }}}}}}}}}
 
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
@@ -675,10 +681,10 @@ return null;}}}{if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {i
 
   public static BQTermList slotListToBQTermList(SlotList tomList) {
     {{if ( (tomList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if ( (( tom.engine.adt.tomslot.types.SlotList )tomList).isEmptyconcSlot() ) {
- return  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ; }}}}{if ( (tomList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if (!( (( tom.engine.adt.tomslot.types.SlotList )tomList).isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch35_7= (( tom.engine.adt.tomslot.types.SlotList )tomList).getHeadconcSlot() ;if ( (tomMatch35_7 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
+ return  tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() ; }}}}{if ( (tomList instanceof tom.engine.adt.tomslot.types.SlotList) ) {if ( (((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot) || ((( tom.engine.adt.tomslot.types.SlotList )tomList) instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot)) ) {if (!( (( tom.engine.adt.tomslot.types.SlotList )tomList).isEmptyconcSlot() )) { tom.engine.adt.tomslot.types.Slot  tomMatch36_7= (( tom.engine.adt.tomslot.types.SlotList )tomList).getHeadconcSlot() ;if ( (tomMatch36_7 instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl) ) {
 
         BQTermList tl = slotListToBQTermList( (( tom.engine.adt.tomslot.types.SlotList )tomList).getTailconcSlot() );
-        return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(convertFromVarToBQVar( tomMatch35_7.getAppl() ),tom_append_list_concBQTerm(tl, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() )) ;
+        return  tom.engine.adt.code.types.bqtermlist.ConsconcBQTerm.make(convertFromVarToBQVar( tomMatch36_7.getAppl() ),tom_append_list_concBQTerm(tl, tom.engine.adt.code.types.bqtermlist.EmptyconcBQTerm.make() )) ;
       }}}}}}
 
     throw new TomRuntimeException("slotListToTomList: " + tomList);
