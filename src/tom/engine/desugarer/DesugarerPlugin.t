@@ -243,20 +243,21 @@ public class DesugarerPlugin extends TomGenericPlugin {
     String opName = headName.getString();
     TomSymbol tomSymbol = getSymbolFromName(opName);
 
-
     //System.out.println("replaceTermAppl: " + tomSymbol);
     //System.out.println("  nameList = " + nameList);
 
+    /*
+     * may be for constant patterns: f(1) for instance
+     */
     if(tomSymbol==null && args.isEmptyconcTomTerm()) {
       return `RecordAppl(option,nameList,concSlot(),constraints);
     }
 
     SlotList slotList = `concSlot();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
     if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
       for(TomTerm arg:(concTomTerm)args) {
         try {
-          TomTerm subterm = typeStrategy.visitLight(arg);
+          TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
           TomName slotName = `EmptyName();
           /*
            * we cannot optimize when subterm.isUnamedVariable
@@ -269,25 +270,28 @@ public class DesugarerPlugin extends TomGenericPlugin {
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-      for(TomTerm arg:(concTomTerm)args) {
-        try{
-          TomTerm subterm = typeStrategy.visitLight(arg);
-          TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-          /*
-           * we cannot optimize when subterm.isUnamedVariable
-           * since it can be constrained
-           */	  
-          slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-        } catch(tom.library.sl.VisitFailure e) {
-          System.out.println("should not be there");
+
+      if(pairNameDeclList.length() != args.length()) {
+        getLogger().log(new tom.platform.PlatformLogRecord( Level.SEVERE, TomMessage.symbolNumberArgument,
+              new Object[]{opName, pairNameDeclList.length(), args.length()},
+              getStreamManager().getInputFileName(), 
+              TomBase.findOriginTracking(option).getLine()));
+      } else {
+
+        for(TomTerm arg:(concTomTerm)args) {
+          try {
+            TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
+            TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
+            /*
+             * we cannot optimize when subterm.isUnamedVariable
+             * since it can be constrained
+             */	  
+            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
+            pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+          } catch(tom.library.sl.VisitFailure e) {
+            System.out.println("should not be there");
+          }
         }
-      }
-      %match(pairNameDeclList) {
-        !concPairNameDecl() -> { 
-          throw new TomRuntimeException("The symbol '"
-                +
-                `pairNameDeclList.getHeadconcPairNameDecl().getSlotName().getString() + "' has a bad arity"); }
       }
     }
 
