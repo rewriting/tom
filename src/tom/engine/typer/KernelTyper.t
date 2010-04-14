@@ -234,16 +234,15 @@ public class KernelTyper {
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
-          try {
             tomSymbol = kernelTyper.getSymbolFromType(contextType);
             if(tomSymbol==null) {
-              throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+              Option ot = TomBase.findOriginTracking(`option);
+              kernelTyper.logger.log(new tom.platform.PlatformLogRecord(Level.SEVERE, TomMessage.unknownUnamedList,
+                  new Object[] { TomBase.getTomType(contextType) },
+                  ot.getFileName(),
+                  ot.getLine()));
             }
             `nameList = `concTomName(tomSymbol.getAstName());
-          } catch(UnsupportedOperationException e) {
-            // contextType has no AstType slot
-            tomSymbol = null;
-          }
         } else {
           tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         }

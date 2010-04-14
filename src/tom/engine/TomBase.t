@@ -535,7 +535,6 @@ public final class TomBase {
   }
 
   public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-
     if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
 
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
@@ -548,7 +547,11 @@ public final class TomBase {
       }
       list = list.getTailconcTomSymbol();
     }
-    return filteredList.getHeadconcTomSymbol();
+    if(filteredList.isEmptyconcTomSymbol()) {
+      return null;
+    } else {
+      return filteredList.getHeadconcTomSymbol();
+    }
   }
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {

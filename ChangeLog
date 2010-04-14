@@ -5,6 +5,7 @@
 2010-04-14 pem
   * bootinstall
   * re-introduce error detection (in desugarer)
+  * detect nested anonymous list (a,(b,c))
 
 2010-04-13 tavaresc
   * add a newtyper option in GOM ant task

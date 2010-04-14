@@ -124,7 +124,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        System.out.println("\nCode after type inference = \n" + typedCode);
+        //System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -209,6 +209,7 @@ public class TyperPlugin extends TomGenericPlugin {
     /*
      * replace conc('abc') by conc('a','b','c')
      * cannot be performed in the desugarer since anonymous symbols have to be already typed and expanded
+     * indeed (_,x@'bc') is expanded into (_,x@('b','c')): the nested anonymous list cannot be resolved  
      */
     %strategy desugarString(typer:TyperPlugin) extends Identity() {
       visit TomTerm {
