@@ -1,3 +1,7 @@
+2010-04-14 tavaresc
+  * add an argument to TypeVar and move it from TargetLanguageType to 
+   TomType
+
 2010-04-14 pem
   * bootinstall
   * re-introduce error detection (in desugarer)
@@ -13,7 +17,7 @@
 
 2010-04-07 pem
   * add a newtyper option in ant task
-	* introduced TargetLanguageType for TLType and EmptyTargetLanguageType
+  * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
 
 2010-03-31 tavaresc
   * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
