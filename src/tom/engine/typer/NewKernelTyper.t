@@ -140,7 +140,7 @@ public class NewKernelTyper {
 
   protected TomType getType(BQTerm bqTerm) {
     %match(bqTerm) {
-      (BQVariable|BQVariableStar|BuildReducedTerm)[AstType=aType] -> {
+      (BQVariable|BQVariableStar)[AstType=aType] -> {
         return `aType;
       }
 

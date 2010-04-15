@@ -159,46 +159,11 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   /*
    * Expand_once:
-   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
    * replaces RawAction by TypedAction (with If(true,action))
    * compiles %strategy
    */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
-        return TomBase.convertFromVarToBQVar(`var);
-      }
-
-      BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = expander.getSymbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
-        BQTermList tomListArgs = TomBase.slotListToBQTermList(newTermArgs);
-        
-        if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
-        } else if(tomSymbol != null) {
-          if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,expander.getSymbolTable());
-          } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,expander.getSymbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
-          } else {
-            String moduleName = TomBase.getModuleName(`optionList);
-            if(moduleName==null) {
-              moduleName = TomBase.DEFAULT_MODULE_NAME;
-            }
-            return `BuildTerm(name,tomListArgs,moduleName);
-          }
-        } else {
-          return `FunctionCall(name,astType,tomListArgs);
-        }
-
-      }
-
-    } // end match
-
     visit Instruction {
       Match(constraintInstructionList, matchOptionList)  -> {
         Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
@@ -605,13 +570,5 @@ matchBlock: {
       }        
     }//end visit Declaration
   } // end strategy
-
-  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> {
-        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
-      }
-    }
-  }
 
 }

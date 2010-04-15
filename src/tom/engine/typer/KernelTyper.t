@@ -429,12 +429,6 @@ public class KernelTyper {
             }                   
           }
 
-          // the user specified the type (already checked for consistence in SyntaxChecker)
-          term@BuildReducedTerm[AstType=userType] -> {            
-            newSubject = `term;
-            newSubjectType = `userType;
-          }
-          
           c@BuildConstant(Name(name)) -> {
             newSubject = `c;
             TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
@@ -473,7 +467,6 @@ public class KernelTyper {
 matchL:  %match(subject,s) {
            BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
            BQAppl[AstName=astName,Args=tomList],BQAppl[AstName=astName,Args=tomList] -> {break matchL;}
-           BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
            _,_ -> { continue; }
          }
          TomTerm patt = `pattern;

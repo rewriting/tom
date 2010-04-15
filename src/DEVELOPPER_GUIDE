@@ -42,6 +42,8 @@ The compiler is composed of several plugins, which are executed in the following
   Check that visit <type> constructs have a known <type> 
 
 - Expander
+  replaces RawAction by TypedAction (with If(true,action))
+  compiles %strategy
 
 - Compiler
 

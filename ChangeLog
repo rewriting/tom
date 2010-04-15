@@ -1,3 +1,6 @@
+2010-04-15 pem
+  * removed BuildReduceTerm (was not used)
+
 2010-04-14 tavaresc
   * add an argument to TypeVar and move it from TargetLanguageType to 
    TomType
