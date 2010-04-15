@@ -50,7 +50,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage simpleMessage =
     new GomMessage("{0}:{1,number,integer}: {2}");
   public static final GomMessage exceptionMessage =
-    new GomMessage("{0}: Unhandled exception occurs with input {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
+    new GomMessage("{0}: Unhandled exception occurs in class {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
 
   // GomOptionManager error messages
   public static final GomMessage optionNotFound =
