@@ -64,8 +64,8 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       moduleList = (GomModuleList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"TypeExpander", "[GomModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -81,9 +81,9 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     TypeExpander typer = new TypeExpander(getGomEnvironment());
     typedModuleList = typer.expand(moduleList);
     if (null == typedModuleList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.expansionIssue.getMessage(),
-          getStreamManager().getInputFileName());
+      GomMessage.error(getLogger(),
+        getStreamManager().getInputFileName(),0,
+        GomMessage.expansionIssue);
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
@@ -101,9 +101,9 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList,getGomEnvironment());
     typedHookList = hooktyper.expand(moduleList);
     if (null == typedHookList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.hookExpansionIssue.getMessage(),
-          getStreamManager().getInputFileName());
+      GomMessage.error(getLogger(),
+          getStreamManager().getInputFileName(),0,
+        GomMessage.hookExpansionIssue);
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
