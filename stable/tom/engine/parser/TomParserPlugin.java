@@ -179,7 +179,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
-                      new Integer((int)(System.currentTimeMillis()-startChrono)) );
+                      Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
     } catch (TokenStreamException e) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
                       TomMessage.tokenStreamException,

@@ -87,8 +87,9 @@ public class GomParserPlugin extends GomGenericPlugin {
   public synchronized void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-    if (null == inputReader)
+    if (null == inputReader) {
       return;
+    }
     CharStream input = null;
     try {
       input = new ANTLRReaderStream(inputReader);

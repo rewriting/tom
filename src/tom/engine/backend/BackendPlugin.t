@@ -290,7 +290,7 @@ public class BackendPlugin extends TomGenericPlugin {
 
       }
 
-      TypedAction[AstInstruction=inst] -> {
+      RawAction[AstInstruction=inst] -> {
         markStrategy.visitLight(`inst);
         throw new tom.library.sl.VisitFailure();
       }

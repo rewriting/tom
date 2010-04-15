@@ -174,6 +174,10 @@ public class TypeCheckerPlugin extends CheckerPlugin {
     }    
   }
 
+  /**
+    * check that variables that appear more than once have coherent types
+    * @param list the list of variables
+    */
   private void verifyVariableTypeListCoherence(ArrayList<TomTerm> list) {
     // compute multiplicities
     //System.out.println("list = " + list);
@@ -195,18 +199,6 @@ public class TypeCheckerPlugin extends CheckerPlugin {
         }
       } else {
         map.put(name,variable);
-      }
-    }
-  }
-
-  private void verifyStrategyVariable(TomVisitList list) {
-    %match(list) {
-      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,options),_*) -> {
-        String fileName = findOriginTrackingFileName(`options);
-        messageError(fileName,
-            findOriginTrackingLine(`options),
-            TomMessage.unknownVisitedType,
-            new Object[]{`(strVisitType)});
       }
     }
   }
@@ -233,6 +225,18 @@ public class TypeCheckerPlugin extends CheckerPlugin {
               TomMessage.incoherentVariableStar,
               new Object[]{ (`variableName),(`rootName),(`listName) });
         }
+      }
+    }
+  }
+
+  private void verifyStrategyVariable(TomVisitList list) {
+    %match(list) {
+      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,options),_*) -> {
+        String fileName = findOriginTrackingFileName(`options);
+        messageError(fileName,
+            findOriginTrackingLine(`options),
+            TomMessage.unknownVisitedType,
+            new Object[]{`(strVisitType)});
       }
     }
   }

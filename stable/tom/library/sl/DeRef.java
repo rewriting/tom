@@ -67,12 +67,9 @@ public class DeRef extends AbstractStrategyCombinator {
   public int visit(Introspector introspector) {
     if(environment.getSubject() instanceof Path) {
       visitPath((Path)environment.getSubject(),introspector);
-    } else {
-      if(strict) {
-        // does nothing when it is not a Ref
-      } else {
-        return arguments[ARG].visit(introspector);
-      }
+    } else if(!strict) {
+      // does nothing when it is not a Ref
+      return arguments[ARG].visit(introspector);
     }
     return Environment.SUCCESS;
   }

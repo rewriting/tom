@@ -566,12 +566,12 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      TypedAction[AstInstruction=AbstractBlock(instructionList)] -> {
+      RawAction[AstInstruction=AbstractBlock(instructionList)] -> {
         `generateInstructionList(deep, instructionList, moduleName);
         return;
       }
 
-      TypedAction[AstInstruction=inst] -> {
+      RawAction[AstInstruction=inst] -> {
         `generateInstruction(deep, inst, moduleName);
         return;
       }

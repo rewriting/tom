@@ -27,7 +27,6 @@
 package tom.engine.typer;
 
 import java.util.Map;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,7 +116,6 @@ public class NewTyper extends TomGenericPlugin {
         updateSymbolTable();
 
         //DEBUG System.out.println("\nSymbolTable before type inference = \n");
-        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
 
         /**
          * Typing variables whose types are unknown with fresh type variables before
@@ -129,38 +127,18 @@ public class NewTyper extends TomGenericPlugin {
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        //DEBUG System.out.println("Code before inference = \n" + typedCodeWithTypeVariables);
         Code inferredTypeForCode = newKernelTyper.inferCode(typedCodeWithTypeVariables);
-        //DEBUGSystem.out.println("Code after inference = \n" + inferredTypeForCode);
-
-        /** Transform each BackQuoteTerm into its compiled form --> maybe to
-         * desugarer phase before perform type inference 
-         */
-        // Code backQuoteExpandedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`variableExpandedCode);
-        /** Transform a string into an array of characters before type inference, 
-         * so we can apply inference just once on all terms 
-         */
-        //Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedCode);
-
-        // Update type information for codomain in symbol table
-        typedCode = `TopDownIdStopOnSuccess(updateCodomain(newKernelTyper)).visitLight(inferredTypeForCode);
-        //DEBUG System.out.println("Code after updateCodomain = \n" + typedCode);
 
         /** 
-         * TOMOVE to a post phase: transform each BackQuoteTerm into its compiled form
+         * TOMOVE to a post phase: 
+         * - transform each BackQuoteTerm into its compiled form
          */
-        //TODO typeString
+        typedCode =
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(inferredTypeForCode);
 
-        typedCode = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(typedCode);
         System.out.println("\nCode after type inference = \n" + typedCode);
 
-        //DEBUG System.out.println("\nSymbolTable after type inference = \n");
-        //DEBUG newKernelTyper.getSymbolTable().printMapSymbolName();
-
-        //Propagate type information for all variables with same name
-        //typedCode = newKernelTyper.propagateVariablesTypes(typedCode);
         setWorkingTerm(typedCode);
-        //getStreamManager().setSymbolTable(newKernelTyper.getSymbolTable());
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
@@ -204,57 +182,43 @@ public class NewTyper extends TomGenericPlugin {
   }
 
   /*
-   * Type(name, EmptyType()) -> Type(name, foundType) if name in TypeTable
-   * Type(name, EmptyType()) -> Type(name, Var(i)) if name not in TypeTable
+   * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
+   * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
    */
   %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
-    
     visit TomType {
-      Type(typeName,EmptyTargetLanguageType()) -> {
+      Type(tomType,EmptyTargetLanguageType()) -> {
         TomType newType = null;
-        // two tomtypes 'Type("unknown type",EmptyType())' may have different
-        // TlType. So, if there already exists a 'Type("unknown type",TypeVar(i))'
-        // into the symbolTable, we don't take this in account; we call
-        // getType(typeName) otherwise
-        if (!nkt.getSymbolTable().isUnknownType(`typeName)) {
-
-          newType = nkt.getSymbolTable().getType(`typeName);
-          if(newType == null) {
-            throw new TomRuntimeException("newType==null with typeName = " + `typeName);
-          }
-
-        }
+        newType = nkt.getSymbolTable().getType(`tomType);
         if (newType == null) {
           // This happens when :
-          // * typeName != unknown type AND (newType == null)
-          // * typeName == unknown type
-          newType = `Type(typeName,nkt.getFreshTypeVar());
-          nkt.getSymbolTable().putType(`typeName,newType);
+          // * tomType != unknown type AND (newType == null)
+          // * tomType == unknown type
+          newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
+          if (!nkt.getSymbolTable().isUnknownType(`tomType)) {
+            // A type typeVar will be add to the typeTable only for the first
+            // occurence, because for the other ones, newType will not be 'null'
+            nkt.getSymbolTable().putType(`tomType,newType);
+          }
           return newType;
         }
         return newType;
       }
     }
   }
-
   /**
    * updateSymbol is called after a first syntax expansion phase
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
-   * - each Type(_,EmptyTargetLanguageType()) is replaced by Type(_,TypeVar(i))
+   * - each Type(name,EmptyTargetLanguageType()) is replaced by TypeVar(name,i)
    */
   private void updateSymbolTable() {
-    //SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    SymbolTable symbolTable = getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:newKernelTyper.getSymbolTable().keySymbolIterable()) {      
       try {
         TomSymbol tomSymbol = getSymbolFromName(tomName);
         tomSymbol = collectKnownTypesFromTomSymbol(tomSymbol);
         getSymbolTable().putSymbol(tomName,tomSymbol);
-        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(newKernelTyper)).visitLight(`tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");
       }
@@ -263,52 +227,15 @@ public class NewTyper extends TomGenericPlugin {
     }
   }
 
-  /*
-   * this post-processing phase replaces untyped (universalType) codomain
-   * by their precise type (according to the symbolTable)
-   */
-  %strategy updateCodomain(nkt:NewKernelTyper) extends Identity() {
-    visit Declaration {
-
-      // pem: why this case ?
-      GetHeadDecl[] -> {
-        throw new TomRuntimeException("updateCodomain");
-      }
-
-      // In case of constants, where the domain is the codomain 
-      decl@GetHeadDecl[Opname=Name(opName)] -> {
-        TomSymbol tomSymbol = nkt.getSymbolFromName(`opName);
-        TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
-        if(codomain.length()==1) {
-          return `decl.setCodomain(codomain.getHeadconcTomType());
-        } else {
-          throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-        }
-      }
-
-      decl@GetHeadDecl[Variable=BQVariable[AstType=domain]] -> {
-        TomSymbol tomSymbol = nkt.getSymbolFromType(`domain);
-        if(tomSymbol != null) {
-          TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
-          if(codomain.length()==1) {
-            return `decl.setCodomain(codomain.getHeadconcTomType());
-          } else {
-            throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-          }
-        }
-      }
-    } // end match
-  }
-
-  /*
+  /**
    * transform a BQAppl into its compiled form
    */
   // pem: why this strategy ? there is a similar code in ExpanderPlugin
-  %strategy typeBQAppl(nkt:NewKernelTyper) extends Identity() {
+  %strategy TransformBQAppl(nkt:NewKernelTyper) extends Identity() {
     visit BQTerm {
       BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
         TomSymbol tomSymbol = nkt.getSymbolFromName(`tomName);
-        BQTermList args  = `TopDownIdStopOnSuccess(typeBQAppl(nkt)).visitLight(`l);
+        BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(nkt)).visitLight(`l);
         //System.out.println("BackQuoteTerm: " + `tomName);
         //System.out.println("tomSymbol: " + tomSymbol);
         if(TomBase.hasConstant(`optionList)) {
