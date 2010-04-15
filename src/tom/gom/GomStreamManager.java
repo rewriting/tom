@@ -193,7 +193,8 @@ public class GomStreamManager {
         inputReader = new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.fileNotFound,
           new Object[]{inputFileName});
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "getInputReader:IOExceptionManipulation",
