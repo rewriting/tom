@@ -58,10 +58,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
   %include { ../adt/objects/Objects.tom }
   %include { boolean.tom }
 
-  public /*synchronized*/ GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
     HookList h = `ConcHook(hooks*);
