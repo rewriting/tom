@@ -149,9 +149,7 @@ public class Expander {
       Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-            re.getMessage(),moduleName+".gom", lexer.getLine()));
+      GomMessage.error(getLogger(),moduleName+".gom", lexer.getLine(),GomMessage.detailedParseException,re.getMessage());
       return null;
     }
     return result;

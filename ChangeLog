@@ -1,4 +1,8 @@
 2010-04-15 pem
+  * introduced a unique way top log errors:
+	  TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
+	  (same for warning, info, fine, finer, ...)
+	* DO NOT USE logger.log(...) anymore
   * removed BuildReduceTerm (was not used)
 
 2010-04-14 tavaresc

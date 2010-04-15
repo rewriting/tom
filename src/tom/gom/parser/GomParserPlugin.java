@@ -111,15 +111,11 @@ public class GomParserPlugin extends GomGenericPlugin {
       tom.library.utils.Viewer.toTree(module,swriter);
       getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);
       if (null == module) {
-        getLogger().log(new PlatformLogRecord(Level.SEVERE,
-              GomMessage.detailedParseException,
-              "", inputFileName, lex.getLine()));
+        GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException);
         return;
       }
     } catch (RecognitionException re) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-            re.toString(), inputFileName, lex.getLine()));
+        GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException,re.toString());
       return;
     } catch (Exception e) {
       StringWriter stringwriter = new StringWriter();

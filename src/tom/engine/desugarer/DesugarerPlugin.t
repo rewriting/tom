@@ -26,7 +26,6 @@
 package tom.engine.desugarer;
 
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -118,14 +117,12 @@ public class DesugarerPlugin extends TomGenericPlugin {
       setWorkingTerm(syntaxExpandedTerm);      
 
         // verbose
-        getLogger().log(Level.INFO, TomMessage.tomDesugaringPhase.getMessage(),
+        TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
-      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{
-          getClass().getName(), 
-          getStreamManager().getInputFileName(), 
-          e.getMessage()} );
+      TomMessage.error(logger,
+          getStreamManager().getInputFileName(), 0,
+          TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
       return;
     }
@@ -272,10 +269,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
 
       if(pairNameDeclList.length() != args.length()) {
-        getLogger().log(new tom.platform.PlatformLogRecord( Level.SEVERE, TomMessage.symbolNumberArgument,
-              new Object[]{opName, pairNameDeclList.length(), args.length()},
-              getStreamManager().getInputFileName(), 
-              TomBase.findOriginTracking(option).getLine()));
+        TomMessage.error(logger,getStreamManager().getInputFileName(),TomBase.findOriginTracking(option).getLine(),
+            TomMessage.symbolNumberArgument, opName, pairNameDeclList.length(), args.length());
       } else {
 
         for(TomTerm arg:(concTomTerm)args) {
