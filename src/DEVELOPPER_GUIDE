@@ -32,10 +32,14 @@ The compiler is composed of several plugins, which are executed in the following
     propagateVariablesTypes: in all constraints, if a variable has a type, this
      type is propaged to all the variables of the constraint
     replaces 'abc' by concString('a','b','c')
-    TransformBQApp: lafter typing, transform each BackQuoteTerm into its
+    TransformBQApp: after typing, transform each BackQuoteTerm into its
      compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
 
 - Type checker
+  traverse the AST and check that variable that appear more than once in the
+  LHS have coherent types
+  Also check that VariableStar appear under a compatible list symbol 
+  Check that visit <type> constructs have a known <type> 
 
 - Expander
 

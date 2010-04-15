@@ -78,7 +78,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
-    "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
+    "<boolean name='genIntrospector' altName='gi' description='Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
   private static final TomType objectType = ASTFactory.makeType("undefined","Object");
