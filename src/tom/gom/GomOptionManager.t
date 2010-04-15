@@ -170,7 +170,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         PluginOption[Value=StringValue(value)]    -> { return `value; }
       }
     } else {
-      getLogger().log(Level.SEVERE,GomMessage.optionNotFound.getMessage(),name);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.optionNotFound,name);
       throw new RuntimeException();
     }
     return null;
@@ -227,7 +228,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     while(owners.hasNext()) {
       OptionOwner plugin = (OptionOwner)owners.next();
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        getLogger().log(Level.SEVERE, GomMessage.prerequisitesIssue.getMessage(), plugin.getClass().getName());
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.prerequisitesIssue,
+            plugin.getClass().getName());
         return 1;
       }
     }
@@ -243,8 +246,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   private PlatformOption getOptionFromName(String name) {
     PlatformOption option = mapNameToOption.get(getCanonicalName(name));
-    if(option == null) {
-      getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
+    if (null == option) {
+      GomMessage.warning(getLogger(),null,0,
+          GomMessage.optionNotFound,
+          getCanonicalName(name));
     }
     return option;
   }
@@ -255,8 +260,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = mapNameToOptionOwner.get(getCanonicalName(name));
-    if(plugin == null) {
-      getLogger().log(Level.WARNING,GomMessage.optionNotFound.getMessage(),getCanonicalName(name));
+    if (null == plugin) {
+      GomMessage.warning(getLogger(),null,0,
+          GomMessage.optionNotFound,
+          getCanonicalName(name));
     }
     return plugin;
   }
@@ -270,7 +277,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     if(option != null) {
       PlatformOption newOption = option.setValue(value);
       Object replaced = setOptionFromName(name, newOption);
-      getLogger().log(Level.FINER,GomMessage.setValue.getMessage(),new Object[]{name,value,replaced});
+      GomMessage.finer(getLogger(),null,0,
+          GomMessage.setValue,
+          new Object[]{name,value,replaced});
     } else {
       throw new RuntimeException();
     }
@@ -330,16 +339,16 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         if(option !=null) {
           PlatformValue localValue = option.getValue();
           if(`value != localValue) {
-            getLogger().log(Level.SEVERE,
-                GomMessage.incorrectOptionValue.getMessage(),
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.incorrectOptionValue,
                 new Object[]{`name,`value,getOptionValue(`name)});
             return false;
           } else {
             return checkOptionDependency(`tail*);
           }
         } else {
-          getLogger().log(Level.SEVERE,
-              GomMessage.incorrectOptionValue.getMessage(),
+          GomMessage.error(getLogger(),null,0,
+              GomMessage.incorrectOptionValue,
               new Object[]{`name,`value,getOptionValue(`name)});
           return false;
         }
@@ -396,13 +405,14 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             displayVersion();
             return null;
           }
-          if(argument.equals("import") || argument.equals("I")) {
+          if (argument.equals("import") || argument.equals("I")) {
             i++;
             imports.append(argumentList[i] + ":");
           }
-          if(argument.equals("destdir") || argument.equals("d")) {
-            if(destdirEncountered) {
-              getLogger().log(Level.SEVERE, GomMessage.destdirTwice.getMessage());
+          if (argument.equals("destdir") || argument.equals("d")) {
+            if (destdirEncountered) {
+              GomMessage.error(getLogger(),null,0,
+                  GomMessage.destdirTwice);
               return null;
             } else {
               destdirEncountered = true;
@@ -412,8 +422,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
           OptionOwner plugin = getOptionOwnerFromName(argument);
           PlatformOption option = getOptionFromName(argument);
 
-          if(option == null || plugin == null) {// option not found
-            getLogger().log(Level.SEVERE, GomMessage.invalidOption.getMessage(), argument);
+          if (option == null || plugin == null) {// option not found
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.invalidOption,
+                argument);
             displayHelp();
             return null;
           } else {
@@ -439,15 +451,18 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      getLogger().log(Level.SEVERE, GomMessage.incompleteOption.getMessage(), argument);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.incompleteOption,
+          argument);
       displayHelp();
       return null;
     }
 
     setOptionValue("import",imports.toString());
 
-    if(inputFiles.isEmpty()) {
-      getLogger().log(Level.SEVERE, GomMessage.noFileToCompile.getMessage());
+    if (inputFiles.isEmpty()) {
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.noFileToCompile);
       displayHelp();
       return null;
     }
