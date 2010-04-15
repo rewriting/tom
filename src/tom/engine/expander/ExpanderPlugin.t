@@ -27,6 +27,7 @@ package tom.engine.expander;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -71,6 +72,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   %typeterm ExpanderPlugin { implement { ExpanderPlugin } }
 
+  private static Logger logger = Logger.getLogger("tom.engine.expander.ExpanderPlugin");
   /** some output suffixes */
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
 
@@ -132,15 +134,13 @@ public class ExpanderPlugin extends TomGenericPlugin {
       setGeneratedIntrospector(false);
       Code expandedTerm = (Code) this.expand((Code)getWorkingTerm());
       // verbose
-      getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(logger,null,0,TomMessage.tomExpandingPhase, Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(expandedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + EXPANDED_SUFFIX, (Code)getWorkingTerm());
       }
     } catch(Exception e) {
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "ExpanderPlugin", e.getMessage()} );
+      TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
     }
   }
