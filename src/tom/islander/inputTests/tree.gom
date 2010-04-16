@@ -1,0 +1,13 @@
+module rbtree.tree 
+abstract syntax
+Color= R()
+     | B()
+
+Tree = emptyTree()
+     | node(color:Color,lhs:Tree,value:Element,rhs:Tree)
+
+Element = f(elt:Element)
+        | e1() 
+        | e2()
+        | e3()
+

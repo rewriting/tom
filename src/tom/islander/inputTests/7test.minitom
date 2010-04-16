@@ -1,0 +1,11 @@
+%strategy MyStrategy(toto:Toto) extends Identity() {
+  visit Term {
+    LabelA:p1,p2 -> { testStrategy1 }
+    LabelB:p -> Type myTerm1
+    a -> { testStrategy2 }
+    b -> myTerm()
+  }
+  visit Term2 {
+    LabelC:otherPattern -> { testStrategy3 }
+  }
+}

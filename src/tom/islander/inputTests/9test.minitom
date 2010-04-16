@@ -1,0 +1,6 @@
+%include{ File.tom }
+
+rule int package.class.method(T x, int y) {
+  h(e) << s -> { test }
+  b << c -> { test2 }
+}

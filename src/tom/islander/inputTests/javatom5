@@ -1,0 +1,11 @@
+%include{ File1.tom }
+%include{ File2.tom }
+
+rule myType package.class.method(T x, myType y) {
+  h(e) << s -> { return some; }
+  _ << s -> { return some ; /* .Composite.Term*/ }
+  
+  %match(x) {
+    aa -> { retur aResult;}
+  }
+}
