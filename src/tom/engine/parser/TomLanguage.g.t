@@ -239,12 +239,9 @@ patternInstruction [BQTermList subjectList, List<ConstraintInstruction> list, To
              option = matchPattern[matchPatternList,true]
             {
               if(matchPatternList.size() != subjectList.length()) {
-                getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                    TomMessage.badMatchNumberArgument,
-                    new Object[]{
-                      Integer.valueOf(subjectList.length()),
-                      Integer.valueOf(matchPatternList.size())},
-                    currentFile(), getLine()));
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                    TomMessage.badMatchNumberArgument, 
+                    Integer.valueOf(subjectList.length()), Integer.valueOf(matchPatternList.size()));
                 return;
               }
 
@@ -299,9 +296,9 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
             {
             int subjectListLength = 1;
               if(matchPatternList.size() != subjectListLength) {
-                getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
-                    new Object[]{subjectListLength, Integer.valueOf(matchPatternList.size())},
-                    currentFile(), getLine()));
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                    TomMessage.badMatchNumberArgument,
+                    subjectListLength, Integer.valueOf(matchPatternList.size()));
                 return;
               }
 
@@ -616,9 +613,9 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
               }
               TomName astName = ASTFactory.makeName(stringSlotName);
               if(slotNameList.indexOf(astName) != -1) {
-              getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
-                  new Object[]{stringSlotName},
-                  currentFile(), getLine()));
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                    TomMessage.repeatedSlotName,
+                    stringSlotName);
               }
               slotNameList.add(astName);
 
@@ -1744,9 +1741,9 @@ operator returns [Declaration result] throws TomException
                     stringSlotName = slotName2.getText();
                     astName = ASTFactory.makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
-                      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
-                        new Object[]{stringSlotName},
-                        currentFile(), getLine()));
+                      TomMessage.error(getLogger(),currentFile(), getLine(),
+                        TomMessage.repeatedSlotName,
+                        stringSlotName);
                     }
                     slotNameList.add(astName);
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration()));
@@ -1789,10 +1786,10 @@ operator returns [Declaration result] throws TomException
                 }
               }
               if(msg != null) {
-                getLogger().log(new PlatformLogRecord(Level.SEVERE, msg,
-                      new Object[]{currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
-                      "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString()} ,
-                    currentFile(), getLine()));
+                TomMessage.error(getLogger(),currentFile(), getLine(),
+                  msg,
+                  currentFile(), Integer.valueOf(attribute.getOrgTrack().getLine()),
+                  "%op "+type.getText(), Integer.valueOf(ot.getLine()), sName.getString());
               } else {
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
               }

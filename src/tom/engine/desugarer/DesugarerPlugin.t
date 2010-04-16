@@ -104,19 +104,17 @@ public class DesugarerPlugin extends TomGenericPlugin {
     try {
       setSymbolTable(getStreamManager().getSymbolTable());
       updateSymbolTable();
-      Code syntaxExpandedTerm = (Code) getWorkingTerm();
+      Code code = (Code) getWorkingTerm();
 
       // replace underscores by fresh variables
-      syntaxExpandedTerm = 
-        `TopDown(DesugarUnderscore(this)).visitLight(syntaxExpandedTerm);
+      code = `TopDown(DesugarUnderscore(this)).visitLight(code);
 
       // replace TermAppl and XmlAppl by RecordAppl
-      syntaxExpandedTerm = 
-        `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(syntaxExpandedTerm);
+      code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
 
-      setWorkingTerm(syntaxExpandedTerm);      
+      setWorkingTerm(code);      
 
-        // verbose
+      // verbose
       TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {

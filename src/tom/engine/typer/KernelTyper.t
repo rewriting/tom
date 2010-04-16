@@ -237,10 +237,8 @@ public class KernelTyper {
             tomSymbol = kernelTyper.getSymbolFromType(contextType);
             if(tomSymbol==null) {
               Option ot = TomBase.findOriginTracking(`option);
-              kernelTyper.logger.log(new tom.platform.PlatformLogRecord(Level.SEVERE, TomMessage.unknownUnamedList,
-                  new Object[] { TomBase.getTomType(contextType) },
-                  ot.getFileName(),
-                  ot.getLine()));
+              TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
+                  TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
             }
             `nameList = `concTomName(tomSymbol.getAstName());
         } else {
@@ -397,8 +395,7 @@ public class KernelTyper {
               if(newSubjectType != null) {
                 newSubject = `BQVariable(variableOption,astName,newSubjectType);
               } else {
-                logger.log( Level.SEVERE, TomMessage.cannotGuessMatchType.getMessage(),
-                    new Object[]{`(name)} );
+                TomMessage.error(logger,null,0, TomMessage.cannotGuessMatchType,`name);
                 throw new VisitFailure();
               }
             } else {
