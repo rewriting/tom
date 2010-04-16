@@ -136,7 +136,7 @@ public class BackendPlugin extends TomGenericPlugin {
           output.close();
         } catch (IOException e) {
           TomMessage.error(getLogger(),
-              getStreamManager().getInputFileName().getName(), 0,
+              getStreamManager().getInputFileName(), 0,
               TomMessage.backendIOException, e.getMessage());
           return;
         } catch (Exception e) {
