@@ -319,7 +319,7 @@ public final class TomBase {
   }
 
   /**
-   * Returns a Map which associates an interger to each variable name
+   * Returns a Map which associates an integer to each variable name
    */
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables

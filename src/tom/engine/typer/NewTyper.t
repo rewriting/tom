@@ -121,20 +121,20 @@ public class NewTyper extends TomGenericPlugin {
          * Typing variables whose types are unknown with fresh type variables before
          * start inference
          */
-        Code typedCodeWithTypeVariables = collectKnownTypesFromCode((Code)getWorkingTerm());
+        typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
         /**
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        Code inferredTypeForCode = newKernelTyper.inferCode(typedCodeWithTypeVariables);
+        typedCode = newKernelTyper.inferCode(typedCode);
 
         /** 
          * TOMOVE to a post phase: 
          * - transform each BackQuoteTerm into its compiled form
          */
         typedCode =
-          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(inferredTypeForCode);
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(typedCode);
 
         System.out.println("\nCode after type inference = \n" + typedCode);
 
