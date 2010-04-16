@@ -107,7 +107,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return genIntrospector;
   }
 
-  public void setGenIntrospector(boolean genIntrospector) {
+  private void setGenIntrospector(boolean genIntrospector) {
     this.genIntrospector = genIntrospector;
   }
 
@@ -115,7 +115,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return generatedIntrospector;
   }
 
-  public void setGeneratedIntrospector(boolean generatedIntrospector) {
+  private void setGeneratedIntrospector(boolean generatedIntrospector) {
     this.generatedIntrospector = generatedIntrospector;
   }
 
@@ -160,10 +160,10 @@ public class ExpanderPlugin extends TomGenericPlugin {
   /*
    * Expand_once:
    * compiles %strategy
+   * - generate instrospectors if -gi is activated
    */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
-
     /*
      * compilation of  %strategy
      */
@@ -438,23 +438,21 @@ public class ExpanderPlugin extends TomGenericPlugin {
          */
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        for(TomVisit visit_ins:(concTomVisit)`visitList) {
-          BQTermList subjectListAST = `concBQTerm();
-          %match(visit_ins) {
-            VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
+        //for(TomVisit visit_ins:(concTomVisit)`visitList) {
+          %match(visitList) {
+            concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
               BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
-              subjectListAST = `concBQTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type; // function name
-              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
+              BQTermList subjectListAST = `concBQTerm(arg,introspectorVar);
               //return default strategy.visitLight(arg)
               // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-              Instruction returnStatement = null;
-              returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
+              Instruction returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
+              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
               l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)));
               dispatchInfo.put(`vType,funcName);
-            }              
-          }
+            }
+          //}
         }
 
         /*
