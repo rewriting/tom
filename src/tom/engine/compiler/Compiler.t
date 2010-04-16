@@ -193,11 +193,14 @@ public class Compiler extends TomGenericPlugin {
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
       }
-      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(getLogger(),null,0,TomMessage.tomCompilationPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );
+      String fileName = getStreamManager().getInputFileName();
+        TomMessage.error(getLogger(),
+            fileName, 0,
+            TomMessage.exceptionMessage, 
+            fileName, "Compiler", e.getMessage());
       e.printStackTrace();
     }
   }
