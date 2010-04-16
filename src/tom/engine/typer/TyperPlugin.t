@@ -144,7 +144,7 @@ public class TyperPlugin extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      logger.log(Level.INFO, "The default typer is not in use.");
+      TomMessage.info(logger,null,0,TomMessage.typerNotUsed);
     }
   }
 

@@ -178,6 +178,7 @@ public class Compiler extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
       getCompilerEnvironment().setSymbolTable(getStreamManager().getSymbolTable());
+
       Code code = (Code)getWorkingTerm();
       code = addACFunctions(code);      
 
@@ -240,7 +241,7 @@ public class Compiler extends TomGenericPlugin {
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
-              TomNumberList path = compiler.getRootpath();
+              TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
@@ -286,7 +287,7 @@ public class Compiler extends TomGenericPlugin {
               MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
               newConstraint);
         }
-        TomNumberList path = compiler.getRootpath();
+        TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
@@ -351,10 +352,6 @@ public class Compiler extends TomGenericPlugin {
    * helper functions - mostly related to free var generation
    */
 
-  public TomNumberList getRootpath() {
-    return getCompilerEnvironment().getRootpath();
-  }
-
   public SymbolTable getSymbolTable() {
     return getCompilerEnvironment().getSymbolTable();
   }
@@ -393,7 +390,7 @@ public class Compiler extends TomGenericPlugin {
   }
 
   private BQTerm getVariableName(String name, TomType type) {
-    TomNumberList path = getRootpath();
+    TomNumberList path = getCompilerEnvironment().getRootpath();
     TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `BQVariable(concOption(),freshVarName,type);
   }
@@ -409,7 +406,7 @@ public class Compiler extends TomGenericPlugin {
   }
 
   private BQTerm getVariableStarName(String name, TomType type) {
-    TomNumberList path = getRootpath();
+    TomNumberList path = getCompilerEnvironment().getRootpath();
     TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `BQVariableStar(concOption(),freshVarName,type);
   }

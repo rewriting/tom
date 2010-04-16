@@ -63,6 +63,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
+  %typeterm TypeCheckerPlugin { implement { TypeCheckerPlugin } }
+
   // Different kind of structures
   protected final static int TERM_APPL               = 0;
   protected final static int UNAMED_APPL             = 1;
@@ -232,7 +234,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
    * Main type checking entry point:
    * We check all Match
    */
-  %typeterm TypeCheckerPlugin { implement { TypeCheckerPlugin } }
 
   %strategy checkTypeInference(tcp:TypeCheckerPlugin) extends Identity() {
     visit Instruction {
