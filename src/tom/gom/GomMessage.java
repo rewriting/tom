@@ -25,23 +25,18 @@
 package tom.gom;
 
 import tom.platform.BasicFormatter;
-import tom.platform.PlatformMessage;
+import tom.platform.BasicPlatformMessage;
 import tom.platform.PlatformLogRecord;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The GomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
-public class GomMessage implements PlatformMessage {
-  private final String message;
-  private static BasicFormatter formatter;
+public class GomMessage extends BasicPlatformMessage {
 
   private GomMessage(String message) {
-    this.message = message;
-    this.formatter = new BasicFormatter();
+    super(message);
   }
 
   public static final GomMessage loggingInitializationFailure =
@@ -172,10 +167,6 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage gomChoiceWarning =
     new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
 
-  public String toString() {
-    return message;
-  }
-
   // SymbolTable
   public static final GomMessage nonExhaustiveMatch =
     new GomMessage("Non exhaustive match");
@@ -196,46 +187,6 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage constructorName =
     new GomMessage("Constructor exception : {0}");
 
-
-  public String getMessage() {
-    return message;
-  }
   // Message level
   public static final int GOM_INFO = 0;
-  // Default error line
-  public static final String DEFAULT_ERROR_FILE_NAME = "unknown file";
-  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
-
-  private static void logMessage(Level level, Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    if (null == msgArgs) {
-      msgArgs = new Object[]{};
-    }
-    if (null == fileName) {
-      fileName = DEFAULT_ERROR_FILE_NAME;
-      errorLine = DEFAULT_ERROR_LINE_NUMBER;
-    }
-
-    if (Level.FINER == level) {
-      logger.log(level, msg.getMessage(), msgArgs);
-    } else {
-      logger.log(level, formatter.format(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine)));
-    }
-  }
-
-  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
-    logMessage(Level.SEVERE, logger, fileName, errorLine, msg, msgArgs);
-  }
-
-  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
-    logMessage(Level.WARNING, logger, fileName, errorLine, msg, msgArgs);
-  }
-
-  public static void info(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
-    logMessage(Level.INFO, logger, fileName, errorLine, msg, msgArgs);
-  }
-
-  public static void finer(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
-    logMessage(Level.FINER, logger, fileName, errorLine, msg, msgArgs);
-  }
-
 }
