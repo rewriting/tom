@@ -1,3 +1,6 @@
+2010-04-16 tavaresc
+  * New version of the new typer: The methods applying inference rules are transformed in strategies.
+
 2010-04-15 pem
   * introduced a unique way top log errors:
 	  TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
