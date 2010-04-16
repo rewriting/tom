@@ -57,15 +57,15 @@ public class BasicPlatformMessage implements PlatformMessage {
   }
 
   private static void logMessage(Level level,Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    if(msgArgs==null) {
+    if (null == msgArgs) {
       msgArgs = new Object[]{};
     }
-    if(fileName==null) {
+    if (null == fileName) {
       fileName=DEFAULT_ERROR_FILE_NAME;
       errorLine=DEFAULT_ERROR_LINE_NUMBER;
     }
 
-    if(level==Level.FINER) {
+    if (Level.FINER == level) {
       logger.log(level, msg.getMessage(), msgArgs);
     } else {
       logger.log(level, formatter.format(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine)));
