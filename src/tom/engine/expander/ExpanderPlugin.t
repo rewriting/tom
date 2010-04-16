@@ -159,55 +159,10 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   /*
    * Expand_once:
-   * replaces RawAction by TypedAction (with If(true,action))
    * compiles %strategy
    */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
-    visit Instruction {
-      Match(constraintInstructionList, matchOptionList)  -> {
-        Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
-        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
-        ConstraintList negativeConstraint = `concConstraint();        
-        for(ConstraintInstruction constraintInstruction:(concConstraintInstruction)`constraintInstructionList) {
-          /*
-           * the call to Expand performs the recursive expansion
-           * of nested match constructs
-           */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) expander.expand(constraintInstruction);
-
-matchBlock: {
-              %match(newConstraintInstruction) {
-                ConstraintInstruction(constraint,actionInst, option) -> {
-                  Instruction newAction = `actionInst;
-                  /* expansion of RawAction into TypedAction */
-                  %match(actionInst) {
-                    RawAction(x) -> {
-                      newAction=`TypedAction(If(TrueTL(),x,Nop()),constraint,negativeConstraint);
-                    }
-                  }
-                  negativeConstraint = `concConstraint(negativeConstraint*,constraint);
-
-                  /* generate equality checks */
-                  newConstraintInstruction = `ConstraintInstruction(constraint,newAction, option);
-                  /* do nothing */
-                  break matchBlock;
-                }
-
-                _ -> {
-                  System.out.println("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
-                  throw new TomRuntimeException("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
-                }
-              }
-            } // end matchBlock
-
-            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
-        }
-
-        return `Match(newConstraintInstructionList, matchOptionList);
-      }
-
-    } // end visit
 
     /*
      * compilation of  %strategy

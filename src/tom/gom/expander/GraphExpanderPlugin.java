@@ -67,8 +67,8 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment)arg[2]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"GraphExpander", "[ModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -87,9 +87,9 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       referencedModuleList = mpair.getModules();
       referencedHookList = mpair.getHookDecls();
       if(referencedModuleList == null) {
-        getLogger().log(Level.SEVERE,
-            GomMessage.expansionIssue.getMessage(),
-            getStreamManager().getInputFileName());
+        GomMessage.error(getLogger(),
+            getStreamManager().getInputFileName(), 0,
+            GomMessage.expansionIssue);
       } else {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
         getLogger().log(Level.INFO, "Signature extension succeeds");

@@ -86,9 +86,11 @@ public class BackendPlugin extends GomGenericPlugin {
       classList = (GomClassList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomBackend", "[GomClassList,GomEnvironment]",
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
+          new Object[] {
+            "GomBackend",
+            "[GomClassList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -129,8 +131,8 @@ public class BackendPlugin extends GomGenericPlugin {
                   getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.generationIssue.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.generationIssue,
           getStreamManager().getInputFileName());
     } else {
       getLogger().info("GOM Code generation phase ("

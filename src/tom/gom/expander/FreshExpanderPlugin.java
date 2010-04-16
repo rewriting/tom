@@ -70,8 +70,8 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
       modules = (GomModuleList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"FreshExpander", "[GomModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -90,9 +90,9 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
       result = expander.expand(modules,
           (String) getOptionManager().getOptionValue("package"));
       if(modules == null) {
-        getLogger().log(Level.SEVERE,
-            GomMessage.expansionIssue.getMessage(),
-            getStreamManager().getInputFileName());
+        GomMessage.error(getLogger(),
+            getStreamManager().getInputFileName(),0,
+            GomMessage.expansionIssue);
       } else {
         java.io.StringWriter swriter = new java.io.StringWriter();
         try { tom.library.utils.Viewer.toTree(result,swriter); }

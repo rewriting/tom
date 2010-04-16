@@ -66,8 +66,8 @@ public class ExpanderPlugin extends GomGenericPlugin {
       module = (GomModule)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"GomExpander", "[GomModule,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -89,9 +89,9 @@ public class ExpanderPlugin extends GomGenericPlugin {
       getGomEnvironment().initSymbolTable(modules);
     }
     if (null == modules) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.expansionIssue.getMessage(),
-          getStreamManager().getInputFileName());
+      GomMessage.error(getLogger(),
+          getStreamManager().getInputFileName(),0,
+          GomMessage.expansionIssue);
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try {

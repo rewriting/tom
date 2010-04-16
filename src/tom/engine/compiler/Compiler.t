@@ -1,6 +1,6 @@
 /*
- *
- * TOM - To One Matching Compiler
+ * 
+ * TOM - To One Matching Expander
  * 
  * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
@@ -119,11 +119,11 @@ public class Compiler extends TomGenericPlugin {
     }
 
     public TomNumberList getRootpath() {
-      return this.rootpath;
-    }
-
-    public void setRootpath(TomNumberList rootpath) {
-      this.rootpath = rootpath;
+      if(this.rootpath==null) {
+        return `concTomNumber();
+      } else {
+        return this.rootpath;
+      }
     }
 
     public int getMatchNumber() {
@@ -177,12 +177,18 @@ public class Compiler extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
-      Code compiledTerm = compile((Code)getWorkingTerm(),getStreamManager().getSymbolTable());
+      getCompilerEnvironment().setSymbolTable(getStreamManager().getSymbolTable());
+      Code code = (Code)getWorkingTerm();
+      code = addACFunctions(code);      
+
+      // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
+      Code compiledTerm = `TopDown(CompileMatch(this)).visitLight(code);
+
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      // add the aditional functions needed by the AC operators
-      renamedTerm = addACFunctions(renamedTerm);      
+      // add the additional functions needed by the AC operators
+      //renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
@@ -198,12 +204,6 @@ public class Compiler extends TomGenericPlugin {
 
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
-  }
-
-  public Code compile(Code termToCompile,SymbolTable symbolTable) throws VisitFailure {
-    getCompilerEnvironment().setSymbolTable(symbolTable);
-    // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
-    return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
   // looks for a 'Match' instruction:

@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import tom.library.sl.*;
 import tom.gom.backend.CodeGen;
-import tom.gom.GomMessage;
 import tom.gom.SymbolTable;
 import tom.gom.exception.*;
 import tom.gom.GomStreamManager;

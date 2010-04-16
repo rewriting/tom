@@ -347,7 +347,7 @@ visitInstruction [List<ConstraintInstruction> list, TomType rhsType] throws TomE
  blockList.add(`TargetLanguageToCode(tlCode));
  list.add(`ConstraintInstruction(
      constraint,
-     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+     RawAction(If(TrueTL(),AbstractBlock(ASTFactory.makeInstructionList(blockList)),Nop())),
      optionList)
    );
  }
@@ -394,7 +394,7 @@ arrowAndAction[List<ConstraintInstruction> list, OptionList optionList, List<Opt
        blockList.add(`TargetLanguageToCode(tlCode));
        list.add(`ConstraintInstruction(
            constraint,
-           RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+           RawAction(If(TrueTL(),AbstractBlock(ASTFactory.makeInstructionList(blockList)),Nop())),
            optionList)
        );
    }

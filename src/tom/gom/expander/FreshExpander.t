@@ -26,7 +26,6 @@ package tom.gom.expander;
 
 import java.util.logging.Level;
 import tom.gom.GomStreamManager;
-import tom.gom.GomMessage;
 import tom.gom.SymbolTable;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;

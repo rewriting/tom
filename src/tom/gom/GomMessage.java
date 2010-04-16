@@ -50,7 +50,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage simpleMessage =
     new GomMessage("{0}:{1,number,integer}: {2}");
   public static final GomMessage exceptionMessage =
-    new GomMessage("{0}: Unhandled exception occurs with input {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
+    new GomMessage("{0}: Unhandled exception occurs in class {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
 
   // GomOptionManager error messages
   public static final GomMessage optionNotFound =
@@ -206,16 +206,16 @@ public class GomMessage implements PlatformMessage {
   public static final String DEFAULT_ERROR_FILE_NAME = "unknown file";
   public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
 
-  private static void logMessage(Level level,Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
-    if(msgArgs==null) {
+  private static void logMessage(Level level, Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
+    if (null == msgArgs) {
       msgArgs = new Object[]{};
     }
-    if(fileName==null) {
-      fileName=DEFAULT_ERROR_FILE_NAME;
-      errorLine=DEFAULT_ERROR_LINE_NUMBER;
+    if (null == fileName) {
+      fileName = DEFAULT_ERROR_FILE_NAME;
+      errorLine = DEFAULT_ERROR_LINE_NUMBER;
     }
 
-    if(level==Level.FINER) {
+    if (Level.FINER == level) {
       logger.log(level, msg.getMessage(), msgArgs);
     } else {
       logger.log(level, formatter.format(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine)));

@@ -84,18 +84,21 @@ public class Gom {
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println(MessageFormat.format(GomMessage.loggingInitializationFailure.getMessage(),new Object[]{e.getMessage()}));
+      System.err.println(
+          MessageFormat.format(
+            GomMessage.loggingInitializationFailure.getMessage(),
+            new Object[]{ e.getMessage() }));
       return 1;
     }
     // Retrieve the configuration file name
     String configFileName =
       PluginPlatformFactory.getInstance().extractConfigFileName(commandLine);
-    if(configFileName == null) {
+    if (null == configFileName) {
       return 1;
     }
     // Create a ConfigurationManager in order to retrieve the 'global' inputToCompileList
     ConfigurationManager initConfigurationManager = new ConfigurationManager(configFileName);
-    if(initConfigurationManager.initialize(commandLine) == 1) {
+    if (initConfigurationManager.initialize(commandLine) == 1) {
       return 1;
     }
     // Retrieve the whole fileList that has to be compiled

@@ -73,8 +73,8 @@ public class GomParserPlugin extends GomGenericPlugin {
       inputReader = getStreamManager().getInputReader();
       inputFileName = getStreamManager().getInputFileName();
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"GomParser", "[GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -94,9 +94,8 @@ public class GomParserPlugin extends GomGenericPlugin {
     try {
       input = new ANTLRReaderStream(inputReader);
     } catch (java.io.IOException e) {
-      getLogger().log(Level.INFO,
-          GomMessage.unableToUseReaderMessage.getMessage(),
-          new Object[]{});
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.unableToUseReaderMessage);
       // Invalid input stream
       return;
     }
@@ -121,8 +120,9 @@ public class GomParserPlugin extends GomGenericPlugin {
       StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
       e.printStackTrace(printwriter);
-      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
-          new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
+      GomMessage.error(getLogger(),inputFileName,0,
+          GomMessage.exceptionMessage,
+          new Object[]{getClass().getName(),stringwriter.toString()});
       return;
     } finally {
       if (null != inputReader) {
@@ -130,8 +130,8 @@ public class GomParserPlugin extends GomGenericPlugin {
           inputReader.close();
         } catch(java.io.IOException ioExcep) {
           // nothing to do
-          getLogger().log(Level.INFO, GomMessage.unableToCloseReaderMessage.getMessage(),
-              new Object[]{});
+          GomMessage.error(getLogger(),inputFileName,0,
+              GomMessage.unableToCloseReaderMessage);
         }
       }
     }
