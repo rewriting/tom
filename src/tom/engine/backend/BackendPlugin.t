@@ -131,21 +131,22 @@ public class BackendPlugin extends TomGenericPlugin {
 
           generator.generate(defaultDeep, pilCode,TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          getLogger().log(Level.INFO,
-              TomMessage.tomGenerationPhase.getMessage(),
+          TomMessage.info(getLogger(),null,0,TomMessage.tomGenerationPhase,
               Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
         } catch (IOException e) {
-          getLogger().log(Level.SEVERE,
-              TomMessage.backendIOException.getMessage(),
-              new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+          TomMessage.error(getLogger(),
+              getStreamManager().getInputFileName(), 0,
+              TomMessage.backendIOException, e.getMessage());
           return;
         } catch (Exception e) {
           String fileName = getStreamManager().getInputFileName();
-          int line = -1;
-          TomMessage.error(getLogger(),fileName,line,TomMessage.exceptionMessage, new Object[]{fileName});
+          //int line = -1;
+          // set line number to -1 instead of 0 in order to keep the old
+          // behavior. It will probably be modified soon.
+          TomMessage.error(getLogger(),fileName,-1,TomMessage.exceptionMessage, fileName);
           e.printStackTrace();
-           return;
+          return;
         }
         // set the generated File Name
         try {
@@ -156,10 +157,10 @@ public class BackendPlugin extends TomGenericPlugin {
         }
       } else {
         // backend is desactivated
-        getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
+        TomMessage.info(getLogger(),getStreamManager().getInputFileName(),0,TomMessage.backendInactivated);
       }
     } catch(PlatformException e) {
-      getLogger().log( Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
+      TomMessage.error(getLogger(),null,0,PluginPlatformMessage.platformStopped);
       return;
     }
   }
