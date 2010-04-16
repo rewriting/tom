@@ -188,7 +188,7 @@ public class Gom {
    * @param newLevel the Level to which we want to set the log output
    */
   public static void changeLogLevel(Level newLevel) {
-    if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
+    if (logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
     }
     if(consoleHandler != null && newLevel.intValue() <= Level.WARNING.intValue()) {
@@ -213,7 +213,7 @@ public class Gom {
     } else { // custom configuration file for LogManager is used
       LogManager.getLogManager().readConfiguration();
       initGomRootLogger(true);
-      refreshTopLoggerHandlers();
+      PluginPlatformFactory.refreshTopLoggerHandlers();
     }
   }
 
@@ -227,49 +227,6 @@ public class Gom {
     Handler[] handlers = logger.getHandlers();
     for(int i = 0; i < handlers.length; i++) {
       logger.removeHandler(handlers[i]);
-    }
-  }
-
-  private static void refreshTopLoggerHandlers()
-    throws InstantiationException,ClassNotFoundException,
-           IllegalAccessException {
-    Handler[] handlers = Logger.getLogger("").getHandlers();
-    for(int i=0; i < handlers.length; i++) {
-      /*
-       * OK, the following code is ugly, I could have made it prettier but
-       * it is more robust that way, since it handles all the basic
-       * handlers as well as the ones that might extend them.
-       * I wrote that because the LogManager won't refresh the formatters,
-       * although its properties are set at the appropriate values.
-       */
-      if(handlers[i] instanceof ConsoleHandler) {
-        // search for the global console handler
-        consoleHandler = handlers[i];
-        handlers[i].setFormatter((Formatter)Class.forName(
-              LogManager.getLogManager().getProperty(
-                "java.util.logging.ConsoleHandler.formatter")
-              ).newInstance());
-      } else if(handlers[i] instanceof FileHandler) {
-        handlers[i].setFormatter((Formatter)Class.forName(
-              LogManager.getLogManager().getProperty(
-                "java.util.logging.FileHandler.formatter")
-              ).newInstance());
-      } else if(handlers[i] instanceof SocketHandler) {
-        handlers[i].setFormatter((Formatter)Class.forName(
-              LogManager.getLogManager().getProperty(
-                "java.util.logging.SocketHandler.formatter")
-              ).newInstance());
-      } else if(handlers[i] instanceof MemoryHandler) {
-        handlers[i].setFormatter((Formatter)Class.forName(
-              LogManager.getLogManager().getProperty(
-                "java.util.logging.MemoryHandler.formatter")
-              ).newInstance());
-      } else if(handlers[i] instanceof StreamHandler) {
-        handlers[i].setFormatter((Formatter)Class.forName(
-              LogManager.getLogManager().getProperty(
-                "java.util.logging.StreamHandler.formatter")
-              ).newInstance());
-      }
     }
   }
 }

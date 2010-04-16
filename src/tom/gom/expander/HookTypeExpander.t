@@ -205,9 +205,9 @@ public class HookTypeExpander {
             }
             kind@HookKind(("make"|"make_insert"|"make_empty")[]) -> {
               SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
-              if (typedArgs == null) {
-                getLogger().log(Level.SEVERE,
-                    GomMessage.discardedHook.getMessage(),
+              if (null == typedArgs) {
+                GomMessage.error(getLogger(),null,0,
+                    GomMessage.discardedHook,
                     new Object[]{ `(hName) });
                 return `ConcHookDecl();
               }
@@ -246,7 +246,9 @@ public class HookTypeExpander {
             }
           }
           if (newHookList == `ConcHookDecl()) {
-            getLogger().log(Level.SEVERE, GomMessage.unknownHookKind.getMessage(), new Object[]{ `(hkind) });
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.unknownHookKind,
+                new Object[]{ `(hkind) });
           }
           return newHookList;
         }
@@ -327,8 +329,8 @@ public class HookTypeExpander {
         }
       }
     }
-    getLogger().log(Level.SEVERE,
-        GomMessage.orphanedHook.getMessage(),
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.orphanedHook,
         new Object[]{oname});
     return null;
   }
@@ -348,8 +350,8 @@ public class HookTypeExpander {
             /* tests the arguments number */
             if (args.length() != `slotList.length()) {
               SlotList slist = `slotList;
-              getLogger().log(Level.SEVERE,
-                  GomMessage.mismatchedMakeArguments.getMessage(),
+              GomMessage.error(getLogger(),null,0,
+                  GomMessage.mismatchedMakeArguments,
                   new Object[]{args,slist });
               return null;
             }
@@ -357,8 +359,8 @@ public class HookTypeExpander {
             return recArgSlots(args,`slotList);
           }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookAlgebraic.getMessage(),
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.unsupportedHookAlgebraic,
                 new Object[]{ kind });
             return null;
           }
@@ -378,16 +380,16 @@ public class HookTypeExpander {
                   return `ConcSlot(Slot(head,sortDecl),Slot(tail,sort));
                 }
                 _ -> {
-                  getLogger().log(Level.SEVERE,
-                      GomMessage.badHookArguments.getMessage(),
+                  GomMessage.error(getLogger(),null,0,
+                      GomMessage.badHookArguments,
                       new Object[]{ `(hookName), Integer.valueOf(args.length())});
                   return null;
                 }
               }
             }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookVariadic.getMessage(),
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.unsupportedHookVariadic,
                 new Object[]{ kind });
             return null;
           }
@@ -405,16 +407,16 @@ public class HookTypeExpander {
               %match(args) {
                 ConcArg() -> { return `ConcSlot(); }
                 _ -> {
-                  getLogger().log(Level.SEVERE,
-                      GomMessage.badHookArguments.getMessage(),
+                  GomMessage.error(getLogger(),null,0,
+                      GomMessage.badHookArguments,
                       new Object[]{ `(hookName), Integer.valueOf(args.length())});
                   return null;
                 }
               }
             }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookVariadic.getMessage(),
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.unsupportedHookVariadic,
                 new Object[]{ kind });
             return null;
           }
