@@ -390,6 +390,9 @@ public class TomMessage implements PlatformMessage {
 
   public static final TomMessage writingFailureTempGom=
       new TomMessage("Failed writing gom temp file: ''{0}''");
+  
+  public static final TomMessage typerNotUsed =
+      new TomMessage("The default typer is not in use");
   /*
    * FINER
    */
