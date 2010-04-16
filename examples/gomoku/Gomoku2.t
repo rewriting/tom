@@ -184,18 +184,18 @@ class Gomoku2 {
               pawn(c),pawn(c),pawn(c),pawn(c),empty(x5,y5),_ -> { board.addValue(`x5,`y5,value1); }
               pawn(c),pawn(c),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x4,`y4,value1); }
               pawn(c),pawn(c),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x3,`y3,value1); }
-              empty(tmpx1,tmpy1),pawn(c),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x5,`y5,value2); }
-              empty(tmpx1,tmpy1),pawn(c),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x4,`y4,value2); }
+              empty(_,_),pawn(c),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(_,_),_*) -> { board.addValue(`x5,`y5,value2); }
+              empty(_,_),pawn(c),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(_,_),_*) -> { board.addValue(`x4,`y4,value2); }
               empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x2,`y2,value4); }
               empty(x1,y1),pawn(c),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x3,`y3,value4); }
               empty(x1,y1),pawn(c),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x4,`y4,value4); }
               empty(x1,y1),pawn(c),pawn(c),pawn(c),empty(x5,y5),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x5,`y5,value4); }
               pawn(c),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x2,`y2,value4); board.addValue(`x3,`y3,value4); }
               pawn(c),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x2,`y2,value4); board.addValue(`x4,`y4,value4); }
-              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x3,`y3,value3); }
-              empty(tmpx1,tmpy1),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x4,`y4,value3); }
-              empty(tmpx1,tmpy1),pawn(c),empty(x3,y3),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x3,`y3,value3); board.addValue(`x4,`y4,value3); }
-              empty(tmpx1,tmpy1),empty(x2,y2),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x5,`y5,value3); }
+              empty(_,_),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),concPawn(empty(_,_),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x3,`y3,value3); }
+              empty(_,_),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(_,_),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x4,`y4,value3); }
+              empty(_,_),pawn(c),empty(x3,y3),empty(x4,y4),pawn(c),concPawn(empty(_,_),_*) -> { board.addValue(`x3,`y3,value3); board.addValue(`x4,`y4,value3); }
+              empty(_,_),empty(x2,y2),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(_,_),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x5,`y5,value3); }
               empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
@@ -245,7 +245,7 @@ class Gomoku2 {
               }
               // 1 in 6
               // ____x_
-              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> {
+              empty(_,_),empty(x2,y2),empty(x3,y3),empty(x4,y4),pawn(_),concPawn(empty(_,_),_*) -> {
                 //if(`c == patternColor) {
                 board.addValue(`x2,`y2,value6);
                 board.addValue(`x3,`y3,value6);
@@ -253,7 +253,7 @@ class Gomoku2 {
                 //}
               }
               // ___x__
-              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> {
+              empty(_,_),empty(x2,y2),empty(x3,y3),pawn(_),empty(x5,y5),concPawn(empty(_,_),_*) -> {
                 //if(`c == patternColor) {
                 board.addValue(`x2,`y2,value6);
                 board.addValue(`x3,`y3,value6);
@@ -262,7 +262,7 @@ class Gomoku2 {
               }
               //1 in 5
               // x____
-              pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
+              pawn(_),empty(x2,y2),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x2,`y2,value7);
                 board.addValue(`x3,`y3,value7);
@@ -271,7 +271,7 @@ class Gomoku2 {
                 //}
               }
               // _x___
-              empty(x1,y1),pawn(c),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
+              empty(x1,y1),pawn(_),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value7);
                 board.addValue(`x3,`y3,value7);
@@ -280,7 +280,7 @@ class Gomoku2 {
                 //}
               }
               // __x__
-              empty(x1,y1),empty(x2,y2),pawn(c),empty(x4,y4),empty(x5,y5),_ -> {
+              empty(x1,y1),empty(x2,y2),pawn(_),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value7);
                 board.addValue(`x2,`y2,value7);

@@ -51,7 +51,7 @@ public class Polygraphes {
       c0(head,tail*) -> { return s(`head) + s(`tail*); } 
       c1() -> { return 0; }
       // We want A here
-      c1(head,tail*) -> { return s(`head); }
+      c1(head,_*) -> { return s(`head); }
     }
     throw new tom.engine.exception.TomRuntimeException("strange term: " + t);
   }
@@ -65,7 +65,7 @@ public class Polygraphes {
       c0(head,tail*) -> { return t(`head) + t(`tail*); }
       c1() -> { return 0; }
       // We want A here
-      c1(head*,last) -> { return t(`last); }
+      c1(_*,last) -> { return t(`last); }
     }
     throw new RuntimeException("strange term: " + t);
   }
@@ -130,12 +130,12 @@ public class Polygraphes {
        * C0(id(m),g,tail*) -> C1(C0(id(m),g,id(source(tail*)),
        *                         C0(id(m+target(g)),tail*)) g notin tail
        */
-      c0(head@id(m), c1(f*,g*), tail*) -> {
+      c0(head@id(_), c1(f*,g*), tail*) -> {
         if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
           return `c1(c0(head,f*,tail*), c0(head,g*,tail*)); 
         }
       }
-      c0(head*, c1(f*,g*), tail@id(n)) -> {
+      c0(head*, c1(f*,g*), tail@id(_)) -> {
         if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
           return `c1(c0(head*,f*,tail), c0(head*,g*,tail)); 
         }
@@ -184,7 +184,7 @@ public class Polygraphes {
   private static boolean isEmptyOrId(TwoPath l) {
     %match(l) {
       c0()  -> { return true; }
-      id(n) -> { return true; }
+      id(_) -> { return true; }
     }
     return false;
   }

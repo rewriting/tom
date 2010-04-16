@@ -61,7 +61,7 @@ class BenchGomGC {
       C(Suc(x),y) -> { return `Suc(C(x,y)); }
       F(x,y,Suc(z),t,u) -> { return `F(x,y,z,C(t,t),u); } 
       F(x,Suc(y),Zero(),t,u) -> { return `F(x,y,P(),t,t); } 
-      F(Suc(x),Zero(),Zero(),t,u) -> {
+      F(Suc(x),Zero(),Zero(),u,u) -> {
         return `F(x,N(),P(),Suc(Zero()),Zero());
       }
       F(Zero(),Zero(),Zero(),t,_) -> { return `t; } 
