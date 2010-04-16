@@ -43,6 +43,8 @@ The compiler is composed of several plugins, which are executed in the following
 
 - Expander
   compiles %strategy
+    generate instrospectors if -gi is activated
+    generate visitLight and visit
 
 - Compiler
 

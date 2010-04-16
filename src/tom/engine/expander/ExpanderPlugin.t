@@ -161,6 +161,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
    * Expand_once:
    * compiles %strategy
    * - generate instrospectors if -gi is activated
+   * - generate visitLight and visit
    */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
@@ -214,7 +215,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
           }
           //default case (for builtins too): return 0
           instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("0")))));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)),l*);
           /**
            * generate code for:
            * public Object[] getChildren(Object o);
@@ -328,7 +329,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
           }
           //default case: return null
           instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("null")))));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)),l*);
 
           /**
            * generate code for:
@@ -410,14 +411,14 @@ public class ExpanderPlugin extends TomGenericPlugin {
           }
           //default case: return o
           instructions = `concInstruction(instructions*,Return(objectVar));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,objectArrayVar),objectType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,objectArrayVar),objectType,EmptyType(),AbstractBlock(instructions)),l*);
 
           /**
            * generate code for:
            * public Object getChildAt(Object o, int i);
            */
           funcName = "getChildAt";//function name
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))),l*);
 
           /**
            * generate code for:
@@ -429,7 +430,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
             newChildren[i] = child;
             return setChildren(o, newChildren);
           ]%;
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))),l*);
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
 
@@ -438,21 +439,19 @@ public class ExpanderPlugin extends TomGenericPlugin {
          */
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        //for(TomVisit visit_ins:(concTomVisit)`visitList) {
-          %match(visitList) {
-            concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
-              BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
-              String funcName = "visit_" + `type; // function name
-              BQTermList subjectListAST = `concBQTerm(arg,introspectorVar);
-              //return default strategy.visitLight(arg)
-              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-              Instruction returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
-              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
-              InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)));
-              dispatchInfo.put(`vType,funcName);
-            }
-          //}
+        %match(visitList) {
+          concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
+            BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
+            String funcName = "visit_" + `type; // function name
+            BQTermList subjectListAST = `concBQTerm(arg,introspectorVar);
+            //return default strategy.visitLight(arg)
+            // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
+            Instruction returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
+            Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
+            InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+            l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)),l*);
+            dispatchInfo.put(`vType,funcName);
+          }
         }
 
         /*
@@ -501,12 +500,12 @@ public class ExpanderPlugin extends TomGenericPlugin {
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type("Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
-          l = `concDeclaration(l*,MethodDef(
+          l = `concDeclaration(MethodDef(
                 Name("_" + dispatchInfo.get(type)),
                 concBQTerm(arg,introspectorVar),
                 type,
                 visitfailureType,
-                ifThenElse));
+                ifThenElse),l*);
         }
         ifList = `concInstruction(ifList*,              
             If(testEnvNotNull,
@@ -518,7 +517,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
             methodparameterType,
             visitfailureType,
             AbstractBlock(ifList));
-        l = `concDeclaration(l*,visitLightDeclaration);
+        l = `concDeclaration(visitLightDeclaration,l*);
         return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration
