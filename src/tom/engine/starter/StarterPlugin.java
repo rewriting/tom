@@ -57,8 +57,8 @@ public class StarterPlugin extends TomGenericPlugin {
     if (arg[0] instanceof String) {
       fileName = (String)arg[0];
     } else {
-      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
-                      new Object[]{"StarterPlugin", "[String]", getArgumentArrayString(arg)});
+      TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
+          "StarterPlugin", "[String]", getArgumentArrayString(arg));
     }
   }
 

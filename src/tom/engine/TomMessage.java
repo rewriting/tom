@@ -72,6 +72,8 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TomOptionManager: No file to compile");
   public static final TomMessage outputWithMultipleCompilation =
       new TomMessage("TomOptionManager: Cannot specify --output with multiple compilation inputs");
+  public static final TomMessage notReturnedPluginOption =
+    new TomMessage("TomOptionManager: getOptionFromName did not return a PluginOption");
   // Debug messages
   public static final TomMessage setValue              =
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
@@ -98,6 +100,10 @@ public class TomMessage extends BasicPlatformMessage {
   // Plugings common
   public static final TomMessage invalidPluginArgument =
     new TomMessage("{0}.setArg expecting {1} but {2} argument");
+
+  //TomStreamManager
+  public static final TomMessage expectingOOptionWhenStdin =
+    new TomMessage("Expecting use of \"-o file\" when using stdin");
 
   // parser.TomParserPlugin
   public static final TomMessage fileNotFound          =

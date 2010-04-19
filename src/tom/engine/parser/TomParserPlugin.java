@@ -132,9 +132,8 @@ public class TomParserPlugin extends TomGenericPlugin {
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
     } else {
-      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
-                      new Object[]{"TomParserPlugin", "[TomStreamManager]",
-                                   getArgumentArrayString(arg)});
+      TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
+          "TomParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
     }
   }
 
@@ -178,32 +177,28 @@ public class TomParserPlugin extends TomGenericPlugin {
         tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
       }
       // verbose
-      getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
-                      Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (TokenStreamException e) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.tokenStreamException,
-                      new Object[]{e.getMessage()},
-                      currentFileName, getLineFromTomParser()));
+      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
+          TomMessage.tokenStreamException, e.getMessage());
       return;
     } catch (RecognitionException e){
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.recognitionException,
-                      new Object[]{e.getMessage()},
-                      currentFileName, getLineFromTomParser()));
+      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+          TomMessage.recognitionException, e.getMessage());
       return;
     } catch (TomException e) {
-       getLogger().log(new PlatformLogRecord(Level.SEVERE, e.getPlatformMessage(),e.getParameters(),
-          currentFileName, getLineFromTomParser()));
+      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+          e.getPlatformMessage(), e.getParameters());
       return;
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(),currentFileName); 
+      TomMessage.error(getLogger(), currentFileName, 0, TomMessage.fileNotFound); 
       e.printStackTrace();
       return;
     } catch (Exception e) {
       e.printStackTrace();
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(), 
-                      new Object[]{getClass().getName(), currentFileName});
+      TomMessage.error(getLogger(), currentFileName, 0, TomMessage.exceptionMessage,
+          getClass().getName(), currentFileName);
       return;
     }
     // Some extra stuff
