@@ -52,6 +52,12 @@ public class PluginPlatformMessage implements PlatformMessage {
     new PluginPlatformMessage("A configuration file must be specified with the -X option");
   public static final PluginPlatformMessage configFileNotFound =
     new PluginPlatformMessage("The configuration file {0} was not found");
+  public static final PluginPlatformMessage formatterNotFound =
+    new PluginPlatformMessage("The formatter class {0} was not found");
+  public static final PluginPlatformMessage formatterInvalid =
+    new PluginPlatformMessage("The formatter class {0} is invalid");
+  public static final PluginPlatformMessage logfileInvalid =
+    new PluginPlatformMessage("The log file {0} path is invalid");
 
   // Platform messages
   public static final PluginPlatformMessage platformStopped =
