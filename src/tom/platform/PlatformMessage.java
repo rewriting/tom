@@ -35,4 +35,4 @@ public interface PlatformMessage {
 
   public String getMessage();
 
-} // Interface PlatformMessage
+}

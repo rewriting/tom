@@ -40,10 +40,6 @@ public class NullTemplate extends TemplateClass {
     super(gomClass,gomEnvironment);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) { /* does nothing */ }
 

@@ -122,24 +122,21 @@ public class Expander {
         new Object[]{moduleName});
     GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
-    if(importedModuleFile == null) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.moduleNotFound.getMessage(),
-          new Object[]{moduleName});
+    if (null == importedModuleFile) {
+      GomMessage.error(getLogger(),moduleName,0,
+          GomMessage.moduleNotFound);
       return null;
     }
     CharStream inputStream = null;
     try {
       inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.fileNotFound.getMessage(),
-          new Object[]{moduleName+".gom"});
+      GomMessage.error(getLogger(),moduleName+".gom",0,
+          GomMessage.fileNotFound);
       return null;
     } catch (java.io.IOException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.fileNotFound.getMessage(),
-          new Object[]{moduleName+".gom"});
+      GomMessage.error(getLogger(),moduleName+".gom",0,
+          GomMessage.fileNotFound);
       return null;
     }
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
@@ -149,9 +146,9 @@ public class Expander {
       Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-            re.getMessage(),moduleName+".gom", lexer.getLine()));
+      GomMessage.error(getLogger(),moduleName+".gom", lexer.getLine(),
+          GomMessage.detailedParseException,
+          re.getMessage());
       return null;
     }
     return result;

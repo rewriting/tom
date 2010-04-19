@@ -1,9 +1,34 @@
+2010-04-16 tavaresc
+  * New version of the new typer: The methods applying inference rules are transformed in strategies.
+
+2010-04-15 pem
+  * introduced a unique way top log errors:
+	  TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
+	  (same for warning, info, fine, finer, ...)
+	* DO NOT USE logger.log(...) anymore
+  * removed BuildReduceTerm (was not used)
+
+2010-04-14 tavaresc
+  * add an argument to TypeVar and move it from TargetLanguageType to 
+   TomType
+
+2010-04-14 pem
+  * bootinstall
+  * re-introduce error detection (in desugarer)
+  * detect nested anonymous list (a,(b,c))
+
+2010-04-13 tavaresc
+  * add a newtyper option in GOM ant task
+
+2010-04-11 pem
+  * removed a type-expansion which was performed twice in the TyperPlugin (this is now more efficient)
+
 2010-04-08 pem
   * removed unecessary code in Typer (work was done twice!)
 
 2010-04-07 pem
   * add a newtyper option in ant task
-	* introduced TargetLanguageType for TLType and EmptyTargetLanguageType
+  * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
 
 2010-03-31 tavaresc
   * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
@@ -1252,8 +1277,8 @@
 
 2003-09-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-        * bootinstall
-        * bumped to 1.4beta
+  * bootinstall
+  * bumped to 1.4beta
 
 2003-09-15  Pierre-Etienne Moreau  <pem@escher.loria.fr>
   * user defined labels are allowed in patterns
@@ -1276,7 +1301,7 @@
 
   * src/jtom/compiler/TomExpander.t: fix a problem when expanding RewriteRule
   * bumped to 1.3delta
-        * bootinstall
+  * bootinstall
   * src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
   * src/jtom/tools/ASTFactory.java: removed previous dollar/backquote parser
   * src/jtom/checker/TomChecker.t: adapted to DollarTerm
@@ -1288,7 +1313,7 @@
 
 2003-08-21    <julien.guyon@loria.fr>
   * Remove Flags.java, add TomSyntaxChecker.java and TomTypeChecker.java
-        * Simplify Tom interface
+  * Simplify Tom interface
 
 2003-08-20    <pem@bach>
         * bootinstall
@@ -1424,7 +1449,7 @@
 2003-03-16    <pem@bach>
 
   * src/jtom/compiler/TomExpander.t:
-          - support for integer in backQuotedTerm
+    - support for integer in backQuotedTerm
 
   * src/jtom/parser/TomParser.jj:
     - disjunction of patterns are now allowed
@@ -1440,7 +1465,7 @@
   * examples/Reach.t: based on runtime.GenericTraversal
 
   * tutorial/poly/2_advanced:
-          - poly tutorial is now based on runtime.GenericTraversal
+    - poly tutorial is now based on runtime.GenericTraversal
     - bug: single-line comments are not supported in imported signature
 
 2003-03-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
@@ -1480,7 +1505,7 @@
 
 2003-01-18    <pem@bach>
 
-        * Tom source and generated code are now synchronized
+  * Tom source and generated code are now synchronized
   * bootinstall
   * --pretty flag added for de-synchronization
   * src/jtom/tools/SingleLineOutputCode.java:

@@ -24,18 +24,19 @@
 
 package tom.gom;
 
-import tom.platform.PlatformMessage;
+import tom.platform.BasicFormatter;
+import tom.platform.BasicPlatformMessage;
+import tom.platform.PlatformLogRecord;
 
 /**
  * The GomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
-public class GomMessage implements PlatformMessage {
-  private final String message;
+public class GomMessage extends BasicPlatformMessage {
 
   private GomMessage(String message) {
-    this.message = message;
+    super(message);
   }
 
   public static final GomMessage loggingInitializationFailure =
@@ -44,7 +45,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage simpleMessage =
     new GomMessage("{0}:{1,number,integer}: {2}");
   public static final GomMessage exceptionMessage =
-    new GomMessage("{0}: Unhandled exception occurs with input {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
+    new GomMessage("{0}: Unhandled exception occurs in class {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
 
   // GomOptionManager error messages
   public static final GomMessage optionNotFound =
@@ -166,10 +167,6 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage gomChoiceWarning =
     new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
 
-  public String toString() {
-    return message;
-  }
-
   // SymbolTable
   public static final GomMessage nonExhaustiveMatch =
     new GomMessage("Non exhaustive match");
@@ -190,13 +187,6 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage constructorName =
     new GomMessage("Constructor exception : {0}");
 
-
   // Message level
   public static final int GOM_INFO = 0;
-  // Default error line
-  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
-
-  public String getMessage() {
-    return message;
-  }
 }

@@ -130,7 +130,9 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
         String initArgument = input;
         boolean success = true;
         statusHandler.clear();
-        if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
+        if(this.testHandler!=null) {
+          Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
+        }
         testHandler = new TestHandler(input);
         if(!testHandler.hasError()) {
           Logger.getLogger(loggerRadical).addHandler(this.testHandler);
@@ -188,13 +190,13 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
         }
       }
       if(!globalSuccess) {
-        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),new Integer(globalNbOfErrors));
+        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),Integer.valueOf(globalNbOfErrors));
         //return 1;
         this.runResult = 1;
         ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();
       } /*else if(globalNbOfWarnings>0) {
         getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
-            new Integer(globalNbOfWarnings));
+            Integer.valueOf(globalNbOfWarnings));
         //return 0;
         this.runResult = 0;
         PluginPlatformFactory.getInstance().decreaseThreadsCounter();
@@ -202,7 +204,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
       }*/ 
       else {
         if (globalNbOfWarnings>0) {
-          getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),new Integer(globalNbOfWarnings));
+          getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),Integer.valueOf(globalNbOfWarnings));
         }
         this.runResult = 0;
         ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();

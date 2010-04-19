@@ -59,6 +59,7 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
@@ -85,9 +86,11 @@ public class BackendPlugin extends GomGenericPlugin {
       classList = (GomClassList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomBackend", "[GomClassList,GomEnvironment]",
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
+          new Object[] {
+            "GomBackend",
+            "[GomClassList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }
@@ -128,8 +131,8 @@ public class BackendPlugin extends GomGenericPlugin {
                   getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.generationIssue.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.generationIssue,
           getStreamManager().getInputFileName());
     } else {
       getLogger().info("GOM Code generation phase ("

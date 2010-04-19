@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import tom.library.sl.*;
 import tom.gom.backend.CodeGen;
-import tom.gom.GomMessage;
 import tom.gom.SymbolTable;
 import tom.gom.exception.*;
 import tom.gom.GomStreamManager;
@@ -411,23 +410,23 @@ public class GraphExpander {
                 getEnvironment().followPath((Path)`p);
                 Position realDest = getEnvironment().getPosition();
             if(!realDest.equals(dest)) {
-                //the subterm pointed was a pos (in case of previous switch)
-                //and we must only update the relative position
+                /* the subterm pointed was a pos (in case of previous switch) */
+                /* and we must only update the relative position */
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
                 return Path@`sortname@.make(realDest.sub(current));
             }  else {
-                //switch the rel position and the pointed subterm
+                /* switch the rel position and the pointed subterm */
 
-                // 1. construct the new relative position
+                /* 1. construct the new relative position */
                 @`sortname@ relref = Path@`sortname@.make(current.sub(dest));
 
-                // 2. update the part to change
+                /* 2. update the part to change */
                 `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
 
-                // 3. save the subterm updated
+                /* 3. save the subterm updated */
                 @`sortname@ subterm = (@`sortname@) getEnvironment().getSubject();
 
-                // 4. replace at dest the subterm by the new relative pos
+                /* 4. replace at dest the subterm by the new relative pos */
                 getEnvironment().setSubject(relref);
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
                 return subterm;
@@ -453,38 +452,38 @@ public class GraphExpander {
             p@@Path@`sortname@(_*) -> {
               Position current = getEnvironment().getPosition();
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
-              //relative pos from the source to the external
+              /* relative pos from the source to the external */
               if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
                 current = current.changePrefix(source,target);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
-              //relative pos from the external to the source
+              /* relative pos from the external to the source */
               if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){
                 dest = dest.changePrefix(source,target);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
-              //relative pos from the target to the external
+              /* relative pos from the target to the external */
               if(current.hasPrefix(target) && !dest.hasPrefix(source) && !dest.hasPrefix(target)){
                 current = current.changePrefix(target,source);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
-              //relative pos from the external to the target
+              /* relative pos from the external to the target */
               if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){
                 dest = dest.changePrefix(target,source);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
-              //relative pos from the source to the target
+              /* relative pos from the source to the target */
               if(current.hasPrefix(source) && dest.hasPrefix(target)){
                 current = current.changePrefix(source,target);
                 dest = dest.changePrefix(target,source);
                 return Path@`sortname@.make(dest.sub(current));
               }
 
-              //relative pos from the target to the source
+              /* relative pos from the target to the source */
               if(current.hasPrefix(target) && dest.hasPrefix(source)){
                 current = current.changePrefix(target,source);
                 dest = dest.changePrefix(source,target);
@@ -648,7 +647,6 @@ public class GraphExpander {
           if (map.containsKey(`label)) {
             Position target = (Position) map.get(`label);
             /*@CodeGen.generateCode(`FullSortClass(sDecl))@ ref = */ return (@CodeGen.generateCode(`FullSortClass(sDecl))@) (Path@`sortName@.make(target.sub(getEnvironment().getPosition())).getCanonicalPath());
-            //return ref;
           }
         }
       }
@@ -658,8 +656,10 @@ public class GraphExpander {
         CollectRefCode.append(%[
       visit @`sortName@ {
         p@@Path@`sortName@(_*) -> {
-          //use String instead of Position because containskey method does
-          //not use the method equals to compare values
+          /* 
+           * use String instead of Position because containskey method does
+           * not use the method equals to compare values
+           */
           String target =
             getEnvironment().getPosition().add((Path)`p).getCanonicalPath().toString();
           if (map.containsKey(target)){
@@ -699,7 +699,7 @@ public class GraphExpander {
             getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
             `OnceTopDown(CollectSubterm@`sortName@(label,info)).visit(getEnvironment());
             getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
-            //test if it is not a ref to a cycle
+            /* test if it is not a ref to a cycle */
             if (info.sharedTerm!=null) {
               map.put(`label,old);
               return `Lab@`sortName@(label,info.sharedTerm);
@@ -719,14 +719,14 @@ public class GraphExpander {
         term@@Lab@`sortName@[label@`sortName@=label,term@`sortName@=subterm] -> {
           Position current = getEnvironment().getPosition();
           if (label.equals(`label)) {
-            //test if it is not a cycle
+            /* test if it is not a cycle */
             if (!info.omegaRef.hasPrefix(current)) {
-              //return a ref
+              /* return a ref */
               info.sharedTerm = `subterm;
               return `Ref@`sortName@(label);
             }
             else {
-              //do not return a ref and stop to collect
+              /* do not return a ref and stop to collect */
               return `term;
             }
           }

@@ -239,7 +239,7 @@ public class TestBuiltin {
   public void testMatchString2() {
     assertTrue("Roger".equals(matchString("Roger")));
   }
-  
+ 
   @Test
   public void testMatchString3() {
     String s = "abcaabbccabc";
@@ -262,16 +262,25 @@ public class TestBuiltin {
       concString(_*,'ab',_*) -> { ab++; }
       concString(_*,'bc',_*) -> { bc++; }
       concString(_*,'abc',_*) -> { abc++; }
+      (_*,'a',_*) -> { a++; }
+      (_*,'b',_*) -> { b++; }
+      (_*,'c',_*) -> { c++; }
+      (_*,'a',_*,'b',_*) -> { a_b++; }
+      (_*,'a',_*,'c',_*) -> { a_c++; }
+      (_*,'b',_*,'c',_*) -> { b_c++; }
+      (_*,'ab',_*) -> { ab++; }
+      (_*,'bc',_*) -> { bc++; }
+      (_*,'abc',_*) -> { abc++; }
     }
-    assertEquals(a,4);
-    assertEquals(b,4);
-    assertEquals(c,4);
-    assertEquals(a_b,11);
-    assertEquals(a_c,11);
-    assertEquals(b_c,11);
-    assertEquals(ab,3);
-    assertEquals(bc,3);
-    assertEquals(abc,2);
+    assertEquals(a,2*4);
+    assertEquals(b,2*4);
+    assertEquals(c,2*4);
+    assertEquals(a_b,2*11);
+    assertEquals(a_c,2*11);
+    assertEquals(b_c,2*11);
+    assertEquals(ab,2*3);
+    assertEquals(bc,2*3);
+    assertEquals(abc,2*2);
   }
 
   @Test

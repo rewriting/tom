@@ -84,26 +84,26 @@ public class GomStreamManager {
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
     // paths are separated by ':'
-    StringTokenizer st = new StringTokenizer(imports, ":");
-    while( st.hasMoreTokens() ) {
+    final StringTokenizer st = new StringTokenizer(imports, ":");
+    while (st.hasMoreTokens() ) {
       String next = st.nextToken();
       userImportList.add(new File(next).getAbsoluteFile());
     }
     // computes destdir
     String dest = (String)optionManager.getOptionValue("destdir");
-    if ( dest.length() > 0 ) {
+    if (dest.length() > 0 ) {
       // note : destdir is `.` by default
       setDestDir(dest);
     }
     // package and name for apigen
     String pack = (String)optionManager.getOptionValue("package");
-    if(pack.length() > 0) {
+    if (pack.length() > 0) {
       setDefaultPackagePath(pack);
     }
     // output file name for intermediate
     String intermediateName =
       (String)optionManager.getOptionValue("intermediateName");
-    if(intermediateName.length() > 0) {
+    if (intermediateName.length() > 0) {
       this.intermediateName = intermediateName;
     }
   }
@@ -193,7 +193,8 @@ public class GomStreamManager {
         inputReader = new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.fileNotFound,
           new Object[]{inputFileName});
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "getInputReader:IOExceptionManipulation",

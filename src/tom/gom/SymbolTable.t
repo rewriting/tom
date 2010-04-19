@@ -38,9 +38,7 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import tom.gom.exception.*;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.tools.error.GomRuntimeException;
 
 public class SymbolTable {
 
@@ -126,8 +124,9 @@ public class SymbolTable {
   public String getFullSortClassName(String sort) {
     SortDescription desc = sorts.get(sort);
     if (null == desc) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException,
+          sort);
       return null;
     }
     %match(desc) {
@@ -137,15 +136,16 @@ public class SymbolTable {
           + `m.toLowerCase() + ".types." + sort;
       }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonExhaustiveMatch);
     return null;
   }
 
   public String getFullConstructorClassName(String cons) {
     ConstructorDescription desc = constructors.get(cons);
-    if(null == desc) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(), cons);
+    if (null == desc) {
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException, cons);
       return null;
     }
     %match(desc) {
@@ -156,7 +156,8 @@ public class SymbolTable {
         return getFullSortClassName(`s).toLowerCase() + "." + cons;
       }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonExhaustiveMatch);
     return null;
   }
 
@@ -210,8 +211,8 @@ public class SymbolTable {
       %match(desc) { VariadicConstructorDescription[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException,
           cons);
       return false;
     }
@@ -227,8 +228,8 @@ public class SymbolTable {
       }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException,
           cons);
       return false;
     }
@@ -244,8 +245,8 @@ public class SymbolTable {
       }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException,
           cons);
       return false;
     }
@@ -261,7 +262,8 @@ public class SymbolTable {
       }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), cons);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException, cons);
       return false;
     }
   }
@@ -363,8 +365,8 @@ public class SymbolTable {
   public String qualifiedRawSortId(String sort) {
     SortDescription desc = sorts.get(sort);
     if (null == desc) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException, sort);
       return null;
     }
     %match(desc) {
@@ -374,15 +376,16 @@ public class SymbolTable {
           + `m.toLowerCase() + ".types." + rawSort(sort);
       }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonExhaustiveMatch);
     return null;
   }
 
   public String qualifiedRawConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
     if (null == desc) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(), cons);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException, cons);
       return null;
     }
     %match(desc) {
@@ -390,7 +393,8 @@ public class SymbolTable {
         return qualifiedRawSortId(`s).toLowerCase() + "." + `rawCons(cons);
       }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonExhaustiveMatch.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonExhaustiveMatch);
     return null;
   }
 
@@ -503,8 +507,8 @@ public class SymbolTable {
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException, sort);
       return false;
     }
   }
@@ -518,7 +522,8 @@ public class SymbolTable {
       %match(i) { PatternTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException, sort);
       return false;
     }
   }
@@ -532,7 +537,8 @@ public class SymbolTable {
       %match(i) { AtomTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException, sort);
       return false;
     }
   }
@@ -546,8 +552,8 @@ public class SymbolTable {
       %match(i) { !NoFreshSort[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredSortException.getMessage(), sort);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredSortException, sort);
       return false;
     }
   }
@@ -580,7 +586,8 @@ public class SymbolTable {
     try {
       return constructors.get(constructor).getSortSymbol();
     } catch(NullPointerException e) {
-      getLogger().log(Level.SEVERE, GomMessage.undeclaredConstructorException.getMessage(), constructor);
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException, constructor);
       return null;
     }
   }
@@ -604,13 +611,13 @@ public class SymbolTable {
         }
       }
     } catch (NullPointerException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.undeclaredConstructorException.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.undeclaredConstructorException,
           constructor);
       return null;
     }
-    getLogger().log(Level.SEVERE,
-        GomMessage.cannotAccessToChildConstructor.getMessage(),
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.cannotAccessToChildConstructor,
         new Object[] {omega,constructor});
     return null;
   }
@@ -621,8 +628,8 @@ public class SymbolTable {
         return (tom.gom.adt.symboltable.types.stringlist.StringList)
           sorts.get(sort).getFreshInfo().getAccessibleAtoms();
       } catch(NullPointerException e) {
-        getLogger().log(Level.SEVERE,
-            GomMessage.undeclaredSortException.getMessage(), sort);
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.undeclaredSortException, sort);
         return null;
       }
     }
@@ -730,7 +737,9 @@ public class SymbolTable {
         if (`n.equals(field)) { return `sort; }
       }
     }
-    getLogger().log(Level.SEVERE,GomMessage.shouldNeverHappen.getMessage(),new Object[]{cons,field});
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.shouldNeverHappen,
+        new Object[]{cons,field});
     return null;
   }
 
@@ -823,7 +832,8 @@ public class SymbolTable {
     %match(d) {
       VariadicConstructorDescription[Domain=dom] -> { return `dom; }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonVariadicOperator.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonVariadicOperator);
     return null;
   }
 
@@ -835,7 +845,8 @@ public class SymbolTable {
     %match(d) {
       VariadicConstructorDescription[SortSymbol=s] -> { return `s; }
     }
-    getLogger().log(Level.SEVERE,GomMessage.nonVariadicOperator.getMessage());
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.nonVariadicOperator);
     return null;
   }
 
@@ -941,9 +952,6 @@ public class SymbolTable {
       setFreshSortInfo(s,`NoFreshSort());
     }
   }
-
-  /* TODO: use GomMessage and the logger instead of RuntimeException */
-  //getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
 
   public Logger getLogger() {
     return Logger.getLogger(getClass().getName());

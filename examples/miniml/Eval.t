@@ -101,7 +101,7 @@ public class Eval {
 
   %strategy HeadBeta() extends Fail() {
     visit LTerm {
-      App(Abs(lam(x,ty,t)),u) -> { return `substitute(t,x,u); }
+      App(Abs(lam(x,_,t)),u) -> { return `substitute(t,x,u); }
       Let(letin(x,u,t)) -> { return `substitute(t,x,u); }
       Fix(fixpoint(x,ty,t)) -> { return `substitute(t,x,Fix(fixpoint(x,ty,t))); }
       Case(t,r) -> { return `caseof(t,r); }

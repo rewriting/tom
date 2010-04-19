@@ -208,8 +208,9 @@ public class PluginFactory implements Plugin {
 
         while( it.hasNext() ) {
           String name = it.next();
-          if( !name.equals(flagName) ) // require that the other aren't
+          if( !name.equals(flagName) ) { // require that the other aren't
             allRequiredOptions =  tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make( tom.platform.adt.platformoption.types.platformoption.PluginOption.make(name, "", "",  tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make( tom.platform.adt.platformoption.types.platformboolean.False.make() ) , "") ,tom_append_list_concPlatformOption(allRequiredOptions, tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() )) ;
+          }
         }
       }
     }
@@ -249,8 +250,8 @@ public class PluginFactory implements Plugin {
             while(!(tom_cl.isEmptyconcTNode())) {
               TNode pluginNode = tom_cl.getHeadconcTNode();
 
-              {{if ( (pluginNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )pluginNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch599_2= (( tom.library.adt.tnode.types.TNode )pluginNode).getAttrList() ; tom.library.adt.tnode.types.TNodeList  tomMatch599_3= (( tom.library.adt.tnode.types.TNode )pluginNode).getChildList() ;if ( "plugin".equals( (( tom.library.adt.tnode.types.TNode )pluginNode).getName() ) ) {if ( ((tomMatch599_2 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch599_2 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) { tom.library.adt.tnode.types.TNodeList  tomMatch599__end__9=tomMatch599_2;do {{if (!( tomMatch599__end__9.isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch599_16= tomMatch599__end__9.getHeadconcTNode() ;if ( (tomMatch599_16 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( "classpath".equals( tomMatch599_16.getName() ) ) {if ( ((tomMatch599_3 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch599_3 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch599_3.isEmptyconcTNode() ) {
- classPaths.add( tomMatch599_16.getValue() ); }}}}}if ( tomMatch599__end__9.isEmptyconcTNode() ) {tomMatch599__end__9=tomMatch599_2;} else {tomMatch599__end__9= tomMatch599__end__9.getTailconcTNode() ;}}} while(!( (tomMatch599__end__9==tomMatch599_2) ));}}}}}}tom_cl
+              {{if ( (pluginNode instanceof tom.library.adt.tnode.types.TNode) ) {if ( ((( tom.library.adt.tnode.types.TNode )pluginNode) instanceof tom.library.adt.tnode.types.tnode.ElementNode) ) { tom.library.adt.tnode.types.TNodeList  tomMatch3_2= (( tom.library.adt.tnode.types.TNode )pluginNode).getAttrList() ; tom.library.adt.tnode.types.TNodeList  tomMatch3_3= (( tom.library.adt.tnode.types.TNode )pluginNode).getChildList() ;if ( "plugin".equals( (( tom.library.adt.tnode.types.TNode )pluginNode).getName() ) ) {if ( ((tomMatch3_2 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch3_2 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) { tom.library.adt.tnode.types.TNodeList  tomMatch3__end__9=tomMatch3_2;do {{if (!( tomMatch3__end__9.isEmptyconcTNode() )) { tom.library.adt.tnode.types.TNode  tomMatch3_16= tomMatch3__end__9.getHeadconcTNode() ;if ( (tomMatch3_16 instanceof tom.library.adt.tnode.types.tnode.AttributeNode) ) {if ( "classpath".equals( tomMatch3_16.getName() ) ) {if ( ((tomMatch3_3 instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode) || (tomMatch3_3 instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode)) ) {if ( tomMatch3_3.isEmptyconcTNode() ) {
+ classPaths.add( tomMatch3_16.getValue() ); }}}}}if ( tomMatch3__end__9.isEmptyconcTNode() ) {tomMatch3__end__9=tomMatch3_2;} else {tomMatch3__end__9= tomMatch3__end__9.getTailconcTNode() ;}}} while(!( (tomMatch3__end__9==tomMatch3_2) ));}}}}}}tom_cl
 
 = tom_cl.getTailconcTNode();
             }

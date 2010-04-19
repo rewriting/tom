@@ -86,7 +86,8 @@ public class TypeExpander {
         Collection<SortDecl> undeclaredSorts = new HashSet<SortDecl>();
         undeclaredSorts.addAll(implicitdecls);
         undeclaredSorts.removeAll(decls);
-        getLogger().log(Level.WARNING, GomMessage.undeclaredSorts.getMessage(),
+        GomMessage.warning(getLogger(),null,0,
+            GomMessage.undeclaredSorts,
             new Object[]{showSortList(undeclaredSorts)});
       }
       if(!implicitdecls.containsAll(decls)) {
@@ -94,7 +95,8 @@ public class TypeExpander {
         Collection<SortDecl> emptySorts = new HashSet<SortDecl>();
         emptySorts.addAll(decls);
         emptySorts.removeAll(implicitdecls);
-        getLogger().log(Level.SEVERE, GomMessage.emptySorts.getMessage(),
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.emptySorts,
             new Object[]{showSortList(emptySorts)});
         return `ConcModule();
       }
@@ -198,7 +200,8 @@ public class TypeExpander {
       }
     }
 
-    getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.unknownSort,
         new Object[]{typename});
     /* If the sort is not known, assume it is a builtin */
     return `BuiltinSortDecl(typename);
@@ -226,8 +229,8 @@ public class TypeExpander {
         return `ConcSlot(Slot(name,declFromTypename(typename,sortDeclList)),newtail*);
       }
     }
-    getLogger().log(Level.SEVERE,
-        GomMessage.malformedProduction.getMessage(),
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.malformedProduction,
         new Object[]{fields.toString()});
     return `ConcSlot();
   }
@@ -244,8 +247,8 @@ public class TypeExpander {
             _*)),_*)),
             _*)) -> {
         if (getGomEnvironment().isBuiltinSort(`typeName)) {
-          getLogger().log(Level.SEVERE,
-              GomMessage.operatorOnBuiltin.getMessage(),
+          GomMessage.error(getLogger(),null,0,
+              GomMessage.operatorOnBuiltin,
               new Object[]{(`typeName)});
           result.add(getGomEnvironment().builtinSort(`typeName));
         } else {
@@ -375,8 +378,8 @@ public class TypeExpander {
         } else {
           SortDecl prevSort = mapNameType.get(`slotName);
           if (!prevSort.equals(`slotSort)) {
-            getLogger().log(Level.SEVERE,
-                GomMessage.slotIncompatibleTypes.getMessage(),
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.slotIncompatibleTypes,
                 new Object[]{`sortName,`slotName,prevSort.getName(),
                              `(slotSort).getName()});
             valid = false;
