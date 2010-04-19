@@ -104,7 +104,7 @@ public class Tom {
     }
 
     if(((Boolean)initConfigurationManager.getOptionManager().getOptionValue("verbose")).booleanValue()) {
-      logger.log(Level.INFO, TomMessage.tomExec.getMessage(), new Object[] {Arrays.toString(args)});
+      TomMessage.info(logger, null, 0, TomMessage.tomExec, Arrays.toString(args));
     }
 
     // Retrieve the whole fileList that has to be compiled

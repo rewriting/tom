@@ -43,6 +43,11 @@ import tom.gom.tools.*;
 //public class PluginPlatform extends PluginPlatformBase {
 public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
+  private final static String FORMATTER =
+    "tom.platform.error.formatter";
+  private final static String LOG_FILE =
+    "tom.platform.error.logfile";
+ 
   /** Used to analyse xml configuration file */
   %include{ adt/tnode/TNode.tom }
 
@@ -86,27 +91,43 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
     statusHandler = new StatusHandler();
  
     this.loggerRadical = loggerRadical;
-    Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
+    Logger logger = Logger.getLogger(loggerRadical);
+    logger.addHandler(this.statusHandler);
     //pluginsList = confManager.getPluginsList();
     this.pluginsList = pluginsList;
     this.inputToCompileList = inputToCompileList;
     //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
     this.informationTracker = new HashMap<String,String>();
     runResult = 0; //init
+    String logfile = System.getProperty(LOG_FILE);
+    if (logfile != null) {
+      try {
+        logger.addHandler(new FileHandler(logfile));
+      } catch (java.io.IOException e) {
+        logger.log(Level.SEVERE, PluginPlatformMessage.logfileInvalid.getMessage());
+      }
+    }
+    String formatter = System.getProperty(FORMATTER);
+    if (formatter==null) {
+      for (Handler handler: logger.getHandlers()) {
+        handler.setFormatter(new PlatformFormatter());
+      }
+    } else {
+      try {
+        for (Handler handler: logger.getHandlers()) {
+          handler.setFormatter((java.util.logging.Formatter) Class.forName(formatter).newInstance());
+        }
+      } catch(ClassNotFoundException e) {
+        logger.log(Level.SEVERE, PluginPlatformMessage.formatterNotFound.getMessage());
+      } catch(java.lang.Exception e) {
+        logger.log(Level.SEVERE, PluginPlatformMessage.formatterInvalid.getMessage());
+      }
+    }
   }
 
   public PluginPlatform(List<Plugin> pluginsList, String loggerRadical, List<String> inputToCompileList, Map<String,String> informationTracker) {
-    super(loggerRadical);  
-    statusHandler = new StatusHandler();
- 
-    this.loggerRadical = loggerRadical;
-    Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    //pluginsList = confManager.getPluginsList();
-    this.pluginsList = pluginsList;
-    this.inputToCompileList = inputToCompileList;
-    //inputToCompileList = confManager.getOptionManager().getInputToCompileList();
+    this(pluginsList, loggerRadical, inputToCompileList);
     this.informationTracker = informationTracker;
-    runResult = 0; //init
   }
 
 //modifier les commentaires
