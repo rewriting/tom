@@ -203,8 +203,9 @@ public class RuleExpander {
             %match(var) {
                 VarStar(name) -> { varname = `name; }
             }
-            getLogger().log(Level.WARNING, GomMessage.variadicRuleStartingWithStar.getMessage(),
-                    new Object[]{`(listOp),varname});
+            GomMessage.warning(getLogger(),null,0,
+                GomMessage.variadicRuleStartingWithStar,
+                new Object[]{`(listOp),varname});
         }
       }
       %match(rule) {

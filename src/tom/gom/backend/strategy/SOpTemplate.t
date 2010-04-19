@@ -62,10 +62,6 @@ public class SOpTemplate extends TemplateClass {
         "Wrong argument for SOpTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;

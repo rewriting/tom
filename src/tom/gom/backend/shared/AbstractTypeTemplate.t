@@ -59,10 +59,6 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
         "Bad argument for AbstractTypeTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
     writer.write(

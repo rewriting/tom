@@ -1,5 +1,5 @@
 #!/bin/sh
-    
+
 #default is regression:
 files=`ls *.t 2>/dev/null`
 generation=0

@@ -27,6 +27,7 @@ package tom.engine.expander;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -71,6 +72,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
 
   %typeterm ExpanderPlugin { implement { ExpanderPlugin } }
 
+  private static Logger logger = Logger.getLogger("tom.engine.expander.ExpanderPlugin");
   /** some output suffixes */
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
 
@@ -78,7 +80,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
-    "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
+    "<boolean name='genIntrospector' altName='gi' description='Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
   private static final TomType objectType = ASTFactory.makeType("undefined","Object");
@@ -105,7 +107,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return genIntrospector;
   }
 
-  public void setGenIntrospector(boolean genIntrospector) {
+  private void setGenIntrospector(boolean genIntrospector) {
     this.genIntrospector = genIntrospector;
   }
 
@@ -113,7 +115,7 @@ public class ExpanderPlugin extends TomGenericPlugin {
     return generatedIntrospector;
   }
 
-  public void setGeneratedIntrospector(boolean generatedIntrospector) {
+  private void setGeneratedIntrospector(boolean generatedIntrospector) {
     this.generatedIntrospector = generatedIntrospector;
   }
 
@@ -132,15 +134,13 @@ public class ExpanderPlugin extends TomGenericPlugin {
       setGeneratedIntrospector(false);
       Code expandedTerm = (Code) this.expand((Code)getWorkingTerm());
       // verbose
-      getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(logger,null,0,TomMessage.tomExpandingPhase, Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(expandedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + EXPANDED_SUFFIX, (Code)getWorkingTerm());
       }
     } catch(Exception e) {
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "ExpanderPlugin", e.getMessage()} );
+      TomMessage.error(logger,getStreamManager().getInputFileName(),0,TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
     }
   }
@@ -148,13 +148,6 @@ public class ExpanderPlugin extends TomGenericPlugin {
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(ExpanderPlugin.DECLARED_OPTIONS);
   }
-
-  /*
-   * Expand:
-   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
-   *
-   * abstract list-matching patterns
-   */
 
   private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {
     try {
@@ -164,94 +157,14 @@ public class ExpanderPlugin extends TomGenericPlugin {
     }
   }
 
-  %strategy Expand_makeTerm_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      t@(BQVariable|BQVariableStar)[] -> {
-        return `Expand_once(expander).visitLight(`BuildReducedTerm(TomBase.convertFromBQVarToVar(t),expander.getTermType(t)));
-      }
-    }
-  }
+  /*
+   * Expand_once:
+   * compiles %strategy
+   * - generate instrospectors if -gi is activated
+   * - generate visitLight and visit
+   */
 
   %strategy Expand_once(expander:ExpanderPlugin) extends Identity() {
-    visit BQTerm {
-      BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
-        return TomBase.convertFromVarToBQVar(`var);
-      }
-
-      BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = expander.getSymbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
-        BQTermList tomListArgs = TomBase.slotListToBQTermList(newTermArgs);
-        
-        if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
-        } else if(tomSymbol != null) {
-          if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,expander.getSymbolTable());
-          } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,expander.getSymbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
-          } else {
-            String moduleName = TomBase.getModuleName(`optionList);
-            if(moduleName==null) {
-              moduleName = TomBase.DEFAULT_MODULE_NAME;
-            }
-            return `BuildTerm(name,tomListArgs,moduleName);
-          }
-        } else {
-          return `FunctionCall(name,astType,tomListArgs);
-        }
-
-      }
-
-    } // end match
-
-    visit Instruction {
-      Match(constraintInstructionList, matchOptionList)  -> {
-        Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
-        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
-        ConstraintList negativeConstraint = `concConstraint();        
-        for(ConstraintInstruction constraintInstruction:(concConstraintInstruction)`constraintInstructionList) {
-          /*
-           * the call to Expand performs the recursive expansion
-           * of nested match constructs
-           */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) expander.expand(constraintInstruction);
-
-matchBlock: {
-              %match(newConstraintInstruction) {
-                ConstraintInstruction(constraint,actionInst, option) -> {
-                  Instruction newAction = `actionInst;
-                  /* expansion of RawAction into TypedAction */
-                  %match(actionInst) {
-                    RawAction(x) -> {
-                      newAction=`TypedAction(If(TrueTL(),x,Nop()),constraint,negativeConstraint);
-                    }
-                  }
-                  negativeConstraint = `concConstraint(negativeConstraint*,constraint);
-
-                  /* generate equality checks */
-                  newConstraintInstruction = `ConstraintInstruction(constraint,newAction, option);
-                  /* do nothing */
-                  break matchBlock;
-                }
-
-                _ -> {
-                  System.out.println("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
-                  throw new TomRuntimeException("ExpanderPlugin.Expand: strange ConstraintInstruction: " + `newConstraintInstruction);
-                }
-              }
-            } // end matchBlock
-
-            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
-        }
-
-        return `Match(newConstraintInstructionList, matchOptionList);
-      }
-
-    } // end visit
-
     /*
      * compilation of  %strategy
      */
@@ -302,7 +215,7 @@ matchBlock: {
           }
           //default case (for builtins too): return 0
           instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("0")))));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)),l*);
           /**
            * generate code for:
            * public Object[] getChildren(Object o);
@@ -416,7 +329,7 @@ matchBlock: {
           }
           //default case: return null
           instructions = `concInstruction(instructions*,Return(Composite(CompositeTL(ITL("null")))));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)),l*);
 
           /**
            * generate code for:
@@ -498,14 +411,14 @@ matchBlock: {
           }
           //default case: return o
           instructions = `concInstruction(instructions*,Return(objectVar));
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,objectArrayVar),objectType,EmptyType(),AbstractBlock(instructions)));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,objectArrayVar),objectType,EmptyType(),AbstractBlock(instructions)),l*);
 
           /**
            * generate code for:
            * public Object getChildAt(Object o, int i);
            */
           funcName = "getChildAt";//function name
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar),objectType,EmptyType(),Return(Composite(CompositeTL(ITL("getChildren(o)[i]"))))),l*);
 
           /**
            * generate code for:
@@ -517,7 +430,7 @@ matchBlock: {
             newChildren[i] = child;
             return setChildren(o, newChildren);
           ]%;
-          l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))));
+          l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(objectVar,intVar,childVar),objectType,EmptyType(),CodeToInstruction(TargetLanguageToCode(ITL(code)))),l*);
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
 
@@ -526,22 +439,18 @@ matchBlock: {
          */
         DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        for(TomVisit visit_ins:(concTomVisit)`visitList) {
-          BQTermList subjectListAST = `concBQTerm();
-          %match(visit_ins) {
-            VisitTerm(vType@Type[TomType=type],constraintInstructionList,_) -> {              
-              BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
-              subjectListAST = `concBQTerm(subjectListAST*,arg,introspectorVar);
-              String funcName = "visit_" + `type; // function name
-              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
-              //return default strategy.visitLight(arg)
-              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-              Instruction returnStatement = null;
-              returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
-              InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)));
-              dispatchInfo.put(`vType,funcName);
-            }              
+        %match(visitList) {
+          concTomVisit(_*,VisitTerm(vType@Type[TomType=type],constraintInstructionList,_),_*) -> {              
+            BQTerm arg = `BQVariable(concOption(orgTrack),Name("tom__arg"),vType);//arg subjectList
+            String funcName = "visit_" + `type; // function name
+            BQTermList subjectListAST = `concBQTerm(arg,introspectorVar);
+            //return default strategy.visitLight(arg)
+            // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
+            Instruction returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
+            Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
+            InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+            l = `concDeclaration(MethodDef(Name(funcName),concBQTerm(arg,introspectorVar),vType,visitfailureType,AbstractBlock(instructions)),l*);
+            dispatchInfo.put(`vType,funcName);
           }
         }
 
@@ -591,12 +500,12 @@ matchBlock: {
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 ExpressionToBQTerm(Bottom(Type("Object",EmptyTargetLanguageType()))),TomBase.convertFromBQVarToVar(environmentVar)));
           Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
-          l = `concDeclaration(l*,MethodDef(
+          l = `concDeclaration(MethodDef(
                 Name("_" + dispatchInfo.get(type)),
                 concBQTerm(arg,introspectorVar),
                 type,
                 visitfailureType,
-                ifThenElse));
+                ifThenElse),l*);
         }
         ifList = `concInstruction(ifList*,              
             If(testEnvNotNull,
@@ -608,7 +517,7 @@ matchBlock: {
             methodparameterType,
             visitfailureType,
             AbstractBlock(ifList));
-        l = `concDeclaration(l*,visitLightDeclaration);
+        l = `concDeclaration(visitLightDeclaration,l*);
         return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration

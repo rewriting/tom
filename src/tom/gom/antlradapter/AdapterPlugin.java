@@ -70,10 +70,11 @@ public class AdapterPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment) arg[2]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{
-            "AntlrAdapter", "[ModuleList,HookDeclList,GomEnvironment]",
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
+          new Object[] {
+            "AntlrAdapter",
+            "[ModuleList,HookDeclList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
   }

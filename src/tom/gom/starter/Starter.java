@@ -54,8 +54,8 @@ public class Starter extends GomGenericPlugin {
     if (arg[0] instanceof String) {
       fileName = (String)arg[0];
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"GomStarter", "[String]",
             getArgumentArrayString(arg)});
     }

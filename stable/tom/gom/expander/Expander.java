@@ -176,10 +176,10 @@ public class Expander {
 
   public ImportList getImportList(GomModule module) {
     ImportList imports =  tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ;
-    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch478_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( ((tomMatch478_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch478_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch478__end__7=tomMatch478_2;do {{if (!( tomMatch478__end__7.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch478_11= tomMatch478__end__7.getHeadConcSection() ;if ( (tomMatch478_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
+    {{if ( (module instanceof tom.gom.adt.gom.types.GomModule) ) {if ( ((( tom.gom.adt.gom.types.GomModule )module) instanceof tom.gom.adt.gom.types.gommodule.GomModule) ) { tom.gom.adt.gom.types.SectionList  tomMatch1_2= (( tom.gom.adt.gom.types.GomModule )module).getSectionList() ;if ( ((tomMatch1_2 instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || (tomMatch1_2 instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) ) { tom.gom.adt.gom.types.SectionList  tomMatch1__end__7=tomMatch1_2;do {{if (!( tomMatch1__end__7.isEmptyConcSection() )) { tom.gom.adt.gom.types.Section  tomMatch1_11= tomMatch1__end__7.getHeadConcSection() ;if ( (tomMatch1_11 instanceof tom.gom.adt.gom.types.section.Imports) ) {
 
-        imports = tom_append_list_ConcImportedModule( tomMatch478_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
-      }}if ( tomMatch478__end__7.isEmptyConcSection() ) {tomMatch478__end__7=tomMatch478_2;} else {tomMatch478__end__7= tomMatch478__end__7.getTailConcSection() ;}}} while(!( (tomMatch478__end__7==tomMatch478_2) ));}}}}}
+        imports = tom_append_list_ConcImportedModule( tomMatch1_11.getImportList() ,tom_append_list_ConcImportedModule(imports, tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() ));
+      }}if ( tomMatch1__end__7.isEmptyConcSection() ) {tomMatch1__end__7=tomMatch1_2;} else {tomMatch1__end__7= tomMatch1__end__7.getTailConcSection() ;}}} while(!( (tomMatch1__end__7==tomMatch1_2) ));}}}}}
 
     return imports;
   }

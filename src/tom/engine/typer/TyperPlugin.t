@@ -73,7 +73,6 @@ public class TyperPlugin extends TomGenericPlugin {
 
   %typeterm TyperPlugin { implement { TyperPlugin } }
 
-
   /** some output suffixes */
   public static final String TYPED_SUFFIX       = ".tfix.typed";
   public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
@@ -84,6 +83,13 @@ public class TyperPlugin extends TomGenericPlugin {
     "<options>" +
     "<boolean name='type' altName='' description='TyperPlugin (activated by default)' value='true'/>" +
     "</options>";
+
+  /**
+   * inherited from OptionOwner interface (plugin)
+   */
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(TyperPlugin.DECLARED_OPTIONS);
+  }
 
   /** the kernel typer acting at very low level */
   private KernelTyper kernelTyper;
@@ -106,20 +112,19 @@ public class TyperPlugin extends TomGenericPlugin {
       Code typedCode = null;
       try {
         kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
-        //no more necessary: realised by the desugarer
-        //Code syntaxExpandedTerm = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((Code)getWorkingTerm());
 
         updateSymbolTable();
 
-        Code syntaxExpandedCode = expandType((Code)getWorkingTerm());
-        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedCode);
+        Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
 
-        Code stringExpandedCode = `TopDownIdStopOnSuccess(typeString(this)).visitLight(variableExpandedCode);
-        typedCode = `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedCode);
-        typedCode = kernelTyper.propagateVariablesTypes(typedCode);
+        typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
+
+        // replace 'abc' by concString('a','b','c')
+        typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
 
         /* transform each BackQuoteTerm into its compiled form */
-        typedCode = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(typedCode);
+        typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
+        //System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -139,43 +144,7 @@ public class TyperPlugin extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      logger.log(Level.INFO, "The default typer is not in use.");
-    }
-
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private Code expandType(Code subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  /*
-   * Replace a TomTypeAlone by its expanded form (TomType)
-   */
-  private TomTerm expandType(TomTerm subject) {
-    try {
-      return `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeType: failure on " + subject);
-    }
-  }
-
-  %strategy expandType(typer:TyperPlugin) extends Identity() {
-    visit TomType {
-      subject@Type(tomType,EmptyTargetLanguageType()) -> {
-        TomType type = typer.getSymbolTable().getType(`tomType);
-        if(type != null) {
-          return type;
-        } else {
-          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
-        }
-      }
+      TomMessage.info(logger,null,0,TomMessage.typerNotUsed);
     }
   }
 
@@ -184,32 +153,17 @@ public class TyperPlugin extends TomGenericPlugin {
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
    * - backquote are typed
-   * - each TomTypeAlone is replaced by the corresponding TomType
+   * - replace a TomType(_,EmptyTargetLanguageType()) by its expanded form (TomType)
    * - default IsFsymDecl and MakeDecl are added
    */
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
 
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:symbolTable.keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
-      /*
-       * add default IsFsymDecl unless it is a builtin type
-       * add default IsFsymDecl and MakeDecl unless:
-       *  - it is a builtin type
-       *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
-       */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
-        tomSymbol = addDefaultMake(tomSymbol);
-        tomSymbol = addDefaultIsFsym(tomSymbol);
-      }
       try {
-        tomSymbol = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
-        tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
-        tomSymbol = `TopDownIdStopOnSuccess(typeBQAppl(this)).visitLight(`tomSymbol);
+        tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -218,110 +172,46 @@ public class TyperPlugin extends TomGenericPlugin {
     }
   }
 
-  private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
-    %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
-        return tomSymbol;
-      }
-      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
-        Declaration isfsym = `IsFsymDecl(name,BQVariable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom),FalseTL(),OriginTracking(Name("is_fsym"),line,file));
-        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
-      }
-    }
-    return tomSymbol;
-  }
-
-  private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
-    %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
-        return tomSymbol;
-      }
-      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
-        //build variables for make
-        BQTermList argsAST = `concBQTerm();
-        int index = 0;
-        for(TomType subtermType:(concTomType)`domain) {
-          BQTerm variable = `BQVariable(concOption(),Name("t"+index),subtermType);
-          argsAST = `concBQTerm(argsAST*,variable);
-          index++;
-        }
-        BQTerm functionCall = `FunctionCall(name,codomain,argsAST);
-        Declaration make = `MakeDecl(name,codomain,argsAST,BQTermToInstruction(functionCall),
-            OriginTracking(Name("make"),line,file));
-        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(make),X2*));
-      }
-    }
-    return tomSymbol;
-  }
-  /**
-   * inherited from OptionOwner interface (plugin)
-   */
-  public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TyperPlugin.DECLARED_OPTIONS);
-  }
-
   /*
-   * The 'typeTermApplTomSyntax' phase replaces:
-   * - each 'TermAppl' by its typed record form:
-   *    placeholders are not removed
-   *    slotName are attached to arguments
+   * transform a BQAppl into its compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
+   * can only be done after typing because BQAppl are treated by the typing algorithm
    */
-  %strategy typeTermApplTomSyntax(typer:TyperPlugin) extends Identity() {
-    visit TomTerm {
-      TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
-        return typer.typeTermAppl(`option,`nameList,`args,`constraints);
-      }
-
-      XMLAppl[Option=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
-        //System.out.println("typeXML in:\n" + subject);
-        return typer.typeXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
+  %strategy TransformBQAppl(typer:TyperPlugin) extends Identity() {
+    visit BQTerm {
+      BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
+        TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
+        BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(typer)).visitLight(`l);
+        //System.out.println("BackQuoteTerm: " + `tomName);
+        //System.out.println("tomSymbol: " + tomSymbol);
+        if(TomBase.hasConstant(`optionList)) {
+          return `BuildConstant(name);
+        } else if(tomSymbol != null) {
+          if(TomBase.isListOperator(tomSymbol)) {
+            return ASTFactory.buildList(`name,args,typer.getSymbolTable());
+          } else if(TomBase.isArrayOperator(tomSymbol)) {
+            return ASTFactory.buildArray(`name,args,typer.getSymbolTable());
+          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
+          } else {
+            String moduleName = TomBase.getModuleName(`optionList);
+            if(moduleName==null) {
+              moduleName = TomBase.DEFAULT_MODULE_NAME;
+            }
+            return `BuildTerm(name,args,moduleName);
+          }
+        } else {
+          return `FunctionCall(name,EmptyType(),args);
+        }
       }
     }
   }
-
-    /*
-     * this post-processing phase replaces untyped (universalType) codomain
-     * by their precise type (according to the symbolTable)
-     */
-    %strategy updateCodomain(typer:TyperPlugin) extends `Identity() {
-      visit Declaration {
-        GetHeadDecl[] -> {
-            throw new TomRuntimeException("updateCodomain");
-        }
-
-        decl@GetHeadDecl[Opname=Name(opName)] -> {
-          TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
-          TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
-          if(codomain.length()==1) {
-            Declaration t = (Declaration)`decl;
-            t = t.setCodomain(codomain.getHeadconcTomType());
-            return t;
-          } else {
-            throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-          }
-        }
-
-        decl@GetHeadDecl[Variable=BQVariable[AstType=domain]] -> {
-          TomSymbol tomSymbol = typer.getSymbolFromType(`domain);
-          if(tomSymbol != null) {
-            TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
-
-            if(codomain.length()==1) {
-              Declaration t = (Declaration)`decl;
-              t = t.setCodomain(codomain.getHeadconcTomType());
-              return t;
-            } else {
-              throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-            }
-          }
-        }
-      } // end match
-    }
 
     /*
      * replace conc('abc') by conc('a','b','c')
+     * cannot be performed in the desugarer since anonymous symbols have to be already typed and expanded
+     * indeed (_,x@'bc') is expanded into (_,x@('b','c')): the nested anonymous list cannot be resolved  
      */
-    %strategy typeString(typer:TyperPlugin) extends `Identity() {
+    %strategy desugarString(typer:TyperPlugin) extends Identity() {
       visit TomTerm {
         appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
@@ -398,277 +288,4 @@ public class TyperPlugin extends TomGenericPlugin {
         return `concSlot(head,tail*);
       }
     }
-
-    /*
-     * replaces 'TermAppl' by its 'RecordAppl' form
-     * when no slotName exists, the position becomes the slotName
-     */
-    protected TomTerm typeTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
-      TomName headName = nameList.getHeadconcTomName();
-      if(headName instanceof AntiName) {
-        headName = ((AntiName)headName).getName();
-      }
-      String opName = headName.getString();
-      TomSymbol tomSymbol = getSymbolFromName(opName);
-
-
-      //System.out.println("typeTermAppl: " + tomSymbol);
-      //System.out.println("  nameList = " + nameList);
-
-      if(tomSymbol==null && args.isEmptyconcTomTerm()) {
-        return `RecordAppl(option,nameList,concSlot(),constraints);
-      }
-
-      SlotList slotList = `concSlot();
-      Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
-      if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-        for(TomTerm arg:(concTomTerm)args) {
-          try {
-            TomTerm subterm = typeStrategy.visitLight(arg);
-            TomName slotName = `EmptyName();
-            /*
-             * we cannot optimize when subterm.isUnamedVariable
-             * since it can be constrained
-             */	  
-            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          } catch(tom.library.sl.VisitFailure e) {
-            System.out.println("should not be there");
-          }
-        }
-      } else {
-        PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-        for(TomTerm arg:(concTomTerm)args) {
-          try{
-            TomTerm subterm = typeStrategy.visitLight(arg);
-            TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-            /*
-             * we cannot optimize when subterm.isUnamedVariable
-             * since it can be constrained
-             */	  
-            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-            pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-          } catch(tom.library.sl.VisitFailure e) {
-            System.out.println("should not be there");
-          }
-        }
-      }
-
-      return `RecordAppl(option,nameList,slotList,constraints);
-    }
-
-    /*
-     * transform a BQAppl into its compiled form
-     */
-    %strategy typeBQAppl(typer:TyperPlugin) extends Identity() {
-      visit BQTerm {
-        BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
-          TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
-          BQTermList args  = `TopDownIdStopOnSuccess(typeBQAppl(typer)).visitLight(`l);
-          //System.out.println("BackQuoteTerm: " + `tomName);
-          //System.out.println("tomSymbol: " + tomSymbol);
-          if(TomBase.hasConstant(`optionList)) {
-            return `BuildConstant(name);
-          } else if(tomSymbol != null) {
-            if(TomBase.isListOperator(tomSymbol)) {
-              return ASTFactory.buildList(`name,args,typer.getSymbolTable());
-            } else if(TomBase.isArrayOperator(tomSymbol)) {
-              return ASTFactory.buildArray(`name,args,typer.getSymbolTable());
-            } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-              return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
-            } else {
-              String moduleName = TomBase.getModuleName(`optionList);
-              if(moduleName==null) {
-                moduleName = TomBase.DEFAULT_MODULE_NAME;
-              }
-              return `BuildTerm(name,args,moduleName);
-            }
-          } else {
-            return `FunctionCall(name,EmptyType(),args);
-          }
-        }
-      }
-    }
-
-    private TomList sortAttributeList(TomList attrList) {
-      %match(attrList) {
-        concTomTerm() -> { return attrList; }
-        concTomTerm(X1*,e1,X2*,e2,X3*) -> {
-          %match(e1, e2) {
-            TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
-              TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-
-            TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
-              TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-
-            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name1))]),_*)],
-              RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name2))]),_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-
-            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name1))]),_*)],
-              RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name2))]),_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-          
-            /**
-            BQAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
-              BQAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-
-            BQAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
-              BQAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-
-            BQAppl[Args=concTomTerm(BQAppl[AstName=Name(name1)],_*)],
-              BQAppl[Args=concTomTerm(BQAppl[AstName=Name(name2)],_*)] -> {
-                if(`name1.compareTo(`name2) > 0) {
-                  return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                }
-              }
-              */
-          }
-        }
-      }
-      return attrList;
-    }
-
-    private OptionList convertOriginTracking(String name,OptionList optionList) {
-      Option originTracking = TomBase.findOriginTracking(optionList);
-      %match(originTracking) {
-        OriginTracking[Line=line, FileName=fileName] -> {
-          return `concOption(OriginTracking(Name(name),line,fileName));
-        }
-      }
-      System.out.println("Warning: no OriginTracking information");
-      return `concOption();
-    }
-
-    protected TomTerm typeXMLAppl(OptionList optionList, TomNameList nameList,
-        TomList attrList, TomList childList, ConstraintList constraints) {
-      boolean implicitAttribute = TomBase.hasImplicitXMLAttribut(optionList);
-      boolean implicitChild     = TomBase.hasImplicitXMLChild(optionList);
-
-      TomList newAttrList  = `concTomTerm();
-      TomList newChildList = `concTomTerm();
-      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
-      if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
-      if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
-
-      /*
-       * the list of attributes should not be typed before the sort
-       * the sortAttribute is extended to compare RecordAppl
-       */
-
-      //System.out.println("attrList = " + attrList);
-      attrList = sortAttributeList(attrList);
-      //System.out.println("sorted attrList = " + attrList);
-
-      /*
-       * Attributes: go from implicit notation to explicit notation
-       */
-      Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
-      for(TomTerm attr:(concTomTerm)attrList) {
-        try {
-          TomTerm newPattern = typeStrategy.visitLight(attr);
-          newAttrList = `concTomTerm(newPattern,newAttrList*);
-          if(implicitAttribute) {
-            newAttrList = `concTomTerm(star,newAttrList*);
-          }
-        } catch(tom.library.sl.VisitFailure e) {
-          System.out.println("should not be there");
-        }
-      }
-      newAttrList = newAttrList.reverse();
-
-      /*
-       * Childs: go from implicit notation to explicit notation
-       */
-      for(TomTerm child:(concTomTerm)childList) {
-        try {
-          TomTerm newPattern = typeStrategy.visitLight(child);
-          newChildList = `concTomTerm(newPattern,newChildList*);
-          if(implicitChild) {
-            if(newPattern.isVariableStar()) {
-              // remove the previously inserted pattern
-              newChildList = newChildList.getTailconcTomTerm();
-              if(newChildList.getHeadconcTomTerm().isUnamedVariableStar()) {
-                // remove the previously inserted star
-                newChildList = newChildList.getTailconcTomTerm();
-              }
-              // re-insert the pattern
-              newChildList = `concTomTerm(newPattern,newChildList*);
-            } else {
-              newChildList = `concTomTerm(star,newChildList*);
-            }
-          }
-        } catch(tom.library.sl.VisitFailure e) {
-          System.out.println("should not be there");
-        }
-      }
-      newChildList = newChildList.reverse();
-
-      /*
-       * encode the name and put it into the table of symbols
-       */
-      TomNameList newNameList = `concTomName();
-matchBlock: 
-      {
-        %match(nameList) {
-          concTomName(Name("_")) -> {
-            break matchBlock;
-          }
-
-          concTomName(_*,Name(name),_*) -> {
-            newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(getSymbolTable(),name)));
-          }
-        }
-      }
-
-      /*
-       * a single "_" is converted into an UnamedVariable to match
-       * any XML node
-       */
-      TomTerm xmlHead;
-
-      if(newNameList.isEmptyconcTomName()) {
-        xmlHead = `UnamedVariable(concOption(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
-      } else {
-        xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
-      }
-      try {
-        SlotList newArgs = `concSlot(
-            PairSlotAppl(Name(Constants.SLOT_NAME),
-              typeStrategy.visitLight(xmlHead)),
-            PairSlotAppl(Name(Constants.SLOT_ATTRLIST),
-              typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
-            PairSlotAppl(Name(Constants.SLOT_CHILDLIST),
-              typeStrategy.visitLight(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
-
-        TomTerm result = `RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraints);
-
-        //System.out.println("typeXML out:\n" + result);
-        return result;
-      } catch(tom.library.sl.VisitFailure e) {
-        //must never be executed
-        return star;
-      }
-    }
-  }
+}

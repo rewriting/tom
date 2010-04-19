@@ -50,10 +50,6 @@ public class StratMappingTemplate extends MappingTemplateClass {
         "Wrong argument for MappingTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
     generate(writer);
   }

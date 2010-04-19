@@ -46,25 +46,25 @@
 
   <plugins>
     <plugin name="Starter"
-      class="tom.engine.starter.TomStarter"/>
+      class="tom.engine.starter.StarterPlugin"/>
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
-    <plugin name="Desugar"
-      class="tom.engine.desugarer.Desugarer"/>
+    <plugin name="Desugarer"
+      class="tom.engine.desugarer.DesugarerPlugin"/>
     <plugin name="Typer"
-      class="tom.engine.typer.TomTyper"/>
-    <plugin name="NewVersionTyper"
-      class="tom.engine.typer.Typer"/>
+      class="tom.engine.typer.TyperPlugin"/>
+    <plugin name="New Typer"
+      class="tom.engine.typer.NewTyper"/>
     <plugin name="Type checker"
-      class="tom.engine.checker.TomTypeChecker"/>
+      class="tom.engine.checker.TypeCheckerPlugin"/>
     <plugin name="Expander"
-      class="tom.engine.expander.Expander"/>
+      class="tom.engine.expander.ExpanderPlugin"/>
     <plugin name="Compiler"
       class="tom.engine.compiler.Compiler"/>
     <plugin name="Optimizer"
-      class="tom.engine.optimizer.TomOptimizer"/>
+      class="tom.engine.optimizer.OptimizerPlugin"/>
     <plugin name="Backend"
-      class="tom.engine.backend.TomBackend"/>
+      class="tom.engine.backend.BackendPlugin"/>
   </plugins>
   <optionmanager class="tom.engine.TomOptionManager">
     <options>

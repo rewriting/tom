@@ -114,7 +114,7 @@ int noattack(ATerm arg0, ATerm arg1, ATerm arg2) {
   int res = FALSE;
   
   %match(Term arg0, Term arg1, Term arg2) {
-    N1,N2,empty() -> {
+    _,_,empty() -> {
       res = TRUE;
       goto end;
     }
@@ -139,7 +139,7 @@ ATerm nqueens_strat(ATerm arg0) {
 
     /* dk(nqueens-rule-0,nqueens-rule-N) */
   %match(Term v0) {
-    nqueens(zero(),size) -> {
+    nqueens(zero(),_) -> {
       res = empty();
       goto stratLab;
     }

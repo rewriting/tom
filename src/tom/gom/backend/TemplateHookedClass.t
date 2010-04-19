@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import tom.gom.Gom;
+import tom.gom.GomMessage;
 import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
@@ -57,10 +58,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   %include { ../adt/objects/Objects.tom }
   %include { boolean.tom }
-
-  public /*synchronized*/ GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
@@ -133,6 +130,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
+      if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
+        tomParams.add("--newtyper");
+      }
       if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
         tomParams.add("--optimize");
       }
@@ -185,7 +185,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
         //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         if (res != 0 ) {
-          getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
+          GomMessage.error(getLogger(),null,0,
+              tom.gom.GomMessage.tomFailure
+              ,new Object[]{file_path});
           return res;
         }
       } catch (IOException e) {

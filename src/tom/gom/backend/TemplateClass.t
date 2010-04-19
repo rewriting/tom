@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public abstract class TemplateClass {
   protected GomClass gomClass;
   protected ClassName className;
-  protected GomEnvironment gomEnvironment;
+  private GomEnvironment gomEnvironment;
 
   public TemplateClass(GomClass gomClass, GomEnvironment gomEnvironment) {
     this.gomClass = gomClass;
@@ -42,7 +42,9 @@ public abstract class TemplateClass {
     this.gomEnvironment = gomEnvironment;
   }
 
-  public abstract GomEnvironment getGomEnvironment();
+  public GomEnvironment getGomEnvironment() {
+    return this.gomEnvironment;
+  }
 
   %include { ../adt/objects/Objects.tom}
 

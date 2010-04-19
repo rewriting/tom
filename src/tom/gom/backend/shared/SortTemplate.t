@@ -68,10 +68,6 @@ public class SortTemplate extends TemplateHookedClass {
         "Bad argument for SortTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   protected String generateInterface() {
     String interfaces =  super.generateInterface();
     if (interfaces.equals("")) return "";

@@ -170,7 +170,7 @@ public class PILFactory {
       }
 
 
-      TypedAction(_,_,_) -> {
+      RawAction[] -> {
         return "targetLanguageInstructions";
       }
 

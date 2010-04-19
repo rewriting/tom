@@ -156,6 +156,7 @@
            nowarn="${nowarnings}"
            optimize="${optimize}"
            optimize2="${optimize2}"
+           newtyper="${newtyper}"
            multithread="${multithread}"
            inline="${inline}"
            inlineplus="${inlineplus}"

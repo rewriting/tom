@@ -26,6 +26,9 @@
 
 package tom.platform;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * The PluginPlatformMessage class is a container for error messages, using the
  * typesafe enum pattern
@@ -34,8 +37,12 @@ package tom.platform;
 public class PluginPlatformMessage implements PlatformMessage {
   private final String message;
 
+  private static BasicFormatter formatter;
+
+
   private PluginPlatformMessage(String message) {
     this.message = message;
+    this.formatter = new BasicFormatter();
   }
 
   // Factory messages
@@ -86,4 +93,45 @@ public class PluginPlatformMessage implements PlatformMessage {
     return message;
   }
 
-} // class PluginPlatformMessage
+  public static final String DEFAULT_ERROR_FILE_NAME = "unknown file";
+  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
+
+
+  private static void logMessage(Level level,Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
+    if(msgArgs==null) {
+      msgArgs = new Object[]{};
+    }
+    if(fileName==null) {
+      fileName=DEFAULT_ERROR_FILE_NAME;
+      errorLine=DEFAULT_ERROR_LINE_NUMBER;
+    }
+
+    if(level==Level.FINER) {
+      logger.log(level, msg.getMessage(), msgArgs);
+    } else {
+      logger.log(level, formatter.format(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine)));
+    }
+  }
+
+  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.SEVERE, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.WARNING, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+  public static void info(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.INFO, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+  public static void fine(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.FINE, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+  public static void finer(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
+    logMessage(Level.FINER, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+
+}

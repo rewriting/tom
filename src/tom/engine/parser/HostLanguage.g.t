@@ -69,6 +69,7 @@ options{
     %include{ ../adt/tomsignature/TomSignature.tom }
   //--------------------------
 
+  private static Logger logger = Logger.getLogger("tom.engine.parser.HostParser");
   // the lexer selector
   private TokenStreamSelector selector = null;
 
@@ -246,9 +247,7 @@ options{
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
 	  testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          getLogger().log(new PlatformLogRecord(Level.INFO,
-                TomMessage.includedFileAlreadyParsed,
-                currentFile, fileName, getLine()));
+          TomMessage.info(logger, currentFile, getLine(), TomMessage.includedFileAlreadyParsed,fileName);
         }
         return;
       }
@@ -302,9 +301,7 @@ options{
     boolean last = subject.endsWith(escapeChar);
     int numSeparator = split.length + 1 + (last ? 1 : 0);
     if (numSeparator%2==1) {
-        getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badNumberOfAt,
-              new Object[]{},
-              currentFile, getLine()));
+      TomMessage.error(logger, currentFile, getLine(), TomMessage.badNumberOfAt);
     }
     //System.out.println("split.length: " + split.length);
     boolean metaMode = true;
@@ -385,9 +382,6 @@ options{
 		return sb.toString();
   }
 
-  private Logger getLogger() {
-    return Logger.getLogger(getClass().getName());
-  }
 }
 
 // The grammar starts here
@@ -528,9 +522,7 @@ gomsignature [List<Code> list] throws TomException
       }
       config_xml = config_xml.getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(
-          Level.FINER,
-          "Failed to get canonical path for "+config_xml.getPath());
+      TomMessage.finer(logger, null, 0, TomMessage.failGetCanonicalPath,config_xml.getPath());
     }
 
     String destDir = getStreamManager().getDestDir().getPath();
@@ -583,19 +575,20 @@ gomsignature [List<Code> list] throws TomException
       tmpFile = File.createTempFile("tmp", ".gom", getStreamManager().getDestDir()).getCanonicalFile();
       parameters.add(tmpFile.getPath());
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "IO Exception when creating gom temp file" + e.getMessage());
+      TomMessage.error(logger, null, 0, TomMessage.ioExceptionTempGom,e.getMessage());
       e.printStackTrace();
       return;
     }
 
-    getLogger().log(Level.FINE,"Writing temp file for gom: " +tmpFile.getPath());
+    TomMessage.fine(logger, null, 0, TomMessage.writingExceptionTempGom,tmpFile.getPath());
+
     try {
       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile)));
       writer.write(new String(gomCode.getBytes("UTF-8")));
       writer.flush();
       writer.close();
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "Failed writing gom temp file: " + e.getMessage());
+      TomMessage.error(logger, null, 0, TomMessage.writingFailureTempGom,e.getMessage());
       return;
     }
 
@@ -616,12 +609,8 @@ gomsignature [List<Code> list] throws TomException
     //5 tom.platform.PluginPlatformFactory.getInstance().getInformationTracker().put(java.lang.Thread.currentThread().getId(),null);
     res = tom.gom.Gom.exec(params,informationTracker);
     tmpFile.delete();
-    if (res != 0 ) {
-       getLogger().log(
-           new PlatformLogRecord(Level.SEVERE,
-             TomMessage.gomFailure,
-             new Object[]{currentFile,Integer.valueOf(initialGomLine)},
-             currentFile, initialGomLine));
+    if(res != 0) {
+      TomMessage.error(logger, currentFile, initialGomLine, TomMessage.gomFailure,currentFile,Integer.valueOf(initialGomLine));
       return;
     }
     String generatedMapping = (String)informationTracker.get(tom.engine.tools.TomGenericPlugin.KEY_LAST_GEN_MAPPING);

@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.concurrent.*;
 
-import tom.gom.GomMessage;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.tools.GomEnvironment;
 

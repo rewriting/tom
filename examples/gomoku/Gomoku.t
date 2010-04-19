@@ -322,7 +322,7 @@ class Gomoku {
       }
       // 1 in 6
       // ____x_
-      concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),empty[],_*),_*) -> {
+      concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(_),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           board.addValue(`x1,`y1,value6);
           board.addValue(`x2,`y2,value6);
@@ -330,7 +330,7 @@ class Gomoku {
           //}
       }
       // ___x__
-      concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),empty[],_*),_*) -> {
+      concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),pawn(_),empty(x3,y3),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           board.addValue(`x1,`y1,value6);
           board.addValue(`x2,`y2,value6);
@@ -339,7 +339,7 @@ class Gomoku {
       }
       //1 in 5
       // x____
-      concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
+      concPawnList(_*,concPawn(_*,pawn(_),empty(x1,y1),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
         //if(`c == patternColor) {
           board.addValue(`x1,`y1,value7);
           board.addValue(`x2,`y2,value7);
@@ -348,7 +348,7 @@ class Gomoku {
           //}
       }
       // _x___
-      concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
+      concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(_),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
         //if(`c == patternColor) {
           board.addValue(`x1,`y1,value7);
           board.addValue(`x2,`y2,value7);
@@ -357,7 +357,7 @@ class Gomoku {
           //}
       }
       // __x__
-      concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),empty(x4,y4),_*),_*) -> {
+      concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(_),empty(x3,y3),empty(x4,y4),_*),_*) -> {
         //if(`c == patternColor) {
           board.addValue(`x1,`y1,value7);
           board.addValue(`x2,`y2,value7);

@@ -26,9 +26,10 @@
 package tom.engine.desugarer;
 
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -74,9 +75,9 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
-
   %typeterm DesugarerPlugin { implement { tom.engine.desugarer.DesugarerPlugin }}
 
+  private static Logger logger = Logger.getLogger("tom.engine.desugarer.DesugarerPlugin");
   private SymbolTable symbolTable;
   private int freshCounter = 0;
 
@@ -99,28 +100,27 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   public void run(Map informationTracker) {
-    // long startChrono = System.currentTimeMillis();
+    long startChrono = System.currentTimeMillis();
     try {
       setSymbolTable(getStreamManager().getSymbolTable());
       updateSymbolTable();
-      Code syntaxExpandedTerm = (Code) getWorkingTerm();
+      Code code = (Code) getWorkingTerm();
 
       // replace underscores by fresh variables
-      syntaxExpandedTerm = 
-        `TopDown(DesugarUnderscore(this)).visitLight(syntaxExpandedTerm);
+      code = `TopDown(DesugarUnderscore(this)).visitLight(code);
 
-      //replace TermAppl and XmlAppl by RecordAppl
-      syntaxExpandedTerm = 
-        `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(syntaxExpandedTerm);
+      // replace TermAppl and XmlAppl by RecordAppl
+      code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
 
-      setWorkingTerm(syntaxExpandedTerm);      
+      setWorkingTerm(code);      
 
+      // verbose
+      TomMessage.info(logger,null,0,TomMessage.tomDesugaringPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
-      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{
-          getClass().getName(), 
-          getStreamManager().getInputFileName(), 
-          e.getMessage()} );
+      TomMessage.error(logger,
+          getStreamManager().getInputFileName(), 0,
+          TomMessage.exceptionMessage, e.getMessage());
       e.printStackTrace();
       return;
     }
@@ -141,18 +141,14 @@ public class DesugarerPlugin extends TomGenericPlugin {
   }
 
   /**
-   * updateSymbol is called after a first syntax expansion phase
-   * this phase updates the symbolTable according to the typeTable
+   * updateSymbol is called before a first syntax expansion phase
+   * this phase updates the symbolTable 
    * this is performed by recursively traversing each symbol
    * - default IsFsymDecl and MakeDecl are added
+   * - TermAppl are transformed into RecordAppl
    */
   public void updateSymbolTable() {
-    SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
-
-    while(it.hasNext()) {
-      String tomName = it.next();
+    for(String tomName:getSymbolTable().keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
        * add default IsFsymDecl unless it is a builtin type
@@ -160,7 +156,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
        *  - it is a builtin type
        *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+      if(!getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
         tomSymbol = addDefaultMake(tomSymbol);
         tomSymbol = addDefaultIsFsym(tomSymbol);
       }
@@ -170,7 +166,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
@@ -242,20 +238,21 @@ public class DesugarerPlugin extends TomGenericPlugin {
     String opName = headName.getString();
     TomSymbol tomSymbol = getSymbolFromName(opName);
 
-
     //System.out.println("replaceTermAppl: " + tomSymbol);
     //System.out.println("  nameList = " + nameList);
 
+    /*
+     * may be for constant patterns: f(1) for instance
+     */
     if(tomSymbol==null && args.isEmptyconcTomTerm()) {
       return `RecordAppl(option,nameList,concSlot(),constraints);
     }
 
     SlotList slotList = `concSlot();
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
     if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
       for(TomTerm arg:(concTomTerm)args) {
         try {
-          TomTerm subterm = typeStrategy.visitLight(arg);
+          TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
           TomName slotName = `EmptyName();
           /*
            * we cannot optimize when subterm.isUnamedVariable
@@ -268,25 +265,26 @@ public class DesugarerPlugin extends TomGenericPlugin {
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-      for(TomTerm arg:(concTomTerm)args) {
-        try{
-          TomTerm subterm = typeStrategy.visitLight(arg);
-          TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-          /*
-           * we cannot optimize when subterm.isUnamedVariable
-           * since it can be constrained
-           */	  
-          slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-        } catch(tom.library.sl.VisitFailure e) {
-          System.out.println("should not be there");
+
+      if(pairNameDeclList.length() != args.length()) {
+        TomMessage.error(logger,getStreamManager().getInputFileName(),TomBase.findOriginTracking(option).getLine(),
+            TomMessage.symbolNumberArgument, opName, pairNameDeclList.length(), args.length());
+      } else {
+
+        for(TomTerm arg:(concTomTerm)args) {
+          try {
+            TomTerm subterm = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(arg);
+            TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
+            /*
+             * we cannot optimize when subterm.isUnamedVariable
+             * since it can be constrained
+             */	  
+            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
+            pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+          } catch(tom.library.sl.VisitFailure e) {
+            System.out.println("should not be there");
+          }
         }
-      }
-      %match(pairNameDeclList){
-        !concPairNameDecl() -> { 
-          throw new TomRuntimeException("The symbol '"
-                +
-                `pairNameDeclList.getHeadconcPairNameDecl().getSlotName().getString() + "' has a bad arity"); }
       }
     }
 
@@ -458,5 +456,5 @@ matchBlock:
     System.out.println("Warning: no OriginTracking information");
     return `concOption();
   }
-
+    
 }
