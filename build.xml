@@ -226,7 +226,8 @@
   make the tomcompile task call tom or tomsrc depending on withsource
   property
   -->
-  <target name="-withstable" unless="withsource" depends="init.task.stable">
+  <target name="-withstable" unless="withsource">
+    <antcall target="init.task.stable"/>
     <presetdef name="tomcompile">
       <tom config="${stable.configfile}">
         <classpath refid="tom.classpath"/>
