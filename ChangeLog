@@ -1,38 +1,59 @@
+2010-04-20 jcb
+ * tom/engine log system should be completely ported
+ * tom/gom log system should be completely ported
+
+2010-04-19 emilie
+ * add two new properties tom.platform.error.formatter for specifying a
+   specific formatter for the platform and tom.platform.error.logfile
+   for putting log records into a specific file
+ * start to write a specific Formatter for regression tests
+
+
+2010-04-19 jcb
+ * Continue to port log system
+ * fix a bug in examples/stategycompiler/StategyCompiler.t caused by single-line
+   comments
+
+2010-04-16 tonio
+ * factorize error methods
+ * factorize part of log handling
+ * formatting
+
 2010-04-16 tavaresc
-  * New version of the new typer: The methods applying inference rules are transformed in strategies.
+ * New version of the new typer: The methods applying inference rules are transformed in strategies.
 
 2010-04-15 pem
-  * introduced a unique way top log errors:
-	  TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
-	  (same for warning, info, fine, finer, ...)
-	* DO NOT USE logger.log(...) anymore
-  * removed BuildReduceTerm (was not used)
+ * introduced a unique way top log errors:
+   TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
+   (same for warning, info, fine, finer, ...)
+ * DO NOT USE logger.log(...) anymore
+ * removed BuildReduceTerm (was not used)
 
 2010-04-14 tavaresc
-  * add an argument to TypeVar and move it from TargetLanguageType to 
+ * add an argument to TypeVar and move it from TargetLanguageType to 
    TomType
 
 2010-04-14 pem
-  * bootinstall
-  * re-introduce error detection (in desugarer)
-  * detect nested anonymous list (a,(b,c))
+ * bootinstall
+ * re-introduce error detection (in desugarer)
+ * detect nested anonymous list (a,(b,c))
 
 2010-04-13 tavaresc
-  * add a newtyper option in GOM ant task
+ * add a newtyper option in GOM ant task
 
 2010-04-11 pem
-  * removed a type-expansion which was performed twice in the TyperPlugin (this is now more efficient)
+ * removed a type-expansion which was performed twice in the TyperPlugin (this is now more efficient)
 
 2010-04-08 pem
-  * removed unecessary code in Typer (work was done twice!)
+ * removed unecessary code in Typer (work was done twice!)
 
 2010-04-07 pem
-  * add a newtyper option in ant task
-  * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
+ * add a newtyper option in ant task
+ * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
 
 2010-03-31 tavaresc
-  * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
-    but also in the rest of the code (which is not necessarily a InstructionToCode).
+ * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
+   but also in the rest of the code (which is not necessarily a InstructionToCode).
 
 2010-03-31 pem
  * switch for TyperPlugin vs NewTyper
@@ -284,7 +305,7 @@
  * fixed bug #5131
 
 2009-04-14 balland
-  * bootinstall
+ * bootinstall
 
 2009-04-09 pem
  * renamed tom-library.jar into tom-runtime.jar
@@ -302,47 +323,47 @@
    (to see how to use this mechanism : jtom/applications/sdfgom)
 
 2009-03-18 pem
-  * bootinstall
+ * bootinstall
 
 2009-01-28 balland
-  * bootinstall
+ * bootinstall
 
 2009-01-28 balland
-  *  In Gom, avoid Tom compiling when it is not necessary
+ * In Gom, avoid Tom compiling when it is not necessary
 
 2009-01-21 jcb
-  * corrected the double display of Tom/Gom help
+ * corrected the double display of Tom/Gom help
 
 2009-01-19 jcb
-  * implement multithreading in Tom
-  * add a new Tom option : --multithread
-    (be careful by using it since there is no thread smart management,
-    therefore performance could not be improved,
-    option deactivated by default)
+ * implement multithreading in Tom
+ * add a new Tom option : --multithread
+   (be careful by using it since there is no thread smart management,
+   therefore performance could not be improved,
+   option deactivated by default)
 
 2009-01-19 pem
-  * re-implement the constraint scheduler using in-place swaping
-  * de-activate the SwitchNumericConstraints rule (it does not terminate)
+ * re-implement the constraint scheduler using in-place swaping
+ * de-activate the SwitchNumericConstraints rule (it does not terminate)
 
 2008-12-19 balland
-  * use generics for visit methods
+ * use generics for visit methods
 
 2008-11-24 jcb
-  * removed singleton pattern in gom module
-  * changed static fields in gom module
-  * adapted few examples that used Gom.getInstance()
+ * removed singleton pattern in gom module
+ * changed static fields in gom module
+ * adapted few examples that used Gom.getInstance()
 
 2008-11-24 jcb
-  * changed static variables and methods in compiler package
-    (in order to become thread-safe)
+ * changed static variables and methods in compiler package
+   (in order to become thread-safe)
 
 2008-04-19 pem
-  * improved the implementation of Position and Environment
-    (no longer use getHead and getTail)
-  * added a int[] toIntArray() method in Path
+ * improved the implementation of Position and Environment
+   (no longer use getHead and getTail)
+ * added a int[] toIntArray() method in Path
 
 2008-04-18 pem
-  * bootinstall
+ * bootinstall
 
 2008-04-17 pem
   * improve class Position
