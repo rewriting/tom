@@ -42,9 +42,9 @@ import tom.gom.tools.*;
  */
 public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
-  private final static String FORMATTER =
+  public final static String FORMATTER =
     "tom.platform.error.formatter";
-  private final static String LOG_FILE =
+  public final static String LOG_FILE =
     "tom.platform.error.logfile";
  
   /** Used to analyse xml configuration file */

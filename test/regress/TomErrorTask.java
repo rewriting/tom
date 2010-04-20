@@ -22,14 +22,22 @@
  **/
 
 package regress;
+
+import tom.platform.PluginPlatform;
 import tom.engine.tools.ant.TomTask;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.types.Environment.Variable;
 
 public class TomErrorTask extends TomTask {
 
   protected void compile() {
     try {
+      Variable var = new Variable();
+      var.setKey(PluginPlatform.FORMATTER);
+      var.setValue("tom.platform.RegressFormatter");
+      javaRunner.addSysproperty(var);
+
       super.compile();
     } catch(BuildException e) {
       return;
