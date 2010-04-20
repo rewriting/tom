@@ -393,6 +393,9 @@ public class TomMessage extends BasicPlatformMessage {
   
   public static final TomMessage typerNotUsed =
       new TomMessage("The default typer is not in use");
+  public static final TomMessage newTyperNotUsed =
+    new TomMessage("The new typer is not in use.");
+
   /*
    * FINER
    */

@@ -159,7 +159,7 @@ public class NewTyper extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      logger.log(Level.INFO, "The new typer is not in use.");
+      TomMessage.info(logger, null, 0, TomMessage.newTyperNotUsed);
     }
   }
 
