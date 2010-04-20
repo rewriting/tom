@@ -60,8 +60,7 @@ public class RuleExpander {
       Tree ast = (Tree) parser.ruleset().getTree();
       rulelist = (RuleList) RuleAdaptor.getTerm(ast);
     } catch (org.antlr.runtime.RecognitionException e) {
-      getLogger().log(Level.SEVERE, "Cannot parse rules",
-          new Object[]{});
+      GomMessage.error(getLogger(), null, 0, GomMessage.rulesParsingFailure);
       return `ConcHookDecl();
     }
     return expand(rulelist);
@@ -83,8 +82,8 @@ public class RuleExpander {
             rulesForOperator.put(decl,`RuleList(rules*,rl));
           }
         } else {
-          getLogger().log(Level.WARNING, "Discard rule \"{0}\"",
-              new Object[]{/*XXX:prettyprint*/`(rl)});
+          GomMessage.warning(getLogger(), null, 0, 
+              GomMessage.discardRuleWarning, /*XXX:prettyprint*/`(rl));
         }
       }
     }
@@ -121,8 +120,8 @@ public class RuleExpander {
             }
           }
           if (count>1) {
-            getLogger().log(Level.WARNING, "Multiple rules for empty {0}",
-                new Object[]{ opDecl.getName() });
+            GomMessage.warning(getLogger(), null, 0, 
+                GomMessage.multipleRulesForEmpty, opDecl.getName());
           }
           /* Then handle rules for insert */
           if (!nonEmptyRules.isEmptyRuleList()) {
@@ -381,8 +380,7 @@ public class RuleExpander {
       throw new GomRuntimeException("Unexpected strategy failure!");
     }
     if (ref.val == null) {
-      getLogger().log(Level.SEVERE, "Unknown constructor {0}",
-          new Object[]{name});
+      GomMessage.error(getLogger(), null, 0, GomMessage.unknownConstructor, name);
     }
     return ref.val;
   }

@@ -104,6 +104,11 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("An error occured when closing reader");
   public static final GomMessage unableToUseReaderMessage =
     new GomMessage("An error occured when initializing reader");
+  public static final GomMessage parsedModules =
+    new GomMessage("Parsed Module:\n{0}");
+  public static final GomMessage parsingPhase =
+    new GomMessage("GOM Parsing phase ({0} ms)");
+
 
   // verbose messages
   public static final GomMessage gomParsingPhase =
@@ -117,6 +122,16 @@ public class GomMessage extends BasicPlatformMessage {
 
   public static final GomMessage iOException =
     new GomMessage("IO Exception reading file `{0}`\n{1}");
+  public static final GomMessage iOExceptionManipulation =
+    new GomMessage("IOExceptionManipulation");
+  public static final GomMessage iOExceptionManipulationInputReader =
+    new GomMessage("getInputReader:IOExceptionManipulation {0} : {1}");
+  public static final GomMessage iOExceptionManipulationInputParent =
+    new GomMessage("getInputParent:IOExceptionManipulation {0} : {1}");
+
+  //Gom Antlr Adapter
+  public static final GomMessage gomAntlrAdapterGenerationPhase =
+    new GomMessage("GOM Antlr Adapter generation phase ({0} ms)");
 
   // GomExpander
   public static final GomMessage moduleNotFound =
@@ -125,6 +140,16 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("Problems encountered expanding module {0}");
   public static final GomMessage hookExpansionIssue =
     new GomMessage("Problems encountered expanding hooks for module {0}");
+  public static final GomMessage moduleToAnalyse =
+    new GomMessage("GomExpander:moduleToAnalyse {0}");
+  public static final GomMessage fileSeeking =
+    new GomMessage("Seeking for file {0}");
+  public static final GomMessage gomExpansionPhase = 
+    new GomMessage("GOM Expansion phase ({0} ms)");
+  public static final GomMessage viewerToTreeFailure = 
+    new GomMessage("Viewer.toTree failed {0}");
+  public static final GomMessage importedModules = 
+    new GomMessage("Imported Modules:\n{0}");
 
   // GomTypeExpander
   public static final GomMessage operatorOnBuiltin =
@@ -151,10 +176,59 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("Sort {0} not found: missing include ?");
   public static final GomMessage slotIncompatibleTypes =
     new GomMessage("Incompatible slot types in sort {0}: slot {1} has sort {2} and {3}. Two slots with the same name in the same sort should have same type");
+  public static final GomMessage typedModules =
+    new GomMessage("Typed Modules:\n{0}");
+  public static final GomMessage gomTypeExpansionPhase = 
+    new GomMessage("GOM Type Expansion phase ({0} ms)");
+  public static final GomMessage typedHooks =
+    new GomMessage("Typed Hooks:\n{0}");
+  public static final GomMessage gomHookExpansionPhase = 
+    new GomMessage("GOM Hook Expansion phase ({0} ms)");
+
+  //FreshExpander
+  public static final GomMessage gomFreshGomExpansionPhase = 
+    new GomMessage("GOM Expansion of freshgom phase ({0} ms)");
+  public static final GomMessage freshExpandedModules = 
+    new GomMessage("Fresh expanded Modules:\n{0}");
+
+  //GraphExpander
+  public static final GomMessage signatureExtension = 
+    new GomMessage("Extend the signature");
+  public static final GomMessage referencedModules = 
+    new GomMessage("Referenced Modules: {0}");
+  public static final GomMessage signatureExtensionSuccess = 
+    new GomMessage("Signature extension succeeds");
 
   // RuleExpander
   public static final GomMessage variadicRuleStartingWithStar =
     new GomMessage("Rule for variadic operator {0} should not have list variable {1} in head position");
+  public static final GomMessage discardRuleWarning =
+    new GomMessage("Discard rule \"{0}\"");
+  public static final GomMessage multipleRulesForEmpty =
+    new GomMessage("Multiple rules for empty {0}");
+  public static final GomMessage unknownConstructor =
+    new GomMessage("Unknown constructor {0}");
+
+  //HookTypeExpander
+  public static final GomMessage graphRulesHooksAuthOnSorts  =
+    new GomMessage("Graphrules hooks are authorised only on sorts");
+  public static final GomMessage moduleHooksAuthOnCurrentModule =
+    new GomMessage("Hooks on module are authorised only on the current module");
+  public static final GomMessage mustSpecifyAssociatedTheoryForVarOp =
+    new GomMessage("As you use make_insert, make_empty or rules, specify the associated theory for the variadic operator {0}");
+  public static final GomMessage differentDomainCodomain =
+    new GomMessage("Different domain and codomain");
+  public static final GomMessage hookFLAUACACUOnlyOnVarOp =
+    new GomMessage("FL/AU/AC/ACU hook can only be used on a variadic operator");
+  public static final GomMessage graphrulHookAuthorizedStrat =
+    new GomMessage("In graphrules hooks, the default strategies authorized are only Fail and Identity");
+  public static final GomMessage neutralElmtDefNotAllowed =
+    new GomMessage("FL hook does not allow the definition of a neutral element");
+
+  //GraphRuleExpander
+  public static final GomMessage rulesParsingFailure =
+    new GomMessage("Cannot parse rules");
+
   // GomCompiler
   public static final GomMessage compilationIssue =
     new GomMessage("Problems encountered compiling module {0}");
@@ -166,6 +240,14 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("An error occured running Tom when generating {0}");
   public static final GomMessage gomChoiceWarning =
     new GomMessage("There were many possibilities ({0}) in {1} but the first one was chosen : {2}");
+  public static final GomMessage gomGenerationPhase = 
+    new GomMessage("GOM generation phase ({0} ms)");
+  public static final GomMessage impossibleToDeleteTmpFile = 
+    new GomMessage("Could not delete temporary file {0}");
+  public static final GomMessage tomCodeGenerationFailure = 
+    new GomMessage("Failed to generate Tom code: {0}");
+  public static final GomMessage importListComputationFailure = 
+    new GomMessage("Failed compute import list: {0}");
 
   // SymbolTable
   public static final GomMessage nonExhaustiveMatch =
@@ -186,6 +268,18 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("Sort exception : {0}");
   public static final GomMessage constructorName =
     new GomMessage("Constructor exception : {0}");
+
+  //FINE & FINER
+  public static final GomMessage systemInAsInput = 
+    new GomMessage("Gom will use System.in as input");
+  public static final GomMessage processingArgument = 
+    new GomMessage("GomOptionManager: processing argument {0} \"{1}\"");
+  public static final GomMessage compiledModules = 
+    new GomMessage("Compiled Modules:\n{0}");
+  public static final GomMessage gomCompilationPhase = 
+    new GomMessage("GOM Compilation phase ({0} ms)");
+  public static final GomMessage getCanonicalPathFailure = 
+    new GomMessage("Failed to get canonical path for {0}");
 
   // Message level
   public static final int GOM_INFO = 0;

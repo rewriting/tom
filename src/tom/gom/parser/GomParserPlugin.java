@@ -108,7 +108,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       module = (GomModule) GomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
-      getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);
+      GomMessage.fine(getLogger(), null, 0, GomMessage.parsedModules, swriter);
       if (null == module) {
         GomMessage.error(getLogger(),inputFileName, lex.getLine(),GomMessage.detailedParseException);
         return;
@@ -135,9 +135,8 @@ public class GomParserPlugin extends GomGenericPlugin {
         }
       }
     }
-    getLogger().info("GOM Parsing phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+    GomMessage.info(getLogger(), null, 0, GomMessage.parsingPhase, 
+        (System.currentTimeMillis()-startChrono));
     if (intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());

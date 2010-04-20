@@ -379,7 +379,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     try {
       for(; i < argumentList.length; i++) {
         argument = argumentList[i];
-        getLogger().log(Level.FINER, "GomOptionManager: processing argument "+i+" \""+argument+"\"");
+        GomMessage.finer(getLogger(), null, 0, GomMessage.processingArgument,
+            i, argument);
         if(!argument.startsWith("-") || (argument.equals("-")) ) {
           // input file name, should never start with '-' (except for System.in)
           inputFiles.add(argument);

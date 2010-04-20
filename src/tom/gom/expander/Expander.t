@@ -73,8 +73,8 @@ public class Expander {
     Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
     alreadyParsedModule.add(module.getModuleName());
     Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-    getLogger().log(Level.FINER, "GomExpander:moduleToAnalyse {0}",
-        new Object[]{moduleToAnalyse});
+    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse, 
+        moduleToAnalyse);
 
     while (!moduleToAnalyse.isEmpty()) {
       Set<GomModuleName> newModuleToAnalyse = new HashSet<GomModuleName>();
@@ -118,8 +118,7 @@ public class Expander {
   }
 
   private GomModule parse(String moduleName) {
-    getLogger().log(Level.FINE, "Seeking for file {0}",
-        new Object[]{moduleName});
+    GomMessage.fine(getLogger(), null, 0, GomMessage.fileSeeking, moduleName);
     GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
     if (null == importedModuleFile) {

@@ -88,10 +88,8 @@ public class BackendPlugin extends GomGenericPlugin {
     } else {
       GomMessage.error(getLogger(),null,0,
           GomMessage.invalidPluginArgument,
-          new Object[] {
-            "GomBackend",
-            "[GomClassList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+          "GomBackend", "[GomClassList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -113,7 +111,8 @@ public class BackendPlugin extends GomGenericPlugin {
       }
       tomHomePath = new File(tomHome).getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
+      GomMessage.finer(getLogger(),null,0, GomMessage.getCanonicalPathFailure,
+          tomHome);
     }
     int generateStratMapping = 0;
     if (getOptionBooleanValue("withCongruenceStrategies")) {
@@ -127,17 +126,16 @@ public class BackendPlugin extends GomGenericPlugin {
     boolean jmicompatible = getOptionBooleanValue("jmicompatible");
     Backend backend =
       new Backend(templateFactory.getFactory(getOptionManager()),
-                  tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
-                  getStreamManager().getImportList(),getGomEnvironment());
+          tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
+          getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
       GomMessage.error(getLogger(),null,0,
           GomMessage.generationIssue,
           getStreamManager().getInputFileName());
     } else {
-      getLogger().info("GOM Code generation phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+      GomMessage.info(getLogger(), null, 0, GomMessage.gomGenerationPhase, 
+          (System.currentTimeMillis()-startChrono));
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }
