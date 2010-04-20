@@ -96,8 +96,8 @@ public class ConfigurationManager {
     }    
     if(createOptionManager(configurationNode.getDocElem()) == 1) {     
       if( ((Boolean)optionManager.getOptionValue("optimize2")).booleanValue()
-          && !(optionManager.getInputToCompileList().size() == 1 && "-".equals((String)optionManager.getInputToCompileList().get(0))) ) {        
-        logger.log(Level.WARNING, TomMessage.optimizerModifiesLineNumbers.getMessage());
+          && !(optionManager.getInputToCompileList().size() == 1 && "-".equals((String)optionManager.getInputToCompileList().get(0))) ) {
+        TomMessage.warning(logger, null, 0, TomMessage.optimizerModifiesLineNumbers);
       }
       return 1;
     }

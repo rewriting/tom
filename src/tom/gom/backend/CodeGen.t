@@ -27,7 +27,7 @@ package tom.gom.backend;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.util.logging.Logger;
-import java.util.logging.Level;
+import tom.gom.GomMessage;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.code.types.*;
 import tom.gom.adt.objects.types.*;
@@ -35,6 +35,8 @@ import tom.gom.adt.objects.types.*;
 public class CodeGen {
 
   %include { ../adt/code/Code.tom}
+
+  private static Logger logger = Logger.getLogger("CodeGen");
 
   private CodeGen() {
     /* Prevent instantiation */
@@ -51,8 +53,8 @@ public class CodeGen {
     try {
       generateCode(code,writer);
     } catch (java.io.IOException e) {
-      Logger.getLogger("CodeGen").log(
-          Level.SEVERE,"Failed to generate code for " + code);
+      GomMessage.error(logger, null, 0, 
+          GomMessage.codeGenerationFailure , code);
     }
     return writer.toString();
   }
@@ -92,9 +94,8 @@ public class CodeGen {
             return;
           }
         }
-        Logger.getLogger("CodeGen").log(
-            Level.SEVERE,"{Empty,Cons}: expecting varidic, but got {0}",
-            new Object[] { `(opdecl) });
+        GomMessage.error(logger, null, 0, 
+            GomMessage.expectingVariadicButGot, `(opdecl));
         return;
       }
       (IsEmpty|IsCons)[Var=varName,Operator=opdecl] -> {
@@ -114,9 +115,8 @@ public class CodeGen {
             return;
           }
         }
-        Logger.getLogger("CodeGen").log(
-            Level.SEVERE,"Is{Empty,Cons}: expecting varidic, but got {0}",
-            new Object[] { `(opdecl) });
+        GomMessage.error(logger, null, 0, 
+            GomMessage.expectingVariadicButGot, `(opdecl));
         return;
       }
       FullOperatorClass[

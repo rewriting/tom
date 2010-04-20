@@ -248,6 +248,10 @@ public class GomMessage extends BasicPlatformMessage {
     new GomMessage("Failed to generate Tom code: {0}");
   public static final GomMessage importListComputationFailure = 
     new GomMessage("Failed compute import list: {0}");
+  public static final GomMessage codeGenerationFailure = 
+    new GomMessage("Failed to generate code for {0}");
+  public static final GomMessage expectingVariadicButGot = 
+    new GomMessage("{Empty,Cons}: expecting variadic, but got {0}");
 
   // SymbolTable
   public static final GomMessage nonExhaustiveMatch =
