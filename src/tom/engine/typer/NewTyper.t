@@ -141,12 +141,11 @@ public class NewTyper extends TomGenericPlugin {
         setWorkingTerm(typedCode);
 
         // verbose
-        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
+        getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
       } catch (Exception e) {
-        TomMessage.error(logger, getStreamManager().getInputFileName(), 
-            0, TomMessage.exceptionMessage, getClass().getName(), 
-            getStreamManager().getInputFileName(), e.getMessage());
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+            new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
         e.printStackTrace();
         return;
       }
