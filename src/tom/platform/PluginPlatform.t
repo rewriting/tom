@@ -40,7 +40,6 @@ import tom.gom.tools.*;
  * error management.
  *
  */
-//public class PluginPlatform extends PluginPlatformBase {
 public class PluginPlatform extends PluginPlatformBase implements Runnable {
 
   private final static String FORMATTER =
