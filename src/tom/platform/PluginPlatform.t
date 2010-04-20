@@ -103,7 +103,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
       try {
         logger.addHandler(new FileHandler(logfile));
       } catch (java.io.IOException e) {
-        logger.log(Level.SEVERE, PluginPlatformMessage.logfileInvalid.getMessage());
+        PluginPlatformMessage.error(getLogger(), null, 0, PluginPlatformMessage.logfileInvalid);
       }
     }
     String formatter = System.getProperty(FORMATTER);
@@ -117,9 +117,9 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
           handler.setFormatter((java.util.logging.Formatter) Class.forName(formatter).newInstance());
         }
       } catch(ClassNotFoundException e) {
-        logger.log(Level.SEVERE, PluginPlatformMessage.formatterNotFound.getMessage());
+        PluginPlatformMessage.error(getLogger(), null, 0, PluginPlatformMessage.formatterNotFound);
       } catch(java.lang.Exception e) {
-        logger.log(Level.SEVERE, PluginPlatformMessage.formatterInvalid.getMessage());
+        PluginPlatformMessage.error(getLogger(), null, 0, PluginPlatformMessage.formatterInvalid);
       }
     }
   }
@@ -157,9 +157,8 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
         if(!testHandler.hasError()) {
           Logger.getLogger(loggerRadical).addHandler(this.testHandler);
         }
-
-        getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
-        
+        PluginPlatformMessage.finer(getLogger(), null, 0, 
+            PluginPlatformMessage.nowCompiling, input);
         // runs the plugins
         Iterator<Plugin> it = pluginsList.iterator();
         while(it.hasNext()) {
@@ -182,7 +181,7 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
           currentFileName = input;
           plugin.setArgs(pluginArg);
           if(statusHandler.hasError()) {
-            getLogger().log(Level.INFO, PluginPlatformMessage.settingArgError.getMessage());
+            PluginPlatformMessage.info(getLogger(), null, 0, PluginPlatformMessage.settingArgError);
             success = false;`
             globalSuccess = false;
             globalNbOfErrors += statusHandler.nbOfErrors();
@@ -192,8 +191,9 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
           plugin.run(informationTracker);
           
           if(statusHandler.hasError()) {
-            getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
-                new Object[]{plugin.getClass().getName(), initArgument});
+            PluginPlatformMessage.info(getLogger(), null, 0, 
+                PluginPlatformMessage.processingError,
+                plugin.getClass().getName(), initArgument);
             success = false;
             globalSuccess = false;
             globalNbOfErrors += statusHandler.nbOfErrors();
@@ -210,27 +210,33 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
         }
       }
       if(!globalSuccess) {
-        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),Integer.valueOf(globalNbOfErrors));
+        PluginPlatformMessage.info(getLogger(), null, 0, 
+            PluginPlatformMessage.runErrorMessage,
+            Integer.valueOf(globalNbOfErrors));
         //return 1;
         this.runResult = 1;
         ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();
       } /*else if(globalNbOfWarnings>0) {
-        getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
+        PluginPlatformMessage.info(getLogger(), null, 0, 
+            PluginPlatformMessage.runWarningMessage,
             Integer.valueOf(globalNbOfWarnings));
         //return 0;
         this.runResult = 0;
         PluginPlatformFactory.getInstance().decreaseThreadsCounter();
         System.out.println("end run PluginPlatform succeeded");
-      }*/ 
+      } */
       else {
         if (globalNbOfWarnings>0) {
-          getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),Integer.valueOf(globalNbOfWarnings));
+          PluginPlatformMessage.info(getLogger(), null, 0, 
+              PluginPlatformMessage.runWarningMessage,
+              Integer.valueOf(globalNbOfWarnings));
         }
         this.runResult = 0;
-        ///PluginPlatformFactory.getInstance().decreaseThreadsCounter();
+        //PluginPlatformFactory.getInstance().decreaseThreadsCounter();
       }
     } catch(PlatformException e) {
-      getLogger().log(Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
+      PluginPlatformMessage.error(getLogger(), null, 0, 
+          PluginPlatformMessage.platformStopped);
       //return 1;
       this.runResult = 1;
     }

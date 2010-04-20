@@ -160,8 +160,8 @@ public class GomStreamManager {
     try {
       this.destDirFile = new File(destDirName).getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "IOExceptionManipulation",
-                       new Object[]{destDirFile, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0,
+          GomMessage.iOExceptionManipulation, destDirFile, e.getMessage());
     }
   }
 
@@ -189,16 +189,16 @@ public class GomStreamManager {
             new FileReader(
               new File(inputFileName).getCanonicalFile()));
       } else {
-        getLogger().log(Level.FINER, "gom will use System.in as input");
+        GomMessage.finer(getLogger(), null, 0, GomMessage.systemInAsInput);
         inputReader = new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
-      GomMessage.error(getLogger(),null,0,
-          GomMessage.fileNotFound,
-          new Object[]{inputFileName});
+      GomMessage.error(getLogger(),null,0, GomMessage.fileNotFound,
+          inputFileName);
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "getInputReader:IOExceptionManipulation",
-                      new Object[]{inputFileName, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0,
+          GomMessage.iOExceptionManipulationInputReader,
+          inputFileName, e.getMessage());
     }
     return inputReader;
   }
@@ -211,8 +211,8 @@ public class GomStreamManager {
         parent = rawParent.getCanonicalFile();
       }
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
-                      new Object[]{inputFileName, e.getMessage()});
+      GomMessage.error(getLogger(), null, 0, GomMessage.iOExceptionManipulationInputParent, 
+          inputFileName, e.getMessage());
     }
     return parent;
   }
