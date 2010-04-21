@@ -67,10 +67,9 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment)arg[2]);
     } else {
-      GomMessage.error(getLogger(),null,0,
-          GomMessage.invalidPluginArgument,
-          new Object[]{"GraphExpander", "[ModuleList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+      GomMessage.error(getLogger(),null,0, GomMessage.invalidPluginArgument,
+          "GraphExpander", "[ModuleList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -81,7 +80,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
   public void run(Map<String,String> informationTracker) {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("termpointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-      getLogger().log(Level.INFO, "Extend the signature");
+      GomMessage.info(getLogger(), null, 0, GomMessage.signatureExtension);
       GraphExpander expander = new GraphExpander(getOptionBooleanValue("termgraph"),getGomEnvironment());
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
@@ -91,8 +90,10 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
             getStreamManager().getInputFileName(), 0,
             GomMessage.expansionIssue);
       } else {
-        getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
-        getLogger().log(Level.INFO, "Signature extension succeeds");
+        GomMessage.fine(getLogger(), null, 0, 
+            GomMessage.referencedModules,referencedModuleList);
+        GomMessage.info(getLogger(), null, 0, 
+            GomMessage.signatureExtensionSuccess);
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + TYPED_SUFFIX, (aterm.ATerm)referencedModuleList.toATerm());

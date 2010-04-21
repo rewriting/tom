@@ -148,7 +148,8 @@
       </classpath>
     </taskdef>
       <gomregress config="${gomconfigfile}"
-                  srcdir="${test.src}">
+                  srcdir="${test.src}"
+                  destdir="${test.gen}/regress">
         <classpath refid="tom.classpath"/>
         <include name="regress/error/**/*.gom"/>
       </gomregress>
@@ -165,7 +166,7 @@
            fork="${tomfork}"
            pretty="${pretty}"
            srcdir="${test.src}"
-           destdir="${test.gen}">
+           destdir="${test.gen}/regress">
         <classpath refid="tom.classpath"/>
         <include name="regress/error/**/*.t"/>
       </tomregress>

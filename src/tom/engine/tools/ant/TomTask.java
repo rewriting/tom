@@ -27,6 +27,7 @@ package tom.engine.tools.ant;
 
 import java.io.*;
 import java.util.*;
+import tom.platform.PluginPlatform;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -106,7 +107,7 @@ public class TomTask extends MatchingTask {
   private boolean camlCode = false;
   private File[] compileList = new File[0];
 
-  private Java javaRunner;
+  protected Java javaRunner;
 
   public void init() throws BuildException {
     javaRunner = new Java();
@@ -627,7 +628,11 @@ public class TomTask extends MatchingTask {
       
       if (logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
-        System.setProperty("java.util.logging.config.file",logPropertiesFile);
+        System.setProperty(PluginPlatform.LOG_FILE,logPropertiesFile);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.LOG_FILE);
+        var.setValue(logPropertiesFile);
+        javaRunner.addSysproperty(var);
       }
 
       /* If "tom.home" is defined in the ant project, pass it to tom */
