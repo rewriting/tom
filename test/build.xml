@@ -3,6 +3,12 @@
   <description>
     Build script for Tom unit tests
   </description>
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${tom.home}/lib/tools/ant-contrib-0.6.jar"/>
+    </classpath>
+  </taskdef>
 
   <property name="test.src"   location="."/>
   <property name="test.gen"   location="gen"/>
