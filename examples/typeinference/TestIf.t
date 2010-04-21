@@ -8,13 +8,18 @@ public class TestIf{
   }
 
   public static void main(String[] args) {
-    int tt = 10;
+    TestIf test = new TestIf();
+    test.plus10(10);
+  }
+
+  public int plus10(int n) {
     %match{
-      x << int tt -> { 
+      x << int n -> { 
         if (`x>1) {  
-          System.out.println(`x); 
+          return `plus10(x + 10); 
         }
       }
     }
+    return -1;
   }
 }

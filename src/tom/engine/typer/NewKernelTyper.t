@@ -418,7 +418,7 @@ public class NewKernelTyper {
       bqvar@(BQVariable|BQVariableStar)[AstType=aType] -> {
         nkt.checkNonLinearityOfBQVariables(`bqvar);
         nkt.addConstraint(`Equation(aType,freshType));  
-        //DEBUG System.out.println("InferTypes:BQTerm bqvar -- constraint = " + `aType + " = " + freshType);
+        System.out.println("InferTypes:BQTerm bqvar -- constraint = " + `aType + " = " + freshType);
         return `bqvar;
       }
 
@@ -437,14 +437,20 @@ public class NewKernelTyper {
         }
 
       bqAppl@BQAppl[AstName=Name(name),Args=bqTList] -> {
-        //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `tomName);
+        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tomName = " + `name);
         TomSymbol tSymbol = nkt.getSymbolFromName(`name);
+        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = "+ tSymbol);
         //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol=
         //" + `tSymbol);
         TomType codomain = nkt.getCodomain(tSymbol);
+        if (tSymbol == null) {
+          tSymbol = `EmptySymbol();
+        }
+        System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. codomain = "+ codomain);
         nkt.addConstraint(`Equation(codomain,freshType));
         //DEBUG System.out.println("InferTypes:BQTerm bqappl -- constraint = " + `codomain + " = " + freshType);
         if (!`bqTList.isEmptyconcBQTerm()) {
+          System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
           nkt.inferBQTermList(`bqTList,`tSymbol,freshType);
         }
         return `bqAppl;
@@ -478,6 +484,8 @@ public class NewKernelTyper {
          << varPatternList ||
          concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
          << varList) -> {
+          System.out.println("checkNonLinearityOfVariables -- constraint = " +
+              `aType1 + " = " + `aType2);
           addConstraint(`Equation(aType1,aType2)); }
     }
   }
@@ -507,6 +515,8 @@ public class NewKernelTyper {
          << varList ||
          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
          << varPatternList) -> { 
+          System.out.println("checkNonLinearityOfBQVariables -- constraint = " +
+              `aType1 + " = " + `aType2);
           addConstraint(`Equation(aType1,aType2)); }
     }
   }
@@ -543,10 +553,10 @@ public class NewKernelTyper {
           //DEBUG System.out.println("\n Constraints = " + typeConstraints);
           TomList TTList = varPatternList;
           `TopDownCollect(CollectVars(this)).visitLight(`constraint);
+          System.out.println("\n varPatternList apres = " + `varPatternList);
           inferConstraint(`constraint);
           inferAllTypes(`action,getUnknownFreshTypeVar());
           varPatternList = TTList;
-          //DEBUG System.out.println("\n varPatternList apr?s = " + `varPatternList);
           //DEBUG System.out.println("\n varList apr?s = " + `varList);
           inferConstraintInstructionList(`tailCIList);
         } catch(tom.library.sl.VisitFailure e) {
@@ -599,7 +609,7 @@ public class NewKernelTyper {
         //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType freshType1 = getUnknownFreshTypeVar();
         TomType freshType2 = getUnknownFreshTypeVar();
-        //DEBUG System.out.println("inferConstraint: match -- constraint " + freshType1 + " = " + freshType2);
+        System.out.println("inferConstraint: match -- constraint " + freshType1 + " = " + freshType2);
         addConstraint(`Equation(freshType1,freshType2));
         inferAllTypes(`pattern,freshType1);
         inferAllTypes(`subject,freshType2);
@@ -804,6 +814,8 @@ public class NewKernelTyper {
 
   private void inferBQTermList(BQTermList bqTList, TomSymbol tSymbol, TomType
       freshType) {
+          System.out.println("begin of InferBQTermList -- tSymbol'" + tSymbol +
+              "'");
 matchL:    %match(bqTList,tSymbol) {
       concBQTerm(headBQTerm@BQVariable[AstName=Name("head")],tailBQTerm@BQVariable[AstName=Name("tail")]),
         Symbol[AstName=Name("realMake")]
@@ -814,6 +826,20 @@ matchL:    %match(bqTList,tSymbol) {
           inferAllTypes(`tailBQTerm,freshType);
           break matchL;
         }
+
+      concBQTerm(_,_*),EmptySymbol() -> {
+        /*
+         * if the top symbol is unknown, the subterms
+         * are typed in an empty context
+         */
+        for(BQTerm arg : `bqTList.getCollectionconcBQTerm()) {
+          //DEBUG System.out.println("InferBQTermList -- constraint = " + argFreshType +
+          //DEBUG     " = " + argType);
+          System.out.println("InferBQTermList will call inferAllTypes with = "
+              + `arg);
+          `inferAllTypes(arg,getUnknownFreshTypeVar());
+        }
+      }
 
       concBQTerm(bqTerm,tailBQTList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argFreshType = freshType;
