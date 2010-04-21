@@ -68,8 +68,8 @@ public class ExpanderPlugin extends GomGenericPlugin {
     } else {
       GomMessage.error(getLogger(),null,0,
           GomMessage.invalidPluginArgument,
-          new Object[]{"GomExpander", "[GomModule,GomEnvironment]",
-            getArgumentArrayString(arg)});
+          "GomExpander", "[GomModule,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -97,13 +97,12 @@ public class ExpanderPlugin extends GomGenericPlugin {
       try {
         tom.library.utils.Viewer.toTree(modules,swriter);
       } catch(java.io.IOException e) {
-        getLogger().log(Level.SEVERE, "Viewer.toTree failed",e);
+        GomMessage.error(getLogger(), null, 0, GomMessage.viewerToTreeFailure, e);
         e.printStackTrace();
       }
-      getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
-      getLogger().info("GOM Expansion phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+      GomMessage.fine(getLogger(), null, 0, GomMessage.importedModules, swriter);
+      GomMessage.info(getLogger(), null, 0, GomMessage.gomExpansionPhase, 
+          (System.currentTimeMillis()-startChrono));
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

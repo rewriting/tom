@@ -3,6 +3,12 @@
   <description>
     Build script for Tom unit tests
   </description>
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${tom.home}/lib/tools/ant-contrib-0.6.jar"/>
+    </classpath>
+  </taskdef>
 
   <property name="test.src"   location="."/>
   <property name="test.gen"   location="gen"/>
@@ -130,45 +136,39 @@
       </junitreport>
     </target>
 
-  <target name="regress"
-    description="Run regresssion tests"
-    depends="build">
-    <taskdef name="gomregress"
-             classname="regress.GomErrorTask">
-      <classpath>
-        <path refid="tom.classpath"/>
-        <pathelement location="${test.build}"/>
-      </classpath>
-    </taskdef>
-    <taskdef name="tomregress"
-             classname="regress.TomErrorTask">
-      <classpath>
-        <path refid="tom.classpath"/>
-        <pathelement location="${test.build}"/>
-      </classpath>
-    </taskdef>
-      <gomregress config="${gomconfigfile}"
-                  srcdir="${test.src}">
-        <classpath refid="tom.classpath"/>
-        <include name="regress/error/**/*.gom"/>
-      </gomregress>
-    <tomregress config="${tomconfigfile}"
-           nowarn="${nowarnings}"
-           optimize="${optimize}"
-           optimize2="${optimize2}"
-           newtyper="${newtyper}"
-           multithread="${multithread}"
-           inline="${inline}"
-           inlineplus="${inlineplus}"
-      	   genIntrospector="${genIntrospector}"
-           verbose="${verbose}"
-           fork="${tomfork}"
-           pretty="${pretty}"
-           srcdir="${test.src}"
-           destdir="${test.gen}">
-        <classpath refid="tom.classpath"/>
-        <include name="regress/error/**/*.t"/>
-      </tomregress>
+    <target name="regress"
+      description="Run regression tests">
+      <path id="regresstests">
+        <fileset dir="regress" casesensitive="yes">
+          <include name="**/*.t"/>
+        </fileset>
+      </path>
+      <pathconvert targetos="unix" 
+        property="regresstests" 
+        refid="regresstests">
+        <map from="${test.src}/" to=""/>
+      </pathconvert>
+      <foreach target="regress.compile" param="foreach.file" list="${regresstests}" />
+    </target>
+
+    <target name="regress.compile" depends="init,prepare">
+      <property name="tom.platform.error.formatter" value="tom.platform.RegressFormatter"/>
+      <property name="tom.platform.error.logfile" value="${test.gen}/regress.log"/>
+      <trycatch> 
+        <try>
+          <tom.preset 
+            srcdir="${test.src}"
+            destdir="${test.gen}">
+            <include name="${foreach.file}"/>
+          </tom.preset>
+        </try>
+        <catch>
+          <condition property="files.match">
+            <filesmatch file1="${test.gen}/regress.log" file2="${foreach.file}.nrt"/>
+          </condition>
+          <fail unless="files.match">The non-regression test for ${foreach.file} fails</fail>
+        </catch>
+      </trycatch>
   </target>
 
   <target name="clean">

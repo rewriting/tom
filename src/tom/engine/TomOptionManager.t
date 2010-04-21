@@ -105,7 +105,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     // only if it's not a call from GOM
     if(((Boolean)getOptionValue("optimize2")).booleanValue()
         && !(inputFileList.size() == 1 && "-".equals((String)inputFileList.get(0)) ) ) {
-      logger.log(Level.WARNING, TomMessage.optimizerModifiesLineNumbers.getMessage());
+      TomMessage.warning(logger, null, 0, TomMessage.optimizerModifiesLineNumbers);
     }
     return checkAllOptionsDepedencies(optionOwnerList);
   }
@@ -191,7 +191,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         return `value;
       }
     }
-    getLogger().log(Level.SEVERE,"TomOptionManager: getOptionFromName did not return a PluginOption");
+    TomMessage.error(logger, null, 0, TomMessage.notReturnedPluginOption);
     throw new RuntimeException();
   }
 
@@ -262,8 +262,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private int checkAllOptionsDepedencies(List<OptionOwner> optionOwnerList) {
     for (OptionOwner plugin : optionOwnerList) {
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        getLogger().log(Level.SEVERE, TomMessage.prerequisitesIssue.getMessage(),
-                        plugin.getClass().getName());
+        TomMessage.error(logger, null, 0, TomMessage.prerequisitesIssue, plugin.getClass().getName());
         return 1;
       }
     }
@@ -280,7 +279,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private PlatformOption getOptionFromName(String name) {
     PlatformOption option = mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
-      getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
+      TomMessage.error(logger, null, 0, TomMessage.optionNotFound, getCanonicalName(name));
       //throw new RuntimeException();
     }
     return option;
@@ -293,7 +292,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = mapNameToOwner.get(getCanonicalName(name));
     if(plugin == null) {
-      getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
+      TomMessage.error(logger, null, 0, TomMessage.optionNotFound, getCanonicalName(name));
     }
     return plugin;
   }
@@ -307,8 +306,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(option != null) {
       PlatformOption newOption = option.setValue(value);
       Object replaced = setOptionFromName(name, newOption);
-      getLogger().log(Level.FINER,TomMessage.setValue.getMessage(),
-                      new Object[]{name,value,replaced});
+      TomMessage.finer(logger, null, 0, TomMessage.setValue, 
+          name,value,replaced);
     } else {
       throw new RuntimeException();
     }
@@ -345,7 +344,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public static void displayVersion() {
     System.out.println("\njtom " + Tom.VERSION + "\n" +
-                       "Copyright (c) 2000-2010, INPL, INRIA, Nancy, France.\n");
+        "Copyright (c) 2000-2010, INPL, INRIA, Nancy, France.\n");
   }
 
   /**
@@ -366,14 +365,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         if(option !=null) {
           PlatformValue localValue = option.getValue();
           if(`value != localValue) {
-            getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(), new Object[]{`name,`value,getOptionValue(`name)});
+            TomMessage.error(logger, null, 0, TomMessage.incorrectOptionValue, `name,`value,getOptionValue(`name));
             return false;
           } else {
             return checkOptionDependency(`tail*);
           }
         } else {
-          getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(),
-                          new Object[]{`name,`value,getOptionValue(`name)});
+          TomMessage.error(logger, null, 0, TomMessage.incorrectOptionValue, `name,`value,getOptionValue(`name));
           return false;
         }
       }
@@ -427,7 +425,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("output") || argument.equals("o")) {
             if(outputEncountered) {
-              getLogger().log(Level.SEVERE, TomMessage.outputTwice.getMessage());
+              TomMessage.error(logger, null, 0, TomMessage.outputTwice);
               return null;
             } else {
               outputEncountered = true;
@@ -435,7 +433,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("destdir") || argument.equals("d")) {
             if(destdirEncountered) {
-              getLogger().log(Level.SEVERE, TomMessage.destdirTwice.getMessage());
+              TomMessage.error(logger, null, 0, TomMessage.destdirTwice);
               return null;
             } else {
               destdirEncountered = true;
@@ -446,7 +444,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           OptionOwner owner = getOptionOwnerFromName(argument);
 
           if(option == null || owner == null) {// option not found
-            getLogger().log(Level.SEVERE, TomMessage.invalidOption.getMessage(), argument);
+            TomMessage.error(logger, null, 0, TomMessage.invalidOption, argument);
             displayHelp();
             return null;
           } else {
@@ -474,18 +472,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      getLogger().log(Level.SEVERE, TomMessage.incompleteOption.getMessage(), argument);
+      TomMessage.error(logger, null, 0, TomMessage.incompleteOption, argument);
       return null;
     }
 
     setOptionValue("import",imports.toString());
 
     if(fileList.isEmpty()) {
-      getLogger().log(Level.SEVERE, TomMessage.noFileToCompile.getMessage());
+      TomMessage.error(logger, null, 0, TomMessage.noFileToCompile);
       displayHelp();
       return null;
     } else if(fileList.size() > 1 && outputEncountered) {
-      getLogger().log(Level.SEVERE, TomMessage.outputWithMultipleCompilation.getMessage());
+      TomMessage.error(logger, null, 0, TomMessage.outputWithMultipleCompilation);
       displayHelp();
       return null;
     }

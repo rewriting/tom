@@ -128,11 +128,12 @@ public class TyperPlugin extends TomGenericPlugin {
 
         setWorkingTerm(typedCode);      
         // verbose
-        getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
+        TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
             Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-            new Object[]{getClass().getName(), getStreamManager().getInputFileName(), e.getMessage()} );
+        TomMessage.error(logger, getStreamManager().getInputFileName(), 
+            0, TomMessage.exceptionMessage, getClass().getName(), 
+            getStreamManager().getInputFileName(), e.getMessage());
         e.printStackTrace();
         return;
       }
