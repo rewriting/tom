@@ -116,13 +116,13 @@ public class NewTyper extends TomGenericPlugin {
 
         updateSymbolTable();
 
-        //DEBUG System.out.println("\nSymbolTable before type inference = \n");
-
         /**
          * Typing variables whose types are unknown with fresh type variables before
          * start inference
          */
         typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
+
+        System.out.println("\nCode before type inference = \n" + typedCode);
 
         /**
          * Start by typing variables with fresh type variables
