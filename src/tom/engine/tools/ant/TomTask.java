@@ -647,6 +647,26 @@ public class TomTask extends MatchingTask {
         log("\"tom.home\" is not defined, some features may not work");
       }
 
+      /* If "tom.platform.error.formatter" is defined in the ant project, pass it as a syst property for java */
+      String platform_formatter = getProject().getProperty(PluginPlatform.FORMATTER);
+      if (platform_formatter != null) {
+        System.setProperty(PluginPlatform.FORMATTER,platform_formatter);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.FORMATTER);
+        var.setValue(platform_formatter);
+        javaRunner.addSysproperty(var);
+      } 
+
+      /* If "tom.platform.error.logfile" is defined in the ant project, pass it as a syst property for java */
+      String platform_logfile = getProject().getProperty(PluginPlatform.LOG_FILE);
+      if (platform_logfile != null) {
+        System.setProperty(PluginPlatform.LOG_FILE,platform_logfile);
+        Variable var = new Variable();
+        var.setKey(PluginPlatform.LOG_FILE);
+        var.setValue(platform_logfile);
+        javaRunner.addSysproperty(var);
+      } 
+
       if(options != null && getOptions().trim().length() > 0) {
         javaRunner.createArg().setLine(options);
       }
