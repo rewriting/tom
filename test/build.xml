@@ -137,12 +137,18 @@
     </target>
 
     <target name="regress"
-      description="Run regresssion tests">
-      <foreach target="regress.compile" param="foreach.file">
+      description="Run regression tests">
+      <path id="regresstests">
         <fileset dir="regress" casesensitive="yes">
-          <include name="*.t"/>
+          <include name="**/*.t"/>
         </fileset>
-      </foreach>
+      </path>
+      <pathconvert targetos="unix" 
+        property="regresstests" 
+        refid="regresstests">
+        <map from="${test.src}/" to=""/>
+      </pathconvert>
+      <foreach target="regress.compile" param="foreach.file" list="${regresstests}" />
     </target>
 
     <target name="regress.compile" depends="init,prepare">
@@ -153,7 +159,7 @@
           <tom.preset 
             srcdir="${test.src}"
             destdir="${test.gen}">
-            <include name="regress/Include.t"/>
+            <include name="${foreach.file}"/>
           </tom.preset>
         </try>
         <catch>
