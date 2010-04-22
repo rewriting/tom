@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 tommsg=0;
 gommsg=0;
