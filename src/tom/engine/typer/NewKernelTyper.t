@@ -426,11 +426,11 @@ public class NewKernelTyper {
     }
 
     visit BQTerm {
-      bqvar@(BQVariable|BQVariableStar)[AstType=aType] -> {
-        nkt.checkNonLinearityOfBQVariables(`bqvar);
+      bqVar@(BQVariable|BQVariableStar)[AstType=aType] -> {
+        nkt.checkNonLinearityOfBQVariables(`bqVar);
         nkt.addConstraint(`Equation(aType,freshType));  
-        System.out.println("InferTypes:BQTerm bqvar -- constraint = " + `aType + " = " + freshType);
-        return `bqvar;
+        System.out.println("InferTypes:BQTerm bqVar -- constraint = " + `aType + " = " + freshType);
+        return `bqVar;
       }
 
       // Special case : when there is a block "rules" in %gom and "temporary
@@ -453,6 +453,7 @@ public class NewKernelTyper {
         //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. tSymbol = "+ tSymbol);
         if (tSymbol == null) {
           tSymbol = `EmptySymbol();
+          System.out.println("InferTypes:BQTerm bqappl -- tSymbol null!");
         } else {
           TomType codomain = nkt.getCodomain(tSymbol);
           nkt.addConstraint(`Equation(codomain,freshType));
@@ -465,6 +466,9 @@ public class NewKernelTyper {
         }
         return `bqAppl;
       }
+      
+      bqterm -> { System.out.println("InferTypes:BQTerm rest -- `bqterm = " +
+          `bqterm); }
     }
   }
     
@@ -850,7 +854,7 @@ matchL:    %match(bqTList,tSymbol) {
           //DEBUG     " = " + argType);
           System.out.println("InferBQTermList will call inferAllTypes with = "
               + `arg);
-          `inferAllTypes(arg,getUnknownFreshTypeVar());
+          `inferAllTypes(arg,EmptyType());
         }
       }
 
@@ -861,6 +865,9 @@ matchL:    %match(bqTList,tSymbol) {
           TomSymbol argSymb = getSymbolFromTerm(`bqTerm);
           BQTerm newTerm = `bqTerm;
           System.out.println("InferBQTermList -- bqTerm= " + `bqTerm);
+          System.out.println("\n\n" + `bqTerm + " is a list? " +
+              TomBase.isListOperator(`argSymb) + " and " +
+              TomBase.isArrayOperator(`argSymb) + '\n');
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             %match(bqTerm) {
               BQVariableStar[Option=options,AstName=name] -> {
@@ -870,7 +877,7 @@ matchL:    %match(bqTList,tSymbol) {
 
               //TO VERIFY : maybe we need to replace this test with an antipattern by a test
               //with all possible patterns (BQVar,BQAppl,FunctionCall etc)
-              !(BQVariableStar|Composite)[] -> {
+              BQVariableStar[] -> {
                 argFreshType = getUnknownFreshTypeVar();
                 addConstraint(`Equation(argFreshType,headTTList));
                 System.out.println("InferBQTermList line 1 -- constraint = " + argFreshType +
