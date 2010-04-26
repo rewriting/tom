@@ -26,13 +26,9 @@ public class TestStrategy{
     test.run();
   }
 
-	%strategy PropagateCst(m:HashMap) extends `Fail() {
-    visit Expr {
-			Var(n) -> {
-				if(m.containsKey(`n)) {
-					return (Expr) m.get(`n);
-				}
-			}
+  %strategy RenamedVar() extends `Fail() {
+		visit Expr {
+			v@Var(('_',_*)) -> { return `v; }
 		}
 	}
 }
