@@ -129,6 +129,7 @@ public class NewTyper extends TomGenericPlugin {
          * Perform type inference over patterns 
          */
         typedCode = newKernelTyper.inferCode(typedCode);
+        System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /** 
          * TOMOVE to a post phase: 
@@ -139,7 +140,7 @@ public class NewTyper extends TomGenericPlugin {
         typedCode =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(typedCode);
 
-        System.out.println("\nCode after type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);
 
@@ -199,12 +200,11 @@ public class NewTyper extends TomGenericPlugin {
           // * tomType != unknown type AND (newType == null)
           // * tomType == unknown type
           newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
-          if (!nkt.getSymbolTable().isUnknownType(`tomType)) {
-            // A type typeVar will be add to the typeTable only for the first
-            // occurence, because for the other ones, newType will not be 'null'
-            nkt.getSymbolTable().putType(`tomType,newType);
-          }
-          return newType;
+        }
+        if (!nkt.getSymbolTable().isUnknownType(`tomType)) {
+          // A type typeVar will be add to the typeTable only for the first
+          // occurence, because for the other ones, newType will not be 'null'
+          nkt.getSymbolTable().putType(`tomType,newType);
         }
         return newType;
       }
@@ -219,15 +219,16 @@ public class NewTyper extends TomGenericPlugin {
   private void updateSymbolTable() {
     for(String tomName:newKernelTyper.getSymbolTable().keySymbolIterable()) {      
       try {
-        TomSymbol tomSymbol = getSymbolFromName(tomName);
-        tomSymbol = collectKnownTypesFromTomSymbol(tomSymbol);
-        getSymbolTable().putSymbol(tomName,tomSymbol);
-        tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tomSymbol);
+        TomSymbol tSymbol = getSymbolFromName(tomName);
+        tSymbol = collectKnownTypesFromTomSymbol(tSymbol);
+        getSymbolTable().putSymbol(tomName,tSymbol);
+        tSymbol =
+          `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");
       }
-      //System.out.println("symbol = " + tomSymbol);
-      //getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
+      //System.out.println("symbol = " + tSymbol);
+      //getStreamManager().getSymbolTable().putSymbol(tomName,tSymbol);
     }
   }
 
@@ -238,25 +239,25 @@ public class NewTyper extends TomGenericPlugin {
   %strategy TransformBQAppl(nkt:NewKernelTyper) extends Identity() {
     visit BQTerm {
       BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
-        TomSymbol tomSymbol = nkt.getSymbolFromName(`tomName);
+        TomSymbol tSymbol = nkt.getSymbolFromName(`tomName);
         BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(nkt)).visitLight(`l);
         //System.out.println("BackQuoteTerm: " + `tomName);
-        //System.out.println("tomSymbol: " + tomSymbol);
+        //System.out.println("tSymbol: " + tSymbol);
         if(TomBase.hasConstant(`optionList)) {
           return `BuildConstant(name);
-        } else if(tomSymbol != null) {
-          if(TomBase.isListOperator(tomSymbol)) {
+        } else if(tSymbol != null) {
+          if(TomBase.isListOperator(tSymbol)) {
             //DEBUG System.out.println("A list operator '" + `tomName + "' : " +
-            //DEBUG     `tomSymbol + '\n');
+            //DEBUG     `tSymbol + '\n');
             return ASTFactory.buildList(`name,args,nkt.getSymbolTable());
-          } else if(TomBase.isArrayOperator(tomSymbol)) {
+          } else if(TomBase.isArrayOperator(tSymbol)) {
             //DEBUG System.out.println("An array operator '" + `tomName + "' : " +
-            //DEBUG     `tomSymbol + '\n');
+            //DEBUG     `tSymbol + '\n');
             return ASTFactory.buildArray(`name,args,nkt.getSymbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol) || `tomName == "realMake") {
+          } else if(TomBase.isDefinedSymbol(tSymbol) || `tomName == "realMake") {
             //DEBUG System.out.println("A defined symbol '" + `tomName + "' : " +
-            //DEBUG     `tomSymbol + '\n');
-            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
+            //DEBUG     `tSymbol + '\n');
+            return `FunctionCall(name,TomBase.getSymbolCodomain(tSymbol),args);
           } else {
             String moduleName = TomBase.getModuleName(`optionList);
             if(moduleName==null) {
@@ -279,12 +280,12 @@ public class NewTyper extends TomGenericPlugin {
   %strategy desugarString(typer:NewTyper) extends Identity() {
     visit TomTerm {
       appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
-        TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
+        TomSymbol tSymbol = typer.getSymbolFromName(`tomName);
         //System.out.println("appl = " + subject);
-        if(tomSymbol != null) {
-          if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+        if(tSymbol != null) {
+          if(TomBase.isListOperator(tSymbol) || TomBase.isArrayOperator(tSymbol)) {
             //System.out.println("appl = " + subject);
-            SlotList newArgs = typer.typeChar(tomSymbol,`args);
+            SlotList newArgs = typer.typeChar(tSymbol,`args);
             if(newArgs!=`args) {
               return `appl.setSlots(newArgs);
             }
@@ -298,12 +299,12 @@ public class NewTyper extends TomGenericPlugin {
    * detect ill-formed char: 'abc'
    * and type it into a list of char: 'a','b','c'
    */
-  private SlotList typeChar(TomSymbol tomSymbol,SlotList args) {
+  private SlotList typeChar(TomSymbol tSymbol,SlotList args) {
     if(args.isEmptyconcSlot()) {
       return args;
     } else {
       Slot head = args.getHeadconcSlot();
-      SlotList tail = typeChar(tomSymbol,args.getTailconcSlot());
+      SlotList tail = typeChar(tSymbol,args.getTailconcSlot());
       %match(head) {
         PairSlotAppl(slotName,RecordAppl[Option=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
           /*
@@ -341,7 +342,7 @@ public class NewTyper extends TomGenericPlugin {
                 }
               }
 
-              TomTerm newSublist = `RecordAppl(concOption(),concTomName(tomSymbol.getAstName()),newArgs,newConstraintList);
+              TomTerm newSublist = `RecordAppl(concOption(),concTomName(tSymbol.getAstName()),newArgs,newConstraintList);
               Slot newSlot = `PairSlotAppl(slotName,newSublist);
               return `concSlot(newSlot,tail*);
             } else {
