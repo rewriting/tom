@@ -262,27 +262,22 @@ public class NewKernelTyper {
         CodeList codeResult = `concCode();
         for(Code headCodeList : `codes.getCollectionconcCode()) {
           %match(headCodeList) {
+            // For %match 
             InstructionToCode(instruction) -> {
               try{
                 inferAllTypes(`instruction,getUnknownFreshTypeVar());
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
-                /*
-                   InstructionToCode(Match(constraintInstructionList,_)) -> {
-                   try {
-                   flagInnerMatch = false;
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 1.");
-                // Generate type constraints for a %match
-                //DEBUG System.out.println("CIList avant = " + `constraintInstructionList);
-                inferConstraintInstructionList(`constraintInstructionList,flagInnerMatch);
-                //DEBUG System.out.println("CIList apr?s= " + result + "\n\n");
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 2.");
-                //DEBUG System.out.println("\n typeConstraints before solve = " + typeConstraints);
+              } catch(tom.library.sl.VisitFailure e) {
+                throw new TomRuntimeException("inferCode: failure on " +
+                    headCodeList);
+              } 
+            }
+            
+            // For %strategy
+            DeclarationToCode(declaration) -> {
+              try{
+                inferAllTypes(`declaration,getUnknownFreshTypeVar());
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
-                //DEBUG System.out.println("\n typeConstraints aftersolve = " + typeConstraints);
-                System.out.println("\n substitutions= " + substitutions);
-                //DEBUG printGeneratedConstraints(typeConstraints);
-                //DEBUG System.out.println("\n Test pour inferCode -- ligne 5.");
-                 */
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
                     headCodeList);
@@ -378,7 +373,16 @@ public class NewKernelTyper {
         return `match;
       }      
     }
-
+    
+    visit TomVisit {
+      vTerm@VisitTerm(_,constraintInstructionList,_) -> {
+        BQTermList BQTList = nkt.varList;
+        nkt.inferConstraintInstructionList(`constraintInstructionList);
+        nkt.varList = BQTList;
+        return `vTerm;
+      }
+    }
+   
     visit TomTerm {
       //TODO type ConstraintList
       AntiTerm(atomicTerm) -> { nkt.inferAllTypes(`atomicTerm,freshType); }
