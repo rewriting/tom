@@ -79,9 +79,9 @@ public final class TomBase {
    * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
-    %match(type) {
-      (Type|TypeWithSymbol)[TomType=s] -> { return `s; }
-      EmptyType() -> { return null; }
+    %match {
+      (Type|TypeWithSymbol)[TomType=s] << type -> { return `s; }
+      EmptyType() << type||TypeVar[] << type -> { return null; }
     }
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
