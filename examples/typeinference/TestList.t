@@ -16,8 +16,8 @@ public class TestList{
   public void printList(L l) {
     %match{
       f(x*,e1,y*) << L l -> { 
-        //System.out.println("("+`e1+")");
-        //System.out.println("("+`f(e1,x*,y*)+")");
+        System.out.println("("+`e1+")");
+        System.out.println("("+`f(e1,x*,y*)+")");
         `printList(f(e1,b()));
       }
     }
