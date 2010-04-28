@@ -1,4 +1,13 @@
-2010-04-20 jcb
+2010-04-28 tavaresc
+ * Fix treatment of Composites to handle calls of java methods preceded by a backquote.
+ * Delete some unnecessary "putType" calls.
+
+2010-04-23 tavaresc
+ * New version of the new typer: since terms are modified during the inference
+ (e.g. "concString" is added to a string which does not have a constructor), now
+ methods have no more type "void".
+
+ 2010-04-20 jcb
  * tom/engine log system should be completely ported
  * tom/gom log system should be completely ported
 
