@@ -34,6 +34,7 @@ public class RegressFormatter extends Formatter {
     if(level.equals(Level.SEVERE)) { 
       // we are only interested into SEVERE logs
       // TODO: select the information necessary for regression tests
+      System.out.println(record.getMessage());
       return "REGRESS: "+formatMessage(record)+"\n";
     }
     return "";

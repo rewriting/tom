@@ -148,7 +148,7 @@
         refid="regresstests">
         <map from="${test.src}/" to=""/>
       </pathconvert>
-      <foreach target="regress.compile" param="foreach.file" list="${regresstests}" />
+      <foreach target="regress.compile" param="foreach.file" list="${regresstests}" delimiter=":"/>
     </target>
 
     <target name="regress.compile" depends="init,prepare">
@@ -161,15 +161,20 @@
             destdir="${test.gen}">
             <include name="${foreach.file}"/>
           </tom.preset>
+          <delete file="${test.gen}/regress.log"/>
         </try>
         <catch>
-          <condition property="files.match">
+         <condition property="files.match">
             <filesmatch file1="${test.gen}/regress.log" file2="${foreach.file}.nrt"/>
           </condition>
-          <fail unless="files.match">The non-regression test for ${foreach.file} fails</fail>
+          <fail unless="files.match">The non-regression ${foreach.file} fails: the error message does not correspond to ${foreach.file}.nrt</fail>
         </catch>
+        <finally>
+          <available file="${test.gen}/regress.log" property="hasCompilationError" />
+          <fail message="The non-regression ${foreach.file} fails: there was no compilation error" unless="hasCompilationError" />
+        </finally>
       </trycatch>
-  </target>
+    </target>
 
   <target name="clean">
     <delete dir="${test.gen}"/>
