@@ -201,15 +201,11 @@ public class NewTyper extends TomGenericPlugin {
           // * tomType == unknown type
           newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
         }
-        if (!nkt.getSymbolTable().isUnknownType(`tomType)) {
-          // A type typeVar will be add to the typeTable only for the first
-          // occurence, because for the other ones, newType will not be 'null'
-          nkt.getSymbolTable().putType(`tomType,newType);
-        }
         return newType;
       }
     }
   }
+
   /**
    * updateSymbol is called after a first syntax expansion phase
    * this phase updates the symbolTable according to the typeTable

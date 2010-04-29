@@ -26,6 +26,15 @@ public class TestStrategy{
     test.run();
   }
 
+	public Expr propagate(HashMap env, Expr expr) {
+		try {
+			return (Expr) `TopDown(Try(RenamedVar())).visitLight(expr);
+		} catch (VisitFailure e) {
+			System.out.println("strategy failed");
+		}
+		return expr;
+	}
+
   %strategy RenamedVar() extends `Fail() {
 		visit Expr {
 			v@Var(('_',_*)) -> { return `v; }
