@@ -31,6 +31,8 @@ package tom.engine.typer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import java.lang.Class;
+import java.lang.reflect.*;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -881,6 +883,26 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
   }
 
+/*
+  private static boolean inRelation(String class1, String class2) {
+    try {
+      Class subClass = Class.forName(class1);
+      Class superClass = Class.forName(class2);
+      //System.out.println("\n\ninRelation classes = " + superClass.getClasses());
+      //boolean res = true;
+      boolean res = subClass.isInstance(superClass.newInstance());
+      //boolean res = (Class.forName(class1).newInstance()
+      //      instanceof Class.forName(class2)superClass);
+      System.out.println("\n\ninRelation = " + res);
+      return res;
+    } catch(Throwable e) {
+      System.out.println("\n\ninRelation: class1 = " + class1);
+      System.out.println("\n\ninRelation: class2 = " + class2);
+      System.err.println(e);
+      throw new RuntimeException("inRelation: should not be here.");
+    }
+  }
+*/
 
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
@@ -891,8 +913,13 @@ public class NewKernelTyper {
        * and tName1 != tName2
        */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1]),_*) &&
-      (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1,TlType=tLType1],t2@Type[TomType=tName2@!tName1,TlType=tLType2]),_*) &&
+        (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+          /*
+            String class1 = `tLType1.getString();
+            String class2 = `tLType2.getString();
+            System.out.println("\ntest = " + nkt.inRelation(class1,class2));
+          */
         throw new RuntimeException("solveConstraints: failure on " + `t1
             + " = " + `t2);
       }
@@ -1012,10 +1039,9 @@ public class NewKernelTyper {
 
   private TypeConstraintList applySubstitution(TomType oldtt, TomType newtt,
       TypeConstraintList tcList) {
-    
     try {
-        return (TypeConstraintList)
-          `TopDown(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
+      return (TypeConstraintList)
+        `TopDown(replaceTypeConstraints(oldtt,newtt)).visitLight(tcList);
     } catch(tom.library.sl.VisitFailure e) {
       throw new RuntimeException("applySubstitution: should not be here.");
     }
