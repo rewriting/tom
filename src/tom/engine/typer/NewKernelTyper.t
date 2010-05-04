@@ -445,6 +445,9 @@ public class NewKernelTyper {
 
         TomType codomain = contextType;
         if (tSymbol == null) {
+          //tSymbol =
+          //  `Symbol(Name(tomName),TypesToType(concTomType(contextType),contextType),concPairNameDecl(),cList);
+          //nkt.symbolTable.putSymbol(tomName,tSymbol);
           tSymbol = `EmptySymbol();
         } else {
           codomain = nkt.getCodomain(tSymbol);
@@ -757,7 +760,7 @@ public class NewKernelTyper {
           TomTerm newTerm = `tTerm;
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             %match(tTerm) {
-              VariableStar[Option=options,AstName=name,Constraints=constraints] -> {
+              VariableStar[] -> {
                 /**
                  * Continuation of CT-STAR rule (applying to premises):
                  * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
@@ -765,8 +768,6 @@ public class NewKernelTyper {
                  *      "x", where "x" represents a list with
                  *      head symbol "l"
                  */
-                //newTerm =
-                  //       `VariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName),constraints);  
                 argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
               }
 
@@ -872,9 +873,7 @@ public class NewKernelTyper {
           //DEBUG     TomBase.isArrayOperator(`argSymb) + '\n');
           if(!(TomBase.isListOperator(`argSymb) || TomBase.isArrayOperator(`argSymb))) {
             %match(bqTerm) {
-              BQVariableStar[Option=options,AstName=name] -> {
-                //newTerm =
-                  //`BQVariableStar(options,name,TypeWithSymbol(tomCodomain,tlCodomain,symName));  
+              BQVariableStar[] -> {
                 argType = `TypeWithSymbol(tomCodomain,tlCodomain,symName);
               }
 
@@ -1111,6 +1110,12 @@ public class NewKernelTyper {
       }
       //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
       //DEBUG     + tSymbol);
+      /*
+      %match {
+        Symbol[AstName=aName@Name(""),TypesToType=TypesToType(concTomType(contextType),contextType),PairNameDeclList=pndList,Option=oList] << tSymbol -> {
+            
+        }  
+      }*/
       symbolTable.putSymbol(tomName,tSymbol);
     }
   }
