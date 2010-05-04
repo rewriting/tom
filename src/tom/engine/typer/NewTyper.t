@@ -217,9 +217,9 @@ public class NewTyper extends TomGenericPlugin {
       try {
         TomSymbol tSymbol = getSymbolFromName(tomName);
         tSymbol = collectKnownTypesFromTomSymbol(tSymbol);
-        getSymbolTable().putSymbol(tomName,tSymbol);
         tSymbol =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tSymbol);
+        getSymbolTable().putSymbol(tomName,tSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");
       }
