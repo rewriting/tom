@@ -1,3 +1,7 @@
+2010-05-06 tavaresc
+ * Fix inference for lists with sublists, both having different 
+   constructors (symbols). 
+
 2010-05-05 tavaresc
  * Add status of compilation using the new typer into test/README file.
  * Add duplications of tom files with only Named Symbol.
