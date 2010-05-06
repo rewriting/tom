@@ -26,6 +26,7 @@
 package tom.engine;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import aterm.*;
 
@@ -47,6 +48,7 @@ import tom.engine.adt.theory.types.*;
 import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomMessage;
 
 import tom.platform.adt.platformoption.*;
 
@@ -72,6 +74,8 @@ public final class TomBase {
   public final static String DEFAULT_MODULE_NAME = "default";
   //size of cache
   private final static int LRUCACHE_SIZE = 5000;
+
+  private static Logger logger = Logger.getLogger("tom.engine.TomBase");
 
   /** shortcut */
 
@@ -455,10 +459,12 @@ public final class TomBase {
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
-    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
+    TomMessage.error(logger, null, 0, TomMessage.badSlotName, 
+        slotName.getString(), tomSymbol, nameList.toArray());
+/*    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
         + slotName.getString() + "' but expected one of the following names: "
-        + Arrays.toString(nameList.toArray()) + ".");
-    //return -1;
+        + Arrays.toString(nameList.toArray()) + ".");*/
+    return -1;
   }
 
   public static TomType elementAt(TomTypeList l, int index) {
@@ -482,10 +488,11 @@ public final class TomBase {
   }
 
   public static boolean isDefinedSymbol(TomSymbol subject) {
-    if(subject==null) {
+    /*This test seems to be useless
+       if(subject==null) {
       System.out.println("isDefinedSymbol: subject == null");
       return false;
-    }
+    }*/
     %match(subject) {
       Symbol[Option=optionList] -> {
         return hasDefinedSymbol(`optionList);
