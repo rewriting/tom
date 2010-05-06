@@ -61,6 +61,7 @@
       <exclude name="TestPeano.t"/>
       <exclude name="TestWhen.t"/>
       <exclude name="TomList.t"/>
+      <exclude name="TomListNS.t"/>
       <exclude name="TestOptimizer.t"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
