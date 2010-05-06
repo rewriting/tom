@@ -23,7 +23,7 @@ Results obtained by compiling tom files with option -nt (NewTyper):
 - TestListNonLinear.t : FAILED (because of anonymous constructors)
 - TestListNonLinearNS.t : OK
 - TestMatch.t : OK
-- TestMatchInference.t : FAILED (missing information for some TomTerms?) 
+- TestMatchInference.t : OK 
 - TestNonVarSubjects.t : OK
 - TestOptimizer.t : OK
 - TestPeano.t : OK
@@ -49,7 +49,7 @@ Results obtained by compiling tom files with option -nt (NewTyper):
   - TestAntiPattern.t : OK
   - TestAntiPattern2.t : OK
   - TestAntiPattern3.t : OK
-  - TestAntiPatternAssociative.t : FAILED (some "minor" error?)
+  - TestAntiPatternAssociative.t : OK 
   - TestDoubleList.t : FAILED (because of anonymous constructors)
   - TestDoubleListNS.t : OK 
 - gom : 

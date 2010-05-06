@@ -512,11 +512,18 @@ public class NewKernelTyper {
           //DEBUG + `codomain + " = " + contextType);
         }
         
-        
         BQTermList newBQTList = `bqTList;
         if (!`bqTList.isEmptyconcBQTerm()) {
           //DEBUG System.out.println("\n Test pour BQTerm-inferTypes in BQAppl. bqTList = " + `bqTList);
           newBQTList = nkt.inferBQTermList(`bqTList,`tSymbol,codomain);
+        }
+      
+        // TO VERIFY
+        %match(tSymbol) {
+          EmptySymbol() -> {
+            System.out.println("InferTypes:BQTerm bqappl tSymbol null");
+            return `FunctionCall(aName,contextType,newBQTList); 
+          }
         }
         return `BQAppl(oList,aName,newBQTList);
       }
@@ -900,8 +907,20 @@ public class NewKernelTyper {
                 //addConstraint(`Equation(getUnknownFreshTypeVar(),argType));
               }
 
+              // We don't know what is into the Composite
+              // It can be a BQVariableStar or a list operator or something else
               Composite(_*) -> { argType = getUnknownFreshTypeVar(); }
             }
+          } else if (`symName != argSymb.getAstName()) {
+            // TODO: improve this code! It is like CT-ELEM
+            /*
+             * A list with a sublist whose constructor is different
+             * e.g. 
+             * A = ListA(A*) and B = ListB(A*) | b()
+             * ListB(b(),ListA(a()),b())
+             */
+            argType = getUnknownFreshTypeVar();
+            addConstraint(`Equation(argType,headTTList));
           }
           `newTerm = `inferAllTypes(newTerm,argType);
           BQTermList newTail = `inferBQTermList(tailBQTList,tSymbol,contextType);

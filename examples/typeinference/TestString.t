@@ -14,7 +14,7 @@ public class TestString{
     String s = "abcaabbccabc";
     int a = 0;
     %match(String s) {
-      (_*,'a',_*) -> { a++; }
+      concString(_*,'a',_*) -> { a++; }
     }
   }
 }
