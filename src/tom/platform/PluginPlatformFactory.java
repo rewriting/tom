@@ -155,9 +155,8 @@ public class PluginPlatformFactory {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE,
-                 PluginPlatformMessage.incompleteXOption.getMessage(),
-                 commandLine[--i]);
+    PluginPlatformMessage.error(logger, null, 0, 
+        PluginPlatformMessage.incompleteXOption, commandLine[--i]);
       return null;
     }
 
@@ -169,7 +168,7 @@ public class PluginPlatformFactory {
         return xmlConfigurationFile;
       }
     } catch(Exception e) {}
-    logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotSpecified.getMessage());
+    PluginPlatformMessage.error(logger, null, 0, PluginPlatformMessage.configFileNotSpecified);
     return null;
   }
 

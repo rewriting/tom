@@ -343,6 +343,10 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   }
 
   private void verifyStrategyVariable(TomVisitList list) {
+    /* %strategy : error if there is no visit */
+    if(`list.isEmptyconcTomVisit()) {
+      TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
+    }
     %match(list) {
       concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,options),_*) -> {
         TomMessage.error(getLogger(),

@@ -28,7 +28,6 @@ import java.io.Reader;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.logging.Level;
 import java.util.Map;
 
 import tom.platform.PlatformLogRecord;

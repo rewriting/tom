@@ -81,6 +81,10 @@ public class PluginPlatformMessage implements PlatformMessage {
   public static final PluginPlatformMessage runWarningMessage =
     new PluginPlatformMessage("=>Execution generated {0,number,integer} warning(s).");
 
+  //PluginFactory messages
+  public static final PluginPlatformMessage noPluginActivated =
+    new PluginPlatformMessage("Error : No plugin was activated.");
+
   // Warning messages (level = Level.WARNING)
   public static final PluginPlatformMessage classNotFound =
     new PluginPlatformMessage("Class {0} not found");
