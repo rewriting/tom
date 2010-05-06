@@ -9,7 +9,7 @@ public class TestList{
   }
 
   public static void main(String[] args) {
-    TestIf test = new TestList();
+    TestList test = new TestList();
     test.printList(`f(b(),b()));
   }
 

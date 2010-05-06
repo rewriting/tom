@@ -30,9 +30,9 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import testsublists.m.types.*;
+import testsublistsns.m.types.*;
 
-public class TestSublists {
+public class TestSublistsNS {
   %gom {
     module M
       abstract syntax
@@ -72,13 +72,13 @@ public class TestSublists {
   public void test2_1() {
     Term res = `list(a(),b(),c());
     %match(res) {
-      list(_*,_p@(a(),b(),c()),_*) -> {
+      list(_*,_p@list(a(),b(),c()),_*) -> {
         return;
       }
     }
     fail();
   }
-/*
+
   @Test
   public void test3() {
     Term res = `list(a(),b(),b(),c());
@@ -178,7 +178,7 @@ public class TestSublists {
   public void test10() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(_X*,p@(b(),!b()),_Y*) -> {
+      termList(_X*,p@list(b(),!b()),_Y*) -> {
         if( `p == `list(b(),b()) ) {
           fail();
         }
@@ -196,9 +196,9 @@ public class TestSublists {
     }
     fail();
   }
-*/
+
   public static void main(String[] args) {
-    org.junit.runner.JUnitCore.main(TestSublists.class.getName());
+    org.junit.runner.JUnitCore.main(TestSublistsNS.class.getName());
   }
 
 }

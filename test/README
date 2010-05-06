@@ -30,7 +30,8 @@ Results obtained by compiling tom files with option -nt (NewTyper):
 - TestRecord.t : FAILED (need subtype informations for TomTypes)
 - TestReflectiveStrategy.t : OK
 - TestStrategy.t : OK
-- TestSublists.t : FAILED (some "minor" error?)
+- TestSublists.t : FAILED (because of anonymous constructors)
+- TestSublistsNS.t : OK
 - TestVarVarStar.t : OK
 - TomList.t : FAILED (because of anonymous constructors)
 - TomListNS.t : OK

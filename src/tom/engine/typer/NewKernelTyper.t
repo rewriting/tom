@@ -788,7 +788,20 @@ public class NewKernelTyper {
                 addConstraint(`Equation(argType,headTTList));
               }
             }
+          } else if (`symName != argSymb.getAstName()) {
+            // TODO: improve this code! It is like CT-ELEM
+            /*
+             * A list with a sublist whose constructor is different
+             * e.g. 
+             * A = ListA(A*) and B = ListB(A*) | b()
+             * ListB(b(),ListA(a()),b())
+             */
+            argType = getUnknownFreshTypeVar();
+            System.out.println("inferSlotList: symName != argSymbName -- constraint "
+                + `headTTList + " = " + argType);
+            addConstraint(`Equation(argType,headTTList));
           }
+
           /**
            * Continuation of CT-MERGE rule (applying to premises):
            * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
@@ -911,27 +924,6 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
   }
 
-/*
-  private static boolean inRelation(String class1, String class2) {
-    try {
-      Class subClass = Class.forName(class1);
-      Class superClass = Class.forName(class2);
-      //System.out.println("\n\ninRelation classes = " + superClass.getClasses());
-      //boolean res = true;
-      boolean res = subClass.isInstance(superClass.newInstance());
-      //boolean res = (Class.forName(class1).newInstance()
-      //      instanceof Class.forName(class2)superClass);
-      System.out.println("\n\ninRelation = " + res);
-      return res;
-    } catch(Throwable e) {
-      System.out.println("\n\ninRelation: class1 = " + class1);
-      System.out.println("\n\ninRelation: class2 = " + class2);
-      System.err.println(e);
-      throw new RuntimeException("inRelation: should not be here.");
-    }
-  }
-*/
-
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       /**
@@ -941,13 +933,8 @@ public class NewKernelTyper {
        * and tName1 != tName2
        */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1,TlType=tLType1],t2@Type[TomType=tName2@!tName1,TlType=tLType2]),_*) &&
+      concTypeConstraint(_*,Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1]),_*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          /*
-            String class1 = `tLType1.getString();
-            String class2 = `tLType2.getString();
-            System.out.println("\ntest = " + nkt.inRelation(class1,class2));
-          */
         throw new RuntimeException("solveConstraints: failure on " + `t1
             + " = " + `t2);
       }
