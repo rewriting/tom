@@ -111,6 +111,6 @@ Results obtained by compiling tom files with option -nt (NewTyper):
   - EmptyXml.t : OK	
   - TestEncoding.t : OK	
   - TestXml.t : OK	
-  - TestXmlDom.t : FAILED (??)	
+  - TestXmlDom.t : FAILED (because of anonymous constructors)	
   - Xml.t : OK		
-  - XmlDom.t : FAILED (??)
+  - XmlDom.t : FAILED (because of anonymous constructors)
