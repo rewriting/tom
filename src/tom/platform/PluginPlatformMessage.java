@@ -28,6 +28,7 @@ package tom.platform;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.lang.reflect.*;
 
 /**
  * The PluginPlatformMessage class is a container for error messages, using the
@@ -36,8 +37,35 @@ import java.util.logging.Logger;
 
 public class PluginPlatformMessage implements PlatformMessage {
   private final String message;
+  private String messageName;
 
   private static BasicFormatter formatter;
+
+  /*
+   * in a first step the class is initialized (each fieldName field is set to null)
+   * the initMessageName() method iterates over the static fields
+   * and for each of them we set the slot "fieldName" of the corresponding PlatformMessage
+   *
+   * this method is called from a static block (end of file)
+   */
+  public static void initMessageName() {
+    try {
+      Field[] fields = java.lang.Class.forName("tom.platform.PluginPlatformMessage").getDeclaredFields();
+      for(Field f:fields) {
+        int mod=f.getModifiers();
+        if(Modifier.isStatic(mod)) {
+          Object o = f.get(null);
+          if(o instanceof PluginPlatformMessage) {
+            PluginPlatformMessage msg = (PluginPlatformMessage) o;
+            msg.setMessageName(f.getName());
+            //System.out.println(" --> " + msg.getMessageName());
+          }
+        }
+      }
+    } catch(java.lang.Exception e) {
+      throw new tom.engine.exception.TomRuntimeException(e.getMessage());
+    }
+  }
 
 
   private PluginPlatformMessage(String message) {
@@ -103,6 +131,14 @@ public class PluginPlatformMessage implements PlatformMessage {
     return message;
   }
 
+  public String getMessageName() {
+    return messageName;
+  }
+
+  public void setMessageName(String name) {
+    messageName = name;
+  }
+
   public static final String DEFAULT_ERROR_FILE_NAME = "unknown file";
   public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
 
@@ -141,6 +177,13 @@ public class PluginPlatformMessage implements PlatformMessage {
 
   public static void finer(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object... msgArgs) {
     logMessage(Level.FINER, logger, fileName, errorLine, msg, msgArgs);
+  }
+
+  /*
+   * static block: should stay at the end of the file  (after the initialization of static fields)
+   */
+  static {
+    initMessageName();
   }
 
 

@@ -30,6 +30,7 @@ import java.util.logging.*;
 public class RegressFormatter extends Formatter {
   
   public String format(LogRecord record) {
+    System.out.println(record.getClass());
     Level level = record.getLevel();
     if(record instanceof PlatformLogRecord) {
       PlatformLogRecord plr = (PlatformLogRecord) record;
