@@ -31,11 +31,15 @@ public class RegressFormatter extends Formatter {
   
   public String format(LogRecord record) {
     Level level = record.getLevel();
-    if(level.equals(Level.SEVERE)) { 
-      // we are only interested into SEVERE logs
-      // TODO: select the information necessary for regression tests
-      System.out.println(record.getMessage());
-      return "REGRESS: "+formatMessage(record)+"\n";
+    if(record instanceof PlatformLogRecord) {
+      PlatformLogRecord plr = (PlatformLogRecord) record;
+      if(level.equals(Level.SEVERE)) { 
+        // we are only interested into SEVERE logs
+        // TODO: select the information necessary for regression tests
+        System.out.println(plr.getMessage());
+        System.out.println(plr.getPlatformMessage().getMessageName());
+        return "REGRESS: "+formatMessage(plr)+"\n";
+      }
     }
     return "";
   }

@@ -35,10 +35,14 @@ import java.util.logging.Logger;
  */
 
 public class BasicPlatformMessage implements PlatformMessage {
+  /*
+   * name of the error/warning message 
+   */
+  private String messageName;
+
   private final String message;
 
   private static BasicFormatter formatter;
-
 
   protected BasicPlatformMessage(String message) {
     this.message = message;
@@ -47,6 +51,14 @@ public class BasicPlatformMessage implements PlatformMessage {
 
   public String getMessage() {
     return message;
+  }
+
+  public String getMessageName() {
+    return messageName;
+  }
+
+  public void setMessageName(String name) {
+    messageName = name;
   }
 
   public static final String DEFAULT_ERROR_FILE_NAME = "unknown file";

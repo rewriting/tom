@@ -29,15 +29,41 @@ import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
 import tom.platform.PlatformLogRecord;
 
+import java.lang.reflect.*;
 /**
  * The TomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
 public class TomMessage extends BasicPlatformMessage {
-
   private TomMessage(String message) {
     super(message);
+  }
+
+  /*
+   * in a first step the TomMessage class is initialized (each fieldName field is set to null)
+   * the initMessageName() method iterates over the static fields
+   * and for each of them we set the slot "fieldName" of the corresponding TomMessage
+   *
+   * this method is called from a static block (end of file)
+   */
+  public static void initMessageName() {
+    try {
+      Field[] fields = java.lang.Class.forName("tom.engine.TomMessage").getDeclaredFields();
+      for(Field f:fields) {
+        int mod=f.getModifiers();
+        if(Modifier.isStatic(mod)) {
+          Object o = f.get(null);
+          if(o instanceof TomMessage) {
+            TomMessage msg = (TomMessage) o;
+            msg.setMessageName(f.getName());
+            //System.out.println(" --> " + msg.getMessageName());
+          }
+        }
+      }
+    } catch(java.lang.Exception e) {
+      throw new tom.engine.exception.TomRuntimeException(e.getMessage());
+    }
   }
 
   public static final TomMessage loggingInitializationFailure =
@@ -404,4 +430,11 @@ public class TomMessage extends BasicPlatformMessage {
 
   // Message level
   public static final int TOM_INFO = 0;
+
+  /*
+   * static block: should stay at the end of the file  (after the initialization of static fields)
+   */
+  static {
+    TomMessage.initMessageName();
+  }
 }
