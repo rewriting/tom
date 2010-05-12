@@ -17,11 +17,10 @@ class Strategy {
   }
  
   public final static void main(String[] args) {
-    T t = `f(g(a()),g(a()));
+    T t = `a();
     try {
-      Collection bag = new HashSet();
-      T result = (T) `BottomUp(Collect(bag)).visit(t);
-      System.out.println("result = " + bag);
+      T result = (T) `ReplaceAB().visit(t);
+      System.out.println("result = " + result);
     } catch(VisitFailure e) {
       System.out.println("failure on " + t);
     }

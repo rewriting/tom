@@ -10,22 +10,14 @@ public class Term {
         | b()
         | c()
         | f(x1:T, x2:T) 
-        | g(x1:T)  
-
-    L = conc( T* )
-
+        | g(x1:T)
+    
   }
 
   public final static void main(String[] args) {
-    L s = `conc(a(),b(),c(),a(),b());
+    T s = `a();
     System.out.println("s = " + s);
-    %match(s) {
-      conc(C1*,x,C2*,y,_*) -> {
-        return `conc(C1*,y,C2*,x,)
-      }
-    }
-    
   }
- 
+
 }
 

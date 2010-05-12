@@ -66,6 +66,13 @@ public class StatusHandler extends Handler {
           public String getMessage(){
             return recordCopy.getMessage();  
           }
+
+          public String getMessageName() {
+            return "empty_name";
+          }
+
+          public void setMessageName(String name) {
+          }
       }, record.getParameters(), PluginPlatform.getCurrentFileName(), 1);
     }
     PlatformLogRecord plr = (PlatformLogRecord)record;

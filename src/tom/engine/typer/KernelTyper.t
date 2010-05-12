@@ -234,13 +234,13 @@ public class KernelTyper {
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
-            tomSymbol = kernelTyper.getSymbolFromType(contextType);
-            if(tomSymbol==null) {
-              Option ot = TomBase.findOriginTracking(`option);
-              TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
-                  TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
-            }
-            `nameList = `concTomName(tomSymbol.getAstName());
+          tomSymbol = kernelTyper.getSymbolFromType(contextType);
+          if(tomSymbol==null) {
+            Option ot = TomBase.findOriginTracking(`option);
+            TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
+                TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
+          }
+          `nameList = `concTomName(tomSymbol.getAstName());
         } else {
           tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         }
@@ -301,10 +301,10 @@ public class KernelTyper {
           }
         } else {
           tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-/*          if (`tomName == "nothing") {
-            System.out.println("\n tomSymbol of 'nothing' = " + `tomSymbol);
-          }
-*/
+          /*          if (`tomName == "nothing") {
+                      System.out.println("\n tomSymbol of 'nothing' = " + `tomSymbol);
+                      }
+           */
         }
 
         if(tomSymbol != null) {
@@ -355,7 +355,7 @@ public class KernelTyper {
 
       c@concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
-        //System.out.println("\n ConstraintInstruction = " + `c);
+          //System.out.println("\n ConstraintInstruction = " + `c);
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
           Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeTomList(lhsVariable);
@@ -437,7 +437,7 @@ public class KernelTyper {
             }
           } 
         } // end match subject     
-        
+
         newSubjectType = kernelTyper.typeVariable(contextType,newSubjectType);
         newSubject = kernelTyper.typeVariable(newSubjectType, newSubject);                  
         TomTerm newPattern = kernelTyper.typeVariable(newSubjectType, `pattern);
@@ -627,8 +627,8 @@ matchL:  %match(subject,s) {
     throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
   }
 
-// Strategy called when there exist a %match with another one (or more) %match
-// inside it, so tthe strategy links all variables which have the same name
+  // Strategy called when there exist a %match with another one (or more) %match
+  // inside it, so tthe strategy links all variables which have the same name
   %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
     visit TomTerm {
       subject -> {

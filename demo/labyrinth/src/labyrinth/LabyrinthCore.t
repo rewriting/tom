@@ -37,7 +37,7 @@ public class LabyrinthCore {
 
   %include { boulder/boulder.tom }
   %include { sl.tom }
-  %include { HashMap.tom }
+  %include { java/util/HashMap.tom }
 
   %op Bead beadPlayer(north:Bead, south:Bead, east:Bead, west:Bead, direction:String) {
     is_fsym(t) { (t!=null) && t.isbead()  }
