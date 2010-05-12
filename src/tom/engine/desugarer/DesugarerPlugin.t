@@ -106,14 +106,11 @@ public class DesugarerPlugin extends TomGenericPlugin {
       updateSymbolTable();
       Code code = (Code) getWorkingTerm();
 
-      System.out.println("In Desugarer before remove unamed -- code = " + code);
       // replace underscores by fresh variables
       code = `TopDown(DesugarUnderscore(this)).visitLight(code);
-      System.out.println("In Desugarer after remove unamed -- code = " + code);
 
       // replace TermAppl and XmlAppl by RecordAppl
       code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
-      System.out.println("In Desugarer after replaceTermAppl code = " + code);
 
       setWorkingTerm(code);      
 
