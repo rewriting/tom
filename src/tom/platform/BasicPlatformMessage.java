@@ -80,7 +80,7 @@ public class BasicPlatformMessage implements PlatformMessage {
     if (Level.FINER == level) {
       logger.log(level, msg.getMessage(), msgArgs);
     } else {
-      logger.log(level, formatter.format(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine)));
+      logger.log(new PlatformLogRecord(level, msg, msgArgs,fileName, errorLine));
     }
   }
 

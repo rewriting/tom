@@ -30,16 +30,14 @@ import java.util.logging.*;
 public class RegressFormatter extends Formatter {
   
   public String format(LogRecord record) {
-    System.out.println(record.getClass());
     Level level = record.getLevel();
     if(record instanceof PlatformLogRecord) {
       PlatformLogRecord plr = (PlatformLogRecord) record;
       if(level.equals(Level.SEVERE)) { 
         // we are only interested into SEVERE logs
         // TODO: select the information necessary for regression tests
-        System.out.println(plr.getMessage());
-        System.out.println(plr.getPlatformMessage().getMessageName());
-        return "REGRESS: "+formatMessage(plr)+"\n";
+        // for the moment, we only test the name of the message
+        return "REGRESS: "+plr.getPlatformMessage().getMessageName()+"\n";
       }
     }
     return "";
