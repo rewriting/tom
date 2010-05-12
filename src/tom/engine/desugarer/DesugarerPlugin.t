@@ -106,11 +106,14 @@ public class DesugarerPlugin extends TomGenericPlugin {
       updateSymbolTable();
       Code code = (Code) getWorkingTerm();
 
+      System.out.println("In Desugarer before remove unamed -- code = " + code);
       // replace underscores by fresh variables
       code = `TopDown(DesugarUnderscore(this)).visitLight(code);
+      System.out.println("In Desugarer after remove unamed -- code = " + code);
 
       // replace TermAppl and XmlAppl by RecordAppl
       code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
+      System.out.println("In Desugarer after replaceTermAppl code = " + code);
 
       setWorkingTerm(code);      
 
@@ -302,7 +305,9 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
+    TomTerm star =
+      `VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
+
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
