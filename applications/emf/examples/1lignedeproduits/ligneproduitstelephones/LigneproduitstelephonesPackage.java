@@ -8,7 +8,6 @@ package ligneproduitstelephones;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -61,50 +60,88 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	LigneproduitstelephonesPackage eINSTANCE = ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl <em>Ligne Produits Telephones</em>}' class.
+	 * The meta object id for the '{@link ligneproduitstelephones.impl.OSTelephoneImpl <em>OS Telephone</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see ligneproduitstelephones.impl.LigneProduitsTelephonesImpl
-	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getLigneProduitsTelephones()
+	 * @see ligneproduitstelephones.impl.OSTelephoneImpl
+	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getOSTelephone()
 	 * @generated
 	 */
-	int LIGNE_PRODUITS_TELEPHONES = 0;
+	int OS_TELEPHONE = 0;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Version</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGNE_PRODUITS_TELEPHONES__NAME = 0;
+	int OS_TELEPHONE__VERSION = 0;
 
 	/**
-	 * The feature id for the '<em><b>Marque</b></em>' containment reference list.
+	 * The number of structural features of the '<em>OS Telephone</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGNE_PRODUITS_TELEPHONES__MARQUE = 1;
+	int OS_TELEPHONE_FEATURE_COUNT = 1;
 
 	/**
-	 * The feature id for the '<em><b>Telephones</b></em>' containment reference list.
+	 * The meta object id for the '{@link ligneproduitstelephones.impl.IphoneOSImpl <em>Iphone OS</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ligneproduitstelephones.impl.IphoneOSImpl
+	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getIphoneOS()
+	 * @generated
+	 */
+	int IPHONE_OS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Version</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGNE_PRODUITS_TELEPHONES__TELEPHONES = 2;
+	int IPHONE_OS__VERSION = OS_TELEPHONE__VERSION;
 
 	/**
-	 * The number of structural features of the '<em>Ligne Produits Telephones</em>' class.
+	 * The number of structural features of the '<em>Iphone OS</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGNE_PRODUITS_TELEPHONES_FEATURE_COUNT = 3;
+	int IPHONE_OS_FEATURE_COUNT = OS_TELEPHONE_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link ligneproduitstelephones.impl.AndroidImpl <em>Android</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ligneproduitstelephones.impl.AndroidImpl
+	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getAndroid()
+	 * @generated
+	 */
+	int ANDROID = 2;
+
+	/**
+	 * The feature id for the '<em><b>Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANDROID__VERSION = OS_TELEPHONE__VERSION;
+
+	/**
+	 * The number of structural features of the '<em>Android</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANDROID_FEATURE_COUNT = OS_TELEPHONE_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link ligneproduitstelephones.impl.MarqueImpl <em>Marque</em>}' class.
@@ -114,7 +151,7 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getMarque()
 	 * @generated
 	 */
-	int MARQUE = 1;
+	int MARQUE = 3;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -151,7 +188,7 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getTelephone()
 	 * @generated
 	 */
-	int TELEPHONE = 2;
+	int TELEPHONE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -163,31 +200,22 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	int TELEPHONE__NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Tactile</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TELEPHONE__TACTILE = 1;
-
-	/**
-	 * The feature id for the '<em><b>OS Telephone</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TELEPHONE__OS_TELEPHONE = 2;
-
-	/**
 	 * The feature id for the '<em><b>Marque</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TELEPHONE__MARQUE = 3;
+	int TELEPHONE__MARQUE = 1;
+
+	/**
+	 * The feature id for the '<em><b>OS</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TELEPHONE__OS = 2;
 
 	/**
 	 * The number of structural features of the '<em>Telephone</em>' class.
@@ -196,61 +224,95 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TELEPHONE_FEATURE_COUNT = 4;
+	int TELEPHONE_FEATURE_COUNT = 3;
 
 	/**
-	 * The meta object id for the '{@link ligneproduitstelephones.OSTelephone <em>OS Telephone</em>}' enum.
+	 * The meta object id for the '{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl <em>Ligne Produits Telephones</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @see ligneproduitstelephones.impl.LigneProduitsTelephonesImpl
+	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getLigneProduitsTelephones()
+	 * @generated
+	 */
+	int LIGNE_PRODUITS_TELEPHONES = 5;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGNE_PRODUITS_TELEPHONES__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Telephones</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGNE_PRODUITS_TELEPHONES__TELEPHONES = 1;
+
+	/**
+	 * The feature id for the '<em><b>Marques</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGNE_PRODUITS_TELEPHONES__MARQUES = 2;
+
+	/**
+	 * The number of structural features of the '<em>Ligne Produits Telephones</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGNE_PRODUITS_TELEPHONES_FEATURE_COUNT = 3;
+
+
+	/**
+	 * Returns the meta object for class '{@link ligneproduitstelephones.OSTelephone <em>OS Telephone</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>OS Telephone</em>'.
 	 * @see ligneproduitstelephones.OSTelephone
-	 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getOSTelephone()
 	 * @generated
 	 */
-	int OS_TELEPHONE = 3;
-
+	EClass getOSTelephone();
 
 	/**
-	 * Returns the meta object for class '{@link ligneproduitstelephones.LigneProduitsTelephones <em>Ligne Produits Telephones</em>}'.
+	 * Returns the meta object for the attribute '{@link ligneproduitstelephones.OSTelephone#getVersion <em>Version</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Ligne Produits Telephones</em>'.
-	 * @see ligneproduitstelephones.LigneProduitsTelephones
+	 * @return the meta object for the attribute '<em>Version</em>'.
+	 * @see ligneproduitstelephones.OSTelephone#getVersion()
+	 * @see #getOSTelephone()
 	 * @generated
 	 */
-	EClass getLigneProduitsTelephones();
+	EAttribute getOSTelephone_Version();
 
 	/**
-	 * Returns the meta object for the attribute '{@link ligneproduitstelephones.LigneProduitsTelephones#getName <em>Name</em>}'.
+	 * Returns the meta object for class '{@link ligneproduitstelephones.IphoneOS <em>Iphone OS</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see ligneproduitstelephones.LigneProduitsTelephones#getName()
-	 * @see #getLigneProduitsTelephones()
+	 * @return the meta object for class '<em>Iphone OS</em>'.
+	 * @see ligneproduitstelephones.IphoneOS
 	 * @generated
 	 */
-	EAttribute getLigneProduitsTelephones_Name();
+	EClass getIphoneOS();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link ligneproduitstelephones.LigneProduitsTelephones#getMarque <em>Marque</em>}'.
+	 * Returns the meta object for class '{@link ligneproduitstelephones.Android <em>Android</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Marque</em>'.
-	 * @see ligneproduitstelephones.LigneProduitsTelephones#getMarque()
-	 * @see #getLigneProduitsTelephones()
+	 * @return the meta object for class '<em>Android</em>'.
+	 * @see ligneproduitstelephones.Android
 	 * @generated
 	 */
-	EReference getLigneProduitsTelephones_Marque();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link ligneproduitstelephones.LigneProduitsTelephones#getTelephones <em>Telephones</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Telephones</em>'.
-	 * @see ligneproduitstelephones.LigneProduitsTelephones#getTelephones()
-	 * @see #getLigneProduitsTelephones()
-	 * @generated
-	 */
-	EReference getLigneProduitsTelephones_Telephones();
+	EClass getAndroid();
 
 	/**
 	 * Returns the meta object for class '{@link ligneproduitstelephones.Marque <em>Marque</em>}'.
@@ -306,28 +368,6 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	EAttribute getTelephone_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link ligneproduitstelephones.Telephone#isTactile <em>Tactile</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tactile</em>'.
-	 * @see ligneproduitstelephones.Telephone#isTactile()
-	 * @see #getTelephone()
-	 * @generated
-	 */
-	EAttribute getTelephone_Tactile();
-
-	/**
-	 * Returns the meta object for the attribute '{@link ligneproduitstelephones.Telephone#getOSTelephone <em>OS Telephone</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>OS Telephone</em>'.
-	 * @see ligneproduitstelephones.Telephone#getOSTelephone()
-	 * @see #getTelephone()
-	 * @generated
-	 */
-	EAttribute getTelephone_OSTelephone();
-
-	/**
 	 * Returns the meta object for the reference '{@link ligneproduitstelephones.Telephone#getMarque <em>Marque</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -339,14 +379,58 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	EReference getTelephone_Marque();
 
 	/**
-	 * Returns the meta object for enum '{@link ligneproduitstelephones.OSTelephone <em>OS Telephone</em>}'.
+	 * Returns the meta object for the containment reference '{@link ligneproduitstelephones.Telephone#getOS <em>OS</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>OS Telephone</em>'.
-	 * @see ligneproduitstelephones.OSTelephone
+	 * @return the meta object for the containment reference '<em>OS</em>'.
+	 * @see ligneproduitstelephones.Telephone#getOS()
+	 * @see #getTelephone()
 	 * @generated
 	 */
-	EEnum getOSTelephone();
+	EReference getTelephone_OS();
+
+	/**
+	 * Returns the meta object for class '{@link ligneproduitstelephones.LigneProduitsTelephones <em>Ligne Produits Telephones</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Ligne Produits Telephones</em>'.
+	 * @see ligneproduitstelephones.LigneProduitsTelephones
+	 * @generated
+	 */
+	EClass getLigneProduitsTelephones();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ligneproduitstelephones.LigneProduitsTelephones#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see ligneproduitstelephones.LigneProduitsTelephones#getName()
+	 * @see #getLigneProduitsTelephones()
+	 * @generated
+	 */
+	EAttribute getLigneProduitsTelephones_Name();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link ligneproduitstelephones.LigneProduitsTelephones#getTelephones <em>Telephones</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Telephones</em>'.
+	 * @see ligneproduitstelephones.LigneProduitsTelephones#getTelephones()
+	 * @see #getLigneProduitsTelephones()
+	 * @generated
+	 */
+	EReference getLigneProduitsTelephones_Telephones();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link ligneproduitstelephones.LigneProduitsTelephones#getMarques <em>Marques</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Marques</em>'.
+	 * @see ligneproduitstelephones.LigneProduitsTelephones#getMarques()
+	 * @see #getLigneProduitsTelephones()
+	 * @generated
+	 */
+	EReference getLigneProduitsTelephones_Marques();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -371,38 +455,42 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl <em>Ligne Produits Telephones</em>}' class.
+		 * The meta object literal for the '{@link ligneproduitstelephones.impl.OSTelephoneImpl <em>OS Telephone</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see ligneproduitstelephones.impl.LigneProduitsTelephonesImpl
-		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getLigneProduitsTelephones()
+		 * @see ligneproduitstelephones.impl.OSTelephoneImpl
+		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getOSTelephone()
 		 * @generated
 		 */
-		EClass LIGNE_PRODUITS_TELEPHONES = eINSTANCE.getLigneProduitsTelephones();
+		EClass OS_TELEPHONE = eINSTANCE.getOSTelephone();
 
 		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Version</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute LIGNE_PRODUITS_TELEPHONES__NAME = eINSTANCE.getLigneProduitsTelephones_Name();
+		EAttribute OS_TELEPHONE__VERSION = eINSTANCE.getOSTelephone_Version();
 
 		/**
-		 * The meta object literal for the '<em><b>Marque</b></em>' containment reference list feature.
+		 * The meta object literal for the '{@link ligneproduitstelephones.impl.IphoneOSImpl <em>Iphone OS</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @see ligneproduitstelephones.impl.IphoneOSImpl
+		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getIphoneOS()
 		 * @generated
 		 */
-		EReference LIGNE_PRODUITS_TELEPHONES__MARQUE = eINSTANCE.getLigneProduitsTelephones_Marque();
+		EClass IPHONE_OS = eINSTANCE.getIphoneOS();
 
 		/**
-		 * The meta object literal for the '<em><b>Telephones</b></em>' containment reference list feature.
+		 * The meta object literal for the '{@link ligneproduitstelephones.impl.AndroidImpl <em>Android</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @see ligneproduitstelephones.impl.AndroidImpl
+		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getAndroid()
 		 * @generated
 		 */
-		EReference LIGNE_PRODUITS_TELEPHONES__TELEPHONES = eINSTANCE.getLigneProduitsTelephones_Telephones();
+		EClass ANDROID = eINSTANCE.getAndroid();
 
 		/**
 		 * The meta object literal for the '{@link ligneproduitstelephones.impl.MarqueImpl <em>Marque</em>}' class.
@@ -449,22 +537,6 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 		EAttribute TELEPHONE__NAME = eINSTANCE.getTelephone_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Tactile</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TELEPHONE__TACTILE = eINSTANCE.getTelephone_Tactile();
-
-		/**
-		 * The meta object literal for the '<em><b>OS Telephone</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TELEPHONE__OS_TELEPHONE = eINSTANCE.getTelephone_OSTelephone();
-
-		/**
 		 * The meta object literal for the '<em><b>Marque</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -473,14 +545,46 @@ public interface LigneproduitstelephonesPackage extends EPackage {
 		EReference TELEPHONE__MARQUE = eINSTANCE.getTelephone_Marque();
 
 		/**
-		 * The meta object literal for the '{@link ligneproduitstelephones.OSTelephone <em>OS Telephone</em>}' enum.
+		 * The meta object literal for the '<em><b>OS</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see ligneproduitstelephones.OSTelephone
-		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getOSTelephone()
 		 * @generated
 		 */
-		EEnum OS_TELEPHONE = eINSTANCE.getOSTelephone();
+		EReference TELEPHONE__OS = eINSTANCE.getTelephone_OS();
+
+		/**
+		 * The meta object literal for the '{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl <em>Ligne Produits Telephones</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ligneproduitstelephones.impl.LigneProduitsTelephonesImpl
+		 * @see ligneproduitstelephones.impl.LigneproduitstelephonesPackageImpl#getLigneProduitsTelephones()
+		 * @generated
+		 */
+		EClass LIGNE_PRODUITS_TELEPHONES = eINSTANCE.getLigneProduitsTelephones();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LIGNE_PRODUITS_TELEPHONES__NAME = eINSTANCE.getLigneProduitsTelephones_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Telephones</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LIGNE_PRODUITS_TELEPHONES__TELEPHONES = eINSTANCE.getLigneProduitsTelephones_Telephones();
+
+		/**
+		 * The meta object literal for the '<em><b>Marques</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LIGNE_PRODUITS_TELEPHONES__MARQUES = eINSTANCE.getLigneProduitsTelephones_Marques();
 
 	}
 

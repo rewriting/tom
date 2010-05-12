@@ -9,7 +9,6 @@ package ligneproduitstelephones.impl;
 import ligneproduitstelephones.*;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -61,9 +60,12 @@ public class LigneproduitstelephonesFactoryImpl extends EFactoryImpl implements 
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES: return createLigneProduitsTelephones();
+			case LigneproduitstelephonesPackage.OS_TELEPHONE: return createOSTelephone();
+			case LigneproduitstelephonesPackage.IPHONE_OS: return createIphoneOS();
+			case LigneproduitstelephonesPackage.ANDROID: return createAndroid();
 			case LigneproduitstelephonesPackage.MARQUE: return createMarque();
 			case LigneproduitstelephonesPackage.TELEPHONE: return createTelephone();
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES: return createLigneProduitsTelephones();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -74,14 +76,9 @@ public class LigneproduitstelephonesFactoryImpl extends EFactoryImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public Object createFromString(EDataType eDataType, String initialValue) {
-		switch (eDataType.getClassifierID()) {
-			case LigneproduitstelephonesPackage.OS_TELEPHONE:
-				return createOSTelephoneFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
+	public OSTelephone createOSTelephone() {
+		OSTelephoneImpl osTelephone = new OSTelephoneImpl();
+		return osTelephone;
 	}
 
 	/**
@@ -89,14 +86,9 @@ public class LigneproduitstelephonesFactoryImpl extends EFactoryImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public String convertToString(EDataType eDataType, Object instanceValue) {
-		switch (eDataType.getClassifierID()) {
-			case LigneproduitstelephonesPackage.OS_TELEPHONE:
-				return convertOSTelephoneToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
+	public IphoneOS createIphoneOS() {
+		IphoneOSImpl iphoneOS = new IphoneOSImpl();
+		return iphoneOS;
 	}
 
 	/**
@@ -104,9 +96,9 @@ public class LigneproduitstelephonesFactoryImpl extends EFactoryImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public LigneProduitsTelephones createLigneProduitsTelephones() {
-		LigneProduitsTelephonesImpl ligneProduitsTelephones = new LigneProduitsTelephonesImpl();
-		return ligneProduitsTelephones;
+	public Android createAndroid() {
+		AndroidImpl android = new AndroidImpl();
+		return android;
 	}
 
 	/**
@@ -134,19 +126,9 @@ public class LigneproduitstelephonesFactoryImpl extends EFactoryImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public OSTelephone createOSTelephoneFromString(EDataType eDataType, String initialValue) {
-		OSTelephone result = OSTelephone.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertOSTelephoneToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
+	public LigneProduitsTelephones createLigneProduitsTelephones() {
+		LigneProduitsTelephonesImpl ligneProduitsTelephones = new LigneProduitsTelephonesImpl();
+		return ligneProduitsTelephones;
 	}
 
 	/**

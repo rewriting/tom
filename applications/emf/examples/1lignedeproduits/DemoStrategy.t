@@ -5,7 +5,7 @@ import ligneproduitstelephones.*;
 
 import tom.library.sl.*;
 
-class ClassUsingLPTMapping {
+class DemoStrategy {
 
   %include{ ligneproduitstelephonesmapping.tom }
 
@@ -25,28 +25,18 @@ class ClassUsingLPTMapping {
         TelephoneEList(iphone,iphone2,nexus),
         MarqueEList(apple,google) );
 
-    System.out.println(apple.getName());
-    
-    System.out.println(iphone.getName() + " version " + iphone.getOS().getVersion());
-
-    %match(iphone) {
-      Telephone(name,_,OSTelephone(numero)) -> {
-        System.out.println(`name + " version " + `numero);
-      }
+    try {
+      Telephone result = `TopDown(Try(upgradeVersion())).visitLight(nexus, new EcoreContainmentIntrospector());
+      System.out.println(result.getOS().getVersion());
+    } catch (VisitFailure e) {
+      System.out.println("failure");
     }
+  }
 
-    %match(lpt) {
-      LigneProduitsTelephones[telephones=TelephoneEList(_*, Telephone(name,_,OSTelephone(1)),_*)] -> {
-        System.out.println(`name);
-      }
-
-      LigneProduitsTelephones[telephones=TelephoneEList(_*,Telephone(name1,m,_),_*, Telephone(name2,m,_),_*)] -> {
-        System.out.println("meme marque: " + `name1 + " et " + `name2);
-      }
+  %strategy upgradeVersion() extends Fail() {
+    visit OSTelephone {
+      OSTelephone(version) -> { System.out.println("***"); return `OSTelephone(version+1); }
     }
-
-
-
   }
 
 }

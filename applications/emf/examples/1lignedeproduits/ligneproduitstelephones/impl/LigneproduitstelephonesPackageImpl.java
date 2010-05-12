@@ -6,6 +6,8 @@
  */
 package ligneproduitstelephones.impl;
 
+import ligneproduitstelephones.Android;
+import ligneproduitstelephones.IphoneOS;
 import ligneproduitstelephones.LigneProduitsTelephones;
 import ligneproduitstelephones.LigneproduitstelephonesFactory;
 import ligneproduitstelephones.LigneproduitstelephonesPackage;
@@ -15,7 +17,6 @@ import ligneproduitstelephones.Telephone;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -33,7 +34,21 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass ligneProduitsTelephonesEClass = null;
+	private EClass osTelephoneEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass iphoneOSEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass androidEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -54,7 +69,7 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EEnum osTelephoneEEnum = null;
+	private EClass ligneProduitsTelephonesEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -122,8 +137,8 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getLigneProduitsTelephones() {
-		return ligneProduitsTelephonesEClass;
+	public EClass getOSTelephone() {
+		return osTelephoneEClass;
 	}
 
 	/**
@@ -131,8 +146,8 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getLigneProduitsTelephones_Name() {
-		return (EAttribute)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(0);
+	public EAttribute getOSTelephone_Version() {
+		return (EAttribute)osTelephoneEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -140,8 +155,8 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getLigneProduitsTelephones_Marque() {
-		return (EReference)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(1);
+	public EClass getIphoneOS() {
+		return iphoneOSEClass;
 	}
 
 	/**
@@ -149,8 +164,8 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getLigneProduitsTelephones_Telephones() {
-		return (EReference)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(2);
+	public EClass getAndroid() {
+		return androidEClass;
 	}
 
 	/**
@@ -203,26 +218,8 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getTelephone_Tactile() {
-		return (EAttribute)telephoneEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getTelephone_OSTelephone() {
-		return (EAttribute)telephoneEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getTelephone_Marque() {
-		return (EReference)telephoneEClass.getEStructuralFeatures().get(3);
+		return (EReference)telephoneEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -230,8 +227,44 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EEnum getOSTelephone() {
-		return osTelephoneEEnum;
+	public EReference getTelephone_OS() {
+		return (EReference)telephoneEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getLigneProduitsTelephones() {
+		return ligneProduitsTelephonesEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLigneProduitsTelephones_Name() {
+		return (EAttribute)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLigneProduitsTelephones_Telephones() {
+		return (EReference)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLigneProduitsTelephones_Marques() {
+		return (EReference)ligneProduitsTelephonesEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -262,10 +295,12 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 		isCreated = true;
 
 		// Create classes and their features
-		ligneProduitsTelephonesEClass = createEClass(LIGNE_PRODUITS_TELEPHONES);
-		createEAttribute(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__NAME);
-		createEReference(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__MARQUE);
-		createEReference(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__TELEPHONES);
+		osTelephoneEClass = createEClass(OS_TELEPHONE);
+		createEAttribute(osTelephoneEClass, OS_TELEPHONE__VERSION);
+
+		iphoneOSEClass = createEClass(IPHONE_OS);
+
+		androidEClass = createEClass(ANDROID);
 
 		marqueEClass = createEClass(MARQUE);
 		createEAttribute(marqueEClass, MARQUE__NAME);
@@ -273,12 +308,13 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 
 		telephoneEClass = createEClass(TELEPHONE);
 		createEAttribute(telephoneEClass, TELEPHONE__NAME);
-		createEAttribute(telephoneEClass, TELEPHONE__TACTILE);
-		createEAttribute(telephoneEClass, TELEPHONE__OS_TELEPHONE);
 		createEReference(telephoneEClass, TELEPHONE__MARQUE);
+		createEReference(telephoneEClass, TELEPHONE__OS);
 
-		// Create enums
-		osTelephoneEEnum = createEEnum(OS_TELEPHONE);
+		ligneProduitsTelephonesEClass = createEClass(LIGNE_PRODUITS_TELEPHONES);
+		createEAttribute(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__NAME);
+		createEReference(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__TELEPHONES);
+		createEReference(ligneProduitsTelephonesEClass, LIGNE_PRODUITS_TELEPHONES__MARQUES);
 	}
 
 	/**
@@ -309,12 +345,16 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		iphoneOSEClass.getESuperTypes().add(this.getOSTelephone());
+		androidEClass.getESuperTypes().add(this.getOSTelephone());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(ligneProduitsTelephonesEClass, LigneProduitsTelephones.class, "LigneProduitsTelephones", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLigneProduitsTelephones_Name(), ecorePackage.getEString(), "name", null, 0, 1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLigneProduitsTelephones_Marque(), this.getMarque(), null, "marque", null, 0, -1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLigneProduitsTelephones_Telephones(), this.getTelephone(), null, "telephones", null, 0, -1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(osTelephoneEClass, OSTelephone.class, "OSTelephone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getOSTelephone_Version(), ecorePackage.getEInt(), "version", null, 0, 1, OSTelephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(iphoneOSEClass, IphoneOS.class, "IphoneOS", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(androidEClass, Android.class, "Android", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(marqueEClass, Marque.class, "Marque", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMarque_Name(), ecorePackage.getEString(), "name", null, 0, 1, Marque.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -322,18 +362,13 @@ public class LigneproduitstelephonesPackageImpl extends EPackageImpl implements 
 
 		initEClass(telephoneEClass, Telephone.class, "Telephone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTelephone_Name(), ecorePackage.getEString(), "name", null, 0, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTelephone_Tactile(), ecorePackage.getEBoolean(), "tactile", "false", 0, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTelephone_OSTelephone(), this.getOSTelephone(), "oSTelephone", null, 0, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getTelephone_Marque(), this.getMarque(), this.getMarque_Telephones(), "marque", null, 0, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTelephone_Marque(), this.getMarque(), this.getMarque_Telephones(), "marque", null, 1, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTelephone_OS(), this.getOSTelephone(), null, "OS", null, 1, 1, Telephone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		// Initialize enums and add enum literals
-		initEEnum(osTelephoneEEnum, OSTelephone.class, "OSTelephone");
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.ANDROID);
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.MACOS);
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.WINDOWSCE);
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.BLACKBERRY);
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.SYMBIAN);
-		addEEnumLiteral(osTelephoneEEnum, OSTelephone.OTHER);
+		initEClass(ligneProduitsTelephonesEClass, LigneProduitsTelephones.class, "LigneProduitsTelephones", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getLigneProduitsTelephones_Name(), ecorePackage.getEString(), "name", null, 0, 1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLigneProduitsTelephones_Telephones(), this.getTelephone(), null, "telephones", null, 0, -1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLigneProduitsTelephones_Marques(), this.getMarque(), null, "marques", null, 0, -1, LigneProduitsTelephones.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -14,18 +14,19 @@ import ligneproduitstelephones.Marque;
 import ligneproduitstelephones.Telephone;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -35,8 +36,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl#getName <em>Name</em>}</li>
- *   <li>{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl#getMarque <em>Marque</em>}</li>
  *   <li>{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl#getTelephones <em>Telephones</em>}</li>
+ *   <li>{@link ligneproduitstelephones.impl.LigneProduitsTelephonesImpl#getMarques <em>Marques</em>}</li>
  * </ul>
  * </p>
  *
@@ -64,16 +65,6 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getMarque() <em>Marque</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMarque()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Marque> marque;
-
-	/**
 	 * The cached value of the '{@link #getTelephones() <em>Telephones</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -82,6 +73,16 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 	 * @ordered
 	 */
 	protected EList<Telephone> telephones;
+
+	/**
+	 * The cached value of the '{@link #getMarques() <em>Marques</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMarques()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Marque> marques;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -128,18 +129,6 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Marque> getMarque() {
-		if (marque == null) {
-			marque = new EObjectContainmentEList<Marque>(Marque.class, this, LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE);
-		}
-		return marque;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EList<Telephone> getTelephones() {
 		if (telephones == null) {
 			telephones = new EObjectContainmentEList<Telephone>(Telephone.class, this, LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES);
@@ -152,13 +141,25 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Marque> getMarques() {
+		if (marques == null) {
+			marques = new EObjectContainmentEList<Marque>(Marque.class, this, LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES);
+		}
+		return marques;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE:
-				return ((InternalEList<?>)getMarque()).basicRemove(otherEnd, msgs);
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES:
 				return ((InternalEList<?>)getTelephones()).basicRemove(otherEnd, msgs);
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES:
+				return ((InternalEList<?>)getMarques()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -173,10 +174,10 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 		switch (featureID) {
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__NAME:
 				return getName();
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE:
-				return getMarque();
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES:
 				return getTelephones();
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES:
+				return getMarques();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -193,13 +194,13 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__NAME:
 				setName((String)newValue);
 				return;
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE:
-				getMarque().clear();
-				getMarque().addAll((Collection<? extends Marque>)newValue);
-				return;
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES:
 				getTelephones().clear();
 				getTelephones().addAll((Collection<? extends Telephone>)newValue);
+				return;
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES:
+				getMarques().clear();
+				getMarques().addAll((Collection<? extends Marque>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -216,11 +217,11 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE:
-				getMarque().clear();
-				return;
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES:
 				getTelephones().clear();
+				return;
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES:
+				getMarques().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -236,10 +237,10 @@ public class LigneProduitsTelephonesImpl extends EObjectImpl implements LignePro
 		switch (featureID) {
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUE:
-				return marque != null && !marque.isEmpty();
 			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__TELEPHONES:
 				return telephones != null && !telephones.isEmpty();
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES__MARQUES:
+				return marques != null && !marques.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

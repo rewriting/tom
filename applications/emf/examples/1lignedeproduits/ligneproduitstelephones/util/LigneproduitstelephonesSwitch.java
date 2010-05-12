@@ -87,9 +87,23 @@ public class LigneproduitstelephonesSwitch<T> {
 	 */
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES: {
-				LigneProduitsTelephones ligneProduitsTelephones = (LigneProduitsTelephones)theEObject;
-				T result = caseLigneProduitsTelephones(ligneProduitsTelephones);
+			case LigneproduitstelephonesPackage.OS_TELEPHONE: {
+				OSTelephone osTelephone = (OSTelephone)theEObject;
+				T result = caseOSTelephone(osTelephone);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case LigneproduitstelephonesPackage.IPHONE_OS: {
+				IphoneOS iphoneOS = (IphoneOS)theEObject;
+				T result = caseIphoneOS(iphoneOS);
+				if (result == null) result = caseOSTelephone(iphoneOS);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case LigneproduitstelephonesPackage.ANDROID: {
+				Android android = (Android)theEObject;
+				T result = caseAndroid(android);
+				if (result == null) result = caseOSTelephone(android);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -105,22 +119,58 @@ public class LigneproduitstelephonesSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case LigneproduitstelephonesPackage.LIGNE_PRODUITS_TELEPHONES: {
+				LigneProduitsTelephones ligneProduitsTelephones = (LigneProduitsTelephones)theEObject;
+				T result = caseLigneProduitsTelephones(ligneProduitsTelephones);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Ligne Produits Telephones</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>OS Telephone</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Ligne Produits Telephones</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>OS Telephone</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseLigneProduitsTelephones(LigneProduitsTelephones object) {
+	public T caseOSTelephone(OSTelephone object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Iphone OS</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Iphone OS</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseIphoneOS(IphoneOS object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Android</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Android</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseAndroid(Android object) {
 		return null;
 	}
 
@@ -151,6 +201,21 @@ public class LigneproduitstelephonesSwitch<T> {
 	 * @generated
 	 */
 	public T caseTelephone(Telephone object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Ligne Produits Telephones</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Ligne Produits Telephones</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLigneProduitsTelephones(LigneProduitsTelephones object) {
 		return null;
 	}
 

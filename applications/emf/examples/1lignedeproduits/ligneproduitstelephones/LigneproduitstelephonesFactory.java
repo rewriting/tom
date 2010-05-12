@@ -26,13 +26,31 @@ public interface LigneproduitstelephonesFactory extends EFactory {
 	LigneproduitstelephonesFactory eINSTANCE = ligneproduitstelephones.impl.LigneproduitstelephonesFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Ligne Produits Telephones</em>'.
+	 * Returns a new object of class '<em>OS Telephone</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Ligne Produits Telephones</em>'.
+	 * @return a new object of class '<em>OS Telephone</em>'.
 	 * @generated
 	 */
-	LigneProduitsTelephones createLigneProduitsTelephones();
+	OSTelephone createOSTelephone();
+
+	/**
+	 * Returns a new object of class '<em>Iphone OS</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Iphone OS</em>'.
+	 * @generated
+	 */
+	IphoneOS createIphoneOS();
+
+	/**
+	 * Returns a new object of class '<em>Android</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Android</em>'.
+	 * @generated
+	 */
+	Android createAndroid();
 
 	/**
 	 * Returns a new object of class '<em>Marque</em>'.
@@ -51,6 +69,15 @@ public interface LigneproduitstelephonesFactory extends EFactory {
 	 * @generated
 	 */
 	Telephone createTelephone();
+
+	/**
+	 * Returns a new object of class '<em>Ligne Produits Telephones</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ligne Produits Telephones</em>'.
+	 * @generated
+	 */
+	LigneProduitsTelephones createLigneProduitsTelephones();
 
 	/**
 	 * Returns the package supported by this factory.

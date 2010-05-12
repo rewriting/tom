@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export ECLIPSE_WORKSPACE=${HOME}/workspace/jtom/journeeRII
+
 if [ "$1" = "clean" ]
 then
 	rm mappings/*
@@ -10,8 +12,8 @@ else
 	java TomMappingFromEcore org.eclipse.emf.ecore.EcorePackage > ../mappings/ecore.tom
 
 	echo "Generating mapping for LigneProdutisTelephones example…"
-	java -cp "/home/jcb/workspace/eclipseProjects/LigneProduitsTelephones/bin/:$CLASSPATH" TomMappingFromEcore ligneproduitstelephones.LigneproduitstelephonesPackage > ../mappings/ligneproduitstelephonesmapping.tom
+	java -cp "$ECLIPSE_WORKSPACE/LigneProduitsTelephones/bin/:$CLASSPATH" TomMappingFromEcore ligneproduitstelephones.LigneproduitstelephonesPackage > ../mappings/ligneproduitstelephonesmapping.tom
 
 	echo "Generating xmi for LigneProdutisTelephones example…"
-	java -cp "/home/jcb/workspace/eclipseProjects/LigneProduitsTelephones/bin/:$CLASSPATH" EcoreMappingToXMI ligneproduitstelephones.LigneproduitstelephonesPackage > ../mappings/ligneproduitstelephones.xmi
+	java -cp "$ECLIPSE_WORKSPACE/LigneProduitsTelephones/bin/:$CLASSPATH" EcoreMappingToXMI ligneproduitstelephones.LigneproduitstelephonesPackage > ../mappings/ligneproduitstelephones.xmi
 fi

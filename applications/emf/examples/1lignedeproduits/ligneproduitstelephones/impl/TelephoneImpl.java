@@ -28,9 +28,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link ligneproduitstelephones.impl.TelephoneImpl#getName <em>Name</em>}</li>
- *   <li>{@link ligneproduitstelephones.impl.TelephoneImpl#isTactile <em>Tactile</em>}</li>
- *   <li>{@link ligneproduitstelephones.impl.TelephoneImpl#getOSTelephone <em>OS Telephone</em>}</li>
  *   <li>{@link ligneproduitstelephones.impl.TelephoneImpl#getMarque <em>Marque</em>}</li>
+ *   <li>{@link ligneproduitstelephones.impl.TelephoneImpl#getOS <em>OS</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,46 +57,6 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isTactile() <em>Tactile</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isTactile()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean TACTILE_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isTactile() <em>Tactile</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isTactile()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean tactile = TACTILE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getOSTelephone() <em>OS Telephone</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOSTelephone()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final OSTelephone OS_TELEPHONE_EDEFAULT = OSTelephone.ANDROID;
-
-	/**
-	 * The cached value of the '{@link #getOSTelephone() <em>OS Telephone</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOSTelephone()
-	 * @generated
-	 * @ordered
-	 */
-	protected OSTelephone oSTelephone = OS_TELEPHONE_EDEFAULT;
-
-	/**
 	 * The cached value of the '{@link #getMarque() <em>Marque</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -106,6 +65,16 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 	 * @ordered
 	 */
 	protected Marque marque;
+
+	/**
+	 * The cached value of the '{@link #getOS() <em>OS</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOS()
+	 * @generated
+	 * @ordered
+	 */
+	protected OSTelephone os;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -145,48 +114,6 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 		name = newName;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, LigneproduitstelephonesPackage.TELEPHONE__NAME, oldName, name));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isTactile() {
-		return tactile;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTactile(boolean newTactile) {
-		boolean oldTactile = tactile;
-		tactile = newTactile;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, LigneproduitstelephonesPackage.TELEPHONE__TACTILE, oldTactile, tactile));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public OSTelephone getOSTelephone() {
-		return oSTelephone;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setOSTelephone(OSTelephone newOSTelephone) {
-		OSTelephone oldOSTelephone = oSTelephone;
-		oSTelephone = newOSTelephone == null ? OS_TELEPHONE_EDEFAULT : newOSTelephone;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, LigneproduitstelephonesPackage.TELEPHONE__OS_TELEPHONE, oldOSTelephone, oSTelephone));
 	}
 
 	/**
@@ -254,6 +181,49 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public OSTelephone getOS() {
+		return os;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetOS(OSTelephone newOS, NotificationChain msgs) {
+		OSTelephone oldOS = os;
+		os = newOS;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, LigneproduitstelephonesPackage.TELEPHONE__OS, oldOS, newOS);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOS(OSTelephone newOS) {
+		if (newOS != os) {
+			NotificationChain msgs = null;
+			if (os != null)
+				msgs = ((InternalEObject)os).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - LigneproduitstelephonesPackage.TELEPHONE__OS, null, msgs);
+			if (newOS != null)
+				msgs = ((InternalEObject)newOS).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - LigneproduitstelephonesPackage.TELEPHONE__OS, null, msgs);
+			msgs = basicSetOS(newOS, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, LigneproduitstelephonesPackage.TELEPHONE__OS, newOS, newOS));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -275,6 +245,8 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 		switch (featureID) {
 			case LigneproduitstelephonesPackage.TELEPHONE__MARQUE:
 				return basicSetMarque(null, msgs);
+			case LigneproduitstelephonesPackage.TELEPHONE__OS:
+				return basicSetOS(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -289,13 +261,11 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 		switch (featureID) {
 			case LigneproduitstelephonesPackage.TELEPHONE__NAME:
 				return getName();
-			case LigneproduitstelephonesPackage.TELEPHONE__TACTILE:
-				return isTactile();
-			case LigneproduitstelephonesPackage.TELEPHONE__OS_TELEPHONE:
-				return getOSTelephone();
 			case LigneproduitstelephonesPackage.TELEPHONE__MARQUE:
 				if (resolve) return getMarque();
 				return basicGetMarque();
+			case LigneproduitstelephonesPackage.TELEPHONE__OS:
+				return getOS();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -311,14 +281,11 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 			case LigneproduitstelephonesPackage.TELEPHONE__NAME:
 				setName((String)newValue);
 				return;
-			case LigneproduitstelephonesPackage.TELEPHONE__TACTILE:
-				setTactile((Boolean)newValue);
-				return;
-			case LigneproduitstelephonesPackage.TELEPHONE__OS_TELEPHONE:
-				setOSTelephone((OSTelephone)newValue);
-				return;
 			case LigneproduitstelephonesPackage.TELEPHONE__MARQUE:
 				setMarque((Marque)newValue);
+				return;
+			case LigneproduitstelephonesPackage.TELEPHONE__OS:
+				setOS((OSTelephone)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -335,14 +302,11 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 			case LigneproduitstelephonesPackage.TELEPHONE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case LigneproduitstelephonesPackage.TELEPHONE__TACTILE:
-				setTactile(TACTILE_EDEFAULT);
-				return;
-			case LigneproduitstelephonesPackage.TELEPHONE__OS_TELEPHONE:
-				setOSTelephone(OS_TELEPHONE_EDEFAULT);
-				return;
 			case LigneproduitstelephonesPackage.TELEPHONE__MARQUE:
 				setMarque((Marque)null);
+				return;
+			case LigneproduitstelephonesPackage.TELEPHONE__OS:
+				setOS((OSTelephone)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -358,12 +322,10 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 		switch (featureID) {
 			case LigneproduitstelephonesPackage.TELEPHONE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case LigneproduitstelephonesPackage.TELEPHONE__TACTILE:
-				return tactile != TACTILE_EDEFAULT;
-			case LigneproduitstelephonesPackage.TELEPHONE__OS_TELEPHONE:
-				return oSTelephone != OS_TELEPHONE_EDEFAULT;
 			case LigneproduitstelephonesPackage.TELEPHONE__MARQUE:
 				return marque != null;
+			case LigneproduitstelephonesPackage.TELEPHONE__OS:
+				return os != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -380,10 +342,6 @@ public class TelephoneImpl extends EObjectImpl implements Telephone {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", tactile: ");
-		result.append(tactile);
-		result.append(", oSTelephone: ");
-		result.append(oSTelephone);
 		result.append(')');
 		return result.toString();
 	}

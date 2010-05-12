@@ -72,8 +72,16 @@ public class LigneproduitstelephonesAdapterFactory extends AdapterFactoryImpl {
 	protected LigneproduitstelephonesSwitch<Adapter> modelSwitch =
 		new LigneproduitstelephonesSwitch<Adapter>() {
 			@Override
-			public Adapter caseLigneProduitsTelephones(LigneProduitsTelephones object) {
-				return createLigneProduitsTelephonesAdapter();
+			public Adapter caseOSTelephone(OSTelephone object) {
+				return createOSTelephoneAdapter();
+			}
+			@Override
+			public Adapter caseIphoneOS(IphoneOS object) {
+				return createIphoneOSAdapter();
+			}
+			@Override
+			public Adapter caseAndroid(Android object) {
+				return createAndroidAdapter();
 			}
 			@Override
 			public Adapter caseMarque(Marque object) {
@@ -82,6 +90,10 @@ public class LigneproduitstelephonesAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseTelephone(Telephone object) {
 				return createTelephoneAdapter();
+			}
+			@Override
+			public Adapter caseLigneProduitsTelephones(LigneProduitsTelephones object) {
+				return createLigneProduitsTelephonesAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -104,16 +116,44 @@ public class LigneproduitstelephonesAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link ligneproduitstelephones.LigneProduitsTelephones <em>Ligne Produits Telephones</em>}'.
+	 * Creates a new adapter for an object of class '{@link ligneproduitstelephones.OSTelephone <em>OS Telephone</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see ligneproduitstelephones.LigneProduitsTelephones
+	 * @see ligneproduitstelephones.OSTelephone
 	 * @generated
 	 */
-	public Adapter createLigneProduitsTelephonesAdapter() {
+	public Adapter createOSTelephoneAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ligneproduitstelephones.IphoneOS <em>Iphone OS</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ligneproduitstelephones.IphoneOS
+	 * @generated
+	 */
+	public Adapter createIphoneOSAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ligneproduitstelephones.Android <em>Android</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ligneproduitstelephones.Android
+	 * @generated
+	 */
+	public Adapter createAndroidAdapter() {
 		return null;
 	}
 
@@ -142,6 +182,20 @@ public class LigneproduitstelephonesAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTelephoneAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ligneproduitstelephones.LigneProduitsTelephones <em>Ligne Produits Telephones</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ligneproduitstelephones.LigneProduitsTelephones
+	 * @generated
+	 */
+	public Adapter createLigneProduitsTelephonesAdapter() {
 		return null;
 	}
 
