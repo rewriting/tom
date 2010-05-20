@@ -1,0 +1,11 @@
+
+
+
+java -cp
+"/home/jcb/workspace/eclipseProjects/LigneProduitsTelephones/bin/:$CLASSPATH"
+TomMappingFromEcore ligneproduitstelephones.LigneproduitstelephonesPackage >
+ligneproduitstelephonesmappings.tom
+
+java -cp
+"/home/jcb/workspace/eclipseProjects/LigneProduitsTelephones/bin/:$CLASSPATH"
+EcoreMappingToXMI ligneproduitstelephones.LigneproduitstelephonesPackage > ligneproduitstelephones.xmi

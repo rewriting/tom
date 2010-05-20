@@ -365,6 +365,11 @@ public class TomMessage extends BasicPlatformMessage {
   public static final TomMessage IsSortNotDefined =
       new TomMessage("IsSort(t) is not defined for {0}");
 
+  //typer.NewKernelTyper
+  public static final TomMessage incompatibleTypes   =
+    new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
+
+
   //strategy
   public static final TomMessage invalidStrategyName =
       new TomMessage("{0} is not a valid strategy name. Maybe it is already used as a symbol.");

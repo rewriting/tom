@@ -1,0 +1,106 @@
+%typeterm OSTelephone {
+  implement { ligneproduitstelephones.OSTelephone }
+  is_sort(t) { $t instanceof ligneproduitstelephones.OSTelephone }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { int.tom }
+%op OSTelephone OSTelephone(version : int) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.OSTelephone }
+  get_slot(version, t)  { (java.lang.Integer)$t.eGet(t.eClass().getEStructuralFeature("version")) }
+  make(version) { construct((ligneproduitstelephones.OSTelephone)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("OSTelephone")),new Object[]{$version}) }
+}
+public static <O extends EObject> O construct(O o, Object[] objs){
+int i=0;
+EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+for(EStructuralFeature esf : sfes) {
+  if(esf.isChangeable()){
+    o.eSet(esf, objs[i]);
+    i++;
+  }
+}
+  return o;
+}
+%typeterm IphoneOS {
+  implement { ligneproduitstelephones.IphoneOS }
+  is_sort(t) { $t instanceof ligneproduitstelephones.IphoneOS }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op IphoneOS IphoneOS(version : int) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.IphoneOS }
+  get_slot(version, t)  { (java.lang.Integer)$t.eGet(t.eClass().getEStructuralFeature("version")) }
+  make(version) { construct((ligneproduitstelephones.IphoneOS)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("IphoneOS")),new Object[]{$version}) }
+}
+%typeterm Android {
+  implement { ligneproduitstelephones.Android }
+  is_sort(t) { $t instanceof ligneproduitstelephones.Android }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op Android Android(version : int) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.Android }
+  get_slot(version, t)  { (java.lang.Integer)$t.eGet(t.eClass().getEStructuralFeature("version")) }
+  make(version) { construct((ligneproduitstelephones.Android)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("Android")),new Object[]{$version}) }
+}
+%typeterm Marque {
+  implement { ligneproduitstelephones.Marque }
+  is_sort(t) { $t instanceof ligneproduitstelephones.Marque }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { string.tom }
+%typeterm Telephone {
+  implement { ligneproduitstelephones.Telephone }
+  is_sort(t) { $t instanceof ligneproduitstelephones.Telephone }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op Telephone Telephone(name : String, marque : Marque, OS : OSTelephone) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.Telephone }
+  get_slot(name, t)  { (java.lang.String)$t.eGet(t.eClass().getEStructuralFeature("name")) }
+  get_slot(marque, t)  { (ligneproduitstelephones.Marque)$t.eGet(t.eClass().getEStructuralFeature("marque")) }
+  get_slot(OS, t)  { (ligneproduitstelephones.OSTelephone)$t.eGet(t.eClass().getEStructuralFeature("OS")) }
+  make(name, marque, OS) { construct((ligneproduitstelephones.Telephone)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("Telephone")),new Object[]{$name, $marque, $OS}) }
+}
+%typeterm TelephoneEList {
+  implement { EList<ligneproduitstelephones.Telephone> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<ligneproduitstelephones.Telephone>)$t).size() == 0 || (((EList<ligneproduitstelephones.Telephone>)$t).size()>0 && ((EList<ligneproduitstelephones.Telephone>)$t).get(0) instanceof ligneproduitstelephones.Telephone)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray TelephoneEList TelephoneEList(Telephone*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof ligneproduitstelephones.Telephone)) }
+  make_empty(n) { new BasicEList<ligneproduitstelephones.Telephone>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+private static <O> EList<O> append(O e,EList<O> l) {
+  l.add(e);
+  return l;
+}
+%op Marque Marque(name : String, telephones : TelephoneEList) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.Marque }
+  get_slot(name, t)  { (java.lang.String)$t.eGet(t.eClass().getEStructuralFeature("name")) }
+  get_slot(telephones, t)  { (EList<ligneproduitstelephones.Telephone>)$t.eGet(t.eClass().getEStructuralFeature("telephones")) }
+  make(name, telephones) { construct((ligneproduitstelephones.Marque)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("Marque")),new Object[]{$name, $telephones}) }
+}
+%typeterm LigneProduitsTelephones {
+  implement { ligneproduitstelephones.LigneProduitsTelephones }
+  is_sort(t) { $t instanceof ligneproduitstelephones.LigneProduitsTelephones }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm MarqueEList {
+  implement { EList<ligneproduitstelephones.Marque> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<ligneproduitstelephones.Marque>)$t).size() == 0 || (((EList<ligneproduitstelephones.Marque>)$t).size()>0 && ((EList<ligneproduitstelephones.Marque>)$t).get(0) instanceof ligneproduitstelephones.Marque)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray MarqueEList MarqueEList(Marque*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof ligneproduitstelephones.Marque)) }
+  make_empty(n) { new BasicEList<ligneproduitstelephones.Marque>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op LigneProduitsTelephones LigneProduitsTelephones(name : String, telephones : TelephoneEList, marques : MarqueEList) {
+  is_fsym(t) { $t instanceof ligneproduitstelephones.LigneProduitsTelephones }
+  get_slot(name, t)  { (java.lang.String)$t.eGet(t.eClass().getEStructuralFeature("name")) }
+  get_slot(telephones, t)  { (EList<ligneproduitstelephones.Telephone>)$t.eGet(t.eClass().getEStructuralFeature("telephones")) }
+  get_slot(marques, t)  { (EList<ligneproduitstelephones.Marque>)$t.eGet(t.eClass().getEStructuralFeature("marques")) }
+  make(name, telephones, marques) { construct((ligneproduitstelephones.LigneProduitsTelephones)ligneproduitstelephones.LigneproduitstelephonesFactory.eINSTANCE.create((EClass)ligneproduitstelephones.LigneproduitstelephonesPackage.eINSTANCE.getEClassifier("LigneProduitsTelephones")),new Object[]{$name, $telephones, $marques}) }
+}
