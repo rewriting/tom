@@ -29,35 +29,25 @@ package regress;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  * 
- * Radu Kopetz  e-mail: Radu.Kopetz@loria.fr
+ * Emilie Balland  e-mail: Emilie.Balland@inria.fr
  */
 
+import regress.disjunction1.m.types.*;
 
+public class IncludeSl {
 
-import regress.disjunction2.m.types.*;
-
-public class Disjunction2 {
-  %gom {
+  %gom{
     module M
       abstract syntax
-      Term = 
+      A = 
       | a()
-      | b()
-      | c()
-      | list( Term* )
-      | f(t1:Term,t2:Term)
-      | h( l:TermList)
-      | g(t1:Term)
-
-      TermList = termList(Term*)
   }
-  
-  public void test30() {
-    %match {
-      ( f(x,y) << f(a(),b()) && y << b() ) || (x << a() && y << b() && z << c() )  -> {
-        System.out.println(`z);        
-      }      
-    }    
+
+
+  %strategy S() extends Identity() {
+    visit A {
+      x -> {}
+    }
   }
 
 }
