@@ -302,8 +302,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star =
-      `VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
+    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
+    //TomTerm star = `VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
 
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
