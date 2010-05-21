@@ -298,10 +298,12 @@
       <batchtest todir="${examples.report}">
         <fileset dir="${examples.gen}">
           <include name="**/Test*.java"/>
+          <exclude name="appletxml/Test*.java"/>
         </fileset>
         <fileset dir="${examples.dir}">
           <include name="**/Test*.java"/>
           <exclude name="gen/**/*"/>
+          <exclude name="appletxml/Test*.java"/>
         </fileset>
       </batchtest>
       <formatter type="xml" if="test.xmlreport"/>
@@ -337,10 +339,12 @@
       <batchtest todir="${examples.report}">
         <fileset dir="${examples.gen}">
           <include name="${example}/**/Test*.java"/>
+          <exclude name="appletxml/Test*.java"/>
         </fileset>
         <fileset dir="${examples.dir}">
           <include name="${example}/**/Test*.java"/>
           <exclude name="gen/**/*"/>
+          <exclude name="appletxml/Test*.java"/>
         </fileset>
       </batchtest>
       <formatter type="xml" if="test.xmlreport"/>
