@@ -1,4 +1,4 @@
-package andor;
+package regress;
 
 /*
  * Copyright (c) 2004-2010, INPL, INRIA
@@ -32,9 +32,7 @@ package andor;
  * Radu Kopetz  e-mail: Radu.Kopetz@loria.fr
  */
 
-
-
-import regress.error.disjunction1.m.types.*;
+import regress.disjunction1.m.types.*;
 
 public class Disjunction1 {
   %gom {

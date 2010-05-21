@@ -27,16 +27,27 @@ class DemoStrategy {
 
     try {
       Telephone result = `TopDown(Try(upgradeVersion())).visitLight(nexus, new EcoreContainmentIntrospector());
-      System.out.println(result.getOS().getVersion());
+      System.out.println("Version après = " + result.getOS().getVersion());
     } catch (VisitFailure e) {
       System.out.println("failure");
     }
   }
 
   %strategy upgradeVersion() extends Fail() {
-    visit OSTelephone {
-      OSTelephone(version) -> { System.out.println("***"); return `OSTelephone(version+1); }
+    visit Telephone {
+      Telephone(n,m,OSTelephone(version)) -> {
+        return `Telephone(n,m,OSTelephone(version+1));
+      }
     }
+    //test
+    /*visit OSTelephone {
+      //a@OSTelephone(version) -> {
+      OSTelephone(version) -> {
+        //`a.setVersion(`version+1);
+        return `OSTelephone(version);
+        //return `a;
+      }
+    }*/
   }
 
 }

@@ -43,12 +43,14 @@
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
     </gom.preset>
     <gom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
          <include name="**/*.gom"/>
          <exclude name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
@@ -65,6 +67,7 @@
       <exclude name="TestOptimizer.t"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
@@ -74,6 +77,7 @@
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
@@ -85,6 +89,7 @@
       <src path="${test.gen}"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
       <exclude name="gen/**"/>
     </javac.preset>
     <copy todir="${test.build}">
