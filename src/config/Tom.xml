@@ -49,6 +49,8 @@
       class="tom.engine.starter.StarterPlugin"/>
     <plugin name="Parser"
       class="tom.engine.parser.TomParserPlugin"/>
+    <plugin name="New Parser"
+      class="tom.engine.parser.NewParserPlugin"/>
     <plugin name="Desugarer"
       class="tom.engine.desugarer.DesugarerPlugin"/>
     <plugin name="Typer"
