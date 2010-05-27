@@ -19,8 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
  **/
 
 package tom.engine.parser;
@@ -59,19 +57,19 @@ import aterm.ATerm;
 import tom.engine.adt.code.types.*;
 
 /**
- * The TomParser "plugin"
+ * The New Parser "plugin"
  * The responsability of the plugin is to parse the input file and create the
  * corresponding TomTerm.
  * It get the input file from the TomStreamManger and parse it
  */
-public class TomParserPlugin extends TomGenericPlugin {
+public class NewParserPlugin extends TomGenericPlugin {
   
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/></options>";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='newparser' altName='np' description='New Parser (deactivated by default)' value='false'/></options>";
   
   /** input file name and stream */
   private String currentFileName;
@@ -81,8 +79,8 @@ public class TomParserPlugin extends TomGenericPlugin {
   private HostParser parser = null;
   
   /** Constructor */
-  public TomParserPlugin(){
-    super("TomParserPlugin");
+  public NewParserPlugin() {
+    super("NewParserPlugin");
   }
   
   //creating a new Host parser
@@ -128,7 +126,7 @@ public class TomParserPlugin extends TomGenericPlugin {
    * arg[0] should contain the StreamManager from which we can get the input
    */
   public void setArgs(Object[] arg){
-    //System.out.println("(DEBUG) Old parser");
+    //System.out.println("(DEBUG) NewParser");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
@@ -146,10 +144,11 @@ public class TomParserPlugin extends TomGenericPlugin {
       setStreamManager((TomStreamManager)arg[1]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
+
     } else {
-      System.out.println("(DEBUG) erreur old parser");
+      System.out.println("(debug) erreur new parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
-          "TomParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
+          "NewParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
     }
   }
 
@@ -158,13 +157,14 @@ public class TomParserPlugin extends TomGenericPlugin {
    * Parse the input ans set the "Working" TomTerm to be compiled.
    */
   public synchronized void run(Map informationTracker) {
+
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
-    if (newparser==false) {
-      //System.out.println("(DEBUG) we are using the old parser / newparser = " + newparser);
+    if (newparser) {
+      //System.out.println("(DEBUG) we are using the new parser / newparser = " + newparser);
       try {
         // looking for java package
         if(java && (!currentFileName.equals("-"))) {
@@ -234,16 +234,15 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
     } else {
       // not active plugin
-      TomMessage.info(getLogger(), null, 0, TomMessage.parserNotUsed);
+      TomMessage.info(getLogger(), null, 0, TomMessage.newParserNotUsed);
     }
-
   }
   
   /**
    * inherited from OptionOwner interface (plugin) 
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(NewParserPlugin.DECLARED_OPTIONS);
   }
 
   /**
@@ -256,4 +255,4 @@ public class TomParserPlugin extends TomGenericPlugin {
     return parser.getLine();
   }
   
-} //class TomParserPlugin
+} //class NewParserPlugin
