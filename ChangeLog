@@ -2,7 +2,13 @@
  * removed UnameVariable and UnamedVariableStar, EmptyName() is used instead
    to denote an '_'
 
+2010-05-12 tavaresc
+ * Start adding error messages for typer.
+
 2010-05-06 tavaresc
+ * Fix inference for BQAppl with TomSymbol null.
+ * In this case, BQAppl becames FunctionCall.
+ * Need to be tested.
  * Fix inference for lists with sublists, both having different 
    constructors (symbols). 
 

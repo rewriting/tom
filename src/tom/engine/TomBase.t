@@ -476,7 +476,8 @@ public final class TomBase {
         return elementAt(`typeList,index);
       }
     }
-    throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
+    return null;
+    //throw new TomRuntimeException("getSlotType: bad slotName error: " + slotName);
   }
 
   public static boolean isDefinedSymbol(TomSymbol subject) {
