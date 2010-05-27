@@ -107,11 +107,12 @@ public class PluginPlatform extends PluginPlatformBase implements Runnable {
       }
     }
     String formatter = System.getProperty(FORMATTER);
-    if (formatter==null) {
+    if (formatter ==null) {
       for (Handler handler: logger.getHandlers()) {
-        handler.setFormatter(new PlatformFormatter());
+        System.out.println(handler.getFormatter());
       }
-    } else {
+    }
+    if (formatter!=null) {
       try {
         for (Handler handler: logger.getHandlers()) {
           handler.setFormatter((java.util.logging.Formatter) Class.forName(formatter).newInstance());
