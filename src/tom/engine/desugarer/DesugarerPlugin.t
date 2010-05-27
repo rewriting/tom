@@ -132,10 +132,10 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
+      Variable[Option=opts,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
         return `Variable(opts,desugarer.getFreshVariable(),ty,constr);
       }
-      UnamedVariableStar[Option=opts,AstType=ty,Constraints=constr] -> {
+      VariableStar[Option=opts,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
         return `VariableStar(opts,desugarer.getFreshVariable(),ty,constr);
       }
     }
@@ -311,7 +311,6 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    //TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
 
     if(implicitAttribute) { newAttrList  = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newChildList*); }
@@ -385,7 +384,6 @@ matchBlock:
     }
 
     /*
-     * a single "_" is converted into an UnamedVariable to match
      * any XML node
      */
     TomTerm xmlHead;

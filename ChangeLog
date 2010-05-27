@@ -2,6 +2,7 @@
  * removed UnameVariable and UnamedVariableStar, EmptyName() is used instead
    to denote an '_'
 
+<<<<<<< HEAD
 2010-05-12 tavaresc
  * Start adding error messages for typer.
 
@@ -10,6 +11,8 @@
  * In this case, BQAppl becames FunctionCall.
  * Need to be tested.
 
+=======
+>>>>>>> f4a3c24944c22110ae77c1a98aa384ac2e1d2c78
 2010-05-06 tavaresc
  * Fix inference for lists with sublists, both having different 
    constructors (symbols). 
@@ -36,7 +39,6 @@
    specific formatter for the platform and tom.platform.error.logfile
    for putting log records into a specific file
  * start to write a specific Formatter for regression tests
-
 
 2010-04-19 jcb
  * Continue to port log system
