@@ -1,3 +1,7 @@
+2010-05-27 pem
+ * removed UnameVariable and UnamedVariableStar, EmptyName() is used instead
+   to denote an '_'
+
 2010-05-06 tavaresc
  * Fix inference for lists with sublists, both having different 
    constructors (symbols). 
@@ -24,7 +28,6 @@
    specific formatter for the platform and tom.platform.error.logfile
    for putting log records into a specific file
  * start to write a specific Formatter for regression tests
-
 
 2010-04-19 jcb
  * Continue to port log system

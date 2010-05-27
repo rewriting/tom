@@ -151,14 +151,6 @@ public class TomConstraintPrettyPrinter {
         return prettyPrint(`name);
       }
 
-      UnamedVariable[] -> {
-        return "_";
-      }
-
-      UnamedVariableStar[] -> {
-        return "_";
-      }
-
       VariableStar(_,name,_,_) -> {
         return prettyPrint(`name);
       }
