@@ -495,25 +495,10 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      /**
-       * no more unamed variables in this phase
-       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
-       return;
-       }
-       */
-
       AssignArray(var@BQVariable[Option=list],index,exp) -> {
         `buildAssignArray(deep, var, list, index, exp, moduleName);
         return;
       }
-
-      /**
-       * no more unamed variables in this phase
-       (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-       `generateInstruction(deep, body, moduleName);
-       return;
-       }
-       */
 
       Let(var@(BQVariable|BQVariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
         `buildLet(deep, var, list, tlType, exp, body, moduleName);
