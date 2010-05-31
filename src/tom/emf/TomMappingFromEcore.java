@@ -469,7 +469,7 @@ public class TomMappingFromEcore {
               na = "EList<" + na + ">";
             }
             s_gets.append("  get_slot(" + sfname + ", t)  { (" + na
-                + ")$t.eGet(t.eClass().getEStructuralFeature(\"" + sf.getName()
+                + ")$t.eGet($t.eClass().getEStructuralFeature(\"" + sf.getName()
                 + "\")) }\n");
           }
         }
