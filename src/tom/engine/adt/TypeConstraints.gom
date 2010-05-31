@@ -13,3 +13,14 @@ TypeConstraintList = concTypeConstraint(TypeConstraint*)
                    | FalseTypeConstraint()
                    | TrueTypeConstraint()
 
+/*
+RichTomType = TypeVariable(Origins:TypeOriginList, TypeName:String,Index:int)
+            | TypeConstant(Origins:TypeOriginList, ConstantType:TomType)
+            | TypeConstantWithSymbol(Origins:TypeOriginList, ConstantType:TomType, RootSymbolName:TomName)
+
+TypeOrigin = 
+  | TypeOriginTracking(AstName:TomName,Line:int,FileName:String)
+// | ...
+
+TypeOriginList = concTypeOrigin(TypeOrigin*)
+*/
