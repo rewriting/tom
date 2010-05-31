@@ -536,6 +536,7 @@
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -688,6 +689,7 @@
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -740,6 +742,12 @@
     <replace file="${src.dist.bin}/emf-generate-mappings">
       <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
       <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
+    </replace>
+    <replace file="${src.dist.bin}/emf-generate-xmi">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
       <replaceFilter token="@CONFIG_FILE@" value=""/>
       <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
