@@ -272,8 +272,9 @@
          destdir="${gen.destination}"
          multithread="${multithread}"
          options="--optimize --inlineplus">
-      <include name="tom/engine/**/**/*.t"/>     	
+      <include name="tom/emf/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
+      <include name="tom/engine/**/**/*.t"/>
       <include name="tom/library/**/*.t"/>
       <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
@@ -534,6 +535,7 @@
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -595,6 +597,11 @@
       update="yes">
       <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
+    </jar>
+    <jar jarfile="${stable.dist.lib}/tom/emf.jar"
+      update="yes">
+      <fileset dir="${stable.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${stable.src}" includes="tom/emf/**/*.properties"/>
     </jar>
 
     <!-- tom share -->
@@ -680,6 +687,7 @@
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -728,6 +736,12 @@
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+    </replace>
+    <replace file="${src.dist.bin}/emf-generate-mappings">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
@@ -785,6 +799,11 @@
         includes="tom/gom/**/*.class"
         excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/tom/emf-${src.version}.jar"
+      update="yes">
+      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/tom/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>

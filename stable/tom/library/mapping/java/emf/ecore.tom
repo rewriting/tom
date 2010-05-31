@@ -1,0 +1,562 @@
+%typeterm EAttribute {
+  implement { org.eclipse.emf.ecore.EAttribute }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EAttribute }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EAnnotation {
+  implement { org.eclipse.emf.ecore.EAnnotation }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EAnnotation }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EAnnotationEList {
+  implement { EList<org.eclipse.emf.ecore.EAnnotation> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EAnnotation>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EAnnotation>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EAnnotation>)$t).get(0) instanceof org.eclipse.emf.ecore.EAnnotation)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EAnnotationEList EAnnotationEList(EAnnotation*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EAnnotation)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EAnnotation>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+private static <O> EList<O> append(O e,EList<O> l) {
+  l.add(e);
+  return l;
+}
+%include { string.tom }
+%typeterm Entry {
+  implement { EObject }
+  is_sort(t) { $t instanceof java.util.Map.Entry<?, ?> }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op Entry EStringToStringMapEntry(key : String, value : String) {
+  is_fsym(t) { $t instanceof java.util.Map.Entry<?, ?> }
+  get_slot(key, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("key")) }
+  get_slot(value, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("value")) }
+  make(key, value) { construct((EObject)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EStringToStringMapEntry")),new Object[]{$key, $value}) }
+}
+public static <O extends EObject> O construct(O o, Object[] objs){
+int i=0;
+EList<EStructuralFeature> sfes = o.eClass().getEAllStructuralFeatures();
+for(EStructuralFeature esf : sfes) {
+  if(esf.isChangeable()){
+    o.eSet(esf, objs[i]);
+    i++;
+  }
+}
+  return o;
+}
+%typeterm EntryEList {
+  implement { EList<EObject> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<EObject>)$t).size() == 0 || (((EList<EObject>)$t).size()>0 && ((EList<EObject>)$t).get(0) instanceof java.util.Map.Entry<?, ?>)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EntryEList EntryEList(Entry*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof java.util.Map.Entry<?, ?>)) }
+  make_empty(n) { new BasicEList<EObject>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%typeterm EModelElement {
+  implement { org.eclipse.emf.ecore.EModelElement }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EModelElement }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EObject {
+  implement { org.eclipse.emf.ecore.EObject }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EObject }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op EObject EObject() {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EObject }
+  make() { construct((org.eclipse.emf.ecore.EObject)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EObject")),new Object[]{}) }
+}
+%typeterm EObjectEList {
+  implement { EList<org.eclipse.emf.ecore.EObject> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EObject>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EObject>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EObject>)$t).get(0) instanceof org.eclipse.emf.ecore.EObject)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EObjectEList EObjectEList(EObject*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EObject)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EObject>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EAnnotation EAnnotation(eAnnotations : EAnnotationEList, source : String, details : EntryEList, eModelElement : EModelElement, contents : EObjectEList, references : EObjectEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EAnnotation }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(source, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("source")) }
+  get_slot(details, t)  { (EList<EObject>)$t.eGet($t.eClass().getEStructuralFeature("details")) }
+  get_slot(eModelElement, t)  { (org.eclipse.emf.ecore.EModelElement)$t.eGet($t.eClass().getEStructuralFeature("eModelElement")) }
+  get_slot(contents, t)  { (EList<org.eclipse.emf.ecore.EObject>)$t.eGet($t.eClass().getEStructuralFeature("contents")) }
+  get_slot(references, t)  { (EList<org.eclipse.emf.ecore.EObject>)$t.eGet($t.eClass().getEStructuralFeature("references")) }
+  make(eAnnotations, source, details, eModelElement, contents, references) { construct((org.eclipse.emf.ecore.EAnnotation)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EAnnotation")),new Object[]{$eAnnotations, $source, $details, $eModelElement, $contents, $references}) }
+}
+%include { boolean.tom }
+%include { int.tom }
+%typeterm EClassifier {
+  implement { org.eclipse.emf.ecore.EClassifier }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EClassifier }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm ETypeParameter {
+  implement { org.eclipse.emf.ecore.ETypeParameter }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.ETypeParameter }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EGenericType {
+  implement { org.eclipse.emf.ecore.EGenericType }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EGenericType }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EGenericTypeEList {
+  implement { EList<org.eclipse.emf.ecore.EGenericType> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EGenericType>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EGenericType>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EGenericType>)$t).get(0) instanceof org.eclipse.emf.ecore.EGenericType)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EGenericTypeEList EGenericTypeEList(EGenericType*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EGenericType)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EGenericType>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EGenericType EGenericType(eUpperBound : EGenericType, eTypeArguments : EGenericTypeEList, eLowerBound : EGenericType, eTypeParameter : ETypeParameter, eClassifier : EClassifier) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EGenericType }
+  get_slot(eUpperBound, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eUpperBound")) }
+  get_slot(eTypeArguments, t)  { (EList<org.eclipse.emf.ecore.EGenericType>)$t.eGet($t.eClass().getEStructuralFeature("eTypeArguments")) }
+  get_slot(eLowerBound, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eLowerBound")) }
+  get_slot(eTypeParameter, t)  { (org.eclipse.emf.ecore.ETypeParameter)$t.eGet($t.eClass().getEStructuralFeature("eTypeParameter")) }
+  get_slot(eClassifier, t)  { (org.eclipse.emf.ecore.EClassifier)$t.eGet($t.eClass().getEStructuralFeature("eClassifier")) }
+  make(eUpperBound, eTypeArguments, eLowerBound, eTypeParameter, eClassifier) { construct((org.eclipse.emf.ecore.EGenericType)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EGenericType")),new Object[]{$eUpperBound, $eTypeArguments, $eLowerBound, $eTypeParameter, $eClassifier}) }
+}
+%op ETypeParameter ETypeParameter(eAnnotations : EAnnotationEList, name : String, eBounds : EGenericTypeEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.ETypeParameter }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(eBounds, t)  { (EList<org.eclipse.emf.ecore.EGenericType>)$t.eGet($t.eClass().getEStructuralFeature("eBounds")) }
+  make(eAnnotations, name, eBounds) { construct((org.eclipse.emf.ecore.ETypeParameter)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("ETypeParameter")),new Object[]{$eAnnotations, $name, $eBounds}) }
+}
+%typeterm ETypeParameterEList {
+  implement { EList<org.eclipse.emf.ecore.ETypeParameter> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.ETypeParameter>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.ETypeParameter>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.ETypeParameter>)$t).get(0) instanceof org.eclipse.emf.ecore.ETypeParameter)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray ETypeParameterEList ETypeParameterEList(ETypeParameter*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.ETypeParameter)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.ETypeParameter>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EAttribute EAttribute(eAnnotations : EAnnotationEList, name : String, ordered : boolean, unique : boolean, lowerBound : int, upperBound : int, eType : EClassifier, eGenericType : EGenericType, changeable : boolean, _volatile : boolean, _transient : boolean, defaultValueLiteral : String, unsettable : boolean, derived : boolean, iD : boolean) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EAttribute }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(ordered, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("ordered")) }
+  get_slot(unique, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unique")) }
+  get_slot(lowerBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("lowerBound")) }
+  get_slot(upperBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("upperBound")) }
+  get_slot(eType, t)  { (org.eclipse.emf.ecore.EClassifier)$t.eGet($t.eClass().getEStructuralFeature("eType")) }
+  get_slot(eGenericType, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eGenericType")) }
+  get_slot(changeable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("changeable")) }
+  get_slot(_volatile, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("volatile")) }
+  get_slot(_transient, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("transient")) }
+  get_slot(defaultValueLiteral, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("defaultValueLiteral")) }
+  get_slot(unsettable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unsettable")) }
+  get_slot(derived, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("derived")) }
+  get_slot(iD, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("iD")) }
+  make(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType, changeable, _volatile, _transient, defaultValueLiteral, unsettable, derived, iD) { construct((org.eclipse.emf.ecore.EAttribute)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EAttribute")),new Object[]{$eAnnotations, $name, $ordered, $unique, $lowerBound, $upperBound, $eType, $eGenericType, $changeable, $_volatile, $_transient, $defaultValueLiteral, $unsettable, $derived, $iD}) }
+}
+%typeterm EClass {
+  implement { org.eclipse.emf.ecore.EClass }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EClass }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EClassEList {
+  implement { EList<org.eclipse.emf.ecore.EClass> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EClass>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EClass>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EClass>)$t).get(0) instanceof org.eclipse.emf.ecore.EClass)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EClassEList EClassEList(EClass*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EClass)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EClass>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%typeterm EOperation {
+  implement { org.eclipse.emf.ecore.EOperation }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EOperation }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EParameter {
+  implement { org.eclipse.emf.ecore.EParameter }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EParameter }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op EParameter EParameter(eAnnotations : EAnnotationEList, name : String, ordered : boolean, unique : boolean, lowerBound : int, upperBound : int, eType : EClassifier, eGenericType : EGenericType) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EParameter }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(ordered, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("ordered")) }
+  get_slot(unique, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unique")) }
+  get_slot(lowerBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("lowerBound")) }
+  get_slot(upperBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("upperBound")) }
+  get_slot(eType, t)  { (org.eclipse.emf.ecore.EClassifier)$t.eGet($t.eClass().getEStructuralFeature("eType")) }
+  get_slot(eGenericType, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eGenericType")) }
+  make(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType) { construct((org.eclipse.emf.ecore.EParameter)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EParameter")),new Object[]{$eAnnotations, $name, $ordered, $unique, $lowerBound, $upperBound, $eType, $eGenericType}) }
+}
+%typeterm EParameterEList {
+  implement { EList<org.eclipse.emf.ecore.EParameter> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EParameter>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EParameter>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EParameter>)$t).get(0) instanceof org.eclipse.emf.ecore.EParameter)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EParameterEList EParameterEList(EParameter*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EParameter)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EParameter>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%typeterm EClassifierEList {
+  implement { EList<org.eclipse.emf.ecore.EClassifier> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EClassifier>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EClassifier>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EClassifier>)$t).get(0) instanceof org.eclipse.emf.ecore.EClassifier)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EClassifierEList EClassifierEList(EClassifier*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EClassifier)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EClassifier>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EOperation EOperation(eAnnotations : EAnnotationEList, name : String, ordered : boolean, unique : boolean, lowerBound : int, upperBound : int, eType : EClassifier, eGenericType : EGenericType, eTypeParameters : ETypeParameterEList, eParameters : EParameterEList, eExceptions : EClassifierEList, eGenericExceptions : EGenericTypeEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EOperation }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(ordered, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("ordered")) }
+  get_slot(unique, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unique")) }
+  get_slot(lowerBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("lowerBound")) }
+  get_slot(upperBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("upperBound")) }
+  get_slot(eType, t)  { (org.eclipse.emf.ecore.EClassifier)$t.eGet($t.eClass().getEStructuralFeature("eType")) }
+  get_slot(eGenericType, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eGenericType")) }
+  get_slot(eTypeParameters, t)  { (EList<org.eclipse.emf.ecore.ETypeParameter>)$t.eGet($t.eClass().getEStructuralFeature("eTypeParameters")) }
+  get_slot(eParameters, t)  { (EList<org.eclipse.emf.ecore.EParameter>)$t.eGet($t.eClass().getEStructuralFeature("eParameters")) }
+  get_slot(eExceptions, t)  { (EList<org.eclipse.emf.ecore.EClassifier>)$t.eGet($t.eClass().getEStructuralFeature("eExceptions")) }
+  get_slot(eGenericExceptions, t)  { (EList<org.eclipse.emf.ecore.EGenericType>)$t.eGet($t.eClass().getEStructuralFeature("eGenericExceptions")) }
+  make(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType, eTypeParameters, eParameters, eExceptions, eGenericExceptions) { construct((org.eclipse.emf.ecore.EOperation)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EOperation")),new Object[]{$eAnnotations, $name, $ordered, $unique, $lowerBound, $upperBound, $eType, $eGenericType, $eTypeParameters, $eParameters, $eExceptions, $eGenericExceptions}) }
+}
+%typeterm EOperationEList {
+  implement { EList<org.eclipse.emf.ecore.EOperation> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EOperation>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EOperation>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EOperation>)$t).get(0) instanceof org.eclipse.emf.ecore.EOperation)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EOperationEList EOperationEList(EOperation*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EOperation)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EOperation>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%typeterm EStructuralFeature {
+  implement { org.eclipse.emf.ecore.EStructuralFeature }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EStructuralFeature }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EStructuralFeatureEList {
+  implement { EList<org.eclipse.emf.ecore.EStructuralFeature> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EStructuralFeature>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EStructuralFeature>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EStructuralFeature>)$t).get(0) instanceof org.eclipse.emf.ecore.EStructuralFeature)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EStructuralFeatureEList EStructuralFeatureEList(EStructuralFeature*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EStructuralFeature)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EStructuralFeature>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EClass EClass(eAnnotations : EAnnotationEList, name : String, instanceClassName : String, instanceTypeName : String, eTypeParameters : ETypeParameterEList, _abstract : boolean, _interface : boolean, eSuperTypes : EClassEList, eOperations : EOperationEList, eStructuralFeatures : EStructuralFeatureEList, eGenericSuperTypes : EGenericTypeEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EClass }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(instanceClassName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceClassName")) }
+  get_slot(instanceTypeName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceTypeName")) }
+  get_slot(eTypeParameters, t)  { (EList<org.eclipse.emf.ecore.ETypeParameter>)$t.eGet($t.eClass().getEStructuralFeature("eTypeParameters")) }
+  get_slot(_abstract, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("abstract")) }
+  get_slot(_interface, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("interface")) }
+  get_slot(eSuperTypes, t)  { (EList<org.eclipse.emf.ecore.EClass>)$t.eGet($t.eClass().getEStructuralFeature("eSuperTypes")) }
+  get_slot(eOperations, t)  { (EList<org.eclipse.emf.ecore.EOperation>)$t.eGet($t.eClass().getEStructuralFeature("eOperations")) }
+  get_slot(eStructuralFeatures, t)  { (EList<org.eclipse.emf.ecore.EStructuralFeature>)$t.eGet($t.eClass().getEStructuralFeature("eStructuralFeatures")) }
+  get_slot(eGenericSuperTypes, t)  { (EList<org.eclipse.emf.ecore.EGenericType>)$t.eGet($t.eClass().getEStructuralFeature("eGenericSuperTypes")) }
+  make(eAnnotations, name, instanceClassName, instanceTypeName, eTypeParameters, _abstract, _interface, eSuperTypes, eOperations, eStructuralFeatures, eGenericSuperTypes) { construct((org.eclipse.emf.ecore.EClass)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EClass")),new Object[]{$eAnnotations, $name, $instanceClassName, $instanceTypeName, $eTypeParameters, $_abstract, $_interface, $eSuperTypes, $eOperations, $eStructuralFeatures, $eGenericSuperTypes}) }
+}
+%typeterm EDataType {
+  implement { org.eclipse.emf.ecore.EDataType }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EDataType }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op EDataType EDataType(eAnnotations : EAnnotationEList, name : String, instanceClassName : String, instanceTypeName : String, eTypeParameters : ETypeParameterEList, serializable : boolean) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EDataType }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(instanceClassName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceClassName")) }
+  get_slot(instanceTypeName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceTypeName")) }
+  get_slot(eTypeParameters, t)  { (EList<org.eclipse.emf.ecore.ETypeParameter>)$t.eGet($t.eClass().getEStructuralFeature("eTypeParameters")) }
+  get_slot(serializable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("serializable")) }
+  make(eAnnotations, name, instanceClassName, instanceTypeName, eTypeParameters, serializable) { construct((org.eclipse.emf.ecore.EDataType)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EDataType")),new Object[]{$eAnnotations, $name, $instanceClassName, $instanceTypeName, $eTypeParameters, $serializable}) }
+}
+%typeterm EEnum {
+  implement { org.eclipse.emf.ecore.EEnum }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EEnum }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EEnumLiteral {
+  implement { org.eclipse.emf.ecore.EEnumLiteral }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EEnumLiteral }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Enumerator {
+  implement { org.eclipse.emf.common.util.Enumerator }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.Enumerator }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%op EEnumLiteral EEnumLiteral(eAnnotations : EAnnotationEList, name : String, value : int, instance : Enumerator, literal : String) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EEnumLiteral }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(value, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("value")) }
+  get_slot(instance, t)  { (org.eclipse.emf.common.util.Enumerator)$t.eGet($t.eClass().getEStructuralFeature("instance")) }
+  get_slot(literal, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("literal")) }
+  make(eAnnotations, name, value, instance, literal) { construct((org.eclipse.emf.ecore.EEnumLiteral)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EEnumLiteral")),new Object[]{$eAnnotations, $name, $value, $instance, $literal}) }
+}
+%typeterm EEnumLiteralEList {
+  implement { EList<org.eclipse.emf.ecore.EEnumLiteral> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EEnumLiteral>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EEnumLiteral>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EEnumLiteral>)$t).get(0) instanceof org.eclipse.emf.ecore.EEnumLiteral)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EEnumLiteralEList EEnumLiteralEList(EEnumLiteral*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EEnumLiteral)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EEnumLiteral>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EEnum EEnum(eAnnotations : EAnnotationEList, name : String, instanceClassName : String, instanceTypeName : String, eTypeParameters : ETypeParameterEList, serializable : boolean, eLiterals : EEnumLiteralEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EEnum }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(instanceClassName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceClassName")) }
+  get_slot(instanceTypeName, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("instanceTypeName")) }
+  get_slot(eTypeParameters, t)  { (EList<org.eclipse.emf.ecore.ETypeParameter>)$t.eGet($t.eClass().getEStructuralFeature("eTypeParameters")) }
+  get_slot(serializable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("serializable")) }
+  get_slot(eLiterals, t)  { (EList<org.eclipse.emf.ecore.EEnumLiteral>)$t.eGet($t.eClass().getEStructuralFeature("eLiterals")) }
+  make(eAnnotations, name, instanceClassName, instanceTypeName, eTypeParameters, serializable, eLiterals) { construct((org.eclipse.emf.ecore.EEnum)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EEnum")),new Object[]{$eAnnotations, $name, $instanceClassName, $instanceTypeName, $eTypeParameters, $serializable, $eLiterals}) }
+}
+%typeterm EFactory {
+  implement { org.eclipse.emf.ecore.EFactory }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EFactory }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EPackage {
+  implement { org.eclipse.emf.ecore.EPackage }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EPackage }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EPackageEList {
+  implement { EList<org.eclipse.emf.ecore.EPackage> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EPackage>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EPackage>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EPackage>)$t).get(0) instanceof org.eclipse.emf.ecore.EPackage)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EPackageEList EPackageEList(EPackage*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EPackage)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EPackage>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EPackage EPackage(eAnnotations : EAnnotationEList, name : String, nsURI : String, nsPrefix : String, eFactoryInstance : EFactory, eClassifiers : EClassifierEList, eSubpackages : EPackageEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EPackage }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(nsURI, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("nsURI")) }
+  get_slot(nsPrefix, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("nsPrefix")) }
+  get_slot(eFactoryInstance, t)  { (org.eclipse.emf.ecore.EFactory)$t.eGet($t.eClass().getEStructuralFeature("eFactoryInstance")) }
+  get_slot(eClassifiers, t)  { (EList<org.eclipse.emf.ecore.EClassifier>)$t.eGet($t.eClass().getEStructuralFeature("eClassifiers")) }
+  get_slot(eSubpackages, t)  { (EList<org.eclipse.emf.ecore.EPackage>)$t.eGet($t.eClass().getEStructuralFeature("eSubpackages")) }
+  make(eAnnotations, name, nsURI, nsPrefix, eFactoryInstance, eClassifiers, eSubpackages) { construct((org.eclipse.emf.ecore.EPackage)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EPackage")),new Object[]{$eAnnotations, $name, $nsURI, $nsPrefix, $eFactoryInstance, $eClassifiers, $eSubpackages}) }
+}
+%op EFactory EFactory(eAnnotations : EAnnotationEList, ePackage : EPackage) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EFactory }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(ePackage, t)  { (org.eclipse.emf.ecore.EPackage)$t.eGet($t.eClass().getEStructuralFeature("ePackage")) }
+  make(eAnnotations, ePackage) { construct((org.eclipse.emf.ecore.EFactory)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EFactory")),new Object[]{$eAnnotations, $ePackage}) }
+}
+%typeterm ENamedElement {
+  implement { org.eclipse.emf.ecore.ENamedElement }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.ENamedElement }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EReference {
+  implement { org.eclipse.emf.ecore.EReference }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.EReference }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EAttributeEList {
+  implement { EList<org.eclipse.emf.ecore.EAttribute> }
+  is_sort(t) { $t instanceof EList<?> && (((EList<org.eclipse.emf.ecore.EAttribute>)$t).size() == 0 || (((EList<org.eclipse.emf.ecore.EAttribute>)$t).size()>0 && ((EList<org.eclipse.emf.ecore.EAttribute>)$t).get(0) instanceof org.eclipse.emf.ecore.EAttribute)) }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%oparray EAttributeEList EAttributeEList(EAttribute*) {
+  is_fsym(t) { $t instanceof EList<?> && ($t.size() == 0 || ($t.size()>0 && $t.get(0) instanceof org.eclipse.emf.ecore.EAttribute)) }
+  make_empty(n) { new BasicEList<org.eclipse.emf.ecore.EAttribute>($n) }
+  make_append(e,l) { append($e,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
+}
+%op EReference EReference(eAnnotations : EAnnotationEList, name : String, ordered : boolean, unique : boolean, lowerBound : int, upperBound : int, eType : EClassifier, eGenericType : EGenericType, changeable : boolean, _volatile : boolean, _transient : boolean, defaultValueLiteral : String, unsettable : boolean, derived : boolean, containment : boolean, resolveProxies : boolean, eOpposite : EReference, eKeys : EAttributeEList) {
+  is_fsym(t) { $t instanceof org.eclipse.emf.ecore.EReference }
+  get_slot(eAnnotations, t)  { (EList<org.eclipse.emf.ecore.EAnnotation>)$t.eGet($t.eClass().getEStructuralFeature("eAnnotations")) }
+  get_slot(name, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("name")) }
+  get_slot(ordered, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("ordered")) }
+  get_slot(unique, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unique")) }
+  get_slot(lowerBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("lowerBound")) }
+  get_slot(upperBound, t)  { (java.lang.Integer)$t.eGet($t.eClass().getEStructuralFeature("upperBound")) }
+  get_slot(eType, t)  { (org.eclipse.emf.ecore.EClassifier)$t.eGet($t.eClass().getEStructuralFeature("eType")) }
+  get_slot(eGenericType, t)  { (org.eclipse.emf.ecore.EGenericType)$t.eGet($t.eClass().getEStructuralFeature("eGenericType")) }
+  get_slot(changeable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("changeable")) }
+  get_slot(_volatile, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("volatile")) }
+  get_slot(_transient, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("transient")) }
+  get_slot(defaultValueLiteral, t)  { (java.lang.String)$t.eGet($t.eClass().getEStructuralFeature("defaultValueLiteral")) }
+  get_slot(unsettable, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("unsettable")) }
+  get_slot(derived, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("derived")) }
+  get_slot(containment, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("containment")) }
+  get_slot(resolveProxies, t)  { (java.lang.Boolean)$t.eGet($t.eClass().getEStructuralFeature("resolveProxies")) }
+  get_slot(eOpposite, t)  { (org.eclipse.emf.ecore.EReference)$t.eGet($t.eClass().getEStructuralFeature("eOpposite")) }
+  get_slot(eKeys, t)  { (EList<org.eclipse.emf.ecore.EAttribute>)$t.eGet($t.eClass().getEStructuralFeature("eKeys")) }
+  make(eAnnotations, name, ordered, unique, lowerBound, upperBound, eType, eGenericType, changeable, _volatile, _transient, defaultValueLiteral, unsettable, derived, containment, resolveProxies, eOpposite, eKeys) { construct((org.eclipse.emf.ecore.EReference)org.eclipse.emf.ecore.EcoreFactory.eINSTANCE.create((EClass)org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier("EReference")),new Object[]{$eAnnotations, $name, $ordered, $unique, $lowerBound, $upperBound, $eType, $eGenericType, $changeable, $_volatile, $_transient, $defaultValueLiteral, $unsettable, $derived, $containment, $resolveProxies, $eOpposite, $eKeys}) }
+}
+%typeterm ETypedElement {
+  implement { org.eclipse.emf.ecore.ETypedElement }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.ETypedElement }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm BigDecimal {
+  implement { java.math.BigDecimal }
+  is_sort(t) { $t instanceof java.math.BigDecimal }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm BigInteger {
+  implement { java.math.BigInteger }
+  is_sort(t) { $t instanceof java.math.BigInteger }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Boolean {
+  implement { java.lang.Boolean }
+  is_sort(t) { $t instanceof java.lang.Boolean }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm byte {
+  implement { byte }
+  is_sort(t) { true }
+  equals(l1,l2) { $l1 == $l2 }
+}
+%typeterm bytearray {
+  implement { byte[] }
+  is_sort(t) { $t instanceof byte[] }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Byte {
+  implement { java.lang.Byte }
+  is_sort(t) { $t instanceof java.lang.Byte }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { char.tom }
+%typeterm Character {
+  implement { java.lang.Character }
+  is_sort(t) { $t instanceof java.lang.Character }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Date {
+  implement { java.util.Date }
+  is_sort(t) { $t instanceof java.util.Date }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm DiagnosticChain {
+  implement { org.eclipse.emf.common.util.DiagnosticChain }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.DiagnosticChain }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { double.tom }
+%typeterm Double {
+  implement { java.lang.Double }
+  is_sort(t) { $t instanceof java.lang.Double }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm EList {
+  implement { org.eclipse.emf.common.util.EList<?> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.EList<?> }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm FeatureMap {
+  implement { org.eclipse.emf.ecore.util.FeatureMap }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.util.FeatureMap }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Entry1 {
+  implement { org.eclipse.emf.ecore.util.FeatureMap.Entry }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.util.FeatureMap.Entry }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { float.tom }
+%typeterm Float {
+  implement { java.lang.Float }
+  is_sort(t) { $t instanceof java.lang.Float }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Integer {
+  implement { java.lang.Integer }
+  is_sort(t) { $t instanceof java.lang.Integer }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm Class {
+  implement { java.lang.Class<?> }
+  is_sort(t) { $t instanceof java.lang.Class<?> }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { util/Object.tom }
+%include { long.tom }
+%typeterm Long {
+  implement { java.lang.Long }
+  is_sort(t) { $t instanceof java.lang.Long }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%include { util/types/Map.tom }
+%typeterm Resource {
+  implement { org.eclipse.emf.ecore.resource.Resource }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.resource.Resource }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm ResourceSet {
+  implement { org.eclipse.emf.ecore.resource.ResourceSet }
+  is_sort(t) { $t instanceof org.eclipse.emf.ecore.resource.ResourceSet }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm short {
+  implement { short }
+  is_sort(t) { true }
+  equals(l1,l2) { $l1 == $l2 }
+}
+%typeterm Short {
+  implement { java.lang.Short }
+  is_sort(t) { $t instanceof java.lang.Short }
+  equals(l1,l2) { $l1.equals($l2) }
+}
+%typeterm TreeIterator {
+  implement { org.eclipse.emf.common.util.TreeIterator<?> }
+  is_sort(t) { $t instanceof org.eclipse.emf.common.util.TreeIterator<?> }
+  equals(l1,l2) { $l1.equals($l2) }
+}
