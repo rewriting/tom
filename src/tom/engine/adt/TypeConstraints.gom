@@ -4,7 +4,7 @@ imports String TomType TomSignature TomName
 abstract syntax
 
 /* Type Reconstruction */
-Info = PairNameOption(AstName:TomName,Option:OptionList)
+Info = PairNameOptions(AstName:TomName,Options:OptionList)
 
 TypeConstraint = Equation(Type1: TomType, Type2: TomType, Info: Info)
                | Subtype(Type1: TomType, Type2: TomType)

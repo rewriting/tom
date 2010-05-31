@@ -91,7 +91,7 @@ public class ACPropagator implements IBasePropagator {
   %strategy RemoveNonVariableStar(acp: ACPropagator) extends Identity() {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
-          Option=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          Options=optWithAC@concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@(Name(tomName)), Slots=slots],subject) -> {
         OptionList optWithoutAC = `concOption(T1*,MatchingTheory(concElementaryTheory(T2*,T3*)),T4*);
 
@@ -141,7 +141,7 @@ public class ACPropagator implements IBasePropagator {
   %strategy PerformAbstraction(acp: ACPropagator) extends Identity() {
     visit Constraint {
       MatchConstraint(pattern@RecordAppl[
-          Option=optWithAC@concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*),
+          Options=optWithAC@concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*),
           NameList=namelist@(Name[]), Slots=slots],subject) -> {
         if(`slots.length() > 2) {
           %match(slots) {
@@ -194,7 +194,7 @@ public class ACPropagator implements IBasePropagator {
        * f(X*) <<ac s => f(X*) <<a s
        */
       MatchConstraint(RecordAppl[
-          Option=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
+          Options=concOption(T1*,MatchingTheory(concElementaryTheory(T2*,AC(),T3*)),T4*),
           NameList=namelist@(Name[]), 
           Slots=slots],subject) &&
         (concSlot()<<slots || concSlot(PairSlotAppl[Appl=VariableStar[]])<<slots) -> {

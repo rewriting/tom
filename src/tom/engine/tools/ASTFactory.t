@@ -303,9 +303,9 @@ public class ASTFactory {
       String key = term.getNameList().getHeadconcTomName().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if(symbol != null) {
-        OptionList optionList = symbol.getOption();
+        OptionList optionList = symbol.getOptions();
         optionList = `concOption(optionList*,DefinedSymbol());
-        symbolTable.putSymbol(key,symbol.setOption(optionList));
+        symbolTable.putSymbol(key,symbol.setOptions(optionList));
         return symbol;
       }
     }

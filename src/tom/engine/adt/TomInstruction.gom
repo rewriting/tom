@@ -42,8 +42,8 @@ Instruction =
    *
    * @param ConstraintInstructionList a list of (constraint and an action)
    */
-  | Match(ConstraintInstructionList:ConstraintInstructionList, Option:OptionList)
-  | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
+  | Match(ConstraintInstructionList:ConstraintInstructionList, Options:OptionList)
+  | CompiledMatch(AutomataInst:Instruction,Options:OptionList)
   | CompiledPattern(Contraint:Constraint,AutomataInst:Instruction)
   /*
    * a RawAction is an action that comes from the original program 
@@ -56,7 +56,7 @@ Instruction =
  * @param Constraint a constraint (can be a OR or an AND)
  * @param Action the action to execute if the constraints are evaluated to true
  */  
-ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Option:OptionList)  
+ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Options:OptionList)  
 
 ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   

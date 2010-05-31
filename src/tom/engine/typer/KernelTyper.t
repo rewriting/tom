@@ -110,7 +110,7 @@ public class KernelTyper {
 
   %strategy ProcessRhsForVarTypePropagation() extends Identity() {
     visit ConstraintInstruction {
-      c@ConstraintInstruction(constr,action,option) -> {
+      c@ConstraintInstruction(constr,_,_) -> {
         HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
         `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
         return `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`c);        
@@ -202,7 +202,7 @@ public class KernelTyper {
     }
 
     visit TomVisit {
-      v@VisitTerm(type,constraintInstructionList,options) -> {
+      VisitTerm(type,constraintInstructionList,options) -> {
         // expands the type (remember that the strategy is applied top-down)
         TomType newType = `kernelTyper.typeVariable(contextType,`type);
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
@@ -231,12 +231,12 @@ public class KernelTyper {
     }
 
     visit TomTerm {
-      RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+      RecordAppl[Options=optionList,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
           tomSymbol = kernelTyper.getSymbolFromType(contextType);
           if(tomSymbol==null) {
-            Option ot = TomBase.findOriginTracking(`option);
+            Option ot = TomBase.findOriginTracking(`optionList);
             TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
                 TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
           }
@@ -248,7 +248,7 @@ public class KernelTyper {
         if(tomSymbol != null) {
           SlotList subterm = kernelTyper.typeVariableList(tomSymbol, `slotList);
           ConstraintList newConstraints = kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
-          return `RecordAppl(option,nameList,subterm,newConstraints);
+          return `RecordAppl(optionList,nameList,subterm,newConstraints);
         } else {
           //System.out.println("contextType = " + contextType);
 
@@ -256,7 +256,7 @@ public class KernelTyper {
             type@(Type|TypeWithSymbol)[] -> {
               SlotList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `slotList);
               ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
-              return `RecordAppl(option,nameList,subterm,newConstraints);
+              return `RecordAppl(optionList,nameList,subterm,newConstraints);
             }
 
           }
@@ -286,7 +286,7 @@ public class KernelTyper {
 
     visit BQTerm {
 
-      BQAppl[Option=option,AstName=name@Name(tomName),Args=args] -> {
+      BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
           try {
@@ -309,14 +309,14 @@ public class KernelTyper {
 
         if(tomSymbol != null) {
           BQTermList subterm = kernelTyper.typeVariableList(tomSymbol, `args);
-          return `BQAppl(option,name,subterm);
+          return `BQAppl(optionList,name,subterm);
         } else {
           //System.out.println("contextType = " + contextType);
 
           %match(contextType) {
-            type@(Type|TypeWithSymbol)[] -> {
+            (Type|TypeWithSymbol)[] -> {
               BQTermList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `args);
-              return `BQAppl(option,name,subterm);
+              return `BQAppl(optionList,name,subterm);
             }
           }
         }
@@ -353,7 +353,7 @@ public class KernelTyper {
         return constraintInstructionList; 
       }
 
-      c@concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
+      concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
           //System.out.println("\n ConstraintInstruction = " + `c);
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
@@ -385,7 +385,7 @@ public class KernelTyper {
         BQTerm newSubject = `subject;
         TomType newSubjectType = `EmptyType();
         %match(subject) {
-          (BQVariable|BQVariableStar)(variableOption,astName@Name(name),tomType) -> {
+          (BQVariable|BQVariableStar)(variableOptions,astName@Name(name),tomType) -> {
             // tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable
             String type = TomBase.getTomType(`tomType);
             //System.out.println("match type = " + type);
@@ -393,7 +393,7 @@ public class KernelTyper {
               /* the subject is a variable with an unknown type */
               newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
               if(newSubjectType != null) {
-                newSubject = `BQVariable(variableOption,astName,newSubjectType);
+                newSubject = `BQVariable(variableOptions,astName,newSubjectType);
               } else {
                 TomMessage.error(logger,null,0, TomMessage.cannotGuessMatchType,`name);
                 throw new VisitFailure();
@@ -445,7 +445,7 @@ public class KernelTyper {
         return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
 
-      constraint@NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {
+      NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {
         //System.out.println("\nNumeric constraint = " + `constraint);
         // if it is numeric, we do not care about the type
         BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhs);                  
@@ -509,7 +509,7 @@ matchL:  %match(subject,s) {
         return `concBQTerm(typeVariable(EmptyType(),head),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type(tomCodomain,tlCodomain))],
         concBQTerm(head,tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
@@ -530,9 +530,9 @@ matchL:  %match(subject,s) {
             //System.out.println("slotAppl: " + `slotAppl);
 
             %match(head) {
-              BQVariableStar[Option=option,AstName=name] -> {
+              BQVariableStar[Options=optionList,AstName=name] -> {
                 BQTermList sl = typeVariableList(`symb,`tail);
-                return `concBQTerm(BQVariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName)),sl*);
+                return `concBQTerm(BQVariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName)),sl*);
               }
               _ -> {
                 //we cannot know the type precisely (the var can be of domain or codomain type)
@@ -596,10 +596,10 @@ matchL:  %match(subject,s) {
             //System.out.println("slotAppl: " + `slotAppl);
 
             %match(slotAppl) {
-              VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
+              VariableStar[Options=optionList,AstName=name,Constraints=constraints] -> {
                 ConstraintList newconstraints = typeVariable(`codomain,`constraints);
                 SlotList sl = typeVariableList(`symb,`tail);
-                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
+                return `concSlot(PairSlotAppl(slotName,VariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
               }
 
               _ -> {

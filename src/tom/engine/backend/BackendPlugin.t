@@ -263,7 +263,7 @@ public class BackendPlugin extends TomGenericPlugin {
    */
   %strategy Collector(markStrategy:Strategy,bp:BackendPlugin,stack:StringStack) extends Identity() {
     visit Instruction {
-      CompiledMatch[AutomataInst=inst, Option=optionList] -> {
+      CompiledMatch[AutomataInst=inst, Options=optionList] -> {
 
         String moduleName = TomBase.getModuleName(`optionList);
         /*

@@ -114,17 +114,20 @@ public class TyperPlugin extends TomGenericPlugin {
         kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
 
         updateSymbolTable();
+        System.out.println("\nCode before type inference = \n" +
+            getWorkingTerm());
 
         Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
 
         typedCode = kernelTyper.propagateVariablesTypes(variableExpandedCode);
+        //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         // replace 'abc' by concString('a','b','c')
         typedCode = `TopDownIdStopOnSuccess(desugarString(this)).visitLight(typedCode);
 
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        //System.out.println("\nCode after type inference = \n" + typedCode);
+        System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose
@@ -163,6 +166,7 @@ public class TyperPlugin extends TomGenericPlugin {
     for(String tomName:symbolTable.keySymbolIterable()) {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       try {
+        `TopDownIdStopOnSuccess(FindEmptyTLType(this)).visitLight(tomSymbol);
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
@@ -173,13 +177,27 @@ public class TyperPlugin extends TomGenericPlugin {
     }
   }
 
+  %strategy FindEmptyTLType(typer:TyperPlugin) extends Identity() {
+    visit TomType {
+      Type(tomType,EmptyTargetLanguageType()) -> {
+        TomType newType = null;
+        newType = typer.getSymbolTable().getType(`tomType);
+        %match(newType) {
+         Type(tomType,EmptyTargetLanguageType()) -> {
+          System.out.println("Found an EmptyTargetLanguageType!!");
+         }
+        }
+      }
+    }
+  }
+
   /*
    * transform a BQAppl into its compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
    * can only be done after typing because BQAppl are treated by the typing algorithm
    */
   %strategy TransformBQAppl(typer:TyperPlugin) extends Identity() {
     visit BQTerm {
-      BQAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
+      BQAppl[Options=optionList,AstName=name@Name(tomName),Args=l] -> {
         TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
         BQTermList args  = `TopDownIdStopOnSuccess(TransformBQAppl(typer)).visitLight(`l);
         //System.out.println("BackQuoteTerm: " + `tomName);
@@ -241,7 +259,7 @@ public class TyperPlugin extends TomGenericPlugin {
         Slot head = args.getHeadconcSlot();
         SlotList tail = typeChar(tomSymbol,args.getTailconcSlot());
         %match(head) {
-          PairSlotAppl(slotName,RecordAppl[Option=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
+          PairSlotAppl(slotName,RecordAppl[Options=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
             /*
              * ensure that the argument contains at least 1 character and 2 single quotes
              */

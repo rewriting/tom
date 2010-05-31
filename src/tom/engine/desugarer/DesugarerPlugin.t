@@ -132,11 +132,11 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      Variable[Option=opts,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
-        return `Variable(opts,desugarer.getFreshVariable(),ty,constr);
+      Variable[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
+        return `Variable(optionList,desugarer.getFreshVariable(),ty,constr);
       }
-      VariableStar[Option=opts,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
-        return `VariableStar(opts,desugarer.getFreshVariable(),ty,constr);
+      VariableStar[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
+        return `VariableStar(optionList,desugarer.getFreshVariable(),ty,constr);
       }
     }
   }
@@ -173,7 +173,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Options=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
 
@@ -187,7 +187,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+      Symbol[Options=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
@@ -216,8 +216,8 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy replaceTermApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
-        return desugarer.replaceTermAppl(`option,`nameList,`args,`constraints);
+      TermAppl[Options=optionList,NameList=nameList,Args=args,Constraints=constraints] -> {
+        return desugarer.replaceTermAppl(`optionList,`nameList,`args,`constraints);
       }
     }
   }
@@ -228,7 +228,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy replaceXMLApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      subject@XMLAppl[Option=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
+      XMLAppl[Options=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
         //System.out.println("replaceXML in:\n" + `subject);
         return desugarer.replaceXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
       }

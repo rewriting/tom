@@ -82,7 +82,7 @@ public class CGenerator extends CFamilyGenerator {
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    OptionList optionList = tomSymbol.getOption();
+    OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
@@ -97,7 +97,7 @@ public class CGenerator extends CFamilyGenerator {
 
   protected void buildArraySymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    OptionList optionList = tomSymbol.getOption();
+    OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();        
     TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
@@ -137,7 +137,7 @@ public class CGenerator extends CFamilyGenerator {
 
   protected void buildListSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    OptionList optionList = tomSymbol.getOption();
+    OptionList optionList = tomSymbol.getOptions();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
     TomType type1 = TomBase.getSymbolCodomain(tomSymbol);

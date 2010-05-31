@@ -221,8 +221,8 @@ public final class TomBase {
       return false;
     }
     %match(symbol) {
-      Symbol[Option=l] -> {
-        OptionList optionList = `l;
+      Symbol[Options=optionList] -> {
+        OptionList optionList = `optionList;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(opt) {
@@ -245,8 +245,8 @@ public final class TomBase {
       return false;
     }
     %match(symbol) {
-      Symbol[Option=l] -> {
-        OptionList optionList = `l;
+      Symbol[Options=optionList] -> {
+        OptionList optionList = `optionList;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(opt) {
@@ -355,7 +355,7 @@ public final class TomBase {
 
   public static Theory getTheory(TomTerm term) {
     %match(term) {
-      RecordAppl[Option=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
+      RecordAppl[Options=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
     }
     return `concElementaryTheory(Syntactic());
   }
@@ -376,7 +376,7 @@ public final class TomBase {
 
   public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return true;
       }
     }
@@ -487,7 +487,7 @@ public final class TomBase {
       return false;
     }*/
     %match(subject) {
-      Symbol[Option=optionList] -> {
+      Symbol[Options=optionList] -> {
         return hasDefinedSymbol(`optionList);
       }
     }
@@ -706,11 +706,11 @@ public final class TomBase {
    */
   public static BQTerm convertFromVarToBQVar(TomTerm variable) {
     %match(variable) {
-      Variable[Option=option,AstName=name,AstType=type] -> {
-        return `BQVariable(option, name, type);
+      Variable[Options=optionList,AstName=name,AstType=type] -> {
+        return `BQVariable(optionList, name, type);
       }
-      VariableStar[Option=option,AstName=name,AstType=type] -> {
-        return `BQVariableStar(option, name, type);
+      VariableStar[Options=optionList,AstName=name,AstType=type] -> {
+        return `BQVariableStar(optionList, name, type);
       }
     }
     throw new TomRuntimeException("cannot convert into a bq variable the term "+variable);
@@ -721,11 +721,11 @@ public final class TomBase {
    */
   public static TomTerm convertFromBQVarToVar(BQTerm variable) {
     %match(variable) {
-      BQVariable[Option=option,AstName=name,AstType=type] -> {
-        return `Variable(option, name, type, concConstraint());
+      BQVariable[Options=optionList,AstName=name,AstType=type] -> {
+        return `Variable(optionList, name, type, concConstraint());
       }
-      BQVariableStar[Option=option,AstName=name,AstType=type] -> {
-        return `VariableStar(option, name, type, concConstraint());
+      BQVariableStar[Options=optionList,AstName=name,AstType=type] -> {
+        return `VariableStar(optionList, name, type, concConstraint());
       }
     }
     throw new TomRuntimeException("cannot convert into a variable the term "+variable);

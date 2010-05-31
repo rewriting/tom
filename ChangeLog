@@ -1,3 +1,7 @@
+2010-05-31 tavaresc
+ * Replace argument "Option" by "Options" in files .gom and propagate this.
+ * (i.e.: "Option:OptionList" by "Options:OptionList")
+
 2010-05-27 pem
  * removed UnameVariable and UnamedVariableStar, EmptyName() is used instead
    to denote an '_'
