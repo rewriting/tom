@@ -647,7 +647,10 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
+      <zipgroupfileset dir="${stable.dist.lib}/tools" 
+        includes="*.jar"
+        excludes="org.eclipse.*.jar"
+        />
     </jar>
     <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
@@ -862,7 +865,10 @@
     <!-- generate a single runtime jar -->
     <jar jarfile="${src.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
+      <zipgroupfileset dir="${src.dist.lib}/tools" 
+        includes="*.jar"
+        excludes="org.eclipse.*.jar"
+        />
     </jar>
     <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>

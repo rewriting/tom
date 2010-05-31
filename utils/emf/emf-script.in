@@ -10,8 +10,12 @@
 
 SCRIPT_ARGS=
 JAVA_ARGS=
+JAVA_CP=
 while [ $# -gt 0 ]; do
   case $1 in
+    -cp*)
+      JAVA_CP=$JAVA_CP" "$1
+      ;;
     -D*)
       JAVA_ARGS=$JAVA_ARGS" "$1
       ;;
@@ -67,9 +71,10 @@ JAVACMD=java$JAVA_ARGS
 
 if [ -z "$LOCALCLASSPATH" ]
 then
-  LOCALCLASSPATH=$TOM_JAR
+# TODO: take classpath in parameter 
+  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/Users/pem/workspace/jtom/src/dist/lib/tom-runtime-full.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 else
-  LOCALCLASSPATH=$TOM_JAR:$LOCALCLASSPATH
+  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$LOCALCLASSPATH:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/Users/pem/workspace/jtom/src/dist/lib/tom-runtime-full.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 fi
 
 SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
