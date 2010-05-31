@@ -64,7 +64,7 @@ public abstract class TomGenericPlugin implements Plugin {
   private String pluginName;
 
   /** The term the plugin works on. */
-  private Code term;
+  protected Code term;
 
   /** The streamanager */
   protected TomStreamManager streamManager;

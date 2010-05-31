@@ -263,7 +263,7 @@ public class KernelTyper {
         }
       }
 
-      var@(Variable|UnamedVariable)[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
+      var@Variable[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
         TomType localType = kernelTyper.getType(`tomType);
         //System.out.println("localType = " + localType);
         if(localType != null) {
@@ -600,12 +600,6 @@ matchL:  %match(subject,s) {
                 ConstraintList newconstraints = typeVariable(`codomain,`constraints);
                 SlotList sl = typeVariableList(`symb,`tail);
                 return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
-              }
-
-              UnamedVariableStar[Option=option,Constraints=constraints] -> {
-                ConstraintList newconstraints = typeVariable(`codomain,`constraints);
-                SlotList sl = typeVariableList(`symb,`tail);
-                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
               }
 
               _ -> {

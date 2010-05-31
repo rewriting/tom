@@ -10,6 +10,7 @@
   <property name="inline"      value="off"/>
   <property name="inlineplus"  value="off"/>
   <property name="newtyper"    value="off"/>
+  <property name="newparser"   value="off"/>
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
@@ -75,6 +76,7 @@
       	   genIntrospector="${genIntrospector}"
            verbose="${verbose}"
            newtyper="${newtyper}"
+           newparser="${newparser}"
            fork="${tomfork}"
            pretty="${pretty}">
         <classpath refid="tom.classpath"/>

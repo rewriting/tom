@@ -105,7 +105,7 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
   // Warnings
   public static final TomMessage optimizerModifiesLineNumbers              =
-    new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
+    new TomMessage("The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
                 " Please disable the optimizer if you need correct line numbers.");
 
   public static final TomMessage optimizerNotActive              =
@@ -138,6 +138,12 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
       new TomMessage("RecognitionException catched: {0}");
+
+  public static final TomMessage parserNotUsed =
+    new TomMessage("The parser is not in use.");
+  public static final TomMessage newParserNotUsed =
+    new TomMessage("The new parser is not in use.");
+
   // parser.TomParser
   // TODO : simplify the message in using PlatformLogRecord with detail
   // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial

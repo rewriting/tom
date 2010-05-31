@@ -110,10 +110,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       RecordAppl[NameList=(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
-      UnamedVariable[] -> { return UNAMED_VARIABLE;}
       VariableStar[] -> { return VARIABLE_STAR;}
       Variable[] -> { return VARIABLE;}
-      UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
     }
     throw new TomRuntimeException("Invalid Term");
   }
@@ -156,8 +154,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       }
       Variable[AstName=Name(name)] -> { return `name;}
       VariableStar[AstName=Name(name)] -> { return `name+"*";}
-      UnamedVariable[] -> { return "_";}
-      UnamedVariableStar[] -> { return "_*";}
       AntiTerm(t) -> { return getName(`t); }
     }
     throw new TomRuntimeException("Invalid Term:" + term);

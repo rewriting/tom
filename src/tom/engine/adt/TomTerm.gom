@@ -50,25 +50,6 @@ TomTerm =
    * @param Constraints a list of constraints
    */
     | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
-  /** 
-   * <code>UnamedVariable</code> a variable without name
-   *
-   * @param Option a list of options
-   * @param AstName the name of the variable
-   * @param AstType the type of the variable
-   * @param Constraints a list of constraints
-   */
-    | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
-  /** 
-   * <code>UnamedVariableStar</code> a list-variable without name
-   *
-   * @param Option a list of options
-   * @param AstName the name of the variable
-   * @param AstType the type of the variable
-   * @param Constraints a list of constraints
-   */
-    | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
-
   /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
    */

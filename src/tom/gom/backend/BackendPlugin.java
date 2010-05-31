@@ -60,6 +60,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
     "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +

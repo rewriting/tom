@@ -56,6 +56,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>outputfile</li>
  * <li>import</li>
  * <li>newtyper</li>
+ * <li>newparser</li>
  * <li>optimize</li>
  * <li>optimize2</li>
  * <li>pretty</li>
@@ -92,6 +93,7 @@ public class TomTask extends MatchingTask {
   private boolean nowarn = false;
   private boolean nostatic = false;
   private boolean newtyper = false;
+  private boolean newparser = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean pretty = false;
@@ -326,6 +328,18 @@ public class TomTask extends MatchingTask {
 
   public boolean getNewtyper() {
     return newtyper;
+  }
+
+ /**
+   * If true, compiles with new parser enabled.
+   * @param flag if true compile with new parser
+   */
+  public void setNewparser(boolean newparser) {
+    this.newparser = newparser;
+  }
+
+  public boolean getNewparser() {
+    return newparser;
   }
 
   /**
@@ -690,6 +704,9 @@ public class TomTask extends MatchingTask {
       }
       if(newtyper == true) {
         javaRunner.createArg().setValue("--newtyper");
+      }
+      if(newparser == true) {
+        javaRunner.createArg().setValue("--newparser");
       }
       if(optimize == true) {
         javaRunner.createArg().setValue("--optimize");

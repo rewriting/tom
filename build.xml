@@ -88,7 +88,7 @@
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 
-  <property name="multithread"    value="true"/>
+  <property name="multithread"    value="false"/>
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">

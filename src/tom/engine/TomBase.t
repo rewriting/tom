@@ -301,14 +301,6 @@ public final class TomBase {
         `Fail().visitLight(`v);
       }
 
-      v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-        TomTerm annotedVariable = getAliasToVariable(`constraintList);
-        if(annotedVariable!=null) {
-          collection.add(annotedVariable);
-        }
-        `Fail().visitLight(`v);
-      }
-
       // to collect annoted nodes but avoid collect variables in optionSymbol
       t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
         collectVariable(collection,`subterms,considerBQVars);
@@ -484,7 +476,8 @@ public final class TomBase {
         return elementAt(`typeList,index);
       }
     }
-    throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
+    return null;
+    //throw new TomRuntimeException("getSlotType: bad slotName error: " + slotName);
   }
 
   public static boolean isDefinedSymbol(TomSymbol subject) {
@@ -578,7 +571,7 @@ public final class TomBase {
         }
       }
 
-      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> {
+      (Variable|VariableStar)[AstType=type] -> {
         return `type;
       }
 
