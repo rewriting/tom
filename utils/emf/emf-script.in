@@ -76,10 +76,8 @@ if [ -z "$LOCALCLASSPATH" ]
 then
 # TODO: take classpath in parameter 
   LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$TOM_EMF
-  #:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tom-runtime-full.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 else
   LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$LOCALCLASSPATH:$TOM_EMF
-  #:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tom-runtime-full.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 fi
 
 SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
