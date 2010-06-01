@@ -122,7 +122,7 @@ public class NewTyper extends TomGenericPlugin {
          */
         typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
-        System.out.println("\nCode before type inference = \n" + typedCode);
+        //System.out.println("\nCode before type inference = \n" + typedCode);
 
         /**
          * Start by typing variables with fresh type variables

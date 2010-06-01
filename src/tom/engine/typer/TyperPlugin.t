@@ -114,8 +114,7 @@ public class TyperPlugin extends TomGenericPlugin {
         kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
 
         updateSymbolTable();
-        System.out.println("\nCode before type inference = \n" +
-            getWorkingTerm());
+        //System.out.println("\nCode before type inference = \n" + getWorkingTerm());
 
         Code variableExpandedCode = (Code) kernelTyper.typeVariable(`EmptyType(), (Code)getWorkingTerm());
 
