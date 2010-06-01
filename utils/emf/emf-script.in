@@ -14,6 +14,7 @@ JAVA_CP=
 while [ $# -gt 0 ]; do
   case $1 in
     -cp*)
+      shift
       JAVA_CP=$JAVA_CP" "$1
       ;;
     -D*)
