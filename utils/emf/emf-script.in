@@ -67,14 +67,19 @@ fi
 # set TOM_LIB location
 TOM_LIB="${@TOM_HOME@}/lib"
 TOM_JAR="${TOM_LIB}/tom-compiler-full.jar:${TOM_LIB}/tom-runtime-full.jar"
+#TOM_EMF="${TOM_LIB}/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:${TOM_LIB}/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"
+TOM_EMF=`echo ${TOM_LIB}/tools/org.eclipse.emf.*.jar | tr ' ' ':'`
+
 JAVACMD=java$JAVA_ARGS
 
 if [ -z "$LOCALCLASSPATH" ]
 then
 # TODO: take classpath in parameter 
-  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/Users/pem/workspace/jtom/src/dist/lib/tom-runtime-full.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
+  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$TOM_EMF
+  #:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tom-runtime-full.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 else
-  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$LOCALCLASSPATH:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/Users/pem/TeX/Work/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/Users/pem/workspace/jtom/src/dist/lib/tom-runtime-full.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/Users/pem/workspace/jtom/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
+  LOCALCLASSPATH=$TOM_JAR:$JAVA_CP:$LOCALCLASSPATH:$TOM_EMF
+  #:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/simplepdlsemantics_1.0.0.jar:/home/jcb/workspace/Quarteft/quarteft/src/PDL2TINA/plugins/petrinetsemantics_1.0.0.jar:.:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tom-runtime-full.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.common_2.5.0.v200906151043.jar:/home/jcb/workspace/gitexperiment/jtom2/src/dist/lib/tools/org.eclipse.emf.ecore_2.5.0.v200906151043.jar
 fi
 
 SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
