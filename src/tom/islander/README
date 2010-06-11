@@ -1,0 +1,62 @@
+======
+README
+======
+
+This directory is a kind of "laboratory" for the future version of Tom, and
+particularly for the parser. It is not considered as "stable code" and can be
+completely modified.
+
+-------
+Content
+-------
+ +--- fusion
+ +--- backquote
+ +--- newtom
+ +--- inputTests
+
+fusion :
+This is a former version of a parser based on the official Tom grammar + few
+constructs. A "Minijava" language is integrated.
+
+backquote :
+This is an experiment for a new backquote parser. It is very different from the
+former one : it has its own language which almost match with the java
+expressions.
+It has not yet been completely tested. It is integrated in "newtom" but we keep
+it here because it is a simple way to test the parser on backquote construct
+only.
+
+newtom :
+It will replace src/tom/engine/parser when finished. It contains a light version
+of Tom parser (without backquote : NewTomLanguage.g) and a work version with
+backquote include. It has not been decided how will be the final version.
+
+inputTests :
+Few tests for fusion, backquote, newtom
+
+-----
+Usage
+-----
+
+To use this code, go to the tom directory :
+
+cd $YOUR_TOM_WORKSPACE/src/tom/
+
+For backquote test :
+ant -f backquote.build.xml
+cd build
+java newtom/MainNewBackQuote ../islander/inputTests/backquoteTest (uncomment the
+test you want tu execute)
+
+For "light" newtom test :
+ant -f newtom.build.xml
+cd build
+java newtom/MainNewTom ../islander/inputTests/[0-9]+test.minitom
+
+For newtom test :
+ant -f tom.build.xml
+cd build
+java newtom/MainTomLanguage ../islander/inputTests/tomTest (uncomment the
+test you want tu execute)
+
+
