@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="javac" basedir=".">
+  
+  <property environment="env"/>
+  <property name="tom.home"        location="../dist"/>
+  <property name="v3.dir"      location="."/>
+  <property name="v3.src"      location="${v3.dir}/islander"/>
+  <property name="v3.gen"      location="${v3.dir}/gen"/>
+  <property name="v3.build"    location="${v3.dir}/build"/>
+  <property name="v3.package"   value="newtom"/>
+  <property name="v3.newtomast"   value="${v3.package}/NewTomAst"/>
+  <property name="v3.newtomgrammarname"  value="NewTomLanguage"/>
+  <property name="v3.newtomgrammar"  value="${v3.package}/${v3.newtomgrammarname}"/>
+
+  <import file="${tom.home}/lib/tom-common.xml"/>
+  
+  <taskdef name="antlr3"
+           classname="org.apache.tools.ant.antlr.ANTLR3">
+    <classpath refid="tom.classpath"/>
+  </taskdef>
+  
+  <target name="init" depends="tom.init">
+    <mkdir dir="${v3.build}"/>
+    <mkdir dir="${v3.gen}"/>
+  </target>
+  
+  <target name="tom" depends="gom">
+    <tom.preset srcdir="${v3.src}"
+                destdir="${v3.gen}"
+                import="${v3.gen}"> 
+		<include name="**/${v3.package}/*.t"/>
+		<!-- exclude name="**/*.g.t"/-->
+    </tom.preset>
+  </target>
+  
+  <!--target name="antlrtom" depends="gomantlradapter">
+    <tom.preset srcdir="${v3.src}"
+        outputfile="${v3.gen}/${v3.newtomgrammar}.g">
+      <include name="${v3.newtomgrammar}.g.t"/>
+      <tomincludedir>
+        <pathelement location="${v3.gen}"/>
+        <pathelement location="${v3.gen}/${v3.package}"/>
+      </tomincludedir>
+    </tom.preset>
+  </target-->
+  
+  <target name="gomantlradapter" depends="init, gom">
+     <gomantlradapter.preset srcdir="${v3.src}"
+	                    destdir="${v3.gen}"
+                            package="${v3.package}">
+      <include name="${v3.newtomast}.gom"/>
+      <!--grammar="NewTomLanguage"-->
+    </gomantlradapter.preset>
+  </target>
+
+  <target name="gom" depends="init">
+    <gom.preset srcdir="${v3.src}"
+                destdir="${v3.gen}">
+      <include name="${v3.newtomast}.gom"/>
+   </gom.preset>
+  </target>
+  
+  <!--target name="antlr" depends="antlrtom"-->
+  <target name="antlr" depends="gomantlradapter">
+	  <!--antlr3 target="${v3.gen}/${v3.newtomgrammar}.g"-->
+   <antlr3 target="${v3.src}/${v3.newtomgrammar}.g"
+            outputdirectory="${v3.gen}/${v3.package}"
+            libdirectory="${v3.gen}/${v3.package}/newtomast"
+            />
+  </target>
+  
+  <target name="javac" depends="tom, antlr">
+    <javac.preset destdir="${v3.build}" >
+      <!--<src path="${v3.src}"/>-->
+      <src path="${v3.gen}"/>
+      <src path="${v3.src}"/>
+      <include name="**/${v3.package}/MainNewTom.java"/>
+      <exclude name="**/${v3.package}/MainNewBackQuote.java"/>
+    </javac.preset>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${v3.gen}"/>
+    <delete dir="${v3.build}"/>
+  </target>
+  
+</project>
