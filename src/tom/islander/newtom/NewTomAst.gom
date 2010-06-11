@@ -107,7 +107,6 @@ BlockList = BlockList(Block*)
 
 Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionList )
       | MatchConstructWithoutArgs(ConstraintActions:ConstraintActionList )
-//      | CompositeTerm(JavaTomBlock:String)/*BlockList)*/
       | Operator(Name:TomName,Type:TomType,Args:SlotList/*,Op:Operator*/,OperatorList:OperatorList) // Name - Type -Args - isfsym - OperatorList
       | OpList(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
       | OpArray(Name:TomName,Type:TomType,Arg:TomType/*,Op:Operator*/,OperatorList:OperatorList)
@@ -115,7 +114,6 @@ Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionLi
       | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
       | Include(FileName:String)
 //      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
-  	  //| JavaCompilationUnit(expression:Expression)
       | BackQuoteTerm(CompositeTerm:CompositeTerm) //Term:Term)
 
 SlotList = SlotList(Slot*)
@@ -134,127 +132,3 @@ VisitAction = VisitActionBL(Patterns:PatternList,BlockList:BlockList)
 
 VisitActionList = VisitActionList(VisitAction*)
 
-
-// temporary constructors, for test purpose
-/*Arg = Arg(Name:String)
-ArgList = concArg(Arg*)*/
-
-//=========================================
-
-// grammaire matchconstruct du wiki : 
-/*
-
-MatchConstruct 	 ::= 	 '%match' '(' MatchArguments ')' '{' ( PatternAction )* '}'
-	∣ 	'%match' '{' ( ConstraintAction )* '}'
-MatchArguments 	::= 	[Type] Term ( ',' [Type] Term )*
-PatternAction 	::= 	[LabelName':'] PatternList '->' '{' BlockList '}'
-PatternList 	::= 	Pattern( ',' Pattern )* [ ('&&' ∣'||') Constraint ]
-ConstraintAction 	::= 	Constraint '->' '{' BlockList '}'
-Constraint 	::= 	Pattern '<<' [Type] Term
-	∣ 	Constraint '&&' Constraint
-	∣ 	Constraint '||' Constraint
-	∣ 	'(' Constraint ')'
-	∣ 	Term Operator Term
-Operator 	::= 	'>' ∣'>=' ∣'<' ∣'<=' ∣'==' ∣'!='
-*/
-
-//  grammaire pattern du wiki
-/*
-
-Term 	 ::= 	 VariableName['*']
-	∣ 	Name '('[Term ( ',' Term )*]')'
-Pattern 	::= 	[ AnnotedName '@' ] PlainPattern
-PlainPattern 	::= 	['!']VariableName [ '*' ]
-	∣ 	['!'] HeadSymbolList (ExplicitTermList ∣ ImplicitPairList)
-	∣ 	ExplicitTermList
-	∣ 	'_'
-	∣ 	'_*'
-	∣ 	XMLTerm
-HeadSymbolList 	::= 	HeadSymbol [ '?' ]
-	∣ 	'(' HeadSymbol ( '∣' HeadSymbol )+ ')'
-ExplicitTermList 	::= 	'(' [ Pattern ( ',' Pattern )*] ')'
-ImplicitPairList 	::= 	'[' [ PairPattern ( ',' PairPattern )*] ']'
-PairPattern 	::= 	SlotName '=' Pattern
-*/
-
-// convention lexicales du wiki -> cf lexer
-/*
-Identifier 	 ::= 	 Letter ( Letter ∣ Digit ∣ '_' ∣ '-' )*
-Integer 	::= 	(Digit )+
-Double 	::= 	(Digit)+ ['.'] (Digit)* ∣ '.' (Digit)+
-String 	::= 	'"' (Letter ∣ ('\' ('n' ∣ 't' ∣ 'b' ∣ 'r' ∣ 'f' ∣ '\' ∣ '’' ∣ '"') ) )* '"'
-Letter 	::= 	'A' ... 'Z' ∣ 'a' ... 'z'
-Digit 	::= 	'0' ... '9'
-Char 	::= 	'’' (Letter ∣Digit) '’'
-*/
-
-// convention names  du wiki -> lexer
-/*
-SubjectName 	 ::= 	 Identifier
-Type 	::= 	Identifier
-SlotName 	::= 	Identifier
-HeadSymbol 	::= 	Identifier
-  ∣ 	Integer
-	∣ 	Double
-	∣ 	String
-	∣ 	Char
-VariableName 	::= 	Identifier
-AnnotedName 	::= 	Identifier
-LabelName 	::= 	Identifier
-FileName 	::= 	Identifier
-AttributeName 	::= 	Identifier
-XMLName 	::= 	Identifier
-Name 	::= 	Identifier
-*/
-
-// grammaire tom program  du wiki
-/*
-Tom 	 ::= 	 BlockList
-BlockList 	::=
-	( 	MatchConstruct
-	∣ 	StrategyConstruct
-	∣ 	BackQuoteTerm
-	∣ 	IncludeConstruct
-	∣ 	GomConstruct
-	∣ 	TypeTerm
-	∣ 	Operator
-	∣ 	OperatorList
-	∣ 	OperatorArray
-	∣ 	'{' BlockList '}'
-	)* 
-*/
-
-
-// grammaire anti pattern du wiki
-/*
-PlainPattern 	 ::= 	 ['!'] VariableName
-	∣ 	['!'] HeadSymbolList ( ExplicitTermList ∣ ImplicitPairList )
-	∣ 	... 
-*/
-
-
-// grammaire XML Term du wiki
-/*
-XMLTerm 	 ::= 	 '<' XMLNameList XMLAttrList '/>'
-	∣ 	'<' XMLNameList XMLAttrList '>' XMLChilds '</' XMLNameList '>'
-	∣ 	'#TEXT' '(' Identifier ∣ String ')'
-	∣ 	'#COMMENT' '(' Identifier ∣ String ')'
-	∣ 	'#PROCESSING-INSTRUCTION'
-		'(' (Identifier ∣ String) ',' (Identifier ∣ String) ')'
-XMLNameList 	::= 	XMLName
-	∣ 	'(' XMLName ( '∣' XMLName )* ')'
-XMLAttrList 	::= 	'[' [ XMLAttribute (',' XMLAttribute)* ] ']'
-	∣ 	'(' [ XMLAttribute (',' XMLAttribute)* ] ')'
-	∣ 	( XMLAttribute )*
-XMLAttribute 	::= 	'_*'
-	∣ 	VariableName '*'
-	∣ 	AttributeName '=' [AnnotedName '@'] ( Identifier ∣ String )
-	∣ 	[AnnotedName '@'] '_' '=' [AnnotedName '@'] ( Identifier ∣ String )
-XMLChilds 	::= 	( Term )*
-	∣ 	'[' Term ( ',' Term )* ']'
-*/
-
-
-/*
- *
- * */

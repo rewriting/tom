@@ -173,7 +173,6 @@ Suffix = ArrayClassSuffix( dimension:int )
        | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
        | ThisSuffix()
        | SuperSuffix( super_:Super_ )
-       /*| InnerCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )*/
        | ArrayIndexSuffix( position:ExpressionList )
        | EmptySuffix()
 
