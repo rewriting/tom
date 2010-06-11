@@ -1,0 +1,3 @@
+%match (MyType subject, MySecondType s2) { 
+  a -> { `(x) }
+}
