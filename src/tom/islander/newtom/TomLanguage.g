@@ -1,5 +1,4 @@
 /*
- * 
  * TOM - To One Matching Compiler
  * 
  * Copyright (c) 2000-2010, INPL, INRIA
@@ -19,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- **/
+ */
 
 grammar TomLanguage;
 
@@ -46,7 +45,6 @@ options {
   protected boolean enumIsKeyword = true;
   protected boolean assertIsKeyword = true;
 }*/
-
 
 
 /**
@@ -123,7 +121,7 @@ patternAction :
     -> ^(LabelledPatternAction patternList blockList $labelName)
   ;
 
-/*compositeTerm :
+/*compositeTerm : //the old one, the new one is further
   Identifier -> ^(CompositeTerm Identifier ) //temporary rule
   ;*/
 //  | id=Identifier -> ^(CompositeTerm $id ) //temporary rule
@@ -869,12 +867,10 @@ arguments :
   ;
 
 /////////////////////////////////////////
-// Lexer
+// LEXER
 /////////////////////////////////////////
 
-//Minitom lexer
 
-// LEXER
 //keywords
 MATCH       :   '%match'    ;
 INCLUDE     :   '%include'  ;
@@ -986,10 +982,6 @@ DIGIT:   ('0'..'9')  ;*/
  (LETTER | UNDERSCORE) (LETTER | UNDERSCORE | DIGIT | DOT)*
  ;*/
 
-//MiniJava lexer
-
-/////////////////////////////////////////
-//partial Java lexer
 
 fragment
 Letter : 
@@ -1084,15 +1076,3 @@ UnicodeEscape :
 ASSERT
     :   'assert' {if (!assertIsKeyword) $type=Identifier;}
     ;*/
-    
-
-/* I found this char range in JavaCC's grammar, but Letter and Digit overlap.
-   Still works, but...
- */
-
-/*Identifier:
-  Letter (Letter|JavaIDDigit)*
-  ;*/
-
-
-
