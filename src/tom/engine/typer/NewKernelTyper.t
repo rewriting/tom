@@ -169,7 +169,7 @@ public class NewKernelTyper {
       !concTypeConstraint(_*,typeConstraint,_*) << typeConstraints &&
       typeConstraint << TypeConstraint tConstraint -> {
         %match(typeConstraint) {
-          Equation[Type1=!EmptyType(),Type1=!EmptyType()] -> { 
+          Equation[Type1=!EmptyType(),Type2=!EmptyType()] -> { 
             typeConstraints = `concTypeConstraint(tConstraint,typeConstraints*);
           }
         }
@@ -251,7 +251,9 @@ public class NewKernelTyper {
               try{
                 `instruction = inferAllTypes(`instruction,getUnknownFreshTypeVar());
                 `headCodeList = `InstructionToCode(instruction);
+                //DEBUG printGeneratedConstraints(typeConstraints);
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
+                //DEBUG printGeneratedConstraints(typeConstraints);
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
                     headCodeList);
@@ -416,8 +418,8 @@ public class NewKernelTyper {
         %match(cList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(boundTerm)) -> {
-            System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
-                nkt.getType(`boundTerm) + " = " + contextType);
+            //DEBUG System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
+            //DEBUG     nkt.getType(`boundTerm) + " = " + contextType);
             nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); }
         }
 
@@ -426,13 +428,13 @@ public class NewKernelTyper {
           //tSymbol =
           //  `Symbol(Name(tomName),TypesToType(concTomType(contextType),contextType),concPairNameDecl(),cList);
           //nkt.symbolTable.putSymbol(tomName,tSymbol);
-          System.out.println("tSymbol is still null!");
+          //DEBUG System.out.println("tSymbol is still null!");
           tSymbol = `EmptySymbol();
         } else {
           codomain = nkt.getCodomain(tSymbol);
           //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
           nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
-          System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
+          //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
         }
 
         SlotList newSList = `concSlot();
@@ -447,8 +449,8 @@ public class NewKernelTyper {
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
         nkt.checkNonLinearityOfBQVariables(`bqVar);
         nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)));  
-        System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
-        `aType + " = " + contextType);
+        //DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
+        //DEBUG `aType + " = " + contextType);
         return `bqVar;
       }
 
@@ -563,7 +565,7 @@ public class NewKernelTyper {
          << varList ||
          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
          << varPatternList) -> {
-          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList))); }
+          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)));}
     }
   }
 
@@ -936,12 +938,12 @@ public class NewKernelTyper {
        * and tName1 != tName2
        */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
-        //throw new RuntimeException("solveConstraints: failure on " + `t1
-        //    + " = " + `t2);
+          //nkt.printError(`tc);
+          //return `concTypeConstraint(leftTCList*,rightTCList*);
+          throw new RuntimeException("solveConstraints: failure on " + `t1
+              + " = " + `t2);
       }
 
       /**
@@ -951,12 +953,12 @@ public class NewKernelTyper {
        * and tName1 != tName2
        */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(leftTCList*,tc@Equation(Type[TomType=tName1],(Type|TypeWithSymbol)[TomType=tName2@!tName1],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TomType=tName1],t2@(Type|TypeWithSymbol)[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
-          //throw new RuntimeException("solveConstraints: failure on " + `t1
-          //    + " = " + `t2);
+          //nkt.printError(`tc);
+          //return `concTypeConstraint(leftTCList*,rightTCList*);
+          throw new RuntimeException("solveConstraints: failure on " + `t1
+              + " = " + `t2);
         }
 
       /**
@@ -967,13 +969,13 @@ public class NewKernelTyper {
        * and tType1 != tType2
        */
       // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
-      concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TlType=tType1@TLType(_)],Type[TlType=tType2@TLType(_)],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TlType=tType1@TLType(_)],t2@Type[TlType=tType2@TLType(_)],_),rightTCList*) &&
         (tType1 != tType2)  -> {
-          nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
-        //throw new RuntimeException("solveConstraints: failure on " + `t1
-        //    + " = " + `t2);
-      }
+          //nkt.printError(`tc);
+          //return `concTypeConstraint(leftTCList*,rightTCList*);
+          throw new RuntimeException("solveConstraints: failure on " + `t1
+              + " = " + `t2);
+        }
       
       /**
        * Equation(groundType,groundListType) U TCList and Map 
@@ -983,13 +985,13 @@ public class NewKernelTyper {
        * and tType1 != tType2
        */
       // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
-      concTypeConstraint(leftTCList*,tc@Equation(Type[TlType=tType1@TLType(_)],(Type|TypeWithSymbol)[TlType=tType2@TLType(_)],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TlType=tType1@TLType(_)],t2@(Type|TypeWithSymbol)[TlType=tType2@TLType(_)],_),rightTCList*) &&
         (tType1 != tType2)  -> {
-          nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
-       // throw new RuntimeException("solveConstraints: failure on " + `t1
-       //     + " = " + `t2);
-      }
+          //nkt.printError(`tc);
+          //return `concTypeConstraint(leftTCList*,rightTCList*);
+          throw new RuntimeException("solveConstraints: failure on " + `t1
+              + " = " + `t2);
+        }
 
       /**
        * Equation(groundListType1,groundListType2) U TCList and Map 
@@ -999,10 +1001,10 @@ public class NewKernelTyper {
       // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
       concTypeConstraint(leftTCList*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),rightTCList*) &&
         (tLType1 != tLType2)  -> {
-          nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
-          //throw new RuntimeException("solveConstraints: failure on " + `tLType1
-          //    + " = " + `tLType2);
+          //nkt.printError(`tc);
+          //return `concTypeConstraint(leftTCList*,rightTCList*);
+          throw new RuntimeException("solveConstraints: failure on " + `tLType1
+              + " = " + `tLType2);
         }
 
       /**
@@ -1010,6 +1012,7 @@ public class NewKernelTyper {
        *    --> Equation(type,type) U [typeVar/type]TCList and
        *        [typeVar/type]Map
        */
+      /*
       concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -1026,7 +1029,7 @@ public class NewKernelTyper {
           }
         }
         return `concTypeConstraint(leftTCList*,Equation(type,type,info),rightTCList*);
-      }
+      }*/
 
       /**
        * Equation(groundType,typeVar) U TCList and Map 
