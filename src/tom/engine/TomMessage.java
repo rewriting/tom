@@ -342,8 +342,6 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Single list variable ''{0}'' is not allowed on top of ''match'' pattern");
   public static final TomMessage wrongMatchArgumentTypeInPattern=
       new TomMessage("Wrong type for slot {0,number,integer}:Type ''{1}'' required but Type ''{2}'' found");
-  public static final TomMessage unknownSymbol=
-      new TomMessage("Unknown symbol ''{0}''");
   public static final TomMessage unknownSymbolInDisjunction=
       new TomMessage("Unknown symbol ''{0}'' not allowed in disjunction");
   public static final TomMessage unknownUnamedList       =
@@ -374,7 +372,8 @@ public class TomMessage extends BasicPlatformMessage {
   //typer.NewKernelTyper
   public static final TomMessage incompatibleTypes   =
     new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
-
+  public static final TomMessage unknownSymbol=
+      new TomMessage("Unknown symbol ''{0}''");
 
   //strategy
   public static final TomMessage invalidStrategyName =
