@@ -98,10 +98,6 @@ public class NewTyper extends TomGenericPlugin {
     newKernelTyper = new NewKernelTyper();
   }
 
-  public Logger getLogger() {
-    return logger;
-  }
-
  /**
    * The run() method performs type inference for variables
    * occurring in patterns and propagate this information for
@@ -176,7 +172,7 @@ public class NewTyper extends TomGenericPlugin {
    */
   private TomSymbol collectKnownTypesFromTomSymbol(TomSymbol subject) {
     try {
-      return `TopDownIdStopOnSuccess(CollectKnownTypes(this,newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
@@ -184,7 +180,7 @@ public class NewTyper extends TomGenericPlugin {
 
   private Code collectKnownTypesFromCode(Code subject) {
     try {
-      return `TopDownIdStopOnSuccess(CollectKnownTypes(this,newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
@@ -194,21 +190,14 @@ public class NewTyper extends TomGenericPlugin {
    * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
    * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
    */
-  %strategy CollectKnownTypes(nt:NewTyper,nkt:NewKernelTyper) extends Identity() {
+  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
       Type(tomType,EmptyTargetLanguageType()) -> {
         TomType newType = null;
         newType = nkt.getSymbolTable().getType(`tomType);
         if (newType == null) {
-          if (`tomType != nkt.getSymbolTable().TYPE_UNKNOWN.getTomType()) {
-            //TO VERIFY : this can happen in a xml file. Is this normal?
-            // This happens when :
-            // * tomType != unknown type AND (newType == null) which means that
-            // the current type was used in the code without been declared
-            TomMessage.error(nt.getLogger(), nt.getStreamManager().getInputFileName(), 
-            0, TomMessage.unknownSymbol,`tomType);
-          }
           // This happens when :
+          // * tomType != unknown type AND (newType == null)
           // * tomType == unknown type
           newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
         }
