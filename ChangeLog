@@ -1,3 +1,9 @@
+2010-06-22 tavaresc
+ * Add a target into the build.xml to compile the directory "test" using the new
+ typer. Must to be continued.
+ * Fix some test files in order to successfully compile.
+ * Comment the method of message error for undeclared types.
+
 2010-06-21 tavaresc
  * Add a message error for undeclared types.
  * Fix a type when adding a type constraint.

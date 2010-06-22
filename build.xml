@@ -1031,6 +1031,19 @@
     </ant>
   </target>
 
+  <!-- BEGIN Tests for the new typer -->
+  <target name="testnewtyper" depends="src.dist"
+    description="Compile acceptance tests">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="off"/>
+      <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
+    </ant>
+  </target>
+  <!-- END Tests for the new typer -->
+
   <target name="all" description="cleans, build, test all"
     depends="stable.all, src.all">
     <!--<exec dir="${basedir}"

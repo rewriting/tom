@@ -113,6 +113,7 @@ public class NewTyper extends TomGenericPlugin {
       Code typedCode = null;
       try {
         newKernelTyper.setSymbolTable(getStreamManager().getSymbolTable()); 
+        newKernelTyper.setCurrentInputFileName(getStreamManager().getInputFileName()); 
 
         updateSymbolTable();
 
@@ -122,7 +123,7 @@ public class NewTyper extends TomGenericPlugin {
          */
         typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
-        //System.out.println("\nCode before type inference = \n" + typedCode);
+        System.out.println("\nCode before type inference = \n" + typedCode);
 
         /**
          * Start by typing variables with fresh type variables
@@ -148,9 +149,9 @@ public class NewTyper extends TomGenericPlugin {
         TomMessage.info(logger, null, 0, TomMessage.tomTypingPhase,
           Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));    
       } catch (Exception e) {
-        TomMessage.error(logger, getStreamManager().getInputFileName(), 
+        TomMessage.error(logger, newKernelTyper.getCurrentInputFileName(), 
             0, TomMessage.exceptionMessage, getClass().getName(), 
-            getStreamManager().getInputFileName(), e.getMessage());
+            newKernelTyper.getCurrentInputFileName(), e.getMessage());
         e.printStackTrace();
         return;
       }

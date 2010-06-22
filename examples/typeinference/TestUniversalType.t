@@ -1,5 +1,5 @@
 import testuniversaltype.testuniversaltype.types.*;
-public class TestSublist{
+public class TestUniversalType{
   %gom {
     module TestUniversalType
       abstract syntax
@@ -9,12 +9,16 @@ public class TestSublist{
 
   public static void main(String[] args) {
     TestUniversalType test = new TestUniversalType();
+    %match {
+      a() << B test() -> { System.out.println("test OK!"); }
+    }
   }
 
-  public void test() {
-    %match(f(a()),ff(a())) {
-      f(a()),f(_x) -> { return; }
+  public static Term test() {
+    Term n = `a();
+    %match(n) {
+      x@f(a()) -> { return `x; }
     }
-    fail("a,f(a) hould match");
+    return `n;
   }
 }
