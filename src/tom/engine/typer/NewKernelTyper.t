@@ -431,29 +431,22 @@ public class NewKernelTyper {
       }
 
       RecordAppl[Options=optionList,NameList=nList@concTomName(aName@Name(tomName),_*),Slots=sList,Constraints=cList] -> {
-        TomType codomain = contextType;
         // In case of a String, tomName is "" for ("a","b")
         TomSymbol tSymbol = nkt.getSymbolFromName(`tomName);
+
+
+        // IF_1
         if (tSymbol == null) {
           //The contextType is used here, so it must be a ground type, not a
           //type variable
           //DEBUG System.out.println("visit contextType = " + contextType);
           tSymbol = nkt.getSymbolFromType(contextType);
+
+          // IF_2
           if (tSymbol != null) {
             // In case of contextType is "TypeVar(name,i)"
             `nList = `concTomName(tSymbol.getAstName());
-            codomain = nkt.getCodomain(tSymbol);
-            //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
-            nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
-            //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
-          } else {
-            //tSymbol =
-            //  `Symbol(Name(tomName),TypesToType(concTomType(contextType),contextType),concPairNameDecl(),cList);
-            //nkt.symbolTable.putSymbol(tomName,tSymbol);
-            //DEBUG System.out.println("tSymbol is still null!");
-            tSymbol = `EmptySymbol();
-
-          }
+          } 
         }
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. tSymbol = " + `tSymbol);
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. astName = " +`concTomName(tSymbol.getAstName()));
@@ -467,20 +460,23 @@ public class NewKernelTyper {
             //DEBUG     nkt.getType(`boundTerm) + " = " + contextType);
             nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); }
         }
-/*
+
+        TomType codomain = contextType;
+
+        // IF_3
         if (tSymbol == null) {
-          //tSymbol =
-          //  `Symbol(Name(tomName),TypesToType(concTomType(contextType),contextType),concPairNameDecl(),cList);
-          //nkt.symbolTable.putSymbol(tomName,tSymbol);
           //DEBUG System.out.println("tSymbol is still null!");
           tSymbol = `EmptySymbol();
         } else {
+          // This code can not be moved to IF_2 because tSymbol may be not "null
+          // since the begginning and then does not enter into neither IF_1 nor
+          // IF_2
           codomain = nkt.getCodomain(tSymbol);
           //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
           nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
           //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
         }
-*/
+
         SlotList newSList = `concSlot();
         if (!`sList.isEmptyconcSlot()) {
           `newSList = nkt.inferSlotList(`sList,tSymbol,codomain);

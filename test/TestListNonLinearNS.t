@@ -1,6 +1,6 @@
 import org.junit.Test;
 import org.junit.Assert;
-import testlistnonlinearns.test.types.*;
+import testlistnonlinear.test.types.*;
 
 public class TestListNonLinearNS {
   public static void main(String[] args) {
@@ -122,8 +122,7 @@ relationAppl(relation("B"),EmptyconcTerm()))); /* B */
     %match(t) {
       rule(
           "implies L",
-          (rule(_,_,sequent(context(g1*,g2*),context(A,d*)),_),
-           rule(_,_,sequent(context(g1*,B,g2*),d),_)),
+          (rule(_,_,sequent((g1*,g2*),(A,d*)),_), rule(_,_,sequent((g1*,B,g2*),d),_)),
           sequent((g1*,a,g2*),d),
           a@implies(A,B)
           )
