@@ -131,7 +131,7 @@ public class NewKernelTyper {
   // a term has type Type(name,EmptyTargetLanguage()), where name is not
   // UNKNOWN_TYPE. So we verify the subjects of %match but, which BQTerm we need to
   // treat?
-  /*
+  
   protected void hasUndeclaredType(BQTerm subject) {
     String fileName = currentInputFileName;
     int line = 0;
@@ -152,7 +152,7 @@ public class NewKernelTyper {
         }
     }
   }
-  */
+  
 
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
@@ -707,7 +707,7 @@ public class NewKernelTyper {
         addConstraint(`Equation(freshType1,freshType2,getInfoFromTomTerm(pattern)));
         `pattern = inferAllTypes(`pattern,freshType1);
         `subject = inferAllTypes(`subject,freshType2);
-        //hasUndeclaredType(`subject);
+        hasUndeclaredType(`subject);
         return `MatchConstraint(pattern,subject);
       }
 
