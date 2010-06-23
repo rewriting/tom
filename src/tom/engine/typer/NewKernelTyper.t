@@ -118,6 +118,21 @@ public class NewKernelTyper {
     return TomBase.getSymbolFromType(tType,symbolTable); 
    }
 
+  protected void hasUndeclaredType(BQTerm subject) {
+    String fileName = "";
+    int line = 0;
+    Option option = TomBase.findOriginTracking(subject.getOptions());
+    TomType tType = subject.getAstType();
+    %match {
+      TypeVar(tomType,_) << tType &&  (tomType !=
+          symbolTable.TYPE_UNKNOWN.getTomType()) && !noOption() << option -> {
+        fileName = option.getFileName();
+        line = option.getLine();
+        TomMessage.error(logger, fileName, 
+            line, TomMessage.unknownSymbol,`tomType);
+      }
+    }
+  }
 
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
@@ -251,9 +266,7 @@ public class NewKernelTyper {
               try{
                 `instruction = inferAllTypes(`instruction,getUnknownFreshTypeVar());
                 `headCodeList = `InstructionToCode(instruction);
-                //DEBUG printGeneratedConstraints(typeConstraints);
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
-                //DEBUG printGeneratedConstraints(typeConstraints);
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
                     headCodeList);
@@ -565,7 +578,7 @@ public class NewKernelTyper {
          << varList ||
          concTomTerm(_*,(Variable|VariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
          << varPatternList) -> {
-          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)));}
+          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList))); }
     }
   }
 
@@ -667,6 +680,7 @@ public class NewKernelTyper {
         addConstraint(`Equation(freshType1,freshType2,getInfoFromTomTerm(pattern)));
         `pattern = inferAllTypes(`pattern,freshType1);
         `subject = inferAllTypes(`subject,freshType2);
+        hasUndeclaredType(`subject);
         return `MatchConstraint(pattern,subject);
       }
 
@@ -938,13 +952,13 @@ public class NewKernelTyper {
        * and tName1 != tName2
        */
       // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1],_),rightTCList*) && 
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
           //nkt.printError(`tc);
           //return `concTypeConstraint(leftTCList*,rightTCList*);
           throw new RuntimeException("solveConstraints: failure on " + `t1
               + " = " + `t2);
-      }
+        }
 
       /**
        * Equation(groundType,groundListType) U TCList and Map 
@@ -1012,7 +1026,6 @@ public class NewKernelTyper {
        *    --> Equation(type,type) U [typeVar/type]TCList and
        *        [typeVar/type]Map
        */
-      /*
       concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -1029,7 +1042,7 @@ public class NewKernelTyper {
           }
         }
         return `concTypeConstraint(leftTCList*,Equation(type,type,info),rightTCList*);
-      }*/
+      }
 
       /**
        * Equation(groundType,typeVar) U TCList and Map 
