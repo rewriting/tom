@@ -1,8 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 import tom.library.sl.*;
-import testlabel.mod.*;
-import testlabel.mod.types.*;
+import testlabelns.mod.*;
+import testlabelns.mod.types.*;
 
 public class TestLabelNS {
   public static void main(String[] args) {

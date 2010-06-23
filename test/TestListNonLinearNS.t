@@ -1,6 +1,6 @@
 import org.junit.Test;
 import org.junit.Assert;
-import testlistnonlinear.test.types.*;
+import testlistnonlinearns.test.types.*;
 
 public class TestListNonLinearNS {
   public static void main(String[] args) {

@@ -68,6 +68,9 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
 
+      <!-- Exclude tests that don't run -->
+      <exclude name="TestPeano.t"/>
+
       <!-- Exclude tests having anonymous constructors (but theirs copies <name>NS.t
            have been tested) -->
       <exclude name="TestBuiltin.t"/>
@@ -106,10 +109,9 @@
     </copy>
   </target>
 
-  <target name="junitnewtyper" description="Runs junit acceptance tests
-          with new typer"
+  <target name="junitnt" description="Runs junit acceptance tests with new typer"
           depends="infer">
-    <tom.junitnewtyper printsummary="on"
+    <tom.junitnt printsummary="on"
                fork="on"
                dir="${test.build}"
                haltonfailure="false"
@@ -129,7 +131,7 @@
         </fileset>
       </batchtest>
       <formatter type="xml" if="test.xmlreport"/>
-    </tom.junitnewtyper>
+    </tom.junitnt>
     <fail if="tests.failed">
       *****************************************************************
       *****************************************************************
@@ -139,14 +141,14 @@
     </fail>
   </target>
 
-  <target name="reportnewtyper" description="Create acceptance tests report"
-          depends="junit">
-      <junitnewtyperreport todir="${test.report}">
+  <target name="reportnt" description="Create acceptance tests report"
+          depends="junitnt">
+      <junitntreport todir="${test.report}">
         <fileset dir="${test.report}">
           <include name="TEST-*.xml"/>
         </fileset>
         <report format="frames" todir="${test.report}/html"/>
-      </junitnewtyperreport>
+      </junitntreport>
     </target>
   <!-- END Tests for the new typer -->
 

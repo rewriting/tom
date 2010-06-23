@@ -922,6 +922,7 @@
     <delete dir="${src.src}/bootcheck"/>
   </target>
 
+  <target name="clean.testnt" depends="clean.test"/>
   <target name="clean.test" description="Cleans acceptance tests directory">
     <ant dir="${test}" target="clean">
       <property name="tom.home" value="${stable.dist}"/>
@@ -1011,6 +1012,7 @@
     </ant>
   </target>
 
+  <!-- Why do we need a target src.junit?? -->
   <target name="src.junit" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests"
     depends="clean.test, test">
@@ -1019,6 +1021,7 @@
     </ant>
   </target>
 
+  <!-- Why do we need a target src.junit.opt?? -->
   <target name="src.junit.opt" depends="junit.opt"/>
   <target name="junit.opt"
     description="Runs junit acceptance tests with optimization"
@@ -1032,14 +1035,58 @@
   </target>
 
   <!-- BEGIN Tests for the new typer -->
-  <target name="testnewtyper" depends="src.dist"
-    description="Compile acceptance tests">
+  <target name="testnt" depends="src.dist"
+    description="Compile acceptance tests with new typer">
     <ant dir="${test}" target="infer">
       <property name="tom.home" value="${src.dist}"/>
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
       <property name="inlineplus" value="off"/>
+    </ant>
+  </target>
+
+  <target name="testnt.opt" depends="src.dist"
+    description="Compile acceptance tests with new typer and optimizer">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+    </ant>
+  </target>
+
+  <target name="testnt.stable" description="Compile and run acceptance tests with new typer and stable"
+    depends="stable.dist">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
+  </target>
+
+  <target name="stable.junitnt"
+    description="Runs junit acceptance tests compiled with new typer and stable"
+    depends="clean.testnt, testnt.stable">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
+  </target>
+
+  <target name="junitnt" description="Runs junit acceptance tests with new
+    typer"
+    depends="clean.testnt, testnt">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${src.dist}"/>
+    </ant>
+  </target>
+
+  <target name="junitnt.opt"
+    description="Runs junit acceptance tests with new typer and optimizer"
+    depends="clean.testnt, testnt.opt">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
     </ant>
   </target>
   <!-- END Tests for the new typer -->
