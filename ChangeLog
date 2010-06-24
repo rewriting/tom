@@ -1,3 +1,7 @@
+2010-06-24 tavaresc
+ * Fix a bug when using a constructor whose tomSymbol can not be set by neither
+   its tomName nor its Type.
+
 2010-06-23 tavaresc
  * Finish adding tasks "junitnt" and "testnt" as targets into the build.xml to compile the directory "test" using the new
  typer.
