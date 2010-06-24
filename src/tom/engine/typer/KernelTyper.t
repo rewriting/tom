@@ -57,7 +57,7 @@ public class KernelTyper {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
 
-  private static Logger logger = Logger.getLogger("tom.engine.typer.TyperPlugin");
+  private static Logger logger = Logger.getLogger("tom.engine.typer.KernelTyper");
   
   %typeterm KernelTyper {
     implement { KernelTyper }

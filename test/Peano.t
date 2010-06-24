@@ -3,8 +3,8 @@ import aterm.pure.*;
 
 public class Peano {
 
-  private ATermFactory factory;
-  private AFun fzero, fsuc, fplus;
+  private static ATermFactory factory;
+  private static AFun fzero, fsuc, fplus;
   public ATermAppl tzero;
 
   %typeterm term {
@@ -61,18 +61,21 @@ public class Peano {
       assertTrue( peano2int(plus3(N,N)) == (i+i) );
       assertTrue( peano2int(plus4(N,N)) == (i+i) );
     }
+    System.out.println("First loop has successfully terminated.");
 
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
       assertTrue( peano2int(fib3(N)) == fibint(i) );
       assertTrue( peano2int(fib4(N)) == fibint(i) );
     }
+    System.out.println("Second loop has successfully terminated.");
     
   }
 
   public final static void main(String[] args) {
     Peano test = new Peano(new PureFactory(16));
     test.run();
+    System.out.println("Peano test has successfully terminated.");
   }
 
   public ATerm plus1(ATerm t1, ATerm t2) {

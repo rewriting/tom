@@ -3,7 +3,7 @@ import aterm.pure.*;
 import java.util.*;
 
 public class TomList {
-  private ATermFactory factory;
+  private static ATermFactory factory;
 
   %typeterm E {
     implement { ATerm }
@@ -23,7 +23,7 @@ public class TomList {
     get_tail(l)    { ((ATermList)$l).getNext() }
     is_empty(l)    { ((ATermList)$l).isEmpty() }
     make_empty()  { factory.makeList() }
-    make_insert(e,l) { ((ATermList)$l).insert((ATerm)e) }
+    make_insert(e,l) { ((ATermList)$l).insert((ATerm)$e) }
   }
   
   %op E a() {
@@ -54,6 +54,7 @@ public class TomList {
     TomList test = new TomList(new PureFactory(16));
     test.testList1();
     test.testList2();
+    System.out.println("TomList test has successfully terminated.");
   }
 
   public ATermList sort1(ATermList l) {
@@ -144,6 +145,7 @@ public class TomList {
     
     assertTrue(sort1(l) == res);
     assertTrue(sort2(l) == res);
+    System.out.println("testList1 has successfully terminated.");
   }
  
   public void testList2() {
@@ -160,6 +162,7 @@ public class TomList {
       //System.out.println("l        = " + l);
       //System.out.println("sorted l = " + sort2(l));
       //System.out.println("double l = " + double2(sort2(l)));
+    System.out.println("testList2 has successfully terminated.");
   }
   
   static void  assertTrue(boolean condition) {

@@ -35,6 +35,123 @@
     <mkdir dir="${test.report}"/>
   </target>
 
+  <!-- BEGIN Tests for the new typer -->
+  <target name="infer" depends="init,prepare">
+    <gom.preset srcdir="${test.src}"
+                package="sl"
+                termpointer="true"
+                withCongruenceStrategies="true"
+                destdir="${test.gen}">
+         <include name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
+    </gom.preset>
+    <gom.preset srcdir="${test.src}"
+                destdir="${test.gen}">
+         <include name="**/*.gom"/>
+         <exclude name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
+      <exclude name="**/regress/**"/>
+    </gom.preset>
+    <tom.preset srcdir="${test.src}"
+                multithread="${multithread}"
+                destdir="${test.gen}"
+                options="--newtyper">
+      <!-- Exclude tests written in C -->
+      <exclude name="cfib1.t"/>
+      <exclude name="loulou.t"/>
+      
+      <!-- Exclude tests called with a special option -->
+      <exclude name="TestOptimizer.t"/>
+
+      <!-- Exclude tests using subtyping -->
+      <exclude name="Record.t"/>
+      <exclude name="TestRecord.t"/>
+
+      <!-- Exclude tests that don't run -->
+      <exclude name="TestPeano.t"/>
+
+      <!-- Exclude tests having anonymous constructors (but theirs copies <name>NS.t
+           have been tested) -->
+      <exclude name="TestBuiltin.t"/>
+      <exclude name="TestLabel.t"/>
+      <exclude name="TestList.t"/>
+      <exclude name="TestList2.t"/>
+      <exclude name="TestListNonLinear.t"/>
+      <exclude name="TestSublists.t"/>
+      <exclude name="TomList.t"/>
+      <exclude name="**/andor/TestAndOrConstraintOnly.t"/>
+      <exclude name="**/antipatterns/TestDoubleList.t"/>
+      <exclude name="**/xml/TestXmlDom.t"/>
+      <exclude name="**/xml/XmlDom.t"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                options="--newtyper --optimize">
+    	<include name="TestOptimizer.t"/>
+    </tom.preset>
+    <javac.preset destdir="${test.build}" fork="true">
+      <src path="${test.src}"/>
+      <src path="${test.gen}"/>
+      <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
+      <exclude name="**/regress/**"/>
+      <exclude name="gen/**"/>
+    </javac.preset>
+    <copy todir="${test.build}">
+      <fileset dir="${test.src}">
+        <include name="*/*.xml"/>
+        <include name="*/*.dtd"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="junitnt" description="Runs junit acceptance tests with new typer"
+          depends="infer">
+    <tom.junitnt printsummary="on"
+               fork="on"
+               dir="${test.build}"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+      <batchtest todir="${test.report}">
+        <fileset dir="${test.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${test.src}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junitnt>
+    <fail if="tests.failed">
+      *****************************************************************
+      *****************************************************************
+      One or more tests failed using the new typer. Check the output...
+      *****************************************************************
+      *****************************************************************
+    </fail>
+  </target>
+
+  <target name="reportnt" description="Create acceptance tests report"
+          depends="junitnt">
+      <junitntreport todir="${test.report}">
+        <fileset dir="${test.report}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${test.report}/html"/>
+      </junitntreport>
+    </target>
+  <!-- END Tests for the new typer -->
+
   <target name="build" depends="init,prepare">
     <gom.preset srcdir="${test.src}"
                 package="sl"
@@ -55,19 +172,32 @@
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"
                 destdir="${test.gen}">
+      <!-- Exclude tests written in C -->
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
+      
+      <!-- Exclude tests called with a special option -->
       <exclude name="Record.t"/>
-      <exclude name="Peano.t"/>
       <exclude name="TestRecord.t"/>
-      <exclude name="TestPeano.t"/>
-      <exclude name="TestWhen.t"/>
-      <exclude name="TomList.t"/>
-      <exclude name="TomListNS.t"/>
       <exclude name="TestOptimizer.t"/>
+
+      <!-- Why to exclude these tests?? -->
+      <exclude name="TestPeano.t"/>
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
       <exclude name="**/regress/**"/>
+
+      <!-- Exclude tests intentionally created to test the new typer -->
+      <exclude name="TestBuiltinNS.t"/>
+      <exclude name="TestLabelNS.t"/>
+      <exclude name="TestListNS.t"/>
+      <exclude name="TestList2NS.t"/>
+      <exclude name="TestListNonLinearNS.t"/>
+      <exclude name="TestRecordNS.t"/>
+      <exclude name="TestSublistsNS.t"/>
+      <exclude name="TomListNS.t"/>
+      <exclude name="**/andor/TestAndOrConstraintOnlyNS.t"/>
+      <exclude name="**/antipatterns/TestDoubleListNS.t"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 multithread="${multithread}"

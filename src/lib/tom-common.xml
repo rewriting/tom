@@ -64,6 +64,10 @@
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
       <classpath refid="tom.classpath"/>
     </taskdef>
+    <taskdef name="tom.junitnt"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
 
     <presetdef name="tom.preset">
       <tom config="${tomconfigfile}"

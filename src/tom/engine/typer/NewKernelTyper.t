@@ -60,7 +60,7 @@ public class NewKernelTyper {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../adt/tomsignature/TomSignature.tom }
 
-  private static Logger logger = Logger.getLogger("tom.engine.typer.NewTyper");
+  private static Logger logger = Logger.getLogger("tom.engine.typer.NewKernelTyper");
 
   %typeterm NewKernelTyper {
     implement { NewKernelTyper }
@@ -85,7 +85,9 @@ public class NewKernelTyper {
 
   private SymbolTable symbolTable;
 
-  public void setSymbolTable(SymbolTable symbolTable) {
+  private String currentInputFileName;
+
+  protected void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
   }
 
@@ -93,6 +95,13 @@ public class NewKernelTyper {
     return symbolTable;
   }
 
+  protected void setCurrentInputFileName(String currentInputFileName) {
+    this.currentInputFileName = currentInputFileName;
+  }
+
+  protected String getCurrentInputFileName() {
+    return currentInputFileName;
+  }
   protected TomType getCodomain(TomSymbol tSymbol) {
     return TomBase.getSymbolCodomain(tSymbol);
   }
@@ -118,21 +127,32 @@ public class NewKernelTyper {
     return TomBase.getSymbolFromType(tType,symbolTable); 
    }
 
+  // TO VERIFY: how to test if a term has an undeclared type? Maybe verifying if
+  // a term has type Type(name,EmptyTargetLanguage()), where name is not
+  // UNKNOWN_TYPE. So we verify the subjects of %match but, which BQTerm we need to
+  // treat?
+  
   protected void hasUndeclaredType(BQTerm subject) {
-    String fileName = "";
+    String fileName = currentInputFileName;
     int line = 0;
-    Option option = TomBase.findOriginTracking(subject.getOptions());
-    TomType tType = subject.getAstType();
+    //DEBUG System.out.println("hasUndeclaredType: subject = " + subject);
     %match {
-      TypeVar(tomType,_) << tType &&  (tomType !=
-          symbolTable.TYPE_UNKNOWN.getTomType()) && !noOption() << option -> {
-        fileName = option.getFileName();
-        line = option.getLine();
-        TomMessage.error(logger, fileName, 
-            line, TomMessage.unknownSymbol,`tomType);
-      }
+      (BQVariable|BQVariableStar)[Options=oList,AstType=aType] << subject && 
+        TypeVar(tomType,_) << aType &&
+        (tomType != symbolTable.TYPE_UNKNOWN.getTomType()) -> {
+          Option option = TomBase.findOriginTracking(`oList);
+          %match(option) {
+            !noOption() -> {
+              fileName = option.getFileName();
+              line = option.getLine();
+              TomMessage.error(logger, fileName, 
+                  line, TomMessage.unknownSymbol,`tomType);
+            }
+          }
+        }
     }
   }
+  
 
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
@@ -413,15 +433,20 @@ public class NewKernelTyper {
       RecordAppl[Options=optionList,NameList=nList@concTomName(aName@Name(tomName),_*),Slots=sList,Constraints=cList] -> {
         // In case of a String, tomName is "" for ("a","b")
         TomSymbol tSymbol = nkt.getSymbolFromName(`tomName);
+
+
+        // IF_1
         if (tSymbol == null) {
           //The contextType is used here, so it must be a ground type, not a
           //type variable
           //DEBUG System.out.println("visit contextType = " + contextType);
           tSymbol = nkt.getSymbolFromType(contextType);
+
+          // IF_2
           if (tSymbol != null) {
             // In case of contextType is "TypeVar(name,i)"
             `nList = `concTomName(tSymbol.getAstName());
-          }
+          } 
         }
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. tSymbol = " + `tSymbol);
         //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. astName = " +`concTomName(tSymbol.getAstName()));
@@ -437,13 +462,15 @@ public class NewKernelTyper {
         }
 
         TomType codomain = contextType;
+
+        // IF_3
         if (tSymbol == null) {
-          //tSymbol =
-          //  `Symbol(Name(tomName),TypesToType(concTomType(contextType),contextType),concPairNameDecl(),cList);
-          //nkt.symbolTable.putSymbol(tomName,tSymbol);
           //DEBUG System.out.println("tSymbol is still null!");
           tSymbol = `EmptySymbol();
         } else {
+          // This code can not be moved to IF_2 because tSymbol may be not "null
+          // since the begginning and then does not enter into neither IF_1 nor
+          // IF_2
           codomain = nkt.getCodomain(tSymbol);
           //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
           nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
