@@ -141,7 +141,7 @@ public class NewTyper extends TomGenericPlugin {
         typedCode =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(typedCode);
 
-        //System.out.println("\nCode after type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);
 

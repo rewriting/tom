@@ -517,11 +517,29 @@ public class NewKernelTyper {
           //type variable
           //DEBUG System.out.println("visit contextType = " + contextType);
           tSymbol = nkt.getSymbolFromType(contextType);
-          if (tSymbol != null) {
+          if (tSymbol != null && `name.equals("")) {
             // In case of contextType is "TypeVar(name,i)"
             `aName = tSymbol.getAstName();
           }
         }
+
+        /*
+           TomSymbol tSymbol = null;
+           if (`name.equals("")) {
+           System.out.println("\n Test pour BQTerm-inferTypes in BQAppl without tomName. bqterm = " + `a);
+        //The contextType is used here, so it must be a ground type, not a
+        //type variable
+        //DEBUG System.out.println("visit contextType = " + contextType);
+        tSymbol = nkt.getSymbolFromType(contextType);
+        if (tSymbol != null) {
+        // In case of contextType is "TypeVar(name,i)"
+        `aName = tSymbol.getAstName();
+        }
+        } else {
+        // "name" is not "" and "aName" must not be changed
+        tSymbol = nkt.getSymbolFromName(`name);
+        }
+         */
 
         TomType codomain = contextType;
         if (tSymbol == null) {
