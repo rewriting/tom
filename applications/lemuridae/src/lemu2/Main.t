@@ -50,7 +50,7 @@ public class Main {
       //System.out.println(Pretty.pretty(prules.export()));
       PropRewriteRules pfrules = parser.propfold().convert();
       //System.out.println(Pretty.pretty(pfrules.export()));
-      PropRewriteRules psrules = parser.propsuper().convert();
+      //PropRewriteRules psrules = parser.propsuper().convert();
       //System.out.println(Pretty.pretty(psrules.export()));
       ProofTerm pt = parser.proofterm().convert();
       
@@ -58,10 +58,8 @@ public class Main {
       //System.out.println(Pretty.toDoc(pt.export()));
       //System.exit(0);
       
-      
-      
       System.out.println(Pretty.pretty(pt.export()));
-      System.out.println(Pretty.lpretty(pt.export()));
+      //System.out.println(Pretty.lpretty(pt.export()));
       System.out.println();
 			//Latex.display(pt.export());
       Pretty.setChurchStyle(false);
@@ -85,7 +83,6 @@ public class Main {
       PropRewriteRules rulesunion = `proprrules(prules*,pfrules*);
 
 
-/*
 
       ProofTerm pt_eta = LKMtoLKF.convert(pt,rulesunion);
       System.out.println("conversion: " + Pretty.pretty(pt_eta.export()));
@@ -107,6 +104,7 @@ public class Main {
 
 
       // lambda-bar mu mu~ reduction of the translation
+      /*
       LMMTerm pure_lmm = LKFtoLambdaBarMuMuTF.convert(pt);
       System.out.println("before reduction : " + Pretty.pretty(pure_lmm.export()));
       System.out.println("reducts : ");
@@ -119,7 +117,7 @@ public class Main {
         }
       }
       System.out.println("(" + buf.length() + " normal forms)");
-  */
+      */
 
       /* urban reduction */
       System.out.println();

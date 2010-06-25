@@ -1,0 +1,120 @@
+term modulo {
+  plusz : [x]   plus(z(),x)  -> x
+  pluss : [x,y] plus(s(x),y) -> s(plus(x,y))
+}
+
+prop modulo {
+  eqrefl : [x]   Eq(x,x)       -> True
+  eqsz   : [x]   Eq(s(x),z())  -> False
+  eqzs   : [x]   Eq(z(),s(x))  -> False
+  eqss   : [x,y] Eq(s(x),s(y)) -> Eq(x,y)
+}
+
+prop fold {
+  natdef : [n] Nat(n) -> forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n)))
+  ndef   : []  N      -> forall t, (Eps(t) => (N => Eps(t) => Eps(t)) => Eps(t))
+
+  test   : [x] P(x)   -> P(s(x))
+}
+
+
+(* cut elimination test *)
+(*
+rootR(
+  <r:P(z())=>P(s(s(z())))> cut(
+    <th:forall n, (P(n)=>P(s(n)))> forallR(
+      <a:P(n0)=>P(s(n0))><n0> implyR(
+        <x:P(n0)><b:P(s(n0))> foldL[test](
+          <y:P(s(n0))> ax(y,b),x),a),th),
+    <th:forall n, (P(n)=>P(s(n)))> implyR(
+      <x:P(z())><a:P(s(s(z())))> forallL(
+        <y:P(s(z()))=>P(s(s(z())))> forallL(
+           <z:P(z())=>P(s(z()))> implyL(
+             <z1:P(s(z()))> implyL(
+               <z2:P(s(s(z())))> ax(z2,a),
+               <b:P(s(z()))> ax(z1,b),y),
+             <c:P(z())> ax(x,c),z),z(),th),s(z()),th),r)))
+*)
+
+
+(* typechecks *)
+rootR(
+    <r:Nat(s(s(z())))> cut(
+      <a:forall n, (Nat(n) => Nat(s(n)))> forallR(
+        <b:Nat(n0) => Nat(s(n0))><n0> implyR(
+          <y:Nat(n0)><c:Nat(s(n0))> foldR[natdef](
+            <c1:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,s(n0))))> forallR(
+              <d:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0)))><p0> implyR(
+                <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,s(n0))> implyR(
+                  <z1:forall m, (In(p0,m) => In(p0,s(m)))><f:In(p0,s(n0))> foldL[natdef](
+                    <z9:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,n0)))> forallL(
+                      <z2:In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0))> implyL(
+                        <z3:(forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,n0)> implyL( 
+                          <z4:In(p0,n0)> forallL(
+                            <z5:In(p0,n0) => In(p0,s(n0))> implyL(
+                              <z6:In(p0,s(n0))> ax(z6,f),
+                              <h1:In(p0,n0)> ax(z4,h1),z5),n0,z1),
+                          <h:forall m, (In(p0,m) => In(p0,s(m)))> ax(z1,h),z3),
+                        <g:In(p0,z())> ax(z,g),z2),p0,z9),y)
+                  ,e),d),c1),c),b),a),
+      <x:forall n, (Nat(n) => Nat(s(n)))> cut(
+        <a:Nat(z())> foldR[natdef](
+          <b1:forall p, (In(p,z()) => ((forall m, (In(p,m) => In(p,s(m)))) => In(p,z())))> forallR(
+            <d:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
+              <z:In(p0,z())><e:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
+                <z1:forall m, (In(p0,m)  => In(p0,s(m)))><f:In(p0,z())> ax(z,f),e),d),b1),a),
+        <y:Nat(z())> forallL(
+          <z:Nat(z()) => Nat(s(z()))> forallL(
+            <z2:Nat(s(z())) => Nat(s(s(z())))> implyL(
+              <z1:Nat(s(z()))> implyL(
+                <z3:Nat(s(s(z())))> ax(z3,r),
+                <c:Nat(s(z()))> ax(z1,c),z2),
+              <b:Nat(z())> ax(y,b),z),s(z()),x),z(),x))))
+
+
+  (*
+   rootR(
+     <r:Nat(z())> forallR(
+       <a:(In(p0,z()) => ((forall m, (In(p0,m) => In(p0,s(m)))) => In(p0,z())))> <p0> implyR(
+         <x:In(p0,z())><b:(forall m, (In(p0,m) => In(p0,s(m))) => In(p0,z()))> implyR(
+           <y:forall m, (In(p0,m)  => In(p0,s(m)))><c:In(p0,z())> ax(x,c),b),a),r))
+   *)
+
+
+  (*
+   rootR(
+     <r:forall y, P(y,a()) => Q(a())> implyR(
+       <x:forall y,P(y,a())><a:Q(a())> ax(x,a),r))
+   *)
+
+  (*
+   rootR(
+     <r:Eq(s(s(s(z()))),plus(s(z()),s(s(z()))))> trueR(r))
+   *)
+
+   (* 
+   rootR(
+     <a:P(s(s(z())))=>exists x,P(x)> cut(
+       <b:exists x,P(x)> implyR(
+         <x:P(plus(s(z()),s(z())))><c:exists x,P(x)> existsR(<d:P(s(s(z())))> ax(x,d),plus(s(s(z())),z()),b),a),
+       <z:exists x,P(x)> implyR(<v:P(plus(z(),s(s(z()))))><e:exists x,P(x)> ax(z,e),a)))
+   *)
+
+(* rootR(<a:A=>A> cut(<c:A> implyR(<x:A><b:A> ax(x,c),a), <y:A> implyR(<x:A><b:A> ax(x,b),a))) *)
+
+  (*
+   rootR(
+     <r:A=>A> cut(
+       <a:B> implyR(<x:A><b:A>ax(x,b),r),
+       <x:B> implyR(<x:A><b:A>ax(x,b),r)))
+   *)
+
+  (*
+   rootR(
+     <r:P(cc())=>exists x,P(x)> implyR(
+       <x:P(cc())><a:exists x,P(x)> existsR(
+         <b:P(cc())>ax(x,b),cc(),a),r))
+   *)
+
+
+
