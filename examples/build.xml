@@ -371,4 +371,72 @@
     <antcall target="junit"/>
   </target>
 
+  <!-- BEGIN Tests for the new typer -->
+  <target name="infer">
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+      <!--fail unless="example">
+        Please define the "example" to build
+      </fail-->
+      <filelist dir=".">
+        <file name="${example}/build.xml"/>
+      </filelist>
+    </subant>
+    <tom.preset srcdir="${examples.dir}"
+      multithread="${multithread}"
+      destdir="${examples.gen}"
+      options="--newtyper">
+      <!--exclude name="boulderdash/BoulderDashCode.t"/>
+      <exclude name="modeltrans/Uml.t"/>
+      <exclude name="python/draw_tree.py.t"/>
+      <exclude name="rbtree/TestTree.t"/>
+      <exclude name="strategycompiler/StrategyCompiler.t"/>
+      <exclude name="strings/Anagram.t"/>
+      <exclude name="termgraph/TermGraphRewriting.t"/>
+      <exclude name="tutorial/HelloWorld.t"/>
+      <exclude name="tutorial/PersonSort1.t"/>
+      <exclude name="typeinference/TestBug.t"/>
+      <exclude name="xml/dommapping/*"/>
+      <exclude name="xquery/xqueryimpl/xquery/uc1/UC1_6DOM.t"/-->
+    </tom.preset>
+  </target>
+
+  <target name="junitnt" depends="tom.init, infer"
+    description="Runs junit acceptance tests with new typer">
+    <!--mkdir dir="${examples.build}"/-->
+    <tom.junitnt printsummary="on"
+              fork="on"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest todir="${examples.report}">
+        <fileset dir="${examples.gen}">
+          <include name="**/Test*.java"/>
+          <exclude name="appletxml/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+          <exclude name="appletxml/Test*.java"/>
+        </fileset>
+      </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
+    </tom.junitnt>
+    <fail if="tests.failed">
+      *****************************************************************
+      *****************************************************************
+      One or more tests failed using the new typer. Check the output...
+      *****************************************************************
+      *****************************************************************
+    </fail>
+  </target>
+  <!-- END Tests for the new typer -->
+
 </project>
