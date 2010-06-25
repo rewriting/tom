@@ -252,9 +252,16 @@ options{
         return;
       }
       Reader fileReader = new BufferedReader(new FileReader(fileCanonicalName));
-      parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
-                                         includedFileSet,alreadyParsedFileSet,
-                                         getOptionManager(), getStreamManager());
+
+      if ((Boolean)optionManager.getOptionValue("newparser")) {
+        parser = NewParserPlugin.newParser(fileReader,fileCanonicalName,
+            includedFileSet,alreadyParsedFileSet,
+            getOptionManager(), getStreamManager());
+      } else {
+        parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
+            includedFileSet,alreadyParsedFileSet,
+            getOptionManager(), getStreamManager());
+      }
       parser.setSkipComment();
       astTom = parser.input();
       astTom = `TomInclude(astTom.getCodeList());
@@ -319,8 +326,14 @@ options{
         //System.out.println("prg to parse: '" + code + "'");
         try {
           Reader codeReader = new BufferedReader(new StringReader(code));
-          HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
-              getOptionManager(), getStreamManager());
+          HostParser parser;
+          if (((Boolean)optionManager.getOptionValue("newparser"))) {
+            parser = NewParserPlugin.newParser(codeReader,getCurrentFile(),
+                getOptionManager(), getStreamManager());
+          } else {
+            parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
+                getOptionManager(), getStreamManager());
+          }
           Code astTom = parser.input();
           %match(astTom) {
             Tom(concCode(_*,c,_*)) -> {
@@ -555,6 +568,9 @@ gomsignature [List<Code> list] throws TomException
     }
     if(Boolean.TRUE == getOptionManager().getOptionValue("newtyper")) {
       parameters.add("--newtyper");
+    }
+    if(Boolean.TRUE == getOptionManager().getOptionValue("newparser")) {
+      parameters.add("--newparser");
     }
     parameters.add("--intermediateName");
     parameters.add(getStreamManager().getRawFileName()+".t.gom");

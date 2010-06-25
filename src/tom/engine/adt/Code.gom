@@ -36,9 +36,9 @@ CompositeMember = CompositeBQTerm(term:BQTerm)
                 | CompositeTL(Tl:TargetLanguage)
 
 
-BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
-       | BQVariable(Option:OptionList,AstName:TomName,AstType:TomType)
-       | BQVariableStar(Option:OptionList,AstName:TomName,AstType:TomType)
+BQTerm = BQAppl(Options:OptionList,AstName:TomName,Args:BQTermList)
+       | BQVariable(Options:OptionList,AstName:TomName,AstType:TomType)
+       | BQVariableStar(Options:OptionList,AstName:TomName,AstType:TomType)
        | Composite(CompositeMember*)
       /**
        * <code>FunctionCall</code> generates a function call
@@ -62,19 +62,17 @@ BQTerm = BQAppl(Option:OptionList,AstName:TomName,Args:BQTermList)
   /**
    * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
    *
-   * @param Option a list of options
-   * @param AstName the name of the variable
-   * @param AstType the type of the variable
-   * @param Constraints a list of constraints
+   * @param Opname operator's name
+   * @param Begin first term of the list
+   * @param End last term of the list
    */
     | VariableHeadList(Opname:TomName,Begin:BQTerm,End:BQTerm)
   /**
    * <code>VariableHeadArray</code> a head array that is variable ( starting from begining to end )
    *
-   * @param Option a list of options
-   * @param AstName the name of the variable
-   * @param AstType the type of the variable
-   * @param Constraints a list of constraints
+   * @param Opname operator's name
+   * @param BeginIndex first term of the array
+   * @param EndIndes last term of the array
    */
     | VariableHeadArray(Opname:TomName,Subject:BQTerm,BeginIndex:BQTerm,EndIndex:BQTerm)
   /**

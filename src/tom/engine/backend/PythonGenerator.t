@@ -72,7 +72,7 @@ public class PythonGenerator extends GenericGenerator {
   }
   */
 
-  protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generateBQTerm(deep,var,moduleName);
     output.write("=");
@@ -424,7 +424,7 @@ matchBlock: {
     buildAssignArrayVar(deep,var,optionList, index, exp, moduleName);
   }
 
-  protected void buildAssignArrayVar(int deep, BQTerm var, OptionList list, BQTerm index, 
+  protected void buildAssignArrayVar(int deep, BQTerm var, OptionList optionList, BQTerm index, 
       Expression exp, String moduleName) throws IOException {    
     //output.indent(deep);
     generateArray(deep,var,index,moduleName);

@@ -110,6 +110,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
       code = `TopDown(DesugarUnderscore(this)).visitLight(code);
 
       // replace TermAppl and XmlAppl by RecordAppl
+      code = `TopDownIdStopOnSuccess(replaceXMLApplTomSyntax(this)).visitLight(code);
       code = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this)).visitLight(code);
 
       setWorkingTerm(code);      
@@ -131,11 +132,11 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy DesugarUnderscore(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      UnamedVariable[Option=opts,AstType=ty,Constraints=constr] -> {
-        return `Variable(opts,desugarer.getFreshVariable(),ty,constr);
+      Variable[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
+        return `Variable(optionList,desugarer.getFreshVariable(),ty,constr);
       }
-      UnamedVariableStar[Option=opts,AstType=ty,Constraints=constr] -> {
-        return `VariableStar(opts,desugarer.getFreshVariable(),ty,constr);
+      VariableStar[Options=optionList,AstName=EmptyName(),AstType=ty,Constraints=constr] -> {
+        return `VariableStar(optionList,desugarer.getFreshVariable(),ty,constr);
       }
     }
   }
@@ -172,7 +173,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Options=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
 
@@ -186,7 +187,7 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
+      Symbol[Options=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
@@ -215,12 +216,20 @@ public class DesugarerPlugin extends TomGenericPlugin {
    */
   %strategy replaceTermApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
     visit TomTerm {
-      TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
-        return desugarer.replaceTermAppl(`option,`nameList,`args,`constraints);
+      TermAppl[Options=optionList,NameList=nameList,Args=args,Constraints=constraints] -> {
+        return desugarer.replaceTermAppl(`optionList,`nameList,`args,`constraints);
       }
+    }
+  }
 
-      XMLAppl[Option=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
-        //System.out.println("replaceXML in:\n" + subject);
+  /**
+   * The 'replaceXMLApplTomSyntax' phase replaces:
+   * - each 'XMLAppl' by its typed record form:
+   */
+  %strategy replaceXMLApplTomSyntax(desugarer:DesugarerPlugin) extends Identity() {
+    visit TomTerm {
+      XMLAppl[Options=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
+        //System.out.println("replaceXML in:\n" + `subject);
         return desugarer.replaceXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
       }
     }
@@ -302,29 +311,27 @@ public class DesugarerPlugin extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),getSymbolTable().TYPE_UNKNOWN,concConstraint());
-    if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
-    if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
+
+    if(implicitAttribute) { newAttrList  = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newAttrList*); }
+    if(implicitChild)     { newChildList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newChildList*); }
 
     /*
      * the list of attributes should not be typed before the sort
      * the sortAttribute is extended to compare RecordAppl
      */
 
-    //System.out.println("attrList = " + attrList);
     attrList = sortAttributeList(attrList);
-    //System.out.println("sorted attrList = " + attrList);
 
     /*
      * Attributes: go from implicit notation to explicit notation
      */
-    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceTermApplTomSyntax(this));
+    Strategy typeStrategy = `TopDownIdStopOnSuccess(replaceXMLApplTomSyntax(this));
     for(TomTerm attr:(concTomTerm)attrList) {
       try {
         TomTerm newPattern = typeStrategy.visitLight(attr);
         newAttrList = `concTomTerm(newPattern,newAttrList*);
         if(implicitAttribute) {
-          newAttrList = `concTomTerm(star,newAttrList*);
+          newAttrList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newAttrList*);
         }
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
@@ -343,14 +350,14 @@ public class DesugarerPlugin extends TomGenericPlugin {
           if(newPattern.isVariableStar()) {
             // remove the previously inserted pattern
             newChildList = newChildList.getTailconcTomTerm();
-            if(newChildList.getHeadconcTomTerm().isUnamedVariableStar()) {
+            if(newChildList.getHeadconcTomTerm().isVariableStar()) {
               // remove the previously inserted star
               newChildList = newChildList.getTailconcTomTerm();
             }
             // re-insert the pattern
             newChildList = `concTomTerm(newPattern,newChildList*);
           } else {
-            newChildList = `concTomTerm(star,newChildList*);
+            newChildList = `concTomTerm(VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint()),newChildList*);
           }
         }
       } catch(tom.library.sl.VisitFailure e) {
@@ -377,13 +384,12 @@ matchBlock:
     }
 
     /*
-     * a single "_" is converted into an UnamedVariable to match
      * any XML node
      */
     TomTerm xmlHead;
 
     if(newNameList.isEmptyconcTomName()) {
-      xmlHead = `UnamedVariable(concOption(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
+      xmlHead = `Variable(concOption(),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
     } else {
       xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
     }
@@ -402,6 +408,7 @@ matchBlock:
       return result;
     } catch(tom.library.sl.VisitFailure e) {
       //must never be executed
+    TomTerm star = `VariableStar(convertOriginTracking("_*",optionList),getFreshVariable(),getSymbolTable().TYPE_UNKNOWN,concConstraint());
       return star;
     }
   }
@@ -414,28 +421,28 @@ matchBlock:
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
         %match(e1, e2) {
           TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
-            TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
           TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
-            TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
           RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name1))]),_*)],
-            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
           RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name1))]),_*)],
-            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }

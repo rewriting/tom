@@ -83,7 +83,7 @@ public class ArrayGenerator implements IBaseGenerator{
        *
        * *** we need <= instead of < to make the algorithm complete ***
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadArray(opName,subject,begin,end))) -> {
+      ConstraintToExpression(MatchConstraint(v@VariableStar[],VariableHeadArray(opName,subject,begin,end))) -> {
         Expression doWhileTest = `Negation(GreaterThan(BQTermToExpression(end),GetSize(opName,subject)));
         
         // expression at the end of the loop 

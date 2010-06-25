@@ -110,10 +110,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       RecordAppl[NameList=(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
-      UnamedVariable[] -> { return UNAMED_VARIABLE;}
       VariableStar[] -> { return VARIABLE_STAR;}
       Variable[] -> { return VARIABLE;}
-      UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
     }
     throw new TomRuntimeException("Invalid Term");
   }
@@ -156,8 +154,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       }
       Variable[AstName=Name(name)] -> { return `name;}
       VariableStar[AstName=Name(name)] -> { return `name+"*";}
-      UnamedVariable[] -> { return "_";}
-      UnamedVariableStar[] -> { return "_*";}
       AntiTerm(t) -> { return getName(`t); }
     }
     throw new TomRuntimeException("Invalid Term:" + term);
@@ -262,8 +258,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
       app@TermAppl[] -> {
         if(tcp.getSymbolTable().getSymbolFromName(tcp.getName(`app))==null) {
           TomMessage.error(tcp.getLogger(),
-              tcp.findOriginTrackingFileName(`app.getOption()),
-              tcp.findOriginTrackingLine(`app.getOption()),
+              tcp.findOriginTrackingFileName(`app.getOptions()),
+              tcp.findOriginTrackingLine(`app.getOptions()),
               TomMessage.unknownVariableInWhen,
               tcp.getName(`app));
         }
@@ -303,8 +299,8 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
         // we use getTomType because type1 may be a TypeWithSymbol and type2 a TomType
         if(!TomBase.getTomType(type1).equals(TomBase.getTomType(type2))) {
           TomMessage.error(getLogger(),
-              findOriginTrackingFileName(variable.getOption()),
-              findOriginTrackingLine(variable.getOption()),
+              findOriginTrackingFileName(variable.getOptions()),
+              findOriginTrackingLine(variable.getOptions()),
               TomMessage.incoherentVariable,
               name.getString(),
               TomBase.getTomType(type1),
@@ -330,11 +326,11 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   %strategy checkVariableStar(tcp:TypeCheckerPlugin) extends Identity() {
     visit BQTerm {
-      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
+      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=BQVariableStar[Options=optionList,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]] -> {
         if(!`listName.equals(`rootName)) {
           TomMessage.error(tcp.getLogger(),
-              tcp.findOriginTrackingFileName(`options),
-              tcp.findOriginTrackingLine(`options),
+              tcp.findOriginTrackingFileName(`optionList),
+              tcp.findOriginTrackingLine(`optionList),
               TomMessage.incoherentVariableStar,
               `variableName, `rootName, `listName);
         }
@@ -343,11 +339,15 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   }
 
   private void verifyStrategyVariable(TomVisitList list) {
+    /* %strategy : error if there is no visit */
+    if(`list.isEmptyconcTomVisit()) {
+      TomMessage.error(getLogger(),null,0,TomMessage.emptyStrategy);
+    }
     %match(list) {
-      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,options),_*) -> {
+      concTomVisit(_*,VisitTerm(Type(strVisitType,EmptyTargetLanguageType()),_,optionList),_*) -> {
         TomMessage.error(getLogger(),
-            findOriginTrackingFileName(`options),
-            findOriginTrackingLine(`options),
+            findOriginTrackingFileName(`optionList),
+            findOriginTrackingLine(`optionList),
             TomMessage.unknownVisitedType,
             `strVisitType);
       }

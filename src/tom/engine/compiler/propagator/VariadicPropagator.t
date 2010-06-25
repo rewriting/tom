@@ -148,7 +148,7 @@ public class VariadicPropagator implements IBasePropagator {
             BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
 mAppl:      %match(appl) {
               // if we have a variable star
-              (VariableStar | UnamedVariableStar)[] -> {                
+              VariableStar[] -> {                
                 // if it is the last element               
                 if(`X.length() == 0) {
                   // we should only assign it, without generating a loop

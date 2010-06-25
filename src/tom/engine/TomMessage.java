@@ -29,15 +29,41 @@ import tom.platform.BasicFormatter;
 import tom.platform.BasicPlatformMessage;
 import tom.platform.PlatformLogRecord;
 
+import java.lang.reflect.*;
 /**
  * The TomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
 public class TomMessage extends BasicPlatformMessage {
-
   private TomMessage(String message) {
     super(message);
+  }
+
+  /*
+   * in a first step the TomMessage class is initialized (each fieldName field is set to null)
+   * the initMessageName() method iterates over the static fields
+   * and for each of them we set the slot "fieldName" of the corresponding TomMessage
+   *
+   * this method is called from a static block (end of file)
+   */
+  public static void initMessageName() {
+    try {
+      Field[] fields = java.lang.Class.forName("tom.engine.TomMessage").getDeclaredFields();
+      for(Field f:fields) {
+        int mod=f.getModifiers();
+        if(Modifier.isStatic(mod)) {
+          Object o = f.get(null);
+          if(o instanceof TomMessage) {
+            TomMessage msg = (TomMessage) o;
+            msg.setMessageName(f.getName());
+            //System.out.println(" --> " + msg.getMessageName());
+          }
+        }
+      }
+    } catch(java.lang.Exception e) {
+      throw new tom.engine.exception.TomRuntimeException(e.getMessage());
+    }
   }
 
   public static final TomMessage loggingInitializationFailure =
@@ -79,7 +105,7 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
   // Warnings
   public static final TomMessage optimizerModifiesLineNumbers              =
-    new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
+    new TomMessage("The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
                 " Please disable the optimizer if you need correct line numbers.");
 
   public static final TomMessage optimizerNotActive              =
@@ -112,6 +138,12 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
       new TomMessage("RecognitionException catched: {0}");
+
+  public static final TomMessage parserNotUsed =
+    new TomMessage("The parser is not in use.");
+  public static final TomMessage newParserNotUsed =
+    new TomMessage("The new parser is not in use.");
+
   // parser.TomParser
   // TODO : simplify the message in using PlatformLogRecord with detail
   // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial
@@ -310,8 +342,6 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("Single list variable ''{0}'' is not allowed on top of ''match'' pattern");
   public static final TomMessage wrongMatchArgumentTypeInPattern=
       new TomMessage("Wrong type for slot {0,number,integer}:Type ''{1}'' required but Type ''{2}'' found");
-  public static final TomMessage unknownSymbol=
-      new TomMessage("Unknown symbol ''{0}''");
   public static final TomMessage unknownSymbolInDisjunction=
       new TomMessage("Unknown symbol ''{0}'' not allowed in disjunction");
   public static final TomMessage unknownUnamedList       =
@@ -338,6 +368,12 @@ public class TomMessage extends BasicPlatformMessage {
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
   public static final TomMessage IsSortNotDefined =
       new TomMessage("IsSort(t) is not defined for {0}");
+
+  //typer.NewKernelTyper
+  public static final TomMessage incompatibleTypes   =
+    new TomMessage("Incompatible types ''{0}'' and ''{1}'' for symbol ''{2}''.");
+  public static final TomMessage unknownSymbol=
+      new TomMessage("Unknown symbol ''{0}''");
 
   //strategy
   public static final TomMessage invalidStrategyName =
@@ -393,6 +429,9 @@ public class TomMessage extends BasicPlatformMessage {
   
   public static final TomMessage typerNotUsed =
       new TomMessage("The default typer is not in use");
+  public static final TomMessage newTyperNotUsed =
+    new TomMessage("The new typer is not in use.");
+
   /*
    * FINER
    */
@@ -401,4 +440,11 @@ public class TomMessage extends BasicPlatformMessage {
 
   // Message level
   public static final int TOM_INFO = 0;
+
+  /*
+   * static block: should stay at the end of the file  (after the initialization of static fields)
+   */
+  static {
+    TomMessage.initMessageName();
+  }
 }

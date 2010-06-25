@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ligneproduitstelephones"
+    nsURI="http:///ligneproduitstelephones.ecore" nsPrefix="ligneproduitstelephones">
+  <eClassifiers xsi:type="ecore:EClass" name="OSTelephone">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IphoneOS" eSuperTypes="#//OSTelephone"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Android" eSuperTypes="#//OSTelephone"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Marque">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="telephones" upperBound="-1"
+        eType="#//Telephone" eOpposite="#//Telephone/marque"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Telephone">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="marque" lowerBound="1"
+        eType="#//Marque" eOpposite="#//Marque/telephones"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="OS" lowerBound="1" eType="#//OSTelephone"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LigneProduitsTelephones">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="telephones" upperBound="-1"
+        eType="#//Telephone" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="marques" upperBound="-1"
+        eType="#//Marque" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

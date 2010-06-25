@@ -1197,7 +1197,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 optionList.add(`OriginTracking(Name("_"),getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(option,SymbolTable.TYPE_UNKNOWN,constraint)));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Variable(option,EmptyName(),SymbolTable.TYPE_UNKNOWN,constraint)));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
@@ -1544,8 +1544,9 @@ variableStar [List<Option> optionList, List<Constraint> constraintList] returns 
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 if(name1 == null) {
-                    result = `UnamedVariableStar(
+                    result = `VariableStar(
                         options,
+                        EmptyName(),
                         SymbolTable.TYPE_UNKNOWN,
                         constraints
                     );
@@ -1577,7 +1578,7 @@ unamedVariable [List<Option> optionList, List<Constraint> constraintList] return
                 optionList.add(`OriginTracking(Name(t.getText()),t.getLine(),currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
-                result = `UnamedVariable(options,SymbolTable.TYPE_UNKNOWN,constraints);
+                result = `Variable(options,EmptyName(),SymbolTable.TYPE_UNKNOWN,constraints);
             }
         )
     ;

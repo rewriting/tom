@@ -1,4 +1,0 @@
-module PR5007
-imports int
-abstract syntax
-int = mimi()

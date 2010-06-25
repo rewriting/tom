@@ -26,6 +26,7 @@
 package tom.engine;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import aterm.*;
 
@@ -47,6 +48,7 @@ import tom.engine.adt.theory.types.*;
 import tom.engine.adt.code.types.*;
 
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomMessage;
 
 import tom.platform.adt.platformoption.*;
 
@@ -73,15 +75,17 @@ public final class TomBase {
   //size of cache
   private final static int LRUCACHE_SIZE = 5000;
 
+  private static Logger logger = Logger.getLogger("tom.engine.TomBase");
+
   /** shortcut */
 
   /**
    * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
-    %match(type) {
-      (Type|TypeWithSymbol)[TomType=s] -> { return `s; }
-      EmptyType() -> { return null; }
+    %match {
+      (Type|TypeWithSymbol)[TomType=s] << type -> { return `s; }
+      EmptyType() << type||TypeVar[] << type -> { return null; }
     }
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
@@ -217,8 +221,8 @@ public final class TomBase {
       return false;
     }
     %match(symbol) {
-      Symbol[Option=l] -> {
-        OptionList optionList = `l;
+      Symbol[Options=optionList] -> {
+        OptionList optionList = `optionList;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(opt) {
@@ -241,8 +245,8 @@ public final class TomBase {
       return false;
     }
     %match(symbol) {
-      Symbol[Option=l] -> {
-        OptionList optionList = `l;
+      Symbol[Options=optionList] -> {
+        OptionList optionList = `optionList;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(opt) {
@@ -290,14 +294,6 @@ public final class TomBase {
     visit TomTerm {
       v@(Variable|VariableStar)[Constraints=constraintList] -> {
         collection.add(`v);
-        TomTerm annotedVariable = getAliasToVariable(`constraintList);
-        if(annotedVariable!=null) {
-          collection.add(annotedVariable);
-        }
-        `Fail().visitLight(`v);
-      }
-
-      v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
         TomTerm annotedVariable = getAliasToVariable(`constraintList);
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
@@ -359,7 +355,7 @@ public final class TomBase {
 
   public static Theory getTheory(TomTerm term) {
     %match(term) {
-      RecordAppl[Option=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
+      RecordAppl[Options=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
     }
     return `concElementaryTheory(Syntactic());
   }
@@ -380,7 +376,7 @@ public final class TomBase {
 
   public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Options=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return true;
       }
     }
@@ -455,10 +451,12 @@ public final class TomBase {
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
-    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
+    TomMessage.error(logger, null, 0, TomMessage.badSlotName, 
+        slotName.getString(), tomSymbol, nameList.toArray());
+/*    throw new TomRuntimeException("getSlotIndex: bad slotName error. Found '"
         + slotName.getString() + "' but expected one of the following names: "
-        + Arrays.toString(nameList.toArray()) + ".");
-    //return -1;
+        + Arrays.toString(nameList.toArray()) + ".");*/
+    return -1;
   }
 
   public static TomType elementAt(TomTypeList l, int index) {
@@ -478,16 +476,18 @@ public final class TomBase {
         return elementAt(`typeList,index);
       }
     }
-    throw new TomRuntimeException("getSlotType: bad slotName error: " + symbol);
+    return null;
+    //throw new TomRuntimeException("getSlotType: bad slotName error: " + slotName);
   }
 
   public static boolean isDefinedSymbol(TomSymbol subject) {
-    if(subject==null) {
+    /*This test seems to be useless
+       if(subject==null) {
       System.out.println("isDefinedSymbol: subject == null");
       return false;
-    }
+    }*/
     %match(subject) {
-      Symbol[Option=optionList] -> {
+      Symbol[Options=optionList] -> {
         return hasDefinedSymbol(`optionList);
       }
     }
@@ -571,7 +571,7 @@ public final class TomBase {
         }
       }
 
-      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> {
+      (Variable|VariableStar)[AstType=type] -> {
         return `type;
       }
 
@@ -706,11 +706,11 @@ public final class TomBase {
    */
   public static BQTerm convertFromVarToBQVar(TomTerm variable) {
     %match(variable) {
-      Variable[Option=option,AstName=name,AstType=type] -> {
-        return `BQVariable(option, name, type);
+      Variable[Options=optionList,AstName=name,AstType=type] -> {
+        return `BQVariable(optionList, name, type);
       }
-      VariableStar[Option=option,AstName=name,AstType=type] -> {
-        return `BQVariableStar(option, name, type);
+      VariableStar[Options=optionList,AstName=name,AstType=type] -> {
+        return `BQVariableStar(optionList, name, type);
       }
     }
     throw new TomRuntimeException("cannot convert into a bq variable the term "+variable);
@@ -721,11 +721,11 @@ public final class TomBase {
    */
   public static TomTerm convertFromBQVarToVar(BQTerm variable) {
     %match(variable) {
-      BQVariable[Option=option,AstName=name,AstType=type] -> {
-        return `Variable(option, name, type, concConstraint());
+      BQVariable[Options=optionList,AstName=name,AstType=type] -> {
+        return `Variable(optionList, name, type, concConstraint());
       }
-      BQVariableStar[Option=option,AstName=name,AstType=type] -> {
-        return `VariableStar(option, name, type, concConstraint());
+      BQVariableStar[Options=optionList,AstName=name,AstType=type] -> {
+        return `VariableStar(optionList, name, type, concConstraint());
       }
     }
     throw new TomRuntimeException("cannot convert into a variable the term "+variable);

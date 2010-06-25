@@ -535,7 +535,7 @@ public class Compiler extends TomGenericPlugin {
 
   %strategy CollectACSymbols(HashSet bag) extends Identity() {
     visit TomTerm {
-      RecordAppl[NameList=(Name(headName),_*),Option=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
+      RecordAppl[NameList=(Name(headName),_*),Options=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
         bag.add(`headName);
       }
     }

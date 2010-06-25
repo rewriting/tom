@@ -1,0 +1,16 @@
+creer 2 telephones
+  Android
+  Iphone
+
+recuperer le nom d'un telephone
+
+afficher le numero de version de l'OS d'un telephone
+
+le faire par filtrage
+
+On part d'une ligne de produits
+expliquer comment recuperer les telephone dont le no de version est 3.0
+le faire avec un match associatif
+
+incrementer un no de version avec une strategy
+

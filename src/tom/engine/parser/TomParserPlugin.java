@@ -56,6 +56,7 @@ import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.TokenStreamSelector;
 import aterm.ATerm;
+import tom.engine.adt.code.types.*;
 
 /**
  * The TomParser "plugin"
@@ -127,11 +128,26 @@ public class TomParserPlugin extends TomGenericPlugin {
    * arg[0] should contain the StreamManager from which we can get the input
    */
   public void setArgs(Object[] arg){
+    //System.out.println("(DEBUG) Old parser");
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
       currentFileName = getStreamManager().getInputFileName();  
       currentReader = getStreamManager().getInputReader();
+      /*
+       * The following part has been added in order to be able to have many
+       * parsers. It is useful as long the new parser is not fully operational
+       * A parser waits a StreamManager as first (and single) argument
+       * (arg[0]) but the NewParser Plugin is called after the TomParserPlugin,
+       * —whatever parser plugin is activated, both are called— therefore
+       * it receives two arguments : the parsed code and the StreamManager.
+       */
+    } else if (arg[1] instanceof TomStreamManager) {
+      term = (Code)arg[0];
+      setStreamManager((TomStreamManager)arg[1]);
+      currentFileName = getStreamManager().getInputFileName();  
+      currentReader = getStreamManager().getInputReader();
     } else {
+      System.out.println("(DEBUG) erreur old parser");
       TomMessage.error(getLogger(), null, 0, TomMessage.invalidPluginArgument,
           "TomParserPlugin", "[TomStreamManager]", getArgumentArrayString(arg));
     }
@@ -146,74 +162,81 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
-    //System.out.println("(debug) I'm in the Tom parserPlugin : TSM"+getStreamManager().toString());
-    try {
-      // looking for java package
-      if(java && (!currentFileName.equals("-"))) {
-        /* Do not exhaust the stream !! */
-        TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
-        String packageName = "";
-        try {
-          packageName = javaParser.javaPackageDeclaration();
-        } catch (TokenStreamException tse) {
-          /* no package was found: ignore */
+    boolean newparser    = ((Boolean)getOptionManager().getOptionValue("newparser")).booleanValue();
+    if (newparser==false) {
+      //System.out.println("(DEBUG) we are using the old parser / newparser = " + newparser);
+      try {
+        // looking for java package
+        if(java && (!currentFileName.equals("-"))) {
+          /* Do not exhaust the stream !! */
+          TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
+          String packageName = "";
+          try {
+            packageName = javaParser.javaPackageDeclaration();
+          } catch (TokenStreamException tse) {
+            /* no package was found: ignore */
+          }
+          // Update streamManager to take into account package information
+          getStreamManager().setPackagePath(packageName);
         }
-        // Update streamManager to take into account package information
-        getStreamManager().setPackagePath(packageName);
+        // getting a parser 
+        parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
+        // parsing
+        setWorkingTerm(parser.input());
+        /*
+         * we update codomains which are constrained by a symbolName
+         * (come from the %strategy operator)
+         */
+        SymbolTable symbolTable = getStreamManager().getSymbolTable();
+        Iterator it = symbolTable.keySymbolIterator();
+        while(it.hasNext()) {
+          String tomName = (String)it.next();
+          TomSymbol tomSymbol = getSymbolFromName(tomName);
+          tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+        }
+        // verbose
+        TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
+      } catch (TokenStreamException e) {
+        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
+            TomMessage.tokenStreamException, e.getMessage());
+        return;
+      } catch (RecognitionException e){
+        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+            TomMessage.recognitionException, e.getMessage());
+        return;
+      } catch (TomException e) {
+        TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
+            e.getPlatformMessage(), e.getParameters());
+        return;
+      } catch (FileNotFoundException e) {
+        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.fileNotFound); 
+        e.printStackTrace();
+        return;
+      } catch (Exception e) {
+        e.printStackTrace();
+        TomMessage.error(getLogger(), currentFileName, 0, TomMessage.exceptionMessage,
+            getClass().getName(), currentFileName);
+        return;
       }
-      // getting a parser 
-      parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
-      // parsing
-      setWorkingTerm(parser.input());
-      /*
-       * we update codomains which are constrained by a symbolName
-       * (come from the %strategy operator)
-       */
-      SymbolTable symbolTable = getStreamManager().getSymbolTable();
-      Iterator it = symbolTable.keySymbolIterator();
-      while(it.hasNext()) {
-        String tomName = (String)it.next();
-        TomSymbol tomSymbol = getSymbolFromName(tomName);
-        tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+      // Some extra stuff
+      if(eclipse) {
+        String outputFileName = getStreamManager().getInputParentFile()+
+          File.separator + "."+
+          getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
+        Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
       }
-      // verbose
-      TomMessage.info(getLogger(), null, 0, TomMessage.tomParsingPhase,
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
-    } catch (TokenStreamException e) {
-      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(),
-          TomMessage.tokenStreamException, e.getMessage());
-      return;
-    } catch (RecognitionException e){
-      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
-          TomMessage.recognitionException, e.getMessage());
-      return;
-    } catch (TomException e) {
-      TomMessage.error(getLogger(), currentFileName, getLineFromTomParser(), 
-          e.getPlatformMessage(), e.getParameters());
-      return;
-    } catch (FileNotFoundException e) {
-      TomMessage.error(getLogger(), currentFileName, 0, TomMessage.fileNotFound); 
-      e.printStackTrace();
-      return;
-    } catch (Exception e) {
-      e.printStackTrace();
-      TomMessage.error(getLogger(), currentFileName, 0, TomMessage.exceptionMessage,
-          getClass().getName(), currentFileName);
-      return;
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileName() 
+            + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
+        Tools.generateOutput(getStreamManager().getOutputFileName() 
+            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
+      }
+    } else {
+      // not active plugin
+      TomMessage.info(getLogger(), null, 0, TomMessage.parserNotUsed);
     }
-    // Some extra stuff
-    if(eclipse) {
-      String outputFileName = getStreamManager().getInputParentFile()+
-        File.separator + "."+
-        getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-      Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
-      }
-    if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileName() 
-                           + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
-      Tools.generateOutput(getStreamManager().getOutputFileName() 
-                           + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
-    }
+
   }
   
   /**

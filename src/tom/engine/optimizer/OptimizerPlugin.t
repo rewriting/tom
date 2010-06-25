@@ -181,8 +181,8 @@ public class OptimizerPlugin extends TomGenericPlugin {
       /* Let x <- y in body where y is a variable ==> inline */
       /* Let x <- (T) y in body where y is a variable ==> inline */
       Let((BQVariable|BQVariableStar)[AstName=name@!Name(concString('t','o','m','_',_*))],exp,body) &&
-        (BQTermToExpression((BQVariable|BQVariableStar)[AstName=expname])<<exp ||
-         Cast[Source=BQTermToExpression((BQVariable|BQVariableStar)[AstName=expname])]<<exp) -> {
+        (BQTermToExpression((BQVariable|BQVariableStar)[])<<exp ||
+         Cast[Source=BQTermToExpression((BQVariable|BQVariableStar)[])]<<exp) -> {
           return `TopDown(replaceVariableByExpression(name,exp)).visitLight(`body);
       }
 
@@ -222,7 +222,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
                 // variables introduced by renaming starts with a '_'
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
-                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+                Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
                 TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                     TomMessage.unusedVariable,varName);
                 TomMessage.info(logger,null,0,TomMessage.remove,mult,varName);
@@ -292,7 +292,7 @@ public class OptimizerPlugin extends TomGenericPlugin {
               if(info.readCount<=1 && !varName.startsWith("_")) {
                 // verify linearity in case of variables from the pattern
                 // warning to indicate that this var is unused in the rhs
-                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+                Option orgTrack = TomBase.findOriginTracking(`var.getOptions());
                 TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                     TomMessage.unusedVariable,varName);
                 TomMessage.info(logger,null,0,TomMessage.remove,mult,varName);

@@ -117,15 +117,15 @@ public class PluginFactory implements Plugin {
         if(instance instanceof Plugin) {
           plugins.add((Plugin)instance);
         } else {
-          logger.log(Level.SEVERE, "ClassNotAPlugin",
-                     new Object[]{pluginName, path});
+      PluginPlatformMessage.error(getLogger(), null, 0,
+          PluginPlatformMessage.classNotAPlugin, pluginName);
         }
       } catch(ClassNotFoundException cnfe) {
-        logger.log(Level.WARNING, "ClassNotFound",
-                   new Object[]{pluginName, path});
+        PluginPlatformMessage.warning(getLogger(), null, 0, 
+            PluginPlatformMessage.classNotFound, pluginName);
       } catch(Exception e) {
-        logger.log(Level.SEVERE, "InstantiationError",
-                   new Object[]{pluginName, path});
+        PluginPlatformMessage.error(getLogger(), null, 0,
+            PluginPlatformMessage.instantiationError, pluginName);
       }
     }
 
@@ -176,8 +176,7 @@ public class PluginFactory implements Plugin {
       activatedPlugin.run(informationTracker);
       argToRelay = activatedPlugin.getArgs();
     } catch (NullPointerException npe) {
-      System.out.println("Error : No plugin was activated.");
-      // TODO: when error management has changed, change this
+      PluginPlatformMessage.error(getLogger(), null, 0, PluginPlatformMessage.noPluginActivated);
     }
   }
 

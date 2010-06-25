@@ -78,7 +78,7 @@ public class TestSublists {
     }
     fail();
   }
-
+/*
   @Test
   public void test3() {
     Term res = `list(a(),b(),b(),c());
@@ -196,7 +196,7 @@ public class TestSublists {
     }
     fail();
   }
-
+*/
   public static void main(String[] args) {
     org.junit.runner.JUnitCore.main(TestSublists.class.getName());
   }

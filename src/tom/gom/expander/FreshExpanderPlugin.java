@@ -72,8 +72,8 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
     } else {
       GomMessage.error(getLogger(),null,0,
           GomMessage.invalidPluginArgument,
-          new Object[]{"FreshExpander", "[GomModuleList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+          "FreshExpander", "[GomModuleList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -97,10 +97,10 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
         java.io.StringWriter swriter = new java.io.StringWriter();
         try { tom.library.utils.Viewer.toTree(result,swriter); }
         catch(java.io.IOException e) { e.printStackTrace(); }
-        getLogger().log(Level.FINE, "Fresh expanded Modules:\n{0}",swriter);
-        getLogger().log(Level.INFO, "GOM Expansion of freshgom phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+        GomMessage.fine(getLogger(), null, 0, GomMessage.freshExpandedModules,
+            swriter);
+        GomMessage.info(getLogger(), null, 0, 
+            GomMessage.gomFreshGomExpansionPhase, (System.currentTimeMillis()-startChrono));
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getOutputFileName()
               + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());

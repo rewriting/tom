@@ -1,38 +1,108 @@
+2010-06-24 tavaresc
+ * Fix a bug when using a constructor whose tomSymbol can not be set by neither
+   its tomName nor its Type.
+
+2010-06-23 tavaresc
+ * Finish adding tasks "junitnt" and "testnt" as targets into the build.xml to compile the directory "test" using the new
+ typer.
+ * Fix message error for undeclared types.
+
+2010-06-22 tavaresc
+ * Add a target into the build.xml to compile the directory "test" using the new
+ typer. Must to be continued.
+ * Fix some test files in order to successfully compile.
+ * Comment the method of message error for undeclared types.
+
+2010-06-21 tavaresc
+ * Add a message error for undeclared types.
+ * Remove EmptyType() when adding a type constraint.
+
+2010-05-31 tavaresc
+ * Replace argument "Option" by "Options" in files .gom and propagate this.
+ * (i.e.: "Option:OptionList" by "Options:OptionList")
+
+2010-05-27 pem
+ * removed UnameVariable and UnamedVariableStar, EmptyName() is used instead
+   to denote an '_'
+
+2010-05-12 tavaresc
+ * Start adding error messages for typer.
+
+2010-05-06 tavaresc
+ * Fix inference for BQAppl with TomSymbol null.
+ * In this case, BQAppl becames FunctionCall.
+ * Need to be tested.
+ * Fix inference for lists with sublists, both having different 
+   constructors (symbols). 
+
+2010-05-05 tavaresc
+ * Add status of compilation using the new typer into test/README file.
+ * Add duplications of tom files with only Named Symbol.
+
+2010-04-28 tavaresc
+ * Fix treatment of Composites to handle calls of java methods preceded by a backquote.
+ * Delete some unnecessary "putType" calls.
+
+2010-04-23 tavaresc
+ * New version of the new typer: since terms are modified during the inference
+ (e.g. "concString" is added to a string which does not have a constructor), now
+ methods have no more type "void".
+
+ 2010-04-20 jcb
+ * tom/engine log system should be completely ported
+ * tom/gom log system should be completely ported
+
+2010-04-19 emilie
+ * add two new properties tom.platform.error.formatter for specifying a
+   specific formatter for the platform and tom.platform.error.logfile
+   for putting log records into a specific file
+ * start to write a specific Formatter for regression tests
+
+2010-04-19 jcb
+ * Continue to port log system
+ * fix a bug in examples/stategycompiler/StategyCompiler.t caused by single-line
+   comments
+
+2010-04-16 tonio
+ * factorize error methods
+ * factorize part of log handling
+ * formatting
+
 2010-04-16 tavaresc
-  * New version of the new typer: The methods applying inference rules are transformed in strategies.
+ * New version of the new typer: The methods applying inference rules are transformed in strategies.
 
 2010-04-15 pem
-  * introduced a unique way top log errors:
-	  TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
-	  (same for warning, info, fine, finer, ...)
-	* DO NOT USE logger.log(...) anymore
-  * removed BuildReduceTerm (was not used)
+ * introduced a unique way top log errors:
+   TomMessage.error(logger,filename,linenumber,TomMessage.msg, args...)
+   (same for warning, info, fine, finer, ...)
+ * DO NOT USE logger.log(...) anymore
+ * removed BuildReduceTerm (was not used)
 
 2010-04-14 tavaresc
-  * add an argument to TypeVar and move it from TargetLanguageType to 
+ * add an argument to TypeVar and move it from TargetLanguageType to 
    TomType
 
 2010-04-14 pem
-  * bootinstall
-  * re-introduce error detection (in desugarer)
-  * detect nested anonymous list (a,(b,c))
+ * bootinstall
+ * re-introduce error detection (in desugarer)
+ * detect nested anonymous list (a,(b,c))
 
 2010-04-13 tavaresc
-  * add a newtyper option in GOM ant task
+ * add a newtyper option in GOM ant task
 
 2010-04-11 pem
-  * removed a type-expansion which was performed twice in the TyperPlugin (this is now more efficient)
+ * removed a type-expansion which was performed twice in the TyperPlugin (this is now more efficient)
 
 2010-04-08 pem
-  * removed unecessary code in Typer (work was done twice!)
+ * removed unecessary code in Typer (work was done twice!)
 
 2010-04-07 pem
-  * add a newtyper option in ant task
-  * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
+ * add a newtyper option in ant task
+ * introduced TargetLanguageType for TLType and EmptyTargetLanguageType
 
 2010-03-31 tavaresc
-  * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
-    but also in the rest of the code (which is not necessarily a InstructionToCode).
+ * NewTyper : Apply replacement of typeVars not only in a ConstraintInstructionList
+   but also in the rest of the code (which is not necessarily a InstructionToCode).
 
 2010-03-31 pem
  * switch for TyperPlugin vs NewTyper
@@ -284,7 +354,7 @@
  * fixed bug #5131
 
 2009-04-14 balland
-  * bootinstall
+ * bootinstall
 
 2009-04-09 pem
  * renamed tom-library.jar into tom-runtime.jar
@@ -302,47 +372,47 @@
    (to see how to use this mechanism : jtom/applications/sdfgom)
 
 2009-03-18 pem
-  * bootinstall
+ * bootinstall
 
 2009-01-28 balland
-  * bootinstall
+ * bootinstall
 
 2009-01-28 balland
-  *  In Gom, avoid Tom compiling when it is not necessary
+ * In Gom, avoid Tom compiling when it is not necessary
 
 2009-01-21 jcb
-  * corrected the double display of Tom/Gom help
+ * corrected the double display of Tom/Gom help
 
 2009-01-19 jcb
-  * implement multithreading in Tom
-  * add a new Tom option : --multithread
-    (be careful by using it since there is no thread smart management,
-    therefore performance could not be improved,
-    option deactivated by default)
+ * implement multithreading in Tom
+ * add a new Tom option : --multithread
+   (be careful by using it since there is no thread smart management,
+   therefore performance could not be improved,
+   option deactivated by default)
 
 2009-01-19 pem
-  * re-implement the constraint scheduler using in-place swaping
-  * de-activate the SwitchNumericConstraints rule (it does not terminate)
+ * re-implement the constraint scheduler using in-place swaping
+ * de-activate the SwitchNumericConstraints rule (it does not terminate)
 
 2008-12-19 balland
-  * use generics for visit methods
+ * use generics for visit methods
 
 2008-11-24 jcb
-  * removed singleton pattern in gom module
-  * changed static fields in gom module
-  * adapted few examples that used Gom.getInstance()
+ * removed singleton pattern in gom module
+ * changed static fields in gom module
+ * adapted few examples that used Gom.getInstance()
 
 2008-11-24 jcb
-  * changed static variables and methods in compiler package
-    (in order to become thread-safe)
+ * changed static variables and methods in compiler package
+   (in order to become thread-safe)
 
 2008-04-19 pem
-  * improved the implementation of Position and Environment
-    (no longer use getHead and getTail)
-  * added a int[] toIntArray() method in Path
+ * improved the implementation of Position and Environment
+   (no longer use getHead and getTail)
+ * added a int[] toIntArray() method in Path
 
 2008-04-18 pem
-  * bootinstall
+ * bootinstall
 
 2008-04-17 pem
   * improve class Position

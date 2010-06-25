@@ -405,7 +405,7 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      GetElement(opNameAST,codomain, varName, varIndex) -> {
+      GetElement(opNameAST, _, varName, varIndex) -> {
         buildExpGetElement(deep,`opNameAST,getTermType(`varName),`varName, `varIndex, moduleName);
         return;
       }
@@ -490,38 +490,23 @@ public abstract class AbstractGenerator {
         return;
       }
 
-      Assign(var@(BQVariable|BQVariableStar)[Option=option],exp) -> {
-        `buildAssign(deep, var, option, exp, moduleName);
+      Assign(var@(BQVariable|BQVariableStar)[Options=optionList],exp) -> {
+        `buildAssign(deep, var, optionList, exp, moduleName);
         return;
       }
 
-      /**
-       * no more unamed variables in this phase
-       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
-       return;
-       }
-       */
-
-      AssignArray(var@BQVariable[Option=list],index,exp) -> {
-        `buildAssignArray(deep, var, list, index, exp, moduleName);
+      AssignArray(var@BQVariable[Options=optionList],index,exp) -> {
+        `buildAssignArray(deep, var, optionList, index, exp, moduleName);
         return;
       }
 
-      /**
-       * no more unamed variables in this phase
-       (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-       `generateInstruction(deep, body, moduleName);
-       return;
-       }
-       */
-
-      Let(var@(BQVariable|BQVariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
-        `buildLet(deep, var, list, tlType, exp, body, moduleName);
+      Let(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+        `buildLet(deep, var, optionList, tlType, exp, body, moduleName);
         return;
       }
 
-      LetRef(var@(BQVariable|BQVariableStar)[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
-        `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
+      LetRef(var@(BQVariable|BQVariableStar)[Options=optionList,AstType=(Type|TypeWithSymbol)[TlType=tlType]],exp,body) -> {
+        `buildLetRef(deep, var, optionList, tlType, exp, body, moduleName);
         return;
       }
 
@@ -809,10 +794,10 @@ public abstract class AbstractGenerator {
         }
 
       MakeEmptyArray(Name(opname),
-          BQVariable[Option=option,AstName=name],
+          BQVariable[Options=optionList,AstName=name],
           instr, _) -> {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
-        BQTerm newVar = `BQVariable(option, name, getSymbolTable(moduleName).getIntType());
+        BQTerm newVar = `BQVariable(optionList, name, getSymbolTable(moduleName).getIntType());
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
           `genDeclMake("tom_empty_array_", opname, returnType, concBQTerm(newVar), instr, moduleName);
         }
@@ -975,10 +960,11 @@ public abstract class AbstractGenerator {
   protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, BQTerm varName, BQTerm varIndex, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, BQTerm varBegin, BQTerm varEnd, BQTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, BQTerm varArray, BQTerm varBegin, BQTerm expEnd, String moduleName) throws IOException;
-  protected abstract void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
-  protected abstract void buildAssignArray(int deep, BQTerm var, OptionList list, BQTerm index, Expression exp, String moduleName) throws IOException ;
-  protected abstract void buildLet(int deep, BQTerm var, OptionList list, TargetLanguageType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildLetRef(int deep, BQTerm var, OptionList list, TargetLanguageType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildAssignArray(int deep, BQTerm var, OptionList
+      optionList, BQTerm index, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildLet(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildLetRef(int deep, BQTerm var, OptionList optionList, TargetLanguageType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
   protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;

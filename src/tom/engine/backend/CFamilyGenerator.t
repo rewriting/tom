@@ -60,7 +60,7 @@ public abstract class CFamilyGenerator extends GenericGenerator {
     super(output, optionManager, symbolTable);
   }
 
-  protected void buildAssign(int deep, BQTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+  protected void buildAssign(int deep, BQTerm var, OptionList optionList, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generateBQTerm(deep,var,moduleName);
     output.write("=");
