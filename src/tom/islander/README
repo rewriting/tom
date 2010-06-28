@@ -12,6 +12,7 @@ Content
  +--- fusion
  +--- backquote
  +--- newtom
+ +--- proto
  +--- inputTests
 
 fusion :
@@ -30,6 +31,10 @@ newtom :
 It will replace src/tom/engine/parser when finished. It contains a light version
 of Tom parser (without backquote : NewTomLanguage.g) and a work version with
 backquote include. It has not been decided how will be the final version.
+
+proto :
+It is a small prototype for the "glue" between HostLanguage, TomLanguage and
+BackQuoteLanguage. It contains three mini languages which represent them.
 
 inputTests :
 Few tests for fusion, backquote, newtom
@@ -59,4 +64,7 @@ cd build
 java newtom/MainTomLanguage ../islander/inputTests/tomTest (uncomment the
 test you want tu execute)
 
-
+For proto test :
+ant -f proto.build.xml
+cd build
+java Main ../islander/inputTests/protoTest 
