@@ -1,0 +1,3 @@
+proof th : (P => A /\ B) => ((B \/ C) => Q) => P => Q.
+intros.
+display th.

@@ -126,7 +126,7 @@ public class TyperPlugin extends TomGenericPlugin {
 
         /* transform each BackQuoteTerm into its compiled form */
         typedCode = `TopDownIdStopOnSuccess(TransformBQAppl(this)).visitLight(typedCode);
-        //System.out.println("\nCode after type inference = \n" + typedCode);
+        //DEBUG System.out.println("\nCode after type inference = \n" + typedCode);
 
         setWorkingTerm(typedCode);      
         // verbose

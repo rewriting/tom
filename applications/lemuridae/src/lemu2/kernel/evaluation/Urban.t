@@ -430,6 +430,9 @@ l:  for(Tree t: l2) {
 
 
   public static Collection<ProofTerm> reduce(ProofTerm pt) {
+
+  /*
+
     LinkedList<Tree> forest = 
       new LinkedList<Tree>();
     forest.add(new Tree(pt,null));
@@ -449,34 +452,8 @@ l:  for(Tree t: l2) {
       }
     }
   }
+  */
 
-    /*
-       Collection<ProofTerm> res = new HashSet<ProofTerm>();
-       LinkedList<ProofTerm> done = new LinkedList<ProofTerm>();
-       ProofTerm ppt = pt;
-       int count = 0;
-       while(true) {
-       done.add(ppt);
-       count++;
-       try { `TopDown(RStep(res,ppt)).visit(ppt); }
-       catch (VisitFailure e) { throw new RuntimeException("never happens"); }
-       ppt = res.iterator().next();
-       res.clear();
-       System.out.println("count = " + count);
-       System.out.println(lemu2.util.Pretty.pretty(ppt.export()));
-       System.out.println("------------------------------------");
-       for (int i=0; i < done.size(); i++ ) {
-       if (done.get(i).equals(ppt)) {
-       System.out.println("loop on " + i);
-       return null;
-       }
-       }
-       }
-       }
-     */
-
-
-/*
   Collection<ProofTerm> res = new HashSet<ProofTerm>();
   Collection<ProofTerm> swap;
   res.add(pt);
@@ -526,6 +503,5 @@ l:  for(Tree t: l2) {
   } while(res.size()>0);
   return nf;
 }
-*/
 }
 
