@@ -32,12 +32,31 @@ It will replace src/tom/engine/parser when finished. It contains a light version
 of Tom parser (without backquote : NewTomLanguage.g) and a work version with
 backquote include. It has not been decided how will be the final version.
 
+inputTests :
+Few tests for fusion, backquote, newtom and proto
+
 proto :
 It is a small prototype for the "glue" between HostLanguage, TomLanguage and
-BackQuoteLanguage. It contains three mini languages which represent them.
+BackQuoteLanguage. It contains three mini languages which represent them, and
+uses island-grammars. It is based on the official island grammar example (Simple
++ Javadoc). From 'HostLanguage', 'TomLanguage' and 'BackQuoteLanguage' can be
+called (with %match and `( ). And from TomLanguage, HostLanguage is called in
+%match body.
 
-inputTests :
-Few tests for fusion, backquote, newtom
+PROBLEM :
+Although Tom and BackQuote seem to be called, the tree building doesn't work.
+For instance, in a very small example, we obtain this tree :
+
+(Program (HostBlock (StatementConstruct (Return myvar))) (HostBlock
+(StatementConstruct (Return myvarvar))) (BackQuoteBlock `(x*)) (TomBlock
+%match<code of the %match...>))
+
+instead of :
+
+(Program (HostBlock (StatementConstruct (Return myvar))) (HostBlock
+(StatementConstruct (Return myvarvar))) (BackQuoteBlock (BQVariableStar "x"))
+(TomBlock (MatchConstruct <rest of the match tree>)))
+
 
 -----
 Usage
