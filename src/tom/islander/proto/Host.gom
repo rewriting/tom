@@ -1,0 +1,26 @@
+module Host
+imports String Tom BackQuote
+abstract syntax
+
+Program = Program(Block*)
+
+Block = TomBlock(tc:TomConstruct)
+      | HostBlock(hc:HostConstruct)
+      | BackQuoteBlock(bqc:BackQuoteConstruct)
+
+HostConstruct = HostConstruct(VariableList:VariableList,MethodList:MethodList)
+              | StatementConstruct(Statement:Statement)
+
+VariableList = VariableList(Variable*)
+
+Variable = Variable(Name:String)
+         | VarExp(Name:String,Expr:String)
+
+MethodList = MethodList(Method*)
+
+Method = Method(Name:String,VariableList:VariableList,StatementList:StatementList)
+
+StatementList = StatementList(Statement*)
+
+Statement = Equal(Name:String,Expr:String)
+          | Return(Expr:String)

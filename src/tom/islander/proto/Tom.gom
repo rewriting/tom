@@ -1,0 +1,14 @@
+module  Tom
+imports String Host
+abstract syntax
+
+TomConstruct = MatchConstruct(Args:TomTerm,PatternActionList:PatternActionList)
+
+PatternActionList =  PatternActionList(PatternAction*)
+
+PatternAction = PatternAction(Left:TomTerm,Right:String) //Block)
+
+TomTerm = TomVariableType(Name:String,Type:String)
+        | TomVariable(Name:String)
+
+TomTermList = TomTermList(TomTerm*)
