@@ -1,0 +1,25 @@
+// single-line comment test
+
+/* multi-line comment test */
+
+/*
+int myvar;
+method get() {
+  int totovar;
+  myvar = 42;
+  totovar = myvar;
+  return totovar;
+}
+*/
+
+return myvar;
+
+return myvarvar;
+
+/* backquote is embedded in host */
+`(x*)
+
+/* tom is embedded in host */ /* host is embedded in tom */
+%match(subject) {
+  type myvar -> { return something; }
+}
