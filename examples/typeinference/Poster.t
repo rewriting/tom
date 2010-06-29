@@ -2,7 +2,7 @@ import poster.puzzle.types.*;
 import tom.library.sl.*;
 
 public class Poster {
-  %include {../src/tom/library/mapping/java/sl.tom}
+  %include {sl.tom}
   %gom {
     module Puzzle
     abstract syntax
