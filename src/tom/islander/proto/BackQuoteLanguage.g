@@ -20,7 +20,7 @@ options {
 }
 
 backQuoteConstruct :
-  id=ID /*(LPAREN RPAREN)?*/ -> ^(BQVariable $id)
+  id=ID (LPAREN RPAREN)? -> ^(BQVariable $id)
   | id=ID '*' -> ^(BQVariableStar $id)
   | '_' -> ^(BQUnamedVariable )
   | '_*' -> ^(BQUnamedVariableStar )

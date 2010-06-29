@@ -28,7 +28,7 @@ program :
 
 block :
    hostConstruct -> ^(HostBlock hostConstruct)
-  | matchConstruct -> ^(TomBlock matchConstruct)
+  | tomConstruct -> ^(TomBlock tomConstruct)
   /* and few other : all '%something' */
   | backquoteConstruct -> ^(BackQuoteBlock backquoteConstruct)
 //  | '{' block '}' -> block
@@ -63,13 +63,14 @@ expr :
 
 
 //Tom
-matchConstruct :
-  MATCH^ //{System.out.println("before \%match");}
+tomConstruct :
+  MATCH
+  /* and other keywords  */
   ;
 
 //BackQuote
 backquoteConstruct :
-  BACKQUOTE^
+  BACKQUOTE
   ;
 
 //Lexer
@@ -91,7 +92,7 @@ RBRACE : '}'
   }
   ;
 
-MATCH : '%match'
+MATCH : '%' //match'
   {
 System.out.println("\nbefore new Tom*");
     TomLanguageLexer lexer = new TomLanguageLexer(input);
@@ -99,13 +100,15 @@ System.out.println("\nbefore new Tom*");
 System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
 System.out.println("host, tokens list = " + tokens.getTokens().toString());
     TomLanguageParser parser = new TomLanguageParser(tokens);
-System.out.println("before parser.matchconstruct()");
-    parser.matchConstruct();
-/*
-System.out.println("HOST before match channel change, channel = " + $channel);
-    $channel=TOM_CHANNEL;
-System.out.println("HOST after match channel change, channel = " + $channel);
-*/
+System.out.println("before parser.matchConstruct()");
+//    parser.matchConstruct();
+
+    TomLanguageParser.matchConstruct_return res = parser.matchConstruct();
+    System.out.println("(host - tom) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " (<- should be 'MatchConstruct')");
+
+//System.out.println("HOST before match channel change, channel = " + $channel);
+//    $channel=TOM_CHANNEL;
+//System.out.println("HOST after match channel change, channel = " + $channel);
   }
 ;
 
@@ -117,13 +120,15 @@ System.out.println("\nbefore new BackQuote*");
 System.out.println("host, tokens = " + tokens.toString() + " /fin");
 System.out.println("host, tokens list = " + tokens.getTokens().toString());
     BackQuoteLanguageParser parser = new BackQuoteLanguageParser(tokens);
-System.out.println("before parser.backquoteconstruct()");
-   parser.backQuoteConstruct();
-/*
-System.out.println("HOST before backquote channel change, channel = " + $channel);
-    $channel=BACKQUOTE_CHANNEL;
-System.out.println("HOST after backquote channel change, channel = " + $channel);
-*/
+System.out.println("before parser.backQuoteConstruct()");
+//    parser.backQuoteConstruct().getTree();
+
+BackQuoteLanguageParser.backQuoteConstruct_return res = parser.backQuoteConstruct();
+System.out.println("(host - bq) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " (<- should be BQVariable, BQVariableStar, BQUnamedVariable or BQUnamedVariableStar)");
+
+//System.out.println("HOST before backquote channel change, channel = " + $channel);
+//    $channel=BACKQUOTE_CHANNEL;
+//System.out.println("HOST after backquote channel change, channel = " + $channel);
   }
   ;
 
