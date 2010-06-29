@@ -12,6 +12,7 @@ Content
  +--- fusion
  +--- backquote
  +--- newtom
+ +--- proto
  +--- inputTests
 
 fusion :
@@ -32,7 +33,30 @@ of Tom parser (without backquote : NewTomLanguage.g) and a work version with
 backquote include. It has not been decided how will be the final version.
 
 inputTests :
-Few tests for fusion, backquote, newtom
+Few tests for fusion, backquote, newtom and proto
+
+proto :
+It is a small prototype for the "glue" between HostLanguage, TomLanguage and
+BackQuoteLanguage. It contains three mini languages which represent them, and
+uses island-grammars. It is based on the official island grammar example (Simple
++ Javadoc). From 'HostLanguage', 'TomLanguage' and 'BackQuoteLanguage' can be
+called (with %match and `( ). And from TomLanguage, HostLanguage is called in
+%match body.
+
+PROBLEM :
+Although Tom and BackQuote seem to be called, the tree building doesn't work.
+For instance, in a very small example, we obtain this tree :
+
+(Program (HostBlock (StatementConstruct (Return myvar))) (HostBlock
+(StatementConstruct (Return myvarvar))) (BackQuoteBlock `(x*)) (TomBlock
+%match<code of the %match...>))
+
+instead of :
+
+(Program (HostBlock (StatementConstruct (Return myvar))) (HostBlock
+(StatementConstruct (Return myvarvar))) (BackQuoteBlock (BQVariableStar "x"))
+(TomBlock (MatchConstruct <rest of the match tree>)))
+
 
 -----
 Usage
@@ -59,4 +83,7 @@ cd build
 java newtom/MainTomLanguage ../islander/inputTests/tomTest (uncomment the
 test you want tu execute)
 
-
+For proto test :
+ant -f proto.build.xml
+cd build
+java Main ../islander/inputTests/protoTest 

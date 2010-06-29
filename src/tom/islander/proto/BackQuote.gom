@@ -1,0 +1,9 @@
+module BackQuote
+imports String
+abstract syntax
+
+BackQuoteConstruct = BQVariable(Name:String)
+                   | BQVariableStar(Name:String)
+                   | BQUnamedVariable()
+                   | BQUnamedVariableStar()
+//       | BQComposite(Name:String)
