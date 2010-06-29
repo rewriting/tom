@@ -1,3 +1,8 @@
+2010-06-29 tavaresc
+ * Improve error messages for new typer.
+ * Add task "junitnt" into the build.xml (in directory "examples") to compile
+   the examples using the new typer.
+
 2010-06-24 tavaresc
  * Fix a bug when using a constructor whose tomSymbol can not be set by neither
    its tomName nor its Type.

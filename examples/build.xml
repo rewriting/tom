@@ -48,7 +48,10 @@
       <filelist dir=".">
         <file name="${example}/build.xml"/>
       </filelist>
+      
     </subant>
+      <!-- Exclude tests that run only with the new typer -->
+      <exclude name="typeinference/Test12.t"/>
   </target>
 
   <target name="examples"
@@ -375,29 +378,18 @@
   <target name="infer">
     <subant target="build">
       <fileset dir="." includes="*/build.xml"/>
-      <!--fail unless="example">
-        Please define the "example" to build
-      </fail-->
       <filelist dir=".">
         <file name="${example}/build.xml"/>
       </filelist>
     </subant>
+    <fail unless="example">
+      Please define the "example" to build
+    </fail>
+    <echo>Building example: ${example}</echo>
     <tom.preset srcdir="${examples.dir}"
       multithread="${multithread}"
       destdir="${examples.gen}"
       options="--newtyper">
-      <!--exclude name="boulderdash/BoulderDashCode.t"/>
-      <exclude name="modeltrans/Uml.t"/>
-      <exclude name="python/draw_tree.py.t"/>
-      <exclude name="rbtree/TestTree.t"/>
-      <exclude name="strategycompiler/StrategyCompiler.t"/>
-      <exclude name="strings/Anagram.t"/>
-      <exclude name="termgraph/TermGraphRewriting.t"/>
-      <exclude name="tutorial/HelloWorld.t"/>
-      <exclude name="tutorial/PersonSort1.t"/>
-      <exclude name="typeinference/TestBug.t"/>
-      <exclude name="xml/dommapping/*"/>
-      <exclude name="xquery/xqueryimpl/xquery/uc1/UC1_6DOM.t"/-->
     </tom.preset>
   </target>
 

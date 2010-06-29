@@ -205,7 +205,7 @@ public class NewKernelTyper {
       typeConstraint << TypeConstraint tConstraint -> {
         %match(typeConstraint) {
           Equation[Type1=!EmptyType(),Type2=!EmptyType()] -> { 
-            typeConstraints = `concTypeConstraint(tConstraint,typeConstraints*);
+            typeConstraints = `concTypeConstraint(typeConstraints*,tConstraint);
           }
         }
       }
@@ -988,89 +988,78 @@ public class NewKernelTyper {
     throw new TomRuntimeException("inferBQTermList: failure on " + `bqTList);
   }
 
+  /**
+   * The class <code>solveConstraints</code> is generated from a strategy wich
+   * tries to solve all type constraints collected during the inference
+   * <p> 
+   * There exists 3 kinds of types : variable types Ai, ground types Ti and
+   * ground types Ti^c which are decorated with a given symbol c. Since a type
+   * constraints is a pair (type1,type2) representing an equation relation
+   * between two types, them the set of all possibilities of arrangement between
+   * types is a sequence with repetition. Then, we have 9 possible case (since
+   * 3^2 = 9).
+   * <p>
+   * CASE 1: Equation(T1 = T2) U TCList and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 2: Equation(T1 = T2^c) U TCList and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 3: Equation(T1^c = T2) U TCList and Map
+   *  a) --> Fail if T1 is different from T2
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 4: Equation(T1^a = T2^b) U TCList and Map
+   *  a) --> Fail if T1 is different from T2 and/or "a" is different from "b"
+   *  b) --> Nothing if T1 is equals to T2
+   * <p>
+   * CASE 5: Equation(T = A) U TCList and Map 
+   *  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+   * <p>
+   * CASE 6: Equation(T^c = A) U TCList and Map 
+   *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+   * <p>
+   * CASE 7: Equation(A = T) U TCList and Map 
+   *  --> Equation(T = T) U [A/T]TCList and [A/T]Map
+   * <p>
+   * CASE 8: Equation(A = T^c) U TCList and Map 
+   *  --> Equation(T^c = T^c) U [A/T^c]TCList and [A/T^c]Map
+   * <p>
+   * CASE 9: Equation(A1 = A2) U TCList and Map 
+   *  --> Nothing 
+   */   
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
-      /**
-       * Equation(groundListType,groundType) U TCList and Map 
-       *    --> Fail
-       * if groundListType = tName1^g and groundType = tName2^? 
-       * and tName1 != tName2
-       */
-      // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
+      // CASES 1a and 3a :
       concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1],_),rightTCList*) && 
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          //nkt.printError(`tc);
-          //return `concTypeConstraint(leftTCList*,rightTCList*);
-          throw new RuntimeException("solveConstraints: failure on " + `t1
-              + " = " + `t2);
+          nkt.printError(`tc);
+          return `concTypeConstraint(leftTCList*,rightTCList*);
+          //throw new RuntimeException("solveConstraints: failure on " + `t1
+          //    + " = " + `t2);
         }
 
-      /**
-       * Equation(groundType,groundListType) U TCList and Map 
-       *    --> Fail
-       * if groundType = tName1^? and groundListType = tName2^g 
-       * and tName1 != tName2
-       */
-      // E.g. Equation(Type("A",TypeVar(0)),Type("B",TLType(" test.test.types.B ")))
-      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TomType=tName1],t2@(Type|TypeWithSymbol)[TomType=tName2@!tName1],_),rightTCList*) &&
+      // CASE 2a :
+      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TomType=tName1],t2@TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
-          //nkt.printError(`tc);
-          //return `concTypeConstraint(leftTCList*,rightTCList*);
-          throw new RuntimeException("solveConstraints: failure on " + `t1
-              + " = " + `t2);
+          nkt.printError(`tc);
+          return `concTypeConstraint(leftTCList*,rightTCList*);
+          //throw new RuntimeException("solveConstraints: failure on " + `t1
+          //    + " = " + `t2);
         }
 
-      /**
-       * Equation(groundListType,groundType) U TCList and Map 
-       *    --> Fail
-       * if groundListType has "java type" = tType1
-       * and groundType has "java type" = tType2
-       * and tType1 != tType2
-       */
-      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
-      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TlType=tType1@TLType(_)],t2@Type[TlType=tType2@TLType(_)],_),rightTCList*) &&
-        (tType1 != tType2)  -> {
-          //nkt.printError(`tc);
-          //return `concTypeConstraint(leftTCList*,rightTCList*);
-          throw new RuntimeException("solveConstraints: failure on " + `t1
-              + " = " + `t2);
-        }
-      
-      /**
-       * Equation(groundType,groundListType) U TCList and Map 
-       *    --> Fail
-       * if groundType has "java type" = tType1
-       * and groundListType has "java type" = tType2
-       * and tType1 != tType2
-       */
-      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
-      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TlType=tType1@TLType(_)],t2@(Type|TypeWithSymbol)[TlType=tType2@TLType(_)],_),rightTCList*) &&
-        (tType1 != tType2)  -> {
-          //nkt.printError(`tc);
-          //return `concTypeConstraint(leftTCList*,rightTCList*);
-          throw new RuntimeException("solveConstraints: failure on " + `t1
-              + " = " + `t2);
-        }
-
-      /**
-       * Equation(groundListType1,groundListType2) U TCList and Map 
-       *    --> Fail
-       * if groundListType1 != groundListType2
-       */
-      // E.g. Equation(Type("A",TLType("A")),Type("B",TLType("B")))
+      // CASE 4a :  
       concTypeConstraint(leftTCList*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),rightTCList*) &&
         (tLType1 != tLType2)  -> {
-          //nkt.printError(`tc);
-          //return `concTypeConstraint(leftTCList*,rightTCList*);
-          throw new RuntimeException("solveConstraints: failure on " + `tLType1
-              + " = " + `tLType2);
+          nkt.printError(`tc);
+          return `concTypeConstraint(leftTCList*,rightTCList*);
+          //throw new RuntimeException("solveConstraints: failure on " + `tLType1
+          //    + " = " + `tLType2);
         }
 
-      /**
-       * Equation(typeVar,type) U TCList and Map 
-       *    --> Equation(type,type) U [typeVar/type]TCList and
-       *        [typeVar/type]Map
-       */
+      // CASES 7 and 8 :
       concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
         %match {
@@ -1089,11 +1078,7 @@ public class NewKernelTyper {
         return `concTypeConstraint(leftTCList*,Equation(type,type,info),rightTCList*);
       }
 
-      /**
-       * Equation(groundType,typeVar) U TCList and Map 
-       *    --> Equation(groundType,groundType) U [typeVar/groundType]TCList and
-       *        [typeVar/groundType]Map
-       */
+      // CASES 5 and 6 :
       concTypeConstraint(leftTCList*,Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`groundType);
         %match {
