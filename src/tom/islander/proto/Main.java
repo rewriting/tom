@@ -31,13 +31,14 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       HostLanguageParser parser = new HostLanguageParser(tokens);
 
-      System.out.println("(DEBUG) MainNewTom : init OK");
+      System.out.println("\n(DEBUG) MainNewTom : init OK");
       Tree tree = (Tree) parser.program().getTree();
-      System.out.println("(DEBUG) MainNewTom : parsing & getTree() OK / tree =\n" + tree.toStringTree() + "\n");
+      System.out.println("\n(DEBUG) MainNewTom : parsing & getTree() OK / tree =\n" + tree.toStringTree() + "\n");
+      System.out.println("\n(DEBUG) before getTerm()");
       Program term = (Program) HostAdaptor.getTerm(tree);
-      System.out.println("(DEBUG) MainNewTom : getTerm(tree) OK / term =\n" + term + "\n");
+      System.out.println("\n(DEBUG) MainNewTom : getTerm(tree) OK / term =\n" + term + "\n");
       tom.library.utils.Viewer.toTree(term);
-      System.out.println("(DEBUG) MainNewTom : Visualization OK");
+      System.out.println("\n(DEBUG) MainNewTom : Visualization OK");
 
     } catch (Exception e) {
       //System.err.println("exception: " + e);

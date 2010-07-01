@@ -58,10 +58,10 @@ System.out.println("tom, tokens = " + tokens.toString() + " /fin");
 System.out.println("tom, tokens list = " + tokens.getTokens().toString());
     HostLanguageParser parser = new HostLanguageParser(tokens);
 System.out.println("before parser.block()");
-//    parser.block();
-
+//    parser.block().getTree();
+//((HostLanguageParser.block_return)parser.block()).getTree();
 HostLanguageParser.block_return res = parser.block();
-System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <- should be 'HostBlock')");
+System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <- should be '(HostBlock )')");
 //System.out.println("TOM before channel change, channel = " + $channel);
 //    $channel=HOST_CHANNEL;
 //System.out.println("TOM after channel change, channel = " + $channel);
