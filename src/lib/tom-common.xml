@@ -9,6 +9,8 @@
   <property name="multithread" value="off"/>
   <property name="inline"      value="off"/>
   <property name="inlineplus"  value="off"/>
+  <property name="newtyper"    value="off"/>
+  <property name="newparser"   value="off"/>
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
@@ -62,6 +64,10 @@
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
       <classpath refid="tom.classpath"/>
     </taskdef>
+    <taskdef name="tom.junitnt"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
 
     <presetdef name="tom.preset">
       <tom config="${tomconfigfile}"
@@ -73,6 +79,8 @@
            inlineplus="${inlineplus}"
       	   genIntrospector="${genIntrospector}"
            verbose="${verbose}"
+           newtyper="${newtyper}"
+           newparser="${newparser}"
            fork="${tomfork}"
            pretty="${pretty}">
         <classpath refid="tom.classpath"/>

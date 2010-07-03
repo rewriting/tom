@@ -187,7 +187,7 @@ public class TomStreamManager {
     //    and reuse the inputFileName with a good suffix
     /* if using stdin, --output is mandatory */
     if (!isUserOutputFile() && (localInputFileName.equals("-"))) {
-      getLogger().log(Level.SEVERE,"Expecting use of \"-o file\" when using stdin");
+      TomMessage.error(getLogger(), null, 0, TomMessage.expectingOOptionWhenStdin);
       return;
     }
     if(isUserOutputFile()) {
@@ -311,8 +311,8 @@ public class TomStreamManager {
         return new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(),
-          new Object[]{inputFileName});
+      TomMessage.error(getLogger(), null, 0, TomMessage.fileNotFound, 
+          inputFileName);
     } catch (IOException e) {
       System.out.println("IO Exception using file `" + inputFileName + "`");
       e.printStackTrace();
@@ -385,8 +385,7 @@ public class TomStreamManager {
 
   public String getRawFileName() {
     String rawInputFileName = new File(getInputFileName()).getName();
-    String res = rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
-    return res;
+    return rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
   }
 
   public boolean isSilentDiscardImport(String fileName) {

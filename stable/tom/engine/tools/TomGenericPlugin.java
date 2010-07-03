@@ -159,7 +159,7 @@ public abstract class TomGenericPlugin implements Plugin {
     this.streamManager = streamManager; 
   }
 
-  public SymbolTable symbolTable() {
+  public SymbolTable getSymbolTable() {
     return streamManager.getSymbolTable(); 
   }
 

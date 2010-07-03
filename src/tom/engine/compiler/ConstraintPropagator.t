@@ -112,7 +112,7 @@ public class ConstraintPropagator {
   public Constraint performDetach(Constraint subject) {    
     Constraint result = `AndConstraint(); 
     %match(subject){
-      MatchConstraint((RecordAppl|Variable|UnamedVariable)[Constraints=constraints@!concConstraint()],g) -> {
+      MatchConstraint((RecordAppl|Variable)[Constraints=constraints@!concConstraint()],g) -> {
         %match(constraints) {
           concConstraint(_*,AliasTo(var),_*) -> {
             // add constraint to the list
@@ -120,7 +120,7 @@ public class ConstraintPropagator {
           }
         }// end match   
       }      
-      MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
+      MatchConstraint(t@VariableStar[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
         BQTerm freshVariable = getCompiler().getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AliasTo(var),_*) -> {

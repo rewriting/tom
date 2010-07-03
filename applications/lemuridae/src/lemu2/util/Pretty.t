@@ -1,6 +1,8 @@
 package lemu2.util;
 
 import lemu2.kernel.proofterms.types.*;
+import lemu2.kernel.proofterms.types.rawnamelist.RawnameList;
+import lemu2.kernel.proofterms.types.rawconamelist.RawconameList;
 import lemu2.kernel.coc.types.*;
 import fj.data.List;
 import fj.F;
@@ -91,7 +93,6 @@ public class Pretty {
     }
     throw new RuntimeException("non exhaustive patterns");
   }
-
 
   /* raw propositions */
 
@@ -575,5 +576,424 @@ public class Pretty {
     throw new RuntimeException("non exhaustive patterns");
   }
 
-}
+  /* latex */
 
+  private static String lspace(int sp) {
+    String res = "";
+    for(int i=0; i<sp; i++)
+      res += "~~";
+    return res;
+  }
+
+  private static String lpr(String var, RawProp prop, int sp) {
+    return "\\\\\n" + lspace(sp) + (churchStyle ? %[\langle @var@:@lpretty(prop)@ \rangle]% : %[\langle @var@ \rangle]%);
+  }
+
+  private static String lpr2(String var, RawProp prop, String fovar, int sp) {
+    return "\\\\\n" + lspace(sp) + (churchStyle ? %[\langle @var@:@lpretty(prop)@ \rangle\langle \fo{@fovar@} \rangle]% : %[\langle @var@ \rangle\langle \fo{@fovar@} \rangle]%);
+  }
+
+  private static String lpr3(String var1, RawProp prop1, String var2, RawProp prop2, int sp) {
+    return "\\\\\n" + lspace(sp) + (churchStyle ? %[\langle @var1@:@lpretty(prop1)@ \rangle\langle @var2@:@lpretty(prop2)@ \rangle]% : %[\langle @var1@ \rangle\langle @var2@ \rangle]%);
+  }
+
+  public static String lpretty(RawProofTerm t) {
+    return lpretty(t,1);
+  }
+
+ 
+  private static String lpretty(RawProofTerm t, int sp) {
+    %match(t) {
+      Rawax(n,cn) -> {return %[\tAx(@`n@,@`cn@)]%; }
+      RawfalseL(n) -> { return %[\tFalseL(@`n@)]%; }
+      RawtrueR(cn) -> { return %[\tTrueR(@`cn@)]%; }
+      Rawcut(RawCutPrem1(cn,pcn,M),RawCutPrem2(n,pn,N)) -> { return %[\tCut(@`lpr(cn,pcn,sp)@ @`lpretty(M,sp+1)@,@`lpr(n,pn,sp)@ @`lpretty(N,sp+1)@)]%; }
+      RawandR(RawAndRPrem1(a,pa,M),RawAndRPrem2(b,pb,N),cn) -> { return %[\tAndR(@`lpr(a,pa,sp)@ @`lpretty(M,sp+1)@,@`lpr(b,pb,sp)@ @`lpretty(N,sp+1)@,@`cn@)]%; }
+      RawandL(RawAndLPrem1(x,px,y,py,M),n) -> { return %[\tAndL(@`lpr3(x,px,y,py,sp)@ @`lpretty(M,sp+2)@,@`n@)]%; }
+      RaworR(RawOrRPrem1(a,pa,b,pb,M),cn) -> { return %[\tOrR(@`lpr3(a,pa,b,pb,sp)@ @`lpretty(M,sp+1)@,@`cn@)]%; }
+      RaworL(RawOrLPrem1(x,px,M),RawOrLPrem2(y,py,N),n) -> { return %[\tOrL(@`lpr(x,px,sp)@ @`lpretty(M,sp+1)@,@`lpr(y,py,sp)@ @`lpretty(N,sp+1)@,@`n@)]%; }
+      RawimplyR(RawImplyRPrem1(x,px,a,pa,M),cn) -> { return %[\tImpR(@`lpr3(x,px,a,pa,sp)@ @`lpretty(M,sp+1)@,@`cn@)]%; }
+      RawimplyL(RawImplyLPrem1(x,px,M),RawImplyLPrem2(a,pa,N),n) -> { return %[\tImpL(@`lpr(x,px,sp)@ @`lpretty(M,sp+1)@,@`lpr(a,pa,sp)@ @`lpretty(N,sp+1)@,@`n@)]%; }
+      RawexistsR(RawExistsRPrem1(a,pa,M),term,cn) -> { return %[\tExistsR(@`lpr(a,pa,sp)@ @`lpretty(M,sp+1)@,@`lpretty(term)@,@`cn@)]%; }
+      RawexistsL(RawExistsLPrem1(x,px,fx,M),n) -> { return %[\tExistsL(@`lpr2(x,px,fx,sp)@ @`lpretty(M,sp+1)@,@`n@)]%; }
+      RawforallR(RawForallRPrem1(a,pa,fx,M),cn) -> { return %[\tForallR(@`lpr2(a,pa,fx,sp)@ @`lpretty(M,sp+1)@,@`cn@)]%; }
+      RawforallL(RawForallLPrem1(x,px,M),term,n) -> { return %[\tForallL(@`lpr(x,px,sp)@ @`lpretty(M,sp+1)@,@`lpretty(term)@,@`n@)]%; }
+      RawrootL(RawRootLPrem1(x,px,M)) -> { return %[@`lpr(x,px,sp)@ @`lpretty(M,sp+1)@]%; }
+      RawrootR(RawRootRPrem1(a,pa,M)) -> { return %[@`lpr(a,pa,sp)@ @`lpretty(M,sp+1)@]%; }
+      RawfoldL(id,RawFoldLPrem1(x,px,M),n) -> { return %[\tFoldL{\mathfrak{@`id@}}(@`lpr(x,px,sp)@ @`lpretty(M,sp+1)@,@`n@)]%; }
+      RawfoldR(id,RawFoldRPrem1(a,pa,M),cn) -> { return %[\tFoldR{\mathfrak{@`id@}}(@`lpr(a,pa,sp)@ @`lpretty(M,sp+1)@,@`cn@)]%; }
+      //RawsuperR(id,prems,ts,cn) -> { return %[\tSuperR[@`id@](@`lpr(prems,sp+1)@,(@`lpretty(ts)@),@`cn@)]%; }
+      //RawsuperL(id,prems,ts,n) -> { return %[\tSuperL[@`id@](@`lpr(prems,sp+1)@,(@`lpretty(ts)@),@`n@)]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  private static String lpretty(RawProp p, int prec) {
+    %match(p) {
+      Rawforall(RawFa(x,p1)) -> { if (prec <= 0) return %[\forall \fo{@`x@}, @`lpretty(p1,0)@]%; }
+      Rawexists(RawEx(x,p1)) -> { if (prec <= 0) return %[\exists \fo{@`x@}, @`lpretty(p1,0)@]%; }
+      Rawimplies(p1,p2)      -> { if (prec <= 1) return %[@`lpretty(p1,2)@ \implies @`lpretty(p2,1)@]% ; }
+      Rawor(p1,p2)           -> { if (prec <= 2) return %[@`lpretty(p1,2)@ \lor @`lpretty(p2,3)@]%; }
+      Rawand(p1,p2)          -> { if (prec <= 3) return %[@`lpretty(p1,3)@ \land @`lpretty(p2,4)@]%; }
+      Rawbottom()            -> { return "\\bot"; }
+      Rawtop()               -> { return "\\top"; }
+      RawrelApp(r,())        -> { return `r; }
+      RawrelApp("Eq",RawtermList(x,y)) -> { return %[@lpretty(`x)@ \simeq @lpretty(`y)@]%; }
+      RawrelApp("In",RawtermList(x,y)) -> { return %[@lpretty(`x)@ \in @lpretty(`y)@]%; }
+      RawrelApp(r,x)         -> { return %[@`r@(@`lpretty(x)@)]%; }
+      p1                     -> { return %[(@`lpretty(p1,0)@)]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+  public static String lpretty(RawProp p) {
+    return lpretty(p,0);
+  }
+  public static String lpretty(RawTermList tl) {
+    %match(tl) {
+      RawtermList(x) -> { return `lpretty(x); }
+      RawtermList(h,t*) -> { return %[@`lpretty(h)@,@lpretty(`t)@]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+  public static String lpretty(RawTerm t) {
+    %match(t) {
+      Rawvar(x) -> { return %[\fo{@`x@}]%;}
+      RawfunApp(name,RawtermList()) -> { return %[@`name@]%; }
+      RawfunApp(name,x) -> { return %[@`name@(@`lpretty(x)@)]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  /* tree pretty print */
+
+  private static String lpretty(RawNProp np) {
+    %match(np) { Rawnprop(n,p) -> { return %[@`n@:@`lpretty(p)@]%; }}
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  private static String lpretty(RawCNProp np) {
+    %match(np) { Rawcnprop(cn,p) -> { return %[@`cn@:@`lpretty(p)@]%; }}
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+
+  private static String lpretty(RawLCtx ctx, RawnameList fns) {
+    return lpretty(ctx,fns,false);
+  }
+
+  private static String lpretty(RawLCtx ctx, RawnameList fns, boolean comma) {
+    %match(ctx) {
+      Rawlctx() -> { return ""; }
+      Rawlctx(x@Rawnprop(n,_),xs*) -> { 
+        if (fns.contains(`n)) 
+          return (comma ? "," : "") + `lpretty(x) + `lpretty(xs,fns,true);
+        else
+          return `lpretty(xs,fns,comma);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  private static String lpretty(RawRCtx ctx, RawconameList fcns) {
+    return lpretty(ctx,fcns,false);
+  }
+
+  private static String lpretty(RawRCtx ctx, RawconameList fcns, boolean comma) {
+    %match(ctx) {
+      Rawrctx() -> { return ""; }
+      Rawrctx(x@Rawcnprop(cn,_),xs*) -> { 
+        if (fcns.contains(`cn)) 
+          return (comma ? "," : "") + `lpretty(x) + `lpretty(xs,fcns,true);
+        else
+          return `lpretty(xs,fcns,comma);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+ public static String lpretty(RawSequent s, RawnameList fns, RawconameList fcns) {
+    %match(s) { 
+      Rawseq(_,lctx,rctx) -> {
+        return `lpretty(lctx,fns) + " \\vdash " + `lpretty(rctx,fcns);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  private static RawnameList getFreeNames(RawNameList ctx, RawProofTerm pt) {
+    RawnameList c = (RawnameList) ctx;
+    %match (pt) {
+      Rawax(n,_) -> {
+        return (RawnameList) (c.contains(`n) ? `RawnameList() : `RawnameList(n));
+      }
+      Rawcut(RawCutPrem1(_,_,M1),RawCutPrem2(x,_,M2)) -> {
+        RawNameList M1names = `getFreeNames(c,M1);
+        RawNameList M2names = `getFreeNames(RawnameList(x,c*),M2);
+        return (RawnameList) `RawnameList(M1names*,M2names*); 
+      }
+      // left rules
+      RawfalseL(n) -> {
+        return (RawnameList) (c.contains(`n) ? `RawnameList() : `RawnameList(n)); 
+      }
+      RawandL(RawAndLPrem1(x,_,y,_,M),n) -> {
+        RawNameList Mnames = `getFreeNames(RawnameList(x,y,c*),M);
+        return (RawnameList) (c.contains(`n) ? Mnames : `RawnameList(n,Mnames*)); 
+      }
+      RaworL(RawOrLPrem1(x,_,M1),RawOrLPrem2(y,_,M2),n) -> {
+        RawNameList M1names = `getFreeNames(RawnameList(x,c*),M1);
+        RawNameList M2names = `getFreeNames(RawnameList(y,c*),M2);
+        return (RawnameList) (c.contains(`n) ? `RawnameList(M1names*,M2names*) : `RawnameList(n,M1names*,M2names*));
+      }
+      RawimplyL(RawImplyLPrem1(x,_,M1),RawImplyLPrem2(_,_,M2),n) -> {
+        RawNameList M1names = `getFreeNames(RawnameList(x,c*),M1);
+        RawNameList M2names = `getFreeNames(c,M2);
+        return (RawnameList) (c.contains(`n) ? `RawnameList(M1names*,M2names*) : `RawnameList(n,M1names*,M2names*)); 
+      }
+      RawforallL(RawForallLPrem1(x,_,M),_,n) -> {
+        RawNameList Mnames = `getFreeNames(RawnameList(x,c*),M);
+        return (RawnameList) (c.contains(`n) ? Mnames : `RawnameList(n,Mnames*)); 
+      }
+      RawexistsL(RawExistsLPrem1(x,_,_,M),n) -> {
+        RawNameList Mnames = `getFreeNames(RawnameList(x,c*),M);
+        return (RawnameList) (c.contains(`n) ? Mnames : `RawnameList(n,Mnames*)); 
+      }
+      RawrootL(RawRootLPrem1(x,_,M)) -> {
+        return `getFreeNames(RawnameList(x,c*),M);
+      }
+      RawfoldL(_,RawFoldLPrem1(x,_,M),n) -> {
+        RawNameList Mnames = `getFreeNames(RawnameList(x,c*),M);
+        return (RawnameList) (c.contains(`n) ? Mnames : `RawnameList(n,Mnames*)); 
+      }
+      // right rules
+      RawtrueR(_) -> {
+        return (RawnameList) `RawnameList();
+      }
+      RaworR(RawOrRPrem1(_,_,_,_,M),_) -> {
+        return `getFreeNames(c,M);
+      }
+      RawandR(RawAndRPrem1(_,_,M1),RawAndRPrem2(_,_,M2),_) -> {
+        RawNameList M1names = `getFreeNames(c,M1);
+        RawNameList M2names = `getFreeNames(c,M2);
+        return (RawnameList) `RawnameList(M1names*,M2names*); 
+      }
+      RawimplyR(RawImplyRPrem1(x,_,_,_,M),_) -> {
+        return `getFreeNames(RawnameList(x,c*),M);
+      }
+      RawexistsR(RawExistsRPrem1(_,_,M),_,_) -> {
+        return `getFreeNames(c,M);
+      }
+      RawforallR(RawForallRPrem1(_,_,_,M),_) -> {
+        return `getFreeNames(c,M);
+      }
+      RawrootR(RawRootRPrem1(_,_,M)) -> {
+        return `getFreeNames(c,M);
+      }
+      RawfoldR(_,RawFoldRPrem1(_,_,M),_) -> {
+        return `getFreeNames(c,M);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static RawnameList getFreeNames(RawProofTerm pt) {
+    return `getFreeNames(RawnameList(),pt);
+  }
+
+  private static RawconameList getFreeCoNames(RawCoNameList ctx, RawProofTerm pt) {
+    RawconameList c = (RawconameList) ctx;
+    %match (pt) {
+      Rawax(_,cn) -> {
+        return (RawconameList) (c.contains(`cn) ? `RawconameList() : `RawconameList(cn));
+      }
+      Rawcut(RawCutPrem1(a,_,M1),RawCutPrem2(_,_,M2)) -> {
+        RawCoNameList M1Rawconames = `getFreeCoNames(RawconameList(a,c*),M1);
+        RawCoNameList M2Rawconames = `getFreeCoNames(c,M2);
+        return (RawconameList) `RawconameList(M1Rawconames*,M2Rawconames*); 
+      }
+      // left rules
+      RawfalseL(_) -> {
+        return (RawconameList) `RawconameList();
+      }
+      RawandL(RawAndLPrem1(_,_,_,_,M),_) -> {
+        return `getFreeCoNames(c,M);
+      }
+      RaworL(RawOrLPrem1(_,_,M1),RawOrLPrem2(_,_,M2),_) -> {
+        RawCoNameList M1Rawconames = `getFreeCoNames(c,M1);
+        RawCoNameList M2Rawconames = `getFreeCoNames(c,M2);
+        return (RawconameList) `RawconameList(M1Rawconames*,M2Rawconames*); 
+      }
+      RawimplyL(RawImplyLPrem1(_,_,M1),RawImplyLPrem2(a,_,M2),_) -> {
+        RawCoNameList M1names = `getFreeCoNames(c,M1);
+        RawCoNameList M2names = `getFreeCoNames(RawconameList(a,c*),M2);
+        return (RawconameList) `RawconameList(M1names*,M2names*); 
+      }
+      RawforallL(RawForallLPrem1(_,_,M),_,_) -> {
+        return `getFreeCoNames(c,M);
+      }
+      RawexistsL(RawExistsLPrem1(_,_,_,M),_) -> {
+        return `getFreeCoNames(c,M);
+      }
+      RawrootL(RawRootLPrem1(_,_,M)) -> {
+        return `getFreeCoNames(c,M);
+      }
+      RawfoldL(_,RawFoldLPrem1(_,_,M),_) -> {
+        return `getFreeCoNames(c,M);
+      }
+      // right rules
+      RawtrueR(cn) -> {
+        return (RawconameList) (c.contains(`cn) ? `RawconameList() : `RawconameList(cn)); 
+      }
+      RaworR(RawOrRPrem1(a,_,b,_,M),cn) -> {
+        RawCoNameList MRawconames = `getFreeCoNames(RawconameList(a,b,c*),M);
+        return (RawconameList) (c.contains(`cn) ? MRawconames : `RawconameList(cn,MRawconames*)); 
+      }
+      RawandR(RawAndRPrem1(a,_,M1),RawAndRPrem2(b,_,M2),cn) -> {
+        RawCoNameList M1Rawconames = `getFreeCoNames(RawconameList(a,c*),M1);
+        RawCoNameList M2Rawconames = `getFreeCoNames(RawconameList(b,c*),M2);
+        return (RawconameList) (c.contains(`cn)  ? `RawconameList(M1Rawconames*,M2Rawconames*) : `RawconameList(cn,M1Rawconames*,M2Rawconames*)); 
+      }
+      RawimplyR(RawImplyRPrem1(_,_,a,_,M),cn) -> {
+        RawCoNameList MRawconames = `getFreeCoNames(RawconameList(a,c*),M);
+        return (RawconameList) (c.contains(`cn) ? MRawconames : `RawconameList(cn,MRawconames*)); 
+      }
+      RawexistsR(RawExistsRPrem1(a,_,M),_,cn) -> {
+        RawCoNameList MRawconames = `getFreeCoNames(RawconameList(a,c*),M);
+        return (RawconameList) (c.contains(`cn) ? MRawconames : `RawconameList(cn,MRawconames*)); 
+      }
+      RawforallR(RawForallRPrem1(a,_,_,M),cn) -> {
+        RawCoNameList MRawconames = `getFreeCoNames(RawconameList(a,c*),M);
+        return (RawconameList) (c.contains(`cn) ? MRawconames : `RawconameList(cn,MRawconames*)); 
+      }
+      RawrootR(RawRootRPrem1(a,_,M)) -> {
+        return `getFreeCoNames(RawconameList(a,c*),M);
+      }
+      RawfoldR(_,RawFoldRPrem1(a,_,M),cn) -> {
+        RawCoNameList MRawconames = `getFreeCoNames(RawconameList(a,c*),M);
+        return (RawconameList) (c.contains(`cn) ? MRawconames : `RawconameList(cn,MRawconames*)); 
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static RawconameList getFreeCoNames(RawProofTerm pt) {
+    return `getFreeCoNames(RawconameList(),pt);
+  }
+
+  public static String lprettyTree(RawProofTerm t) {
+    %match(t) {
+      RawrootR(RawRootRPrem1(cn,pcn,M)) -> {
+        return `lprettyTree(Rawseq(RawfovarList(),Rawlctx(),Rawrctx(Rawcnprop(cn,pcn))),M);
+      }
+      RawrootR(RawRootRPrem1(n,pn,M)) -> {
+        return `lprettyTree(Rawseq(RawfovarList(),Rawlctx(Rawnprop(n,pn)),Rawrctx()),M);
+      }
+    }
+    throw new RuntimeException("proof must begin with rootR or rootL");
+  }
+
+  public static String lprettyTree(RawSequent seq, RawProofTerm t) {
+    %match(seq) {
+      Rawseq(fvs,lctx,rctx) -> {
+        %match(t) {
+          Rawax(n,cn) -> { return %[\infer[\text{\textsc{ax}}]{@`lpretty(seq,RawnameList(n),RawconameList(cn))@}{}]%; }
+          RawfalseL(n) -> { return %[\infer[\bot\text{\textsc{-l}}]{@`lpretty(seq,RawnameList(n),RawconameList())@}{}]%; }
+          RawtrueR(cn) -> { return %[\infer[\top\text{\textsc{-r}}]{@`lpretty(seq,RawnameList(),RawconameList(cn))@}{}]%; }
+          Rawcut(RawCutPrem1(cn,pcn,M),RawCutPrem2(n,pn,N)) -> { 
+            RawnameList fns1 = `getFreeNames(M);
+            RawnameList fns2 = `getFreeNames(N);
+            RawnameList fns = (RawnameList) `RawnameList(fns1*,fns2*);
+            RawconameList fcns1 = `getFreeCoNames(M);
+            RawconameList fcns2 = `getFreeCoNames(N);
+            RawconameList fcns = (RawconameList) `RawconameList(fcns1*,fcns2*);
+            return %[\infer[\text{\textsc{cut}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,lctx,Rawrctx(Rawcnprop(cn,pcn),rctx*)),M)@ & 
+               @`lprettyTree(Rawseq(fvs,Rawlctx(Rawnprop(n,pn),lctx*),rctx),N)@}]%; 
+          }
+          RawimplyR(RawImplyRPrem1(x,px,a,pa,M),cn) -> { 
+            RawnameList fns = `getFreeNames(M);
+            RawconameList fcns1 = `getFreeCoNames(M);
+            RawconameList fcns = (RawconameList) `RawconameList(cn,fcns1*);
+            return %[\infer[\Rightarrow\text{\textsc{-r}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,Rawlctx(Rawnprop(x,px),lctx*),Rawrctx(Rawcnprop(a,pa),rctx*)),M)@}]%; 
+          }
+          RawimplyL(RawImplyLPrem1(x,px,M),RawImplyLPrem2(a,pa,N),n) -> { 
+            RawnameList fns1 = `getFreeNames(M);
+            RawnameList fns2 = `getFreeNames(N);
+            RawnameList fns = (RawnameList) `RawnameList(n,fns1*,fns2*);
+            RawconameList fcns1 = `getFreeCoNames(M);
+            RawconameList fcns2 = `getFreeCoNames(M);
+            RawconameList fcns = (RawconameList) `RawconameList(fcns1*,fcns2*);
+            return %[\infer[\Rightarrow\text{\textsc{-l}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,Rawlctx(Rawnprop(x,px),lctx*),rctx),M)@ &
+               @`lprettyTree(Rawseq(fvs,lctx,Rawrctx(Rawcnprop(a,pa),rctx*)),N)@}]%; 
+          }
+          RawforallR(RawForallRPrem1(a,pa,fx,M),cn) -> { 
+            RawnameList fns = `getFreeNames(M);
+            RawconameList fcns1 = `getFreeCoNames(M);
+            RawconameList fcns = (RawconameList) `RawconameList(cn,fcns1*);
+            return %[\infer[\forall\text{\textsc{-r}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(RawfovarList(fx,fvs*),lctx,Rawrctx(Rawcnprop(a,pa),rctx*)),M)@}]%; 
+          }
+          RawforallL(RawForallLPrem1(x,px,M),_,n) -> { 
+            RawnameList fns1 = `getFreeNames(M);
+            RawnameList fns = (RawnameList) `RawnameList(n,fns1*);
+            RawconameList fcns = `getFreeCoNames(M);
+            return %[\infer[\forall\text{\textsc{-l}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,Rawlctx(Rawnprop(x,px),lctx*),rctx),M)@}]%; 
+          }
+          RawfoldL(id,RawFoldLPrem1(x,px,M),n) -> {
+            RawnameList fns1 = `getFreeNames(M);
+            RawnameList fns = (RawnameList) `RawnameList(n,fns1*);
+            RawconameList fcns = `getFreeCoNames(M);
+            return %[\infer[\text{\textsc{fold-l[$\mathfrak{@`id@}$]}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,Rawlctx(Rawnprop(x,px),lctx*),rctx),M)@}]%; 
+          }
+          RawfoldR(id,RawFoldRPrem1(a,pa,M),cn) -> { 
+            RawnameList fns = `getFreeNames(M);
+            RawconameList fcns1 = `getFreeCoNames(M);
+            RawconameList fcns = (RawconameList) `RawconameList(cn,fcns1*);
+            return %[\infer[\text{\textsc{fold-r[$\mathfrak{@`id@}$]}}]
+              {@`lpretty(seq,fns,fcns)@}
+              {@`lprettyTree(Rawseq(fvs,lctx,Rawrctx(Rawcnprop(a,pa),rctx*)),M)@}]%; 
+          }
+          /*
+          RawandR(RawAndRPrem1(a,pa,M),RawAndRPrem2(b,pb,N),cn) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RawandL(RawAndLPrem1(x,px,y,py,M),n) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RaworR(RawOrRPrem1(a,pa,b,pb,M),cn) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RaworL(RawOrLPrem1(x,px,M),RawOrLPrem2(y,py,N),n) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RawexistsR(RawExistsRPrem1(a,pa,M),term,cn) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RawexistsL(RawExistsLPrem1(x,px,fx,M),n) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RawrootL(RawRootLPrem1(x,px,M)) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          RawrootR(RawRootRPrem1(a,pa,M)) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          */
+          //RawsuperR(id,prems,ts,cn) -> { return %[infer{@`lpretty(seq)@}{}]%; }
+          //RawsuperL(id,prems,ts,n) -> { }
+        }
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns"); 
+  }
+
+  public static String toDoc(RawProofTerm pt) {
+    return
+      %[\documentclass{article}
+        \newcommand{\tez}{\vdash}
+        \newcommand{\fo}[1]{\mathsf{#1}}
+        \usepackage{proof}
+        \usepackage{amssymb}
+        \usepackage{amsmath}
+        \usepackage{euler}
+        \renewcommand{\implies}{\Rightarrow}
+        \begin{document}
+        \pagestyle{empty}
+        \[@lprettyTree(pt)@\]
+        \end{document}]%;
+  }
+
+}

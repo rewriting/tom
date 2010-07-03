@@ -47,7 +47,6 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.code.types.*;
-import tom.engine.adt.typeconstraints.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -57,35 +56,33 @@ import tom.library.sl.*;
 public class KernelTyper {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
-  %include { ../adt/tomsignature/TomSignature.tom }
-  %include { ../../library/mapping/java/util/types/HashMap.tom}
 
+  private static Logger logger = Logger.getLogger("tom.engine.typer.KernelTyper");
+  
   %typeterm KernelTyper {
     implement { KernelTyper }
     is_sort(t) { ($t instanceof KernelTyper) }
   }
 
-  private TypeConstraintList constraintsToTypeVariable = `concTypeConstraint();
   private SymbolTable symbolTable;
-  private int freshTypeVarCounter = 0;
 
   public KernelTyper() {
     super();
   }
 
-  public SymbolTable getSymbolTable() {
-    return this.symbolTable;
+  public void setSymbolTable(SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
   }
 
-  public void setSymbolTable(SymbolTable newSymbolTable) {
-    this.symbolTable = newSymbolTable;
+  private SymbolTable getSymbolTable() {
+    return symbolTable;
   }
 
-  public TomSymbol getSymbolFromName(String tomName) {
+  protected TomSymbol getSymbolFromName(String tomName) {
     return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
 
-  /*public*/ protected TomSymbol getSymbolFromType(TomType type) {
+  protected TomSymbol getSymbolFromType(TomType type) {
     %match(type) {
       TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
         return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
@@ -93,333 +90,17 @@ public class KernelTyper {
     }
     return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
-
-  protected TomType getFreshTypeVar() {
-    return `TypeVar(freshTypeVarCounter++);
-  }
-
-  public TypeConstraintList getConstraints() {
-    return this.constraintsToTypeVariable;
-  }
-
-  public void addConstraints(TypeConstraint newConstraint) {
-    TypeConstraintList auxList = this.constraintsToTypeVariable;
-    this.constraintsToTypeVariable=
-      `concTypeConstraint(newConstraint,auxList*); 
-  }
-
-  /**
-   * The "typeVariable" phase types RecordAppl into Variable
-   * we focus on
-   * - Match
-   * The types of subjects are inferred from the patterns
-   * Variable is typed in the TomTerm case
-   */
-
-  public <T extends tom.library.sl.Visitable> T typeVariable(TomType
-      contextType, T subject) {
-    if(contextType == null) {
-      throw new TomRuntimeException("typeVariable: null contextType");
-    }
-    try {
-      //System.out.println("typeVariable: " + contextType);
-      //System.out.println("typeVariable subject: " + subject);
-      T res =
-        `TopDownStopOnSuccess(typeVariable(contextType,this)).visitLight(subject);
-      //System.out.println("res: " + res);
-      return res;
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("typeVariable: failure on " + subject);
-    }
-  }
-
-  %strategy typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
-    // TomVisit exists in a "%strategy"
-    visit TomVisit {
-      VisitTerm(type,constraintInstructionList,options) -> {
-        //HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
-        // Collect all match and numeric match (with explicit declaration of
-        // type)
-        //`TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
-        TypeConstraintList typeConstraints =
-          kernelTyper.`reconConstraintInstructionList(type,constraintInstructionList,concTypeConstraint());
-        // Call type constraint resolution algorithm
-        MappingList listOfMappings =
-          kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
-        // Type a list of matchs
-        return `VisitTerm(type,
-            kernelTyper.typeConstraintInstructionList(constraintInstructionList,listOfMappings),options);
-      }
-    }
-
-    visit Instruction {
-      /**
-       * Expansion of a Match construct
-       * to add types in subjects
-       * to add types in variables of patterns and rhs
-       * constraintInstructionList is a list of pair (condition,action)
-       */
-      Match(constraintInstructionList, options) -> {
-        TomType newType = contextType;
-        //HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
-        // Collect all match and numeric match (with explicit declaration of
-        // type)
-        //`TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
-        TypeConstraintList typeConstraints = kernelTyper.`reconConstraintInstructionList(newType,constraintInstructionList,concTypeConstraint());
-        // Call type constraint resolution algorithm
-        MappingList listOfMappings =
-          kernelTyper.`resolveTypeConstraints(concMapping(),typeConstraints);
-
-        // Type a list of matchs
-        return
-          `Match(kernelTyper.typeConstraintInstructionList(constraintInstructionList,listOfMappings),options);
-      }
-    }
-
-
-    // FIXME: maybe the attribute "constraints" in RecordAppl and Variable is
-    // not necessary anymore
-    visit TermToInfer {
-      NewTerm(tomTerm,typeVar) -> {
-
-        // TODO: to put code to treat constraints, because this is important
-        // when using an alias ("@")
-
-
-        // Type a function or a list
-        %match(tomTerm) {
-          RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
-            // Take the symbol with type represented by "contextType", but,
-            // why?!? What really is contextType?? Who generates this??
-            // Example: in a match, if the type of the subject is known, then
-            // this is taken as the contextType to help to infer the type of
-            // the pattern 
-
-            TomSymbol tomSymbol = null;
-            if(`tomName.equals("")) {
-              tomSymbol = kernelTyper.getSymbolFromType(contextType);
-              if(tomSymbol==null) {
-                throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
-              } 
-              // Add the name found to the name list. But why the "symbolname" (which
-              // is equals to "") is not removed of the nameList???
-              `nameList = `concTomName(tomSymbol.getAstName());
-            } else {
-              tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-            }
-
-          /**
-           * CT-FUN rule:
-           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-           * THEN infers type of arguments and add a type constraint "A = T" and
-           *      calls the TypeVariableList method which adds a type constraint "Ai =
-           *      Ti" for each argument, where Ai is a fresh type variable
-           *
-           * CT-ELEM rule:
-           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-           * THEN infers type of both sublist "l(e1,...,en)" and last argument
-           *      "e" and adds a type constraint "AA = TT" and calls the
-           *      TypeVariableList method which adds a type constraint "A =T"
-           *      for the last argument, where A is a fresh type variable and
-           *      "e" does not represent a list with head symbol "l"
-           *
-           * CT-MERGE rule:
-           * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-           * THEN infers type of both sublist "l(e1,...,en)" and last argument
-           *      "e" and adds a type constraint "AA = TT" and calls the
-           *      TypeVariableList method, where "e" represents a list with
-           *      head symbol "l"
-           *
-           * CT-STAR rule:
-           * Equals to CT-MERGE but with a star variable "x*" instead of "e"
-           * This rule is necessary because it differed from CT-MERGE in the
-           * sense of the type of the last argument ("x*" here) is unknown 
-           */
-            if(tomSymbol != null) {
-              kernelTyper.addConstraints(`Equation(typeVar,TomBase.getSymbolCodomain(tomSymbol)));
-              TomTypeList domainType = TomBase.getSymbolDomain(tomSymbol);
-              // Typing the arguments 
-              SlotList subterm =
-                kernelTyper.typeVariableList(tomSymbol,domainType,`slotList);
-              //Typing the term after a "@" symbol
-              ConstraintList newConstraints =
-                kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
-              return
-                `NewTerm(RecordAppl(option,nameList,subterm,newConstraints),typeVar);
-            } else {
-              System.out.println("contextType when tomSymbol is 'null' = " + contextType);
-
-              // This case happens when tom takes a java function, since the
-              // type of this java function is unknown
-              // Then the type is infered by the information of the contextType
-              %match(contextType) {
-                type@(Type|TypeWithSymbol)[] -> {
-                  //kernelTyper.addConstraints(`Equation(typeVar,contextType));
-                  SlotList subterm =
-                    kernelTyper.typeVariableList(`emptySymbol(),`concTomType(),`slotList);
-                  ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
-                  return
-                    `NewTerm(RecordAppl(option,nameList,subterm,newConstraints),typeVar);
-                }
-              }
-            }
-          }
-          // FIXME: it seems to be useless to match against a "UnamedVariable"
-          // since the desugarer has already replaced unknown variables by fresh
-          // variables
-          /**
-           * Type a variable
-           * CT-VAR rule: 
-           * IF found "x:A" and "x:T" already exists in SymbolTable 
-           * THEN add a type constraint "A = T"
-           */
-          (Variable|UnamedVariable)[AstType=Type(tomType,EmptyType()),Constraints=_] -> {
-            //The variable will always have a type: a primitive (Type) or an unknown
-            //(TypeVar) type (a fresh type variable)
-            TomType globalType = kernelTyper.getType(`tomType);
-            kernelTyper.addConstraints(`Equation(typeVar,globalType));
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * ConstraintInstructionList
-   * @param contextType
-   * @param constraintInstructionList a list of ConstraintInstruction
-   * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
-   * @param typeConstraints a list of TypeConstraint to by sended for the type constraint
-   * resolution algorithm
-   */
-  private TypeConstraintList reconConstraintInstructionList(TomType
-      contextType, ConstraintInstructionList constraintInstructionList,
-      TypeConstraintList typeConstraints) {
-    %match(constraintInstructionList) {
-      concConstraintInstruction() -> {
-        return typeConstraints;
-      }
-
-      concConstraintInstruction(ConstraintInstruction(constraint,action,option),tail*) -> {
-        try {
-          /**
-           * CT-RULE rule:
-           * IF found "(constraint -> (e1,...,en)):wt" and "forall ei, ei has
-           * type Ai" in SymbolTable
-           * THEN calls the reconConstraint method to infer types of the variables in
-           * the constraint and calls the typeVariable to set types Ai for each ei
-           */
-          Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
-          // 1 - Infer types of a condition and collect both variables and type
-          // constraints
-          `TopDownStopOnSuccess(reconConstraint(contextType,lhsVariable,typeConstraints,this)).visitLight(`constraint);
-          TomList varList = ASTFactory.makeTomList(lhsVariable);
-          // 2 - If a variable 'x' is instantiated by 'a()', replace all variables 'x'
-          // found in the code succeeding by 'a()' 
-          Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
-          // 3 - Infer types of an action
-          newAction = typeVariable(`EmptyType(),`newAction);
-          // 4 - Infer types for the rest of the rules (constraint -> action)
-          TypeConstraintList newTypeConstraints =
-            reconConstraintInstructionList(contextType, `tail, typeConstraints);
-          // 5 - Return all collected type constraints 
-          return `concTypeConstraint(newTypeConstraints*,typeConstraints*);
-        } catch(VisitFailure e) {
-          System.out.println("Error in 'reconConstraintInstructionList'");
-        }
-      }
-    }
-    throw new TomRuntimeException("Bad ConstraintInstruction: " + constraintInstructionList);
- }
-
-  // TOCHECK
-  %strategy reconConstraint(contextType: TomType, lhsVariable: Collection, typeConstraints:
-      TypeConstraintList, kernelTyper: KernelTyper) extends Fail() {
-    visit Constraint {
-      MatchConstraint[Pattern=pattern,Subject=subject] -> {}
-
-      constraint@NumericConstraint[Left=lhsTerm,Right=rhsTerm] -> {
-        //lundi: il faut que j'appele la fonction getTypeBQTermInConstraint pour
-        //recuperer le type et pouvoir ajouter la contrainte lhsTermType =
-        //rhsTermType
-
-        //TomType typeVar = kernelTyper.getFreshTypeVar();
-        //kernelTyper.addConstraints(`Equation(typeVar,globalType));
-        BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhsTerm);                  
-        BQTerm newRhs = kernelTyper.typeVariable(`EmptyType(), `rhsTerm);                  
-        return `constraint.setLeft(newLhs).setRight(newRhs);               
-      }       
-    } 
-  }
-
-  private TomType getTypeBQTermInConstraint(BQTerm bqTerm) {
-    %match(bqTerm) {
-      (BQVariable|BQVariable)[Option=_,AstName=_,AstType=astType] -> {
-        return `astType;
-      }
-
-      term@BQAppl[Option=_,AstName=astName,Args=_] -> {
-        //lundi: il faut creer une fonction pour recuperer le tom type 
-        //return term.getType(astName);
-      }
-    }
-      throw new TomRuntimeException("Bad term in constraint: " + bqTerm);
-  }
-
-  /**
-   * Replace variables that are already instantiated before. So, this happens
-   * when having a %match inside the action (right hand-side) of another
-   * external %match and both use variables with the same name
-   */
-  private tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
-    try {
-      return `TopDownStopOnSuccess(replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
-    } catch(tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
-    }
-  }
-
-  %strategy replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
-    visit TomTerm {
-      subject -> {
-        %match(subject, instantiatedVariable) {
-          RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
-            System.out.println("RecordAppl, opNameAST = " + `opNameAST);
-            return `var;
-          }
-          Variable[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
-            System.out.println("Variable, opNameAST = " + `opNameAST);
-            return `var;
-          }
-          VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
-            System.out.println("VariableStar, opNameAST = " + `opNameAST);
-            return `var;
-          }
-        }
-      }
-    }
-  }
-
-  // TOCHECK
-  private MappingList resolveTypeConstraints(MappingList
-      emptyMapping,TypeConstraintList typeConstraints) {
-    return `concMapping();
-  }
-
-  // TOCHECK
-  private ConstraintInstructionList
-    typeConstraintInstructionList(ConstraintInstructionList
-        constraintInstructionList, MappingList listOfMappings) {
-    return `concConstraintInstruction();
-    }
+  // ------------------------------------------------------------
+  %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../library/mapping/java/util/types/HashMap.tom}
+  // ------------------------------------------------------------
 
   /**
    * If a variable with a type X is found, then all the variables that have the same name and 
    * with type 'unknown' get this type
    *  - apply this for each rhs
    */
-  // TOCHECK
-  protected Code propagateVariablesTypes(Code workingTerm){
+  protected Code propagateVariablesTypes(Code workingTerm) {
     try{
       return `TopDown(ProcessRhsForVarTypePropagation()).visitLight(workingTerm);  
     } catch(tom.library.sl.VisitFailure e) {
@@ -427,77 +108,454 @@ public class KernelTyper {
     }
   }
 
-  // TOCHECK
   %strategy ProcessRhsForVarTypePropagation() extends Identity() {
     visit ConstraintInstruction {
-      ConstraintInstruction(constr,action,option) -> {
+      c@ConstraintInstruction(constr,_,_) -> {
         HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
         `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
-        Constraint c = `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
-        return `ConstraintInstruction(c,action,option);
-      }
-    }
-  }  
-
-  // TOCHECK
-  %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
-    visit TomTerm {       
-      //Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
-        //if(`type!=SymbolTable.TYPE_UNKNOWN) {
-      Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type && !TypeVar[] << type -> {
-          map.put(`name,`type);
+        return `TopDown(PropagateVariablesTypes(varTypes)).visitLight(`c);        
       }
     }
   }
 
-  // TOCHECK
-  %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
-    visit BQTerm {
-      //v@BQVariable[AstName=Name(name),AstType=type] -> {
-        //if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
-      v@BQVariable[AstName=Name(name),AstType=type] && EmptyType[] << type && TypeVar[] << type -> {
-        if (map.containsKey(`name)) {
-          return `v.setAstType((TomType)map.get(`name)); 
+  %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
+    visit TomTerm {       
+      (Variable|VariableStar)[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
+        if(`type!=SymbolTable.TYPE_UNKNOWN) {
+          map.put(`name,`type);
         }
       }
     }
   }
-  
-  private TomType getType(String tomName) {
-    TomType tomType = getSymbolTable().getType(tomName);
-    return tomType;
+
+  %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
+    visit BQTerm {
+      v@(BQVariable|BQVariableStar)[AstName=Name(name),AstType=type] -> {
+        if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
+          if (map.containsKey(`name)) {
+            return `v.setAstType((TomType)map.get(`name)); 
+          }
+        }
+      }
+    }
+    visit TomTerm {
+      v@(Variable|VariableStar)[AstName=Name(name),AstType=type] -> {
+        if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
+          if (map.containsKey(`name)) {
+            return `v.setAstType((TomType)map.get(`name)); 
+          }
+        }
+      }
+    }
+  }
+
+  /*
+   * The "typeVariable" phase types RecordAppl into Variable
+   * we focus on
+   * - Match
+   *
+   * The types of subjects are inferred from the patterns
+   * Type(_,EmptyTargetLanguageType()) are expanded
+   *
+   * Variable and TermAppl are typed in the TomTerm case
+   */
+
+  public <T extends tom.library.sl.Visitable> T typeVariable(TomType contextType, T subject) {
+    if(contextType == null) {
+      throw new TomRuntimeException("typeVariable: null contextType");
+    }
+    try {
+      //System.out.println("typeVariable: " + contextType);
+      //System.out.println("typeVariable subject: " + subject);
+      T res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
+      //System.out.println("res: " + res);
+      return res;
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeVariable: failure on " + subject);
+    }
+  }
+
+  %strategy replace_typeVariable(contextType:TomType,kernelTyper:KernelTyper) extends Fail() {
+
+    visit Option {
+      // cut the traversal
+      subject@OriginTracking[] -> { return `subject; }
+    }
+
+    visit TargetLanguage {
+      // cut the traversal
+      subject@TL[] -> { return `subject; }
+      subject@ITL[] -> { return `subject; }
+      subject@Comment[] -> { return `subject; }
+    }
+
+    visit TomType {
+      // Type(_,EmptyTargetLanguageType()) are expanded
+      subject@Type(tomType,EmptyTargetLanguageType()) -> {
+        TomType type = kernelTyper.getType(`tomType);
+        if(type != null) {
+          return type;
+        } else {
+          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
+        }
+      }
+    }
+
+    visit TomVisit {
+      VisitTerm(type,constraintInstructionList,options) -> {
+        // expands the type (remember that the strategy is applied top-down)
+        TomType newType = `kernelTyper.typeVariable(contextType,`type);
+        HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        // collect one level of MatchConstraint and NumericConstraint
+        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        ConstraintInstructionList newConstraintInstructionList = 
+          kernelTyper.typeConstraintInstructionList(newType,`constraintInstructionList,matchAndNumericConstraints);
+        return `VisitTerm(newType,newConstraintInstructionList,options);
+      }
+    }
+
+    visit Instruction {
+      /*
+       * Expansion of a Match construct
+       * to add types in subjects
+       * to add types in variables of patterns and rhs
+       */
+      Match(constraintInstructionList, options) -> {
+        TomType newType = contextType;
+        HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
+        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        ConstraintInstructionList newConstraintInstructionList = 
+          kernelTyper.typeConstraintInstructionList(newType,`constraintInstructionList,matchAndNumericConstraints);
+        return `Match(newConstraintInstructionList,options);
+      }
+    }
+
+    visit TomTerm {
+      RecordAppl[Options=optionList,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+        TomSymbol tomSymbol = null;
+        if(`tomName.equals("")) {
+          tomSymbol = kernelTyper.getSymbolFromType(contextType);
+          if(tomSymbol==null) {
+            Option ot = TomBase.findOriginTracking(`optionList);
+            TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
+                TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
+          }
+          `nameList = `concTomName(tomSymbol.getAstName());
+        } else {
+          tomSymbol = kernelTyper.getSymbolFromName(`tomName);
+        }
+
+        if(tomSymbol != null) {
+          SlotList subterm = kernelTyper.typeVariableList(tomSymbol, `slotList);
+          ConstraintList newConstraints = kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
+          return `RecordAppl(optionList,nameList,subterm,newConstraints);
+        } else {
+          //System.out.println("contextType = " + contextType);
+
+          %match(contextType) {
+            type@(Type|TypeWithSymbol)[] -> {
+              SlotList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `slotList);
+              ConstraintList newConstraints = kernelTyper.typeVariable(`type,`constraints);
+              return `RecordAppl(optionList,nameList,subterm,newConstraints);
+            }
+
+          }
+        }
+      }
+
+      var@Variable[AstType=Type(tomType,EmptyTargetLanguageType()),Constraints=constraints] -> {
+        TomType localType = kernelTyper.getType(`tomType);
+        //System.out.println("localType = " + localType);
+        if(localType != null) {
+          // The variable has already a known type
+          return `var.setAstType(localType);
+        }
+
+        //System.out.println("contextType = " + contextType);
+        %match(contextType) {
+          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tomType,tlType);
+            ConstraintList newConstraints = kernelTyper.typeVariable(ctype,`constraints);
+            TomTerm newVar = `var.setAstType(ctype);
+            //System.out.println("newVar = " + newVar);
+            return newVar.setConstraints(newConstraints);
+          }
+        }
+      }
+    }
+
+    visit BQTerm {
+
+      BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
+        TomSymbol tomSymbol = null;
+        if(`tomName.equals("")) {
+          try {
+            tomSymbol = kernelTyper.getSymbolFromType(contextType);
+            if(tomSymbol==null) {
+              throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+            }
+            `name = `tomSymbol.getAstName();
+          } catch(UnsupportedOperationException e) {
+            // contextType has no AstType slot
+            tomSymbol = null;
+          }
+        } else {
+          tomSymbol = kernelTyper.getSymbolFromName(`tomName);
+          /*          if (`tomName == "nothing") {
+                      System.out.println("\n tomSymbol of 'nothing' = " + `tomSymbol);
+                      }
+           */
+        }
+
+        if(tomSymbol != null) {
+          BQTermList subterm = kernelTyper.typeVariableList(tomSymbol, `args);
+          return `BQAppl(optionList,name,subterm);
+        } else {
+          //System.out.println("contextType = " + contextType);
+
+          %match(contextType) {
+            (Type|TypeWithSymbol)[] -> {
+              BQTermList subterm = kernelTyper.typeVariableList(`EmptySymbol(), `args);
+              return `BQAppl(optionList,name,subterm);
+            }
+          }
+        }
+      }
+
+      var@BQVariable[AstType=Type(tomType,EmptyTargetLanguageType())] -> {
+        TomType localType = kernelTyper.getType(`tomType);
+        //System.out.println("localType = " + localType);
+        if(localType != null) {
+          // The variable has already a known type
+          return `var.setAstType(localType);
+        }
+
+        //System.out.println("contextType = " + contextType);
+        %match(contextType) {
+          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tomType,tlType);
+            return `var.setAstType(ctype);
+          }
+        }
+      }
+    }
+  }
+
+  /*
+   ** type all elements of the ConstraintInstructionList
+   * @param contextType
+   * @param constraintInstructionList a list of ConstraintInstruction
+   * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
+   */
+  private ConstraintInstructionList typeConstraintInstructionList(TomType contextType, ConstraintInstructionList constraintInstructionList, Collection<Constraint> matchAndNumericConstraints) {
+    %match(constraintInstructionList) {
+      concConstraintInstruction() -> {
+        return constraintInstructionList; 
+      }
+
+      concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
+        try {
+          //System.out.println("\n ConstraintInstruction = " + `c);
+          Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
+          Constraint newConstraint = `TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
+          TomList varList = ASTFactory.makeTomList(lhsVariable);
+          Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
+          newAction = typeVariable(`EmptyType(),`newAction);
+          ConstraintInstructionList newTail = typeConstraintInstructionList(contextType,`tail,matchAndNumericConstraints);
+          return `concConstraintInstruction(ConstraintInstruction(newConstraint,newAction,optionConstraint),newTail*);
+        } catch(VisitFailure e) {
+          throw new TomRuntimeException("should not be there");
+        }
+      }
+    }        
+    throw new TomRuntimeException("Bad ConstraintInstruction: " + constraintInstructionList);
   }
 
   /**
-   * Collect the constraints (match and numeric)
-   * NumericConstraint are %match with explicit type declaration
+   * Try to guess the type for the subjects
+   * @param contextType the context in which the constraint is typed
+   * @param lhsVariable (computed by this strategy) the list of variables that occur in all the lhs 
+   * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
+   * @param kernelTyper the current class
    */
-  /*
-  %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends
-    Fail() {
+  %strategy typeConstraint(TomType contextType, Collection lhsVariable,
+      Collection matchAndNumericConstraints, KernelTyper kernelTyper) extends Fail() {
     visit Constraint {
-      c@(MatchConstraint|NumericConstraint)[] -> {        
-        constrList.add(`c);
-      }      
-    }
-  }
-*/
-  private TomSymbol findSymbol(TomType contextType, String symbolName) {
-    TomSymbol tomSymbol = null;
-    if(symbolName.equals("")) {
-      tomSymbol = this.getSymbolFromType(contextType);
-      if(tomSymbol==null) {
-        throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
-      } 
-      // Add the name found to the name list. But why the "symbolname" (which
-      // is equals to "") is not removed of the nameList???
-    } else {
-      tomSymbol = this.getSymbolFromName(`symbolName);
-    }
-    return tomSymbol;
+      constraint@MatchConstraint[Pattern=pattern,Subject=subject] -> {
+        BQTerm newSubject = `subject;
+        TomType newSubjectType = `EmptyType();
+        %match(subject) {
+          (BQVariable|BQVariableStar)(variableOptions,astName@Name(name),tomType) -> {
+            // tomType may be a Type(_,EmptyTargetLanguageType()) or a type from an typed variable
+            String type = TomBase.getTomType(`tomType);
+            //System.out.println("match type = " + type);
+            if(kernelTyper.getType(`type) == null) {
+              /* the subject is a variable with an unknown type */
+              newSubjectType = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
+              if(newSubjectType != null) {
+                newSubject = `BQVariable(variableOptions,astName,newSubjectType);
+              } else {
+                TomMessage.error(logger,null,0, TomMessage.cannotGuessMatchType,`name);
+                throw new VisitFailure();
+              }
+            } else {
+              newSubject = `subject;
+            }
+            newSubjectType = newSubject.getAstType();
+          }
+
+          t@BQAppl[AstName=n@Name(name),Args=args] -> {
+            TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
+            TomType type = null;
+            if(symbol!=null) {
+              type = TomBase.getSymbolCodomain(symbol);
+              if(type != null) {
+                newSubject = `t;
+              }
+            } else {
+              // unknown function call
+              type = kernelTyper.guessSubjectType(`subject,matchAndNumericConstraints);
+              if(type != null) {
+                newSubject = `FunctionCall(n,type,args);
+              }
+            }
+            if(type == null) {
+              throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+            } else {
+              newSubjectType = type;
+            }                   
+          }
+
+          c@BuildConstant(Name(name)) -> {
+            newSubject = `c;
+            TomSymbol symbol = kernelTyper.getSymbolFromName(`name);
+            TomType type = TomBase.getSymbolCodomain(symbol);
+            if(type!=null) {
+              newSubjectType = type;
+            } else {
+              throw new TomRuntimeException("No type found for name '" + `name + "'");
+            }
+          } 
+        } // end match subject     
+
+        newSubjectType = kernelTyper.typeVariable(contextType,newSubjectType);
+        newSubject = kernelTyper.typeVariable(newSubjectType, newSubject);                  
+        TomTerm newPattern = kernelTyper.typeVariable(newSubjectType, `pattern);
+        TomBase.collectVariable(lhsVariable,newPattern,false);
+        return `constraint.setPattern(newPattern).setSubject(newSubject);               
+      }
+
+      NumericConstraint[Left=lhs,Right=rhs,Type=nct] -> {
+        //System.out.println("\nNumeric constraint = " + `constraint);
+        // if it is numeric, we do not care about the type
+        BQTerm newLhs = kernelTyper.typeVariable(`EmptyType(), `lhs);                  
+        BQTerm newRhs = kernelTyper.typeVariable(`EmptyType(), `rhs);                  
+        return `NumericConstraint(lhs,rhs,nct);
+      }       
+    } 
   }
 
-  private SlotList typeVariableList(TomSymbol symbol, TomTypeList domainType, SlotList subtermList) {
+  private TomType guessSubjectType(BQTerm subject, Collection matchConstraints) {
+    for(Object constr:matchConstraints) {
+      %match(constr) {
+        MatchConstraint(pattern,s) -> {
+          // we want two terms to be equal even if their option is different 
+          // ( because of their position for example )
+matchL:  %match(subject,s) {
+           BQVariable[AstName=astName,AstType=tomType],BQVariable[AstName=astName,AstType=tomType] -> {break matchL;}
+           BQAppl[AstName=astName,Args=tomList],BQAppl[AstName=astName,Args=tomList] -> {break matchL;}
+           _,_ -> { continue; }
+         }
+         TomTerm patt = `pattern;
+         %match(pattern) {
+           AntiTerm(p) -> { patt = `p; }
+         }
+         %match(patt) {
+           (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+             TomSymbol symbol = getSymbolFromName(`name);
+             // System.out.println("name = " + `name);
+             if(symbol != null) {
+               return TomBase.getSymbolCodomain(symbol);
+             }
+           }      
+         }
+        }
+      }
+    }// for    
+    return null;
+  }
+
+  /*
+   * perform type inference of subterms (subtermList)
+   * under a given operator (symbol)
+   */
+  private BQTermList typeVariableList(TomSymbol symbol, BQTermList subtermList) {
+    if(symbol == null) {
+      throw new TomRuntimeException("typeVariableList: null symbol");
+    }
+
+    if(subtermList.isEmptyconcBQTerm()) {
+      return `concBQTerm();
+    }
+
+    //System.out.println("symbol = " + symbol.getastname());
+    %match(symbol, subtermList) {
+      symb@EmptySymbol(), concBQTerm(head,tail*) -> {
+        /*
+         * if the top symbol is unknown, the subterms
+         * are typed in an empty context
+         */
+        BQTermList sl = typeVariableList(`symb,`tail);
+        return `concBQTerm(typeVariable(EmptyType(),head),sl*);
+      }
+
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,Type(tomCodomain,tlCodomain))],
+        concBQTerm(head,tail*) -> {
+          //System.out.println("codomain = " + `codomain);
+          // process a list of subterms and a list of types
+          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
+            /*
+             * todo:
+             * when the symbol is an associative operator,
+             * the signature has the form: list conc( element* )
+             * the list of types is reduced to the singleton { element }
+             *
+             * consider a pattern: conc(e1*,x,e2*,y,e3*)
+             *  assign the type "element" to each subterm: x and y
+             *  assign the type "list" to each subtermlist: e1*,e2* and e3*
+             */
+
+            //System.out.println("listoperator: " + `symb);
+            //System.out.println("subtermlist: " + subtermList);
+            //System.out.println("slotAppl: " + `slotAppl);
+
+            %match(head) {
+              BQVariableStar[Options=optionList,AstName=name] -> {
+                BQTermList sl = typeVariableList(`symb,`tail);
+                return `concBQTerm(BQVariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName)),sl*);
+              }
+              _ -> {
+                //we cannot know the type precisely (the var can be of domain or codomain type)
+                BQTermList sl = typeVariableList(`symb,`tail);
+                return `concBQTerm(typeVariable(EmptyType(), head),sl*);
+              }
+            }
+          } else {
+            BQTermList sl = typeVariableList(`symb,`tail);
+            //TODO: find the correct type of this argument (using its rank)
+            return `concBQTerm(typeVariable(EmptyType(), head),sl*);
+          }
+        }
+    }
+    throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
+  }
+
+
+  /*
+   * perform type inference of subterms (subtermList)
+   * under a given operator (symbol)
+   */
+  private SlotList typeVariableList(TomSymbol symbol, SlotList subtermList) {
     if(symbol == null) {
       throw new TomRuntimeException("typeVariableList: null symbol");
     }
@@ -506,105 +564,110 @@ public class KernelTyper {
       return `concSlot();
     }
 
-    %match(symbol, domainType, subtermList) {
-      //TODO
-      symb@emptySymbol(), concTomType(firstDomainType,tail1*),
-        concSlot(PairSlotAppl(slotName,slotAppl),tail2*) -> {
+    //System.out.println("symbol = " + symbol.getastname());
+    %match(symbol, subtermList) {
+      symb@EmptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
         /*
          * if the top symbol is unknown, the subterms
          * are typed in an empty context
          */
-        SlotList sl = typeVariableList(`symb,`tail1*,`tail2);
-        TomType typeVar = this.getFreshTypeVar();
-        this.addConstraints(`Equation(typeVar,firstDomainType));
-        //return
-        //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),NewTerm(slotAppl,typeVar))),sl*);
+        SlotList sl = typeVariableList(`symb,`tail);
+        return `concSlot(PairSlotAppl(slotName,typeVariable(EmptyType(),slotAppl)),sl*);
       }
 
-      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(_,codomain@Type(tomCodomain,tlCodomain))], concTomType(firstDomainType,tail1*),
-        concSlot(PairSlotAppl(slotName,slotAppl),tail2*) -> {
-          TomType typeVar = this.getFreshTypeVar();
+      symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
+        concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+          //System.out.println("codomain = " + `codomain);
+          // process a list of subterms and a list of types
           if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
             /*
-             * todo
+             * todo:
              * when the symbol is an associative operator,
              * the signature has the form: list conc( element* )
              * the list of types is reduced to the singleton { element }
              *
              * consider a pattern: conc(e1*,x,e2*,y,e3*)
-             * assign the type "element" to each subterm: x and y
-             * assign the type "list" to each subtermlist: e1*,e2* and e3*
-             * assign the type "list" to each subtermlist: conc(...)
+             *  assign the type "element" to each subterm: x and y
+             *  assign the type "list" to each subtermlist: e1*,e2* and e3*
              */
+
+            //System.out.println("listoperator: " + `symb);
+            //System.out.println("subtermlist: " + subtermList);
+            //System.out.println("slotAppl: " + `slotAppl);
+
             %match(slotAppl) {
-              /**
-               * Continuation of CT-STAR rule (applying to premises):
-               * IF found "l(e1,...,en,x*):AA" and "l:T*->TT" exists in SymbolTable
-               * THEN infers type of both sublist "l(e1,...,en)" and last argument
-               *      "x", where "x" represents a list with
-               *      head symbol "l"
-               *
-               */
-              VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
-                this.addConstraints(`Equation(typeVar,codomain));
-                SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),constraints)),sl*);
+              VariableStar[Options=optionList,AstName=name,Constraints=constraints] -> {
+                ConstraintList newconstraints = typeVariable(`codomain,`constraints);
+                SlotList sl = typeVariableList(`symb,`tail);
+                return `concSlot(PairSlotAppl(slotName,VariableStar(optionList,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
               }
 
-              UnamedVariableStar[Option=option,Constraints=constraints] -> {
-                this.addConstraints(`Equation(typeVar,codomain));
-                SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                //return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,constraints)),sl*);
-              }
-
-              /**
-               * Continuation of CT-MERGE rule (applying to premises):
-               * IF found "l(e1,...,en,e):AA" and "l:T*->TT" exists in SymbolTable
-               * THEN infers type of both sublist "l(e1,...,en)" and last argument
-               *      "e", where "e" represents a list with
-               *      head symbol "l"
-               *
-               */
-              RecordAppl[Option=_,NameList=concTomName(Name(tomName),_),Slots=_,Constraints=_] -> {
-                TomSymbol tomSymbol = this.findSymbol(`firstDomainType,`tomName);
-                if (`symb == tomSymbol) {
-                  SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                  //return 
-                  //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
-                }
-              }
-                             
-              /**
-               * Continuation of CT-ELEM rule (applying to premises which are
-               * not lists):
-               * IF found "l(e1,...en,e):AA" and "l:T*->TT" exists in SymbolTable
-               * THEN infers type of both sublist "l(e1,...,en)" and last argument
-               *      "e" and adds a type constraint "A = T" for the last
-               *      argument, where "A" is a fresh type variable  and
-               *      "e" does not represent a list with head symbol "l"
-               */
               _ -> {
-                this.addConstraints(`Equation(typeVar,firstDomainType));
-                SlotList sl = typeVariableList(`symb,domainType,`tail2);
-                //return 
-                //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(firstDomainType,NewTerm(slotAppl,typeVar))),sl*);
+                TomType domaintype = `typelist.getHeadconcTomType();
+                SlotList sl = typeVariableList(`symb,`tail);
+                SlotList res = `concSlot(PairSlotAppl(slotName,typeVariable(domaintype, slotAppl)),sl*);
+                //System.out.println("domaintype = " + domaintype);
+                //System.out.println("res = " + res);
+                return res;
+
               }
             }
-          } 
-          /**
-           * Continuation of CT-FUN rule (applying to premises):
-           * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
-           * THEN infers type of arguments and adds a type constraint "Ai =
-           *      Ti" for each argument, where "Ai" is a fresh type variable
-           */
-          else {
-            this.addConstraints(`Equation(typeVar,firstDomainType));
-            SlotList sl = typeVariableList(`symb,`tail1,`tail2);
-            //return
-            //  `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName),NewTerm(slotAppl,typeVar))),sl*);
+          } else {
+            SlotList sl = typeVariableList(`symb,`tail);
+            return `concSlot(PairSlotAppl(slotName,typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
           }
         }
     }
     throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
   }
-} 
+
+  // Strategy called when there exist a %match with another one (or more) %match
+  // inside it, so tthe strategy links all variables which have the same name
+  %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
+    visit TomTerm {
+      subject -> {
+        %match(subject, instantiatedVariable) {
+          RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            //System.out.println("RecordAppl, opNameAST = " + `opNameAST);
+            return `var;
+          }
+          Variable[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+            //System.out.println("Variable, opNameAST = " + `opNameAST);
+            return `var;
+          }
+          VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
+            //System.out.println("VariableStar, opNameAST = " + `opNameAST);
+            return `var;
+          }
+        }
+      }
+    }
+  }
+
+  protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
+    try {
+      //System.out.println("\nvarlist = " + instantiatedVariable);
+      //System.out.println("\nsubject = " + subject);
+      return `TopDownStopOnSuccess(replace_replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
+    }
+  }
+
+  private TomType getType(String tomName) {
+    return getSymbolTable().getType(tomName);
+  }
+
+  /**
+   * Collect the constraints (match and numeric)
+   */
+  %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends Identity() {
+    visit Constraint {
+      c@(MatchConstraint|NumericConstraint)[] -> {        
+        constrList.add(`c);
+        throw new VisitFailure();// to stop the top-down
+      }      
+    }
+  }
+}
+

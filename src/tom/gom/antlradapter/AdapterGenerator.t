@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;

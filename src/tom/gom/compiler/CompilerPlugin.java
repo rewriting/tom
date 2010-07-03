@@ -27,10 +27,8 @@ package tom.gom.compiler;
 import java.util.logging.Level;
 import java.util.Map;
 
-import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
-import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
 import tom.gom.tools.GomEnvironment;
 
@@ -68,11 +66,10 @@ public class CompilerPlugin extends GomGenericPlugin {
       hookList = (HookDeclList) arg[1];
       setGomEnvironment((GomEnvironment) arg[2]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{
-            "GomCompiler", "[ModuleList,HookDeclList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+      GomMessage.error(getLogger(), null, 0, 
+          GomMessage.invalidPluginArgument, "GomCompiler", 
+          "[ModuleList,HookDeclList,GomEnvironment]", 
+          getArgumentArrayString(arg));
     }
   }
 
@@ -86,17 +83,15 @@ public class CompilerPlugin extends GomGenericPlugin {
     Compiler compiler = new Compiler(getGomEnvironment());
     classList = compiler.compile(moduleList,hookList);
     if (null == classList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.compilationIssue.getMessage(),
+      GomMessage.error(getLogger(), null, 0, GomMessage.compilationIssue, 
           getStreamManager().getInputFileName());
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(classList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-      getLogger().log(Level.FINE, "Compiled Modules:\n{0}",swriter);
-      getLogger().info("GOM Compilation phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+        GomMessage.fine(getLogger(), null, 0, GomMessage.compiledModules, swriter);
+        GomMessage.info(getLogger(), null, 0, GomMessage.gomCompilationPhase, 
+            (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());

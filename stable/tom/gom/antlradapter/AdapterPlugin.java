@@ -84,7 +84,6 @@ public class AdapterPlugin extends GomGenericPlugin {
    */
   public void run(Map<String,String> informationTracker) {
     long startChrono = System.currentTimeMillis();
-    boolean intermediate = getOptionBooleanValue("intermediate");
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");

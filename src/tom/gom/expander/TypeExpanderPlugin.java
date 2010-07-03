@@ -64,8 +64,8 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       moduleList = (GomModuleList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
           new Object[]{"TypeExpander", "[GomModuleList,GomEnvironment]",
             getArgumentArrayString(arg)});
     }
@@ -81,17 +81,16 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     TypeExpander typer = new TypeExpander(getGomEnvironment());
     typedModuleList = typer.expand(moduleList);
     if (null == typedModuleList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.expansionIssue.getMessage(),
-          getStreamManager().getInputFileName());
+      GomMessage.error(getLogger(),
+        getStreamManager().getInputFileName(),0,
+        GomMessage.expansionIssue);
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(typedModuleList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-      getLogger().log(Level.FINE, "Typed Modules:\n{0}",swriter);
-      getLogger().info("GOM Type Expansion phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+      GomMessage.fine(getLogger(), null, 0, GomMessage.typedModules, swriter);
+      GomMessage.info(getLogger(), null, 0, GomMessage.gomTypeExpansionPhase, 
+          (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPED_SUFFIX, typedModuleList);
@@ -101,17 +100,16 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList,getGomEnvironment());
     typedHookList = hooktyper.expand(moduleList);
     if (null == typedHookList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.hookExpansionIssue.getMessage(),
-          getStreamManager().getInputFileName());
+      GomMessage.error(getLogger(),
+          getStreamManager().getInputFileName(),0,
+        GomMessage.hookExpansionIssue);
     } else {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try{ tom.library.utils.Viewer.toTree(typedHookList,swriter); }
       catch(java.io.IOException e) { e.printStackTrace(); }
-      getLogger().log(Level.FINE, "Typed Hooks:\n{0}",swriter);
-      getLogger().info("GOM Hook expansion phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+      GomMessage.fine(getLogger(), null, 0, GomMessage.typedHooks, swriter);
+      GomMessage.info(getLogger(), null, 0, GomMessage.gomHookExpansionPhase, 
+          (System.currentTimeMillis()-startChrono));
       if (intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
             + TYPEDHOOK_SUFFIX, typedHookList);

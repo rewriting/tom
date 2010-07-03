@@ -28,20 +28,23 @@ package tom.gom.expander.rule;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.tree.Tree;
-import java.util.logging.Level;
+
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Logger;
+
+import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
+import tom.gom.SymbolTable;
+import tom.gom.GomMessage;
+
 import tom.gom.adt.gom.types.*;
 import tom.gom.adt.rule.RuleAdaptor;
 import tom.gom.adt.rule.types.*;
 import tom.gom.adt.rule.types.term.*;
 import tom.gom.adt.objects.types.ClassName;
-import tom.gom.tools.error.GomRuntimeException;
-import tom.gom.tools.GomEnvironment;
+
 import tom.library.sl.*;
-import tom.gom.SymbolTable;
 
 public class GraphRuleExpander {
 
@@ -100,8 +103,7 @@ public class GraphRuleExpander {
       Tree ast = (Tree)parser.graphruleset().getTree();
       rulelist = (RuleList) RuleAdaptor.getTerm(ast);
     } catch (org.antlr.runtime.RecognitionException e) {
-      getLogger().log(Level.SEVERE, "Cannot parse rules",
-          new Object[]{});
+      GomMessage.error(getLogger(), null, 0, GomMessage.rulesParsingFailure);
       return `ConcHookDecl();
     }
     return expand(rulelist,stratname,defaultstrat,sdecl);
@@ -696,8 +698,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             path = `PathTerm(path*,head);
           }
           //transform the path to obtain the corresponding one in the pattern
-          Term newpath = `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
-          return newpath;
+          return `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
         }
       }
     }

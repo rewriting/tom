@@ -59,6 +59,8 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator. Possible value: \"shared\"' value='shared' attrName='type' />" +
+    "<boolean name='newtyper' altName='nt' description='New TyperPlugin (not activated by default)' value='false'/>" +
+    "<boolean name='newparser' altName='np' description='New parser plugin (not activated by default)' value='false'/>" +
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
@@ -85,10 +87,10 @@ public class BackendPlugin extends GomGenericPlugin {
       classList = (GomClassList)arg[0];
       setGomEnvironment((GomEnvironment)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE,
-          GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomBackend", "[GomClassList,GomEnvironment]",
-            getArgumentArrayString(arg)});
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.invalidPluginArgument,
+          "GomBackend", "[GomClassList,GomEnvironment]",
+          getArgumentArrayString(arg));
     }
   }
 
@@ -110,7 +112,8 @@ public class BackendPlugin extends GomGenericPlugin {
       }
       tomHomePath = new File(tomHome).getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
+      GomMessage.finer(getLogger(),null,0, GomMessage.getCanonicalPathFailure,
+          tomHome);
     }
     int generateStratMapping = 0;
     if (getOptionBooleanValue("withCongruenceStrategies")) {
@@ -124,17 +127,16 @@ public class BackendPlugin extends GomGenericPlugin {
     boolean jmicompatible = getOptionBooleanValue("jmicompatible");
     Backend backend =
       new Backend(templateFactory.getFactory(getOptionManager()),
-                  tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
-                  getStreamManager().getImportList(),getGomEnvironment());
+          tomHomePath, generateStratMapping, multithread, nosharing, jmicompatible,
+          getStreamManager().getImportList(),getGomEnvironment());
     backend.generate(classList);
     if (null == classList) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.generationIssue.getMessage(),
+      GomMessage.error(getLogger(),null,0,
+          GomMessage.generationIssue,
           getStreamManager().getInputFileName());
     } else {
-      getLogger().info("GOM Code generation phase ("
-          + (System.currentTimeMillis()-startChrono)
-          + " ms)");
+      GomMessage.info(getLogger(), null, 0, GomMessage.gomGenerationPhase, 
+          (System.currentTimeMillis()-startChrono));
     }
     informationTracker.put(KEY_LAST_GEN_MAPPING,getGomEnvironment().getLastGeneratedMapping());
   }

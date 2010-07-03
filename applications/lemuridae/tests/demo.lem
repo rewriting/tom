@@ -1,0 +1,40 @@
+rule subset(A,B) -> forall x, In(x,A) => In(x,B).
+proof th1: forall A, subset(A,A).
+auto.
+display th1.
+
+
+rule N(n) -> forall p, eps(0,p) => (forall m, eps(m,p) => eps(succ(m),p)) => eps(n,p).
+H.
+
+termrule plus(0,x) -> x.
+termrule plus(succ(x),y) -> succ(plus(x,y)).
+
+reduce term (3+4).
+
+proprule eq(0,0) -> True.
+proprule eq(0,succ(x)) -> False.
+proprule eq(succ(x),0) -> False.
+proprule eq(succ(x),succ(y)) -> eq(x,y).
+
+reduce proposition eq(3,3).
+
+proprule eps(n,c()) -> eq(plus(n,0),n).
+
+proof th2: forall n, N(n) => eq(plus(n,0),n).
+intros.
+focus h1. rule. c().
+reduce.
+axiom.
+rule.
+reduce.
+axiom.
+reduce.
+intro.
+//display th2.
+
+termrule plus(0,n) -> n.
+
+reduce term 3+0.
+
+proofterm th2.

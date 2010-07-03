@@ -65,8 +65,7 @@ public class GomEnvironment {
   }
 
   public ModuleDeclList getModuleDependency(ModuleDecl module) {
-    ModuleDeclList modulesDecl = importedModules.get(module);
-    return modulesDecl;
+    return importedModules.get(module);
   }
   public void addModuleDependency(ModuleDecl module, ModuleDeclList imported) {
     importedModules.put(module,imported);

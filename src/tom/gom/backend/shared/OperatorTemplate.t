@@ -78,10 +78,6 @@ public class OperatorTemplate extends TemplateHookedClass {
         "Bad argument for OperatorTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
 
 writer.write(
@@ -324,12 +320,10 @@ writer.write(%[
      */
     @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
     /* return 0 for equality */
-    if (ao == this)
-      return 0;
+    if (ao == this) { return 0; }
     /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
-    if (symbCmp != 0)
-      return symbCmp;
+    if (symbCmp != 0) { return symbCmp; }
     /* compare the childs */
     @genCompareChilds("ao","compareToLPO")@
     throw new RuntimeException("Unable to compare");
@@ -356,17 +350,14 @@ writer.write(%[
      */
     @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
     /* return 0 for equality */
-    if (ao == this)
-      return 0;
+    if (ao == this) { return 0; }
     /* use the hash values to discriminate */
 
-    if(hashCode != ao.hashCode())
-      return (hashCode < ao.hashCode())?-1:1;
+    if(hashCode != ao.hashCode()) { return (hashCode < ao.hashCode())?-1:1; }
 
     /* If not, compare the symbols : back to the normal order */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
-    if (symbCmp != 0)
-      return symbCmp;
+    if (symbCmp != 0) { return symbCmp; }
     /* last resort: compare the childs */
     @genCompareChilds("ao","compareTo")@
     throw new RuntimeException("Unable to compare");

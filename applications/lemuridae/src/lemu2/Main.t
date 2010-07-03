@@ -33,7 +33,7 @@ public class Main {
       res += "\n";
       res += "  typechecks LKM1 eta-long : " + LKM1EtaLongTypeChecker.typecheck(pt,pr);
       res += "\n";
-      res += "  typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pr);
+      res += "  typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pfr);
       res += "\n";
     }
     return res;
@@ -45,15 +45,21 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LemuParser parser = new LemuParser(tokens);
       TermRewriteRules rrules = parser.termmodulo().convert();
-      System.out.println(Pretty.pretty(rrules.export()));
+      //System.out.println(Pretty.pretty(rrules.export()));
       PropRewriteRules prules = parser.propmodulo().convert();
-      System.out.println(Pretty.pretty(prules.export()));
+      //System.out.println(Pretty.pretty(prules.export()));
       PropRewriteRules pfrules = parser.propfold().convert();
-      System.out.println(Pretty.pretty(pfrules.export()));
-      PropRewriteRules psrules = parser.propsuper().convert();
-      System.out.println(Pretty.pretty(psrules.export()));
+      //System.out.println(Pretty.pretty(pfrules.export()));
+      //PropRewriteRules psrules = parser.propsuper().convert();
+      //System.out.println(Pretty.pretty(psrules.export()));
       ProofTerm pt = parser.proofterm().convert();
+      
+      
+      //System.out.println(Pretty.toDoc(pt.export()));
+      //System.exit(0);
+      
       System.out.println(Pretty.pretty(pt.export()));
+      //System.out.println(Pretty.lpretty(pt.export()));
       System.out.println();
 			//Latex.display(pt.export());
       Pretty.setChurchStyle(false);
@@ -75,6 +81,9 @@ public class Main {
       System.out.println("typechecks LKF           : " + LKFTypeChecker.typecheck(pt,pfrules));
       System.out.println();
       PropRewriteRules rulesunion = `proprrules(prules*,pfrules*);
+
+
+
       ProofTerm pt_eta = LKMtoLKF.convert(pt,rulesunion);
       System.out.println("conversion: " + Pretty.pretty(pt_eta.export()));
 			//Latex.display(pt_eta.export());
@@ -94,7 +103,8 @@ public class Main {
       System.out.println("to coq               : " + Pretty.pretty(LambdaMutoCoq.convert(pure_lmu_eta).export()));
 
 
-      /* lambda-bar mu mu~ reduction of the translation */
+      // lambda-bar mu mu~ reduction of the translation
+      /*
       LMMTerm pure_lmm = LKFtoLambdaBarMuMuTF.convert(pt);
       System.out.println("before reduction : " + Pretty.pretty(pure_lmm.export()));
       System.out.println("reducts : ");
@@ -107,7 +117,8 @@ public class Main {
         }
       }
       System.out.println("(" + buf.length() + " normal forms)");
-      
+      */
+
       /* urban reduction */
       System.out.println();
       System.out.println("normal forms :");

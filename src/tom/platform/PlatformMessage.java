@@ -34,5 +34,7 @@ package tom.platform;
 public interface PlatformMessage {
 
   public String getMessage();
+  public String getMessageName();
+  public void setMessageName(String name);
 
-} // Interface PlatformMessage
+}

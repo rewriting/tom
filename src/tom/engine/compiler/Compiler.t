@@ -1,6 +1,6 @@
 /*
- *
- * TOM - To One Matching Compiler
+ * 
+ * TOM - To One Matching Expander
  * 
  * Copyright (c) 2000-2010, INPL, INRIA
  * Nancy, France.
@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
 import tom.engine.adt.tomconstraint.types.*;
 import java.util.*;
+
 import tom.engine.tools.ASTFactory;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import tom.platform.OptionParser;
@@ -118,11 +119,11 @@ public class Compiler extends TomGenericPlugin {
     }
 
     public TomNumberList getRootpath() {
-      return this.rootpath;
-    }
-
-    public void setRootpath(TomNumberList rootpath) {
-      this.rootpath = rootpath;
+      if(this.rootpath==null) {
+        return `concTomNumber();
+      } else {
+        return this.rootpath;
+      }
     }
 
     public int getMatchNumber() {
@@ -176,33 +177,37 @@ public class Compiler extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
-      Code compiledTerm = compile((Code)getWorkingTerm(),getStreamManager().getSymbolTable());
+      getCompilerEnvironment().setSymbolTable(getStreamManager().getSymbolTable());
+
+      Code code = (Code)getWorkingTerm();
+      code = addACFunctions(code);      
+
+      // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
+      Code compiledTerm = `TopDown(CompileMatch(this)).visitLight(code);
+
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       Code renamedTerm = `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      // add the aditional functions needed by the AC operators
-      renamedTerm = addACFunctions(renamedTerm);      
+      // add the additional functions needed by the AC operators
+      //renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
       }
-      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
-          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
+      TomMessage.info(getLogger(),null,0,TomMessage.tomCompilationPhase,
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );
+      String fileName = getStreamManager().getInputFileName();
+        TomMessage.error(getLogger(),
+            fileName, 0,
+            TomMessage.exceptionMessage, 
+            fileName, "Compiler", e.getMessage());
       e.printStackTrace();
     }
   }
 
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
-  }
-
-  public Code compile(Code termToCompile,SymbolTable symbolTable) throws VisitFailure {
-    getCompilerEnvironment().setSymbolTable(symbolTable);
-    // we use TopDown and not TopDownIdStopOnSuccess to compile nested-match
-    return `TopDown(CompileMatch(this)).visitLight(termToCompile);		
   }
 
   // looks for a 'Match' instruction:
@@ -236,7 +241,7 @@ public class Compiler extends TomGenericPlugin {
               Expression preGeneratedExpr = preGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = compiler.getCompilerEnvironment().getConstraintGenerator().performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
-              TomNumberList path = compiler.getRootpath();
+              TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
               TomNumberList numberList = `concTomNumber(path*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
@@ -282,7 +287,7 @@ public class Compiler extends TomGenericPlugin {
               MatchConstraint(renamedSubj,ExpressionToBQTerm(Cast(freshSubjectType,BQTermToExpression(freshVar)))),
               newConstraint);
         }
-        TomNumberList path = compiler.getRootpath();
+        TomNumberList path = compiler.getCompilerEnvironment().getRootpath();
         TomName freshSubjectName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshSubject_" + compiler.getCompilerEnvironment().genFreshSubjectCounter()))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
@@ -312,7 +317,7 @@ public class Compiler extends TomGenericPlugin {
     }
   }
 
-  private BQTerm getUniversalObjectForSubject(TomType subjectType){    
+  private BQTerm getUniversalObjectForSubject(TomType subjectType) {
     if(getSymbolTable().isBuiltinType(TomBase.getTomType(subjectType))) {
       return getFreshVariable(subjectType);
     } else {
@@ -346,10 +351,6 @@ public class Compiler extends TomGenericPlugin {
   /**
    * helper functions - mostly related to free var generation
    */
-
-  public TomNumberList getRootpath() {
-    return getCompilerEnvironment().getRootpath();
-  }
 
   public SymbolTable getSymbolTable() {
     return getCompilerEnvironment().getSymbolTable();
@@ -389,7 +390,7 @@ public class Compiler extends TomGenericPlugin {
   }
 
   private BQTerm getVariableName(String name, TomType type) {
-    TomNumberList path = getRootpath();
+    TomNumberList path = getCompilerEnvironment().getRootpath();
     TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `BQVariable(concOption(),freshVarName,type);
   }
@@ -405,7 +406,7 @@ public class Compiler extends TomGenericPlugin {
   }
 
   private BQTerm getVariableStarName(String name, TomType type) {
-    TomNumberList path = getRootpath();
+    TomNumberList path = getCompilerEnvironment().getRootpath();
     TomName freshVarName = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `BQVariableStar(concOption(),freshVarName,type);
   }
@@ -432,21 +433,31 @@ public class Compiler extends TomGenericPlugin {
 
     visit Instruction {
       CompiledPattern(patternList,instruction) -> {
-        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
+        // only variables found in LHS that are not already used in some constraint's RHS 
+        // have to be renamed (this avoids that the JAVA ones are renamed)
         Collection newContext = new HashSet();
-        `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
+        Collection rhsContext = new HashSet();
+        `TopDownCollect(CollectLHSVars(newContext,rhsContext)).visitLight(`patternList);        
         newContext.addAll(context);
         return `TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
       }
     }  
   }  
 
-  %strategy CollectLHSVars(Collection bag) extends Identity() {
+  %strategy CollectLHSVars(Collection bag, Collection alreadyInRhs) extends Identity() {
     visit Constraint {
-      MatchConstraint(p,_) -> {        
+      MatchConstraint(p,s) -> {          
+        
+        Map rhsMap = TomBase.collectMultiplicity(`s);
+        alreadyInRhs.addAll(rhsMap.keySet());
+        
         Map map = TomBase.collectMultiplicity(`p);
         Collection newContext = new HashSet(map.keySet());
-        bag.addAll(newContext);
+        for (Object o:newContext) {
+          if (!alreadyInRhs.contains(o)) {
+            bag.add(o);       
+          }
+        }        
         throw new VisitFailure();// to stop the top-down
       }
     }
@@ -524,7 +535,7 @@ public class Compiler extends TomGenericPlugin {
 
   %strategy CollectACSymbols(HashSet bag) extends Identity() {
     visit TomTerm {
-      RecordAppl[NameList=(Name(headName),_*),Option=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
+      RecordAppl[NameList=(Name(headName),_*),Options=concOption(_*,MatchingTheory(concElementaryTheory(_*,AC(),_*)),_*)] -> { 
         bag.add(`headName);
       }
     }

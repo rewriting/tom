@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import tom.gom.Gom;
+import tom.gom.GomMessage;
 import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
@@ -57,10 +58,6 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   %include { ../adt/objects/Objects.tom }
   %include { boolean.tom }
-
-  public /*synchronized*/ GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
@@ -108,14 +105,16 @@ public abstract class TemplateHookedClass extends TemplateClass {
       /* We need to call Tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
-        getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
+        GomMessage.finer(getLogger(),null,0,
+            GomMessage.getCanonicalPathFailure, xmlFile.getPath());
       }
       String file_path = null;
       try {
         File output = fileToGenerate();
         file_path = output.getCanonicalPath();
       } catch (IOException e) {
-        getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
+        GomMessage.finer(getLogger(),null,0,
+            GomMessage.getCanonicalPathFailure, fileName());
       }
 
       ArrayList<String> tomParams = new ArrayList<String>();
@@ -128,11 +127,18 @@ public abstract class TemplateHookedClass extends TemplateClass {
           tomParams.add(importPath);
         }
       } catch (IOException e) {
-        getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.importListComputationFailure, e.getMessage());
       }
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
+      if(Boolean.TRUE == optionManager.getOptionValue("newtyper")) {
+        tomParams.add("--newtyper");
+      }
+      if(Boolean.TRUE == optionManager.getOptionValue("newparser")) {
+        tomParams.add("--newparser");
+      }
       if(Boolean.TRUE == optionManager.getOptionValue("optimize")) {
         tomParams.add("--optimize");
       }
@@ -180,17 +186,19 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
         int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]));
         if (!tmpFile.delete()) {
-          getLogger().log(Level.SEVERE, "Could not delete temporary file " + tmpFile.getPath());
+          GomMessage.error(getLogger(),null,0, 
+              GomMessage.impossibleToDeleteTmpFile, tmpFile.getPath());
         }
 
         //int res = tom.engine.Tom.exec(tomParams.toArray(new String[0]),informationTracker);
         if (res != 0 ) {
-          getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
+          GomMessage.error(getLogger(),null,0,
+              tom.gom.GomMessage.tomFailure, file_path);
           return res;
         }
       } catch (IOException e) {
-        getLogger().log(Level.SEVERE,
-            "Failed generate Tom code: " + e.getMessage());
+        GomMessage.error(getLogger(),null,0,
+            GomMessage.tomCodeGenerationFailure, e.getMessage());
       }
 
     } else {

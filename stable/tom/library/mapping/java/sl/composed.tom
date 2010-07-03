@@ -28,12 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  **/
+
 /*
- * complex strategies
+ * composed strategies
  */
 
 %op Strategy Try(s1:Strategy) {
-  make(v) {( `Choice(v,Identity()) )}
+  make(s) {( `Choice(s,Identity()) )}
+}
+
+/*
+ * Repeat(s) = (s ; Repeat(s)) <+ id
+ * Repeat(s) = mu x.(s ; x) <+ id
+ */
+%op Strategy Repeat(s1:Strategy) {
+  make(s) {( `mu(MuVar("_x"),Choice(Sequence(s,MuVar("_x")),Identity())) )}
 }
 
 
@@ -86,10 +95,6 @@
   // the following optimized version is not correct
   //make(v) {( `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) )}
   make(v) {( `Repeat(OnceTopDown(v)) )}
-}
-
-%op Strategy Repeat(s1:Strategy) {
-  make(v) {( `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) )}
 }
 
 %op Strategy RepeatId(s1:Strategy) {

@@ -1,0 +1,24 @@
+term modulo { }
+
+prop modulo { }
+
+prop fold { 
+  r : [] A -> A => A
+}
+
+prop super { }
+
+
+rootR(
+  <r:A>cut(
+    <c:A=>A>implyR(
+      <x:A><a:A>cut(
+        <b:A=>A>foldL[r](<y:A=>A>ax(y,b),x),
+        <y:A=>A>implyL(<z:A>ax(z,a),<b:A>ax(x,b),y)),c),
+    <x:A=>A>implyL(
+      <y:A>ax(y,r),
+      <a:A>foldR[r](
+        <c:A=>A>implyR(
+          <x:A><a:A>cut(
+            <b:A=>A>foldL[r](<y:A=>A>ax(y,b),x),
+            <y:A=>A>implyL(<z:A>ax(z,a),<b:A>ax(x,b),y)),c),a),x)))

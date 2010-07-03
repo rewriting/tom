@@ -1,50 +1,26 @@
 module TypeConstraints
 
-imports String TomType 
+imports String TomType TomSignature TomName 
 abstract syntax
 
 /* Type Reconstruction */
-TermToInfer = 
-            /**
-             * TermToInfer set all kind of terms with a fresh type variable
-             * @param Term a tom term (Variable or RecordAppl)
-             * @param TypeVar a type variable
-             */
-            NewTerm(Term: TomTerm, TypeVar: TomType)
-           | TypedTomTerm(Term1: TomTerm, TypeVar: TomType)
-           |TypedBQTerm(Term2: BQTerm, TypeVar: TomType)
+Info = PairNameOptions(AstName:TomName,Options:OptionList)
 
-TermToInferList = concTermToInfer(TermToInfer*) 
-
-TypeConstraint = Equation(Type1: TomType, Type2: TomType)
+TypeConstraint = Equation(Type1: TomType, Type2: TomType, Info: Info)
                | Subtype(Type1: TomType, Type2: TomType)
 
 TypeConstraintList = concTypeConstraint(TypeConstraint*)
                    | FalseTypeConstraint()
                    | TrueTypeConstraint()
 
-ReconResult = Pair(Type: TomType, constraints: TypeConstraintList)
+/*
+RichTomType = TypeVariable(Origins:TypeOriginList, TypeName:String,Index:int)
+            | TypeConstant(Origins:TypeOriginList, ConstantType:TomType)
+            | TypeConstantWithSymbol(Origins:TypeOriginList, ConstantType:TomType, RootSymbolName:TomName)
 
-ReconResultList = concReconResult(ReconResult*)
+TypeOrigin = 
+  | TypeOriginTracking(AstName:TomName,Line:int,FileName:String)
+// | ...
 
-Domain = Domain(TomType*)
-       | VariadicDomain(type: TomType)
-
-Signature = Sig(dom: Domain, codom: TomType)
-
-Jugement = Jugement(var: String, type: TomType)
-         | SigOf(fun: String, sig: Signature)
-
-Context = Context(Jugement*)
-
-Mapping = MapsTo(tvar: TomType, type: TomType)
-
-MappingList = concMapping(Mapping*)
-
-//SubstitutionList = SList(Substitution*)
-
-ContextAndResult = CRPair(ctx: Context, res: ReconResult)
-
-ContextAndResultList = CRLPair(ctx: Context, rlist: ReconResultList)
-
-ContextAndConstraints = CCPair(ctx: Context, constraints: ConstraintList)
+TypeOriginList = concTypeOrigin(TypeOrigin*)
+*/

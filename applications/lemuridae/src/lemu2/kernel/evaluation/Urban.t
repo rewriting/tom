@@ -9,6 +9,7 @@ import lemu2.kernel.*;
 import lemu2.util.*;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Collection;
 
 public class Urban {
@@ -21,6 +22,11 @@ public class Urban {
     %match(pt, Name n1) {
       ax(n,cn), n -> {
         return U.`reconame(P,cn1,cn);
+      }
+      falseL(n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,falseL(n1)));
       }
       andL(AndLPrem1(x,px,y,py,M),n), n -> {
         return `cut(
@@ -71,6 +77,9 @@ public class Urban {
             CutPrem2(x,px,substName(M2,n1,cn1,prop,P)));
       }
       // left rules
+      falseL(n) -> {
+        return `falseL(n);
+      }
       andL(AndLPrem1(x,px,y,py,M),n) -> {
         return `andL(
             AndLPrem1(x,px,y,py,substName(M,n1,cn1,prop,P)),n); 
@@ -178,6 +187,9 @@ public class Urban {
             CutPrem2(x,px,substCoName(M2,cn1,n1,prop,P)));
       }
       // left rules
+      falseL(n) -> {
+        return `falseL(n);
+      }
       andL(AndLPrem1(x,px,y,py,M),n) -> {
         return `andL(
             AndLPrem1(x,px,y,py,substCoName(M,cn1,n1,prop,P)),n); 
@@ -245,32 +257,38 @@ public class Urban {
     visit ProofTerm {
       // commuting cut -- non determinism
       cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
-        if (!U.`freshlyIntroducedCoName(M1,a)) 
+        if (!U.`freshlyIntroducedCoName(M1,a)) { 
           c.add(subst(getPosition(),last,
                 `substCoName(M1,a,x,pa,M2)));
-        if (!U.`freshlyIntroducedName(M2,x))
+        }
+        if (!U.`freshlyIntroducedName(M2,x)) {
           c.add(subst(getPosition(),last,
                 `substName(M2,x,a,px,M1)));
+        }
       }
       // axiom cuts -- non determinism 
       cut(CutPrem1(a,_,M),CutPrem2(x,_,ax(x,b))) -> {
-        if (U.`freshlyIntroducedCoName(M,a)) 
+        if (U.`freshlyIntroducedCoName(M,a)) {
           c.add(subst(getPosition(),last,
                 U.`reconame(M,a,b)));
+        }
       }
       cut(CutPrem1(a,_,ax(y,a)),CutPrem2(x,_,M)) -> {
-        if (U.`freshlyIntroducedName(M,x)) 
+        if (U.`freshlyIntroducedName(M,x)) { 
           c.add(subst(getPosition(),last,
                 U.`rename(M,x,y)));
+        }
       }
       // top and bottom cuts
       cut(CutPrem1(a,_,trueR(a)),CutPrem2(x,_,M)) -> {
-        if (U.`freshlyIntroducedName(M,x))
+        if (U.`freshlyIntroducedName(M,x)) {
           c.add(subst(getPosition(),last,`M));
+        }
       }
       cut(CutPrem1(a,_,M),CutPrem2(x,_,falseL(x))) -> {
-        if (U.`freshlyIntroducedCoName(M,a))
+        if (U.`freshlyIntroducedCoName(M,a)) {
           c.add(subst(getPosition(),last,`M));
+        }
       }
       // => cut -- non determinism
       cut(
@@ -334,49 +352,156 @@ public class Urban {
     }
   }
 
-  public static Collection<ProofTerm> reduce(ProofTerm pt) {
-    Collection<ProofTerm> res = new HashSet<ProofTerm>();
-    Collection<ProofTerm> swap;
-    res.add(pt);
-    Collection<ProofTerm> nf = new HashSet<ProofTerm>();
+
+  static class Tree {
+    public ProofTerm pt;
+    public Tree parent;
+    public Tree(ProofTerm a, Tree b) { pt = a; parent = b;}
+    public LinkedList<ProofTerm> chainback() {
+      LinkedList<ProofTerm> res = new LinkedList<ProofTerm>();
+      Tree t = this;
+      do {
+        res.add(t.pt);
+        t = t.parent;
+      } while (t != null);
+      java.util.Collections.reverse(res);
+      return res;
+    }
+    public LinkedList<ProofTerm> checkloop() {
+      LinkedList<ProofTerm> res = new LinkedList<ProofTerm>();
+      res.add(this.pt);
+      Tree t = this.parent;
+      while(t != null) {
+        res.add(t.pt);
+        if (t.pt.equals(this.pt)) {
+          java.util.Collections.reverse(res);
+          return res;
+        } else {
+          t = t.parent;
+        }
+      } 
+      return null;
+    }
+  }
+
+  public static LinkedList<Tree> step(Tree tree) {
     Collection<ProofTerm> tmp = new HashSet<ProofTerm>();
-    Collection<ProofTerm> tmpres = new HashSet<ProofTerm>();
-    do {
-      tmpres.clear();
-      for(ProofTerm t : res) {
-        tmp.clear();
-        try { `TopDown(RStep(tmp,t)).visit(t); }
-        catch (VisitFailure e) { throw new RuntimeException("never happens"); }
-        if (tmp.isEmpty()) {
-          boolean in_nf = false;
-          for (ProofTerm nft: nf) {
-            if (nft.equals(t)) {
-              in_nf = true;
-              break;
-            }
-          }
-          if (!in_nf) {
-            nf.add(t);
-            System.out.println("normal forms so far: " + nf.size());      
+    try { `TopDown(RStep(tmp,tree.pt)).visit(tree.pt); }
+    catch (VisitFailure e) { throw new RuntimeException("never happens"); }
+    LinkedList<Tree> res = new LinkedList<Tree>();
+    for (ProofTerm pt: tmp) {
+      res.add(new Tree(pt,tree));
+    }
+    return res;
+  }
+
+  public static void smartAppend(LinkedList<Tree> l1, LinkedList<Tree> l2) {
+l:  for(Tree t: l2) {
+      for(Tree t1: l1) {
+        if (t.pt.equals(t1.pt)) break l;
+      }
+      l1.add(t);
+    }
+  }
+
+  public static LinkedList<Tree> step(LinkedList<Tree> trees) {
+    LinkedList<Tree> res = new LinkedList<Tree>();
+    for (Tree t: trees) {
+      smartAppend(res,step(t));
+      //res.addAll(step(t));
+    }
+    return res;
+  }
+
+  public static LinkedList<ProofTerm> check(ProofTerm orig, LinkedList<Tree> forest) {
+    for(Tree t: forest) {
+      if(t.pt.equals(orig)) return t.chainback();
+    }
+    return null;
+  }
+
+  public static LinkedList<ProofTerm> checkloop(LinkedList<Tree> forest) {
+    for(Tree t: forest) {
+      LinkedList<ProofTerm> l = t.checkloop();
+      if(l != null) return l;
+    }
+    return null;
+  }
+
+
+  public static Collection<ProofTerm> reduce(ProofTerm pt) {
+
+  /*
+
+    LinkedList<Tree> forest = 
+      new LinkedList<Tree>();
+    forest.add(new Tree(pt,null));
+    while(true) {
+      System.out.println(forest.size() + " leaves");
+      forest = step(forest);
+      //LinkedList<ProofTerm> chain = check(pt,forest);
+      LinkedList<ProofTerm> chain = checkloop(forest);
+      if (chain != null) {
+        System.out.println("found a loop of size " + chain.size());
+        System.out.println("------------------");
+        for (ProofTerm pt1:chain) {
+          System.out.println(Pretty.lpretty(pt1.export()));
+          System.out.println("------------------");
+        }
+        return null;
+      }
+    }
+  }
+  */
+
+  Collection<ProofTerm> res = new HashSet<ProofTerm>();
+  Collection<ProofTerm> swap;
+  res.add(pt);
+  Collection<ProofTerm> nf = new HashSet<ProofTerm>();
+  Collection<ProofTerm> tmp = new HashSet<ProofTerm>();
+  Collection<ProofTerm> tmpres = new HashSet<ProofTerm>();
+  do {
+    tmpres.clear();
+    for(ProofTerm t : res) {
+      tmp.clear();
+      try { `TopDown(RStep(tmp,t)).visit(t); }
+      catch (VisitFailure e) { throw new RuntimeException("never happens"); }
+      if (tmp.isEmpty()) {
+        boolean in_nf = false;
+        for (ProofTerm nft: nf) {
+          if (nft.equals(t)) {
+            in_nf = true;
+            break;
           }
         }
-        for(ProofTerm ptt: tmp) {
-          boolean in_tmpres = false;
-          for(ProofTerm pttr: tmpres) {
-            if(ptt.equals(pttr)) {
-              in_tmpres = true;
-              break;
-            }
-          }
-          if (!in_tmpres) tmpres.add(ptt);
+        if (!in_nf) {
+          nf.add(t);
+          System.out.println("normal forms so far: " + nf.size());      
         }
       }
-      swap = tmpres;
-      tmpres = res;
-      res = swap;
-      System.out.println("intermediate results: " + res.size());
-    } while(res.size()>0);
-    return nf;
-  }
+      for(ProofTerm ptt: tmp) {
+        boolean in_tmpres = false;
+        for(ProofTerm pttr: tmpres) {
+          if(ptt.equals(pttr)) {
+            in_tmpres = true;
+            break;
+          }
+        }
+        if (!in_tmpres) tmpres.add(ptt);
+      }
+    }
+    swap = tmpres;
+    tmpres = res;
+    res = swap;
+    System.out.println("intermediate results: " + res.size());
+    for (ProofTerm x: res) {
+      if (x.equals(pt)) {
+        System.out.println("loop !");
+        return null;
+      }
+    }
+  } while(res.size()>0);
+  return nf;
+}
 }
 

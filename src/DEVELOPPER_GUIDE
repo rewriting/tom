@@ -4,6 +4,56 @@ Tom Developper Guide
 This file explains how the compiler works and should help to understand in
 which part of the compiler particular treatment is done
 
+* Compiler plugins
+------------------
+The compiler is composed of several plugins, which are executed in the following order:
+- Starter
+  initialize the platform and run the others plugins
+
+- Parser
+  parse the input file
+  call gom
+
+- Desugarer
+  update the SymbolTable. For each symbol:
+    add default IsFsym and default Make to symbols
+    replaces 'TermAppl' by its 'RecordAppl' form
+    replaces 'XMLAppl' by its 'RecordAppl' form
+  transforms the input term:
+    replaces  _  by a fresh variable _* by a fresh varstar 
+    replaces 'TermAppl' by its 'RecordAppl' form
+    replaces 'XMLAppl' by its 'RecordAppl' form
+
+- Typer
+  update the SymbolTable. For each symbol and for the input term:
+    typeVariable:
+      replace a TomType(_,EmptyTargetLanguageType()) by its expanded form (TomType)
+      perform type-inference
+    propagateVariablesTypes: in all constraints, if a variable has a type, this
+     type is propaged to all the variables of the constraint
+    replaces 'abc' by concString('a','b','c')
+    TransformBQApp: after typing, transform each BackQuoteTerm into its
+     compiled form (BuildConstant, BuildList, FunctionCall, BuildTerm)
+
+- Type checker
+  traverse the AST and check that variable that appear more than once in the
+  LHS have coherent types
+  Also check that VariableStar appear under a compatible list symbol 
+  Check that visit <type> constructs have a known <type> 
+
+- Expander
+  compiles %strategy
+    generate instrospectors if -gi is activated
+    generate visitLight and visit
+
+- Compiler
+
+- Optimizer
+
+- Backend
+
+
+
 
 * AC Matching
 -------------

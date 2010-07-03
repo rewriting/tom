@@ -17,8 +17,6 @@ rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
 rem
 rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
-rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
-rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
 rem ---------------------------------------------------------------------------
 
 rem Make sure prerequisite environment variables are set

@@ -234,8 +234,7 @@ public class ASTFactory {
   }
 
   public static TomType makeType(String typeNameTom, String typeNametGL) {
-    TomType sortTL  = `TLType(typeNametGL);
-    return `Type(typeNameTom,sortTL);
+    return `Type(typeNameTom,TLType(typeNametGL));
   }
 
     /*
@@ -247,7 +246,7 @@ public class ASTFactory {
                              String value, List optionList) {
     TomTypeList typeList = `concTomType();
     PairNameDeclList pairSlotDeclList = `concPairNameDecl();
-    TomSymbol astSymbol = makeSymbol(value,`Type(sort,EmptyType()),typeList,pairSlotDeclList,optionList);
+    TomSymbol astSymbol = makeSymbol(value,`Type(sort,EmptyTargetLanguageType()),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
 
@@ -304,9 +303,9 @@ public class ASTFactory {
       String key = term.getNameList().getHeadconcTomName().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if(symbol != null) {
-        OptionList optionList = symbol.getOption();
+        OptionList optionList = symbol.getOptions();
         optionList = `concOption(optionList*,DefinedSymbol());
-        symbolTable.putSymbol(key,symbol.setOption(optionList));
+        symbolTable.putSymbol(key,symbol.setOptions(optionList));
         return symbol;
       }
     }

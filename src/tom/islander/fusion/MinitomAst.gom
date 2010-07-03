@@ -119,7 +119,7 @@ BlockList = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActi
           | Include(FileName:String)
           | BlockList( BlockList* )
           | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
-	  | JavaCompilationUnit(expression:Expression)
+      	  //| JavaCompilationUnit(expression:Expression)
 
 SlotList = SlotList(Slot*)
 

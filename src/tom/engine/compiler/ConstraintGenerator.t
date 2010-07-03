@@ -127,8 +127,7 @@ public class ConstraintGenerator {
     // it is done innermost because the expression is also simplified		
     expression = `TopDown(ReplaceSubterms(this)).visitLight(expression);
     // generate automata
-    Instruction automata = generateAutomata(expression,action);    
-    return automata;
+    return generateAutomata(expression,action);    
   }
 
   /**
@@ -147,10 +146,6 @@ public class ConstraintGenerator {
       ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
         return `LetRef(TomBase.convertFromVarToBQVar(v),BQTermToExpression(t),action);
       }  
-      // nothing for unamed ones
-      ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
-        return action;      
-      }
       // numeric constraints
       ConstraintToExpression(n@NumericConstraint[]) -> {
         return buildNumericCondition(`n,action);

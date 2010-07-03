@@ -1,5 +1,5 @@
 #! /bin/bash
-# Script qui construit tout les fichiers nécessaires en mode pas à pas et qui
+# Script qui construit tout les fichiers nécessaires en mode pasa pas et qui
 #spécifie toute erreur
 ################# Variable d'environnement tom ###############################
 export TOM_HOME=/home/Application/tom

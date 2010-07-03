@@ -85,8 +85,7 @@ public class VariadicPropagator implements IBasePropagator {
   }
  
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    Constraint res =  `TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
-    return res;
+    return `TopDownWhenConstraint(VariadicPatternMatching(this)).visitLight(constraint);		
   }	
 
   %strategy VariadicPatternMatching(vp:VariadicPropagator) extends Identity() {
@@ -149,7 +148,7 @@ public class VariadicPropagator implements IBasePropagator {
             BQTerm newFreshVarList = vp.getCompiler().getFreshVariableStar(listType);            
 mAppl:      %match(appl) {
               // if we have a variable star
-              (VariableStar | UnamedVariableStar)[] -> {                
+              VariableStar[] -> {                
                 // if it is the last element               
                 if(`X.length() == 0) {
                   // we should only assign it, without generating a loop

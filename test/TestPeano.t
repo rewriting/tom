@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class TestPeano {
 
-  private ATermFactory factory;
-  private AFun fzero, fsuc, fplus;
+  private static ATermFactory factory;
+  private static AFun fzero, fsuc, fplus;
   public ATermAppl tzero;
 
   %typeterm term {
@@ -107,16 +107,16 @@ public class TestPeano {
     }
   }
 
-
+/*
   @Test
-  public void testFib6() {
+  public void testFib5() {
     ATerm N = `suc(suc(suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))))));
     assertTrue("Testing fib5 with N =" + peano2int(N) + ": ",   
 	peano2int(`fib5(N)) == fibint(peano2int(N)));
     assertTrue("Testing fib5 with N =" + peano2int(N)+1 + ": ",   
 	peano2int(`fib5(suc(N))) == fibint(peano2int(N)+1));
   }
-
+*/
 
   public ATerm plus1(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {

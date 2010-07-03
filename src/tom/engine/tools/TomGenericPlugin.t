@@ -64,7 +64,7 @@ public abstract class TomGenericPlugin implements Plugin {
   private String pluginName;
 
   /** The term the plugin works on. */
-  private Code term;
+  protected Code term;
 
   /** The streamanager */
   protected TomStreamManager streamManager;
@@ -113,7 +113,7 @@ public abstract class TomGenericPlugin implements Plugin {
       term = (Code)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
-      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(), new Object[]{"[Code, TomStreamManager]", getArgumentArrayString(arg)});
+      TomMessage.error(getLogger(),null,0,TomMessage.invalidPluginArgument, "[Code, TomStreamManager]", getArgumentArrayString(arg));
     }
   }
 
@@ -121,7 +121,7 @@ public abstract class TomGenericPlugin implements Plugin {
     if (arg instanceof Code) {
       term = (Code)arg;
     } else {
-      getLogger().log(Level.SEVERE, TomMessage.tomTermExpected.getMessage(), pluginName);
+      TomMessage.error(getLogger(),null,0,TomMessage.tomTermExpected, pluginName);
     }
   }
 
@@ -159,7 +159,7 @@ public abstract class TomGenericPlugin implements Plugin {
     this.streamManager = streamManager; 
   }
 
-  public SymbolTable symbolTable() {
+  public SymbolTable getSymbolTable() {
     return streamManager.getSymbolTable(); 
   }
 

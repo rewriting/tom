@@ -62,10 +62,6 @@ public class IsOpTemplate extends TemplateClass {
         "Wrong argument for IsOpTemplate: " + gomClass);
   }
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;

@@ -42,8 +42,8 @@ public class Graph<T> {
   private HashMap<T,Node> table = new HashMap<T,Node>();
 
   public void addLink(T a, T b) {
-    if (!table.containsKey(a)) table.put(a,new Node(a));
-    if (!table.containsKey(b)) table.put(b,new Node(b));
+    if (!table.containsKey(a)) { table.put(a,new Node(a)); }
+    if (!table.containsKey(b)) { table.put(b,new Node(b)); }
     table.get(a).neighbors.add(table.get(b));
     table.get(b).neighbors.add(table.get(a));
   }

@@ -37,10 +37,6 @@ public class MakeOpTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public GomEnvironment getGomEnvironment() {
-    return this.gomEnvironment;
-  }
-
   /**
    * The argument is an operator class, and this template generates the
    * assotiated MakeOp strategy
@@ -198,7 +194,7 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       slots = slots.getTailConcSlotField();
 
       %match(head) {
-        SlotField[Name=name,Domain=domain] -> {
+        SlotField[Name=_name,Domain=domain] -> {
           args.append((i==0?"":", "));
           args.append(arg);
           args.append(i);
@@ -268,9 +264,8 @@ private String genStratArgs(SlotFieldList slots,String arg) {
       ConcSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!getGomEnvironment().isBuiltinClass(`domain)) {
           res += fieldName(`fieldName) + ", ";
-        } else {
-          // Skip builtin childs
         }
+        // else : Skip builtin childs
       }
     }
     if (res.length() != 0) {

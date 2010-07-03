@@ -25,31 +25,35 @@ class PrettyPrinter {
   %typeterm Set {implement {Set} }
   %typeterm Collection { implement {Collection} }
 
+  private static String tirname(String s) {
+    return %[\mbox{\small{\textsc{@s@}}}]%;
+  }
+
   private static String translate(RuleType rt) {
     %match(rt) {
-      axiomInfo[] ->  { return "axiom"; }
-      impliesLeftInfo[] -> { return "\\Rightarrow_\\mathcal{L}"; }
-      impliesRightInfo[]-> { return "\\Rightarrow_\\mathcal{R}"; }
-      andLeftInfo[] -> { return "\\land_\\mathcal{L}"; }
-      andRightInfo[] -> { return "\\land_\\mathcal{R}"; }
-      orLeftInfo[] -> { return "\\lor_\\mathcal{L}"; }
-      orRightInfo[] -> { return "\\lor_\\mathcal{R}"; }
-      forallRightInfo[] -> { return "\\forall_\\mathcal{R}"; }
-      forallLeftInfo[] -> { return "\\forall_\\mathcal{L}"; }
-      existsRightInfo[] -> { return "\\exists_\\mathcal{R}"; }
-      existsLeftInfo[] -> { return "\\exists_\\mathcal{L}"; }
-      bottomInfo[] -> { return "\\bot"; }
-      topInfo[] -> { return "\\top"; }
-      cutInfo(p) -> { return "cut (" + `toLatex(p) + ")"; }
-      openInfo[] -> { return "open"; } 
-      reductionInfo[] -> { return "reduction"; }
-      contractionLeftInfo[] -> { return "contr_\\mathcal{L}"; }
-      contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
-      weakLeftInfo() -> { return "weak_\\mathcal{L}"; }
-      weakRightInfo() -> { return "weak_\\mathcal{R}"; }
-      customRuleInfo[name=n] -> { return `n; }
-      foldRightInfo[num=n] -> { return "fold_\\mathcal{R}(" + `n + ")"; }
-      foldLeftInfo[num=n] -> { return "fold_\\mathcal{L}(" + `n + ")"; }
+      axiomInfo[] ->  { return tirname("ax"); }
+      impliesLeftInfo[] -> { return tirname("$\\Rightarrow$-l"); }
+      impliesRightInfo[]-> { return tirname("$\\Rightarrow$-r"); }
+      andLeftInfo[] -> { return tirname("$\\land$-l"); }
+      andRightInfo[] -> { return tirname("$\\land$-r"); }
+      orLeftInfo[] -> { return tirname("$\\lor$-l"); }
+      orRightInfo[] -> { return tirname("$\\lor$-r"); }
+      forallRightInfo[] -> { return tirname("$\\forall$-r"); }
+      forallLeftInfo[] -> { return tirname("$\\forall$-l"); }
+      existsRightInfo[] -> { return tirname("$\\exists$-r"); }
+      existsLeftInfo[] -> { return tirname("$\\exists$-l"); }
+      bottomInfo[] -> { return tirname("$\\bot$-l"); }
+      topInfo[] -> { return tirname("$\\top$-r"); }
+      cutInfo(p) -> { return tirname("cut"); }
+      openInfo[] -> { return tirname("open"); } 
+      reductionInfo[] -> { return tirname("$\\equiv$"); }
+      contractionLeftInfo[] -> { return tirname("contr-l"); }
+      contractionRightInfo[] -> { return tirname("contr-r"); }
+      weakLeftInfo() -> { return tirname("weak-l"); }
+      weakRightInfo() -> { return tirname("weak-r"); }
+      customRuleInfo[name=n] -> { return tirname(`n); }
+      foldRightInfo[num=n] -> { return tirname(%[fold-r[@`n@]]%); }
+      foldLeftInfo[num=n] -> { return tirname(%[fold-l[@`n@]]%); }
       metaVariableInfo[] -> { return ""; }
     }
     return rt.toString();
@@ -171,79 +175,6 @@ class PrettyPrinter {
       sequent(ctx, c) -> { return toLatex(`ctx) + " \\vdash " + toLatex(`c); }
     }
 
-    %match(Prop term) {
-
-      // arithmetic pretty print
-      relationAppl("eq",(x,y)) -> {
-        return toLatex(`x) + " = " + toLatex(`y);
-      }
-      relationAppl("gt",(x,y)) -> {
-        return toLatex(`x) + " > " + toLatex(`y);
-      }
-      relationAppl("lt",(x,y)) -> {
-        return toLatex(`x) + " < " + toLatex(`y);
-      }
-      relationAppl("le",(x,y)) -> {
-        return toLatex(`x) + " \\le " + toLatex(`y);
-      }
-
-      // set theory pretty print
-      relationAppl("in",(x,y)) -> {
-        return toLatex(`x) + " : " + toLatex(`y);
-      }
-      relationAppl("subset",(x,y)) -> {
-        return toLatex(`x) + " \\subset " + toLatex(`y);
-      }
-      relationAppl("supset",(x,y)) -> {
-        return toLatex(`x) + " \\supset " + toLatex(`y);
-      }
-
-      // lamda-Pi
-      relationAppl("WF",(x)) -> {
-        if (leftEndedByNil(`x))
-          return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
-        else
-          return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
-      }
-
-      // Hoare Triples
-      relationAppl("Hoare",(P,S,Q)) -> {
-        return "\\{" + `toLatex(P) + "\\}" + `toLatex(S)  + "\\{" + `toLatex(Q) + "\\}";
-      }
-      relationAppl("eps",(x)) -> {
-        return "\\varepsilon(" + `toLatex(x) + ")";
-      }
-
-      
-      relationAppl(n, ()) -> { return `n;}
-      relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
-
-      implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
-
-      implies(p1@relationAppl[],p2) -> {
-        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@]% ; 
-      }
-      implies(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@]% ; 
-      }
-      or(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@]%; 
-      }
-      or(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@]%; 
-      }
-      and(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \land @toLatex(`p2)@]%; 
-      }
-      and(p1,p2) -> { 
-        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%; 
-      }
-      forall(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
-      exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
-      bottom() -> { return "\\bot";  }
-      top() -> { return "\\top";  }
-    }	
-
     %match(TermList term) {
       () -> { return ""; }
       (x) -> { return toLatex(`x); }
@@ -255,6 +186,10 @@ class PrettyPrinter {
       Var(n) -> { return `n; }
 
       // arithmetic
+      funAppl("rhd",(x,y)) -> {
+        return toLatex(`x) + " \\rhd " + toLatex(`y);
+      }
+
       funAppl("z",()) -> { return "0"; }
       i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
@@ -289,17 +224,17 @@ class PrettyPrinter {
       }
 
       // finite 1st order theory of classes pretty print
-      funAppl("appl",(p,x*)) -> {
-        return `toLatex(p) + "["+ toLatex(`x*) + "]";
+      funAppl("app",(p,x*)) -> {
+        return `toLatex(p) + "\\ @\\ "+ toLatex(`x*);
       }
       funAppl("nil",()) -> {
-        return ("nil");
+        return ("\\nil");
       }
       funAppl("fEq",(x,y)) -> {
         return toLatex(`x) + "\\dot{=}" + `toLatex(y);
       }
       l@funAppl("cons",(x,y)) -> {
-        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle "; 
+        if (endedByNil(`l)) return "[" + listToLatex(`l) + "]"; 
         else return toLatex(`x) + "::" + toLatex(`y);
       }
 
@@ -420,6 +355,87 @@ class PrettyPrinter {
     }
 
     return null;
+  }
+
+  public static String toLatex(Prop p) { return toLatex(p,0); }
+  public static String toLatex(Prop p, int prec) {
+    %match(Prop p) {
+      // arithmetic pretty print
+      relationAppl("eq",(x,y)) -> {
+        return toLatex(`x) + " = " + toLatex(`y);
+      }
+      relationAppl("gt",(x,y)) -> {
+        return toLatex(`x) + " > " + toLatex(`y);
+      }
+      relationAppl("lt",(x,y)) -> {
+        return toLatex(`x) + " < " + toLatex(`y);
+      }
+      relationAppl("le",(x,y)) -> {
+        return toLatex(`x) + " \\le " + toLatex(`y);
+      }
+
+      // set theory pretty print
+      relationAppl("int",(x,y)) -> {
+        return toLatex(`x) + " \\interm " + toLatex(`y);
+      }
+      relationAppl("inp",(x,y)) -> {
+        return toLatex(`x) + " \\intermlist " + toLatex(`y);
+      }
+      relationAppl("intlist",(x,y)) -> {
+        return toLatex(`x) + " \\inpattern " + toLatex(`y);
+      }
+      relationAppl("inplist",(x,y)) -> {
+        return toLatex(`x) + " \\inpatternlist " + toLatex(`y);
+      }
+      relationAppl("subset",(x,y)) -> {
+        return toLatex(`x) + " \\subset " + toLatex(`y);
+      }
+      relationAppl("supset",(x,y)) -> {
+        return toLatex(`x) + " \\supset " + toLatex(`y);
+      }
+
+      // lamda-Pi
+      relationAppl("WF",(x)) -> {
+        if (leftEndedByNil(`x))
+          return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
+        else
+          return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
+      }
+
+      // Hoare Triples
+      relationAppl("Hoare",(P,S,Q)) -> {
+        return "\\{" + `toLatex(P) + "\\}" + `toLatex(S)  + "\\{" + `toLatex(Q) + "\\}";
+      }
+      relationAppl("eps",(x)) -> {
+        return "\\varepsilon(" + `toLatex(x) + ")";
+      }
+
+/*
+fa ex => \/ /\ ~ atom 
+0  0  1  2  3  4  5
+*/
+
+      relationAppl(n, ()) -> { return `n;}
+      relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
+
+      implies(p, bottom()) -> { if (prec <= 4) return "\\lnot " + toLatex(`p,4); }
+
+      implies(p1,p2) -> {
+        if (prec <= 1) return %[@toLatex(`p1,2)@ \Rightarrow @toLatex(`p2,1)@]%; 
+      }
+      or(p1,p2) -> {
+        if (prec <= 2) return %[@toLatex(`p1,2)@ \lor @toLatex(`p2,3)@]%; 
+      }
+      and(p1,p2) -> { 
+        if (prec <= 3) return %[@toLatex(`p1,3)@ \land @toLatex(`p2,4)@]%; 
+      }
+      forall(n, p) -> { if (prec <= 0) return "\\forall " + `n + ", " + toLatex(`p,0);}
+      exists(n, p) -> { if (prec <= 0) return "\\exists " + `n + ", " + toLatex(`p,0);}
+      bottom() -> { return "\\bot";  }
+      top() -> { return "\\top";  }
+      p -> { return %[(@`toLatex(p,0)@)]%; }
+    }
+    throw new RuntimeException("non exhaustive patterns");
   }
 
   public static String toLatex(urbanAbstractType term) {

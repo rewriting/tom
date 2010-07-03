@@ -88,7 +88,7 @@
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 
-  <property name="multithread"    value="true"/>
+  <property name="multithread"    value="false"/>
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
@@ -226,8 +226,7 @@
   make the tomcompile task call tom or tomsrc depending on withsource
   property
   -->
-  <target name="-withstable" unless="withsource">
-    <antcall target="init.task.stable"/>
+  <target name="-withstable" unless="withsource" depends="init.task.stable">
     <presetdef name="tomcompile">
       <tom config="${stable.configfile}">
         <classpath refid="tom.classpath"/>
@@ -273,8 +272,9 @@
          destdir="${gen.destination}"
          multithread="${multithread}"
          options="--optimize --inlineplus">
-      <include name="tom/engine/**/**/*.t"/>     	
+      <include name="tom/emf/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
+      <include name="tom/engine/**/**/*.t"/>
       <include name="tom/library/**/*.t"/>
       <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
@@ -535,6 +535,8 @@
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${stable.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -597,6 +599,11 @@
       <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
+    <jar jarfile="${stable.dist.lib}/tom/emf.jar"
+      update="yes">
+      <fileset dir="${stable.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${stable.src}" includes="tom/emf/**/*.properties"/>
+    </jar>
 
     <!-- tom share -->
     <copy todir="${stable.dist.share}/tom">
@@ -638,13 +645,16 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${stable.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${stable.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${stable.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${stable.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${stable.dist.lib}/tools" 
+        includes="*.jar"
+        excludes="org.eclipse.*.jar"
+        />
+    </jar>
+    <jar jarfile="${stable.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${stable.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
@@ -681,6 +691,8 @@
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-mappings" file="${utils}/emf/emf-script.in"/>
+    <copy tofile="${src.dist.bin}/emf-generate-xmi" file="${utils}/emf/emf-script.in"/>
     <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
     <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <copy todir="${src.dist.bin}" file="${utils}/tom-server/tom-server.py"/>
@@ -729,6 +741,18 @@
       <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
       <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
       <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+    </replace>
+    <replace file="${src.dist.bin}/emf-generate-mappings">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.TomMappingFromEcore"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
+    </replace>
+    <replace file="${src.dist.bin}/emf-generate-xmi">
+      <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+      <replaceFilter token="@MAIN_CLASS@" value="tom.emf.EcoreMappingToXMI"/>
+      <replaceFilter token="@CONFIG_FILE@" value=""/>
+      <replaceFilter token="@INCLUDES_DIR@" value=""/>
     </replace>
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
@@ -787,6 +811,11 @@
         excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
     </jar>
+    <jar jarfile="${src.dist.lib}/tom/emf-${src.version}.jar"
+      update="yes">
+      <fileset dir="${src.build}" includes="tom/emf/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/emf/**/*.properties"/>
+    </jar>
     <jar jarfile="${src.dist.lib}/tom/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
     </jar>
@@ -834,13 +863,16 @@
     </tar>
 
     <!-- generate a single runtime jar -->
-    <zip destfile="${src.dist}/lib/tom-runtime-full.jar">
+    <jar jarfile="${src.dist}/lib/tom-runtime-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/runtime" includes="*.jar"/>
-      <zipgroupfileset dir="${src.dist.lib}/tools" includes="*.jar"/>
-    </zip>
-    <zip destfile="${src.dist}/lib/tom-compiler-full.jar">
+      <zipgroupfileset dir="${src.dist.lib}/tools" 
+        includes="*.jar"
+        excludes="org.eclipse.*.jar"
+        />
+    </jar>
+    <jar jarfile="${src.dist}/lib/tom-compiler-full.jar" duplicate="preserve">
       <zipgroupfileset dir="${src.dist.lib}/tom" includes="*.jar"/>
-    </zip>
+    </jar>
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
@@ -890,6 +922,7 @@
     <delete dir="${src.src}/bootcheck"/>
   </target>
 
+  <target name="clean.testnt" depends="clean.test"/>
   <target name="clean.test" description="Cleans acceptance tests directory">
     <ant dir="${test}" target="clean">
       <property name="tom.home" value="${stable.dist}"/>
@@ -979,6 +1012,7 @@
     </ant>
   </target>
 
+  <!-- Why do we need a target src.junit?? -->
   <target name="src.junit" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests"
     depends="clean.test, test">
@@ -987,6 +1021,7 @@
     </ant>
   </target>
 
+  <!-- Why do we need a target src.junit.opt?? -->
   <target name="src.junit.opt" depends="junit.opt"/>
   <target name="junit.opt"
     description="Runs junit acceptance tests with optimization"
@@ -998,6 +1033,63 @@
       <property name="inlineplus" value="on"/>
     </ant>
   </target>
+
+  <!-- BEGIN Tests for the new typer -->
+  <target name="testnt" depends="src.dist"
+    description="Compile acceptance tests with new typer">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="off"/>
+      <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
+    </ant>
+  </target>
+
+  <target name="testnt.opt" depends="src.dist"
+    description="Compile acceptance tests with new typer and optimizer">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+    </ant>
+  </target>
+
+  <target name="testnt.stable" description="Compile and run acceptance tests with new typer and stable"
+    depends="stable.dist">
+    <ant dir="${test}" target="infer">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
+  </target>
+
+  <target name="stable.junitnt"
+    description="Runs junit acceptance tests compiled with new typer and stable"
+    depends="clean.testnt, testnt.stable">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${stable.dist}"/>
+    </ant>
+  </target>
+
+  <target name="junitnt" description="Runs junit acceptance tests with new
+    typer"
+    depends="clean.testnt, testnt">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${src.dist}"/>
+    </ant>
+  </target>
+
+  <target name="junitnt.opt"
+    description="Runs junit acceptance tests with new typer and optimizer"
+    depends="clean.testnt, testnt.opt">
+    <ant dir="${test}" target="junitnt">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+    </ant>
+  </target>
+  <!-- END Tests for the new typer -->
 
   <target name="all" description="cleans, build, test all"
     depends="stable.all, src.all">
@@ -1559,6 +1651,27 @@
       classpathref="tom.findbugs"/>
   </target>
 
+  <target name="findbugs" depends="src.dist, init.task.findbugs">
+    <path id="src.dist.classpath">
+      <fileset dir="${src.dist.lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+    <findbugs home="${findbugs.home}"
+      jvmargs="-Xmx256m"
+      output="html"
+      stylesheet="fancy-hist.xsl"
+      outputFile="tom-fb.html" >
+      <auxClasspath refid="src.dist.classpath" />
+      <sourcePath path="${src.src}" />
+      <sourcePath path="${src.gen}" />
+      <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
+    </findbugs>
+  </target>
+
   <target name="init.task.clover">
     <available property="clover.present"
       classname="com.cenqua.clover.CloverInstr"
@@ -1594,26 +1707,6 @@
 
   <target name="clover.clean" depends="with.clover">
     <clover-clean keepdb="true"/>
-  </target>
-
-  <target name="findbugs" depends="src.dist, init.task.findbugs">
-    <path id="src.dist.classpath">
-      <fileset dir="${src.dist.lib}">
-        <include name="**/*.jar"/>
-      </fileset>
-    </path>
-    <findbugs home="${findbugs.home}"
-      jvmargs="-Xmx256m"
-      output="html"
-      outputFile="tom-fb.html" >
-      <auxClasspath refid="src.dist.classpath" />
-      <sourcePath path="${src.src}" />
-      <sourcePath path="${src.gen}" />
-      <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
-      <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
-      <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/tom-runtime.jar" />
-    </findbugs>
   </target>
 
   <!-- <target name="tags">

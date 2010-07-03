@@ -83,9 +83,8 @@ public class HookTypeExpander {
               hook@Hook[NameType=KindModule(),HookType=hkind,Name=mname] -> {
                 //Graph-rewrite rules hooks are only allowed for sorts
                 if(`hkind.getkind().equals("graphrules")) {
-                  getLogger().log(Level.SEVERE,
-                      "Grapphrules hooks are authorised only on sorts");
-
+                  GomMessage.error(getLogger(), null, 0, 
+                      GomMessage.graphRulesHooksAuthOnSorts);
                 }
                 if(`mname.equals(`moduleName)) {
                   ModuleDecl mdecl = getModuleDecl(`mname,moduleList);
@@ -93,8 +92,8 @@ public class HookTypeExpander {
                     makeHookDeclList(`hook,`CutModule(mdecl));
                   hookList = `ConcHookDecl(newDeclList*,hookList*);
                 } else {
-                  getLogger().log(Level.SEVERE,
-                      "Hooks on module are authorised only on the current module");
+                  GomMessage.error(getLogger(), null, 0, 
+                      GomMessage.moduleHooksAuthOnCurrentModule);
                 }
               }
               hook@Hook[NameType=KindSort(),Name=sname] -> {
@@ -105,9 +104,8 @@ public class HookTypeExpander {
               hook@Hook[NameType=KindOperator(),HookType=hkind,Name=oname] -> {
                 //Graph-rewrite rules hooks are only allowed for sorts
                 if(`hkind.getkind().equals("graphrules")) {
-                  getLogger().log(Level.SEVERE,
-                      "Grapphrules hooks are authorised only on sorts");
-
+                  GomMessage.error(getLogger(), null, 0, 
+                      GomMessage.graphRulesHooksAuthOnSorts);
                 }
                 OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
                 if(odecl!=null) {
@@ -165,8 +163,8 @@ public class HookTypeExpander {
             /* check there is no associated theory */
             !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"AC"|"ACU"]], _*) -> {
               /* generate an error to make users specify the theory */
-              getLogger().log(Level.SEVERE,
-                "As you use make_insert, make_empty or rules, specify the associated theory for the variadic operator "+`opName);
+              GomMessage.error(getLogger(), null, 0, 
+                  GomMessage.mustSpecifyAssociatedTheoryForVarOp,`opName);
             }
           }
         }
@@ -205,10 +203,9 @@ public class HookTypeExpander {
             }
             kind@HookKind(("make"|"make_insert"|"make_empty")[]) -> {
               SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
-              if (typedArgs == null) {
-                getLogger().log(Level.SEVERE,
-                    GomMessage.discardedHook.getMessage(),
-                    new Object[]{ `(hName) });
+              if (null == typedArgs) {
+                GomMessage.error(getLogger(),null,0,
+                    GomMessage.discardedHook, `(hName));
                 return `ConcHookDecl();
               }
               newHookList = `ConcHookDecl(
@@ -246,7 +243,8 @@ public class HookTypeExpander {
             }
           }
           if (newHookList == `ConcHookDecl()) {
-            getLogger().log(Level.SEVERE, GomMessage.unknownHookKind.getMessage(), new Object[]{ `(hkind) });
+            GomMessage.error(getLogger(),null,0,
+                GomMessage.unknownHookKind, `(hkind));
           }
           return newHookList;
         }
@@ -327,9 +325,8 @@ public class HookTypeExpander {
         }
       }
     }
-    getLogger().log(Level.SEVERE,
-        GomMessage.orphanedHook.getMessage(),
-        new Object[]{oname});
+    GomMessage.error(getLogger(),null,0,
+        GomMessage.orphanedHook, oname);
     return null;
   }
 
@@ -348,18 +345,16 @@ public class HookTypeExpander {
             /* tests the arguments number */
             if (args.length() != `slotList.length()) {
               SlotList slist = `slotList;
-              getLogger().log(Level.SEVERE,
-                  GomMessage.mismatchedMakeArguments.getMessage(),
-                  new Object[]{args,slist });
+              GomMessage.error(getLogger(), null, 0,
+                  GomMessage.mismatchedMakeArguments, args, slist);
               return null;
             }
             /* Then check the types */
             return recArgSlots(args,`slotList);
           }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookAlgebraic.getMessage(),
-                new Object[]{ kind });
+            GomMessage.error(getLogger(), null, 0,
+                GomMessage.unsupportedHookAlgebraic, kind);
             return null;
           }
         }
@@ -378,17 +373,16 @@ public class HookTypeExpander {
                   return `ConcSlot(Slot(head,sortDecl),Slot(tail,sort));
                 }
                 _ -> {
-                  getLogger().log(Level.SEVERE,
-                      GomMessage.badHookArguments.getMessage(),
-                      new Object[]{ `(hookName), Integer.valueOf(args.length())});
+                  GomMessage.error(getLogger(), null, 0,
+                      GomMessage.badHookArguments, 
+                      `(hookName), Integer.valueOf(args.length()));
                   return null;
                 }
               }
             }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookVariadic.getMessage(),
-                new Object[]{ kind });
+            GomMessage.error(getLogger(),null, 0,
+                GomMessage.unsupportedHookVariadic, kind);
             return null;
           }
         }
@@ -405,17 +399,16 @@ public class HookTypeExpander {
               %match(args) {
                 ConcArg() -> { return `ConcSlot(); }
                 _ -> {
-                  getLogger().log(Level.SEVERE,
-                      GomMessage.badHookArguments.getMessage(),
-                      new Object[]{ `(hookName), Integer.valueOf(args.length())});
+                  GomMessage.error(getLogger(), null, 0,
+                      GomMessage.badHookArguments,
+                      `(hookName), Integer.valueOf(args.length()));
                   return null;
                 }
               }
             }
           _ -> {
-            getLogger().log(Level.SEVERE,
-                GomMessage.unsupportedHookVariadic.getMessage(),
-                new Object[]{ kind });
+            GomMessage.error(getLogger(), null, 0,
+                GomMessage.unsupportedHookVariadic, kind);
             return null;
           }
         }
@@ -449,13 +442,11 @@ public class HookTypeExpander {
         if (`domainsdecl == `sdecl) {
           return `sdecl;
         } else {
-          getLogger().log(Level.SEVERE,
-              "Different domain and codomain");
+          GomMessage.error(getLogger(), null, 0, GomMessage.differentDomainCodomain);
         }
       }
       _ -> {
-        getLogger().log(Level.SEVERE,
-            "FL/AU/AC/ACU hook can only be used on a variadic operator");
+        GomMessage.error(getLogger(), null, 0, GomMessage.hookFLAUACACUOnlyOnVarOp);
       }
     }
     return null;
@@ -476,8 +467,7 @@ public class HookTypeExpander {
     %match(args) {
       ConcArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
         if (!`defaultstrat.equals("Fail") && !`defaultstrat.equals("Identity")) {
-          getLogger().log(Level.SEVERE,
-              "In graphrules hooks, the default strategies authorized are only Fail and Identity");
+          GomMessage.error(getLogger(), null, 0, GomMessage.graphrulHookAuthorizedStrat);
         }
         GraphRuleExpander rexpander = new GraphRuleExpander(moduleList,getGomEnvironment());
         if (sortsWithGraphrules.contains(sdecl)) {
@@ -498,8 +488,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+    }
 
     HookDeclList acHooks = `ConcHookDecl();
      /*
@@ -565,8 +556,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+  }
 
     /* start with AU normalization */
     HookDeclList acuHooks = makeAUHookList(opName, mdecl, scode);
@@ -622,8 +614,9 @@ public class HookTypeExpander {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
-    if (null == domain)
+    if (null == domain) {
       return `ConcHookDecl();
+    }
 
     HookDeclList auHooks = `ConcHookDecl();
     String userNeutral = trimBracket(scode);
@@ -687,8 +680,7 @@ public class HookTypeExpander {
 
     String userNeutral = trimBracket(scode);
     if(userNeutral.length() > 0) {
-      getLogger().log(Level.SEVERE,
-          "FL hook does not allow the definition of a neutral element");
+      GomMessage.error(getLogger(), null, 0, GomMessage.neutralElmtDefNotAllowed);
     }
 
     HookDeclList hooks = `ConcHookDecl();

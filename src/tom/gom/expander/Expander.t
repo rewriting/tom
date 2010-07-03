@@ -73,8 +73,8 @@ public class Expander {
     Set<GomModuleName> alreadyParsedModule = new HashSet<GomModuleName>();
     alreadyParsedModule.add(module.getModuleName());
     Set<GomModuleName> moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-    getLogger().log(Level.FINER, "GomExpander:moduleToAnalyse {0}",
-        new Object[]{moduleToAnalyse});
+    GomMessage.finer(getLogger(), null, 0, GomMessage.moduleToAnalyse, 
+        moduleToAnalyse);
 
     while (!moduleToAnalyse.isEmpty()) {
       Set<GomModuleName> newModuleToAnalyse = new HashSet<GomModuleName>();
@@ -118,28 +118,24 @@ public class Expander {
   }
 
   private GomModule parse(String moduleName) {
-    getLogger().log(Level.FINE, "Seeking for file {0}",
-        new Object[]{moduleName});
+    GomMessage.fine(getLogger(), null, 0, GomMessage.fileSeeking, moduleName);
     GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
-    if(importedModuleFile == null) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.moduleNotFound.getMessage(),
-          new Object[]{moduleName});
+    if (null == importedModuleFile) {
+      GomMessage.error(getLogger(),moduleName,0,
+          GomMessage.moduleNotFound);
       return null;
     }
     CharStream inputStream = null;
     try {
       inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.fileNotFound.getMessage(),
-          new Object[]{moduleName+".gom"});
+      GomMessage.error(getLogger(),moduleName+".gom",0,
+          GomMessage.fileNotFound);
       return null;
     } catch (java.io.IOException e) {
-      getLogger().log(Level.SEVERE,
-          GomMessage.fileNotFound.getMessage(),
-          new Object[]{moduleName+".gom"});
+      GomMessage.error(getLogger(),moduleName+".gom",0,
+          GomMessage.fileNotFound);
       return null;
     }
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
@@ -149,9 +145,9 @@ public class Expander {
       Tree tree = (Tree) parser.module().getTree();
       result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-            re.getMessage(),moduleName+".gom", lexer.getLine()));
+      GomMessage.error(getLogger(),moduleName+".gom", lexer.getLine(),
+          GomMessage.detailedParseException,
+          re.getMessage());
       return null;
     }
     return result;

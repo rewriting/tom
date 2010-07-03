@@ -398,6 +398,9 @@ public class U {
         return (nameList) `nameList(M1names*,M2names*); 
       }
       // left rules
+      falseL(n) -> {
+        return (nameList) (c.contains(`n) ? `nameList() : `nameList(n)); 
+      }
       andL(AndLPrem1(x,_,y,_,M),n) -> {
         NameList Mnames = `getFreeNames(nameList(x,y,c*),M);
         return (nameList) (c.contains(`n) ? Mnames : `nameList(n,Mnames*)); 
@@ -479,6 +482,9 @@ public class U {
         return (conameList) `conameList(M1conames*,M2conames*); 
       }
       // left rules
+      falseL(_) -> {
+        return (conameList) `conameList();
+      }
       andL(AndLPrem1(_,_,_,_,M),_) -> {
         return `getFreeCoNames(c,M);
       }

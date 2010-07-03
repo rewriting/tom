@@ -1,0 +1,39 @@
+/*
+ test ML_COMMENT
+*/
+//test SL_COMMENT
+
+//`x                                                            //unauthorized
+//`(x)
+//`(`x)                                                         //unauthorized
+//`(`(x))                                                       //unauthorized
+//`(x())
+//`(x*)
+//`(f(x))
+//`x*                                                           //unauthorized
+//`x()                                                          //unauthorized
+//`(this.get())
+//`(this.get(i).function())
+//`()                                                           //unauthorized
+//`(a?b:c)
+//`((a.getVar().getToto().getCond()?thenVar:elseVar))
+//`((ff(x=,y+1)))
+//`((ff(x=42,x-=9)))
+//`(f(x,myList[x]))
+//`(f(x,x)
+//`(f(x*,x*))
+//`(f(x,x*))
+//`(f(x,x(),x*,f(x,x)))
+//`(f(new Fruit()))
+//`(f(new Fruit(x,y[0],3)))
+//`(g(x,_,z))
+//`(((((x())))))
+//`(get(x,_,z))
+//`(f((MyObject) getAttr()))
+//`(Name("_f_r_e_s_h_v_a_r_" + freshCounter))
+//`(BQVariable(concOption(orgTrack),Name("v_"+typeName),type))
+//`(Composite(composite*, CompositeTL(ITL("};"))))
+//`(Toto(x*,y.get(3)))
+//`(Toto(y.get(3),x*))
+`(f(x*,a.x(),x,f(x,x)))
+//`(f(_,a,_*))
