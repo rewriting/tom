@@ -30,6 +30,7 @@ import tom.gom.adt.symboltable.types.*;
 import tom.gom.adt.symboltable.*;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -636,7 +637,7 @@ public class SymbolTable {
     return constructors.get(constructor).getFields();
   }
 
-  public ArrayList<String> getFields(String constructor) {
+  public List<String> getFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
@@ -647,7 +648,7 @@ public class SymbolTable {
     return result;
   }
 
-  public ArrayList<String> getNeutralFields(String constructor) {
+  public List<String> getNeutralFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
@@ -659,7 +660,7 @@ public class SymbolTable {
     return result;
   }
 
-  public ArrayList<String> getPatternFields(String constructor) {
+  public List<String> getPatternFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
@@ -687,7 +688,7 @@ public class SymbolTable {
     return "get" + field + "()";
   }
 
-  public ArrayList<String> getNonPatternFields(String constructor) {
+  public List<String> getNonPatternFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
@@ -699,7 +700,7 @@ public class SymbolTable {
     return result;
   }
 
-  public ArrayList<String> getOuterFields(String constructor) {
+  public List<String> getOuterFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
@@ -711,7 +712,7 @@ public class SymbolTable {
     return result;
   }
 
-  public ArrayList<String> getInnerFields(String constructor) {
+  public List<String> getInnerFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
     %match(l) {
