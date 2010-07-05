@@ -378,19 +378,19 @@
   <target name="infer">
     <subant target="build">
       <fileset dir="." includes="*/build.xml"/>
-      <filelist dir=".">
+      <!--filelist dir=".">
         <file name="${example}/build.xml"/>
-      </filelist>
+      </filelist-->
     </subant>
-    <fail unless="example">
+    <!--fail unless="example">
       Please define the "example" to build
-    </fail>
-    <echo>Building example: ${example}</echo>
-    <tom.preset srcdir="${examples.dir}"
+    </fail-->
+    <!--echo>Building example: ${example}</echo-->
+    <!--tom.preset srcdir="${examples.dir}"
       multithread="${multithread}"
       destdir="${examples.gen}"
-      options="--newtyper">
-    </tom.preset>
+      options="- -newtyper>
+    </tom.preset-->
   </target>
 
   <target name="junitnt" depends="tom.init, infer"
@@ -401,6 +401,7 @@
               haltonfailure="false"
               failureproperty="tests.failed"
               showoutput="true">
+      <exclude name="boulderdash/BoulderDashCode.t"/>
       <classpath>
         <path refid="tom.classpath"/>
         <fileset dir="${examples.dir}/${examples.lib}">

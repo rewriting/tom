@@ -1135,7 +1135,7 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
-    </ant>
+      </ant>
   </target>
 
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
@@ -1230,6 +1230,25 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
+    </ant>
+  </target>
+
+  <target name="examplesnt"
+    description="Build and test examples with jtom-source and the new typer"
+    depends="examplesnt.src"/>
+
+  <target name="examplesnt.src"
+    depends="src.dist">
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+    </ant>
+    <ant dir="${examples}" target="junitnt">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+      <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
+      <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="on"/>
     </ant>
   </target>
 
