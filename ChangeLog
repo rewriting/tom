@@ -1,3 +1,7 @@
+2010-07-06 tavaresc
+ * Fix inference for Composite having a list of CompositeBQTerm as 
+   element.
+
 2010-06-29 tavaresc
  * Improve error messages for new typer.
  * Add task "junitnt" into the build.xml (in directory "examples") to compile
