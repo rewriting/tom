@@ -194,7 +194,7 @@ public class BoulderDashCore {
         putBead(newSpace,newBead);
         return true;
       }
-
+/*
       beadRock[s=s@beadRock[e=empty()],e=empty()] -> {
         Bead newBead = `bead(getEastPosition(getSouthPosition(b.getpos())),b.getvalue());
         putBead(newSpace,newBead);
@@ -217,7 +217,7 @@ public class BoulderDashCore {
       bead[pos=p] -> {
         newSpace.put(`p,b);
         return false;
-      }
+      }*/
     }
     return false;
   }
