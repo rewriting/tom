@@ -11,7 +11,7 @@ public class Example10 {
   public static void main(String[] args) {
     B tt = `f(f(b()));
     %match{
-      f(a@f(x)) << tt -> { System.out.println("l1 = " + `a); }
+      f(a@f(_)) << tt -> { System.out.println("l1 = " + `a); }
     }
   }
 }
