@@ -1,8 +1,8 @@
 module  Tom
-imports String Host
+imports String Host BackQuote
 abstract syntax
 
-TomConstruct = MatchConstruct(Args:TomTerm,PatternActionList:PatternActionList)
+TomConstruct = MatchConstruct(Args:TomTermList,PatternActionList:PatternActionList)
 
 PatternActionList =  PatternActionList(PatternAction*)
 

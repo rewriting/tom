@@ -8,24 +8,27 @@ options {
 }
 
 @header{
-//package proto;
+//  package islander.proto;
+  import org.antlr.runtime.tree.*;
+  import org.antlr.runtime.*;
 }
 
-/*@members{
-
-}*/
-
 @lexer::header{
-//  package proto;
+//  package islander.proto;
+  import org.antlr.runtime.tree.*;
+}
+
+@parser::members{
+  public static Tree intermediateResult; //subTree
+
 }
 
 @lexer::members{
   public static int tnesting = 0;
-  public static final int HOST_CHANNEL = 44;
 }
 
 matchConstruct :
-  'match' '(' matchArguments ')' LBRACE patternActionList RBRACE -> ^(MatchConstruct matchArguments patternActionList)
+  /*'match'*/ '(' matchArguments ')' LBRACE patternActionList RBRACE -> ^(MatchConstruct matchArguments patternActionList)
 /*  | '{' constraintActionList '}' -> ^()*/
   ;
 
@@ -43,42 +46,39 @@ patternActionList :
   ;
 
 patternAction :
-  tomTerm ARROWLBRACE /* here we call the host parser */ -> ^(PatternAction tomTerm ARROWLBRACE)
+  tomTerm ARROWLBRACE /* here we call the host parser */ -> ^(PatternAction tomTerm ^({intermediateResult}))
   ;
 
 //ARROW : '->' ;
 
 ARROWLBRACE : '-> {' /*(options {greedy=false;} : WS )* LBRACE*/
   {
-System.out.println("\nbefore new Host*");
-System.out.println("in arrowlbrace / tom tnesting = " + tnesting);
+    System.out.println("\nbefore new Host*");
+    System.out.println("in arrowlbrace / tom tnesting = " + tnesting);
     HostLanguageLexer lexer = new HostLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-System.out.println("tom, tokens = " + tokens.toString() + " /fin");
-System.out.println("tom, tokens list = " + tokens.getTokens().toString());
+    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
     HostLanguageParser parser = new HostLanguageParser(tokens);
-System.out.println("before parser.block()");
-//    parser.block().getTree();
-//((HostLanguageParser.block_return)parser.block()).getTree();
-HostLanguageParser.block_return res = parser.block();
-System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <- should be '(HostBlock )')");
-//System.out.println("TOM before channel change, channel = " + $channel);
-//    $channel=HOST_CHANNEL;
-//System.out.println("TOM after channel change, channel = " + $channel);
+    System.out.println("before parser.block()");
+    HostLanguageParser.block_return res = parser.block();
+    System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <-  should be '(*Block )')");
+    TomLanguageParser.intermediateResult = (Tree)res.getTree();
   }
   ;
 
-LBRACE : '{' { tnesting++; System.out.println("tom tnesting++ = " + tnesting);} ;
+LBRACE : '{' //{ tnesting++; System.out.println("tom tnesting++ = " + tnesting);}
+         ;
 
 RBRACE : '}'
   {
     if ( tnesting<=0 ) {
       emit(Token.EOF_TOKEN);
-System.out.println("exit tom language\n");
+      //System.out.println("exit tom language\n");
     }
     else {
       tnesting--;
-System.out.println("tom tnesting-- = " + tnesting);
+      //System.out.println("tom tnesting-- = " + tnesting);
     }
   }
   ;

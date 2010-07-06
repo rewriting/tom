@@ -1,4 +1,4 @@
-//package proto;
+//package islander.proto;
 
 import java.io.*;
 import java.util.*;
@@ -33,7 +33,7 @@ public class Main {
 
       System.out.println("\n(DEBUG) MainNewTom : init OK");
       Tree tree = (Tree) parser.program().getTree();
-      System.out.println("\n(DEBUG) MainNewTom : parsing & getTree() OK / tree =\n" + tree.toStringTree() + "\n");
+      System.out.println("\n(DEBUG) MainNewTom : parsing & getTree() OK / tree =\n" + tree.toStringTree());
       System.out.println("\n(DEBUG) before getTerm()");
       Program term = (Program) HostAdaptor.getTerm(tree);
       System.out.println("\n(DEBUG) MainNewTom : getTerm(tree) OK / term =\n" + term + "\n");
