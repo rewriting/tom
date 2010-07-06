@@ -8,11 +8,11 @@ options {
 }
 
 @header{
-//package proto;
+//  package islander.proto;
 }
 
 @lexer::header{
-//  package proto;
+//  package islander.proto;
 }
 
 @lexer::members{
@@ -20,8 +20,10 @@ options {
 }
 
 backQuoteConstruct :
-  id=ID (LPAREN RPAREN)? -> ^(BQVariable $id)
-  | id=ID '*' -> ^(BQVariableStar $id)
+  id=ID (
+  (LPAREN RPAREN)? -> ^(BQVariable $id)
+  | '*' -> ^(BQVariableStar $id)
+  )
   | '_' -> ^(BQUnamedVariable )
   | '_*' -> ^(BQUnamedVariableStar )
 //  | c=((bqVar '.')? method ('.' method)+) -> ^(BQComposite $c) // x.get() ; get() ; x.get().get()
@@ -43,18 +45,18 @@ ML_COMMENT :
   { $channel=HIDDEN; }
   ;
 
-
-LPAREN : '(' { bnesting++; System.out.println("backquote bnesting++ = " + bnesting);} ;
+LPAREN : '(' { bnesting++; System.out.println("backquote bnesting++ = " + bnesting);}
+         ;
 
 RPAREN : ')'
   {
     if ( bnesting<=0 ) {
+      System.out.println("exit backquote language\n");
       emit(Token.EOF_TOKEN);
-System.out.println("exit backquote language\n");
     }
     else {
       bnesting--;
-System.out.println("backquote bnesting-- = " + bnesting);
+      System.out.println("backquote bnesting-- = " + bnesting);
     }
   }
   ;

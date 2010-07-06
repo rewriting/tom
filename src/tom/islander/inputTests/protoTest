@@ -14,12 +14,16 @@ method get() {
 
 return myvar;
 
-return myvarvar;
+//%match(subj) {
+//  typeiee var -> { return somethingelse; }
+//}
 
-/* backquote is embedded in host */
 `(x*)
+`(y*)
 
-/* tom is embedded in host */ /* host is embedded in tom */
-%match(subject) {
-  type myvar -> { return something; }
-}
+/*%match(subject) {
+  type myvarone -> { return something; }
+  typee myvartwo -> { `(a()) }
+}*/
+
+return myvarvar;

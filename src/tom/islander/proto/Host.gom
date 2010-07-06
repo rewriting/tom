@@ -23,4 +23,4 @@ Method = Method(Name:String,VariableList:VariableList,StatementList:StatementLis
 StatementList = StatementList(Statement*)
 
 Statement = Equal(Name:String,Expr:String)
-          | Return(Expr:String)
+          | Return(Expr:String) //Block:Block)

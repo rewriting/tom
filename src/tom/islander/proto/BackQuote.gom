@@ -1,5 +1,5 @@
 module BackQuote
-imports String
+imports String Host Tom
 abstract syntax
 
 BackQuoteConstruct = BQVariable(Name:String)
