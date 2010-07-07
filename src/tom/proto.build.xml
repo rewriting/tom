@@ -80,7 +80,9 @@
       <!--<src path="${v3.src}"/>-->
       <src path="${v3.gen}"/>
       <src path="${v3.src}"/>
-      <include name="**/${v3.package}/Main.java"/>
+      <include name="**/${v3.package}/*.java"/>
+      <!--include name="**/${v3.package}/Main.java"/>
+      <include name="**/${v3.package}/TomToken.java"/-->
     </javac.preset>
   </target>
   
