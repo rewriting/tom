@@ -18,13 +18,23 @@ options {
   import org.antlr.runtime.tree.*;
 }
 
-@parser::members{
-  public static Tree intermediateResult; //subTree
-
-}
-
 @lexer::members{
   public static int tnesting = 0;
+  public Tree result;
+  
+  // override standard token emission
+  public Token emit() {
+    TomToken t = new TomToken(input, state.type, state.channel,
+        state.tokenStartCharIndex, getCharIndex()-1,result);
+    t.setLine(state.tokenStartLine);
+    t.setText(state.text);
+    t.setCharPositionInLine(state.tokenStartCharPositionInLine);
+    t.setTree(result);
+    emit(t);
+    result = null;
+    return t;
+  }
+
 }
 
 matchConstruct :
@@ -46,24 +56,22 @@ patternActionList :
   ;
 
 patternAction :
-  tomTerm ARROWLBRACE /* here we call the host parser */ -> ^(PatternAction tomTerm ^({intermediateResult}))
+  tomTerm a=ARROWLBRACE-> ^(PatternAction tomTerm ^({((TomToken)$a).getTree()}))
   ;
-
-//ARROW : '->' ;
 
 ARROWLBRACE : '-> {' /*(options {greedy=false;} : WS )* LBRACE*/
   {
-    System.out.println("\nbefore new Host*");
-    System.out.println("in arrowlbrace / tom tnesting = " + tnesting);
+//    System.out.println("\nbefore new Host*");
+//    System.out.println("in arrowlbrace / tom tnesting = " + tnesting);
     HostLanguageLexer lexer = new HostLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
-    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
+//    System.out.println("tom, tokens = " + tokens.toString() + " /fin");
+//    System.out.println("tom, tokens list = " + tokens.getTokens().toString());
     HostLanguageParser parser = new HostLanguageParser(tokens);
-    System.out.println("before parser.block()");
+//    System.out.println("before parser.block()");
     HostLanguageParser.block_return res = parser.block();
-    System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <-  should be '(*Block )')");
-    TomLanguageParser.intermediateResult = (Tree)res.getTree();
+//    System.out.println("(tom - host) res.getTree() = " + ((org.antlr.runtime.tree.Tree)res.getTree()).toStringTree() + " ( <-  should be '(*Block )')");
+    result = (Tree)res.getTree();
   }
   ;
 
