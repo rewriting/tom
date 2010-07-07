@@ -1,5 +1,5 @@
-import simpletest.example.types.*;
-public class SimpleTest {
+import simpleexample.example.types.*;
+public class SimpleExample {
   %gom {
     module Example
       abstract syntax

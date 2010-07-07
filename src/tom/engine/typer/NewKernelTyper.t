@@ -486,7 +486,14 @@ public class NewKernelTyper {
     }
 
     visit BQTerm {
+      // We don't know what is into the Composite
+      // It can be a BQVariableStar or a list operator or a list of
+      // CompositeBQTerm or something else
+      Composite(_*) -> { contextType = `EmptyType(); }
+
       bqVar@(BQVariable|BQVariableStar)[Options=optionList,AstName=aName,AstType=aType] -> {
+        //DEBUG System.out.println("InferTypes:BQTerm bqVar -- contextType = " +
+        //DEBUG     contextType);
         nkt.checkNonLinearityOfBQVariables(`bqVar);
         nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)));  
         //DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
@@ -594,7 +601,7 @@ public class NewKernelTyper {
          << varPatternList ||
          concBQTerm(_*,(BQVariable|BQVariableStar)[AstName=aName,AstType=aType2@!aType1],_*)
          << varList) -> {
-          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList))); }
+          addConstraint(`Equation(aType1,aType2,PairNameOptions(aName,optionList)));}
     }
   }
 
@@ -951,10 +958,6 @@ public class NewKernelTyper {
                 addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(bqTerm)));
                 //addConstraint(`Equation(getUnknownFreshTypeVar(),argType));
               }
-
-              // We don't know what is into the Composite
-              // It can be a BQVariableStar or a list operator or something else
-              Composite(_*) -> { argType = getUnknownFreshTypeVar(); }
             }
           } else if (`symName != argSymb.getAstName()) {
             // TODO: improve this code! It is like CT-ELEM
@@ -965,6 +968,8 @@ public class NewKernelTyper {
              * ListB(b(),ListA(a()),b())
              */
             argType = getUnknownFreshTypeVar();
+            //DEBUG System.out.println("inferBQTermList: symName != argSymb.getAstName() -- constraint "
+            //DEBUG     + argType + " = " + `headTTList);
             addConstraint(`Equation(argType,headTTList,getInfoFromBQTerm(bqTerm)));
           }
           `newTerm = `inferAllTypes(newTerm,argType);
@@ -1033,21 +1038,17 @@ public class NewKernelTyper {
   %strategy solveConstraints(nkt:NewKernelTyper) extends Identity() {
     visit TypeConstraintList {
       // CASES 1a and 3a :
-      concTypeConstraint(leftTCList*,tc@Equation(t1@(Type|TypeWithSymbol)[TomType=tName1],t2@Type[TomType=tName2@!tName1],_),rightTCList*) && 
+      concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),rightTCList*) && 
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
           nkt.printError(`tc);
           return `concTypeConstraint(leftTCList*,rightTCList*);
-          //throw new RuntimeException("solveConstraints: failure on " + `t1
-          //    + " = " + `t2);
         }
 
       // CASE 2a :
-      concTypeConstraint(leftTCList*,tc@Equation(t1@Type[TomType=tName1],t2@TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
+      concTypeConstraint(leftTCList*,tc@Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
           nkt.printError(`tc);
           return `concTypeConstraint(leftTCList*,rightTCList*);
-          //throw new RuntimeException("solveConstraints: failure on " + `t1
-          //    + " = " + `t2);
         }
 
       // CASE 4a :  
@@ -1055,8 +1056,6 @@ public class NewKernelTyper {
         (tLType1 != tLType2)  -> {
           nkt.printError(`tc);
           return `concTypeConstraint(leftTCList*,rightTCList*);
-          //throw new RuntimeException("solveConstraints: failure on " + `tLType1
-          //    + " = " + `tLType2);
         }
 
       // CASES 7 and 8 :
