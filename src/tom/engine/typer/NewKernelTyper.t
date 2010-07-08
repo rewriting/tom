@@ -67,7 +67,9 @@ public class NewKernelTyper {
     is_sort(t) { ($t instanceof NewKernelTyper) }
   }
 
-  private int freshTypeVarCounter = 0;
+  private int freshTypeVarCounter;
+  private int limTVarSymbolTable;
+
   /*
    * pem: why use a state variable here ?
    */
@@ -184,6 +186,10 @@ public class NewKernelTyper {
     return `PairNameOptions(Name(""),concOption()); 
   }
 
+  protected void setLimTVarSymbolTable(int freshTVarSymbolTable) {
+    limTVarSymbolTable = freshTVarSymbolTable;
+  }
+
   protected int getFreshTlTIndex() {
     return freshTypeVarCounter++;
   }
@@ -251,10 +257,39 @@ public class NewKernelTyper {
    * <code>typeConstraints</code> and <code>substitutions</code>
    */
   private void init() {
+    freshTypeVarCounter = limTVarSymbolTable;
     varPatternList = `concTomTerm();
     varList = `concBQTerm();
     typeConstraints = `concTypeConstraint();
     substitutions = new HashMap<TomType,TomType>();
+  }
+
+  private Code collectKnownTypesFromCode(Code subject) {
+    try {
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(this)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
+    }
+  }
+
+  /*
+   * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
+   * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
+   */
+  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
+    visit TomType {
+      Type(tomType,EmptyTargetLanguageType()) -> {
+        TomType newType = null;
+        newType = nkt.symbolTable.getType(`tomType);
+        if (newType == null) {
+          // This happens when :
+          // * tomType != unknown type AND (newType == null)
+          // * tomType == unknown type
+          newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
+        }
+        return newType;
+      }
+    }
   }
 
   /**
@@ -280,19 +315,27 @@ public class NewKernelTyper {
       Tom(codes@concCode(_,_*)) -> {
         CodeList codeResult = `concCode();
         for(Code headCodeList : `codes.getCollectionconcCode()) {
-          %match(headCodeList) {
+          System.out.println("In inferCode -- for! headCodeList = " +
+              headCodeList);
+            headCodeList = collectKnownTypesFromCode(headCodeList);
+          %match(Code headCodeList) {
             // For %match 
             InstructionToCode(instruction) -> {
               try{
+                System.out.println("In inferCode -- try! before inferAllTypes");
                 `instruction = inferAllTypes(`instruction,getUnknownFreshTypeVar());
+                System.out.println("In inferCode -- try! after inferAllTypes");
                 `headCodeList = `InstructionToCode(instruction);
+                //System.out.println("In inferCode -- try! before solveConstraints -- typeConstraints = " +  typeConstraints);
+                System.out.println("In inferCode -- try! before solveConstraints ");
                 typeConstraints = `RepeatId(solveConstraints(this)).visitLight(typeConstraints);
+                System.out.println("In inferCode -- try! after solveConstraints");
               } catch(tom.library.sl.VisitFailure e) {
                 throw new TomRuntimeException("inferCode: failure on " +
                     headCodeList);
               } 
             }
-            
+
             // For %strategy
             DeclarationToCode(declaration) -> {
               try{
@@ -305,15 +348,22 @@ public class NewKernelTyper {
               } 
             }
           }
+          System.out.println("In inferCode avant replaceInCode");
           `headCodeList = replaceInCode(`headCodeList);
+          System.out.println("In inferCode après replaceInCode");
           codeResult = `concCode(codeResult*,headCodeList);
+          System.out.println("In inferCode avant replaceInSymbolTable");
           replaceInSymbolTable();
+          System.out.println("In inferCode après replaceInSymbolTable");
           init();
+          System.out.println("In inferCode après init");
         }
+          System.out.println("In inferCode before return Tom(codeResult)");
         return `Tom(codeResult);
       }
     }
     // If it is a ill-formed code (different from "Tom(...)")
+          System.out.println("In inferCode before return code");
     return code;
   }
 
@@ -417,8 +467,8 @@ public class NewKernelTyper {
         //DEBUG System.out.println("InferTypes:TomTerm var = " + `var);
         nkt.checkNonLinearityOfVariables(`var);
         nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)));  
-        //DEBUG System.out.println("InferTypes:TomTerm var -- constraint = " +
-        //DEBUG `aType + " = " + contextType);
+        System.out.println("InferTypes:TomTerm var -- constraint = " +
+        `aType + " = " + contextType);
         %match(cList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(boundTerm)) -> {
@@ -456,8 +506,8 @@ public class NewKernelTyper {
         %match(cList) {
           // How many "AliasTo" constructors can concConstraint have?
           concConstraint(AliasTo(boundTerm)) -> {
-            //DEBUG System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
-            //DEBUG     nkt.getType(`boundTerm) + " = " + contextType);
+            System.out.println("InferTypes:TomTerm aliasrecordappl -- constraint = " +
+                nkt.getType(`boundTerm) + " = " + contextType);
             nkt.addConstraint(`Equation(nkt.getType(boundTerm),contextType,nkt.getInfoFromTomTerm(boundTerm))); }
         }
 
@@ -472,7 +522,7 @@ public class NewKernelTyper {
           // since the begginning and then does not enter into neither IF_1 nor
           // IF_2
           codomain = nkt.getCodomain(tSymbol);
-          //DEBUG System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
+          System.out.println("\n Test pour TomTerm-inferTypes in RecordAppl. codomain = " + codomain);
           nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
           //DEBUG System.out.println("InferTypes:TomTerm recordappl -- constraint" + codomain + " = " + contextType);
         }
@@ -496,8 +546,8 @@ public class NewKernelTyper {
         //DEBUG     contextType);
         nkt.checkNonLinearityOfBQVariables(`bqVar);
         nkt.addConstraint(`Equation(aType,contextType,PairNameOptions(aName,optionList)));  
-        //DEBUG System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
-        //DEBUG `aType + " = " + contextType);
+        System.out.println("InferTypes:BQTerm bqVar -- constraint = " +
+        `aType + " = " + contextType);
         return `bqVar;
       }
 
@@ -554,8 +604,8 @@ public class NewKernelTyper {
         } else {
           codomain = nkt.getCodomain(tSymbol);
           nkt.addConstraint(`Equation(codomain,contextType,PairNameOptions(aName,optionList)));
-          //DEBUG System.out.println("InferTypes:BQTerm bqappl -- constraint = "
-          //DEBUG + `codomain + " = " + contextType);
+          System.out.println("InferTypes:BQTerm bqappl -- constraint = "
+          + `codomain + " = " + contextType);
         }
         
         BQTermList newBQTList = `bqTList;
@@ -728,7 +778,7 @@ public class NewKernelTyper {
         //DEBUG System.out.println("inferConstraint l1 -- subject = " + `subject);
         TomType freshType1 = getUnknownFreshTypeVar();
         TomType freshType2 = getUnknownFreshTypeVar();
-        //DEBUG System.out.println("inferConstraint: match -- constraint " + freshType1 + " = " + freshType2);
+        System.out.println("inferConstraint: match -- constraint " + freshType1 + " = " + freshType2);
         addConstraint(`Equation(freshType1,freshType2,getInfoFromTomTerm(pattern)));
         `pattern = inferAllTypes(`pattern,freshType1);
         `subject = inferAllTypes(`subject,freshType2);
@@ -1040,27 +1090,31 @@ public class NewKernelTyper {
       // CASES 1a and 3a :
       concTypeConstraint(leftTCList*,tc@Equation((Type|TypeWithSymbol)[TomType=tName1],Type[TomType=tName2@!tName1],_),rightTCList*) && 
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+          System.out.println("In solveConstraints 1a/3a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
+          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
         }
 
       // CASE 2a :
       concTypeConstraint(leftTCList*,tc@Equation(Type[TomType=tName1],TypeWithSymbol[TomType=tName2@!tName1],_),rightTCList*) &&
         (tName1 != "unknown type") && (tName2 != "unknown type")  -> {
+          System.out.println("In solveConstraints 2a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
+          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
         }
 
       // CASE 4a :  
       concTypeConstraint(leftTCList*,tc@Equation(tLType1@TypeWithSymbol(_,_,_),tLType2@TypeWithSymbol(_,_,_),_),rightTCList*) &&
         (tLType1 != tLType2)  -> {
+          System.out.println("In solveConstraints 4a -- tc = " + `tc);
           nkt.printError(`tc);
-          return `concTypeConstraint(leftTCList*,rightTCList*);
+          return `concTypeConstraint(leftTCList*,tc,rightTCList*);
         }
 
       // CASES 7 and 8 :
-      concTypeConstraint(leftTCList*,Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
+      concTypeConstraint(leftTCList*,tc@Equation(typeVar@TypeVar(_,_),type@!typeVar,info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`type);
+          System.out.println("In solveConstraints 7/8 -- tc = " + `tc);
         %match {
           !concTypeConstraint() << leftTCList -> {
             if(nkt.findTypeVars(`typeVar,`leftTCList)) {
@@ -1078,8 +1132,9 @@ public class NewKernelTyper {
       }
 
       // CASES 5 and 6 :
-      concTypeConstraint(leftTCList*,Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info),rightTCList*) -> {
+      concTypeConstraint(leftTCList*,tc@Equation(groundType@!TypeVar(_,_),typeVar@TypeVar(_,_),info),rightTCList*) -> {
         nkt.substitutions.put(`typeVar,`groundType);
+          System.out.println("In solveConstraints 5/6 -- tc = " + `tc);
         %match {
           !concTypeConstraint() << leftTCList -> {
             if(nkt.findTypeVars(`typeVar,`leftTCList)) {
@@ -1096,6 +1151,8 @@ public class NewKernelTyper {
         return
           `concTypeConstraint(leftTCList*,Equation(groundType,groundType,info),rightTCList*);
       }
+
+      //x -> { System.out.println("In solveConstraints tCList = " + `x); }
     }
   }
 

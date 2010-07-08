@@ -1,3 +1,7 @@
+2010-07-08 tavaresc
+ * Improve new typer by resetting set of fresh type variables after each %match
+ or %strategy.
+
 2010-07-06 tavaresc
  * Fix inference for Composite having a list of CompositeBQTerm as 
    element.

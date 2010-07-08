@@ -74,6 +74,8 @@ public class NewTyper extends TomGenericPlugin {
   %typeterm NewKernelTyper { implement { NewKernelTyper } }
   %typeterm NewTyper { implement { NewTyper } }
 
+  private int freshTypeVarCounter = 0;
+
   /** some output suffixes */
   public static final String TYPED_SUFFIX       = ".tfix.typed";
   public static final String TYPED_TABLE_SUFFIX = ".tfix.typed.table";
@@ -96,6 +98,10 @@ public class NewTyper extends TomGenericPlugin {
   public NewTyper() {
     super("NewTyper");
     newKernelTyper = new NewKernelTyper();
+  }
+
+  protected int getFreshTlTIndex() {
+    return freshTypeVarCounter++;
   }
 
  /**
@@ -121,7 +127,7 @@ public class NewTyper extends TomGenericPlugin {
          * Typing variables whose types are unknown with fresh type variables before
          * start inference
          */
-        typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
+        //typedCode = collectKnownTypesFromCode((Code)getWorkingTerm());
 
         //DEBUG System.out.println("\nCode before type inference = \n" + typedCode);
 
@@ -129,7 +135,8 @@ public class NewTyper extends TomGenericPlugin {
          * Start by typing variables with fresh type variables
          * Perform type inference over patterns 
          */
-        typedCode = newKernelTyper.inferCode(typedCode);
+        typedCode = newKernelTyper.inferCode((Code)getWorkingTerm());
+        //typedCode = newKernelTyper.inferCode(typedCode);
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
         /** 
@@ -173,25 +180,26 @@ public class NewTyper extends TomGenericPlugin {
    */
   private TomSymbol collectKnownTypesFromTomSymbol(TomSymbol subject) {
     try {
-      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(this,newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
   }
-
+/*
   private Code collectKnownTypesFromCode(Code subject) {
     try {
-      return `TopDownIdStopOnSuccess(CollectKnownTypes(newKernelTyper)).visitLight(subject);
+      return `TopDownIdStopOnSuccess(CollectKnownTypes(this,newKernelTyper)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeUnknownTypes: failure on " + subject);
     }
   }
+  */
 
   /*
    * Type(name, EmptyTargetLanguageType()) -> Type(name, foundType) if name in TypeTable
    * Type(name, EmptyTargetLanguageType()) -> TypeVar(name, Index(i)) if name not in TypeTable
    */
-  %strategy CollectKnownTypes(nkt:NewKernelTyper) extends Identity() {
+  %strategy CollectKnownTypes(typer:NewTyper,nkt:NewKernelTyper) extends Identity() {
     visit TomType {
       Type(tomType,EmptyTargetLanguageType()) -> {
         TomType newType = null;
@@ -200,7 +208,7 @@ public class NewTyper extends TomGenericPlugin {
           // This happens when :
           // * tomType != unknown type AND (newType == null)
           // * tomType == unknown type
-          newType = `TypeVar(tomType,nkt.getFreshTlTIndex());
+          newType = `TypeVar(tomType,typer.getFreshTlTIndex());
         }
         return newType;
       }
@@ -221,6 +229,7 @@ public class NewTyper extends TomGenericPlugin {
         tSymbol =
           `TopDownIdStopOnSuccess(TransformBQAppl(newKernelTyper)).visitLight(`tSymbol);
         getSymbolTable().putSymbol(tomName,tSymbol);
+        newKernelTyper.setLimTVarSymbolTable(freshTypeVarCounter);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("should not be there");
       }

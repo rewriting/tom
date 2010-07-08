@@ -41,13 +41,15 @@
                 package="sl"
                 termpointer="true"
                 withCongruenceStrategies="true"
-                destdir="${test.gen}">
+                destdir="${test.gen}"
+                options="--newtyper">
          <include name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
       <exclude name="**/regress/**"/>
     </gom.preset>
     <gom.preset srcdir="${test.src}"
-                destdir="${test.gen}">
+                destdir="${test.gen}"
+                options="--newtyper">
          <include name="**/*.gom"/>
          <exclude name="sl/testsl.gom"/>
          <exclude name="**/error/**"/>
@@ -87,6 +89,13 @@
       <exclude name="**/error/**"/>
       <exclude name="**/rule/**"/>
       <exclude name="**/regress/**"/>
+
+      <!-- TOVERIFY -->
+      <!-- exclude name="TestReflective.t"/>
+      <exclude name="TestReflectiveStrategy.t"/>
+      <exclude name="**/sl/TestReflective.t"/>
+      <exclude name="**/xml/Xml.t"/>
+      <exclude name="**/xml/TestXml.t"/-->
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
