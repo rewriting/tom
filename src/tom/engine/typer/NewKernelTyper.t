@@ -155,10 +155,13 @@ public class NewKernelTyper {
     }
   }
   
-
   protected TomType getType(TomTerm tTerm) {
     %match(tTerm) {
-      Variable[AstType=aType] -> { return `aType; }
+      AntiTerm[TomTerm=atomicTerm] -> { return getType(`atomicTerm); }
+      (Variable|VariableStar)[AstType=aType] -> { return `aType; }
+      RecordAppl[NameList=concTomName(Name[String=name],_*)] -> {
+        return symbolTable.getType(`name);
+      }
     } 
     throw new TomRuntimeException("getType(TomTerm): should not be here.");
   }
@@ -1236,25 +1239,16 @@ public class NewKernelTyper {
       }
       //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
       //DEBUG     + tSymbol);
-      /*
-      %match {
-        Symbol[AstName=aName@Name(""),TypesToType=TypesToType(concTomType(contextType),contextType),PairNameDeclList=pndList,Options=optionList] << tSymbol -> {
-            
-        }  
-      }*/
       symbolTable.putSymbol(tomName,tSymbol);
     }
   }
 
   %strategy replaceFreshTypeVar(nkt:NewKernelTyper) extends Identity() {
     visit TomType {
-      typeVar@TypeVar(tomType,_) -> {
+      typeVar@TypeVar(_,_) -> {
         if (nkt.substitutions.containsKey(`typeVar)) {
           return nkt.substitutions.get(`typeVar);
-        } else {
-          //DEBUG System.out.println("\n----- There is no mapping for " + `typeVar +'\n');
-          return `Type(tomType,EmptyTargetLanguageType());
-        }    
+        } 
       }
     }
   }

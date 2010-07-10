@@ -139,6 +139,13 @@ public class NewTyper extends TomGenericPlugin {
         //typedCode = newKernelTyper.inferCode(typedCode);
         //DEBUG System.out.println("\nCode after type inference before desugarString = \n" + typedCode);
 
+        /**
+         * Replace all remains of type variables by
+         * Type(tomType,EmptyTargetLanguageType()) in Code and in SymbolTable
+         */
+        typedCode = replaceInCode(typedCode);
+        replaceInSymbolTable();
+
         /** 
          * TOMOVE to a post phase: 
          * - transform each BackQuoteTerm into its compiled form
@@ -174,6 +181,7 @@ public class NewTyper extends TomGenericPlugin {
       TomMessage.info(logger, null, 0, TomMessage.newTyperNotUsed);
     }
   }
+
 
   /*
    * Type unknown types with fresh type variables 
@@ -275,6 +283,44 @@ public class NewTyper extends TomGenericPlugin {
           return `FunctionCall(name,EmptyType(),args);
         }
       }
+    }
+  }
+
+  private Code replaceInCode(Code code) {
+    Code replacedCode = code;
+    try {
+      replacedCode =
+        `RepeatId(TopDown(replaceFreshTypeVar())).visitLight(code);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInCode: failure on " +
+          replacedCode);
+    }
+    return replacedCode;
+  }
+
+  private void replaceInSymbolTable() {
+    for(String tomName:newKernelTyper.getSymbolTable().keySymbolIterable()) {
+      //DEBUG System.out.println("replaceInSymboltable() - tomName : " + tomName);
+      TomSymbol tSymbol = newKernelTyper.getSymbolFromName(tomName);
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol before strategy: "
+      //DEBUG     + tSymbol);
+      try {
+        tSymbol = `RepeatId(TopDown(replaceFreshTypeVar())).visitLight(tSymbol);
+      } catch(tom.library.sl.VisitFailure e) {
+        throw new TomRuntimeException("replaceInSymbolTable: failure on " +
+            tSymbol);
+      }
+      //DEBUG System.out.println("replaceInSymboltable() - tSymbol after strategy: "
+      //DEBUG     + tSymbol);
+      newKernelTyper.getSymbolTable().putSymbol(tomName,tSymbol);
+    }
+  }
+
+  %strategy replaceFreshTypeVar() extends Identity() {
+    visit TomType {
+      TypeVar(tomType,_) -> {
+        return `Type(tomType,EmptyTargetLanguageType());
+      }    
     }
   }
 
