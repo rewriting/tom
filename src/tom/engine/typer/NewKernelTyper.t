@@ -782,19 +782,21 @@ public class NewKernelTyper {
       }
 
       NumericConstraint(left,right,type) -> {
-        TomType freshType1 = getUnknownFreshTypeVar();
-        TomType freshType2 = getUnknownFreshTypeVar();
-        // It will be useful for subtyping
-        // TomType freshType3 = getUnknownFreshTypeVar();
-        //addConstraint(`Equation(freshType1,getType(left)));
-        //DEBUG System.out.println("inferConstraint l1 - typeConstraints = " + typeConstraints);
-        //addConstraint(`Equation(freshType2,getType(right)));
-        //DEBUG System.out.println("inferConstraint l2 - typeConstraints = " + typeConstraints);
-        //DEBUG System.out.println("inferConstraint: numeric -- constraint " + freshType1 + " = " + freshType2);
-        //TO VERIFY : Do all bqTerm have an AstName?? 
-        addConstraint(`Equation(freshType1,freshType2,getInfoFromBQTerm(left)));
-        `left = inferAllTypes(`left,freshType1);
-        `right = inferAllTypes(`right,freshType2);
+        TomType tLeft = getType(`left);
+        TomType tRight = getType(`right);
+        if (tLeft == null || tLeft == `EmptyType()) {
+          tLeft = getUnknownFreshTypeVar();
+        }
+        if (tRight == null || tRight == `EmptyType()) {
+          tRight = getUnknownFreshTypeVar();
+        }
+        //DEBUG System.out.println("inferConstraint: match -- constraint " +
+        //DEBUG     tLeft + " = " + tRight);
+        addConstraint(`Equation(tLeft,tRight,getInfoFromBQTerm(left)));
+        `left = inferAllTypes(`left,tLeft);
+        `right = inferAllTypes(`right,tRight);
+        hasUndeclaredType(`left);
+        hasUndeclaredType(`right);
         return `NumericConstraint(left,right,type);
       }
 
