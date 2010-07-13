@@ -855,7 +855,7 @@ public class NewKernelTyper {
         return `concSlot(PairSlotAppl(sName,tTerm),newTail*);
       }
 
-      concSlot(PairSlotAppl[SlotName=sName,Appl=tTerm],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(domain@concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
+      concSlot(PairSlotAppl[SlotName=sName,Appl=tTerm],tailSList*),Symbol[AstName=symName,TypesToType=TypesToType(concTomType(headTTList,_*),Type(tomCodomain,tlCodomain))] -> {
         TomType argType = contextType;
         // In case of a list
         if(TomBase.isListOperator(`tSymbol) || TomBase.isArrayOperator(`tSymbol)) {
@@ -923,7 +923,6 @@ public class NewKernelTyper {
           TomTerm argTerm;
           TomName argName;
           SlotList newSList = `concSlot();
-          TomTypeList symDomain = `domain;
           /**
            * Continuation of CT-FUN rule (applying to premises):
            * IF found "f(e1,...,en):A" and "f:T1,...,Tn->T" exists in SymbolTable
@@ -935,11 +934,10 @@ public class NewKernelTyper {
             argName = arg.getSlotName();
             //DEBUG System.out.println("InferSlotList CT-FUN -- slotappl in for = " +
             //DEBUG     `argTerm);
-            argType = symDomain.getHeadconcTomType();
+            argType = TomBase.getSlotType(tSymbol,argName);
             addConstraint(`Equation(getUnknownFreshTypeVar(),argType,getInfoFromTomTerm(argTerm)));
             `argTerm = `inferAllTypes(argTerm,argType);
             newSList = `concSlot(newSList*,PairSlotAppl(argName,argTerm));
-            symDomain = symDomain.getTailconcTomType();
             //DEBUG System.out.println("InferSlotList CT-FUN -- end of for with slotappl = " + `argTerm);
           }
           return newSList;
