@@ -1,0 +1,64 @@
+Results obtained by compiling tom files of all directories with option -nt (NewTyper):
+  - Compile successfully :
+  acmatching 
+  addressbook
+  analysis
+  antipattern
+  appletxml
+  bdd 
+  boulderdash
+  caml 
+  cell
+  cps 
+  csmaca
+  debugger
+  deepmatch
+  dom
+  freshgom 
+  gasel
+  gom
+  gomoku 
+  integerc 
+  labyrinth
+  lambdacalculi
+  lazyml 
+  list
+  master
+  matching
+  meta
+  mgs 
+  multigraph 
+  nspk
+  p3p
+  parser
+  peano
+  poly
+  strategy
+  subtyping 
+  set 
+  structure
+  polygraphes
+  prodrule
+  propp
+  quine
+  rbtree 
+  tactics
+  termgraph
+  tomjastadd
+  typeinference
+
+  - Compile successfully when replacing filename.t having anonymous constructors
+  (symbols) in their code by <filename>NS.t ("NS" for Named Symbol) :
+
+  miniml
+  modeltrans
+  strategycompiler
+  strings
+  tutorial
+
+  - Fail : 
+  bpel
+  builtin
+  bytecode
+  expression : (need subtype informations for TomTypes)
+  
