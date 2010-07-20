@@ -68,16 +68,6 @@ public class TestSublists {
     fail();
   }
 
-  @Test
-  public void test2_1() {
-    Term res = `list(a(),b(),c());
-    %match(res) {
-      list(_*,_p@(a(),b(),c()),_*) -> {
-        return;
-      }
-    }
-    fail();
-  }
 /*
   @Test
   public void test3() {

@@ -339,6 +339,14 @@ public class ASTFactory {
     return "tom_" + name;
   }
 
+  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, List<TomTerm> childs) {
+    LinkedList<TomTerm> res = new LinkedList<TomTerm>();
+    for(TomTerm term:childs) {
+      res.add(metaEncodeXMLAppl(symbolTable,term));
+    }
+    return res;
+  }
+
   public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
     %match(list) {
       concTomTerm() -> { return `concTomTerm();}
@@ -390,42 +398,6 @@ public class ASTFactory {
       }
     }
     return term;
-  }
-
-  public static boolean isExplicitTermList(List childs) {
-    if(childs.size() == 1) {
-      TomTerm term = (TomTerm) childs.get(0);
-      %match(term) {
-        (RecordAppl|TermAppl)[NameList=(Name(""))] -> {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  public static List<TomTerm> metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
-    LinkedList<TomTerm> list = new LinkedList<TomTerm>();
-    %match(term) {
-      RecordAppl[NameList=(Name("")),Slots=args] -> {
-        while(!`args.isEmptyconcSlot()) {
-          list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcSlot().getAppl()));
-          `args = `args.getTailconcSlot();
-        }
-        return list;
-      }
-
-      TermAppl[NameList=(Name("")),Args=args] -> {
-        while(!`args.isEmptyconcTomTerm()) {
-          list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcTomTerm()));
-          `args = `args.getTailconcTomTerm();
-        }
-        return list;
-      }
-    }
-    //System.out.println("metaEncodeExplicitTermList: strange case: " + term);
-    list.add(term);
-    return list;
   }
 
   public static BQTerm buildList(TomName name, BQTermList args, SymbolTable symbolTable) {

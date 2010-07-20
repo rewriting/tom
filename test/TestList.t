@@ -141,8 +141,8 @@ public class TestList {
       ATerm res = fail;
       ATermList l = (ATermList)t;
       %match(L l) {
-        (f(a()))                           -> { return factory.parse("pattern1"); }
-        (_X1*,f(a()))                      -> { return factory.parse("pattern2"); }
+        conc(f(a()))                           -> { return factory.parse("pattern1"); }
+        conc(_X1*,f(a()))                      -> { return factory.parse("pattern2"); }
         conc(_X1*,f(a()),_X2*,f(b()))      -> { return factory.parse("pattern3"); }
         conc(_X1*,f(a()),_X2*,f(b()),_X3*) -> { return factory.parse("pattern4"); }
         conc(f(b()),_X2*,f(b()),_X3*)      -> { return factory.parse("pattern5"); }

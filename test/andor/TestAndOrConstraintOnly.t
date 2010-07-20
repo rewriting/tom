@@ -378,9 +378,9 @@ public class TestAndOrConstraintOnly {
   public void test27() {
     int cpt = 0;
     %match {
-      (_*,a(),_*) << termList(a(),b()) -> { cpt++; }
-      ((_*,a(),_*) << termList(a(),b())) -> { cpt++; }
-      (((_*,a(),_*) << termList(a(),b()))) -> { cpt++; }
+      termList(_*,a(),_*) << termList(a(),b()) -> { cpt++; }
+      (termList(_*,a(),_*) << termList(a(),b())) -> { cpt++; }
+      ((termList(_*,a(),_*) << termList(a(),b()))) -> { cpt++; }
     }
     if(cpt!=3) {
       fail();

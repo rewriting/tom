@@ -718,7 +718,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
     boolean anti = false;
 }
     :   (
-            (
+            (// l: label
                 (ALL_ID COLON) => lname:ALL_ID COLON
                 {
                     text.append(lname.getText());
@@ -727,7 +727,7 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     line = lname.getLine();
                 }
             )?
-            (
+            (// @ annotation
                 (ALL_ID AT) => name:ALL_ID AT
                 {
                     text.append(name.getText());
@@ -736,26 +736,21 @@ annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomExcepti
                     line = name.getLine();
                 }
             )?
-          (
-            {allowImplicit}?
             result = plainTerm[labeledName,annotatedName,line]
-            | {!allowImplicit}?
-              (a:ANTI_SYM {anti = !anti;} )*
-              result = simplePlainTerm[labeledName,annotatedName,line, new LinkedList(), new LinkedList<Option>(), new LinkedList<Option>(), new LinkedList<Constraint>(), anti]
-          )
        )
     ;
 
-// a plainTerm that doesn't allow the notation (...)
-simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List list,
-                 List<Option> secondOptionList, List<Option> optionList,
-                 List<Constraint> constraintList, boolean anti]
-                 returns [TomTerm result] throws TomException
+plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
+    List list = new LinkedList();
+    List<Option> secondOptionList = new LinkedList<Option>();
+    List<Option> optionList = new LinkedList<Option>();
+    List<Constraint> constraintList = new LinkedList<Constraint>();
     result = null;
     TomNameList nameList = `concTomName();
     TomName name = null;
     boolean implicit = false;
+    boolean anti = false;
 
     if(astLabeledName != null) {
       constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
@@ -765,6 +760,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
     }
 }
     :
+      (a:ANTI_SYM {anti = !anti;} )*
         ( // xml term
           result = xmlTerm[optionList, constraintList]
           {
@@ -805,22 +801,19 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 
         | // f(...) or f[...] or !f(...) or !f[...]
           name = headSymbol[optionList]
-
-      (
-      st:QQMARK {
-        if(st!=null) {
-              name = `Name(name.getString());
-              optionList.add(`MatchingTheory(concElementaryTheory(AC())));
-        }
-      }
-      |
-       qm:QMARK {
-        if(qm!=null) {
-              name = `Name(name.getString());
-              optionList.add(`MatchingTheory(concElementaryTheory(AU())));
-        }
-       }
-      )?
+          (
+           st:QQMARK {
+             if(st!=null) {
+               optionList.add(`MatchingTheory(concElementaryTheory(AC())));
+             }
+           }
+           |
+            qm:QMARK {
+              if(qm!=null) {
+                optionList.add(`MatchingTheory(concElementaryTheory(AU())));
+              }
+            }
+           )?
 
           implicit = args[list,secondOptionList]
           {
@@ -846,7 +839,8 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
         | // (f|g...)
           // ambiguity with the last rule so use a lookahead
           // if ALTERNATIVE then parse headSymbolList
-          {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList]
+          {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? 
+          nameList = headSymbolList[optionList]
           implicit = args[list, secondOptionList]
           {
             if(implicit) {
@@ -908,56 +902,6 @@ plainBQTerm  returns [BQTerm result]
     //| name = headConstant[optionList] { result = `BuildConstant(name); }
 ;
 
-plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
-{
-    List<Option> optionList = new LinkedList<Option>();
-    List<Option> secondOptionList = new LinkedList<Option>();
-    List list = new LinkedList();
-    List<Constraint> constraintList = new LinkedList<Constraint>();
-    result = null;
-    boolean anti = false;
-}
-    :
-      (a:ANTI_SYM {anti = !anti;} )*
-      ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }?
-        result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]
-      | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
-      {  return result; }
-    ;
-
-// a plainTerm that allows the (...) notation
-implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line,
-                          List list, List<Option> secondOptionList,
-                          List<Option> optionList, List<Constraint> constraintList,
-                          boolean anti]
-                          returns [TomTerm result] throws TomException
-{
-    TomNameList nameList = null;
-    result = null;
-
-    if(astLabeledName != null) {
-      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
-    }
-    if(astAnnotedName != null) {
-      constraintList.add(ASTFactory.makeAliasTo(astAnnotedName, line, currentFile()));
-    }
-
-}
-:
-args[list,secondOptionList]
-{
-  nameList = `concTomName(Name(""));
-  optionList.addAll(secondOptionList);
-  result = `TermAppl(
-      ASTFactory.makeOptionList(optionList),
-      nameList,
-      ASTFactory.makeTomList((List<TomTerm>)list),
-      ASTFactory.makeConstraintList(constraintList)
-  );
-  if (anti) { result = `AntiTerm(result); }
-}
-;
-
 xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
@@ -988,6 +932,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                 }
             |   // case: > childs  </NODE>
                 XML_CLOSE  {text.append(">");}
+
                 implicit = xmlChilds[childs]
 
                 XML_START_ENDING {text.append("</"); }
@@ -1011,14 +956,14 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
                             "match", expected.substring(1), found.substring(1)});
                     }
                     if(implicit) {
-                        // Special case when XMLChilds() is reduced to a singleton
-                        // when XMLChilds() is reduced to a singleton
-                        // Appl(...,Name(""),args)
-                        if(ASTFactory.isExplicitTermList(childs)) {
-                            childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.get(0));
-                        } else {
-                            optionList.add(`ImplicitXMLChild());
-                        }
+                      //System.out.println("implicit");
+                      //System.out.println("childs = " + childs);
+                      optionList.add(`ImplicitXMLChild());
+                    } else {
+                      //System.out.println("explicit");
+                      //System.out.println("childs1 = " + childs);
+                      childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, childs);
+                      //System.out.println("childs2 = " + childs);
                     }
                     option = ASTFactory.makeOptionList(optionList);
                 }
@@ -1213,19 +1158,6 @@ xmlAttribute returns [TomTerm result] throws TomException
         }
     ;
 
-// This corresponds to the implicit notation
-xmlTermList [List<TomTerm> list] returns [boolean result] throws TomException
-{
-    result = false;
-    TomTerm term;
-}
-    :
-        (
-            term = annotatedTerm[true] {list.add(term);}
-        )*
-        {result = true;}
-    ;
-
 xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
 {
     result = `concTomName();
@@ -1351,14 +1283,15 @@ unamedVariableOrTermStringIdentifier [List<Option> options, List<Constraint> con
         )
     ;
 
-// return true for implicit mode
-implicitTermList [List<TomTerm> list] returns [boolean result] throws TomException
+// returns true is implicit notation
+xmlChilds [List<TomTerm> list] returns [boolean result] throws TomException
 {
-    result = false;
-    TomTerm term;
+  result = false;
+  TomTerm term;
 }
     :
         (
+            {LA(1) == LBRACKET}? 
             LBRACKET
             { text.append("["); }
             (
@@ -1373,30 +1306,27 @@ implicitTermList [List<TomTerm> list] returns [boolean result] throws TomExcepti
                 text.append("]");
                 result=true;
             }
-        )
-    ;
-
-
-xmlChilds [List list] returns [boolean result] throws TomException
-{
-  result = false;
-  List childs = new LinkedList();
-  Iterator it;
-}
-    :
-        (
-            //(implicitTermList[null]) =>
-            {LA(1) == LBRACKET}? result = implicitTermList[childs]
-        |   result = xmlTermList[childs]
-        )
-        {
-            it = childs.iterator();
-            while(it.hasNext()) {
-                list.add(ASTFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
+        |   {LA(1) == LPAREN}?
+            LPAREN
+            { text.append("("); }
+            (
+                term = annotatedTerm[true] { list.add(term); }
+                (
+                    COMMA { text.append(","); }
+                    term = annotatedTerm[true] { list.add(term); }
+                )*
+            )?
+            RPAREN
+            {
+                text.append(")");
+                result=false;
             }
-        }
+        |   ( term = annotatedTerm[true] {list.add(ASTFactory.metaEncodeXMLAppl(symbolTable,term));} )*
+            {
+              result = true;
+            }
+        )
     ;
-
 
 args [List list, List<Option> optionList] returns [boolean result] throws TomException
 {
@@ -1627,14 +1557,10 @@ headSymbolOrConstant [List<Option> optionList] returns [TomName result]
 
 headSymbol [List<Option> optionList] returns [TomName result]
 {
-  //String buf="";
- // TomName name = null;
   result = null;
 }
 :
-  (i:ALL_ID /*{buf=i.getText(); System.out.println("buf = " + buf);}
-   (DOT {buf+=".";}  name = headSymbol[optionList]{buf+=name.getString();System.out.println("buf2 = " + buf);})*
-   */
+  (i:ALL_ID 
   {
     String name = i.getText();
 		int line = i.getLine();

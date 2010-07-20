@@ -63,7 +63,7 @@ TermRuleList = termrulelist(TermRule*)
     IntList l1 = `intlist(1,2,4,5);
     IntList l2 = `intlist(1,2,3,4,5);
     %match(IntList l1, IntList l2) {
-      (x*,y*),(x*,3,y*) -> {
+      intlist(x*,y*),intlist(x*,3,y*) -> {
         return;
       }
     }
@@ -76,7 +76,7 @@ TermRuleList = termrulelist(TermRule*)
     IntList l2 = `intlist(1,2,3,4,5);
     Toto t = `f(l1,l2);
     %match(t) {
-      f((x*,y*),(x*,3,y*)) -> {
+      f(intlist(x*,y*),intlist(x*,3,y*)) -> {
         return;
       }
     }
@@ -89,7 +89,7 @@ TermRuleList = termrulelist(TermRule*)
     IntList l2 = `intlist(1,2,3,4,5);
     IntList l3 = `intlist(1,2,6,4,5);
     %match(IntList l1, IntList l2, IntList l3) {
-      (x*,y*),(x*,_a,y*),(x*,_b,y*) -> {
+      intlist(x*,y*),intlist(x*,_a,y*),intlist(x*,_b,y*) -> {
         return;
       }
     }
@@ -122,18 +122,10 @@ relationAppl(relation("B"),EmptyconcTerm()))); /* B */
     %match(t) {
       rule(
           "implies L",
-          (rule(_,_,sequent((g1*,g2*),(A,d*)),_), rule(_,_,sequent((g1*,B,g2*),d),_)),
-          sequent((g1*,a,g2*),d),
+          premisses(rule(_,_,sequent(context(g1*,g2*),context(A,d*)),_), rule(_,_,sequent(context(g1*,B,g2*),d),_)),
+          sequent(context(g1*,a,g2*),d),
           a@implies(A,B)
           )
-/*
-      rule(
-          "implies L",
-          (p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)),
-          sequent(y@(g1*,a,g2*),d),
-          a@implies(A,B)
-          )
-*/
         -> { return; }
     }
     Assert.fail("ca marche pas");

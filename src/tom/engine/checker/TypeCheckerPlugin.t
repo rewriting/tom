@@ -77,7 +77,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
   protected final static int UNAMED_VARIABLE         = 8;
   protected final static int VARIABLE                = 9;
 
-  protected boolean strictType = false;
   protected Option currentTomStructureOrgTrack;
 
   /** the declared options string */
@@ -192,7 +191,6 @@ public class TypeCheckerPlugin extends TomGenericPlugin {
 
   public void run(Map informationTracker) {
     if(isActivated()) {
-      strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
