@@ -45,10 +45,10 @@ public class Anagram {
 
   public boolean isAnagram(String w1, String w2) {
     %match(String w1, String w2) {
-      (),() -> {
+      concString(),concString() -> {
         return true;
       }
-      (l,a1*),(b2*,l,a2*) -> {
+      concString(l,a1*),concString(b2*,l,a2*) -> {
 //         `isAnagram(a1,b2*+a2*);
         return `isAnagram(a1,concString(b2*,a2*));
       }
@@ -57,7 +57,7 @@ public class Anagram {
   }
 
   private void showIsAnagram(String w1, String w2) {
-    if (isAnagram(w1,w2)) {
+    if(isAnagram(w1,w2)) {
       System.out.println("They are anagrams.");
     } else {
       System.out.println("They aren't anagrams.");

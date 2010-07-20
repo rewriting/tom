@@ -41,55 +41,55 @@ public class HelloWorld {
     %match(String t) {
       "World"  -> { return "World";}
     }
-		return "Unknown"; 
+    return "Unknown"; 
   }
 
   public void revisited(String t) {
     %match(String t) {
-      (_*,'e',_*) -> { System.out.println("we have found a 'e'"); }
+      concString(_*,'e',_*) -> { System.out.println("we have found a 'e'"); }
     }
 
     %match(String t) {
-      (before*,'e',after*) -> { 
+      concString(before*,'e',after*) -> { 
         System.out.println("we have found a 'e'" +
-                           " after " + `before* +
-                           " but before " + `after*); 
+            " after " + `before* +
+            " but before " + `after*); 
       }
     }
 
     %match(String t) {
-      (before*,'o') -> { /* ... */ }
+      concString(before*,'o') -> { /* ... */ }
     }
 
     %match(String t) {
-      (before*,'e',_*,'o') -> { /* ... */ }
+      concString(before*,'e',_*,'o') -> { /* ... */ }
     }
 
     %match(String t) {
-      (_*,'l','l',_*) -> { /* ... */ }
+      concString(_*,'l','l',_*) -> { /* ... */ }
     }
 
     %match(String t) {
-      (_*,'ll',_*) -> { /* ... */ }
+      concString(_*,'ll',_*) -> { /* ... */ }
     }
 
   }
 
   public void re_revisited(String t) {
     %match(String t) {
-      (x,_*,'ll',_*,y) -> { /* ... */ }
+      concString(x,_*,'ll',_*,y) -> { /* ... */ }
     }
 
     %match(String t) {
-      (x,_*,'ll',_*,y) -> { /* ... */ }
-      (x,y,y,x)        -> { /* we have found a palindrome */ }
+      concString(x,_*,'ll',_*,y) -> { /* ... */ }
+      concString(x,y,y,x)        -> { /* we have found a palindrome */ }
     }
 
     %match(String t) {
-      (_*,'a',_*,'a',_*,'a',_*) -> { /* look for 3 'a' in a string */ }
-      (_*,x@'a',_*,x,_*,x,_*)   -> { /* look for 3 'a' in a string */ }
+      concString(_*,'a',_*,'a',_*,'a',_*) -> { /* look for 3 'a' in a string */ }
+      concString(_*,x@'a',_*,x,_*,x,_*)   -> { /* look for 3 'a' in a string */ }
     }
-   
+
   }
 
 }

@@ -58,7 +58,7 @@ public class Compiler {
   }
 
   private static String compile(RawTyPattern p, FixVars vl) {
-    %match (p) {
+    %match(p) {
       RawTyPVar(x,_) -> { return `x; }
       RawTyPFun(f,l) -> { return `f + "(" + `compile(l,vl) + ")"; }
     }
@@ -72,7 +72,7 @@ public class Compiler {
     %match(t) {
       RawTyped(RawTyVar(x),_) -> { 
         %match(FixVars vl) {
-          (_*,v,_*) && v << String x -> { return "(" + `x + ".value())"; }
+          FixVarList(_*,v,_*) && v << String x -> { return "(" + `x + ".value())"; }
           _                          -> { return "`(" + `x + ")"; }
         }
       }

@@ -67,7 +67,7 @@ public class TestHashMap {
 
     /* finding a value by key */
     %match(HashMap m) {
-      (_*, mapEntry(string("two"),y), _*) -> { 
+      concHashMap(_*, mapEntry(string("two"),y), _*) -> { 
         assertEquals(`y,"2");;
       }
     }
@@ -86,7 +86,7 @@ public class TestHashMap {
 
     java.util.HashMap m3 = null;
     %match(HashMap m2) {
-      (X*, mapEntry(_,string("world")), Y* ) -> {
+      concHashMap(X*, mapEntry(_,string("world")), Y* ) -> {
         m3 = `concHashMap(X*,Y*);
       }
     }

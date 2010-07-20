@@ -153,7 +153,7 @@ public class PatternAnalyserNS{
           throw new tom.engine.exception.TomRuntimeException();
         }
       }
-      ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
+      ElementNode("if",_,concTNode(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
         wfglist = `ConcWfg(wfglist*,res);
         %match(TNodeList elses) {

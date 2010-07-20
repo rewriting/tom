@@ -67,7 +67,7 @@ public class TestTreeMap {
 
     /* finding a value by key */
     %match(TreeMap m) {
-      (_*, mapEntry(string("two"),y), _*) -> {
+      concTreeMap(_*, mapEntry(string("two"),y), _*) -> {
         assertEquals(`y,"2");;
       }
     }
@@ -86,7 +86,7 @@ public class TestTreeMap {
 
     java.util.TreeMap m3 = null;
     %match(TreeMap m2) {
-      (X*, mapEntry(_,string("world")), Y* ) -> {
+      concTreeMap(X*, mapEntry(_,string("world")), Y* ) -> {
         m3 = `concTreeMap(X*,Y*);
       }
     }

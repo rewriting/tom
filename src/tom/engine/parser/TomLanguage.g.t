@@ -71,7 +71,7 @@ options{
     %include{ ../adt/tomsignature/TomSignature.tom }
     //--------------------------
 
-    public String currentFile(){
+    public String currentFile() {
         return targetparser.getCurrentFile();
     }
 
@@ -88,7 +88,7 @@ options{
     private SymbolTable symbolTable;
 
     public TomParser(ParserSharedInputState state, HostParser target,
-                     OptionManager optionManager){
+                     OptionManager optionManager) {
         this(state);
         this.targetparser = target;
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
@@ -104,27 +104,27 @@ options{
         symbolTable.putSymbol(name,symbol);
     }
 
-    private int getLine(){
+    private int getLine() {
         return tomlexer.getLine();
     }
 
-    public void updatePosition(int i, int j){
+    public void updatePosition(int i, int j) {
         targetparser.updatePosition(i,j);
     }
 
-    public void addTargetCode(Token t){
+    public void addTargetCode(Token t) {
         targetparser.addTargetCode(t);
     }
 
-    private void setLastLine(int line){
+    private void setLastLine(int line) {
         lastLine = line;
     }
 
-    private void clearText(){
+    private void clearText() {
         text.delete(0,text.length());
     }
 
-    protected TokenStreamSelector selector(){
+    protected TokenStreamSelector selector() {
         return targetparser.getSelector();
     }
 
@@ -204,7 +204,7 @@ matchArgument [List<BQTerm> list] throws TomException
       } else {
         if(subject1.isBQVariable()) {
           String type = subject1.getAstName().getString();
-          %match(subject2){
+          %match(subject2) {
             BQVariable[AstName=name] -> {
               Option ot = `OriginTracking(name, lastLine, currentFile());
               list.add(`BQVariable(concOption(ot),name,Type(type,EmptyTargetLanguageType())));
@@ -909,7 +909,7 @@ xmlTerm [List<Option> optionList, List<Constraint> constraintList] returns [TomT
   List<Slot> pairSlotList = new LinkedList<Slot>();
   List attributeList = new LinkedList();
   List childs = new LinkedList();
-  String keyword = "";
+  String keyword = null;
   boolean implicit;
   TomNameList nameList, closingNameList;
   OptionList option = null;
@@ -1132,8 +1132,7 @@ xmlAttribute returns [TomTerm result] throws TomException
         )
         {
             if (!varStar) {
-
-              if (anti){
+              if (anti) {
                 term = `AntiTerm(term);
               }
 
@@ -1161,7 +1160,7 @@ xmlAttribute returns [TomTerm result] throws TomException
 xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
 {
     result = `concTomName();
-    StringBuilder XMLName = new StringBuilder("");
+    StringBuilder xmlName = new StringBuilder();
     int decLine = 0;
     boolean anti = false;
 }
@@ -1171,7 +1170,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
             name:ALL_ID
             {
                 text.append(name.getText());
-                XMLName.append(name.getText());
+                xmlName.append(name.getText());
                 decLine = name.getLine();
                 if (anti) {
                   result =  `concTomName(AntiName(Name(name.getText())));
@@ -1182,14 +1181,14 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
         |   name2:UNDERSCORE
             {
                 text.append(name2.getText());
-                XMLName.append(name2.getText());
+                xmlName.append(name2.getText());
                 decLine = name2.getLine();
                 result = `concTomName(Name(name2.getText()));
             }
         |   LPAREN (b:ANTI_SYM {anti = !anti;} )* name3:ALL_ID
             {
                 text.append(name3.getText());
-                XMLName.append(name3.getText());
+                xmlName.append(name3.getText());
                 decLine = name3.getLine();
                 if (anti) {
                   result =  `concTomName(AntiName(Name(name3.getText())));
@@ -1202,7 +1201,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
                 ALTERNATIVE (c:ANTI_SYM {anti = !anti;} )* name4:ALL_ID
                 {
                     text.append("|"+name4.getText());
-                    XMLName.append("|"+name4.getText());
+                    xmlName.append("|"+name4.getText());
                     if (anti) {
                       result = `concTomName(result*,AntiName(Name(name4.getText())));
                     } else {
@@ -1214,7 +1213,7 @@ xmlNameList [List<Option> optionList, boolean needOrgTrack] returns [TomNameList
         )
         {
             if(needOrgTrack) {
-                optionList.add(`OriginTracking(Name(XMLName.toString()), decLine, currentFile()));
+                optionList.add(`OriginTracking(Name(xmlName.toString()), decLine, currentFile()));
             }
         }
     ;
@@ -1291,31 +1290,15 @@ xmlChilds [List<TomTerm> list] returns [boolean result] throws TomException
 }
     :
         (
-            {LA(1) == LBRACKET}? 
-            LBRACKET
-            { text.append("["); }
-            (
-                term = annotatedTerm[true] { list.add(term); }
-                (
-                    COMMA { text.append(","); }
-                    term = annotatedTerm[true] { list.add(term); }
-                )*
-            )?
+            LBRACKET { text.append("["); }
+            ( termList[list] )?
             RBRACKET
             {
                 text.append("]");
                 result=true;
             }
-        |   {LA(1) == LPAREN}?
-            LPAREN
-            { text.append("("); }
-            (
-                term = annotatedTerm[true] { list.add(term); }
-                (
-                    COMMA { text.append(","); }
-                    term = annotatedTerm[true] { list.add(term); }
-                )*
-            )?
+        |   LPAREN { text.append("("); }
+            ( termList[list] )?
             RPAREN
             {
                 text.append(")");
@@ -1341,9 +1324,7 @@ args [List list, List<Option> optionList] returns [boolean result] throws TomExc
                 // setting line number for origin tracking
                 // in %rule construct
                 setLastLine(t2.getLine());
-
                 text.append(t2.getText());
-
                 result = false;
                 optionList.add(`OriginTracking(Name(""),t1.getLine(),currentFile()));
             }
@@ -1357,7 +1338,6 @@ args [List list, List<Option> optionList] returns [boolean result] throws TomExc
                 // in %rule construct
                 setLastLine(t4.getLine());
                 text.append(t4.getText());
-
                 result = true;
                 optionList.add(`OriginTracking(Name(""),t3.getLine(),currentFile()));
             }
@@ -1436,8 +1416,6 @@ bqVariableStar [List<Option> optionList, List<Constraint> constraintList] return
             }
         )
     ;
-
-
 
 // _* or var*
 variableStar [List<Option> optionList, List<Constraint> constraintList] returns [TomTerm result]
@@ -1744,7 +1722,7 @@ operator returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     List options = new LinkedList();
     Declaration attribute = null;
-    String opName = "";
+    String opName = null;
 }
     :
         type:ALL_ID name:ALL_ID
@@ -1789,7 +1767,7 @@ operatorArray returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     List<Option> options = new LinkedList<Option>();
     Declaration attribute = null;
-    String opName = "";
+    String opName = null;
 }
     :
         type:ALL_ID name:ALL_ID
@@ -2436,7 +2414,7 @@ ML_COMMENT
     | '\r' '\n'   {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
     | '\r'      {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
     | '\n'      {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-    | ~('*'|'\n'|'\r'){if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
+    | ~('*'|'\n'|'\r') {if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
     )*
     "*/"
     {$setType(Token.SKIP);}

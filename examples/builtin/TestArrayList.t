@@ -54,7 +54,7 @@ public class TestArrayList {
     java.util.Set<String> set = new java.util.HashSet<String>();
     java.util.ArrayList list = `concArrayList("one","two","three","four");
     %match(ArrayList list) {
-      (_*,x,_*)   -> { set.add(`x+"_"+`x); }
+      concArrayList(_*,x,_*)   -> { set.add(`x+"_"+`x); }
     }
     assertEquals(set.size(),4);
     assertTrue(set.contains("one_one"));

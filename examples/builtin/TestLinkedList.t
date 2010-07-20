@@ -54,7 +54,7 @@ public class TestLinkedList {
     java.util.Set set = new java.util.HashSet();
     java.util.LinkedList list = `concLinkedList("one","two","three","four");
     %match(LinkedList list) {
-      (_*,x,_*)   -> { set.add(`x+"_"+`x); }
+      concLinkedList(_*,x,_*)   -> { set.add(`x+"_"+`x); }
     }
     assertEquals(set.size(),4);
     assertTrue(set.contains("one_one"));
