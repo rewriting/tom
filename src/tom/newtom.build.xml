@@ -9,9 +9,14 @@
   <property name="v3.gen"      location="${v3.dir}/gen"/>
   <property name="v3.build"    location="${v3.dir}/build"/>
   <property name="v3.package"   value="newtom"/>
-  <property name="v3.newtomast"   value="${v3.package}/NewTomAst"/>
+  <property name="v3.tomast"   value="${v3.package}/Tom"/>
+  <property name="v3.backquoteast"   value="${v3.package}/BackQuote"/>
+  <property name="v3.newhostgrammarname"  value="NewHostLanguage"/>
+  <property name="v3.newhostgrammar"  value="${v3.package}/${v3.newhostgrammarname}"/>
   <property name="v3.newtomgrammarname"  value="NewTomLanguage"/>
   <property name="v3.newtomgrammar"  value="${v3.package}/${v3.newtomgrammarname}"/>
+  <property name="v3.newbackquotegrammarname"  value="NewBackQuoteLanguage"/>
+  <property name="v3.newbackquotegrammar"  value="${v3.package}/${v3.newbackquotegrammarname}"/>
 
   <import file="${tom.home}/lib/tom-common.xml"/>
   
@@ -47,9 +52,10 @@
   
   <target name="gomantlradapter" depends="init, gom">
      <gomantlradapter.preset srcdir="${v3.src}"
-	                    destdir="${v3.gen}"
-                            package="${v3.package}">
-      <include name="${v3.newtomast}.gom"/>
+	                     destdir="${v3.gen}"
+			     package="${v3.package}">
+      <include name="${v3.tomast}.gom"/>
+      <include name="${v3.backquoteast}.gom"/>
       <!--grammar="NewTomLanguage"-->
     </gomantlradapter.preset>
   </target>
@@ -57,16 +63,39 @@
   <target name="gom" depends="init">
     <gom.preset srcdir="${v3.src}"
                 destdir="${v3.gen}">
-      <include name="${v3.newtomast}.gom"/>
+      <include name="${v3.tomast}.gom"/>
+      <include name="${v3.backquoteast}.gom"/>
    </gom.preset>
   </target>
   
   <!--target name="antlr" depends="antlrtom"-->
   <target name="antlr" depends="gomantlradapter">
 	  <!--antlr3 target="${v3.gen}/${v3.newtomgrammar}.g"-->
-   <antlr3 target="${v3.src}/${v3.newtomgrammar}.g"
+    <!--antlr3 target="${v3.src}/${v3.newhostgrammar}.g"
+            outputdirectory="${v3.gen}"
+	    libdirectory="${v3.gen}/tom"
+	    /-->
+    <antlr3 target="${v3.src}/${v3.newhostgrammar}.g"
             outputdirectory="${v3.gen}/${v3.package}"
-            libdirectory="${v3.gen}/${v3.package}/newtomast"
+	    libdirectory="${v3.gen}/${v3.package}/tom"
+	    />
+
+    <!--antlr3 target="${v3.src}/${v3.newtomgrammar}.g"
+            outputdirectory="${v3.gen}"
+	    libdirectory="${v3.gen}/tom"
+            /-->
+    <antlr3 target="${v3.src}/${v3.newtomgrammar}.g"
+            outputdirectory="${v3.gen}/${v3.package}"
+	    libdirectory="${v3.gen}/${v3.package}/tom"
+	    />
+
+    <!--antlr3 target="${v3.src}/${v3.newbackquotegrammar}.g"
+            outputdirectory="${v3.gen}"
+	    libdirectory="${v3.gen}/backquote"
+            /-->
+    <antlr3 target="${v3.src}/${v3.newbackquotegrammar}.g"
+            outputdirectory="${v3.gen}/${v3.package}"
+	    libdirectory="${v3.gen}/${v3.package}/backquote"
             />
   </target>
   
@@ -76,7 +105,7 @@
       <src path="${v3.gen}"/>
       <src path="${v3.src}"/>
       <include name="**/${v3.package}/MainNewTom.java"/>
-      <exclude name="**/${v3.package}/MainNewBackQuote.java"/>
+      <include name="**/${v3.package}/TomToken.java"/>
     </javac.preset>
   </target>
   

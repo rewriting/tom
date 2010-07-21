@@ -1,7 +1,6 @@
 // single-line comment test
 
 /* multi-line comment test */
-
 /*
 int myvar;
 method get() {
@@ -9,21 +8,19 @@ method get() {
   myvar = 42;
   totovar = myvar;
   return totovar;
-}
-*/
-
-return myvar;
-
-//%match(subj) {
-//  typeiee var -> { return somethingelse; }
-//}
-
-`(x*)
-`(y*)
-
-/*%match(subject) {
-  type myvarone -> { return something; }
-  typee myvartwo -> { `(a()) }
 }*/
 
-return myvarvar;
+return myvar;
+`(y*)
+return myv;
+`(x*)
+
+%match(subject) {
+  type myvarone -> { {return something;} }
+  typee myvartwo -> { `(a()) }
+  typee myvarthree -> { `(b()) }
+} 
+/*return 42;
+%match(s) {
+ aaa bbb -> { {`(u())} }
+}*/

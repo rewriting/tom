@@ -82,14 +82,6 @@ public class KernelTyper {
     return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
 
-  protected TomSymbol getSymbolFromType(TomType type) {
-    %match(type) {
-      TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
-        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
-      }
-    }
-    return TomBase.getSymbolFromType(type, getSymbolTable()); 
-  }
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/util/types/HashMap.tom}
@@ -232,19 +224,7 @@ public class KernelTyper {
 
     visit TomTerm {
       RecordAppl[Options=optionList,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
-        TomSymbol tomSymbol = null;
-        if(`tomName.equals("")) {
-          tomSymbol = kernelTyper.getSymbolFromType(contextType);
-          if(tomSymbol==null) {
-            Option ot = TomBase.findOriginTracking(`optionList);
-            TomMessage.error(kernelTyper.logger,ot.getFileName(), ot.getLine(),
-                TomMessage.unknownUnamedList, TomBase.getTomType(contextType));
-          }
-          `nameList = `concTomName(tomSymbol.getAstName());
-        } else {
-          tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-        }
-
+        TomSymbol tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           SlotList subterm = kernelTyper.typeVariableList(tomSymbol, `slotList);
           ConstraintList newConstraints = kernelTyper.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
@@ -287,26 +267,7 @@ public class KernelTyper {
     visit BQTerm {
 
       BQAppl[Options=optionList,AstName=name@Name(tomName),Args=args] -> {
-        TomSymbol tomSymbol = null;
-        if(`tomName.equals("")) {
-          try {
-            tomSymbol = kernelTyper.getSymbolFromType(contextType);
-            if(tomSymbol==null) {
-              throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
-            }
-            `name = `tomSymbol.getAstName();
-          } catch(UnsupportedOperationException e) {
-            // contextType has no AstType slot
-            tomSymbol = null;
-          }
-        } else {
-          tomSymbol = kernelTyper.getSymbolFromName(`tomName);
-          /*          if (`tomName == "nothing") {
-                      System.out.println("\n tomSymbol of 'nothing' = " + `tomSymbol);
-                      }
-           */
-        }
-
+        TomSymbol tomSymbol = kernelTyper.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           BQTermList subterm = kernelTyper.typeVariableList(tomSymbol, `args);
           return `BQAppl(optionList,name,subterm);

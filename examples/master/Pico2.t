@@ -157,7 +157,7 @@ class Pico2 {
   
 	%strategy RenamedVar() extends `Fail() {
 		visit Expr {
-			v@Var(('_',_*)) -> { return `v; }
+			v@Var(concString('_',_*)) -> { return `v; }
 		}
 	}
 

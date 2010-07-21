@@ -1,14 +1,17 @@
-module newtom.NewTomAst
-imports int String NewBackQuoteAst
+//module  Tom
+module  newtom.Tom
+imports int String BackQuote //Host
 abstract syntax
 
 // Temporary starting point
-TomCompilationUnit = TomCompilationUnit(BlockList:BlockList)
+//TomCompilationUnit = TomCompilationUnit(BlockList:BlockList)
+Program = Program(BlockList:BlockList)
+//Program = Program(Block*)
 
 TomType = Type(Type:String)
         | EmptyType()
 
-//TomTypeList = TomTypeList(TomType*)
+TomTypeList = TomTypeList(TomType*)
 
 TomTerm = Variable(Name:TomName,Type:TomType)
         | VariableStar(Name:TomName,Type:TomType)
@@ -114,7 +117,27 @@ Block = MatchConstruct(MatchArguments:TomTermList,PatternActions:PatternActionLi
       | TypeTerm(Type:TomType,Op1:Operator,Op2:Operator,Op3:Operator)
       | Include(FileName:String)
 //      | RuleConstruct(RType:TomType,FQN:TomName,RuleArguments:TomTermList,BlockList:BlockList)//,ConstraintActions:ConstraintActionList ) //PatternActions:PatternActionList )
-      | BackQuoteTerm(CompositeTerm:CompositeTerm) //Term:Term)
+      | BackQuoteConstruct(BackQuoteTerm:BackQuoteTerm) //Term:Term)
+      | Composite(ctl:CompositeList)
+//      | Composite(ct:CompositeTerm)
+
+/*
+CompositeTerm = CompositeTL(tl:TargetLanguage)
+              | CompositeBQT(term:BackQuoteTerm)
+              | CompositeTermList(CompositeTerm*)
+*/
+
+CompositeList = CompositeList(CompositeTerm*)
+
+CompositeTerm = CompositeTL(tl:TargetLanguage)
+              | CompositeBQT(term:BackQuoteTerm)
+
+TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
+               | ITL(Code:String)
+               | Comment(Code:String)
+               | noTL()
+
+TextPosition = TextPosition(Line:int,Column:int)
 
 SlotList = SlotList(Slot*)
 

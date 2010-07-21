@@ -29,7 +29,7 @@ public class RssFeedTransformer {
 
   %strategy RemoveNonDico() extends `Identity(){
     visit TNode {
-      <item><title>!#TEXT((_*,'Legea',_*))</title></item> -> {    	  
+      <item><title>!#TEXT(concString(_*,'Legea',_*))</title></item> -> {    	  
         return `EmptyNode();
       }
     }

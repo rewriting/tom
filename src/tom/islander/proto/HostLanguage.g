@@ -8,18 +8,18 @@ options {
 }
 
 @header{
-//  package islander.proto;
+  //package proto;
   import org.antlr.runtime.tree.*;
   import org.antlr.runtime.*;
 }
 
 @lexer::header{
-//  package islander.proto;
+  //package proto;
   import org.antlr.runtime.tree.*;
 }
 
 @lexer::members{
-  public static int hnesting = 0;
+  public static int nesting = 0;
   public Tree result;
 
   // override standard token emission
@@ -34,7 +34,6 @@ options {
     result = null;
     return t;
   }
-
 }
 
 // start
@@ -47,7 +46,7 @@ block :
   | tomConstruct -> ^(TomBlock tomConstruct)
   /* and few other : all '%something' */
   | backquoteConstruct -> ^(BackQuoteBlock backquoteConstruct)
-//  | '{' block '}' -> block
+  | '{' block '}' -> block
 
 ;
 
@@ -77,7 +76,6 @@ expr :
   | INT
   ;
 
-
 //Tom
 tomConstruct :
   m=MATCH -> ^({((TomToken)$m).getTree()})
@@ -94,51 +92,50 @@ ID  : ('a'..'z'|'A'..'Z')+ ;
 
 INT : ('0'..'9')+ ;
 
-LBRACE : '{' //{ hnesting++; System.out.println("host hnesting++ = " + hnesting);}
+LBRACE : '{' { nesting++; } //{System.out.println("host nesting++ = " + nesting);}
          ;
 
 RBRACE : '}'
   {
-    if ( hnesting<=0 ) {
+    if ( nesting<=0 ) {
       emit(Token.EOF_TOKEN);
       //System.out.println("exit embedded hostlanguage\n");
     }
     else {
-      hnesting--;
-      //System.out.println("host hnesting-- = " + hnesting);
+      nesting--;
+      //System.out.println("host nesting-- = " + nesting);
     }
   }
   ;
 
 MATCH : '%match'
   {
-//    System.out.println("\nbefore new Tom*");
+//    System.out.println("\nbefore new Tom* / type de input = " + input.getClass().toString());
+//System.out.println("\nbefore new Tom*");
     TomLanguageLexer lexer = new TomLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-//    System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
-//    System.out.println("host, tokens list = " + tokens.getTokens().toString());
+//System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
+//System.out.println("host, tokens list = " + tokens.getTokens().toString());
     TomLanguageParser parser = new TomLanguageParser(tokens);
-//    System.out.println("before parser.matchConstruct()");
+//System.out.println("before parser.matchConstruct()");
     TomLanguageParser.matchConstruct_return res = parser.matchConstruct();
-//    System.out.println("(host - tom) res.getTree() = " + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
   }
-;
+  ;
 
 BACKQUOTE : '`('
   {
-//    System.out.println("\nbefore new BackQuote*");
+//System.out.println("\nbefore new BackQuote*");
     BackQuoteLanguageLexer lexer = new BackQuoteLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-//    System.out.println("host, tokens = " + tokens.toString() + " /fin");
-//    System.out.println("host, tokens list = " + tokens.getTokens().toString());
+//System.out.println("host, tokens = " + tokens.toString() + " /fin");
+//System.out.println("host, tokens list = " + tokens.getTokens().toString());
     BackQuoteLanguageParser parser = new BackQuoteLanguageParser(tokens);
-//    System.out.println("before parser.backQuoteConstruct()");
+//System.out.println("before parser.backQuoteConstruct()");
     BackQuoteLanguageParser.backQuoteConstruct_return res = parser.backQuoteConstruct();
-//    System.out.println("(host - bq) res.getTree() = " + ((Tree)res.getTree()).toStringTree());
-//    System.out.println("(host - bq) res.getTree() = " + HostLanguageParser.intermediateBQResult.toStringTree());
+//    System.out.println("(host - bq) res.getTree() = " + ((Tree)res.getTree()).toStringTree() + " (<- should be BQVariable, BQVariableStar, BQUnamedVariable or BQUnamedVariableStar)");
     result = (Tree)res.getTree();
-}
+  }
   ;
 
 WS  : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;

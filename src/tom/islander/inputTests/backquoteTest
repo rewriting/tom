@@ -17,7 +17,7 @@
 //`()                                                           //unauthorized
 //`(a?b:c)
 //`((a.getVar().getToto().getCond()?thenVar:elseVar))
-//`((ff(x=,y+1)))
+//`((ff(x,y+1)))
 //`((ff(x=42,x-=9)))
 //`(f(x,myList[x]))
 //`(f(x,x)
@@ -35,5 +35,6 @@
 //`(Composite(composite*, CompositeTL(ITL("};"))))
 //`(Toto(x*,y.get(3)))
 //`(Toto(y.get(3),x*))
-`(f(x*,a.x(),x,f(x,x)))
+//`(f(x*,a.x(),x,f(x,x)))
 //`(f(_,a,_*))
+`(f(new Foo(g(x*))))

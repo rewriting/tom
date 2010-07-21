@@ -182,8 +182,9 @@ public class TyperPlugin extends TomGenericPlugin {
         TomType newType = null;
         newType = typer.getSymbolTable().getType(`tomType);
         %match(newType) {
-         Type(tomType,EmptyTargetLanguageType()) -> {
+         Type(_,EmptyTargetLanguageType()) -> {
           System.out.println("Found an EmptyTargetLanguageType!!");
+
          }
         }
       }

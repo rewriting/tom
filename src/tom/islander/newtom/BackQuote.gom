@@ -1,5 +1,6 @@
-module newtom.NewBackQuoteAst
-imports int String
+//module BackQuote
+module newtom.BackQuote
+imports int String Tom //Host
 abstract syntax
 
 //BackQuoteTerm = BackQuoteTerm(CompositeTerm:CompositeTerm) //Term:Term)
@@ -15,14 +16,15 @@ Term = Variable(Name:String)
      | Composite(Name:String,cl:CompositeList)*/
 
 
-CompositeTerm = Expression(Expr:Expression) // ~expression java
+BackQuoteTerm = BQExpression(Expr:Expression) // ~expression java
          //     | Variable(Name:String) // x x()
               | BQVariableStar(Name:String) //x*
               | BQUnamedVariable() // _
               | BQUnamedVariableStar() // _*
-              | Composite(Name:String,cl:CompositeList) //f(...)
+              | BQNamedComposite(Name:String,cl:CompositeList) //f(...)
+              | BQComposite(cl:CompositeList)
 
-CompositeList = CompositeList(CompositeTerm*)
+//CompositeList = CompositeList(CompositeTerm*) // CompositeList and CompositeTerm are in NewTomAst.gom
 
 //TermList = TermList(Term*)
 

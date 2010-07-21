@@ -53,7 +53,7 @@ import tom.platform.OptionManager;
 public abstract class GenericGenerator extends AbstractGenerator {
 
   protected HashMap<String,String> isFsymMap = new HashMap<String,String>();
-  protected boolean lazyMode;
+  protected boolean lazyType;
   protected boolean nodeclMode;
   protected boolean inline;
   protected boolean inlineplus; // perform inlining even if no substitution has been done
@@ -63,7 +63,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
 
-    lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
+    lazyType = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     boolean cCode = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
     boolean jCode = ((Boolean)optionManager.getOptionValue("jCode")).booleanValue();
@@ -302,7 +302,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
                                             TargetLanguageType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
     String args[];
-    if(lazyMode) {
+    if(lazyType) {
       TomType argType = getUniversalType();
       if(getSymbolTable(moduleName).isBuiltinType(type)) {
         argType = getSymbolTable(moduleName).getBuiltinType(type);
@@ -322,7 +322,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
   protected void buildGetImplementationDecl(int deep, String type, String typename,
                                             TargetLanguageType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
-    if(!lazyMode) {
+    if(!lazyType) {
       argType = TomBase.getTLCode(tlType);
     } else {
       argType = TomBase.getTLType(getUniversalType());
@@ -355,7 +355,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
     if(!inline || !code.isCode() || !inlined) {
       TomType returnType = getSymbolTable(moduleName).getBooleanType();
       String argType;
-      if(!lazyMode) {
+      if(!lazyType) {
         argType = TomBase.getTLCode(tlType);
       } else {
         argType = TomBase.getTLType(getUniversalType());
@@ -398,7 +398,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
       TomType returnType = l.getHeadconcTomType();
 
       String argType;
-      if(!lazyMode) {
+      if(!lazyType) {
         argType = TomBase.getTLCode(tlType);
       } else {
         argType = TomBase.getTLType(getUniversalType());
@@ -499,7 +499,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         String argType = null;
         String functionName = "tom_get_head_" + opname;
 
-        if(lazyMode) {
+        if(lazyType) {
           returnType = TomBase.getTLType(getUniversalType());
           argType = TomBase.getTLType(getUniversalType());
         } else {
@@ -542,7 +542,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
             String argType = null;
             String functionName = "tom_get_tail_" + opname;
 
-            if(lazyMode) {
+            if(lazyType) {
               returnType = TomBase.getTLType(getUniversalType());
               argType = TomBase.getTLType(getUniversalType());
             } else {
@@ -584,7 +584,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_is_empty_" + opname;
 
-          if(lazyMode) {
+          if(lazyType) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
             %match(opNameAST) {
@@ -625,7 +625,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_get_element";
 
-          if(lazyMode) {
+          if(lazyType) {
             returnType = TomBase.getTLType(getUniversalType());
             argType = TomBase.getTLType(getUniversalType());
           } else {
@@ -666,7 +666,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
           String argType = null;
           String functionName = "tom_get_size";
 
-          if(lazyMode) {
+          if(lazyType) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
             %match(opNameAST) {
@@ -805,7 +805,7 @@ public abstract class GenericGenerator extends AbstractGenerator {
         String glType = TomBase.getTLType(listType);
 
         String utype = glType;
-        if(lazyMode) {
+        if(lazyType) {
           utype =  TomBase.getTLType(getUniversalType());
         }
 

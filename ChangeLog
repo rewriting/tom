@@ -1,5 +1,11 @@
+2010-07203 pem
+ * removed anonymous operators
+ * except in explicit XML notation : <A>(_*,x,_*)</A> for instance
+ * ported all tests and examples
+
 2010-07-13 tavaresc
- * Fix inference for the explicit arguments of a RecordAppl : typer takes the type of a rank by using the name of the TomSymbol instead of
+ * Fix inference for the explicit arguments of a RecordAppl : typer takes the
+  type of a rank by using the name of the TomSymbol instead of
   traverse both list of arguments and types of the domain of the term in teh
   same order.
 
@@ -7,7 +13,6 @@
  * Apply type variables only for terms with unknonw types:
   - before : all terms were typed with a fresh type variable;
   - now : only terms with unknown types are typed with a fresh type variable.
-
 
 2010-07-08 tavaresc
  * Improve new typer by resetting set of fresh type variables after each %match

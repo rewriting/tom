@@ -1,5 +1,4 @@
 /*
- * 
  * TOM - To One Matching Compiler
  * 
  * Copyright (c) 2000-2010, INPL, INRIA
@@ -19,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- **/
+ */
 
 grammar NewBackQuoteLanguage;
 
@@ -27,73 +26,49 @@ options {
   backtrack=true;
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=NewBackQuoteAstTokens;
-
+  tokenVocab=BackQuoteTokens;
 }
 
 @header {
   //package tom.engine.parser;
-  package backquote;
-
-  //copy imports here
+  package newtom;
 }
 
 
 @lexer::header {
   //package tom.engine.parser;
-  package backquote;
+  package newtom;
 }
 
-/*@lexer::members {
-  protected boolean enumIsKeyword = true;
-  protected boolean assertIsKeyword = true;
-}*/
+@lexer::members {
+  public static int nesting = 0;
+  //protected boolean enumIsKeyword = true;
+  //protected boolean assertIsKeyword = true;
+}
 
 
 //Starting point
+//backQuoteConstruct : '`(' backQuoteTerm ')' -> ^(BackQuoteConstruct backQuoteTerm) ;
 
-backQuoteTerm : '`(' compositeTerm ')' -> ^(BackQuoteTerm compositeTerm) ;
-
-compositeTerm :
-  id=Identifier '*' -> ^(VariableStar $id) // x*
+backQuoteTerm :
+  id=Identifier '*' -> ^(BQVariableStar $id) // x*
 //  | id=Identifier ('()')? -> ^(Variable $id )  // x and x()
-//  | name=Identifier '(' termList ')' -> ^(NamedVariable $name termList) //  //f(...)
-  | '_' -> ^(UnamedVariable )
-  | '_*' -> ^(UnamedVariableStar )
-  | name=Identifier '(' cl=compositeList ')' -> ^(Composite $name $cl) // f(...)
-  | expression -> ^(Expression expression)
+//  | name=Identifier LPAREN termList RPAREN -> ^(NamedVariable $name termList) //  //f(...)
+  | '_' -> ^(BQUnamedVariable )
+  | '_*' -> ^(BQUnamedVariableStar )
+  | name=Identifier LPAREN cl=compositeList RPAREN -> ^(BQNamedComposite $name $cl) // f(...)
+  | expression -> ^(BQExpression expression)
+// to add
+//  | cl=compositeList -> ^(BQComposite $cl)  //BQComposite(cl:CompositeList)
   ;
 
 compositeList : 
-  compositeTerm (',' compositeTerm)* -> ^(CompositeList compositeTerm+)
+  backQuoteTerm (',' backQuoteTerm)* -> ^(CompositeList backQuoteTerm+)
   ;
-
-/*
-compositeTerm :
-  term -> ^(TomVariable term)
-  //| expression* -> ^(Expression ^(ExpressionList expression*))
-  | expression -> ^(Expression expression)
-//  | xmlTerm
-  ;
-
-compositeList : 
-  //c1=(term|expression) (',' c2+=(term|expression))* -> ^(CompositeList $c1 $c2)
-  compositeTerm (',' compositeTerm)* -> ^(CompositeList compositeTerm+)
-  ;
-
-term : // x, x*, x(), x(...)
-   id=Identifier '*' -> ^(VariableStar $id)
-  | id=Identifier -> ^(Variable $id )
-  | id=Identifier '('')' -> ^(Variable $id)
-//  | name=Identifier '(' termList ')' -> ^(NamedVariable $name termList)
-  | name=Identifier '(' cl=compositeList ')' -> ^(Composite $name $cl)
-//  | termList
-  ;
-*/
-
-/*termList :
-  term (',' term)* -> ^(TermList term+)
-  ;*/
+// in TomLanguage.g
+//compositeList
+//compositeTerm
+//composite
 
 /**
  * Partial Java
@@ -166,7 +141,7 @@ typeArgument :
 // EXPRESSIONS
 
 parExpression : 
-  '('! expression ')'!
+  LPAREN! expression RPAREN!
   ;
     
 expressionList : 
@@ -325,9 +300,9 @@ unaryExpressionNotPlusMinus :
   ;
 
 castExpression : 
-  '(' primitiveType ')' unaryExpression
+  LPAREN primitiveType RPAREN unaryExpression
       ->  ^(TypeCast primitiveType unaryExpression)
-  | '(' (t=type | expression) ')' unaryExpressionNotPlusMinus
+  | LPAREN (t=type | expression) RPAREN unaryExpressionNotPlusMinus
       -> {t!=null}? ^(TypeCast $t unaryExpressionNotPlusMinus)
       ->            ^(ExpressionCast expression unaryExpressionNotPlusMinus)  // semantics ?
   ;
@@ -417,7 +392,7 @@ superSuffix :
   ;
 
 arguments : 
-  '(' l=expressionList? ')'
+  LPAREN l=expressionList? RPAREN
       -> {l==null}? ^(ExpressionList )
       -> $l
   ;
@@ -528,14 +503,32 @@ JavaIDDigit :
   '\u1040'..'\u1049'
   ;
 
+LPAREN : '(' { nesting++; } { System.out.println("backquote nesting++ = " + nesting);}
+  ;
+
+RPAREN : ')'
+  {
+    if ( nesting<=0 ) {
+      System.out.println("exit backquote language\n");
+      emit(Token.EOF_TOKEN);
+    }
+    else {
+      nesting--;
+      System.out.println("backquote nesting-- = " + nesting);
+    }
+  }
+  ;
+
 WS : 
   (' '|'\r'|'\t'|'\u000C'|'\n') {$channel=HIDDEN;}
   ;
 
 ML_COMMENT : 
-  '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+  '/*' ( options {greedy=false;} : . )* '*/'
+  {$channel=HIDDEN;}
   ;
 
 SL_COMMENT :
-  '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+  '//' ~('\n'|'\r')* '\r'? '\n'
+  {$channel=HIDDEN;}
   ;

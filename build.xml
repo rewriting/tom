@@ -984,6 +984,7 @@
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
       <property name="inlineplus" value="off"/>
+      <property name="newtyper" value="off"/>
     </ant>
   </target>
 
@@ -994,6 +995,19 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="off"/>
+    </ant>
+  </target>
+
+  <target name="test.nt" depends="src.dist"
+    description="Compile acceptance tests with new typer">
+    <ant dir="${test}" target="build">
+      <property name="tom.home" value="${src.dist}"/>
+      <property name="optimize" value="off"/>
+      <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
+      <property name="newtyper" value="on"/>
     </ant>
   </target>
 
@@ -1031,78 +1045,21 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="off"/>
     </ant>
   </target>
 
-  <!-- BEGIN Tests for the new typer -->
-  <target name="testnt" depends="src.dist"
-    description="Compile acceptance tests with new typer">
-    <ant dir="${test}" target="infer">
+  <target name="src.junit.nt" depends="junit.nt"/>
+  <target name="junit.nt" description="Runs junit acceptance tests with new typer"
+    depends="clean.test, test.nt">
+    <ant dir="${test}" target="junit">
       <property name="tom.home" value="${src.dist}"/>
-      <property name="optimize" value="off"/>
-      <property name="optimize2" value="off"/>
-      <property name="inline" value="off"/>
-      <property name="inlineplus" value="off"/>
+      <property name="newtyper" value="on"/>
     </ant>
   </target>
-
-  <target name="testnt.opt" depends="src.dist"
-    description="Compile acceptance tests with new typer and optimizer">
-    <ant dir="${test}" target="infer">
-      <property name="tom.home" value="${src.dist}"/>
-      <property name="optimize" value="on"/>
-      <property name="optimize2" value="on"/>
-      <property name="inlineplus" value="on"/>
-    </ant>
-  </target>
-
-  <target name="testnt.stable" description="Compile and run acceptance tests with new typer and stable"
-    depends="stable.dist">
-    <ant dir="${test}" target="infer">
-      <property name="tom.home" value="${stable.dist}"/>
-    </ant>
-  </target>
-
-  <target name="stable.junitnt"
-    description="Runs junit acceptance tests compiled with new typer and stable"
-    depends="clean.testnt, testnt.stable">
-    <ant dir="${test}" target="junitnt">
-      <property name="tom.home" value="${stable.dist}"/>
-    </ant>
-  </target>
-
-  <target name="junitnt" description="Runs junit acceptance tests with new
-    typer"
-    depends="clean.testnt, testnt">
-    <ant dir="${test}" target="junitnt">
-      <property name="tom.home" value="${src.dist}"/>
-    </ant>
-  </target>
-
-  <target name="junitnt.opt"
-    description="Runs junit acceptance tests with new typer and optimizer"
-    depends="clean.testnt, testnt.opt">
-    <ant dir="${test}" target="junitnt">
-      <property name="tom.home" value="${src.dist}"/>
-      <property name="optimize" value="on"/>
-      <property name="optimize2" value="on"/>
-      <property name="inlineplus" value="on"/>
-    </ant>
-  </target>
-  <!-- END Tests for the new typer -->
 
   <target name="all" description="cleans, build, test all"
     depends="stable.all, src.all">
-    <!--<exec dir="${basedir}"
-      failonerror="yes"
-      executable="ant">
-      <arg line="src.all"/>
-    </exec>
-    <exec dir="${basedir}"
-      failonerror="yes"
-      executable="ant">
-      <arg line="stable.all"/>
-    </exec>-->
   </target>
 
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
@@ -1115,6 +1072,7 @@
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
     </ant>
+
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
@@ -1141,15 +1099,19 @@
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
+    <echo>Runs junit acceptance tests without optimization</echo>
     <antcall target="src.junit"/>  	
     <echo>Runs junit acceptance tests with optimization</echo>
     <antcall target="src.junit.opt"/>
+    <echo>Runs junit acceptance tests with new typer</echo>
+    <antcall target="src.junit.nt"/>
 
-    <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
     </ant>
+
+    <echo>Test tom-source in examples without optimization</echo>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
@@ -1157,9 +1119,10 @@
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
       <property name="inlineplus" value="off"/>
+      <property name="newtyper" value="off"/>
     </ant>
 
-    <echo>Test tom-source in examples with optimizer</echo>
+    <echo>Test tom-source in examples with optimization</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
@@ -1170,7 +1133,20 @@
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
       <property name="inlineplus" value="on"/>
+      <property name="newtyper" value="off"/>
     </ant>
+
+    <echo>Test tom-source in examples with new typer</echo>
+    <ant dir="${examples}" target="junit">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+      <property name="optimize" value="off"/>
+      <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
+      <property name="newtyper" value="on"/>
+    </ant>
+
   </target>
 
   <target name="examples.stable"

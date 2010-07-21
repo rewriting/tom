@@ -45,7 +45,7 @@ public class TestDoubleList {
     //System.out.println("list = " + l);
     LinkedList<Integer> result = new LinkedList();
     %match(LinkedList l, LinkedList l) {
-      !(_*,x,_*,x,_*),(_*,x,_*) -> { result.add((Integer)`x); }
+      !concLinkedList(_*,x,_*,x,_*),concLinkedList(_*,x,_*) -> { result.add((Integer)`x); }
     }
     if (!(result.contains(2) && result.contains(4))) { fail(); }
   }
@@ -56,7 +56,7 @@ public class TestDoubleList {
     //System.out.println("list = " + l);
     LinkedList<Integer> result = new LinkedList();
     %match(LinkedList l, LinkedList l) {
-      (_*,x,_*),!(_*,x,_*,x,_*) -> { result.add((Integer)`x); }
+      concLinkedList(_*,x,_*),!concLinkedList(_*,x,_*,x,_*) -> { result.add((Integer)`x); }
     }
     if (!(result.contains(2) && result.contains(4))) { fail(); }
   }

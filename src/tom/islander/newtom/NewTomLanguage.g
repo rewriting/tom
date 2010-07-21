@@ -1,4 +1,6 @@
 /*
+ * TOM - To One Matching Compiler
+ *
  * Copyright (c) 2007-2010, INPL, INRIA
  * Nancy, France.
  *
@@ -16,25 +18,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- **/
+ */
 
 grammar NewTomLanguage;
 
 options {
   backtrack=true;
-//  memoize=true;
+  memoize=true;
   output=AST;
   ASTLabelType=Tree;
-  tokenVocab=NewTomAstTokens;
+  tokenVocab=TomTokens;
 }
 
 @header {
   package newtom;
-//  import org.antlr.runtime.tree.Tree;
+  //package tom.engine.parser;
+  import org.antlr.runtime.tree.Tree;
 }
 
 @lexer::header {
-package newtom;
+  package newtom;
+  //package tom.engine.parser;
+  import org.antlr.runtime.tree.Tree;
+}
+
+@lexer::members{
+  public static int nesting = 0;
+  public Tree result;
+  
+  // override standard token emission
+  public Token emit() {
+    TomToken t = new TomToken(input, state.type, state.channel,
+        state.tokenStartCharIndex, getCharIndex()-1,result);
+    t.setLine(state.tokenStartLine);
+    t.setText(state.text);
+    t.setCharPositionInLine(state.tokenStartCharPositionInLine);
+    t.setTree(result);
+    emit(t);
+    result = null;
+    return t;
+  }
+
 }
 
 /**
@@ -42,9 +66,9 @@ package newtom;
  */
 
 // my temporary starting point 
-tomCompilationUnit :
+/*tomCompilationUnit :
   blockList EOF -> ^(TomCompilationUnit blockList)
-  ;
+  ;*/
 
 blockList :
   (block)* -> ^(BlockList (block)*)
@@ -58,7 +82,7 @@ block :
   | typeTerm
   | includeConstruct
   | strategyConstruct
-  | compositeTerm // to modify
+//  | compositeTerm // to modify
   | LBRACE blockList RBRACE -> blockList
   ;
 /*
@@ -76,14 +100,15 @@ backquoteTerm :
 */
 
 
+/* '{' BlockList '}' */
 goalLanguageBlock :
-  LBRACE (block)* RBRACE -> ^(BlockList (block)*)  /*^(BlockList blockList)*/
-  //LBRACE blockList RBRACE -> blockList  /*^(BlockList blockList)*/
+  LBRACE (block)* RBRACE -> ^(BlockList (block)*)  //^(BlockList blockList)
+  //LBRACE blockList RBRACE -> blockList  //^(BlockList blockList)
   ;
 
 matchConstruct :
-  MATCH LPAREN matchArguments RPAREN LBRACE patternActionList RBRACE -> ^(MatchConstruct matchArguments patternActionList)
-  | MATCH LBRACE constraintActionList RBRACE -> ^(MatchConstructWithoutArgs constraintActionList)
+  /*MATCH*/ LPAREN matchArguments RPAREN LBRACE patternActionList RBRACE -> ^(MatchConstruct matchArguments patternActionList)
+  | /*MATCH*/ LBRACE constraintActionList RBRACE -> ^(MatchConstructWithoutArgs constraintActionList)
   ;
 
 pair :
@@ -111,9 +136,9 @@ patternAction :
     -> ^(LabelledPatternAction patternList blockList $labelName)
   ;
 
-compositeTerm :
-  Identifier -> ^(CompositeTerm Identifier ) //temporary rule
-  ;
+////compositeTerm :
+////  Identifier -> ^(CompositeTerm Identifier ) //temporary rule
+////  ;
 //  | id=Identifier -> ^(CompositeTerm $id ) //temporary rule
 //  : unit=(javaCompilationUnit|matchConstruct)* -> ^(CompositeUnit $unit*)
 /*  : cu=(matchConstruct* javaCompilationUnit (matchConstruct|javaCompilationUnit)*) -> ^(CompositeTerm ^(CompilationUnit $cu )) */
@@ -388,6 +413,7 @@ listKeywordsOpList :
 
 keywordIsFsym : 
   'is_fsym' LPAREN name=Identifier RPAREN goalLanguageBlock -> ^(IsFsym ^(Name $name) goalLanguageBlock)
+  //'is_fsym' LPAREN name=Identifier RPAREN t=GOALLBRACE -> ^(IsFsym ^(Name $name) ^({((TomToken)$t).getTree()}))
   ;
 
 keywordMake : 
@@ -495,11 +521,59 @@ OPARRAY     :   '%oparray'  ;
 TYPETERM    :   '%typeterm' ;
 GOM         :   '%gom'      ;
 
-BACKQUOTE   :   '`'           ;
+//BACKQUOTE   :   '`'           ;
+
+
+
+
+
 
 // simple symbols
-LBRACE      :   '{' ;
-RBRACE      :   '}' ;
+fragment
+LBRACE : '{' { nesting++; } //{ System.out.println("tom nesting++ = " + nesting);}
+         ;
+
+GOALLBRACE : '{' { nesting++; } //{ System.out.println("tom nesting++ = " + nesting);}
+  {
+    NewHostLanguageLexer lexer = new NewHostLanguageLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
+    NewHostLanguageParser.goalLanguageBlock_return res = parser.goalLanguageBlock();
+    result = (Tree)res.getTree();
+  }
+  ;
+
+
+RBRACE : '}'
+  {
+    if ( nesting<=0 ) {
+      emit(Token.EOF_TOKEN);
+      //System.out.println("exit tom language\n");
+    }
+    else {
+      nesting--;
+      //System.out.println("tom nesting-- = " + nesting);
+    }
+  }
+  ;
+//LBRACE      :   '{' ;
+//RBRACE      :   '}' ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+
+
 LPAREN      :   '(' ;
 RPAREN      :   ')' ;
 LBRACKET    :   '[' ;

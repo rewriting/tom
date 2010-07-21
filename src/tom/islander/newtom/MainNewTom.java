@@ -1,4 +1,5 @@
 package newtom;
+//package islander.newtom;
 
 import java.io.*;
 import java.util.*;
@@ -7,8 +8,17 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.tree.Tree;
 
-import newtom.newtomast.*;
-import newtom.newtomast.types.*;
+import newtom.tom.*;
+import newtom.tom.types.*;
+import newtom.backquote.*;
+import newtom.backquote.types.*;
+
+/*
+import islander.newtom.tom.*;
+import islander.newtom.tom.types.*;
+import islander.newtom.backquote.*;
+import islander.newtom.backquote.types.*;
+*/
 
 public class MainNewTom {
 
@@ -23,20 +33,19 @@ public class MainNewTom {
         input=System.in;
       }
 
-      NewTomLanguageLexer lexer = new NewTomLanguageLexer(new ANTLRInputStream(input));
+      NewHostLanguageLexer lexer = new NewHostLanguageLexer(new ANTLRInputStream(input));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      NewTomLanguageParser parser = new NewTomLanguageParser(tokens);
+      NewHostLanguageParser parser = new NewHostLanguageParser(tokens);
 
-      System.out.println("(DEBUG) MainNewTom : init OK");
-      Tree tree = (Tree) parser.tomCompilationUnit().getTree(); //orig
-      /*
-      NewTomLanguageParser.tomCompilationUnit_return tempo = parser.tomCompilationUnit();
-      System.out.println("(DEBUG) MainTomJava :  parser.tomCompilationUnit() == tempo == " + tempo);
+      System.out.println("(DEBUG) MainNewHost : init OK");
+//      Tree tree = (Tree) parser.program().getTree();
+      System.out.println("(DEBUG) *** parser.program() ***");
+      NewHostLanguageParser.program_return tempo = parser.program();
+      System.out.println("(DEBUG) *** before getTree() ***");
       Tree tree = (Tree) tempo.getTree();
-      */
-      System.out.println("(DEBUG) MainNewTom : parsing & getTree() OK / tree =\n" + tree.toStringTree() + "\n");
+      System.out.println("(DEBUG) MainNewHost : parsing & getTree() OK / tree =\n" + tree.toStringTree() + "\n");
      
-      TomCompilationUnit term = (TomCompilationUnit) NewTomAstAdaptor.getTerm(tree);
+      Program term = (Program) TomAdaptor.getTerm(tree);
       System.out.println("(DEBUG) MainNewTom : getTerm(tree) OK / term = " + term + "\n");
       tom.library.utils.Viewer.toTree(term);
       System.out.println("(DEBUG) MainNewTom : Visualization OK");

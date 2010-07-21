@@ -42,8 +42,7 @@
   
   <target name="gomantlradapter" depends="init, gom">
      <gomantlradapter.preset srcdir="${v3.src}"
-	                    destdir="${v3.gen}"
-                      >
+	                           destdir="${v3.gen}">
       <include name="${v3.host}.gom"/>
       <include name="${v3.tom}.gom"/>
       <include name="${v3.backquote}.gom"/>
@@ -52,7 +51,7 @@
 
   <target name="gom" depends="init">
     <gom.preset srcdir="${v3.src}"
-      destdir="${v3.gen}">
+               destdir="${v3.gen}">
       <include name="${v3.host}.gom"/>
       <include name="${v3.tom}.gom"/>
       <include name="${v3.backquote}.gom"/>

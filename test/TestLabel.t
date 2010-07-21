@@ -26,7 +26,7 @@ public class TestLabel {
     String s = "abccba";
     %match(s) {
 l1: concString(_*,'a',_*) -> { a++; break l1; }
-l2: (_*,'b',_*) -> { b++; break l2; }
+l2: concString(_*,'b',_*) -> { b++; break l2; }
 l3: concString(_*,'c',_*) -> { c++; }
     concString(_*,'c',_*) -> { c++; }
     concString(_*,'b',_*) -> { b++; }

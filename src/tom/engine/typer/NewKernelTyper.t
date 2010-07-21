@@ -88,6 +88,11 @@ public class NewKernelTyper {
   private SymbolTable symbolTable;
 
   private String currentInputFileName;
+  private boolean lazyType = false;
+
+  protected void setLazyType() {
+    lazyType = true;
+  }
 
   protected void setSymbolTable(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
@@ -1164,8 +1169,10 @@ public class NewKernelTyper {
               line = option.getLine();
             }
           }
-          TomMessage.error(logger,fileName, line,
-              TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
+          if(lazyType==false) {
+            TomMessage.error(logger,fileName, line,
+                TomMessage.incompatibleTypes,`tName1,`tName2,`termName); 
+          }
         }
     }
   }

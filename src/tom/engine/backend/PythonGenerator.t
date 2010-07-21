@@ -249,7 +249,7 @@ public class PythonGenerator extends GenericGenerator {
     //String tlEltType = getTLType(eltType);
 
     //String utype = glType;
-    //if(lazyMode) {
+    //if(lazyType) {
     //  utype = getTLType(getUniversalType());
     //}
     
