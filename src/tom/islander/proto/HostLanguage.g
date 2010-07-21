@@ -8,17 +8,14 @@ options {
 }
 
 @header{
-//  package islander.proto;
+  //package proto;
   import org.antlr.runtime.tree.*;
   import org.antlr.runtime.*;
 }
 
 @lexer::header{
-//  package islander.proto;
+  //package proto;
   import org.antlr.runtime.tree.*;
-}
-
-@parser::members{
 }
 
 @lexer::members{
@@ -37,7 +34,6 @@ options {
     result = null;
     return t;
   }
-
 }
 
 // start
@@ -116,32 +112,31 @@ RBRACE : '}'
 MATCH : '%match'
   {
 //    System.out.println("\nbefore new Tom* / type de input = " + input.getClass().toString());
+//System.out.println("\nbefore new Tom*");
     TomLanguageLexer lexer = new TomLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-//    System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
-//    System.out.println("host, tokens list = " + tokens.getTokens().toString());
+//System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
+//System.out.println("host, tokens list = " + tokens.getTokens().toString());
     TomLanguageParser parser = new TomLanguageParser(tokens);
-//    System.out.println("before parser.matchConstruct()");
+//System.out.println("before parser.matchConstruct()");
     TomLanguageParser.matchConstruct_return res = parser.matchConstruct();
-//    System.out.println("(host - tom) res.getTree() = " + ((Tree)res.getTree()).toStringTree());
     result = (Tree)res.getTree();
   }
-;
+  ;
 
 BACKQUOTE : '`('
   {
-  //  System.out.println("\nbefore new BackQuote*");
+//System.out.println("\nbefore new BackQuote*");
     BackQuoteLanguageLexer lexer = new BackQuoteLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-//    System.out.println("host, tokens = " + tokens.toString() + " /fin");
-//    System.out.println("host, tokens list = " + tokens.getTokens().toString());
+//System.out.println("host, tokens = " + tokens.toString() + " /fin");
+//System.out.println("host, tokens list = " + tokens.getTokens().toString());
     BackQuoteLanguageParser parser = new BackQuoteLanguageParser(tokens);
-//    System.out.println("before parser.backQuoteConstruct()");
+//System.out.println("before parser.backQuoteConstruct()");
     BackQuoteLanguageParser.backQuoteConstruct_return res = parser.backQuoteConstruct();
-//    System.out.println("(host - bq) res.getTree() = " + ((Tree)res.getTree()).toStringTree());
-//    System.out.println("(host - bq) res.getTree() = " + HostLanguageParser.intermediateBQResult.toStringTree());
+//    System.out.println("(host - bq) res.getTree() = " + ((Tree)res.getTree()).toStringTree() + " (<- should be BQVariable, BQVariableStar, BQUnamedVariable or BQUnamedVariableStar)");
     result = (Tree)res.getTree();
-}
+  }
   ;
 
 WS  : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
