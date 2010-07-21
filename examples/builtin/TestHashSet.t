@@ -63,7 +63,7 @@ public class TestHashSet {
     java.util.HashSet res = new java.util.HashSet();
 
     %match (HashSet set) {
-      (_*, x, _*) -> {
+      concHashSet(_*, x, _*) -> {
         res.add(`x);
       }
     }

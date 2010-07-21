@@ -63,7 +63,7 @@ public class TestTreeSet {
     java.util.TreeSet res = new java.util.TreeSet();
 
     %match (TreeSet set) {
-      (_*, x, _*) -> {
+      concTreeSet(_*, x, _*) -> {
         res.add(`x);
       }
     }

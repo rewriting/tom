@@ -46,7 +46,7 @@ public class TestVarVarStar {
   public void test1() {
     A a = `a(conc(),conc());
     %match(a) {
-      a(l,(l*)) -> { return; }
+      a(l,conc(l*)) -> { return; }
     }
     fail();
   }
@@ -55,7 +55,7 @@ public class TestVarVarStar {
   public void test2() {
     A a = `a(conc(b()),conc(b()));
     %match(a) {
-      a(l,(l*)) -> { return; }
+      a(l,conc(l*)) -> { return; }
     }
     fail();
   }
@@ -65,7 +65,7 @@ public class TestVarVarStar {
     int counter = 0;
     A a = `a(conc(b()),conc(b(),b()));
     %match(a) {
-      a(l,(l*)) -> { fail();}
+      a(l,conc(l*)) -> { fail();}
     }
     return;
   }

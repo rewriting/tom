@@ -69,7 +69,7 @@ cd $YOUR_TOM_WORKSPACE/src/tom/
 For backquote test :
 ant -f backquote.build.xml
 cd build
-java newtom/MainNewBackQuote ../islander/inputTests/backquoteTest (uncomment the
+java backquote/MainNewBackQuote ../islander/inputTests/backquoteTest (uncomment the
 test you want tu execute)
 
 For "light" newtom test :

@@ -68,7 +68,6 @@ compositeList :
   compositeTerm (',' compositeTerm)* -> ^(CompositeList compositeTerm+)
   ;
 
-
 /*
 compositeTerm :
   term -> ^(TomVariable term)

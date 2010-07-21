@@ -95,7 +95,7 @@ public class PatternAnalyser{
 
     public void substitute() {
       %match(HashMap nameToCondition) {
-        (_*,mapEntry(k,v),_*) -> {
+        concHashMap(_*,mapEntry(k,v),_*) -> {
           try {
             Condition newCond = `TopDown(Substitute(sourceToName)).visit((Condition)`v);
             nameToCondition.put(`k,newCond);
@@ -129,14 +129,14 @@ public class PatternAnalyser{
       <(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(operation,NoCond(),NoCond())); 
         %match(TNodeList linklist){
-          (_*,<joincondition>cond</joincondition>,_*) -> {
+          concTNode(_*,<joincondition>cond</joincondition>,_*) -> {
             explicitCond.putCondition(`operation,CondParser.parse(`cond.getData())); 
           }
-          (_*,<source linkName=linkName/>,_*) -> {
+          concTNode(_*,<source linkName=linkName/>,_*) -> {
             explicitCond.putLinkName(`linkName,`operation);
             wfg = `WfgNode(wfg*,RefWfg(linkName));
           }
-          (_*,<target linkName=linkName/>,_*) -> {
+          concTNode(_*,<target linkName=linkName/>,_*) -> {
             wfg = `LabWfg(linkName,wfg);
           }
         }
@@ -153,11 +153,11 @@ public class PatternAnalyser{
           throw new tom.engine.exception.TomRuntimeException();
         }
       }
-      ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
+      ElementNode("if",_,concTNode(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
         wfglist = `ConcWfg(wfglist*,res);
         %match(TNodeList elses) {
-          (_*,<(else|elseif)>altenate_activity</(else|elseif)>,_*) -> {
+          concTNode(_*,<(else|elseif)>altenate_activity</(else|elseif)>,_*) -> {
             res = bpelToWfg(`altenate_activity, explicitCond);
             wfglist = `ConcWfg(wfglist*,res);
           }
@@ -170,7 +170,7 @@ public class PatternAnalyser{
         StringBuilder buffer = new StringBuilder();
 
         %match(TNodeList list){
-          (_*,<copy>fromnode@<from /> <to variable=to /></copy>,_*) -> {
+          concTNode(_*,<copy>fromnode@<from /> <to variable=to /></copy>,_*) -> {
             String from = "";
 
             %match(fromnode){
@@ -180,13 +180,13 @@ public class PatternAnalyser{
 
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }
-          (_*) -> {        
+          concTNode(_*) -> {        
             wfg = `WfgNode(Activity(buffer.toString(),NoCond(),NoCond())); 
           }
-          (_*,<source linkName=linkName/>,_*) -> {
+          concTNode(_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,RefWfg(linkName));
           }
-          (_*,<target linkName=linkName/>,_*) -> {
+          concTNode(_*,<target linkName=linkName/>,_*) -> {
             wfg = `LabWfg(linkName,wfg);
           }
         }

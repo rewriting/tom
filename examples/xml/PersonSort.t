@@ -81,7 +81,7 @@ public class PersonSort {
 
   private void searchJu(TNode subject) {
     %match(TNode subject) {
-      <Persons><Person><FirstName>#TEXT(Z@(_*,'Ju',X*))</FirstName></Person></Persons> -> {
+      <Persons><Person><FirstName>#TEXT(Z@concString(_*,'Ju',X*))</FirstName></Person></Persons> -> {
         System.out.println("Z = " + `Z);
         System.out.println("Hello Mr Ju" + `X);
       }

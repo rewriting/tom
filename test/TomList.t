@@ -106,7 +106,7 @@ public class TomList {
 
   public ATermList double2(ATermList l) {
     %match(L l) {
-      (X1*,x,X2*,x,X3*) -> {
+      conc(X1*,x,X2*,x,X3*) -> {
         return `double2(id( conc(X1*,X2*,x,X3*) ));
       }
     }
