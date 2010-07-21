@@ -18,8 +18,11 @@ options {
   import org.antlr.runtime.tree.*;
 }
 
+@parser::members{
+}
+
 @lexer::members{
-  public static int hnesting = 0;
+  public static int nesting = 0;
   public Tree result;
 
   // override standard token emission
@@ -47,7 +50,7 @@ block :
   | tomConstruct -> ^(TomBlock tomConstruct)
   /* and few other : all '%something' */
   | backquoteConstruct -> ^(BackQuoteBlock backquoteConstruct)
-//  | '{' block '}' -> block
+  | '{' block '}' -> block
 
 ;
 
@@ -94,25 +97,25 @@ ID  : ('a'..'z'|'A'..'Z')+ ;
 
 INT : ('0'..'9')+ ;
 
-LBRACE : '{' //{ hnesting++; System.out.println("host hnesting++ = " + hnesting);}
+LBRACE : '{' { nesting++; } //{System.out.println("host nesting++ = " + nesting);}
          ;
 
 RBRACE : '}'
   {
-    if ( hnesting<=0 ) {
+    if ( nesting<=0 ) {
       emit(Token.EOF_TOKEN);
       //System.out.println("exit embedded hostlanguage\n");
     }
     else {
-      hnesting--;
-      //System.out.println("host hnesting-- = " + hnesting);
+      nesting--;
+      //System.out.println("host nesting-- = " + nesting);
     }
   }
   ;
 
 MATCH : '%match'
   {
-//    System.out.println("\nbefore new Tom*");
+//    System.out.println("\nbefore new Tom* / type de input = " + input.getClass().toString());
     TomLanguageLexer lexer = new TomLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 //    System.out.println("host, tokenstream = " + tokens.toString() + " /fin");
@@ -127,7 +130,7 @@ MATCH : '%match'
 
 BACKQUOTE : '`('
   {
-//    System.out.println("\nbefore new BackQuote*");
+  //  System.out.println("\nbefore new BackQuote*");
     BackQuoteLanguageLexer lexer = new BackQuoteLanguageLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 //    System.out.println("host, tokens = " + tokens.toString() + " /fin");
